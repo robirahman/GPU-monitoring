@@ -4,6 +4,8 @@
 
 This is a SPAR research project on adversarial classification of ML training workloads on GPUs. The goal is to determine whether on-chip telemetry and side-channel measurements can reliably distinguish ML training from other GPU workloads (scientific HPC, crypto mining, rendering), even when an adversary actively disguises their workload. The deliverables are a technical report, a signal comparison table, a HEM (Hardware Enabled Mechanism) telemetry design proposal, and a prototype classifier. Budget: $1,000 for compute.
 
+**Sharpened research question (post-literature-review):** Two recently published papers have pre-empted parts of the original scope. WAVE (Xu et al., ASPLOS '26) already demonstrates GPU PMC-based fingerprinting of LLM *inference* workloads using Nsight Compute. Differential Architecture (Anonymous, ISCA '26) already characterizes the hardware bottlenecks (compute vs. memory bandwidth vs. cache bandwidth) for all major GPU workload classes. Our novel contributions are therefore: (1) detection of ML *training* specifically, which neither paper addresses; (2) adversarial evasion and robustness, which neither paper addresses; (3) classification using always-available Tier 1 NVML metrics rather than Nsight Compute's 1200-5300% overhead Tier 3 PMCs, framed as a deployability question; and (4) the HEM governance proposal, which synthesizes all three bodies of work.
+
 ---
 
 ## Hardware & Infrastructure
@@ -15,10 +17,26 @@ This is a SPAR research project on adversarial classification of ML training wor
 - Note: GPM metrics (per-SM pipe utilization, tensor core %) are Hopper-only; use Nsight Compute for kernel-level instruction mix on Ampere
 - Also buy a Kill-A-Watt power meter (~$25) for wall-power side-channel measurements
 
-**Cloud GPU: Use Vast.ai for A100 access (~$0.50-1.00/hr)**
-- Remaining ~$400 budget provides 400-800 A100-hours
-- Vast.ai gives root Docker containers where you can install DCGM and access Tier 2 metrics (tensor core utilization, FP16/FP32/FP64 pipe utilization, DRAM bandwidth)
-- Optionally test RunPod or AWS briefly to compare telemetry access across platforms
+**Cloud GPU: Use Vast.ai for A100 access (~$0.66-0.78/hr)**
+- Remaining ~$400 budget provides 500-600 A100-hours
+- Bare-metal PCIe passthrough on most hosts = full DCGM, pynvml, and Nsight Compute access
+- Can install DCGM yourself in the root Docker container to get Tier 2 metrics (tensor core utilization, FP16/FP32/FP64 pipe utilization, SM occupancy, DRAM bandwidth)
+- Mining software not platform-blocked (important for profiling mining workloads)
+- Use RunPod Secure Cloud as backup ($1.14-1.39/hr A100) -- more reliable, DCGM pre-installed, but blocks mining software
+
+**Why Vast.ai over other providers:**
+
+| Provider | Bare-metal? | DCGM | Nsight | A100 $/hr | Mining OK? |
+|----------|------------|------|--------|-----------|------------|
+| **Vast.ai** | Yes | Yes | Host-dependent | **$0.66-0.78** | Yes (varies by host) |
+| RunPod | Yes | Yes (Secure Cloud) | Yes | $1.14-1.39 | Blocked |
+| Lambda | Yes | Yes | Yes | TBD | Not documented |
+| CoreWeave | Yes | Yes | Yes | TBD | Not documented |
+| GCP | Mostly virtualized | Yes (v2 w/ Ops Agent) | Limited | ~$2.74 | Blocked |
+| AWS | Virtualized | Limited | Limited | $2.74 | Blocked |
+| Azure | Some bare-metal | Yes (auto-installed) | Limited | Premium | Blocked |
+
+Key insight: **bare-metal access is essential** for this project. Hyperscaler VMs (AWS, most GCP) restrict DCGM advanced metrics and Nsight profiling behind the hypervisor. No cloud provider exposes wall-level power draw or physical side-channel data -- those require the local GPU.
 
 **Budget breakdown:**
 | Item | Cost |
@@ -26,8 +44,8 @@ This is a SPAR research project on adversarial classification of ML training wor
 | Used RTX 3090 | ~$550 |
 | Kill-A-Watt meter | ~$25 |
 | Vast.ai cloud compute | ~$400 |
-| Platform comparison tests | ~$25 |
-| **Total** | **~$1,000** |
+| RunPod test instance (1-2 hrs) | ~$5 |
+| **Total** | **~$980** |
 
 ---
 
@@ -83,23 +101,26 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
   - Kulp et al. (2024), "Hardware-Enabled Governance Mechanisms" (RAND)
   - "GPU Under Pressure: Estimating Application's Stress via Telemetry" (arXiv:2511.05067)
   - "Detecting Covert Cryptomining using HPC" (arXiv:1909.00268)
+  - **Xu et al., "WAVE: Leveraging Architecture Observation for Privacy-Preserving Model Oversight" (ASPLOS '26)** -- establishes GPU PMC fingerprinting of LLM inference; read alongside the open-source repo at https://github.com/sept-usc/Wave
+  - **Anonymous, "Differential Architecture: Limiting Performance of Targeted Applications" (ISCA '26 submission)** -- establishes hardware bottleneck characterization for all major GPU workload classes
 - Order RTX 3090 from eBay (verify seller, check return policy)
 - Create accounts on Vast.ai; spin up a test instance for 1 hour to verify `nvidia-smi dmon` and DCGM access
 - Set up Git repository with directory structure: `literature/`, `data/`, `scripts/`, `notebooks/`, `workloads/`, `classifier/`, `report/`
 
-**Checkpoint:** Mentees submit 1-page summary of 2 most relevant papers. GPU ordered. Cloud access verified.
+**Checkpoint:** Mentees submit 1-page summary of WAVE and Differential Architecture, explicitly noting what each paper establishes and what remains open. GPU ordered. Cloud access verified.
 
 ### Week 2: Environment Setup and Telemetry Pipeline
 
 **Tasks:**
 - Install local GPU, NVIDIA drivers (550+), CUDA 12.x, pynvml, Nsight tools
-- Build data collection harness (`scripts/collect_telemetry.py`): polls pynvml at 1 Hz, logs to CSV/Parquet with metadata (workload label, GPU model, timestamps)
+- Clone the WAVE repository (https://github.com/sept-usc/Wave); run their example collection script to understand the 9-metric Nsight Compute PMC collection approach. Adapt their Tier 3 collection code rather than writing it from scratch.
+- Build data collection harness (`scripts/collect_telemetry.py`): polls pynvml at 1 Hz, logs to CSV/Parquet with metadata (workload label, GPU model, timestamps). This is the Tier 1 harness -- separate from WAVE's Tier 3 harness.
 - Build workload launcher (`scripts/run_workload.py`): starts telemetry, launches workload, stops telemetry, saves labeled data
 - Test pipeline end-to-end: idle GPU + simple PyTorch training
 - Complete literature review and annotated bibliography
 - Finalize cloud platform choice based on Week 1 testing
 
-**Checkpoint:** Pipeline produces clean, labeled data files. Literature review draft complete.
+**Checkpoint:** Both Tier 1 (pynvml) and Tier 3 (adapted WAVE) pipelines produce clean, labeled data files. Literature review draft complete.
 
 ### Week 3: Data Collection Round 1
 
@@ -107,9 +128,10 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 - Run all representative workloads on local RTX 3090 (10-15 min each, 3 runs minimum per workload)
 - Collect Tier 1 metrics via pynvml harness for every run
 - Record wall power via Kill-A-Watt during each run
-- Run Nsight Compute profiles for 1 run of each workload type (`ncu --set full`)
+- Run Nsight Compute profiles (Tier 3) for 1 run of each workload type (`ncu --set full`) using the adapted WAVE collection script
 - Run selected workloads (ResNet-50, GPT-2, GROMACS, mining) on cloud A100 with DCGM for Tier 2 metrics
 - Organize data: `{workload}_{gpu}_{run}_{date}.parquet`
+- **Focus for training workloads:** collect enough runs to characterize training-specific temporal signals -- epoch periodicity, optimizer state memory growth over time, forward/backward pass asymmetry. These are not covered by WAVE or Differential Architecture.
 
 **Checkpoint:** 15-20+ workload runs complete. Tier 1 data for all, Tier 2 data for key workloads, Nsight profiles collected.
 
@@ -123,23 +145,25 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
   - PCA/t-SNE visualization of workload feature vectors
 - Build draft signal comparison table (Deliverable 4): workload types vs. metrics, with observed values
 - Analyze Nsight Compute kernel profiles: instruction mix, GEMM prevalence, kernel repetition patterns
-- Write 1-page summary: "Which metrics look most promising for classification?"
+- **Note on bottleneck characterization:** The Differential Architecture paper has already established which hardware bottlenecks dominate each workload class (MatMul/training=compute-bound, FFT/scientific=cache+memory-bound, vector-mult/inference=memory-bandwidth-bound, rendering=compute+RT-bound). Do not spend time re-deriving this from scratch. Instead, verify that your measurements are consistent with their findings, and focus analytical effort on: (a) the training/inference distinction within the ML class, and (b) temporal and behavioral patterns (epoch periodicity, memory growth curves) that static bottleneck analysis does not capture.
+- Write 1-page summary: "Which metrics distinguish ML training from inference, and from non-ML workloads, at Tier 1 resolution?"
 
-**Checkpoint:** 30+ runs in dataset. EDA notebook complete. Draft signal comparison table started.
+**Checkpoint:** 30+ runs in dataset. EDA notebook complete. Draft signal comparison table started. Training/inference distinction characterized.
 
 ### Week 5: Feature Engineering and Baseline Classifier
 
 **Tasks:**
 - Feature engineering: 60-second sliding windows, compute per metric: mean, std, min, max, CV, skewness, autocorrelation at lags 1/5/10/30s, dominant FFT frequency (~120 features per window)
+- **Training-specific features to add** (not in WAVE or Differential Architecture): epoch-level periodicity score (autocorrelation peak at epoch-duration lag), optimizer state memory growth rate (MB/min over the run), compute/memory-bandwidth ratio (to operationalize Differential Architecture's bottleneck model as a feature), ratio of power draw during forward vs. backward pass windows
 - Split by workload run (not window) to prevent leakage: 70/15/15 train/val/test
 - Train classifiers: Random Forest, XGBoost, SVM, Logistic Regression
-- Report accuracy, per-class precision/recall/F1, confusion matrices for both binary (ML training vs. rest) and multi-class
+- Report accuracy, per-class precision/recall/F1, confusion matrices for: binary (ML training vs. rest), three-way (ML training vs. ML inference vs. non-ML), and full multi-class
 - Extract feature importance rankings from tree models
-- Error analysis: which workload pairs are most confused?
+- Error analysis: which workload pairs are most confused? Pay particular attention to training vs. inference confusion.
 
-**Checkpoint:** Target >85% binary accuracy on clean data. Feature importance ranking produced.
+**Checkpoint:** Target >85% binary accuracy on clean data. Training/inference classifier accuracy reported. Feature importance ranking produced.
 
-### Week 6: Classifier Refinement
+### Week 6: Classifier Refinement and WAVE Comparison
 
 **Tasks:**
 - Add cross-metric features (power/utilization ratio, memory allocation rate, PCIe burstiness)
@@ -147,38 +171,44 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 - Train time-series models (1D CNN, LSTM) on raw metric sequences; compare with feature-engineered approach
 - Test with Tier 2 metrics from cloud A100: how much does tensor core utilization improve accuracy?
 - Cross-GPU generalization: train on RTX 3090 data, test on A100 data (and vice versa)
+- **New: WAVE vs. Tier 1 comparison experiment.** Train a parallel classifier using WAVE's 9 Nsight Compute PMC metrics (Tier 3) as features. Compare against the Tier 1 NVML classifier on accuracy and F1. Report the accuracy/overhead tradeoff: "Tier 3 achieves X% accuracy at 1200-5300% runtime overhead; Tier 1 achieves Y% accuracy at ~0% overhead." This is a key novel result framing our deployability contribution.
 
-**Checkpoint:** Target >90% binary, >80% multi-class on clean data. Window size sensitivity and cross-GPU results documented.
+**Checkpoint:** Target >90% binary, >80% multi-class on clean data. Window size sensitivity and cross-GPU results documented. Tier 1 vs. Tier 3 accuracy/overhead tradeoff quantified.
 
 ### Week 7: Adversarial Workload Design
 
 **Tasks:**
-- Design and implement 3-4 disguise strategies:
+- Design and implement 5 disguise strategies:
   - **A: Utilization modulation** -- insert sleeps/dummy work between training batches to mimic rendering patterns
   - **B: Low-utilization training** -- tiny batch sizes + throttling to resemble inference
   - **C: Instruction mix obfuscation** -- disable mixed-precision + run dummy FP64 kernels alongside training
   - **D: Temporal disruption** -- randomize batch sizes, vary compute intensity to break epoch periodicity
-- Run each adversarial workload 3+ times, collect telemetry with same pipeline
-- Label as `ml_training_adversarial_A/B/C/D`
+  - **E: PMC signature spoofing** -- dummy CUDA kernels crafted to produce WAVE-like periodic PMC patterns corresponding to a non-training workload (e.g., FFT-like cache/memory traffic ratios). This directly targets the Nsight-based Tier 3 detector; test whether it also fools the Tier 1 NVML classifier.
+- Run each adversarial workload 3+ times, collect telemetry with same pipeline (both Tier 1 and Tier 3)
+- Label as `ml_training_adversarial_A/B/C/D/E`
 
-**Checkpoint:** 3-4 adversarial strategies implemented. Adversarial telemetry data collected.
+**Checkpoint:** All 5 adversarial strategies implemented. Adversarial telemetry data collected at both Tier 1 and Tier 3.
 
 ### Week 8: Adversarial Robustness Testing
 
 **Tasks:**
-- Evaluate Week 6 classifier on adversarial data: detection rate per strategy
+- Evaluate Week 6 classifiers (both Tier 1 and Tier 3) on all 5 adversarial strategies: detection rate per strategy per tier
 - Analyze successful evasions: which features shifted? By how much?
-- Cost-of-evasion analysis: measure training throughput (samples/sec) and total energy with vs. without disguise
+- Cost-of-evasion analysis: measure training throughput (samples/sec) and total energy with vs. without disguise. Report as a table: strategy, detection rate (Tier 1), detection rate (Tier 3), throughput penalty %, energy overhead %.
 - Retrain classifier with adversarial examples in training set (adversarial training)
 - Add evasion-resistant features: cumulative FLOP counting, tensor core presence detection, memory allocation stability
-- If time: one round of adversary-defender iteration (modify attack, re-defend)
+- **Two rounds of adversary-defender iteration:** after initial robustification, have one team member design a refined attack against the hardened classifier, then defend again. Document the evolution. This is the primary novel contribution of the project.
 
-**Checkpoint:** Adversarial evaluation table complete. Cost-of-evasion quantified. Robustified classifier tested.
+**Checkpoint:** Adversarial evaluation table complete (5 strategies x 2 tiers). Cost-of-evasion quantified. Two rounds of adversary-defender iteration documented.
 
 ### Week 9: HEM Design Proposal and Code Cleanup
 
 **Tasks:**
-- Write HEM telemetry design proposal (Deliverable 5):
+- Write HEM telemetry design proposal (Deliverable 5). The proposal now synthesizes three bodies of prior work:
+  - **From Differential Architecture:** the bottleneck model establishes *which* hardware resources distinguish workload classes at the architectural level. Use their triple-point analysis to justify which counters are most discriminative (compute FLOPS counters for training/MatMul-heavy workloads, memory bandwidth counters for inference/decode, cache bandwidth for scientific workloads).
+  - **From WAVE:** the 9 PMC metrics and the overhead measurements establish the tradeoff between monitoring precision and runtime cost. Use their overhead table (1200-5300% for Nsight; near-zero for DCGM-style periodic reporting) to argue for a tiered monitoring architecture.
+  - **From our experiments:** the adversarial testing results establish which metrics are evasion-resistant and which are not. Ground every recommendation in a specific experimental result.
+  - **Tiered monitoring proposal:** always-on Tier 1 NVML as a low-cost continuous filter; triggered Tier 2/3 sampling (DCGM-style, not Nsight-style) for flagged sessions. Argue that Nsight-style re-execution profiling is impractical for governance and that hardware-native aggregate counters are the right implementation target.
   - **Must-have metrics:** instruction type counters (tensor/FP16/FP32/FP64), cumulative FLOP counters, memory allocation patterns
   - **Should-have:** power draw time series, SM utilization, PCIe/NVLink volumes
   - For each: cite experimental evidence, evasion difficulty, recommended sampling rate, hardware vs. firmware implementation
@@ -186,20 +216,20 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 - Clean up classifier code into a package with README, requirements, and a live-prediction demo script
 - Begin report writing: outline, methodology section, results tables and figures
 
-**Checkpoint:** HEM proposal drafted. Classifier code documented and reproducible. Report outline and methodology section done.
+**Checkpoint:** HEM proposal drafted and grounded in all three papers. Classifier code documented and reproducible. Report outline and methodology section done.
 
 ### Week 10: Report and Final Deliverables
 
 **Tasks:**
 - Write and polish the full technical report (15-25 pages):
-  1. Introduction and research questions
-  2. Literature review (Deliverable 1)
-  3. Workload characterization (Deliverable 2)
+  1. Introduction and research questions -- frame contributions explicitly relative to WAVE and Differential Architecture
+  2. Literature review (Deliverable 1) -- include WAVE, Differential Architecture, and prior papers; discuss what each establishes and what gap we fill
+  3. Workload characterization (Deliverable 2) -- cite Differential Architecture for bottleneck analysis; contribute training/inference distinction and temporal signatures
   4. Experimental setup
-  5. Classification results (Deliverable 3)
+  5. Classification results (Deliverable 3) -- report Tier 1 vs. Tier 3 accuracy/overhead tradeoff as a central result
   6. Signal comparison table (Deliverable 4)
-  7. Adversarial testing results
-  8. HEM design proposal (Deliverable 5)
+  7. Adversarial testing results -- primary novel contribution; 5 strategies x 2 tiers, two rounds of iteration
+  8. HEM design proposal (Deliverable 5) -- synthesizes all three bodies of prior work
   9. Discussion (limitations, future work, policy implications)
   10. Conclusion
 - Finalize signal comparison chart as publication-quality table/heatmap
