@@ -245,6 +245,7 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 - [ ] Classifier code repository with README and demo
 - [ ] Collected dataset with documentation
 - [ ] Presentation slides
+- [ ] TODO (repo cleanup): Remove PDFs from `literature/` and replace with a `literature/bibliography.md` containing full citations and links. PDFs may be under copyright and should not remain in a public repo.
 
 ---
 
