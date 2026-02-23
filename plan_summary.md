@@ -26,6 +26,16 @@ Neither paper addresses ML *training* workloads. Neither paper addresses an adve
 
 | Area | Before | After |
 |------|--------|-------|
+| **Hardware approach** | Buy RTX 3090 + Kill-A-Watt locally; split budget between local and cloud | **Cloud-only for Weeks 1–5.** Full $1,000 budget allocated to cloud compute (~1,300–1,500 A100-hours on Vast.ai). Local GPU deferred to Weeks 6+ if hardware grant is approved. |
+| **Budget** | ~$550 local GPU + ~$400 cloud | ~$1,000 cloud compute; physical hardware (~$575) funded separately by grant if approved |
+| **Tier 5 (physical side channels)** | Collected via Kill-A-Watt on local GPU | Deferred/grant-dependent; becomes a future-work recommendation if no local hardware |
+| Week 1 | Order RTX 3090; set up cloud | Cloud platform setup only (Vast.ai + RunPod); identify bare-metal hosts for Nsight access |
+| Week 2 | Install local GPU + drivers; build pipelines | All environment setup on cloud instances; build and test pipelines on cloud A100 |
+| Weeks 3–4 | Data collection on local RTX 3090 + cloud A100 | All data collection on cloud A100; no wall-power or local GPU measurements |
+| Week 6 | Cross-GPU: train on 3090, test on A100 | Cross-GPU with local 3090 *only if grant approved*; otherwise test across cloud host configurations |
+| Week 7 | Adversarial workloads on local GPU | Adversarial workloads on cloud; local GPU data *if grant approved* |
+| Week 9 HEM | Physical side-channel recommendations | Physical side-channel recommendations empirically grounded *only if grant approved*; otherwise cited as future work |
+| **Risks** | "RTX 3090 arrives defective" | Replaced with "Hardware grant not approved" and "Cloud budget exhaustion" |
 | Week 1 reading list | 4 papers | +2 papers (WAVE, Differential Architecture); checkpoint is a summary of those two specifically |
 | Week 2 pipeline | Build PMC harness from scratch | Clone and adapt the WAVE repo for Tier 3 collection; build Tier 1 NVML harness ourselves |
 | Weeks 3–4 EDA | Re-derive workload bottleneck characteristics | **Skip bottleneck re-derivation; cite Differential Architecture.** Focus EDA on training-specific temporal signals (epoch periodicity, optimizer memory growth, forward/backward asymmetry) and the training vs. inference distinction |

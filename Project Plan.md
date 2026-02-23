@@ -10,19 +10,22 @@ This is a SPAR research project on adversarial classification of ML training wor
 
 ## Hardware & Infrastructure
 
-**Local GPU: Buy a used NVIDIA RTX 3090 (~$500-600)**
+**Primary compute: Cloud GPUs (Vast.ai + RunPod)**
+- Full $1,000 budget allocated to cloud compute (~1,300–1,500 A100-hours on Vast.ai at $0.66–0.78/hr)
+- Bare-metal PCIe passthrough on most Vast.ai hosts = full DCGM, pynvml, and Nsight Compute access
+- Can install DCGM yourself in the root Docker container to get Tier 2 metrics (tensor core utilization, FP16/FP32/FP64 pipe utilization, SM occupancy, DRAM bandwidth)
+- Mining software not platform-blocked on Vast.ai (important for profiling mining workloads)
+- Use RunPod Secure Cloud as backup ($1.14-1.39/hr A100) -- more reliable, DCGM pre-installed, but blocks mining software
+
+**Optional: Physical Hardware (Grant-Dependent)**
+- If the hardware grant is approved, purchase a used NVIDIA RTX 3090 (~$500–600) and a Kill-A-Watt power meter (~$25) for local experiments
 - 24GB VRAM, Ampere architecture, full NVML support
 - Gives direct access to: power draw, temperature, GPU/memory utilization, clock speeds, PCIe throughput, fan speed via `nvidia-smi` and `pynvml`
 - Advanced per-kernel profiling via Nsight Compute (`ncu`) and CUPTI
 - Note: GPM metrics (per-SM pipe utilization, tensor core %) are Hopper-only; use Nsight Compute for kernel-level instruction mix on Ampere
-- Also buy a Kill-A-Watt power meter (~$25) for wall-power side-channel measurements
-
-**Cloud GPU: Use Vast.ai for A100 access (~$0.66-0.78/hr)**
-- Remaining ~$400 budget provides 500-600 A100-hours
-- Bare-metal PCIe passthrough on most hosts = full DCGM, pynvml, and Nsight Compute access
-- Can install DCGM yourself in the root Docker container to get Tier 2 metrics (tensor core utilization, FP16/FP32/FP64 pipe utilization, SM occupancy, DRAM bandwidth)
-- Mining software not platform-blocked (important for profiling mining workloads)
-- Use RunPod Secure Cloud as backup ($1.14-1.39/hr A100) -- more reliable, DCGM pre-installed, but blocks mining software
+- Kill-A-Watt enables wall-power side-channel measurements (Tier 5)
+- Local GPU enables cross-GPU generalization experiments (cloud A100 vs. local 3090) and physical side-channel analysis
+- **This hardware is not required for core experiments in Weeks 1–5; it supplements cloud data starting Week 6 if available**
 
 **Why Vast.ai over other providers:**
 
@@ -36,16 +39,15 @@ This is a SPAR research project on adversarial classification of ML training wor
 | AWS | Virtualized | Limited | Limited | $2.74 | Blocked |
 | Azure | Some bare-metal | Yes (auto-installed) | Limited | Premium | Blocked |
 
-Key insight: **bare-metal access is essential** for this project. Hyperscaler VMs (AWS, most GCP) restrict DCGM advanced metrics and Nsight profiling behind the hypervisor. No cloud provider exposes wall-level power draw or physical side-channel data -- those require the local GPU.
+Key insight: **bare-metal cloud access is essential** for this project. Hyperscaler VMs (AWS, most GCP) restrict DCGM advanced metrics and Nsight profiling behind the hypervisor. Vast.ai and RunPod both offer bare-metal PCIe passthrough, which provides the kernel-level access needed for Tiers 1–3. Physical side-channel data (wall power, acoustics) requires local hardware, which is deferred to Weeks 6+ if the grant is approved.
 
 **Budget breakdown:**
 | Item | Cost |
 |------|------|
-| Used RTX 3090 | ~$550 |
-| Kill-A-Watt meter | ~$25 |
-| Vast.ai cloud compute | ~$400 |
-| RunPod test instance (1-2 hrs) | ~$5 |
-| **Total** | **~$980** |
+| Vast.ai cloud compute | ~$990 |
+| RunPod test instance (1-2 hrs) | ~$10 |
+| **Total (current budget)** | **~$1,000** |
+| *Physical hardware (grant-dependent)* | *~$575 (RTX 3090 ~$550 + Kill-A-Watt ~$25)* |
 
 ---
 
@@ -74,7 +76,7 @@ Key insight: **bare-metal access is essential** for this project. Hyperscaler VM
 
 ## Metrics to Collect
 
-**Tier 1 - Basic NVML (available on RTX 3090, 1 Hz sampling):**
+**Tier 1 - Basic NVML (available on all NVIDIA GPUs including cloud A100, 1 Hz sampling):**
 GPU utilization %, memory utilization %, memory used (MB), power draw (W), temperature (C), SM clock (MHz), memory clock (MHz), PCIe TX/RX throughput (MB/s), encoder/decoder utilization %, fan speed %
 
 **Tier 2 - DCGM (available on cloud A100):**
@@ -86,14 +88,14 @@ Instruction mix (INT, FP16, FP32, FP64, tensor ops), kernel duration, achieved o
 **Tier 4 - Temporal/behavioral patterns (derived):**
 Periodicity, memory allocation stability, power draw variance, communication patterns
 
-**Tier 5 - Physical side channels (local GPU only):**
-Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
+**Tier 5 - Physical side channels (grant-dependent, deferred to Weeks 6+):**
+Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal). Requires local GPU and Kill-A-Watt meter; not available on cloud instances. If the hardware grant is not approved, Tier 5 analysis becomes a documented future-work recommendation.
 
 ---
 
 ## Week-by-Week Plan
 
-### Week 1: Kickoff, Literature Review, Hardware Procurement
+### Week 1: Kickoff, Literature Review, Cloud Platform Setup
 
 **Tasks:**
 - Read core papers:
@@ -103,43 +105,42 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
   - "Detecting Covert Cryptomining using HPC" (arXiv:1909.00268)
   - **Xu et al., "WAVE: Leveraging Architecture Observation for Privacy-Preserving Model Oversight" (ASPLOS '26)** -- establishes GPU PMC fingerprinting of LLM inference; read alongside the open-source repo at https://github.com/sept-usc/Wave
   - **Anonymous, "Differential Architecture: Limiting Performance of Targeted Applications" (ISCA '26 submission)** -- establishes hardware bottleneck characterization for all major GPU workload classes
-- Order RTX 3090 from eBay (verify seller, check return policy)
-- Create accounts on Vast.ai; spin up a test instance for 1 hour to verify `nvidia-smi dmon` and DCGM access
+- Create accounts on Vast.ai and RunPod; spin up a test instance on each for 1 hour to verify `nvidia-smi dmon`, DCGM access, and bare-metal profiling capabilities
+- Identify and bookmark Vast.ai hosts that support Nsight Compute (bare-metal, PCIe passthrough) for Tier 3 collection in Week 3
 - Set up Git repository with directory structure: `literature/`, `data/`, `scripts/`, `notebooks/`, `workloads/`, `classifier/`, `report/`
 
-**Checkpoint:** Mentees submit 1-page summary of WAVE and Differential Architecture, explicitly noting what each paper establishes and what remains open. GPU ordered. Cloud access verified.
+**Checkpoint:** Mentees submit 1-page summary of WAVE and Differential Architecture, explicitly noting what each paper establishes and what remains open. Cloud access verified on both Vast.ai and RunPod. Bare-metal-capable hosts identified.
 
 ### Week 2: Environment Setup and Telemetry Pipeline
 
 **Tasks:**
-- Install local GPU, NVIDIA drivers (550+), CUDA 12.x, pynvml, Nsight tools
-- Clone the WAVE repository (https://github.com/sept-usc/Wave); run their example collection script to understand the 9-metric Nsight Compute PMC collection approach. Adapt their Tier 3 collection code rather than writing it from scratch.
+- Set up cloud GPU environment: prepare a Docker image or setup script with NVIDIA drivers (550+), CUDA 12.x, pynvml, Nsight tools, and DCGM. Test on a Vast.ai A100 instance.
+- Clone the WAVE repository (https://github.com/sept-usc/Wave); run their example collection script on a cloud instance to understand the 9-metric Nsight Compute PMC collection approach. Adapt their Tier 3 collection code rather than writing it from scratch.
 - Build data collection harness (`scripts/collect_telemetry.py`): polls pynvml at 1 Hz, logs to CSV/Parquet with metadata (workload label, GPU model, timestamps). This is the Tier 1 harness -- separate from WAVE's Tier 3 harness.
 - Build workload launcher (`scripts/run_workload.py`): starts telemetry, launches workload, stops telemetry, saves labeled data
-- Test pipeline end-to-end: idle GPU + simple PyTorch training
+- Test pipeline end-to-end on a cloud A100: idle GPU + simple PyTorch training
 - Complete literature review and annotated bibliography
-- Finalize cloud platform choice based on Week 1 testing
+- Finalize cloud platform choice based on Week 1 testing (Vast.ai primary, RunPod backup)
 
-**Checkpoint:** Both Tier 1 (pynvml) and Tier 3 (adapted WAVE) pipelines produce clean, labeled data files. Literature review draft complete.
+**Checkpoint:** Both Tier 1 (pynvml) and Tier 3 (adapted WAVE) pipelines produce clean, labeled data files on cloud instances. Literature review draft complete.
 
 ### Week 3: Data Collection Round 1
 
 **Tasks:**
-- Run all representative workloads on local RTX 3090 (10-15 min each, 3 runs minimum per workload)
+- Run all representative workloads on cloud A100 via Vast.ai (10-15 min each, 3 runs minimum per workload)
 - Collect Tier 1 metrics via pynvml harness for every run
-- Record wall power via Kill-A-Watt during each run
-- Run Nsight Compute profiles (Tier 3) for 1 run of each workload type (`ncu --set full`) using the adapted WAVE collection script
-- Run selected workloads (ResNet-50, GPT-2, GROMACS, mining) on cloud A100 with DCGM for Tier 2 metrics
+- Collect Tier 2 metrics via DCGM for every run (tensor core utilization, FP16/FP32/FP64 pipe utilization, SM occupancy, DRAM bandwidth)
+- Run Nsight Compute profiles (Tier 3) for 1 run of each workload type (`ncu --set full`) using the adapted WAVE collection script on bare-metal cloud hosts that support it
 - Organize data: `{workload}_{gpu}_{run}_{date}.parquet`
 - **Focus for training workloads:** collect enough runs to characterize training-specific temporal signals -- epoch periodicity, optimizer state memory growth over time, forward/backward pass asymmetry. These are not covered by WAVE or Differential Architecture.
 
-**Checkpoint:** 15-20+ workload runs complete. Tier 1 data for all, Tier 2 data for key workloads, Nsight profiles collected.
+**Checkpoint:** 15-20+ workload runs complete. Tier 1 and Tier 2 data for all workloads. Nsight Compute profiles collected on bare-metal cloud hosts.
 
 ### Week 4: Data Collection Round 2 and Exploratory Analysis
 
 **Tasks:**
-- Complete any remaining runs; add edge cases (ML inference, mixed workloads, short training, DataLoader-bottlenecked training)
-- Exploratory data analysis:
+- Complete any remaining cloud runs; add edge cases (ML inference, mixed workloads, short training, DataLoader-bottlenecked training)
+- Exploratory data analysis (all based on cloud-collected data):
   - Time-series plots of each metric per workload type
   - Summary statistics (mean, std, autocorrelation) per workload
   - PCA/t-SNE visualization of workload feature vectors
@@ -148,7 +149,7 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 - **Note on bottleneck characterization:** The Differential Architecture paper has already established which hardware bottlenecks dominate each workload class (MatMul/training=compute-bound, FFT/scientific=cache+memory-bound, vector-mult/inference=memory-bandwidth-bound, rendering=compute+RT-bound). Do not spend time re-deriving this from scratch. Instead, verify that your measurements are consistent with their findings, and focus analytical effort on: (a) the training/inference distinction within the ML class, and (b) temporal and behavioral patterns (epoch periodicity, memory growth curves) that static bottleneck analysis does not capture.
 - Write 1-page summary: "Which metrics distinguish ML training from inference, and from non-ML workloads, at Tier 1 resolution?"
 
-**Checkpoint:** 30+ runs in dataset. EDA notebook complete. Draft signal comparison table started. Training/inference distinction characterized.
+**Checkpoint:** 30+ runs in dataset (all cloud A100). EDA notebook complete. Draft signal comparison table started. Training/inference distinction characterized.
 
 ### Week 5: Feature Engineering and Baseline Classifier
 
@@ -170,10 +171,10 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 - Test window sizes: 30s, 60s, 120s, 300s -- report accuracy vs. window size
 - Train time-series models (1D CNN, LSTM) on raw metric sequences; compare with feature-engineered approach
 - Test with Tier 2 metrics from cloud A100: how much does tensor core utilization improve accuracy?
-- Cross-GPU generalization: train on RTX 3090 data, test on A100 data (and vice versa)
+- Cross-GPU generalization: *if the hardware grant is approved and a local RTX 3090 is available*, train on cloud A100 data and test on local 3090 data (and vice versa). Otherwise, test generalization across different cloud A100 hosts/configurations.
 - **New: WAVE vs. Tier 1 comparison experiment.** Train a parallel classifier using WAVE's 9 Nsight Compute PMC metrics (Tier 3) as features. Compare against the Tier 1 NVML classifier on accuracy and F1. Report the accuracy/overhead tradeoff: "Tier 3 achieves X% accuracy at 1200-5300% runtime overhead; Tier 1 achieves Y% accuracy at ~0% overhead." This is a key novel result framing our deployability contribution.
 
-**Checkpoint:** Target >90% binary, >80% multi-class on clean data. Window size sensitivity and cross-GPU results documented. Tier 1 vs. Tier 3 accuracy/overhead tradeoff quantified.
+**Checkpoint:** Target >90% binary, >80% multi-class on clean data. Window size sensitivity and cross-GPU results documented. Tier 1 vs. Tier 3 accuracy/overhead tradeoff quantified. *(If grant approved: cross-GPU generalization between A100 and RTX 3090.)*
 
 ### Week 7: Adversarial Workload Design
 
@@ -184,10 +185,11 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
   - **C: Instruction mix obfuscation** -- disable mixed-precision + run dummy FP64 kernels alongside training
   - **D: Temporal disruption** -- randomize batch sizes, vary compute intensity to break epoch periodicity
   - **E: PMC signature spoofing** -- dummy CUDA kernels crafted to produce WAVE-like periodic PMC patterns corresponding to a non-training workload (e.g., FFT-like cache/memory traffic ratios). This directly targets the Nsight-based Tier 3 detector; test whether it also fools the Tier 1 NVML classifier.
-- Run each adversarial workload 3+ times, collect telemetry with same pipeline (both Tier 1 and Tier 3)
+- Run each adversarial workload 3+ times on cloud A100, collect telemetry with same pipeline (both Tier 1 and Tier 3)
+- *If the hardware grant is approved and a local RTX 3090 is available*, also run adversarial workloads on the local GPU for additional cross-hardware data
 - Label as `ml_training_adversarial_A/B/C/D/E`
 
-**Checkpoint:** All 5 adversarial strategies implemented. Adversarial telemetry data collected at both Tier 1 and Tier 3.
+**Checkpoint:** All 5 adversarial strategies implemented. Adversarial telemetry data collected at both Tier 1 and Tier 3 on cloud instances. *(If grant approved: additional local GPU adversarial data collected.)*
 
 ### Week 8: Adversarial Robustness Testing
 
@@ -213,10 +215,11 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
   - **Should-have:** power draw time series, SM utilization, PCIe/NVLink volumes
   - For each: cite experimental evidence, evasion difficulty, recommended sampling rate, hardware vs. firmware implementation
   - Address privacy, tamper resistance, false positive considerations
+  - *If the hardware grant is approved and physical side-channel data (Tier 5) has been collected*, the HEM proposal's physical side-channel recommendations become empirically grounded. Otherwise, physical side-channel analysis is included as a documented future-work recommendation citing the literature.
 - Clean up classifier code into a package with README, requirements, and a live-prediction demo script
 - Begin report writing: outline, methodology section, results tables and figures
 
-**Checkpoint:** HEM proposal drafted and grounded in all three papers. Classifier code documented and reproducible. Report outline and methodology section done.
+**Checkpoint:** HEM proposal drafted and grounded in all three papers. Classifier code documented and reproducible. Report outline and methodology section done. *(If grant approved: HEM physical side-channel recommendations grounded in local GPU data.)*
 
 ### Week 10: Report and Final Deliverables
 
@@ -253,9 +256,10 @@ Wall power draw (Kill-A-Watt), acoustic emissions (stretch goal)
 
 | Risk | Mitigation |
 |------|-----------|
-| RTX 3090 arrives defective | Buy from seller with return policy; budget 1 week for shipping |
-| DCGM limited on consumer GPU | Use Nsight Compute locally for kernel-level data; use cloud A100 for DCGM |
+| Hardware grant not approved | All core experiments run on cloud; physical side-channel analysis (Tier 5) becomes a documented future-work recommendation rather than an empirical result. Cross-GPU generalization tested across cloud host configurations instead of A100 vs. 3090. |
+| Cloud budget exhaustion | Monitor spending weekly; prioritize key workloads; use spot/interruptible instances on Vast.ai; reduce run count for low-priority edge cases |
 | Cloud platform blocks mining software | Use benchmark mode or write custom CUDA kernels mimicking mining patterns |
+| Nsight Compute unavailable on cloud host | Pre-identify bare-metal hosts during Week 1; fall back to DCGM Tier 2 metrics if Nsight access is limited |
 | Adversarial strategies too effective | This is a valid research finding -- document fragility and recommend hardened metrics |
 | Insufficient data for robust classifier | Augment with varied hyperparameters; use smaller windows for more samples |
 
