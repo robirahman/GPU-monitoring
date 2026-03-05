@@ -12,35 +12,58 @@ Week 3 is the main data collection campaign. The goal is **30+ labeled workload 
 - 12 Tier 1 runs collected on RTX 5080 (3 runs each: idle, ResNet-18 FP32, ResNet-18 AMP, MLP)
 - DCGM installed and tested; profiling fields confirmed to require data-center GPUs
 
-### What RTX 5080 could NOT do (and why you need A100)
+### What RTX 5080 could NOT do (and why you need a data-center GPU)
 
-| Feature | RTX 5080 limitation | A100 capability |
-|---------|---------------------|-----------------|
+| Feature | RTX 5080 limitation | A100/H100 capability |
+|---------|---------------------|----------------------|
 | DCGM profiling fields (Tier 2) | `DCGMError_ModuleNotLoaded` — profiling module only loads on data-center GPUs | Full support: tensor_active, fp16/32/64 pipes, SM occupancy, DRAM bandwidth |
 | Nsight Compute (Tier 3) | `ERR_NVGPUCTRPERM` — host kernel has `RmProfilingAdminOnly=1`, can't change from Docker | Works on bare-metal hosts with profiling enabled |
 | VRAM | 16 GB — limits larger model training | 40/80 GB — can run GPT-2 fine-tuning, larger batch sizes |
 
 ---
 
-## Step 1: Select a Vast.ai A100 Instance
+## Step 1: Select a Cloud GPU Instance
 
-### Requirements for full Tier 1 + 2 + 3 collection
+### Important: No cloud provider offers true bare-metal GPU rental
 
-You need a **bare-metal A100** host on Vast.ai with these properties:
+Both Vast.ai and RunPod were previously considered but neither offers true bare-metal instances. Most cloud GPU providers use virtualization or containerization that restricts Nsight Compute (NCU) profiling. However, **DCGM profiling fields (Tier 2) do NOT require bare metal** — they work on any data-center GPU (A100/H100) with GPU passthrough, which most cloud providers support.
 
-1. **GPU**: NVIDIA A100 (40GB or 80GB SXM or PCIe)
-2. **Bare-metal / PCIe passthrough**: Required for Nsight Compute and DCGM profiling
-3. **Docker image**: Use `nvidia/cuda:12.4.1-devel-ubuntu22.04` or similar with CUDA dev tools
-4. **Disk**: At least 50 GB (for datasets, profiling reports, and Parquet output)
-5. **CPU/RAM**: At least 8 vCPUs, 32 GB RAM (for data loading, GROMACS, etc.)
+**Strategy: Split collection across providers.**
+- **Tier 1 + 2 (bulk collection)**: RunPod Secure Cloud — reliable, DCGM should work on data-center GPUs
+- **Tier 3 (NCU profiling)**: Massed Compute (bare-metal on request) or Nebius — test first
 
-### How to find NCU-capable hosts
+### GPU requirements
 
-On Vast.ai, not all hosts allow Nsight Compute profiling. To find ones that do:
+1. **GPU**: NVIDIA A100 (40/80GB) or H100 (80GB) — either works, choose by price
+2. **Docker image**: Use `nvidia/cuda:12.4.1-devel-ubuntu22.04` or similar with CUDA dev tools
+3. **Disk**: At least 50 GB (for datasets, profiling reports, and Parquet output)
+4. **CPU/RAM**: At least 8 vCPUs, 32 GB RAM (for data loading, GROMACS, etc.)
 
-1. Go to https://cloud.vast.ai/create/ and filter for A100 GPUs
-2. Sort by price (cheapest first)
-3. **Before committing to a long rental**, rent for 1 hour and run this test:
+### Option A: RunPod Secure Cloud (recommended for Tier 1 + 2)
+
+RunPod provides data-center GPUs with DCGM support:
+- A100: ~$1.14-1.39/hr
+- H100: ~$2-3/hr
+- DCGM profiling fields should work (tensor_active, fp16/32/64 pipes, SM occupancy, etc.)
+- **Caveat**: Blocks mining software — use custom Ethash-like CUDA kernel instead of T-Rex miner
+- **Caveat**: NCU probably won't work (virtualized)
+
+**Before committing to a long rental**, rent for 1 hour and test DCGM profiling fields:
+
+```bash
+# After setup.sh, test Tier 2 DCGM profiling fields
+dcgmi dmon -e 1004 -c 5  # Should show tensor core utilization
+# If this returns errors, try a different instance or provider
+```
+
+### Option B: Massed Compute (best bet for Tier 3 NCU)
+
+Massed Compute offers bare-metal GPU instances on request and has explicit Nsight documentation:
+- Has FAQ pages describing Nsight Systems and Nsight Compute usage on A100/H100
+- Offers bare-metal on request — this is needed for `RmProfilingAdminOnly=0`
+- Check their website for current A100/H100 pricing
+
+**1-hour NCU capability test:**
 
 ```bash
 # Quick NCU capability test (run AFTER setup.sh)
@@ -48,12 +71,13 @@ python3 -c "import torch; x=torch.randn(256,256,device='cuda'); y=torch.mm(x,x);
 ncu --set basic python3 -c "import torch; x=torch.randn(256,256,device='cuda'); y=torch.mm(x,x)"
 ```
 
-If NCU succeeds (prints kernel profiling output), this host supports Tier 3. If you see `ERR_NVGPUCTRPERM`, try a different host.
+If NCU succeeds (prints kernel profiling output), this host supports Tier 3. If you see `ERR_NVGPUCTRPERM`, try a different host or provider.
 
-**Indicators of NCU-capable hosts:**
-- Listed as "bare-metal" or "PCIe passthrough" (not virtualized)
-- Host has NVIDIA driver 535+ with `RmProfilingAdminOnly=0`
-- Some hosts explicitly list "Nsight compatible" in their description
+### Option C: Nebius (backup for Tier 3)
+
+Nebius reportedly supports GPU profiling and offers H100 at ~$1.99/hr (Explorer Tier):
+- Test NCU capability before committing
+- May only offer H100 (A100 availability varies)
 
 ### How to check `RmProfilingAdminOnly` from inside the container
 
@@ -65,23 +89,17 @@ cat /proc/driver/nvidia/params | grep RmProfilingAdminOnly
 
 ### Fallback if no NCU-capable host is found
 
-If you cannot find an A100 host that allows NCU:
-- Collect Tier 1 + Tier 2 on any A100 host (DCGM profiling fields work on all A100s)
-- Defer Tier 3 NCU collection to a later week when a compatible host is available
-- Document the host selection process in the report
-
-### RunPod as backup
-
-RunPod Secure Cloud ($1.14-1.39/hr A100) is more reliable for DCGM but:
-- May also restrict NCU
-- Blocks mining software (cannot profile crypto mining workloads)
-- Use for Tier 1 + 2 collection if Vast.ai hosts are unreliable
+If no provider supports NCU after testing Massed Compute and Nebius:
+- Collect Tier 1 + Tier 2 only (this is the core data for the project)
+- The project's novel contribution is temporal patterns from Tier 1+2 — NCU is supplementary
+- Defer Tier 3 collection to a later week if a compatible host becomes available
+- Document the provider search process in the report
 
 ---
 
 ## Step 2: Instance Setup
 
-Once you have an A100 instance, run:
+Once you have a cloud GPU instance (A100 or H100), run:
 
 ```bash
 # Clone the repo
@@ -100,7 +118,7 @@ source .venv/bin/activate
 python3 scripts/collect_telemetry.py --duration 5 --output /tmp/test.parquet
 python3 -c "import pandas as pd; df=pd.read_parquet('/tmp/test.parquet'); print(f'Tier 1 OK: {len(df.columns)} columns')"
 
-# Tier 2 (DCGM profiling fields — should work on A100)
+# Tier 2 (DCGM profiling fields — should work on any data-center GPU)
 python3 scripts/collect_telemetry.py --duration 5 --output /tmp/test_dcgm.parquet
 python3 -c "
 import pandas as pd
@@ -116,7 +134,7 @@ print(dcgm_cols)
 ncu --set basic python3 -c "import torch; x=torch.randn(256,256,device='cuda'); y=torch.mm(x,x)"
 ```
 
-### Expected DCGM profiling columns on A100
+### Expected DCGM profiling columns on A100/H100
 
 When DCGM profiling fields work, you should see these additional columns in the Parquet output:
 
@@ -168,7 +186,7 @@ pip install transformers datasets accelerate
 
 ### Crypto Mining (add to workloads/)
 
-- **T-Rex miner (benchmark mode)**: Download T-Rex miner, run in benchmark mode (`t-rex -a ethash --benchmark`). Vast.ai allows this on most hosts; RunPod does not.
+- **T-Rex miner (benchmark mode)**: Download T-Rex miner, run in benchmark mode (`t-rex -a ethash --benchmark`). Note: RunPod blocks mining software, so use the custom kernel fallback there.
 - **Custom Ethash CUDA kernel** (fallback): If T-Rex is blocked, write a CUDA kernel that mimics Ethash memory-hard hashing patterns.
 
 ### Rendering (add to workloads/)
@@ -316,10 +334,11 @@ for label, runs in sorted(by_workload.items()):
 
 | Item | Estimated cost |
 |------|---------------|
-| A100 instance (Vast.ai, ~$0.70/hr) | ~$5-7 for 8 hours of data collection |
-| RunPod backup (if needed) | ~$1-2 for 1 hour test |
+| RunPod Secure Cloud (Tier 1+2 collection, ~$1.14-1.39/hr) | ~$10-14 for 8-10 hours |
+| Massed Compute or Nebius (Tier 3 NCU test, 1 hr) | ~$2-4 |
+| Massed Compute or Nebius (Tier 3 NCU collection, ~2 hrs) | ~$4-8 |
 | RTX 5080 Week 2 testing | ~$2-3 |
-| **Running total** | **~$8-12 of $1,000 budget** |
+| **Running total** | **~$18-29 of $1,000 budget** |
 
 Most of the budget is preserved for Week 6-8 adversarial experiments, which require longer runs and more diverse configurations.
 
@@ -345,7 +364,7 @@ The host may not support profiling. Check:
 ```bash
 dcgmi dmon -e 1004 -c 5  # Should show tensor core utilization
 ```
-If this returns errors, the DCGM profiling module is not loaded. Try a different A100 host.
+If this returns errors, the DCGM profiling module is not loaded. Try a different host or provider.
 
 ### NCU returns ERR_NVGPUCTRPERM
 
@@ -353,11 +372,11 @@ The host's NVIDIA kernel module has profiling restricted:
 ```bash
 cat /proc/driver/nvidia/params | grep RmProfilingAdminOnly
 ```
-If `1`, you cannot use NCU on this host. Try a different Vast.ai host.
+If `1`, you cannot use NCU on this host. Try Massed Compute (bare-metal) or Nebius.
 
 ### Workload runs out of VRAM
 
-Reduce batch size or use AMP. The A100 40GB should handle all planned workloads. If using A100 80GB, you can increase batch sizes for more realistic training signatures.
+Reduce batch size or use AMP. A100 40GB or H100 80GB should handle all planned workloads. With 80GB VRAM, you can increase batch sizes for more realistic training signatures.
 
 ### DCGM host engine won't start
 
