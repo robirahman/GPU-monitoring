@@ -18,6 +18,7 @@ As a library (used by run_workload.py):
 import argparse
 import json
 import logging
+import os
 import sys
 import threading
 import time
@@ -167,10 +168,21 @@ class DcgmCollector:
         self._pydcgm = pydcgm
 
         # Load the DCGM shared library
-        dcgm_structs._dcgmInit("/usr/lib/x86_64-linux-gnu/libdcgm.so")
+        for lib_path in [
+            "/usr/lib/x86_64-linux-gnu/libdcgm.so",
+            "/usr/lib/x86_64-linux-gnu/libdcgm.so.3",
+        ]:
+            if os.path.exists(lib_path):
+                dcgm_structs._dcgmInit(lib_path)
+                break
 
-        # Connect to DCGM host engine
-        self._dcgm_handle = pydcgm.DcgmHandle(ipAddress="127.0.0.1")
+        # Connect to DCGM host engine; try standalone first, fall back to embedded
+        try:
+            self._dcgm_handle = pydcgm.DcgmHandle(ipAddress="127.0.0.1")
+        except Exception:
+            self._dcgm_handle = pydcgm.DcgmHandle(
+                opMode=dcgm_structs.DCGM_OPERATION_MODE_AUTO
+            )
         self._group = pydcgm.DcgmGroup(
             self._dcgm_handle,
             groupName="spar_telemetry",
