@@ -16,12 +16,9 @@ import signal
 import subprocess
 import sys
 import time
-import urllib.request
 
 
-BMW_BLEND_URL = "https://download.blender.org/demo/test/BMW27_2.blend.zip"
-BMW_BLEND_DIR = "/tmp/blender_benchmark"
-BMW_BLEND_FILE = os.path.join(BMW_BLEND_DIR, "bmw27", "bmw27_gpu.blend")
+SCENE_BLEND = "/tmp/blender_benchmark/complex_scene.blend"
 
 
 def check_blender():
@@ -37,49 +34,158 @@ def check_blender():
         sys.exit(1)
 
 
-def download_scene():
-    """Download the BMW benchmark scene if not present."""
-    if os.path.exists(BMW_BLEND_FILE):
-        print(f"  Scene already downloaded: {BMW_BLEND_FILE}")
-        return BMW_BLEND_FILE
+def create_complex_scene():
+    """Create a procedurally complex scene for GPU rendering."""
+    if os.path.exists(SCENE_BLEND):
+        print(f"  Scene already exists: {SCENE_BLEND}")
+        return SCENE_BLEND
 
-    os.makedirs(BMW_BLEND_DIR, exist_ok=True)
-    zip_path = os.path.join(BMW_BLEND_DIR, "bmw.zip")
+    os.makedirs(os.path.dirname(SCENE_BLEND), exist_ok=True)
 
-    if not os.path.exists(zip_path):
-        print(f"  Downloading BMW benchmark scene...")
-        urllib.request.urlretrieve(BMW_BLEND_URL, zip_path)
-        print(f"  Downloaded to {zip_path}")
+    # Blender script to build a complex scene with many objects,
+    # materials, and volumetrics to stress the GPU renderer.
+    build_script = r"""
+import bpy, math, random
+random.seed(42)
+bpy.ops.wm.read_factory_settings(use_empty=True)
 
-    print(f"  Extracting...")
-    subprocess.run(["unzip", "-o", zip_path, "-d", BMW_BLEND_DIR],
-                    capture_output=True, check=True)
+scene = bpy.context.scene
 
-    # The zip may have a different internal structure
-    # Find the .blend file
-    for root, dirs, files in os.walk(BMW_BLEND_DIR):
-        for f in files:
-            if f.endswith(".blend"):
-                blend_path = os.path.join(root, f)
-                print(f"  Found scene: {blend_path}")
-                return blend_path
+# Ground plane with glossy material
+bpy.ops.mesh.primitive_plane_add(size=30, location=(0, 0, 0))
+ground = bpy.context.object
+mat_ground = bpy.data.materials.new('Ground')
+mat_ground.use_nodes = True
+nodes = mat_ground.node_tree.nodes
+nodes.clear()
+output = nodes.new('ShaderNodeOutputMaterial')
+glossy = nodes.new('ShaderNodeBsdfGlossy')
+glossy.inputs['Roughness'].default_value = 0.1
+glossy.inputs['Color'].default_value = (0.8, 0.8, 0.9, 1)
+mat_ground.node_tree.links.new(glossy.outputs[0], output.inputs[0])
+ground.data.materials.append(mat_ground)
 
-    print("ERROR: Could not find .blend file in archive")
-    sys.exit(1)
+# Array of Suzanne heads with different glass/metal materials
+for i in range(80):
+    x = random.uniform(-10, 10)
+    y = random.uniform(-10, 10)
+    z = random.uniform(0.5, 4)
+    bpy.ops.mesh.primitive_monkey_add(size=0.6, location=(x, y, z))
+    obj = bpy.context.object
+    obj.rotation_euler = (random.uniform(0, 6.28), random.uniform(0, 6.28), random.uniform(0, 6.28))
+    # Subdivision for more geometry
+    bpy.ops.object.modifier_add(type='SUBSURF')
+    obj.modifiers['Subdivision'].levels = 2
+    obj.modifiers['Subdivision'].render_levels = 2
+
+    mat = bpy.data.materials.new(f'Mat_{i}')
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    nodes.clear()
+    output = nodes.new('ShaderNodeOutputMaterial')
+    if random.random() < 0.4:
+        # Glass
+        shader = nodes.new('ShaderNodeBsdfGlass')
+        shader.inputs['IOR'].default_value = random.uniform(1.3, 2.0)
+        shader.inputs['Color'].default_value = (random.random(), random.random(), random.random(), 1)
+    else:
+        # Glossy metal
+        shader = nodes.new('ShaderNodeBsdfGlossy')
+        shader.inputs['Roughness'].default_value = random.uniform(0.0, 0.3)
+        shader.inputs['Color'].default_value = (random.random(), random.random(), random.random(), 1)
+    mat.node_tree.links.new(shader.outputs[0], output.inputs[0])
+    obj.data.materials.append(mat)
+
+# Sphere array with emission
+for i in range(20):
+    x = random.uniform(-8, 8)
+    y = random.uniform(-8, 8)
+    z = random.uniform(0.3, 2)
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.3, location=(x, y, z))
+    obj = bpy.context.object
+    mat = bpy.data.materials.new(f'Emissive_{i}')
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    nodes.clear()
+    output = nodes.new('ShaderNodeOutputMaterial')
+    emit = nodes.new('ShaderNodeEmission')
+    emit.inputs['Strength'].default_value = random.uniform(5, 20)
+    emit.inputs['Color'].default_value = (random.random(), random.random(), random.random(), 1)
+    mat.node_tree.links.new(emit.outputs[0], output.inputs[0])
+    obj.data.materials.append(mat)
+
+# Volume cube for atmospheric scattering
+bpy.ops.mesh.primitive_cube_add(size=25, location=(0, 0, 5))
+vol_obj = bpy.context.object
+vol_obj.display_type = 'WIRE'
+mat_vol = bpy.data.materials.new('Volume')
+mat_vol.use_nodes = True
+nodes = mat_vol.node_tree.nodes
+nodes.clear()
+output = nodes.new('ShaderNodeOutputMaterial')
+vol_scatter = nodes.new('ShaderNodeVolumeScatter')
+vol_scatter.inputs['Density'].default_value = 0.02
+vol_scatter.inputs['Color'].default_value = (0.8, 0.85, 1.0, 1)
+mat_vol.node_tree.links.new(vol_scatter.outputs[0], output.inputs['Volume'])
+vol_obj.data.materials.append(mat_vol)
+
+# Camera
+bpy.ops.object.camera_add(location=(12, -12, 8))
+cam = bpy.context.object
+cam.rotation_euler = (1.1, 0, 0.8)
+scene.camera = cam
+
+# Sun light
+bpy.ops.object.light_add(type='SUN', location=(10, 10, 15))
+sun = bpy.context.object
+sun.data.energy = 3
+
+# HDRI-like world (sky texture)
+world = bpy.data.worlds.new('World')
+scene.world = world
+world.use_nodes = True
+nodes = world.node_tree.nodes
+nodes.clear()
+output = nodes.new('ShaderNodeOutputWorld')
+bg = nodes.new('ShaderNodeBackground')
+sky = nodes.new('ShaderNodeTexSky')
+sky.sky_type = 'NISHITA'
+world.node_tree.links.new(sky.outputs[0], bg.inputs['Color'])
+world.node_tree.links.new(bg.outputs[0], output.inputs['Surface'])
+
+# Render settings
+scene.render.engine = 'CYCLES'
+scene.render.resolution_x = 1920
+scene.render.resolution_y = 1080
+
+bpy.ops.wm.save_as_mainfile(filepath='""" + SCENE_BLEND + """')
+print('SCENE CREATED')
+"""
+
+    print("  Creating complex procedural scene...")
+    result = subprocess.run(
+        ["blender", "--background", "--python-expr", build_script],
+        capture_output=True, text=True, timeout=120,
+    )
+    if result.returncode != 0 or not os.path.exists(SCENE_BLEND):
+        print(f"  Scene creation failed: {result.stderr[-300:]}")
+        sys.exit(1)
+    print(f"  Scene saved: {SCENE_BLEND}")
+    return SCENE_BLEND
 
 
 def render(blend_file, samples, output_prefix="/tmp/blender_render_"):
     """Render one frame with Blender Cycles CUDA."""
-    # Blender Python script to configure Cycles + CUDA
     setup_script = (
-        "import bpy;"
-        "bpy.context.scene.render.engine = 'CYCLES';"
-        f"bpy.context.scene.cycles.samples = {samples};"
-        "prefs = bpy.context.preferences.addons['cycles'].preferences;"
-        "prefs.compute_device_type = 'CUDA';"
-        "prefs.get_devices();"
-        "for d in prefs.devices: d.use = d.type == 'CUDA';"
-        "bpy.context.scene.cycles.device = 'GPU';"
+        "import bpy\n"
+        f"bpy.context.scene.cycles.samples = {samples}\n"
+        "bpy.context.scene.cycles.use_denoising = False\n"
+        "prefs = bpy.context.preferences.addons['cycles'].preferences\n"
+        "prefs.compute_device_type = 'CUDA'\n"
+        "prefs.get_devices('CUDA')\n"
+        "for d in prefs.devices:\n"
+        "    d.use = (d.type == 'CUDA')\n"
+        "bpy.context.scene.cycles.device = 'GPU'\n"
     )
 
     cmd = [
@@ -102,7 +208,7 @@ def main():
     print(f"  Samples: {args.samples}, Loops: {args.loops}")
 
     check_blender()
-    blend_file = download_scene()
+    blend_file = create_complex_scene()
 
     stopped = False
 
