@@ -1,88 +1,110 @@
 #!/usr/bin/env python3
-"""GPT-2 124M fine-tuning on WikiText-2.
+"""GPT-2 124M fine-tuning workload for SPAR telemetry collection.
 
-Uses Hugging Face Transformers. This is the primary "large model training"
-signature for the classifier — heavy tensor core usage, high memory, periodic
-epoch patterns.
+Fine-tunes GPT-2 small on WikiText-2 using Hugging Face Transformers.
+Runs for a fixed number of steps to produce a ~10-15 minute GPU workload.
 
 Usage:
-    python gpt2_finetune.py --epochs 3 --batch-size 4
-    python gpt2_finetune.py --epochs 3 --batch-size 4 --amp
+    python gpt2_finetune.py
+    python gpt2_finetune.py --steps 500 --batch-size 8 --amp
 """
 
 import argparse
 import time
 
 import torch
-from datasets import load_dataset
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    DataCollatorForLanguageModeling,
-    Trainer,
-    TrainingArguments,
-)
+from torch.utils.data import DataLoader, Dataset
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+
+class WikiTextDataset(Dataset):
+    """Tokenized WikiText-2 dataset chunked into fixed-length sequences."""
+
+    def __init__(self, tokenizer, seq_len: int = 512, num_samples: int = 2000):
+        print("Loading WikiText-2 dataset...")
+        try:
+            from datasets import load_dataset
+            ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+            text = "\n".join(ds["text"])
+        except Exception as e:
+            print(f"  Dataset load failed ({e}), using synthetic text.")
+            text = ("The quick brown fox jumps over the lazy dog. " * 500 + "\n") * 200
+        tokens = tokenizer.encode(text, add_special_tokens=False)
+        # Truncate/pad to get evenly sized chunks
+        n_chunks = min(num_samples, len(tokens) // seq_len)
+        tokens = tokens[: n_chunks * seq_len]
+        self.input_ids = torch.tensor(tokens).view(n_chunks, seq_len)
+
+    def __len__(self):
+        return len(self.input_ids)
+
+    def __getitem__(self, idx):
+        x = self.input_ids[idx]
+        return x, x  # input = label for LM
 
 
 def main():
-    parser = argparse.ArgumentParser(description="GPT-2 fine-tuning on WikiText-2")
-    parser.add_argument("--epochs", type=int, default=3, help="Number of epochs")
-    parser.add_argument("--batch-size", type=int, default=4, help="Per-device batch size")
+    parser = argparse.ArgumentParser(description="GPT-2 fine-tuning workload")
+    parser.add_argument("--steps", type=int, default=400, help="Training steps (default: 400)")
+    parser.add_argument("--batch-size", type=int, default=8, help="Batch size (default: 8)")
+    parser.add_argument("--seq-len", type=int, default=512, help="Sequence length (default: 512)")
     parser.add_argument("--lr", type=float, default=5e-5, help="Learning rate")
-    parser.add_argument("--amp", action="store_true", help="Enable FP16 mixed precision")
-    parser.add_argument("--max-length", type=int, default=512, help="Max sequence length")
-    parser.add_argument("--output-dir", type=str, default="/tmp/gpt2_ft", help="Checkpoint dir")
+    parser.add_argument("--amp", action="store_true", help="Enable mixed precision")
+    parser.add_argument("--device", type=str, default="cuda")
     args = parser.parse_args()
 
-    print(f"GPT-2 124M fine-tuning on WikiText-2")
-    print(f"  Epochs: {args.epochs}, Batch size: {args.batch_size}, LR: {args.lr}")
-    print(f"  AMP (FP16): {args.amp}, Max length: {args.max_length}")
+    if args.device == "cuda" and not torch.cuda.is_available():
+        print("WARNING: CUDA not available, falling back to CPU")
+        args.device = "cpu"
+    device = torch.device(args.device)
 
-    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    print(f"GPT-2 124M fine-tuning")
+    print(f"  Device: {device}, Steps: {args.steps}, Batch: {args.batch_size}, AMP: {args.amp}")
+
+    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained("gpt2")
+    model = GPT2LMHeadModel.from_pretrained("gpt2").to(device)
 
-    dataset = load_dataset("wikitext", "wikitext-2-raw-v1")
+    dataset = WikiTextDataset(tokenizer, seq_len=args.seq_len)
+    loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True,
+                        num_workers=2, pin_memory=(args.device == "cuda"), drop_last=True)
 
-    def tokenize(examples):
-        return tokenizer(
-            examples["text"],
-            truncation=True,
-            max_length=args.max_length,
-            padding="max_length",
-        )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    scaler = torch.amp.GradScaler("cuda", enabled=args.amp)
 
-    tokenized = dataset.map(tokenize, batched=True, remove_columns=["text"])
-
-    # Filter out empty sequences
-    tokenized = tokenized.filter(lambda x: sum(x["attention_mask"]) > 1)
-
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
-
-    training_args = TrainingArguments(
-        output_dir=args.output_dir,
-        num_train_epochs=args.epochs,
-        per_device_train_batch_size=args.batch_size,
-        learning_rate=args.lr,
-        fp16=args.amp,
-        logging_steps=50,
-        save_strategy="no",
-        report_to="none",
-        dataloader_num_workers=2,
-        remove_unused_columns=False,
-    )
-
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized["train"],
-        data_collator=data_collator,
-    )
-
+    model.train()
     wall_start = time.time()
-    trainer.train()
+    step = 0
+    loader_iter = iter(loader)
+
+    while step < args.steps:
+        try:
+            input_ids, labels = next(loader_iter)
+        except StopIteration:
+            loader_iter = iter(loader)
+            input_ids, labels = next(loader_iter)
+
+        input_ids = input_ids.to(device)
+        labels = labels.to(device)
+
+        optimizer.zero_grad()
+        with torch.amp.autocast("cuda", enabled=args.amp):
+            outputs = model(input_ids, labels=labels)
+            loss = outputs.loss
+
+        scaler.scale(loss).backward()
+        scaler.unscale_(optimizer)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        scaler.step(optimizer)
+        scaler.update()
+
+        step += 1
+        if step % 50 == 0:
+            elapsed = time.time() - wall_start
+            print(f"  Step {step}/{args.steps}: loss={loss.item():.4f}, elapsed={elapsed:.1f}s")
+
     wall_time = time.time() - wall_start
-    print(f"GPT-2 fine-tuning complete. Total wall time: {wall_time:.1f}s")
+    print(f"GPT-2 fine-tuning complete. Steps: {step}, Wall time: {wall_time:.1f}s")
 
 
 if __name__ == "__main__":
