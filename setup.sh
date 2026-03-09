@@ -73,10 +73,42 @@ else
     }
 fi
 
-# --- Section 5: Python environment ---
+# --- Section 5: Workload system dependencies ---
 echo ""
-echo "[5/6] Setting up Python environment..."
-apt-get install -y -qq python3 python3-pip python3-venv
+echo "[5/7] Installing workload system dependencies..."
+apt-get install -y -qq python3 python3-pip python3-venv unzip
+
+# GROMACS (scientific HPC workload)
+if command -v gmx &>/dev/null; then
+    echo "GROMACS already installed."
+else
+    echo "Installing GROMACS..."
+    apt-get install -y -qq gromacs || echo "WARNING: GROMACS installation failed. gromacs_adh workload will be unavailable."
+fi
+
+# Blender (rendering workload)
+if command -v blender &>/dev/null; then
+    echo "Blender already installed."
+else
+    echo "Installing Blender..."
+    apt-get install -y -qq blender || echo "WARNING: Blender installation failed. blender_bmw workload will be unavailable."
+fi
+
+# FFmpeg should already be present on most images; verify NVENC support
+if command -v ffmpeg &>/dev/null; then
+    if ffmpeg -encoders 2>/dev/null | grep -q h264_nvenc; then
+        echo "FFmpeg with NVENC: OK"
+    else
+        echo "WARNING: FFmpeg found but h264_nvenc not available. ffmpeg_nvenc workload will be unavailable."
+    fi
+else
+    echo "Installing FFmpeg..."
+    apt-get install -y -qq ffmpeg || echo "WARNING: FFmpeg installation failed."
+fi
+
+# --- Section 6: Python environment ---
+echo ""
+echo "[6/7] Setting up Python environment..."
 
 VENV_DIR="${SCRIPT_DIR}/.venv"
 if [ ! -d "$VENV_DIR" ]; then
@@ -97,12 +129,13 @@ if [ -d "$DCGM_PY_DIR" ] && [ -d "$VENV_DIR/lib" ]; then
     fi
 fi
 
-# --- Section 6: Verify installation ---
+# --- Section 7: Verify installation ---
 echo ""
-echo "[6/6] Verifying installation..."
+echo "[7/7] Verifying installation..."
 python3 -c "import pynvml; pynvml.nvmlInit(); print('  pynvml: OK'); pynvml.nvmlShutdown()"
 python3 -c "import pandas; import pyarrow; print('  pandas + pyarrow: OK')"
 python3 -c "import torch; print(f'  PyTorch: OK (CUDA available: {torch.cuda.is_available()})')"
+python3 -c "import transformers; import datasets; import accelerate; print('  transformers + datasets + accelerate: OK')"
 
 # Optional checks
 python3 -c "
@@ -112,6 +145,15 @@ try:
 except ImportError:
     print('  DCGM Python bindings: NOT AVAILABLE (Tier 2 will be skipped)')
 " 2>/dev/null
+
+# Workload tools
+command -v gmx &>/dev/null && echo "  GROMACS: OK" || echo "  GROMACS: NOT AVAILABLE"
+command -v blender &>/dev/null && echo "  Blender: OK" || echo "  Blender: NOT AVAILABLE"
+if command -v ffmpeg &>/dev/null && ffmpeg -encoders 2>/dev/null | grep -q h264_nvenc; then
+    echo "  FFmpeg NVENC: OK"
+else
+    echo "  FFmpeg NVENC: NOT AVAILABLE"
+fi
 
 echo ""
 echo "=== Setup complete ==="
