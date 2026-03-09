@@ -1,68 +1,51 @@
 #!/usr/bin/env bash
-# Run the full Week 3 data collection campaign.
-# Usage: bash scripts/run_collection.sh
+# Week 3 full data collection — GPU 0, all workloads, 3 runs each
 set -euo pipefail
-
 cd "$(dirname "$0")/.."
 
-RUN_CMD="python3 scripts/run_workload.py"
-COOLDOWN=10
+RUN() {
+    local LABEL=$1
+    local RUN_N=$2
+    echo "========================================"
+    echo "  $LABEL  run $RUN_N / 3"
+    echo "========================================"
+    python3 scripts/run_workload.py --workload "$LABEL"
+    echo "--- $LABEL run $RUN_N complete ---"
+    sleep 10
+}
 
-echo "=== SPAR Week 3 Data Collection ==="
-echo "Started at $(date)"
+echo "=== Week 3 collection started at $(date) ==="
+
+# --- Baseline ---
+for run in 1 2 3; do RUN idle $run; done
+
+# --- ML Training ---
+for run in 1 2 3; do RUN pytorch_resnet_cifar10 $run; done
+for run in 1 2 3; do RUN pytorch_resnet_cifar10_amp $run; done
+for run in 1 2 3; do RUN pytorch_mlp_cifar10 $run; done
+for run in 1 2 3; do RUN gpt2_wikitext2 $run; done
+for run in 1 2 3; do RUN gpt2_wikitext2_amp $run; done
+for run in 1 2 3; do RUN bert_sst2 $run; done
+for run in 1 2 3; do RUN bert_sst2_amp $run; done
+
+# --- ML Inference ---
+for run in 1 2 3; do RUN resnet50_inference $run; done
+
+# --- Scientific HPC ---
+for run in 1 2 3; do RUN cufft_benchmark $run; done
+for run in 1 2 3; do RUN nbody_sim $run; done
+
+# --- Crypto Mining ---
+for run in 1 2 3; do RUN mining_ethash_proxy $run; done
+
+# --- Rendering ---
+for run in 1 2 3; do RUN rendering_proxy $run; done
+
+# --- Other ---
+for run in 1 2 3; do RUN idle $run; done
+for run in 1 2 3; do RUN ffmpeg_nvenc $run; done
+
 echo ""
-
-for run in 1 2 3; do
-    echo "========== RUN $run / 3 =========="
-
-    echo "--- ML Training ---"
-    $RUN_CMD --workload pytorch_resnet_cifar10
-    sleep $COOLDOWN
-    $RUN_CMD --workload pytorch_resnet_cifar10_amp
-    sleep $COOLDOWN
-    $RUN_CMD --workload pytorch_mlp_cifar10
-    sleep $COOLDOWN
-    $RUN_CMD --workload gpt2_wikitext2
-    sleep $COOLDOWN
-    $RUN_CMD --workload gpt2_wikitext2_amp
-    sleep $COOLDOWN
-    $RUN_CMD --workload bert_sst2
-    sleep $COOLDOWN
-    $RUN_CMD --workload bert_sst2_amp
-    sleep $COOLDOWN
-
-    echo "--- ML Inference ---"
-    $RUN_CMD --workload resnet50_inference
-    sleep $COOLDOWN
-
-    echo "--- Scientific HPC ---"
-    $RUN_CMD --workload cufft_benchmark
-    sleep $COOLDOWN
-    $RUN_CMD --workload nbody_sim
-    sleep $COOLDOWN
-    $RUN_CMD --workload gromacs_adh
-    sleep $COOLDOWN
-
-    echo "--- Crypto Mining ---"
-    $RUN_CMD --workload ethash_cuda
-    sleep $COOLDOWN
-
-    echo "--- Rendering ---"
-    $RUN_CMD --workload blender_bmw
-    sleep $COOLDOWN
-
-    echo "--- Other ---"
-    $RUN_CMD --workload idle
-    sleep $COOLDOWN
-    $RUN_CMD --workload ffmpeg_nvenc
-    sleep $COOLDOWN
-
-    echo "RUN $run COMPLETE at $(date)"
-    echo ""
-done
-
-echo "=== Collection complete at $(date) ==="
-echo ""
-echo "Collected files:"
-ls -lh data/*.parquet | wc -l
-echo "files total"
+echo "=== Collection COMPLETE at $(date) ==="
+echo "Files:"
+ls data/*.parquet 2>/dev/null | wc -l
