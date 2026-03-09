@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adversarial Classification of ML Training on GPUs</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --fg: #1a1a2e;
+      --accent: #2563eb;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --fg: #e2e8f0;
+        --accent: #60a5fa;
+        --muted: #94a3b8;
+        --border: #334155;
+        --card-bg: #1e293b;
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    header { margin-bottom: 3rem; }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2em 0.7em;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    p { margin-bottom: 1rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .card p { color: var(--muted); font-size: 0.92rem; margin-bottom: 0; }
+    .questions { list-style: none; padding: 0; }
+    .questions li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .questions li:last-child { border-bottom: none; }
+    .questions li::before {
+      content: "?";
+      display: inline-block;
+      width: 1.5em;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .tier-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 1rem; }
+    .tier-table th, .tier-table td {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tier-table th { font-weight: 600; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .status-placeholder {
+      background: var(--card-bg);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Research in progress</span>
+      <h1>Adversarial Classification of ML Training on GPUs</h1>
+      <p class="subtitle">
+        Can always-available GPU telemetry detect ML training &mdash; even when someone is trying to hide it?
+      </p>
+      <p style="color: var(--muted); font-size: 0.9rem;">
+        A <a href="https://www.sparkrp.org/">SPAR</a> research project
+        &middot; <a href="https://github.com/robirahman/SPAR-GPU-monitoring">GitHub</a>
+      </p>
+    </header>
+
+    <h2>Motivation</h2>
+    <p>
+      Hardware governance proposals increasingly suggest monitoring GPUs to detect
+      unauthorized frontier model training. But how reliably can we distinguish ML training
+      from other intensive workloads like scientific computing, rendering, or crypto mining
+      &mdash; using only the telemetry that cloud providers already collect?
+      And what happens when the user actively tries to disguise their workload?
+    </p>
+
+    <h2>Research questions</h2>
+    <ul class="questions">
+      <li>Which GPU telemetry signals most clearly distinguish ML training from other workloads?</li>
+      <li>Can low-overhead Tier&nbsp;1 metrics (nvidia-smi level) substitute for expensive per-kernel profiling?</li>
+      <li>What temporal patterns &mdash; epoch periodicity, memory growth, forward/backward asymmetry &mdash; are unique to training?</li>
+      <li>Can a determined adversary disguise training to evade detection, and at what cost?</li>
+      <li>What should a hardware-embedded monitoring module measure to catch unauthorized training?</li>
+    </ul>
+
+    <h2>Approach</h2>
+    <p>
+      We collect GPU telemetry across a three-tier monitoring hierarchy while running
+      a diverse set of GPU workloads on data-center GPUs (A100, H100):
+    </p>
+    <table class="tier-table">
+      <tr><th>Tier</th><th>Source</th><th>Metrics</th><th>Overhead</th></tr>
+      <tr><td>1</td><td>NVML (pynvml)</td><td>GPU/mem utilization, power, temperature, clocks, PCIe throughput</td><td>~0%</td></tr>
+      <tr><td>2</td><td>DCGM profiling</td><td>Tensor core activity, FP16/32/64 pipe utilization, SM occupancy, DRAM bandwidth</td><td>~0%</td></tr>
+      <tr><td>3</td><td>Nsight Compute</td><td>Per-kernel PMCs: instruction mix, memory transactions, FLOP counts</td><td>1,200&ndash;5,300%</td></tr>
+    </table>
+    <p>
+      We then build a temporal-pattern classifier that uses features like autocorrelation
+      (epoch periodicity), memory trajectory slope, rolling utilization variance, and
+      compute duty cycle to classify workloads. This temporal approach is novel &mdash;
+      prior work (WAVE, Differential Architecture) uses only aggregate or per-kernel
+      statistics.
+    </p>
+
+    <h2>Workloads</h2>
+    <div class="card"><h3>ML Training</h3><p>ResNet-18, MLP, GPT-2 fine-tuning, BERT fine-tuning (FP32 and AMP variants)</p></div>
+    <div class="card"><h3>ML Inference</h3><p>ResNet-50 batch inference (no gradients)</p></div>
+    <div class="card"><h3>Scientific HPC</h3><p>GROMACS molecular dynamics, cuFFT benchmark, N-body simulation</p></div>
+    <div class="card"><h3>Crypto mining</h3><p>Ethash-like memory-hard CUDA kernel</p></div>
+    <div class="card"><h3>Rendering</h3><p>Blender Cycles GPU rendering (BMW benchmark)</p></div>
+    <div class="card"><h3>Video encoding</h3><p>FFmpeg NVENC hardware encoding</p></div>
+
+    <h2>Results</h2>
+    <div class="status-placeholder">
+      Data collection and analysis in progress. Results and figures will appear here.
+    </div>
+
+    <h2>Related work</h2>
+    <p>
+      <strong>WAVE</strong> (Xu et al., ASPLOS 2026) fingerprints LLM inference workloads using
+      Nsight Compute PMCs with 87&ndash;93% accuracy, but at 1,200&ndash;5,300% overhead.
+      <strong>Differential Architecture</strong> (Anonymous, ISCA 2026) analytically characterizes
+      hardware bottlenecks across GPU workload classes. Our work extends both by focusing on
+      ML <em>training</em> (not just inference), using zero-overhead Tier&nbsp;1 telemetry,
+      exploiting temporal patterns, and evaluating adversarial evasion.
+    </p>
+
+    <footer>
+      <p>
+        SPAR GPU Monitoring Project &middot; 2026
+        &middot; <a href="https://github.com/robirahman/SPAR-GPU-monitoring">Source code</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
