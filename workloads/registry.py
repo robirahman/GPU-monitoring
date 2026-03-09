@@ -171,8 +171,8 @@ WORKLOAD_REGISTRY = {
         "command": [
             "python3",
             os.path.join(_WORKLOADS_DIR, "blender_render.py"),
-            "--samples", "128",
-            "--loops", "3",
+            "--samples", "1024",
+            "--loops", "5",
         ],
         "description": "Blender Cycles BMW benchmark, CUDA rendering (requires blender)",
         "default_timeout": 900,
