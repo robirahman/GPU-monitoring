@@ -63,6 +63,28 @@ If no provider supports full Tier 2 or NCU:
 - The project's novel contribution is temporal patterns from Tier 1+2 -- NCU is supplementary
 - Document the provider search in the report
 
+## Workload-Specific Software Requirements
+
+Most workloads are pure Python/PyTorch and run anywhere. Three optional workloads need external software:
+
+### GROMACS (`gromacs_adh`)
+The Ubuntu package (`apt install gromacs`) is compiled **without GPU support**. To collect GPU telemetry for molecular dynamics, you need a GPU-enabled build:
+
+- **Option 1 — NGC container**: `nvcr.io/hpc/gromacs:2023.3` has CUDA support built in. Run with `docker run --gpus all ...` or use Singularity/Apptainer on HPC systems.
+- **Option 2 — Build from source**: Download from https://manual.gromacs.org and build with `-DGMX_GPU=CUDA`. Requires CUDA toolkit and cmake.
+- **Option 3 — Different instance**: Some cloud providers (e.g., Lambda Labs, CoreWeave) offer instances with GPU-accelerated GROMACS pre-installed or available via containers.
+
+Without GPU support, GROMACS runs on CPU only and won't produce a meaningful GPU telemetry signature.
+
+### FFmpeg NVENC (`ffmpeg_nvenc`)
+FFmpeg with NVENC requires a GPU that has a **hardware video encoder** (NVENC chip). Data-center GPUs like A100 and H100 **do not have NVENC**. This workload requires:
+
+- A consumer/professional GPU (e.g., RTX 3090, RTX 4090, L40) or an older data-center GPU with NVENC (e.g., T4)
+- The `ffmpeg` build must be compiled with `--enable-nvenc` (the Ubuntu package includes this, but the hardware must support it)
+
+### Blender Cycles (`blender_bmw`)
+Works on A100/H100 via CUDA. The workload script generates a procedural scene (no download needed) and disables the denoiser for headless compatibility. First run compiles CUDA kernels (~5 min one-time cost). Already collected successfully on Vast.ai A100.
+
 ## GPU Selection: A100 vs H100
 
 Either A100 or H100 works for this project. Choose based on price:
