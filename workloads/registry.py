@@ -27,11 +27,11 @@ WORKLOAD_REGISTRY = {
             os.path.join(_WORKLOADS_DIR, "pytorch_training.py"),
             "--model", "resnet18",
             "--dataset", "cifar10",
-            "--epochs", "5",
-            "--batch-size", "128",
+            "--epochs", "10",
+            "--batch-size", "512",
         ],
-        "description": "ResNet-18 training on CIFAR-10, 5 epochs, FP32",
-        "default_timeout": 600,
+        "description": "ResNet-18 training on CIFAR-10, 10 epochs, FP32",
+        "default_timeout": 900,
     },
     "pytorch_resnet_cifar10_amp": {
         "command": [
@@ -39,12 +39,12 @@ WORKLOAD_REGISTRY = {
             os.path.join(_WORKLOADS_DIR, "pytorch_training.py"),
             "--model", "resnet18",
             "--dataset", "cifar10",
-            "--epochs", "5",
-            "--batch-size", "128",
+            "--epochs", "10",
+            "--batch-size", "512",
             "--amp",
         ],
-        "description": "ResNet-18 training on CIFAR-10, 5 epochs, mixed precision (AMP)",
-        "default_timeout": 600,
+        "description": "ResNet-18 training on CIFAR-10, 10 epochs, mixed precision (AMP)",
+        "default_timeout": 900,
     },
     "pytorch_mlp_cifar10": {
         "command": [
@@ -52,66 +52,88 @@ WORKLOAD_REGISTRY = {
             os.path.join(_WORKLOADS_DIR, "pytorch_training.py"),
             "--model", "simple_mlp",
             "--dataset", "cifar10",
-            "--epochs", "5",
-            "--batch-size", "256",
+            "--epochs", "20",
+            "--batch-size", "512",
         ],
-        "description": "Simple MLP training on CIFAR-10, 5 epochs, FP32",
-        "default_timeout": 300,
+        "description": "Simple MLP training on CIFAR-10, 20 epochs, FP32",
+        "default_timeout": 900,
     },
     "gpt2_wikitext2": {
         "command": [
             "python3",
             os.path.join(_WORKLOADS_DIR, "gpt2_finetune.py"),
-            "--epochs", "3",
-            "--batch-size", "4",
+            "--steps", "400",
+            "--batch-size", "8",
         ],
-        "description": "GPT-2 124M fine-tuning on WikiText-2, 3 epochs, FP32",
+        "description": "GPT-2 124M fine-tuning on WikiText-2, 400 steps, FP32",
         "default_timeout": 1200,
     },
     "gpt2_wikitext2_amp": {
         "command": [
             "python3",
             os.path.join(_WORKLOADS_DIR, "gpt2_finetune.py"),
-            "--epochs", "3",
+            "--steps", "400",
             "--batch-size", "8",
             "--amp",
         ],
-        "description": "GPT-2 124M fine-tuning on WikiText-2, 3 epochs, AMP",
+        "description": "GPT-2 124M fine-tuning on WikiText-2, 400 steps, AMP",
         "default_timeout": 1200,
     },
     "bert_sst2": {
         "command": [
             "python3",
             os.path.join(_WORKLOADS_DIR, "bert_finetune.py"),
-            "--epochs", "3",
+            "--steps", "300",
             "--batch-size", "32",
         ],
-        "description": "BERT-base fine-tuning on SST-2, 3 epochs, FP32",
+        "description": "BERT-base fine-tuning on SST-2, 300 steps, FP32",
         "default_timeout": 900,
     },
     "bert_sst2_amp": {
         "command": [
             "python3",
             os.path.join(_WORKLOADS_DIR, "bert_finetune.py"),
-            "--epochs", "3",
-            "--batch-size", "64",
+            "--steps", "300",
+            "--batch-size", "32",
             "--amp",
         ],
-        "description": "BERT-base fine-tuning on SST-2, 3 epochs, AMP",
+        "description": "BERT-base fine-tuning on SST-2, 300 steps, AMP",
         "default_timeout": 900,
     },
     # --- ML Inference ---
     "resnet50_inference": {
         "command": [
             "python3",
-            os.path.join(_WORKLOADS_DIR, "resnet50_inference.py"),
+            os.path.join(_WORKLOADS_DIR, "inference.py"),
+            "--model", "resnet50",
             "--batch-size", "256",
-            "--loops", "10",
+            "--duration", "600",
         ],
-        "description": "ResNet-50 inference on CIFAR-10 test set, no gradients",
-        "default_timeout": 600,
+        "description": "ResNet-50 batch inference on CIFAR-10, 600s, no gradients",
+        "default_timeout": 660,
     },
     # --- Scientific HPC ---
+    "cufft_benchmark": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "scientific_hpc.py"),
+            "--workload", "cufft",
+            "--duration", "600",
+        ],
+        "description": "3D cuFFT benchmark (memory + cache bandwidth), 600s",
+        "default_timeout": 660,
+    },
+    "nbody_sim": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "scientific_hpc.py"),
+            "--workload", "nbody",
+            "--duration", "600",
+            "--n-bodies", "4096",
+        ],
+        "description": "Gravitational N-body simulation (compute-bound), 4096 bodies, 600s",
+        "default_timeout": 660,
+    },
     "gromacs_adh": {
         "command": [
             "python3",
@@ -119,41 +141,32 @@ WORKLOAD_REGISTRY = {
             "--benchmark", "adh",
             "--duration", "600",
         ],
-        "description": "GROMACS ADH benchmark MD simulation, GPU-accelerated",
+        "description": "GROMACS ADH benchmark MD simulation, GPU-accelerated (requires gromacs)",
         "default_timeout": 660,
     },
-    "cufft_benchmark": {
-        "command": [
-            "python3",
-            os.path.join(_WORKLOADS_DIR, "cufft_benchmark.py"),
-            "--duration", "300",
-            "--size", "4096",
-        ],
-        "description": "cuFFT benchmark: repeated 4096x4096 FFTs on GPU",
-        "default_timeout": 360,
-    },
-    "nbody_sim": {
-        "command": [
-            "python3",
-            os.path.join(_WORKLOADS_DIR, "nbody_sim.py"),
-            "--duration", "300",
-            "--particles", "16384",
-        ],
-        "description": "N-body gravitational simulation, 16K particles, FP32",
-        "default_timeout": 360,
-    },
     # --- Crypto Mining ---
-    "ethash_cuda": {
+    "mining_ethash_proxy": {
         "command": [
             "python3",
-            os.path.join(_WORKLOADS_DIR, "ethash_cuda.py"),
-            "--duration", "300",
-            "--dag-size", "1024",
+            os.path.join(_WORKLOADS_DIR, "mining_proxy.py"),
+            "--duration", "600",
+            "--dag-size-mb", "1024",
         ],
-        "description": "Ethash-like CUDA kernel (memory-hard hashing), safe for cloud",
-        "default_timeout": 360,
+        "description": "Ethash-like crypto mining proxy (memory-hard), 1GB DAG, 600s",
+        "default_timeout": 660,
     },
     # --- Rendering ---
+    "rendering_proxy": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "rendering_proxy.py"),
+            "--duration", "600",
+            "--rays", "32768",
+            "--bounces", "4",
+        ],
+        "description": "Monte Carlo path tracing proxy (irregular compute, no tensor cores), 600s",
+        "default_timeout": 660,
+    },
     "blender_bmw": {
         "command": [
             "python3",
@@ -161,7 +174,7 @@ WORKLOAD_REGISTRY = {
             "--samples", "128",
             "--loops", "3",
         ],
-        "description": "Blender Cycles BMW benchmark, CUDA rendering",
+        "description": "Blender Cycles BMW benchmark, CUDA rendering (requires blender)",
         "default_timeout": 900,
     },
     # --- Other ---
@@ -171,7 +184,7 @@ WORKLOAD_REGISTRY = {
             os.path.join(_WORKLOADS_DIR, "ffmpeg_nvenc.py"),
             "--duration", "300",
         ],
-        "description": "FFmpeg NVENC hardware video encoding",
+        "description": "FFmpeg NVENC hardware video encoding (requires ffmpeg + NVENC)",
         "default_timeout": 360,
     },
 }
