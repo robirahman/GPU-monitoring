@@ -1,0 +1,43 @@
+@article{aarne2024secure,
+  abstract = {This report examines how on-chip governance mechanisms could help manage national security risks from advanced AI systems. As AI capabilities advance and concerns about misuse grow, policymakers need technical tools to enforce compute governance. We propose a framework of hardware-level mechanisms including secure boot, remote attestation, and usage logging that could be implemented in future AI accelerator chips. These mechanisms would enable verification of how regulated chips are being used without requiring trust in the end user.},
+  author = {Onni Aarne and Tim Fist and Caleb Withers},
+  keywords = {policy, cs.CR},
+  title = {Secure, Governable Chips: Using On-Chip Mechanisms to Manage National Security Risks from AI & Advanced Computing},
+  year = {2024}
+}
+
+@article{fist2024hardwareenabled,
+  abstract = {As AI hardware becomes increasingly central to national security, there is a growing need for technical mechanisms to govern access to and use of AI chips. This report explores hardware-enabled governance mechanisms that can be implemented in current and future AI accelerators. We examine approaches including firmware-based usage controls, cryptographic attestation, and hardware performance monitoring for verifying chip usage patterns. Our analysis considers the trade-offs between governance capability and performance overhead, and provides recommendations for policymakers and chip manufacturers.},
+  author = {Tim Fist and Alan Hickey},
+  keywords = {policy, cs.CR},
+  title = {Hardware-Enabled Governance Mechanisms: Developing Technical Solutions to Manage AI Chip Access},
+  year = {2024}
+}
+
+@article{jackowski2025shadowscope,
+  abstract = {Modern AI accelerators such as GPUs support a wide range of workloads, from scientific computing to deep learning training. As AI regulation and export controls increase, there is a growing need to verify what types of computations are performed on regulated hardware. In this paper, we present ShadowScope, a system that uses GPU hardware performance counters (accessed via CUPTI PMU) to validate GPU kernel behavior. We demonstrate that performance counter signatures can distinguish between different kernel types and detect attempts to disguise ML training workloads. Our approach provides a foundation for hardware-based compute governance mechanisms.},
+  archiveprefix = {arXiv},
+  author = {Andrzej Jackowski and Marcin Copik and Torsten Hoefler},
+  eprint = {2509.00300},
+  keywords = {cs.CR, cs.DC, cs.LG},
+  title = {ShadowScope: From GPU Kernel Validation to Governing AI Chip Usage},
+  url = {https://arxiv.org/pdf/2509.00300.pdf},
+  year = {2025}
+}
+
+@article{lee2025forecasting,
+  abstract = {Understanding and predicting GPU performance for deep learning workloads is critical for efficient resource allocation and hardware design. This paper presents a performance forecasting framework that decomposes deep learning workloads into constituent kernel types (GEMM, convolution, element-wise, reduction, etc.) and models their behavior on GPU hardware. We demonstrate that workload decomposition into kernel types provides accurate performance predictions across different GPU architectures and DL models. Our analysis reveals distinctive patterns in how different DL workloads utilize GPU resources.},
+  author = {Seonho Lee and Amar Phanishayee and Divya Mahajan},
+  keywords = {cs.PF, cs.LG, cs.DC},
+  title = {Forecasting GPU Performance for Deep Learning Training and Inference},
+  year = {2025}
+}
+
+@article{naghibijouybari2018rendered,
+  abstract = {Graphics Processing Units (GPUs) are commonly integrated in modern computing platforms and are being increasingly used to accelerate computation in many domains beyond graphics rendering. This paper demonstrates practical GPU side-channel attacks. We present three attacks that exploit GPU performance counters and contention on GPU resources. Our attacks work across different GPU applications and in cross-process scenarios, demonstrating information leakage about GPU computations from colocated processes.},
+  author = {Hoda Naghibijouybari and Ajaya Neupane and Zhiyun Qian and Nael Abu-Ghazaleh},
+  doi = {10.1145/3243734.3243831},
+  keywords = {cs.CR},
+  title = {Rendered Insecure: GPU Side Channel Attacks are Practical},
+  year = {2018}
+}
