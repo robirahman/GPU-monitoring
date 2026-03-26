@@ -177,6 +177,48 @@ WORKLOAD_REGISTRY = {
         "description": "Blender Cycles BMW benchmark, CUDA rendering (requires blender)",
         "default_timeout": 900,
     },
+    # --- Crypto Mining (standalone) ---
+    "ethash_cuda": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "ethash_cuda.py"),
+            "--duration", "300",
+            "--dag-size", "1024",
+        ],
+        "description": "Ethash-like CUDA kernel (memory-hard hashing), safe for cloud",
+        "default_timeout": 360,
+    },
+    # --- Standalone workload files (collaborator variants) ---
+    "cufft_benchmark_standalone": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "cufft_benchmark.py"),
+            "--duration", "300",
+            "--size", "4096",
+        ],
+        "description": "cuFFT benchmark: repeated 4096x4096 FFTs on GPU (standalone)",
+        "default_timeout": 360,
+    },
+    "nbody_sim_standalone": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "nbody_sim.py"),
+            "--duration", "300",
+            "--particles", "16384",
+        ],
+        "description": "N-body gravitational simulation, 16K particles, FP32 (standalone)",
+        "default_timeout": 360,
+    },
+    "resnet50_inference_standalone": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "resnet50_inference.py"),
+            "--batch-size", "256",
+            "--loops", "10",
+        ],
+        "description": "ResNet-50 inference on CIFAR-10 test set (standalone)",
+        "default_timeout": 600,
+    },
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [
