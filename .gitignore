@@ -1,7 +1,4 @@
-# Data files (stored separately, not in git)
-data/*.parquet
-data/*.csv
-data/*.h5
+# Data files (large datasets, not telemetry results)
 data/cifar10/
 data/cifar-10-*/
 
@@ -16,6 +13,7 @@ build/
 .venv/
 venv/
 env/
+.env
 
 # Jupyter
 .ipynb_checkpoints/
@@ -32,9 +30,20 @@ Thumbs.db
 *.pt
 *.pth
 *.onnx
-*.bin
 
 # Nsight profiles
 *.ncu-rep
 *.nsys-rep
+*.qdrep
 *.sqlite
+
+# WAVE generated artifacts
+Wave/**/data/
+Wave/**/*.ncu-rep
+Wave/**/*.qdrep
+Wave/**/*.nsys-rep
+Wave/**/*.sqlite
+Wave/**/*.csv
+Wave/**/*.parquet
+Wave/**/*.log
+Wave/**/*timing*.json
