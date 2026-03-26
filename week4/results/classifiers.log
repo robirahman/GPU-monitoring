@@ -1,0 +1,62 @@
+============================================================
+Week 4 Classifier Suite
+============================================================
+
+[1/5] Loading data...
+  20,875 rows, 62 runs
+
+[2/5] Extracting per-run features...
+  62 feature vectors, 73 features
+
+[3/5] Building classifiers...
+  Models: ['RandomForest', 'SVM_RBF', 'LogisticRegression']
+
+--- Task A: Binary (ML Training vs. Rest) ---
+  [binary_training_vs_rest] n=62, classes=['ml_training', 'non_training']
+    RandomForest          acc=1.000±0.000  f1_macro=1.000
+    SVM_RBF               acc=0.983±0.033  f1_macro=0.980
+    LogisticRegression    acc=1.000±0.000  f1_macro=1.000
+
+--- Task B: Three-Way (training / inference / other) ---
+  [threeway] n=62, classes=['ml_inference', 'ml_training', 'other']
+    RandomForest          acc=1.000±0.000  f1_macro=1.000
+    SVM_RBF               acc=0.967±0.067  f1_macro=0.915
+    LogisticRegression    acc=1.000±0.000  f1_macro=1.000
+
+--- Task C: Multi-class (full workload label) ---
+  [multiclass_label] n=54, classes=['bert_sst2', 'cufft_benchmark', 'gpt2_wikitext2', 'idle', 'mining_ethash_proxy', 'nbody_sim', 'pytorch_mlp_cifar10', 'pytorch_resnet_cifar10', 'pytorch_resnet_cifar10_amp', 'rendering_proxy', 'resnet50_inference']
+    RandomForest          acc=1.000±0.000  f1_macro=1.000
+    SVM_RBF               acc=1.000±0.000  f1_macro=1.000
+    LogisticRegression    acc=1.000±0.000  f1_macro=1.000
+
+--- Task D: Multi-class (category) ---
+  [multiclass_category] n=62, classes=['baseline', 'crypto_mining', 'ml_inference', 'ml_training', 'rendering', 'scientific_hpc', 'unknown']
+    RandomForest          acc=1.000±0.000  f1_macro=1.000
+    SVM_RBF               acc=0.967±0.023  f1_macro=0.964
+    LogisticRegression    acc=1.000±0.000  f1_macro=1.000
+
+[4/5] Sliding-window evaluation (30s / 60s / 120s)...
+
+  Sliding window: 30s
+    RandomForest          acc=1.000  f1_macro=1.000
+    SVM_RBF               acc=0.999  f1_macro=0.994
+    LogisticRegression    acc=1.000  f1_macro=1.000
+
+  Sliding window: 60s
+    RandomForest          acc=0.997  f1_macro=0.990
+    SVM_RBF               acc=1.000  f1_macro=1.000
+    LogisticRegression    acc=0.997  f1_macro=0.990
+
+  Sliding window: 120s
+    RandomForest          acc=1.000  f1_macro=1.000
+    SVM_RBF               acc=0.994  f1_macro=0.898
+    LogisticRegression    acc=1.000  f1_macro=1.000
+
+[5/5] Saving results...
+  Saved 21 result rows to classifier_results.csv
+  Saved classifier_summary.png
+  Saved sliding_window_accuracy.png
+
+============================================================
+Classifier suite complete. Results in: /root/Telemetry/week4/results
+============================================================
