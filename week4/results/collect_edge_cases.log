@@ -1,0 +1,93 @@
+2026-03-16 04:25:28,521 [INFO] ============================================================
+2026-03-16 04:25:28,521 [INFO] Week 4 Edge-Case Data Collection (2x H100 80GB)
+2026-03-16 04:25:28,521 [INFO] GPU0: varied batch sizes + short runs
+2026-03-16 04:25:28,521 [INFO] GPU1: inference + HPC (concurrent with GPU0)
+2026-03-16 04:25:28,521 [INFO] Output: /root/Telemetry/week4/data
+2026-03-16 04:25:28,521 [INFO] ============================================================
+2026-03-16 04:25:28,521 [INFO] [GPU0] START  label=resnet18_small_batch_batch8
+2026-03-16 04:25:28,523 [INFO] [GPU1] START  label=resnet50_inference_small_bs32
+2026-03-16 04:25:28,686 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=resnet50_inference_small_bs32, run=3a8b8e79)
+2026-03-16 04:25:28,694 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=resnet18_small_batch_batch8, run=78528816)
+2026-03-16 04:27:07,474 [INFO] [GPU0] DONE   label=resnet18_small_batch_batch8  exit=0  dur=96.8s
+2026-03-16 04:27:09,475 [INFO] Telemetry stopped. 101 samples collected.
+2026-03-16 04:27:09,518 [INFO] Saved 101 rows to /root/Telemetry/week4/data/resnet18_small_batch_batch8_H100_gpu0_78528816_20260316_042528.parquet
+2026-03-16 04:27:09,518 [INFO] [GPU0] SAVED  resnet18_small_batch_batch8_H100_gpu0_78528816_20260316_042528.parquet  (101 samples)
+2026-03-16 04:27:09,518 [INFO] [GPU0] START  label=resnet18_large_batch_batch2048
+2026-03-16 04:27:09,602 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=resnet18_large_batch_batch2048, run=e08b1ef6)
+2026-03-16 04:27:22,702 [INFO] [GPU0] DONE   label=resnet18_large_batch_batch2048  exit=0  dur=11.1s
+2026-03-16 04:27:24,703 [INFO] Telemetry stopped. 16 samples collected.
+2026-03-16 04:27:24,714 [INFO] Saved 16 rows to /root/Telemetry/week4/data/resnet18_large_batch_batch2048_H100_gpu0_e08b1ef6_20260316_042709.parquet
+2026-03-16 04:27:24,714 [INFO] [GPU0] SAVED  resnet18_large_batch_batch2048_H100_gpu0_e08b1ef6_20260316_042709.parquet  (16 samples)
+2026-03-16 04:27:24,714 [INFO] [GPU0] START  label=resnet18_short_run_short
+2026-03-16 04:27:24,799 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=resnet18_short_run_short, run=86658d5d)
+2026-03-16 04:27:35,392 [INFO] [GPU0] DONE   label=resnet18_short_run_short  exit=0  dur=8.6s
+2026-03-16 04:27:35,935 [INFO] [GPU1] DONE   label=resnet50_inference_small_bs32  exit=0  dur=125.2s
+2026-03-16 04:27:37,393 [INFO] Telemetry stopped. 13 samples collected.
+2026-03-16 04:27:37,403 [INFO] Saved 13 rows to /root/Telemetry/week4/data/resnet18_short_run_short_H100_gpu0_86658d5d_20260316_042724.parquet
+2026-03-16 04:27:37,403 [INFO] [GPU0] SAVED  resnet18_short_run_short_H100_gpu0_86658d5d_20260316_042724.parquet  (13 samples)
+2026-03-16 04:27:37,404 [INFO] [GPU0] START  label=mlp_small_batch_batch16
+2026-03-16 04:27:37,502 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=mlp_small_batch_batch16, run=435afe62)
+2026-03-16 04:27:37,936 [INFO] Telemetry stopped. 130 samples collected.
+2026-03-16 04:27:37,944 [INFO] Saved 130 rows to /root/Telemetry/week4/data/resnet50_inference_small_bs32_H100_gpu1_3a8b8e79_20260316_042528.parquet
+2026-03-16 04:27:37,944 [INFO] [GPU1] SAVED  resnet50_inference_small_bs32_H100_gpu1_3a8b8e79_20260316_042528.parquet  (130 samples)
+2026-03-16 04:27:37,944 [INFO] [GPU1] START  label=resnet50_inference_large_bs1024
+2026-03-16 04:27:38,027 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=resnet50_inference_large_bs1024, run=8c07ad65)
+2026-03-16 04:27:57,793 [INFO] [GPU0] DONE   label=mlp_small_batch_batch16  exit=0  dur=18.3s
+2026-03-16 04:27:59,794 [INFO] Telemetry stopped. 23 samples collected.
+2026-03-16 04:27:59,804 [INFO] Saved 23 rows to /root/Telemetry/week4/data/mlp_small_batch_batch16_H100_gpu0_435afe62_20260316_042737.parquet
+2026-03-16 04:27:59,805 [INFO] [GPU0] SAVED  mlp_small_batch_batch16_H100_gpu0_435afe62_20260316_042737.parquet  (23 samples)
+2026-03-16 04:27:59,805 [INFO] [GPU0] START  label=mlp_large_batch_batch4096
+2026-03-16 04:27:59,896 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=mlp_large_batch_batch4096, run=605d61b0)
+2026-03-16 04:28:08,467 [INFO] [GPU0] DONE   label=mlp_large_batch_batch4096  exit=0  dur=6.6s
+2026-03-16 04:28:10,468 [INFO] Telemetry stopped. 11 samples collected.
+2026-03-16 04:28:10,478 [INFO] Saved 11 rows to /root/Telemetry/week4/data/mlp_large_batch_batch4096_H100_gpu0_605d61b0_20260316_042759.parquet
+2026-03-16 04:28:10,479 [INFO] [GPU0] SAVED  mlp_large_batch_batch4096_H100_gpu0_605d61b0_20260316_042759.parquet  (11 samples)
+2026-03-16 04:28:10,479 [INFO] [GPU0] START  label=cufft_short_dur120
+2026-03-16 04:28:10,572 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=cufft_short_dur120, run=ee2fa27b)
+2026-03-16 04:29:44,892 [INFO] [GPU1] DONE   label=resnet50_inference_large_bs1024  exit=0  dur=124.9s
+2026-03-16 04:29:46,893 [INFO] Telemetry stopped. 129 samples collected.
+2026-03-16 04:29:46,905 [INFO] Saved 129 rows to /root/Telemetry/week4/data/resnet50_inference_large_bs1024_H100_gpu1_8c07ad65_20260316_042737.parquet
+2026-03-16 04:29:46,905 [INFO] [GPU1] SAVED  resnet50_inference_large_bs1024_H100_gpu1_8c07ad65_20260316_042737.parquet  (129 samples)
+2026-03-16 04:29:46,905 [INFO] [GPU1] START  label=nbody_short_dur120
+2026-03-16 04:29:47,003 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=nbody_short_dur120, run=efe845ec)
+2026-03-16 04:30:17,828 [INFO] [GPU0] DONE   label=cufft_short_dur120  exit=0  dur=125.3s
+2026-03-16 04:30:19,828 [INFO] Telemetry stopped. 130 samples collected.
+2026-03-16 04:30:19,840 [INFO] Saved 130 rows to /root/Telemetry/week4/data/cufft_short_dur120_H100_gpu0_ee2fa27b_20260316_042810.parquet
+2026-03-16 04:30:19,840 [INFO] [GPU0] SAVED  cufft_short_dur120_H100_gpu0_ee2fa27b_20260316_042810.parquet  (130 samples)
+2026-03-16 04:31:56,289 [INFO] [GPU1] DONE   label=nbody_short_dur120  exit=0  dur=127.3s
+2026-03-16 04:31:58,290 [INFO] Telemetry stopped. 132 samples collected.
+2026-03-16 04:31:58,298 [INFO] Saved 132 rows to /root/Telemetry/week4/data/nbody_short_dur120_H100_gpu1_efe845ec_20260316_042946.parquet
+2026-03-16 04:31:58,369 [INFO] [GPU1] SAVED  nbody_short_dur120_H100_gpu1_efe845ec_20260316_042946.parquet  (132 samples)
+2026-03-16 04:31:58,369 [INFO] [GPU1] START  label=idle_h100
+2026-03-16 04:31:58,509 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=idle_h100, run=b0893b64)
+2026-03-16 04:34:02,715 [INFO] [GPU1] DONE   label=idle_h100  exit=0  dur=122.2s
+2026-03-16 04:34:04,716 [INFO] Telemetry stopped. 127 samples collected.
+2026-03-16 04:34:04,727 [INFO] Saved 127 rows to /root/Telemetry/week4/data/idle_h100_H100_gpu1_b0893b64_20260316_043158.parquet
+2026-03-16 04:34:04,731 [INFO] [GPU1] SAVED  idle_h100_H100_gpu1_b0893b64_20260316_043158.parquet  (127 samples)
+2026-03-16 04:34:04,732 [INFO] [GPU1] START  label=cufft_concurrent_concurrent
+2026-03-16 04:34:04,876 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=cufft_concurrent_concurrent, run=b0778ddc)
+2026-03-16 04:36:10,795 [INFO] [GPU1] DONE   label=cufft_concurrent_concurrent  exit=0  dur=123.9s
+2026-03-16 04:36:12,796 [INFO] Telemetry stopped. 128 samples collected.
+2026-03-16 04:36:12,809 [INFO] Saved 128 rows to /root/Telemetry/week4/data/cufft_concurrent_concurrent_H100_gpu1_b0778ddc_20260316_043404.parquet
+2026-03-16 04:36:12,813 [INFO] [GPU1] SAVED  cufft_concurrent_concurrent_H100_gpu1_b0778ddc_20260316_043404.parquet  (128 samples)
+2026-03-16 04:36:12,814 [INFO] [GPU1] START  label=resnet50_concurrent_concurrent
+2026-03-16 04:36:12,969 [INFO] Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=resnet50_concurrent_concurrent, run=c38de51b)
+2026-03-16 04:38:19,547 [INFO] [GPU1] DONE   label=resnet50_concurrent_concurrent  exit=0  dur=124.6s
+2026-03-16 04:38:21,548 [INFO] Telemetry stopped. 129 samples collected.
+2026-03-16 04:38:21,560 [INFO] Saved 129 rows to /root/Telemetry/week4/data/resnet50_concurrent_concurrent_H100_gpu1_c38de51b_20260316_043612.parquet
+2026-03-16 04:38:21,573 [INFO] [GPU1] SAVED  resnet50_concurrent_concurrent_H100_gpu1_c38de51b_20260316_043612.parquet  (129 samples)
+2026-03-16 04:38:21,573 [INFO] ============================================================
+2026-03-16 04:38:21,573 [INFO] Collection complete in 773.1s — 12 files saved
+2026-03-16 04:38:21,574 [INFO]   resnet18_small_batch_batch8_H100_gpu0_78528816_20260316_042528.parquet
+2026-03-16 04:38:21,574 [INFO]   resnet18_large_batch_batch2048_H100_gpu0_e08b1ef6_20260316_042709.parquet
+2026-03-16 04:38:21,574 [INFO]   resnet18_short_run_short_H100_gpu0_86658d5d_20260316_042724.parquet
+2026-03-16 04:38:21,574 [INFO]   mlp_small_batch_batch16_H100_gpu0_435afe62_20260316_042737.parquet
+2026-03-16 04:38:21,574 [INFO]   mlp_large_batch_batch4096_H100_gpu0_605d61b0_20260316_042759.parquet
+2026-03-16 04:38:21,574 [INFO]   cufft_short_dur120_H100_gpu0_ee2fa27b_20260316_042810.parquet
+2026-03-16 04:38:21,574 [INFO]   resnet50_inference_small_bs32_H100_gpu1_3a8b8e79_20260316_042528.parquet
+2026-03-16 04:38:21,574 [INFO]   resnet50_inference_large_bs1024_H100_gpu1_8c07ad65_20260316_042737.parquet
+2026-03-16 04:38:21,574 [INFO]   nbody_short_dur120_H100_gpu1_efe845ec_20260316_042946.parquet
+2026-03-16 04:38:21,574 [INFO]   idle_h100_H100_gpu1_b0893b64_20260316_043158.parquet
+2026-03-16 04:38:21,574 [INFO]   cufft_concurrent_concurrent_H100_gpu1_b0778ddc_20260316_043404.parquet
+2026-03-16 04:38:21,574 [INFO]   resnet50_concurrent_concurrent_H100_gpu1_c38de51b_20260316_043612.parquet
+2026-03-16 04:38:21,575 [INFO] Manifest: /root/Telemetry/week4/data/manifest.txt
