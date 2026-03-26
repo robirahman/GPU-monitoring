@@ -2,7 +2,9 @@
 
 ## Context
 
-This is a SPAR research project on adversarial classification of ML training workloads on GPUs. The goal is to determine whether on-chip telemetry and side-channel measurements can reliably distinguish ML training from other GPU workloads (scientific HPC, crypto mining, rendering), even when an adversary actively disguises their workload. The deliverables are a technical report, a signal comparison table, a HEM (Hardware Enabled Mechanism) telemetry design proposal, and a prototype classifier. Budget: $1,000 for compute.
+This is a SPAR research project on adversarial classification of ML training workloads on GPUs. The goal is to determine whether on-chip telemetry and side-channel measurements can reliably distinguish ML training from other GPU workloads (scientific HPC, crypto mining, rendering), even when an adversary actively disguises their workload. The deliverables are a technical report, a signal comparison table, a HEM (Hardware Enabled Mechanism) telemetry design proposal, a prototype classifier, and a **workshop paper submitted to TAIGR @ ICML 2026**. Budget: $1,000 for compute.
+
+**Publication target:** [TAIGR @ ICML 2026](https://taigr-workshop.com/) — Second Workshop on Technical AI Governance Research (Seoul, South Korea, July 10–11, 2026). **Submission deadline: April 24, 2026, 23:59 AOE.** Full papers (8 pages) or short papers (2 pages), ICML 2026 LaTeX template, double-blind review by both ML and policy/governance experts, non-archival. Submission via [OpenReview](https://openreview.net/group?id=ICML.cc/2026/Workshop/TAIGR). Our work fits TAIGR pillars: Verification (verifying claims about AI workloads), Access (external monitoring of GPU activity), and Operationalisation (translating governance goals into technical monitoring).
 
 **Sharpened research question (post-literature-review):** Two recently published papers have pre-empted parts of the original scope. WAVE (Xu et al., ASPLOS '26) already demonstrates GPU PMC-based fingerprinting of LLM *inference* workloads using Nsight Compute. Differential Architecture (Anonymous, ISCA '26) already characterizes the hardware bottlenecks (compute vs. memory bandwidth vs. cache bandwidth) for all major GPU workload classes. Our novel contributions are therefore: (1) detection of ML *training* specifically, which neither paper addresses; (2) adversarial evasion and robustness, which neither paper addresses; (3) classification using always-available Tier 1 NVML metrics rather than Nsight Compute's 1200-5300% overhead Tier 3 PMCs, framed as a deployability question; and (4) the HEM governance proposal, which synthesizes all three bodies of work.
 
@@ -75,7 +77,7 @@ Key insight: **bare-metal cloud access is essential** for this project. Hypersca
 - **ML frameworks:** PyTorch, Hugging Face Transformers
 - **Workloads:** GROMACS (molecular dynamics), Blender (rendering), T-Rex miner or custom CUDA kernels (mining proxy), cuFFT, llama.cpp (inference)
 - **Analysis:** Python, pandas, scikit-learn, XGBoost, matplotlib/seaborn
-- **Infra:** Git, Docker, Jupyter, LaTeX/Overleaf
+- **Infra:** Git, Docker, Jupyter, LaTeX/Overleaf, ICML 2026 LaTeX template (for TAIGR submission)
 
 ---
 
@@ -182,9 +184,11 @@ Wall power draw via Shelly Plus Plug US (automated, ~1 Hz via REST API) and Kill
 
 **Checkpoint:** Target >85% binary accuracy on clean data. Training/inference classifier accuracy reported. Feature importance ranking produced.
 
-### Week 6: Hardware Setup + Shipping (1 week)
+### Week 6: Hardware Setup + Shipping + Paper Scaffold (~March 26 – April 1)
 
-**Tasks:**
+**⚠️ TAIGR deadline: April 24, 2026 (29 days away). Paper writing begins this week in parallel with hardware setup.**
+
+**Tasks — Hardware setup:**
 - Order Kill-A-Watt P4400 and Shelly Plus Plug US if not already ordered
 - Receive and assemble HP Z640 + RTX 5070 Ti:
   - Install RTX 5070 Ti in PCIe x16 slot (replace Quadro NVS 295)
@@ -203,13 +207,30 @@ Wall power draw via Shelly Plus Plug US (automated, ~1 Hz via REST API) and Kill
 - Set up Shelly Plus Plug US for automated wall-power logging; write Python polling script
 - **WAVE vs. Tier 1 comparison experiment.** Train a parallel classifier using WAVE's 9 Nsight Compute PMC metrics (Tier 3) as features, now possible with unrestricted local Nsight access. Compare against the Tier 1 NVML classifier on accuracy and F1. Report the accuracy/overhead tradeoff: "Tier 3 achieves X% accuracy at 1200-5300% runtime overhead; Tier 1 achieves Y% accuracy at ~0% overhead."
 
-**Checkpoint:** RTX 5070 Ti operational. All workload categories collected locally including FFmpeg NVENC and GROMACS. Tier 2 and Tier 3 access verified. Wall-power logging functional. Tier 1 vs. Tier 3 accuracy/overhead tradeoff quantified.
+**Tasks — TAIGR paper scaffold:**
+- Set up ICML 2026 LaTeX template in `paper/` directory (download from ICML 2026 Author Instructions page)
+- **Decision: full paper (8 pages) or short paper (2 pages).** Target full paper; fall back to short paper if experiments run behind schedule. Write modularly so the paper can be contracted.
+- Write paper skeleton with section headings:
+  1. Introduction (research question, why it matters for AI governance)
+  2. Related Work (WAVE, Differential Architecture, Shavit 2023, Kulp et al. 2024)
+  3. Methodology (telemetry tiers, workload taxonomy, feature engineering, classifier pipeline)
+  4. Experimental Setup (3 GPU architectures, cloud + local, workload registry)
+  5. Results (cross-GPU generalization, adversarial robustness, Tier 1 vs Tier 3 tradeoff)
+  6. Discussion & Policy Implications (HEM proposal, tiered monitoring, governance recommendations)
+  7. Conclusion
+- **Draft Related Work section** (can be written now from existing literature review)
+- **Draft Methodology section** (feature engineering pipeline, classifier setup — already implemented in Weeks 3-5)
+- Frame the governance angle: our work provides technical verification tools for AI governance — always-available Tier 1 monitoring as a low-cost compliance mechanism, adversarial robustness as an evasion-cost analysis for policymakers
 
-### Week 7: Cross-GPU Generalization + Classifier Refinement
+**Checkpoint:** RTX 5070 Ti operational. All workload categories collected locally including FFmpeg NVENC and GROMACS. Tier 2 and Tier 3 access verified. Wall-power logging functional. Tier 1 vs. Tier 3 accuracy/overhead tradeoff quantified. **Paper LaTeX template set up; Related Work and Methodology sections drafted.**
+
+### Week 7: Cross-GPU Generalization + Paper Results Draft (~April 1 – April 8)
 
 This is the **highest-value experiment** enabled by the local hardware. The project now has telemetry from three GPU architectures: A100 (Ampere, 3rd-gen Tensor Cores), H100 (Hopper, 4th-gen), and RTX 5070 Ti (Blackwell, 5th-gen).
 
-**Tasks:**
+**⚠️ TAIGR deadline: April 24 (17 days away). Cross-GPU results are the paper's core contribution — prioritize these experiments.**
+
+**Tasks — Experiments:**
 - **Cross-architecture generalization experiments:**
   1. Train on cloud A100/H100 data (Weeks 3-5), test on local RTX 5070 Ti data: does the 95.65% binary accuracy hold on Blackwell?
   2. Train on RTX 5070 Ti data alone, test on cloud data: do local signatures transfer to datacenter GPUs?
@@ -223,9 +244,17 @@ This is the **highest-value experiment** enabled by the local hardware. The proj
 - Test window sizes: 5s, 15s, 30s, 60s, 120s -- report accuracy vs. window size across GPUs
 - Train time-series models (1D CNN, LSTM) on raw metric sequences; compare with feature-engineered approach
 
-**Checkpoint:** Cross-GPU generalization results documented (3 architectures). Three-way classifier accuracy improved. Feature stability across architectures analyzed.
+**Tasks — Paper writing:**
+- **Draft Experimental Setup section** with GPU specifications table, workload registry, data collection methodology
+- **Draft Results section — Part 1:** cross-GPU generalization tables and figures (accuracy per train/test GPU split, feature stability heatmap)
+- Generate publication-quality figures: confusion matrices, feature importance plots, cross-GPU accuracy comparison bars
+- **Draft Introduction:** frame the governance gap, state contributions (3 GPU architectures, adversarial robustness, Tier 1 vs Tier 3 tradeoff, policy recommendations)
 
-### Week 8: Adversarial Workload Design + Tier 5 Physical Side Channels
+**Checkpoint:** Cross-GPU generalization results documented (3 architectures). Three-way classifier accuracy improved. Feature stability across architectures analyzed. **Paper Introduction, Experimental Setup, and cross-GPU Results drafted.**
+
+### Week 8: Adversarial Workloads + Tier 5 + Paper Results (~April 8 – April 15)
+
+**⚠️ TAIGR deadline: April 24 (10 days away). Run adversarial experiments early in the week; write results into paper by end of week.**
 
 **Tasks — Adversarial workloads (5 strategies):**
 - Design and implement 5 disguise strategies:
@@ -243,21 +272,32 @@ This is the **highest-value experiment** enabled by the local hardware. The proj
 - Compare wall power vs. `nvidia-smi` reported board power -- measure the discrepancy (PSU efficiency, CPU/motherboard overhead)
 - Test whether adversarial strategies A-E that fool NVML Tier 1 classifiers also fool wall-power classifiers
 - Key question: **Can an adversary spoof software telemetry while the physical side channel still reveals true training activity?**
-- Acoustic emissions measurement (stretch goal): record fan noise patterns with USB microphone during different workloads
+- Acoustic emissions measurement (stretch goal, likely deferred post-deadline): record fan noise patterns with USB microphone during different workloads
 
-**Checkpoint:** All 5 adversarial strategies implemented and collected on both local and cloud. Tier 5 wall-power data collected for all workload types. Software vs. physical side-channel comparison documented.
-
-### Week 9: Adversarial Robustness Testing + HEM Design
-
-**Tasks — Adversarial robustness:**
+**Tasks — Adversarial robustness analysis (begin):**
 - Evaluate classifiers (Tier 1, Tier 3, and Tier 5) on all 5 adversarial strategies: detection rate per strategy per tier
-- Analyze successful evasions: which features shifted? By how much?
-- Cost-of-evasion analysis: measure training throughput (samples/sec) and total energy with vs. without disguise. Report as a table: strategy, detection rate (Tier 1), detection rate (Tier 3), detection rate (Tier 5 wall-power), throughput penalty %, energy overhead %.
+- Cost-of-evasion analysis: measure training throughput (samples/sec) and total energy with vs. without disguise
 - Retrain classifier with adversarial examples in training set (adversarial training)
-- Add evasion-resistant features: cumulative FLOP counting, tensor core presence detection, memory allocation stability
-- **Two rounds of adversary-defender iteration:** after initial robustification, design a refined attack against the hardened classifier, then defend again. Document the evolution.
+- **First round of adversary-defender iteration**
 
-**Tasks — HEM design proposal (Deliverable 5):**
+**Tasks — Paper writing:**
+- **Draft Results section — Part 2:** adversarial robustness table (5 strategies x 3 tiers), cost-of-evasion table, Tier 5 wall-power results
+- **Draft Discussion & Policy Implications section:** HEM proposal sketch, tiered monitoring recommendation, what adversarial cost means for governance
+- Generate adversarial-results figures: detection rate heatmap, throughput penalty chart, wall-power vs software-power comparison
+
+**Checkpoint:** All 5 adversarial strategies implemented and collected on both local and cloud. Tier 5 wall-power data collected for all workload types. First adversary-defender round complete. **Paper Results (parts 1+2) and Discussion drafted. ~80% of paper text complete.**
+
+### Week 9: Paper Finalization + Submit TAIGR (~April 15 – April 24)
+
+**⚠️ TAIGR SUBMISSION DEADLINE: APRIL 24, 2026, 23:59 AOE.**
+
+**Tasks — Final experiments (April 15–17):**
+- **Second round of adversary-defender iteration:** refine attack against hardened classifier, then defend again. Document the evolution.
+- Add evasion-resistant features: cumulative FLOP counting, tensor core presence detection, memory allocation stability
+- Any remaining gap-filling experiments (additional adversarial runs, edge cases)
+- Finalize cost-of-evasion table: strategy, detection rate (Tier 1), detection rate (Tier 3), detection rate (Tier 5 wall-power), throughput penalty %, energy overhead %
+
+**Tasks — HEM design proposal:**
 - Synthesize three bodies of prior work + our new contributions:
   - **From Differential Architecture:** which hardware resources distinguish workload classes at the architectural level
   - **From WAVE:** the accuracy/overhead tradeoff between Nsight Compute and DCGM-style monitoring
@@ -269,21 +309,40 @@ This is the **highest-value experiment** enabled by the local hardware. The proj
 - For each metric: cite experimental evidence, evasion difficulty, recommended sampling rate, hardware vs. firmware implementation
 - Address privacy, tamper resistance, false positive considerations
 
-**Checkpoint:** Adversarial evaluation table complete (5 strategies x 3 tiers including wall power). Cost-of-evasion quantified. Two rounds of adversary-defender iteration documented. HEM proposal drafted.
+**Tasks — TAIGR paper finalization (April 17–23):**
+- Complete all remaining paper sections; ensure Discussion includes specific policy recommendations (TAIGR requirement)
+- Finalize all figures and tables (publication-quality)
+- Write Abstract and Conclusion
+- Full paper proofread and anonymization check (double-blind: remove author names, institutional references, GitHub URLs)
+- Verify page limit: 8 pages max for full paper (or 2 for short paper), excluding references/appendices
+- Verify ICML 2026 LaTeX template formatting
+- **April 23:** Internal review — circulate to collaborator and mentor for final comments
+- **April 24 (before 23:59 AOE):** Submit via [OpenReview](https://openreview.net/group?id=ICML.cc/2026/Workshop/TAIGR)
+
+**Tasks — Policy framing for TAIGR (critical for acceptance):**
+- TAIGR requires "authors of more technical-leaning papers should meaningfully interact with policy motivations and implications of their work, and, where suitable, provide specific policy recommendations"
+- Include a dedicated subsection on policy recommendations:
+  - Mandate Tier 1 NVML telemetry logging on cloud GPU instances as a low-cost governance baseline
+  - Define cost-of-evasion thresholds: if adversarial disguise costs >X% throughput, monitoring is economically effective
+  - Recommend physical side-channel (wall power) audits as tamper-resistant verification for high-assurance scenarios
+  - Discuss privacy implications of GPU telemetry monitoring and appropriate access controls
+
+**Checkpoint:** **TAIGR paper submitted by April 24.** Adversarial evaluation table complete (5 strategies x 3 tiers). Cost-of-evasion quantified. Two rounds of adversary-defender iteration documented. HEM proposal drafted.
 
 ### Week 10: Code Cleanup and Report Preparation
 
 **Tasks:**
 - Clean up classifier code into a package with README, requirements, and a live-prediction demo script
-- Begin report writing: outline, methodology section, results tables and figures
+- Expand TAIGR paper into full technical report (15-25 pages) — the paper provides the core; the report adds extended results, full literature review, and appendices
 - Finalize signal comparison chart as publication-quality table/heatmap
+- Address any reviewer feedback if TAIGR notifications arrive early (unlikely before May 14)
 
-**Checkpoint:** Classifier code documented and reproducible. Report outline and methodology section done.
+**Checkpoint:** Classifier code documented and reproducible. Full report draft well underway.
 
 ### Week 11: Report and Final Deliverables
 
 **Tasks:**
-- Write and polish the full technical report (15-25 pages):
+- Complete and polish the full technical report (15-25 pages):
   1. Introduction and research questions -- frame contributions explicitly relative to WAVE and Differential Architecture
   2. Literature review (Deliverable 1) -- WAVE, Differential Architecture, prior work; what each establishes and what gap we fill
   3. Workload characterization (Deliverable 2) -- cite Differential Architecture for bottleneck analysis; contribute training/inference distinction and temporal signatures
@@ -300,7 +359,8 @@ This is the **highest-value experiment** enabled by the local hardware. The proj
 - Mentor review mid-week, incorporate feedback
 
 **Final deliverables checklist:**
-- [ ] Technical report (PDF)
+- [ ] **TAIGR @ ICML 2026 workshop paper** (submitted April 24; notification expected May 14-15)
+- [ ] Technical report (PDF, 15-25 pages — expanded version of TAIGR paper)
 - [ ] Literature review / annotated bibliography
 - [ ] Signal comparison table/chart
 - [ ] HEM telemetry design proposal (with physical side-channel empirical grounding)
@@ -309,6 +369,11 @@ This is the **highest-value experiment** enabled by the local hardware. The proj
 - [ ] Presentation slides
 - [ ] Revised ISCA paper draft
 - [ ] TODO (repo cleanup): Remove PDFs from `literature/` and replace with a `literature/bibliography.md` containing full citations and links.
+
+**Post-Week 11 (if TAIGR accepted, notification ~May 14-15):**
+- Prepare camera-ready version (9 pages for full paper, 3 for short paper)
+- At least one author must attend ICML 2026 in Seoul (July 10-11) to present poster
+- Outstanding papers may be invited for lightning talks
 
 ---
 
