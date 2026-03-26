@@ -45,20 +45,42 @@ Neither paper addresses ML *training* workloads. Neither paper addresses an adve
 
 **Timeline:** Hardware ships and is set up during Week 6 (1 week). Local experiments begin Week 7. Project extended to 11 weeks to accommodate.
 
+### TAIGR Workshop Paper (Added March 2026)
+
+**New deliverable:** Workshop paper submitted to [TAIGR @ ICML 2026](https://taigr-workshop.com/) (Second Workshop on Technical AI Governance Research, Seoul, July 10–11, 2026).
+
+| Detail | Value |
+|--------|-------|
+| Submission deadline | **April 24, 2026, 23:59 AOE** |
+| Format | Full paper (8 pages) or short paper (2 pages), ICML 2026 LaTeX template |
+| Review | Double-blind, by both ML and governance/policy reviewers |
+| Proceedings | Non-archival (workshop website only); dual submission OK |
+| Notification | ~May 14–15, 2026 |
+| Presentation | Poster (in person, Seoul); select papers get lightning talks |
+
+**Why TAIGR is the right venue:** Our work directly addresses three of TAIGR's five governance pillars — Verification (can we verify what workloads run on GPUs?), Access (external monitoring of GPU activity), and Operationalisation (translating AI governance goals into technical monitoring tools). TAIGR requires policy recommendations alongside technical contributions, which aligns with our HEM proposal.
+
+**Paper writing timeline (integrated into Weeks 6–9):**
+- **Week 6:** LaTeX template setup; draft Related Work + Methodology (from existing literature review and pipeline)
+- **Week 7:** Draft Introduction + Experimental Setup + cross-GPU Results
+- **Week 8:** Draft adversarial Results + Discussion/Policy section; ~80% complete
+- **Week 9 (April 15–24):** Finalize all sections, generate figures, anonymize, internal review, **submit by April 24**
+
 ### Earlier Plan Changes (Post-Literature-Review)
 
 | Area | Before | After |
 |------|--------|-------|
 | Weeks 1–5 | Split between local + cloud | **Cloud-only** (Vast.ai A100 + H100). Full $1,000 cloud budget. |
-| Week 6 | Classifier refinement | **Hardware setup + validation** (RTX 5070 Ti in HP Z640) + WAVE vs Tier 1 comparison |
-| Week 7 | Adversarial workloads | **Cross-GPU generalization** (3 architectures) + classifier refinement + fill data gaps (NVENC, GROMACS) |
-| Week 8 | Adversarial robustness | **Adversarial workloads** (5 strategies) + **Tier 5 physical side channels** on local hardware |
-| Week 9 | HEM proposal | **Adversarial robustness testing** + HEM proposal grounded in 3-tier empirical data |
-| Week 10 | Report | Code cleanup + report preparation |
+| Week 6 | Classifier refinement | **Hardware setup + validation** (RTX 5070 Ti in HP Z640) + WAVE vs Tier 1 comparison + **paper scaffold** |
+| Week 7 | Adversarial workloads | **Cross-GPU generalization** (3 architectures) + classifier refinement + fill data gaps (NVENC, GROMACS) + **paper results draft** |
+| Week 8 | Adversarial robustness | **Adversarial workloads** (5 strategies) + **Tier 5 physical side channels** + **paper ~80% complete** |
+| Week 9 | HEM proposal | **Adversarial robustness testing** + HEM proposal + **TAIGR paper finalized and submitted (April 24)** |
+| Week 10 | Report | Code cleanup + expand paper into full technical report |
 | Week 11 (new) | — | **Final report + deliverables** |
 | Tier 5 | Deferred/future work | **Empirically grounded** with Kill-A-Watt + Shelly Plug on local RTX 5070 Ti |
 | Cross-GPU | A100 vs 3090 (if grant) | **A100 vs H100 vs RTX 5070 Ti** (3 architectures, 3 GPU generations) |
 | ISCA paper | Limited to cloud data | **Revised** with cross-GPU generalization and adversarial robustness across 3 tiers |
+| Publication | No external submission | **TAIGR @ ICML 2026 workshop paper** (deadline April 24) |
 | Week 1 reading list | 4 papers | +2 papers (WAVE, Differential Architecture) |
 | Week 2 pipeline | Build PMC harness from scratch | Clone and adapt WAVE repo for Tier 3; build Tier 1 NVML harness ourselves |
 | Weeks 3–4 EDA | Re-derive bottleneck characteristics | **Skip re-derivation; cite Differential Architecture.** Focus on training-specific temporal signals |
