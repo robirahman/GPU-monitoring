@@ -1,0 +1,65 @@
+============================================================
+Week 4 EDA
+============================================================
+
+[1/7] Loading parquet files...
+  Loaded 21,617 rows, 80 runs, 27 workload types
+  Workloads: ['bert_sst2', 'cufft_benchmark', 'cufft_concurrent_concurrent', 'cufft_short_dur120', 'gpt2_wikitext2', 'idle', 'idle_h100', 'mining_ethash_proxy', 'mlp_large_batch_batch4096', 'mlp_small_batch_batch16', 'nbody_short_dur120', 'nbody_sim', 'nvlink_bandwidth', 'nvlink_latency', 'pytorch_mlp_cifar10', 'pytorch_resnet_cifar10', 'pytorch_resnet_cifar10_amp', 'rendering_proxy', 'resnet18_large_batch_batch2048', 'resnet18_short_run_short', 'resnet18_small_batch_batch8', 'resnet50_concurrent_concurrent', 'resnet50_inference', 'resnet50_inference_large_bs1024', 'resnet50_inference_small_bs32', 'training_dual_gpu_dp', 'training_single_gpu']
+
+[2/7] Summary statistics...
+  Saved: eda_summary_stats.csv
+                                 gpu_utilization_pct_mean  power_draw_w_mean  n_samples  n_runs
+workload_label                                                                                 
+bert_sst2                                       78.210797          41.941645        389       6
+cufft_benchmark                                 97.942244          46.031046       3636       6
+cufft_concurrent_concurrent                     92.867188         563.507219        128       1
+cufft_short_dur120                              91.376923         582.056746        130       1
+gpt2_wikitext2                                  83.648477          41.831430        788       6
+idle                                             0.000000          39.253875        375       3
+idle_h100                                        0.000000          68.987094        127       1
+mining_ethash_proxy                             38.829255          40.535898       3637       6
+mlp_large_batch_batch4096                        2.818182          99.608091         11       1
+mlp_small_batch_batch16                         11.173913         119.684348         23       1
+nbody_short_dur120                              90.901515         523.164697        132       1
+nbody_sim                                       97.912541          46.143834       3636       6
+nvlink_bandwidth                                25.000000         118.917935        108       6
+nvlink_latency                                   0.861111         120.321139         36       4
+pytorch_mlp_cifar10                              5.730088          40.209991        226       3
+pytorch_resnet_cifar10                          82.400000          43.177839        205       3
+pytorch_resnet_cifar10_amp                      76.900709          42.962830        141       3
+rendering_proxy                                 84.002200          43.650185       3636       6
+resnet18_large_batch_batch2048                  25.437500         195.914312         16       1
+resnet18_short_run_short                        16.615385         167.683846         13       1
+resnet18_small_batch_batch8                     20.306931         141.466158        101       1
+resnet50_concurrent_concurrent                  92.852713         560.668682        129       1
+resnet50_inference                              65.269915          43.528388       3653       6
+resnet50_inference_large_bs1024                 92.829457         586.271217        129       1
+resnet50_inference_small_bs32                   89.815385         484.790138        130       1
+training_dual_gpu_dp                            13.545455         167.765955         44       2
+training_single_gpu                             15.157895         172.548526         38       2
+
+[3/7] Time-series plots...
+  Saved: timeseries_gpu_utilization_pct.png
+  Saved: timeseries_power_draw_w.png
+  Saved: timeseries_mem_used_mb.png
+
+[4/7] Summary boxplots...
+  Saved: summary_boxplots.png
+
+[5/7] Correlation matrix...
+  Saved: correlation_matrix.png
+
+[6/7] Autocorrelation...
+  Saved: autocorrelation_gpu_utilization_pct.png
+  Saved: autocorrelation_power_draw_w.png
+
+[7/7] PCA and t-SNE projections...
+  Features for 80 runs saved to run_features.csv
+  Saved: pca_projection.png
+  Saved: tsne_projection.png
+  PCA: top 3 components explain 60.2% of variance
+
+============================================================
+EDA complete. Plots saved to: /root/Telemetry/week4/plots
+Stats saved to:  /root/Telemetry/week4/results
+============================================================
