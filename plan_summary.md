@@ -24,24 +24,46 @@ Neither paper addresses ML *training* workloads. Neither paper addresses an adve
 
 ## Key Changes to the Plan
 
+### Hardware Grant Update (March 2026)
+
+**Hardware grant approved and hardware purchased.** The original plan deferred local hardware to "if grant approved." The grant has been approved and the following equipment has been ordered:
+
+| Item | Cost | Notes |
+|------|------|-------|
+| ASUS PRIME RTX 5070 Ti OC 16GB GDDR7 | $1,099 | Blackwell architecture — 3rd GPU arch alongside cloud A100 (Ampere) and H100 (Hopper) |
+| HP Z640 Tower (Xeon E5-2640 v3, 32GB DDR4, 925W PSU) | $533 | Refurbished; PCIe 3.0 x16 slots; 925W PSU handles 300W GPU |
+| Kill-A-Watt P4400 + Shelly Plus Plug US | ~$55 | Manual + automated wall-power measurement |
+| **Total** | **~$1,687** | |
+
+**What this enables (Weeks 6+):**
+- Cross-architecture generalization: Ampere (A100) vs Hopper (H100) vs **Blackwell (RTX 5070 Ti)** — three GPU generations
+- FFmpeg NVENC video encoding workload (A100/H100 lack NVENC hardware encoder)
+- GROMACS with proper GPU build (blocked on Vast.ai)
+- Unrestricted Nsight Compute (Tier 3) and DCGM (Tier 2) access — blocked by virtualization on cloud
+- Tier 5 physical side channels: automated wall-power logging via Shelly Plug REST API (~1 Hz)
+- Adversarial workloads with simultaneous Tier 1 + Tier 3 + Tier 5 measurement
+
+**Timeline:** Hardware ships and is set up during Week 6 (1 week). Local experiments begin Week 7. Project extended to 11 weeks to accommodate.
+
+### Earlier Plan Changes (Post-Literature-Review)
+
 | Area | Before | After |
 |------|--------|-------|
-| **Hardware approach** | Buy RTX 3090 + Kill-A-Watt locally; split budget between local and cloud | **Cloud-only for Weeks 1–5.** Full $1,000 budget allocated to cloud compute (~1,300–1,500 A100-hours on Vast.ai). Local GPU deferred to Weeks 6+ if hardware grant is approved. |
-| **Budget** | ~$550 local GPU + ~$400 cloud | ~$1,000 cloud compute; physical hardware (~$575) funded separately by grant if approved |
-| **Tier 5 (physical side channels)** | Collected via Kill-A-Watt on local GPU | Deferred/grant-dependent; becomes a future-work recommendation if no local hardware |
-| Week 1 | Order RTX 3090; set up cloud | Cloud platform setup only (Vast.ai + RunPod); identify bare-metal hosts for Nsight access |
-| Week 2 | Install local GPU + drivers; build pipelines | All environment setup on cloud instances; build and test pipelines on cloud A100 |
-| Weeks 3–4 | Data collection on local RTX 3090 + cloud A100 | All data collection on cloud A100; no wall-power or local GPU measurements |
-| Week 6 | Cross-GPU: train on 3090, test on A100 | Cross-GPU with local 3090 *only if grant approved*; otherwise test across cloud host configurations |
-| Week 7 | Adversarial workloads on local GPU | Adversarial workloads on cloud; local GPU data *if grant approved* |
-| Week 9 HEM | Physical side-channel recommendations | Physical side-channel recommendations empirically grounded *only if grant approved*; otherwise cited as future work |
-| **Risks** | "RTX 3090 arrives defective" | Replaced with "Hardware grant not approved" and "Cloud budget exhaustion" |
-| Week 1 reading list | 4 papers | +2 papers (WAVE, Differential Architecture); checkpoint is a summary of those two specifically |
-| Week 2 pipeline | Build PMC harness from scratch | Clone and adapt the WAVE repo for Tier 3 collection; build Tier 1 NVML harness ourselves |
-| Weeks 3–4 EDA | Re-derive workload bottleneck characteristics | **Skip bottleneck re-derivation; cite Differential Architecture.** Focus EDA on training-specific temporal signals (epoch periodicity, optimizer memory growth, forward/backward asymmetry) and the training vs. inference distinction |
-| Week 5 features | Standard windowed statistics | + training-specific features: epoch periodicity score, optimizer state memory growth rate, compute/memory-BW ratio as a feature |
-| Week 6 | Classifier refinement only | + new experiment: Tier 1 NVML classifier vs. Tier 3 WAVE-style classifier — quantify the accuracy vs. overhead tradeoff |
-| Week 7 | 4 adversarial strategies | 5 strategies: add **Strategy E (PMC signature spoofing)** — dummy kernels crafted to produce WAVE-like PMC signatures while running real training |
-| Week 8 | 1 round of adversary-defender iteration | **2 rounds**; evaluate all 5 strategies against both Tier 1 and Tier 3 detectors; this is the primary novel contribution |
-| Week 9 HEM proposal | Grounded in our experiments | Also grounded in Differential Architecture (which resources to target) and WAVE (overhead tradeoff, tiered monitoring argument) |
-| Report framing | General contribution | Explicitly positioned against WAVE and Differential Architecture in the introduction |
+| Weeks 1–5 | Split between local + cloud | **Cloud-only** (Vast.ai A100 + H100). Full $1,000 cloud budget. |
+| Week 6 | Classifier refinement | **Hardware setup + validation** (RTX 5070 Ti in HP Z640) + WAVE vs Tier 1 comparison |
+| Week 7 | Adversarial workloads | **Cross-GPU generalization** (3 architectures) + classifier refinement + fill data gaps (NVENC, GROMACS) |
+| Week 8 | Adversarial robustness | **Adversarial workloads** (5 strategies) + **Tier 5 physical side channels** on local hardware |
+| Week 9 | HEM proposal | **Adversarial robustness testing** + HEM proposal grounded in 3-tier empirical data |
+| Week 10 | Report | Code cleanup + report preparation |
+| Week 11 (new) | — | **Final report + deliverables** |
+| Tier 5 | Deferred/future work | **Empirically grounded** with Kill-A-Watt + Shelly Plug on local RTX 5070 Ti |
+| Cross-GPU | A100 vs 3090 (if grant) | **A100 vs H100 vs RTX 5070 Ti** (3 architectures, 3 GPU generations) |
+| ISCA paper | Limited to cloud data | **Revised** with cross-GPU generalization and adversarial robustness across 3 tiers |
+| Week 1 reading list | 4 papers | +2 papers (WAVE, Differential Architecture) |
+| Week 2 pipeline | Build PMC harness from scratch | Clone and adapt WAVE repo for Tier 3; build Tier 1 NVML harness ourselves |
+| Weeks 3–4 EDA | Re-derive bottleneck characteristics | **Skip re-derivation; cite Differential Architecture.** Focus on training-specific temporal signals |
+| Week 5 features | Standard windowed statistics | + training-specific features: epoch periodicity, optimizer memory growth, compute/memory-BW ratio |
+| Adversarial strategies | 4 strategies | 5 strategies: add **Strategy E (PMC signature spoofing)** |
+| Adversary-defender | 1 round | **2 rounds** against Tier 1, Tier 3, and Tier 5 detectors |
+| HEM proposal | Grounded in cloud experiments only | Grounded in Differential Architecture + WAVE + our 3-tier experiments + physical side-channel data |
+| Report framing | General contribution | Explicitly positioned against WAVE and Differential Architecture |
