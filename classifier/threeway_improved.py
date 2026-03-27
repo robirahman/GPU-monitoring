@@ -51,6 +51,13 @@ TRAINING_LABELS = {
     "adversarial_A_util_modulation",
     "adversarial_B_low_util",
     "adversarial_D_temporal_disruption",
+    # Composite adversarial at all idle fractions
+    "adversarial_composite_00", "adversarial_composite_10",
+    "adversarial_composite_20", "adversarial_composite_30",
+    "adversarial_composite_40", "adversarial_composite_50",
+    "adversarial_composite_60", "adversarial_composite_70",
+    "adversarial_composite_80", "adversarial_composite_90",
+    "adversarial_composite_95",
 }
 
 INFERENCE_LABELS = {
