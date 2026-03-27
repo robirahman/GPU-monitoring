@@ -242,6 +242,44 @@ WORKLOAD_REGISTRY = {
         "description": "Strategy B: Tiny-batch CPU-bottlenecked training to mimic inference",
         "default_timeout": 360,
     },
+    # Composite adversarial with parameterized idle fraction
+    # (registered dynamically by sweep script; these are common presets)
+    "adversarial_composite_00": {
+        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.0", "--duration", "120"],
+        "description": "Composite adversarial: 0% idle (baseline, full throughput)",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_30": {
+        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.3", "--duration", "120"],
+        "description": "Composite adversarial: 30% idle",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_50": {
+        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.5", "--duration", "120"],
+        "description": "Composite adversarial: 50% idle",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_70": {
+        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.7", "--duration", "120"],
+        "description": "Composite adversarial: 70% idle",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_90": {
+        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.9", "--duration", "120"],
+        "description": "Composite adversarial: 90% idle",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_95": {
+        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.95", "--duration", "120"],
+        "description": "Composite adversarial: 95% idle",
+        "default_timeout": 240,
+    },
     "adversarial_D_temporal_disruption": {
         "command": [
             "python3",
