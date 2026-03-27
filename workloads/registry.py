@@ -219,6 +219,72 @@ WORKLOAD_REGISTRY = {
         "description": "ResNet-50 inference on CIFAR-10 test set (standalone)",
         "default_timeout": 600,
     },
+    # --- Adversarial Training (evasion strategies) ---
+    "adversarial_A_util_modulation": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "adversarial_training.py"),
+            "--strategy", "A",
+            "--duration", "300",
+            "--sleep-min", "0.1",
+            "--sleep-max", "0.5",
+        ],
+        "description": "Strategy A: Training with sleep gaps to mimic rendering bursts",
+        "default_timeout": 360,
+    },
+    "adversarial_B_low_util": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "adversarial_training.py"),
+            "--strategy", "B",
+            "--duration", "300",
+        ],
+        "description": "Strategy B: Tiny-batch CPU-bottlenecked training to mimic inference",
+        "default_timeout": 360,
+    },
+    "adversarial_D_temporal_disruption": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "adversarial_training.py"),
+            "--strategy", "D",
+            "--duration", "300",
+        ],
+        "description": "Strategy D: Random batch sizes + CUDA noise to break periodicity",
+        "default_timeout": 360,
+    },
+    # --- Modern Inference ---
+    "deepseek_r1_inference": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
+            "--model", "deepseek_r1",
+            "--duration", "300",
+            "--max-tokens", "256",
+        ],
+        "description": "DeepSeek-R1-Distill-Qwen-1.5B autoregressive text generation",
+        "default_timeout": 420,
+    },
+    "qwen25_inference": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
+            "--model", "qwen25",
+            "--duration", "300",
+            "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 0.5B autoregressive text generation",
+        "default_timeout": 420,
+    },
+    "whisper_inference": {
+        "command": [
+            "python3",
+            os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
+            "--model", "whisper",
+            "--duration", "300",
+        ],
+        "description": "Whisper large-v3-turbo audio transcription (synthetic audio)",
+        "default_timeout": 420,
+    },
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [
