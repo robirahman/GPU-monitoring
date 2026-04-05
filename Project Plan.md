@@ -252,40 +252,169 @@ This is the **highest-value experiment** enabled by the local hardware. The proj
 
 **Checkpoint:** Cross-GPU generalization results documented (3 architectures). Three-way classifier accuracy improved. Feature stability across architectures analyzed. **Paper Introduction, Experimental Setup, and cross-GPU Results drafted.**
 
-### Week 8: Adversarial Workloads + Tier 5 + Paper Results (~April 8 – April 15)
+### Week 8: Local Hardware Data Collection + Adversarial Experiments (~April 6 – April 10)
 
-**⚠️ TAIGR deadline: April 24 (10 days away). Run adversarial experiments early in the week; write results into paper by end of week.**
+**⚠️ TAIGR deadline: April 24 (14 days away). This is the final data-collection week — every experiment must serve a table or figure in the paper.**
 
-**Tasks — Adversarial workloads (5 strategies):**
-- Design and implement 5 disguise strategies:
-  - **A: Utilization modulation** -- insert sleeps/dummy work between training batches to mimic rendering patterns
-  - **B: Low-utilization training** -- tiny batch sizes + throttling to resemble inference
-  - **C: Instruction mix obfuscation** -- disable mixed-precision + run dummy FP64 kernels alongside training
-  - **D: Temporal disruption** -- randomize batch sizes, vary compute intensity to break epoch periodicity
-  - **E: PMC signature spoofing** -- dummy CUDA kernels crafted to produce WAVE-like periodic PMC patterns corresponding to a non-training workload. Requires Nsight Compute access (available on local RTX 5070 Ti, blocked on most cloud hosts).
-- Run each adversarial workload 3+ times on **both** local RTX 5070 Ti and cloud A100
-- Collect Tier 1 (NVML), Tier 3 (Nsight Compute on local), and Tier 5 (wall power via Shelly Plug) for every run
-- Label as `ml_training_adversarial_A/B/C/D/E`
+**Status entering Week 8:** All 60+ parquet files are A100-only. No local GPU data exists yet. The midterm report classifier (100% binary, 95.6% 15-class) is trained exclusively on A100 data. The paper's core claim — cross-architecture generalization — has zero supporting data. This week fills that gap on two new architectures simultaneously.
 
-**Tasks — Tier 5 physical side-channel experiments:**
-- Collect synchronized wall-power time series (via Shelly Plus Plug US REST API at ~1 Hz) during all workload types on RTX 5070 Ti
-- Compare wall power vs. `nvidia-smi` reported board power -- measure the discrepancy (PSU efficiency, CPU/motherboard overhead)
-- Test whether adversarial strategies A-E that fool NVML Tier 1 classifiers also fool wall-power classifiers
-- Key question: **Can an adversary spoof software telemetry while the physical side channel still reveals true training activity?**
-- Acoustic emissions measurement (stretch goal, likely deferred post-deadline): record fan noise patterns with USB microphone during different workloads
+**Local hardware available:**
+| Machine | GPU | Arch | VRAM | TDP | Unique capabilities |
+|---------|-----|------|------|-----|---------------------|
+| HP Z640 desktop | RTX 5070 Ti | Blackwell (SM 10.0) | 16 GB GDDR7 | 300W | Tier 5 wall power (Shelly Plug), NVENC Gen 9, unrestricted Nsight, full DCGM |
+| Laptop | RTX 4050 Laptop | Ada Lovelace (SM 8.9) | 6 GB GDDR6 | 60W | 3rd consumer architecture, laptop thermal throttling regime |
 
-**Tasks — Adversarial robustness analysis (begin):**
-- Evaluate classifiers (Tier 1, Tier 3, and Tier 5) on all 5 adversarial strategies: detection rate per strategy per tier
-- Cost-of-evasion analysis: measure training throughput (samples/sec) and total energy with vs. without disguise
-- Retrain classifier with adversarial examples in training set (adversarial training)
-- **First round of adversary-defender iteration**
+---
 
-**Tasks — Paper writing:**
-- **Draft Results section — Part 2:** adversarial robustness table (5 strategies x 3 tiers), cost-of-evasion table, Tier 5 wall-power results
-- **Draft Discussion & Policy Implications section:** HEM proposal sketch, tiered monitoring recommendation, what adversarial cost means for governance
-- Generate adversarial-results figures: detection rate heatmap, throughput penalty chart, wall-power vs software-power comparison
+#### Monday April 6: Desktop RTX 5070 Ti — Full Workload Suite (P0)
 
-**Checkpoint:** All 5 adversarial strategies implemented and collected on both local and cloud. Tier 5 wall-power data collected for all workload types. First adversary-defender round complete. **Paper Results (parts 1+2) and Discussion drafted. ~80% of paper text complete.**
+This is the highest-priority day. The 5070 Ti runs every workload at the same parameters as the A100 baseline, producing directly comparable cross-architecture data.
+
+**Tasks:**
+- Verify desktop setup: drivers, CUDA, pynvml, DCGM, project repo cloned, `collect_telemetry.py` smoke test
+- Run 3 reps of each workload (same parameters as A100 Week 3 collection):
+
+| Workload | Label | Batch size | Duration/Epochs | Notes |
+|----------|-------|-----------|-----------------|-------|
+| Idle | `idle` | — | 120s | Baseline |
+| ResNet-18 CIFAR-10 FP32 | `pytorch_resnet_cifar10` | 512 | 10 epochs | |
+| ResNet-18 CIFAR-10 AMP | `pytorch_resnet_cifar10_amp` | 512 | 10 epochs | |
+| MLP CIFAR-10 | `pytorch_mlp_cifar10` | 512 | 20 epochs | |
+| GPT-2 124M WikiText-2 FP32 | `gpt2_wikitext2` | 8 | 400 steps | |
+| GPT-2 124M WikiText-2 AMP | `gpt2_wikitext2_amp` | 8 | 400 steps | |
+| BERT SST-2 FP32 | `bert_sst2` | 32 | 300 steps | |
+| BERT SST-2 AMP | `bert_sst2_amp` | 32 | 300 steps | |
+| ResNet-50 inference | `resnet50_inference` | 256 | 600s | |
+| cuFFT benchmark | `cufft_benchmark` | — | 600s | |
+| N-body simulation | `nbody_sim` | 4096 bodies | 600s | |
+| Mining proxy | `mining_ethash_proxy` | 1 GB DAG | 600s | |
+| Rendering proxy | `rendering_proxy` | 32768 rays | 600s | |
+| FFmpeg NVENC | `ffmpeg_nvenc` | — | 300s | **New: impossible on A100** |
+
+- Collect Tier 1 (pynvml) for all runs
+- Collect Tier 2 (DCGM) in parallel where possible
+- Set up Shelly Plus Plug US wall-power logging; record Tier 5 power for every run
+- Save as `{workload}_NVIDIA_GeForce_RTX_5070_Ti_{hash}_{timestamp}.parquet`
+
+**Target:** ~42 parquet files (14 workloads × 3 reps). This is the single biggest data-collection push of the week.
+
+---
+
+#### Tuesday April 7: Laptop RTX 4050 — Cross-Architecture Holdout Set (P0)
+
+The laptop provides Ada Lovelace data — the 3rd architecture for generalization testing. All batch sizes reduced to fit 6 GB VRAM.
+
+**Tasks:**
+- Verify laptop setup: pynvml installed, `collect_telemetry.py` runs, CUDA functional
+- Run 3 reps of each workload with VRAM-adjusted parameters:
+
+| Workload | Label | Batch size | Duration/Epochs | VRAM adjustment |
+|----------|-------|-----------|-----------------|-----------------|
+| Idle | `idle` | — | 120s | None |
+| ResNet-18 CIFAR-10 FP32 | `pytorch_resnet_cifar10` | 256 | 10 epochs | Halved batch |
+| ResNet-18 CIFAR-10 AMP | `pytorch_resnet_cifar10_amp` | 256 | 10 epochs | Halved batch |
+| MLP CIFAR-10 | `pytorch_mlp_cifar10` | 512 | 20 epochs | Fits as-is |
+| GPT-2 124M WikiText-2 FP32 | `gpt2_wikitext2` | 2 | 400 steps | Reduced from 8 |
+| GPT-2 124M WikiText-2 AMP | `gpt2_wikitext2_amp` | 4 | 400 steps | Reduced from 8 |
+| BERT SST-2 FP32 | `bert_sst2` | 8 | 300 steps | Reduced from 32 |
+| BERT SST-2 AMP | `bert_sst2_amp` | 16 | 300 steps | Reduced from 32 |
+| ResNet-50 inference | `resnet50_inference` | 64 | 600s | Reduced from 256 |
+| cuFFT benchmark | `cufft_benchmark` | — | 600s | Fits as-is |
+| N-body simulation | `nbody_sim` | 4096 bodies | 600s | Fits as-is |
+| Mining proxy | `mining_ethash_proxy` | 512 MB DAG | 600s | Halved DAG |
+| Rendering proxy | `rendering_proxy` | 32768 rays | 600s | Fits as-is |
+| FFmpeg NVENC | `ffmpeg_nvenc` | — | 300s | Fits as-is |
+
+- Collect Tier 1 only (DCGM may not be available on laptop; don't waste time debugging it)
+- Save as `{workload}_NVIDIA_GeForce_RTX_4050_Laptop_{hash}_{timestamp}.parquet`
+- **Monitor thermal throttling**: log `nvidia-smi` temperature alongside telemetry; note any clock drops during sustained runs — this is itself an interesting data point (laptop thermal signatures differ from desktop/server)
+
+**Target:** ~42 parquet files. Combined with Monday, the dataset grows from 1 architecture to 3.
+
+---
+
+#### Wednesday April 8: Adversarial Workloads on Desktop (P0)
+
+Run on the 5070 Ti where wall-power ground truth is available via Shelly Plug.
+
+**Tasks — Implement and run 5 adversarial disguise strategies (3 reps each):**
+
+| Strategy | Description | What it attacks | Label |
+|----------|-------------|-----------------|-------|
+| A: Utilization modulation | Insert `time.sleep()` between training batches to mimic rendering's bursty pattern | GPU util CV, periodicity features | `ml_training_adversarial_A` |
+| B: Low-utilization training | Batch size 1 + clock throttle to resemble inference | Utilization level, power draw | `ml_training_adversarial_B` |
+| C: Instruction mix obfuscation | Disable AMP + run dummy FP64 kernels alongside training | Tensor core features, instruction mix | `ml_training_adversarial_C` |
+| D: Temporal disruption | Randomize batch size each step (1–64), vary learning rate wildly | Epoch periodicity, autocorrelation | `ml_training_adversarial_D` |
+| E: PMC signature spoofing | Dummy CUDA kernels emitting non-training PMC patterns | Tier 3 Nsight features | `ml_training_adversarial_E` |
+
+- Use ResNet-18 CIFAR-10 as the base training workload for all strategies (fastest iteration)
+- Collect **all three tiers simultaneously** for each adversarial run:
+  - Tier 1: pynvml (always)
+  - Tier 3: Nsight Compute 1 run per strategy (unrestricted on local 5070 Ti)
+  - Tier 5: Shelly Plug wall power (key question: does physical power reveal true training even when software telemetry is spoofed?)
+- Record training throughput (samples/sec) and total energy for each strategy vs. clean baseline — this becomes the cost-of-evasion table
+
+**Target:** 15 adversarial parquet files + 5 Nsight profiles + 15 wall-power logs. Key paper deliverable: **cost-of-evasion table** (strategy × throughput penalty × energy overhead × detection rate per tier).
+
+---
+
+#### Thursday April 9: Cross-GPU Classifier Evaluation + Tier 5 Analysis (P0)
+
+No new data collection. This is analysis day — the results feed directly into paper tables and figures.
+
+**Tasks — Cross-architecture generalization experiments:**
+1. **A100-only → 5070 Ti:** Train on A100 data (Weeks 3–5), test on 5070 Ti data from Monday. Report binary and multi-class accuracy.
+2. **A100-only → 4050:** Train on A100 data, test on 4050 laptop data from Tuesday. Report same.
+3. **Leave-one-GPU-out:** For each of the 3 GPUs, train on the other two, test on the held-out GPU. 3×2 accuracy matrix.
+4. **Pooled classifier:** Train on all 3 GPUs combined, report accuracy via grouped cross-validation (group = GPU type).
+5. **Feature stability heatmap:** For top-20 features by importance, compute mean ± std per workload on each GPU. Which features are architecture-invariant? Which break?
+
+**Tasks — Adversarial robustness evaluation:**
+6. Evaluate the A100-trained classifier on Wednesday's adversarial runs: detection rate per strategy
+7. Evaluate Tier 5 wall-power classifier: train a simple model on clean wall-power data, test on adversarial wall-power data
+8. **Key result for paper:** detection rate table (5 strategies × {Tier 1, Tier 5}), plus cost-of-evasion columns
+
+**Tasks — Generate paper figures:**
+- Cross-GPU accuracy comparison bar chart (Figure for Section 5)
+- Feature stability heatmap across 3 architectures (Figure for Section 5)
+- Adversarial detection rate heatmap (Figure for Section 5)
+- Cost-of-evasion scatter: throughput penalty (%) vs. detection rate (%)
+- Wall power vs. nvidia-smi reported power comparison (Figure for Section 5 or Appendix)
+
+**Target:** All numerical results for the paper's two core tables: (1) cross-GPU generalization table, (2) adversarial robustness table. Figures generated.
+
+---
+
+#### Friday April 10: Adversarial Iteration + Paper Writing (P1)
+
+**Tasks — Second-round adversarial iteration:**
+- Retrain the classifier including Wednesday's adversarial examples in the training set (adversarial training)
+- Re-evaluate: which strategies still evade the hardened classifier?
+- If any strategy still evades: add evasion-resistant features (cumulative memory growth, backward-pass duration ratio) and retrain
+- Document the adversary-defender evolution (1 paragraph for the paper)
+
+**Tasks — Begin paper writing for Week 8 results:**
+- Draft **Experimental Setup** section: 3 GPU architectures table, workload registry, data collection methodology, batch-size adjustments for VRAM-constrained GPUs
+- Draft **Results — Cross-GPU Generalization** subsection using Thursday's tables/figures
+- Draft **Results — Adversarial Robustness** subsection using Thursday's tables/figures
+- Draft **Results — Physical Side Channel** subsection: wall-power vs. software telemetry, adversarial evasion resistance
+
+**Target:** First complete draft of Results section. Adversary-defender iteration documented.
+
+---
+
+#### Week 8 Checkpoint
+
+By end of Friday April 10:
+- [ ] **~84 new parquet files** across 2 local GPUs (42 per GPU), covering all 14 workload types × 3 reps
+- [ ] **15 adversarial parquet files** on 5070 Ti with simultaneous Tier 1 + Tier 5 collection
+- [ ] **Cross-GPU generalization table** (3 architectures: A100, 5070 Ti, 4050 Laptop) — the paper's central result
+- [ ] **Adversarial robustness table** (5 strategies × Tier 1 + Tier 5 detection rate + cost-of-evasion)
+- [ ] **Wall-power vs. software-power comparison** showing Tier 5 evasion resistance
+- [ ] **Paper Results section** first draft complete with figures
+- [ ] Dataset grows from ~60 runs (1 GPU) to **~160 runs (3 GPUs)** — substantial enough for publication
+
+**What's left for Weeks 9–10:** Paper polish (Introduction, Discussion, Conclusion), second adversarial iteration if needed, anonymization, formatting, and submission by April 24.
 
 ### Week 9: Paper Finalization + Submit TAIGR (~April 15 – April 24)
 
