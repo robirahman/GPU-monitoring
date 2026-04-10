@@ -1,0 +1,76 @@
+2026-04-06 15:17:57,082 [INFO] ============================================================
+2026-04-06 15:17:57,082 [INFO] Week 4 NVLink Characterization
+2026-04-06 15:17:57,089 [INFO] GPUs: 2× NVIDIA B200
+2026-04-06 15:17:57,089 [INFO] NV6 topology confirmed (see nvidia-smi topo -m)
+2026-04-06 15:17:57,089 [INFO] ============================================================
+2026-04-06 15:17:57,096 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=nvlink_bandwidth, run=6f4b6397ac47)
+2026-04-06 15:17:57,096 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=nvlink_bandwidth, run=c20b4cd0512f)
+2026-04-06 15:17:59,096 [INFO] === T1: NVLink Bandwidth ===
+2026-04-06 15:17:59,458 [INFO]       1 MB → bandwidth = 57.88 GB/s
+2026-04-06 15:17:59,460 [INFO]       4 MB → bandwidth = 192.60 GB/s
+2026-04-06 15:17:59,462 [INFO]      16 MB → bandwidth = 368.76 GB/s
+2026-04-06 15:17:59,468 [INFO]      64 MB → bandwidth = 574.69 GB/s
+2026-04-06 15:17:59,489 [INFO]     256 MB → bandwidth = 683.33 GB/s
+2026-04-06 15:17:59,563 [INFO]     512 MB → bandwidth = 707.69 GB/s
+2026-04-06 15:17:59,640 [INFO]    1024 MB → bandwidth = 718.13 GB/s
+2026-04-06 15:17:59,794 [INFO]    2048 MB → bandwidth = 723.91 GB/s
+2026-04-06 15:18:00,099 [INFO]    4096 MB → bandwidth = 726.92 GB/s
+2026-04-06 15:18:00,099 [INFO]   Bidirectional (simultaneous)...
+2026-04-06 15:18:00,220 [INFO]   Bidirectional 1024 MB: 714.08 GB/s (each dir)
+2026-04-06 15:18:02,220 [INFO] Telemetry stopped. 11 samples collected.
+2026-04-06 15:18:02,221 [INFO] Telemetry stopped. 11 samples collected.
+2026-04-06 15:18:02,233 [INFO] Saved 11 rows to /root/Telemetry/week7/data/nvlink_bandwidth_gpu0_ef7777.parquet
+2026-04-06 15:18:02,233 [INFO] Saved nvlink_bandwidth_gpu0_ef7777.parquet (11 samples)
+2026-04-06 15:18:02,235 [INFO] Saved 11 rows to /root/Telemetry/week7/data/nvlink_bandwidth_gpu1_30ea2a.parquet
+2026-04-06 15:18:02,235 [INFO] Saved nvlink_bandwidth_gpu1_30ea2a.parquet (11 samples)
+2026-04-06 15:18:02,237 [INFO] Peak unidirectional bandwidth: 726.92 GB/s
+2026-04-06 15:18:02,237 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=nvlink_latency, run=36b79c0d691b)
+2026-04-06 15:18:02,237 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=nvlink_latency, run=91b2c6256733)
+2026-04-06 15:18:04,237 [INFO] === T5: NVLink Latency (ping-pong) ===
+2026-04-06 15:18:04,267 [INFO]       1 floats → RTT = 23.52 µs
+2026-04-06 15:18:04,291 [INFO]       4 floats → RTT = 23.34 µs
+2026-04-06 15:18:04,316 [INFO]      16 floats → RTT = 23.65 µs
+2026-04-06 15:18:04,341 [INFO]      64 floats → RTT = 23.58 µs
+2026-04-06 15:18:04,366 [INFO]     256 floats → RTT = 23.58 µs
+2026-04-06 15:18:04,391 [INFO]    1024 floats → RTT = 23.48 µs
+2026-04-06 15:18:06,392 [INFO] Telemetry stopped. 9 samples collected.
+2026-04-06 15:18:06,392 [INFO] Telemetry stopped. 9 samples collected.
+2026-04-06 15:18:06,397 [INFO] Saved 9 rows to /root/Telemetry/week7/data/nvlink_latency_gpu0_1c6087.parquet
+2026-04-06 15:18:06,397 [INFO] Saved nvlink_latency_gpu0_1c6087.parquet (9 samples)
+2026-04-06 15:18:06,401 [INFO] Saved 9 rows to /root/Telemetry/week7/data/nvlink_latency_gpu1_9a8612.parquet
+2026-04-06 15:18:06,401 [INFO] Saved nvlink_latency_gpu1_9a8612.parquet (9 samples)
+2026-04-06 15:18:06,402 [INFO] === T6: Single-GPU vs 2-GPU Training Throughput ===
+2026-04-06 15:18:06,402 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=training_single_gpu, run=e141cade14ba)
+2026-04-06 15:18:06,403 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=training_single_gpu, run=42687e3e92ce)
+2026-04-06 15:18:12,395 [INFO]   Single-GPU: 29008 img/s (3.4s, 99328 imgs)
+2026-04-06 15:18:14,395 [INFO] Telemetry stopped. 16 samples collected.
+2026-04-06 15:18:14,396 [INFO] Telemetry stopped. 16 samples collected.
+2026-04-06 15:18:14,400 [INFO] Saved 16 rows to /root/Telemetry/week7/data/training_single_gpu_gpu0_199317.parquet
+2026-04-06 15:18:14,400 [INFO] Saved training_single_gpu_gpu0_199317.parquet (16 samples)
+2026-04-06 15:18:14,402 [INFO] Saved 16 rows to /root/Telemetry/week7/data/training_single_gpu_gpu1_a2ce5b.parquet
+2026-04-06 15:18:14,402 [INFO] Saved training_single_gpu_gpu1_a2ce5b.parquet (16 samples)
+2026-04-06 15:18:14,403 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=training_dual_gpu_dp, run=433e776ea707)
+2026-04-06 15:18:14,403 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=training_dual_gpu_dp, run=8cc7625aba2c)
+2026-04-06 15:18:18,729 [INFO]   2-GPU DP:   42455 img/s (2.3s, 98304 imgs)
+2026-04-06 15:18:20,729 [INFO] Telemetry stopped. 13 samples collected.
+2026-04-06 15:18:20,729 [INFO] Telemetry stopped. 13 samples collected.
+2026-04-06 15:18:20,733 [INFO] Saved 13 rows to /root/Telemetry/week7/data/training_dual_gpu_dp_gpu0_e63285.parquet
+2026-04-06 15:18:20,733 [INFO] Saved training_dual_gpu_dp_gpu0_e63285.parquet (13 samples)
+2026-04-06 15:18:20,735 [INFO] Saved 13 rows to /root/Telemetry/week7/data/training_dual_gpu_dp_gpu1_278acd.parquet
+2026-04-06 15:18:20,735 [INFO] Saved training_dual_gpu_dp_gpu1_278acd.parquet (13 samples)
+2026-04-06 15:18:20,889 [INFO] Saved nvlink_bandwidth.png
+2026-04-06 15:18:21,130 [INFO] Saved nvlink_latency.png
+2026-04-06 15:18:21,183 [INFO] Saved throughput_comparison.png
+2026-04-06 15:18:21,307 [INFO] Saved telemetry_bw.png
+2026-04-06 15:18:21,439 [INFO] Saved telemetry_latency.png
+2026-04-06 15:18:21,575 [INFO] Saved telemetry_single.png
+2026-04-06 15:18:21,705 [INFO] Saved telemetry_dual.png
+2026-04-06 15:18:21,706 [INFO] ============================================================
+2026-04-06 15:18:21,706 [INFO] NVLink characterization complete in 24.6s
+2026-04-06 15:18:21,706 [INFO] Results: /root/Telemetry/week7/results/nvlink
+2026-04-06 15:18:21,706 [INFO] Plots:   /root/Telemetry/week7/plots
+2026-04-06 15:18:21,706 [INFO] ============================================================
+2026-04-06 15:18:21,706 [INFO] Peak unidirectional bandwidth: 726.92 GB/s
+2026-04-06 15:18:21,706 [INFO] Peak bidirectional bandwidth:  1428.17 GB/s (both dirs)
+2026-04-06 15:18:21,706 [INFO] Minimum ping-pong RTT:          23.34 µs
+2026-04-06 15:18:21,706 [INFO] Training speedup (2-GPU / 1-GPU): 1.46×

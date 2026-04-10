@@ -1,0 +1,20 @@
+01:47:08 === Week 7 Feature Engineering (B200) ===
+01:47:08 week7/data: 8 parquets -> 98 rows
+01:47:08 single_gpu_tests: 21 parquets -> 387 rows
+01:47:08 ddp parquets: 2 -> 48 rows
+01:47:08 dataset_scale: 7 parquets -> 376 rows
+01:47:08 edge_cases: 8 JSON files -> 474 rows
+01:47:08 Total rows: 1,383 | runs: 46 | labels: 23
+01:47:08 Binary distribution:
+binary_label
+training     841
+other        353
+inference    189
+01:47:08 Feature count per window: 125
+01:47:08 Extracting windows: 5s window, 2s stride ...
+01:47:09   224 windows -> windows_5s.parquet (full=217, short_run=7, training=91, non-training=133)
+01:47:09 Extracting windows: 15s window, 7s stride ...
+01:47:09   58 windows -> windows_15s.parquet (full=26, short_run=32, training=29, non-training=29)
+01:47:09 Extracting windows: 30s window, 15s stride ...
+01:47:09   48 windows -> windows_30s.parquet (full=6, short_run=42, training=25, non-training=23)
+01:47:09 Done. Feature meta saved.

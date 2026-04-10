@@ -1,0 +1,72 @@
+15:32:13 === Week 5 Classifier Training ===
+15:32:13 Feature count: 122
+15:32:13 
+── Window 5s ──
+15:32:13   Task A: Binary (training vs rest)
+15:32:14   [RandomForest  ] binary (training vs rest)          acc=0.7494±0.1705  f1=0.5231
+15:32:16   [XGBoost       ] binary (training vs rest)          acc=0.7911±0.1523  f1=0.5689
+15:32:16   [SVM_RBF       ] binary (training vs rest)          acc=0.7717±0.1654  f1=0.5788
+15:32:16   [LogisticReg   ] binary (training vs rest)          acc=0.7494±0.1705  f1=0.5600
+15:32:16   PCA saved: pca_binary_5s.png
+15:32:16   ROC saved: roc_binary_5s.png
+15:32:17   Task B: Three-way
+15:32:18   [RandomForest  ] threeway                       acc=0.8661±0.1090  f1=0.6052
+15:32:20   [XGBoost       ] threeway                       acc=0.8883±0.0707  f1=0.5754
+15:32:20   [SVM_RBF       ] threeway                       acc=0.8411±0.0949  f1=0.6963
+15:32:20   [LogisticReg   ] threeway                       acc=0.7944±0.1310  f1=0.6848
+15:32:20   Task C: Multi-class
+15:32:21   [RandomForest  ] multiclass                     acc=0.6833±0.2906  f1=0.5833
+15:32:22   [XGBoost       ] multiclass                     acc=0.6500±0.3000  f1=0.5433
+15:32:22   [SVM_RBF       ] multiclass                     acc=0.7000±0.2915  f1=0.6200
+15:32:22   [LogisticReg   ] multiclass                     acc=0.6000±0.2261  f1=0.5278
+15:32:23 
+── Window 15s ──
+15:32:23   Task A: Binary (training vs rest)
+15:32:24   [RandomForest  ] binary (training vs rest)          acc=0.5800±0.1435  f1=0.5171
+15:32:25   [XGBoost       ] binary (training vs rest)          acc=0.5800±0.1435  f1=0.5171
+15:32:25   [SVM_RBF       ] binary (training vs rest)          acc=0.6200±0.1122  f1=0.5767
+15:32:25   [LogisticReg   ] binary (training vs rest)          acc=0.5300±0.1166  f1=0.4933
+15:32:25   Task B: Three-way
+15:32:26   [RandomForest  ] threeway                       acc=0.5300±0.1965  f1=0.3549
+15:32:27   [XGBoost       ] threeway                       acc=0.6200±0.1122  f1=0.4002
+15:32:27   [SVM_RBF       ] threeway                       acc=0.7100±0.2478  f1=0.6305
+15:32:27   [LogisticReg   ] threeway                       acc=0.6600±0.2596  f1=0.5883
+15:32:27   Task C: Multi-class
+15:32:27   Too few multi-class samples, skip
+15:32:27 
+── Window 30s ──
+15:32:27   Task A: Binary (training vs rest)
+15:32:29   [RandomForest  ] binary (training vs rest)          acc=0.5800±0.1435  f1=0.5171
+15:32:29   [XGBoost       ] binary (training vs rest)          acc=0.5800±0.1435  f1=0.5171
+15:32:29   [SVM_RBF       ] binary (training vs rest)          acc=0.6200±0.1122  f1=0.5767
+15:32:29   [LogisticReg   ] binary (training vs rest)          acc=0.5300±0.1166  f1=0.4933
+15:32:29   Task B: Three-way
+15:32:30   [RandomForest  ] threeway                       acc=0.5300±0.1965  f1=0.3549
+15:32:31   [XGBoost       ] threeway                       acc=0.5700±0.0980  f1=0.3589
+15:32:31   [SVM_RBF       ] threeway                       acc=0.7100±0.2478  f1=0.6305
+15:32:32   [LogisticReg   ] threeway                       acc=0.6600±0.2596  f1=0.5883
+15:32:32   Task C: Multi-class
+15:32:32   Too few multi-class samples, skip
+15:32:32 Saved: accuracy_vs_window.png
+15:32:32 Saved: classifier_summary.png
+15:32:32 Saved: classifier_results.csv (28 rows)
+15:32:32 Report saved: /root/Telemetry/week7/reports/week5_report.md
+15:32:32 
+=== Done ===
+
+=== KEY RESULTS ===
+
+Top-5 Binary:
+       model  window_sec  acc_mean  acc_std  f1_macro_mean
+     XGBoost           5  0.791111 0.152251       0.568904
+     SVM_RBF           5  0.771667 0.165444       0.578803
+RandomForest           5  0.749444 0.170515       0.523088
+ LogisticReg           5  0.749444 0.170515       0.560012
+     SVM_RBF          15  0.620000 0.112250       0.576667
+
+Top-5 Multi-class:
+       model  window_sec  acc_mean  acc_std  f1_macro_mean
+     SVM_RBF           5  0.700000 0.291548       0.620000
+RandomForest           5  0.683333 0.290593       0.583333
+     XGBoost           5  0.650000 0.300000       0.543333
+ LogisticReg           5  0.600000 0.226078       0.527778

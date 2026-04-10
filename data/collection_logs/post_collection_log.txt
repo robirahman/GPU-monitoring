@@ -1,0 +1,53 @@
+=== Post-collection pipeline ===
+
+[1] Loading parquets from /workspace/SPAR-GPU-monitoring/data...
+    Loaded 22,547 rows from 98 files
+
+[2] Computing per-workload statistics...
+    15 workloads found: bert_sst2, bert_sst2_amp, blender_bmw, cufft_benchmark, ffmpeg_nvenc, gpt2_wikitext2, gpt2_wikitext2_amp, idle, mining_ethash_proxy, nbody_sim, pytorch_mlp_cifar10, pytorch_resnet_cifar10, pytorch_resnet_cifar10_amp, rendering_proxy, resnet50_inference
+
+[3] Generating week4.md...
+    Written: /workspace/SPAR-GPU-monitoring/week4.md
+
+[4] Setting up /workspace/Telemetry/H100...
+    Copying 98 parquet files...
+    Copied week4.md
+    Copied collection_log.txt
+    Copied collection_gpu1_log.txt
+
+[5] Committing to Telemetry repo...
+    [git warn] Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'root@60fb611880a7.(none)')
+    Commit failed: Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'root@60fb611880a7.(none)')
+
+=== Done ===
+H100 directory: /workspace/Telemetry/H100
+Files: 101
+
+To push, run:
+  cd /workspace/Telemetry
+  git remote set-url origin https://<TOKEN>@github.com/Tajdari-S/Telemetry.git
+  git push origin HEAD

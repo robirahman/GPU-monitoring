@@ -1,0 +1,31 @@
+15:31:23 === Week 5 Feature Engineering ===
+15:31:23 week4/data: 8 parquets → 98 rows
+15:31:23 ddp parquets: 2 → 48 rows
+15:31:23 dataset_scale: 7 parquets → 132 rows
+15:31:23 edge_cases: 8 JSON files → 474 rows
+15:31:23 Total rows: 752 | runs: 25 | labels: 14
+15:31:23 Binary distribution:
+binary_label
+training     556
+inference    156
+other         40
+15:31:23 Feature count per window: 122
+15:31:23 Extracting windows: 5s window, 2s stride ...
+/root/Telemetry/week7/scripts/feature_engineering.py:279: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  feats[f"{sig}_skew"]  = float(sp_stats.skew(vals))   if n > 2 else 0.0
+/root/Telemetry/week7/scripts/feature_engineering.py:280: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  feats[f"{sig}_kurt"]  = float(sp_stats.kurtosis(vals)) if n > 3 else 0.0
+15:31:23   45 windows → windows_5s.parquet (training=38, non-training=7)
+15:31:23 Extracting windows: 15s window, 7s stride ...
+/root/Telemetry/week7/scripts/feature_engineering.py:279: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  feats[f"{sig}_skew"]  = float(sp_stats.skew(vals))   if n > 2 else 0.0
+/root/Telemetry/week7/scripts/feature_engineering.py:280: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  feats[f"{sig}_kurt"]  = float(sp_stats.kurtosis(vals)) if n > 3 else 0.0
+15:31:23   21 windows → windows_15s.parquet (training=14, non-training=7)
+15:31:23 Extracting windows: 30s window, 15s stride ...
+/root/Telemetry/week7/scripts/feature_engineering.py:279: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  feats[f"{sig}_skew"]  = float(sp_stats.skew(vals))   if n > 2 else 0.0
+/root/Telemetry/week7/scripts/feature_engineering.py:280: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  feats[f"{sig}_kurt"]  = float(sp_stats.kurtosis(vals)) if n > 3 else 0.0
+15:31:23   21 windows → windows_30s.parquet (training=14, non-training=7)
+15:31:23 Done. Feature meta saved.
