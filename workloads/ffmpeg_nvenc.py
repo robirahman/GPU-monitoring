@@ -14,6 +14,7 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 
 
@@ -42,7 +43,7 @@ def run_encode_loop(duration, resolution="1920x1080", fps=30):
 
     signal.signal(signal.SIGTERM, handle_signal)
 
-    output_dir = "/tmp/nvenc_workload"
+    output_dir = os.path.join(tempfile.gettempdir(), "nvenc_workload")
     os.makedirs(output_dir, exist_ok=True)
 
     wall_start = time.time()

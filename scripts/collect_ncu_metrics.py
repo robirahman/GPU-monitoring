@@ -17,6 +17,7 @@ Requires: Nsight Compute (`ncu`) installed and accessible, bare-metal GPU access
 import argparse
 import logging
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime
@@ -74,7 +75,7 @@ def run_ncu_profiling(
     Returns the path to the .ncu-rep file, or None on failure.
     """
     # Check ncu is available
-    if subprocess.run(["which", "ncu"], capture_output=True).returncode != 0:
+    if shutil.which("ncu") is None:
         log.error(
             "ncu (Nsight Compute) not found. Install it or add to PATH.\n"
             "Tier 3 profiling requires bare-metal GPU access."

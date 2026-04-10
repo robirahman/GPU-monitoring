@@ -8,6 +8,7 @@ Each entry needs:
 """
 
 import os
+import sys
 
 # Resolve paths relative to the repository root
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,14 +17,14 @@ _WORKLOADS_DIR = os.path.join(_REPO_ROOT, "workloads")
 WORKLOAD_REGISTRY = {
     # --- Baselines ---
     "idle": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "idle.py")],
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "idle.py")],
         "description": "Idle GPU baseline (120 seconds of sleep)",
         "default_timeout": 130,
     },
     # --- ML Training ---
     "pytorch_resnet_cifar10": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "pytorch_training.py"),
             "--model", "resnet18",
             "--dataset", "cifar10",
@@ -35,7 +36,7 @@ WORKLOAD_REGISTRY = {
     },
     "pytorch_resnet_cifar10_amp": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "pytorch_training.py"),
             "--model", "resnet18",
             "--dataset", "cifar10",
@@ -48,7 +49,7 @@ WORKLOAD_REGISTRY = {
     },
     "pytorch_mlp_cifar10": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "pytorch_training.py"),
             "--model", "simple_mlp",
             "--dataset", "cifar10",
@@ -60,7 +61,7 @@ WORKLOAD_REGISTRY = {
     },
     "gpt2_wikitext2": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "gpt2_finetune.py"),
             "--steps", "400",
             "--batch-size", "8",
@@ -70,7 +71,7 @@ WORKLOAD_REGISTRY = {
     },
     "gpt2_wikitext2_amp": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "gpt2_finetune.py"),
             "--steps", "400",
             "--batch-size", "8",
@@ -81,7 +82,7 @@ WORKLOAD_REGISTRY = {
     },
     "bert_sst2": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "bert_finetune.py"),
             "--steps", "300",
             "--batch-size", "32",
@@ -91,7 +92,7 @@ WORKLOAD_REGISTRY = {
     },
     "bert_sst2_amp": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "bert_finetune.py"),
             "--steps", "300",
             "--batch-size", "32",
@@ -103,7 +104,7 @@ WORKLOAD_REGISTRY = {
     # --- ML Inference ---
     "resnet50_inference": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "inference.py"),
             "--model", "resnet50",
             "--batch-size", "256",
@@ -115,7 +116,7 @@ WORKLOAD_REGISTRY = {
     # --- Scientific HPC ---
     "cufft_benchmark": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "scientific_hpc.py"),
             "--workload", "cufft",
             "--duration", "600",
@@ -125,7 +126,7 @@ WORKLOAD_REGISTRY = {
     },
     "nbody_sim": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "scientific_hpc.py"),
             "--workload", "nbody",
             "--duration", "600",
@@ -136,7 +137,7 @@ WORKLOAD_REGISTRY = {
     },
     "gromacs_adh": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "gromacs_sim.py"),
             "--benchmark", "adh",
             "--duration", "600",
@@ -147,7 +148,7 @@ WORKLOAD_REGISTRY = {
     # --- Crypto Mining ---
     "mining_ethash_proxy": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "mining_proxy.py"),
             "--duration", "600",
             "--dag-size-mb", "1024",
@@ -158,7 +159,7 @@ WORKLOAD_REGISTRY = {
     # --- Rendering ---
     "rendering_proxy": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "rendering_proxy.py"),
             "--duration", "600",
             "--rays", "32768",
@@ -169,7 +170,7 @@ WORKLOAD_REGISTRY = {
     },
     "blender_bmw": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "blender_render.py"),
             "--samples", "1024",
             "--loops", "5",
@@ -180,7 +181,7 @@ WORKLOAD_REGISTRY = {
     # --- Crypto Mining (standalone) ---
     "ethash_cuda": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "ethash_cuda.py"),
             "--duration", "300",
             "--dag-size", "1024",
@@ -191,7 +192,7 @@ WORKLOAD_REGISTRY = {
     # --- Standalone workload files (collaborator variants) ---
     "cufft_benchmark_standalone": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "cufft_benchmark.py"),
             "--duration", "300",
             "--size", "4096",
@@ -201,7 +202,7 @@ WORKLOAD_REGISTRY = {
     },
     "nbody_sim_standalone": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "nbody_sim.py"),
             "--duration", "300",
             "--particles", "16384",
@@ -211,7 +212,7 @@ WORKLOAD_REGISTRY = {
     },
     "resnet50_inference_standalone": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "resnet50_inference.py"),
             "--batch-size", "256",
             "--loops", "10",
@@ -222,7 +223,7 @@ WORKLOAD_REGISTRY = {
     # --- Adversarial Training (evasion strategies) ---
     "adversarial_A_util_modulation": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "adversarial_training.py"),
             "--strategy", "A",
             "--duration", "300",
@@ -234,7 +235,7 @@ WORKLOAD_REGISTRY = {
     },
     "adversarial_B_low_util": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "adversarial_training.py"),
             "--strategy", "B",
             "--duration", "300",
@@ -245,44 +246,44 @@ WORKLOAD_REGISTRY = {
     # Composite adversarial with parameterized idle fraction
     # (registered dynamically by sweep script; these are common presets)
     "adversarial_composite_00": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.0", "--duration", "120"],
         "description": "Composite adversarial: 0% idle (baseline, full throughput)",
         "default_timeout": 180,
     },
     "adversarial_composite_30": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.3", "--duration", "120"],
         "description": "Composite adversarial: 30% idle",
         "default_timeout": 180,
     },
     "adversarial_composite_50": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.5", "--duration", "120"],
         "description": "Composite adversarial: 50% idle",
         "default_timeout": 180,
     },
     "adversarial_composite_70": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.7", "--duration", "120"],
         "description": "Composite adversarial: 70% idle",
         "default_timeout": 180,
     },
     "adversarial_composite_90": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.9", "--duration", "120"],
         "description": "Composite adversarial: 90% idle",
         "default_timeout": 180,
     },
     "adversarial_composite_95": {
-        "command": ["python3", os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.95", "--duration", "120"],
         "description": "Composite adversarial: 95% idle",
         "default_timeout": 240,
     },
     "adversarial_D_temporal_disruption": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "adversarial_training.py"),
             "--strategy", "D",
             "--duration", "300",
@@ -293,7 +294,7 @@ WORKLOAD_REGISTRY = {
     # --- Modern Inference ---
     "deepseek_r1_inference": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
             "--model", "deepseek_r1",
             "--duration", "300",
@@ -304,7 +305,7 @@ WORKLOAD_REGISTRY = {
     },
     "qwen25_inference": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
             "--model", "qwen25",
             "--duration", "300",
@@ -315,7 +316,7 @@ WORKLOAD_REGISTRY = {
     },
     "whisper_inference": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
             "--model", "whisper",
             "--duration", "300",
@@ -326,7 +327,7 @@ WORKLOAD_REGISTRY = {
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [
-            "python3",
+            sys.executable,
             os.path.join(_WORKLOADS_DIR, "ffmpeg_nvenc.py"),
             "--duration", "300",
         ],
