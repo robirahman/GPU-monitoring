@@ -30,6 +30,7 @@ def run_path_tracing(duration: int, device: torch.device, n_rays: int, n_bounces
     print(f"  Path tracing proxy: {n_rays} rays, {n_bounces} bounces, {duration}s")
 
     wall_start = time.time()
+    last_print = wall_start
     frame = 0
 
     while time.time() - wall_start < duration:
@@ -100,10 +101,12 @@ def run_path_tracing(duration: int, device: torch.device, n_rays: int, n_bounces
         torch.cuda.synchronize()
 
         frame += 1
-        if frame % 5 == 0:
-            elapsed = time.time() - wall_start
+        now = time.time()
+        if now - last_print >= 30:
+            elapsed = now - wall_start
             fps = frame / elapsed
             print(f"  Frame {frame}: {fps:.2f} fps, {elapsed:.1f}s elapsed")
+            last_print = now
 
     wall_time = time.time() - wall_start
     print(f"Rendering proxy complete. Frames: {frame}, {frame/wall_time:.2f} fps, {wall_time:.1f}s")
