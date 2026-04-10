@@ -42,6 +42,7 @@ def run_ethash_proxy(duration: int, device: torch.device, dag_size_mb: int):
     seeds = torch.randint(0, 2**31, (batch, seed_size), dtype=torch.int32, device=device)
 
     wall_start = time.time()
+    last_print = wall_start
     iterations = 0
 
     while time.time() - wall_start < duration:
@@ -66,10 +67,12 @@ def run_ethash_proxy(duration: int, device: torch.device, dag_size_mb: int):
         torch.cuda.synchronize()
 
         iterations += 1
-        if iterations % 20 == 0:
-            elapsed = time.time() - wall_start
+        now = time.time()
+        if now - last_print >= 30:
+            elapsed = now - wall_start
             hashrate = (iterations * batch) / elapsed / 1e6
             print(f"  Iteration {iterations}: ~{hashrate:.2f} MH/s, {elapsed:.1f}s elapsed")
+            last_print = now
 
         # Refresh seeds for next iteration
         seeds = torch.randint(0, 2**31, (batch, seed_size), dtype=torch.int32, device=device)

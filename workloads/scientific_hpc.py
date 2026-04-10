@@ -24,6 +24,7 @@ def run_cufft(duration: int, device: torch.device):
 
     x = torch.randn(*size, dtype=torch.complex64, device=device)
     wall_start = time.time()
+    last_print = wall_start
     iterations = 0
 
     while time.time() - wall_start < duration:
@@ -34,9 +35,11 @@ def run_cufft(duration: int, device: torch.device):
         x = z.real.to(dtype=torch.complex64) + x.imag * 1j
         torch.cuda.synchronize()
         iterations += 1
-        if iterations % 50 == 0:
-            elapsed = time.time() - wall_start
+        now = time.time()
+        if now - last_print >= 30:
+            elapsed = now - wall_start
             print(f"  Iteration {iterations}: {elapsed:.1f}s elapsed")
+            last_print = now
 
     wall_time = time.time() - wall_start
     print(f"cuFFT complete. Iterations: {iterations}, Wall time: {wall_time:.1f}s")
@@ -54,6 +57,7 @@ def run_nbody(duration: int, device: torch.device, n_bodies: int):
     mass = torch.rand(n_bodies, device=device) * 1e30 + 1e29
 
     wall_start = time.time()
+    last_print = wall_start
     step = 0
 
     while time.time() - wall_start < duration:
@@ -71,9 +75,11 @@ def run_nbody(duration: int, device: torch.device, n_bodies: int):
         torch.cuda.synchronize()
         step += 1
 
-        if step % 20 == 0:
-            elapsed = time.time() - wall_start
+        now = time.time()
+        if now - last_print >= 30:
+            elapsed = now - wall_start
             print(f"  Step {step}: {elapsed:.1f}s elapsed")
+            last_print = now
 
     wall_time = time.time() - wall_start
     print(f"N-body complete. Steps: {step}, Wall time: {wall_time:.1f}s")
