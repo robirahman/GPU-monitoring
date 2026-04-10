@@ -1,0 +1,102 @@
+W0406 15:20:15.798000 9141 torch/distributed/run.py:862] 
+W0406 15:20:15.798000 9141 torch/distributed/run.py:862] *****************************************
+W0406 15:20:15.798000 9141 torch/distributed/run.py:862] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0406 15:20:15.798000 9141 torch/distributed/run.py:862] *****************************************
+2026-04-06 15:20:17,697 [INFO] ============================================================
+2026-04-06 15:20:17,697 [INFO] DDP Training Characterization — 2× H100 via NVLink
+2026-04-06 15:20:17,697 [INFO] ============================================================
+2026-04-06 15:20:17,705 [INFO] ============================================================
+2026-04-06 15:20:17,705 [INFO] DDP Training Characterization — 2× H100 via NVLink
+2026-04-06 15:20:17,705 [INFO] ============================================================
+2026-04-06 15:20:17,722 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=ddp_training_gpu0, run=04d247557742)
+2026-04-06 15:20:17,737 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=ddp_training_gpu1, run=3ef56930f810)
+2026-04-06 15:20:17,743 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=ddp_training_gpu0, run=af0470270283)
+2026-04-06 15:20:17,755 [INFO] Telemetry started (gpu=NVIDIA B200, interval=0.5s, dcgm=disabled, label=ddp_training_gpu1, run=aca90805837e)
+2026-04-06 15:20:19,737 [INFO] Launching: /usr/bin/python3 -m torch.distributed.run --nproc_per_node=2 --master_port=29500 /root/Telemetry/week7/ddp_training_characterize.py --torchrun
+2026-04-06 15:20:19,755 [INFO] Launching: /usr/bin/python3 -m torch.distributed.run --nproc_per_node=2 --master_port=29500 /root/Telemetry/week7/ddp_training_characterize.py --torchrun
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 1020, in <module>
+    main()
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 367, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 1016, in main
+    run(args)
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 1007, in run
+    elastic_launch(
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 184, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 323, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 134, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 745, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 926, in _invoke_run
+    self._initialize_workers(self._worker_group)
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 134, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 713, in _initialize_workers
+    self._rendezvous(worker_group)
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 134, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 528, in _rendezvous
+    rdzv_info = spec.rdzv_handler.next_rendezvous()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/rendezvous/static_tcp_rendezvous.py", line 67, in next_rendezvous
+    self._store = TCPStore(  # type: ignore[call-arg]
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.distributed.DistNetworkError: The server socket has failed to listen on any local network address. port: 29500, useIpv6: false, code: -98, name: EADDRINUSE, message: address already in use
+2026-04-06 15:20:20,827 [INFO] torchrun finished (exit=1, elapsed=1.1s)
+NCCL version 2.29.7+cuda12.9
+2026-04-06 15:20:22,827 [INFO] Telemetry stopped. 11 samples collected.
+2026-04-06 15:20:22,837 [INFO] Saved 11 rows to /root/Telemetry/week7/results/ddp/ddp_telemetry_gpu0.parquet
+2026-04-06 15:20:22,838 [INFO] GPU0: 11 telemetry samples
+2026-04-06 15:20:22,838 [INFO] Telemetry stopped. 11 samples collected.
+2026-04-06 15:20:22,840 [INFO] Saved 11 rows to /root/Telemetry/week7/results/ddp/ddp_telemetry_gpu1.parquet
+2026-04-06 15:20:22,844 [INFO] GPU1: 11 telemetry samples
+2026-04-06 15:20:22,998 [INFO] Saved ddp_telemetry_over_time.png
+2026-04-06 15:20:23,183 [INFO] Saved ddp_step_breakdown_rank0.png
+/usr/local/lib/python3.12/dist-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+2026-04-06 15:20:23,292 [INFO] Saved ddp_step_breakdown_rank1.png
+2026-04-06 15:20:23,574 [INFO] Saved ddp_roofline_model.png
+2026-04-06 15:20:23,576 [INFO] Saved ddp_summary.csv
+2026-04-06 15:20:23,576 [INFO] ============================================================
+2026-04-06 15:20:23,576 [INFO] DDP Characterization Summary
+2026-04-06 15:20:23,576 [INFO] ============================================================
+2026-04-06 15:20:23,576 [INFO]   Rank 0: 26351 img/s | fwd=7.1ms | bwd+allreduce=11.7ms | step=19.4ms
+2026-04-06 15:20:23,576 [INFO]   Rank 1: 26354 img/s | fwd=7.1ms | bwd+allreduce=11.6ms | step=19.4ms
+2026-04-06 15:20:23,576 [INFO]   Total wall time: 1.1s
+2026-04-06 15:20:23,576 [INFO] ============================================================
+2026-04-06 15:20:24,440 [INFO] Epoch 1/3: loss=2.3186  time=1.2s  imgs/s=20992
+2026-04-06 15:20:25,255 [INFO] Epoch 2/3: loss=2.3115  time=0.8s  imgs/s=24744
+2026-04-06 15:20:26,072 [INFO] Epoch 3/3: loss=2.3133  time=0.8s  imgs/s=26304
+2026-04-06 15:20:26,073 [INFO] DDP training complete: 26304 imgs/s over 2.8s
+2026-04-06 15:20:27,414 [INFO] torchrun finished (exit=0, elapsed=7.7s)
+2026-04-06 15:20:29,414 [INFO] Telemetry stopped. 24 samples collected.
+2026-04-06 15:20:29,423 [INFO] Saved 24 rows to /root/Telemetry/week7/results/ddp/ddp_telemetry_gpu0.parquet
+2026-04-06 15:20:29,425 [INFO] GPU0: 24 telemetry samples
+2026-04-06 15:20:29,425 [INFO] Telemetry stopped. 24 samples collected.
+2026-04-06 15:20:29,426 [INFO] Saved 24 rows to /root/Telemetry/week7/results/ddp/ddp_telemetry_gpu1.parquet
+2026-04-06 15:20:29,432 [INFO] GPU1: 24 telemetry samples
+2026-04-06 15:20:29,597 [INFO] Saved ddp_telemetry_over_time.png
+2026-04-06 15:20:29,784 [INFO] Saved ddp_step_breakdown_rank0.png
+2026-04-06 15:20:29,892 [INFO] Saved ddp_step_breakdown_rank1.png
+2026-04-06 15:20:30,180 [INFO] Saved ddp_roofline_model.png
+2026-04-06 15:20:30,182 [INFO] Saved ddp_summary.csv
+2026-04-06 15:20:30,182 [INFO] ============================================================
+2026-04-06 15:20:30,182 [INFO] DDP Characterization Summary
+2026-04-06 15:20:30,182 [INFO] ============================================================
+2026-04-06 15:20:30,182 [INFO]   Rank 0: 26304 img/s | fwd=7.2ms | bwd+allreduce=11.6ms | step=19.4ms
+2026-04-06 15:20:30,182 [INFO]   Rank 1: 26304 img/s | fwd=7.2ms | bwd+allreduce=11.7ms | step=19.5ms
+2026-04-06 15:20:30,182 [INFO]   Total wall time: 7.7s
+2026-04-06 15:20:30,182 [INFO] ============================================================
