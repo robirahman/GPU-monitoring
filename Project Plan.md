@@ -19,29 +19,28 @@ This is a SPAR research project on adversarial classification of ML training wor
 - Mining software not platform-blocked on Vast.ai (important for profiling mining workloads)
 - Use RunPod Secure Cloud as backup ($1.14-1.39/hr A100) -- more reliable, DCGM pre-installed, but blocks mining software
 
-**Local Hardware (Grant Approved — Purchased March 2026)**
-- **GPU:** ASUS PRIME NVIDIA GeForce RTX 5070 Ti OC Edition, 16GB GDDR7 — $1,099 after tax
+**Local Hardware (Loaned Desktop — Available Weeks 8–10)**
+- **GPU:** NVIDIA GeForce RTX 5080, 16GB GDDR7
   - Blackwell architecture (GB203), 5th-gen Tensor Cores (FP8/FP4/FP6/BF16/FP16/TF32)
-  - 8,960 CUDA cores, 280 Tensor Cores, 300W TDP
+  - 10,752 CUDA cores, 336 Tensor Cores, 360W TDP
   - NVENC Gen 9 (H.264, HEVC, AV1) — enables FFmpeg encoding workload impossible on A100/H100
-  - 12V-2x6 (12VHPWR) power connector; adapter to dual 8-pin included in box
-  - PCIe 5.0 x16 (runs at Gen 3 speeds in the Z640 — negligible impact on ML training)
-  - **Cross-architecture value:** Blackwell is a third GPU architecture alongside cloud A100 (Ampere) and H100 (Hopper), maximizing cross-GPU generalization experiments
-- **Workstation:** HP Z640 Tower, refurbished — $533
-  - Intel Xeon E5-2640 v3 (Haswell-EP), 8 cores / 16 threads, 2.60 GHz base / 3.40 GHz boost
-  - 32GB DDR4 ECC RAM
-  - 512GB SSD + 2TB HDD
-  - 925W PSU (sufficient for 300W GPU + ~85W CPU + peripherals)
-  - PCIe 3.0 x16 slots
-  - Note: Haswell-EP CPU may be a data-loading bottleneck for GPU-bound workloads; mitigate by pre-loading datasets to GPU memory and using small datasets (CIFAR-10, SST-2, WikiText-2)
+  - 12V-2x6 (12VHPWR) power connector
+  - PCIe 5.0 x16
+  - **Cross-architecture value:** Blackwell is also available via cloud B100/B200 instances; the local RTX 5080 adds Tier 5 physical side-channel capability that cloud cannot provide
+- **Desktop** (loaned for 3 weeks from another researcher — Dell, 1000W PSU):
+  - Intel Core Ultra 9 285K (Arrow Lake), 24 cores / 24 threads
+  - 32GB RAM
+  - 2TB NVMe SSD (~1.8TB free)
+  - 1000W PSU (sufficient for 360W GPU + ~125W CPU + peripherals)
+  - Windows 11 Home
 - **Power measurement:**
   - Kill-A-Watt P4400 (~$30) — manual ground-truth spot checks
   - Shelly Plus Plug US (~$25) — automated wall-power logging via local REST API at ~1 Hz
   - `nvidia-smi` software logging at 10 Hz (GPU-reported board power, free)
-- **Total hardware grant spend:** ~$1,687 ($1,099 GPU + $533 workstation + $55 power meters)
-- Full NVML, DCGM, and Nsight Compute access (no cloud virtualization restrictions)
-- Enables: Tier 5 physical side-channel measurements, FFmpeg NVENC workload, unrestricted Tier 3 profiling, cross-architecture generalization (Ampere/Hopper/Blackwell)
-- **Hardware arrives and is set up during Week 6; local experiments begin Week 7**
+- Full NVML and Nsight Compute access (no cloud virtualization restrictions); DCGM Tier 2 profiling fields unavailable (consumer GPU limitation + Windows/Linux constraint)
+- Enables: Tier 5 physical side-channel measurements, FFmpeg NVENC workload, unrestricted Tier 3 profiling
+- Note: Blackwell-architecture data is also collected via cloud B100/B200 instances; the local desktop uniquely enables Tier 5 and unrestricted Nsight
+- **Desktop loaned starting Week 8; local experiments begin immediately**
 
 **Why Vast.ai over other providers:**
 
@@ -55,7 +54,7 @@ This is a SPAR research project on adversarial classification of ML training wor
 | AWS | Virtualized | Limited | Limited | $2.74 | Blocked |
 | Azure | Some bare-metal | Yes (auto-installed) | Limited | Premium | Blocked |
 
-Key insight: **bare-metal cloud access is essential** for this project. Hyperscaler VMs (AWS, most GCP) restrict DCGM advanced metrics and Nsight profiling behind the hypervisor. Vast.ai and RunPod both offer bare-metal PCIe passthrough, which provides the kernel-level access needed for Tiers 1–3. Physical side-channel data (wall power, acoustics) requires local hardware (available from Week 7 onward).
+Key insight: **bare-metal cloud access is essential** for this project. Hyperscaler VMs (AWS, most GCP) restrict DCGM advanced metrics and Nsight profiling behind the hypervisor. Vast.ai and RunPod both offer bare-metal PCIe passthrough, which provides the kernel-level access needed for Tiers 1–3. Physical side-channel data (wall power, acoustics) requires local hardware (available from Week 8 onward).
 
 **Budget breakdown:**
 | Item | Cost | Source |
@@ -63,11 +62,9 @@ Key insight: **bare-metal cloud access is essential** for this project. Hypersca
 | Vast.ai cloud compute | ~$990 | Cloud compute budget |
 | RunPod test instance (1-2 hrs) | ~$10 | Cloud compute budget |
 | **Cloud subtotal** | **~$1,000** | |
-| ASUS PRIME RTX 5070 Ti OC 16GB | $1,099 | Hardware grant |
-| HP Z640 Tower (refurb, 32GB, 925W) | $533 | Hardware grant |
 | Kill-A-Watt P4400 + Shelly Plus Plug US | ~$55 | Hardware grant |
-| **Hardware subtotal** | **~$1,687** | |
-| **Total project spend** | **~$2,687** | |
+| **Hardware subtotal** | **~$55** | Desktop + RTX 5080 loaned |
+| **Total project spend** | **~$1,055** | |
 
 ---
 
@@ -99,7 +96,7 @@ Key insight: **bare-metal cloud access is essential** for this project. Hypersca
 **Tier 1 - Basic NVML (available on all NVIDIA GPUs including cloud A100, 1 Hz sampling):**
 GPU utilization %, memory utilization %, memory used (MB), power draw (W), temperature (C), SM clock (MHz), memory clock (MHz), PCIe TX/RX throughput (MB/s), encoder/decoder utilization %, fan speed %
 
-**Tier 2 - DCGM (available on cloud A100):**
+**Tier 2 - DCGM (available on cloud data-center GPUs: A100, H100, B100/B200):**
 Tensor core active %, FP16/FP32/FP64 pipe utilization, SM occupancy %, DRAM read/write bandwidth, NVLink bandwidth
 
 **Tier 3 - Per-kernel profiling (Nsight Compute):**
@@ -108,8 +105,8 @@ Instruction mix (INT, FP16, FP32, FP64, tensor ops), kernel duration, achieved o
 **Tier 4 - Temporal/behavioral patterns (derived):**
 Periodicity, memory allocation stability, power draw variance, communication patterns
 
-**Tier 5 - Physical side channels (local RTX 5070 Ti, Weeks 7+):**
-Wall power draw via Shelly Plus Plug US (automated, ~1 Hz via REST API) and Kill-A-Watt P4400 (manual ground truth). GPU-reported board power via `nvidia-smi -lms 100` (10 Hz). Acoustic emissions via USB microphone (stretch goal). Not available on cloud instances; collected on local HP Z640 + RTX 5070 Ti.
+**Tier 5 - Physical side channels (local RTX 5080, Weeks 8+):**
+Wall power draw via Shelly Plus Plug US (automated, ~1 Hz via REST API) and Kill-A-Watt P4400 (manual ground truth). GPU-reported board power via `nvidia-smi -lms 100` (10 Hz). Acoustic emissions via USB microphone (stretch goal). Not available on cloud instances; collected on local desktop + RTX 5080.
 
 ---
 
@@ -184,28 +181,13 @@ Wall power draw via Shelly Plus Plug US (automated, ~1 Hz via REST API) and Kill
 
 **Checkpoint:** Target >85% binary accuracy on clean data. Training/inference classifier accuracy reported. Feature importance ranking produced.
 
-### Week 6: Hardware Setup + Shipping + Paper Scaffold (~March 26 – April 1)
+### Week 6: Paper Scaffold + Cloud Experiments (~March 26 – April 1)
 
-**⚠️ TAIGR deadline: April 24, 2026 (29 days away). Paper writing begins this week in parallel with hardware setup.**
+**⚠️ TAIGR deadline: April 24, 2026 (29 days away). Paper writing begins this week.**
 
-**Tasks — Hardware setup:**
-- Order Kill-A-Watt P4400 and Shelly Plus Plug US if not already ordered
-- Receive and assemble HP Z640 + RTX 5070 Ti:
-  - Install RTX 5070 Ti in PCIe x16 slot (replace Quadro NVS 295)
-  - Connect 12VHPWR power via included dual 8-pin adapter to Z640's 925W PSU
-  - Install Ubuntu 22.04 or 24.04 (dual-boot or replace Windows 10)
-  - Install NVIDIA drivers (560+), CUDA 12.x, cuDNN, pynvml, Nsight Compute, DCGM
-  - Install PyTorch 2.x + Hugging Face Transformers + scikit-learn + XGBoost
-  - Clone project repository and verify all scripts run
-- **Validation runs:** Execute 1 run of each workload category on RTX 5070 Ti to establish local baselines:
-  - idle, pytorch_resnet_cifar10, bert_sst2, gpt2_wikitext2, cufft_benchmark, nbody_sim, mining_ethash_proxy, rendering_proxy, resnet50_inference
-  - **FFmpeg NVENC** -- first-ever collection of this workload (impossible on A100/H100)
-  - **GROMACS** with proper GPU build (NGC container) -- blocked on Vast.ai
-- Run `nvml_smoke_test.py` to verify telemetry pipeline
-- Test DCGM profiling fields (Tier 2) -- unrestricted on local hardware (blocked on cloud by virtualization)
-- Test Nsight Compute (Tier 3) -- unrestricted on local hardware (blocked on cloud by `RmProfilingAdminOnly`)
-- Set up Shelly Plus Plug US for automated wall-power logging; write Python polling script
-- **WAVE vs. Tier 1 comparison experiment.** Train a parallel classifier using WAVE's 9 Nsight Compute PMC metrics (Tier 3) as features, now possible with unrestricted local Nsight access. Compare against the Tier 1 NVML classifier on accuracy and F1. Report the accuracy/overhead tradeoff: "Tier 3 achieves X% accuracy at 1200-5300% runtime overhead; Tier 1 achieves Y% accuracy at ~0% overhead."
+**Tasks — Cloud experiments:**
+- Begin cloud B100/B200 Blackwell data collection (Tier 1 + Tier 2) to complement existing A100/H100 datasets
+- Order Kill-A-Watt P4400 and Shelly Plus Plug US for Tier 5 measurements on local hardware (arriving Week 8)
 
 **Tasks — TAIGR paper scaffold:**
 - Set up ICML 2026 LaTeX template in `paper/` directory (download from ICML 2026 Author Instructions page)
@@ -222,56 +204,55 @@ Wall power draw via Shelly Plus Plug US (automated, ~1 Hz via REST API) and Kill
 - **Draft Methodology section** (feature engineering pipeline, classifier setup — already implemented in Weeks 3-5)
 - Frame the governance angle: our work provides technical verification tools for AI governance — always-available Tier 1 monitoring as a low-cost compliance mechanism, adversarial robustness as an evasion-cost analysis for policymakers
 
-**Checkpoint:** RTX 5070 Ti operational. All workload categories collected locally including FFmpeg NVENC and GROMACS. Tier 2 and Tier 3 access verified. Wall-power logging functional. Tier 1 vs. Tier 3 accuracy/overhead tradeoff quantified. **Paper LaTeX template set up; Related Work and Methodology sections drafted.**
+**Checkpoint:** **Paper LaTeX template set up; Related Work and Methodology sections drafted.** Cloud B100/B200 data collection underway.
 
-### Week 7: Cross-GPU Generalization + Paper Results Draft (~April 1 – April 8)
+### Week 7: Cloud Blackwell Experiments + Paper Drafting (~April 1 – April 8)
 
-This is the **highest-value experiment** enabled by the local hardware. The project now has telemetry from three GPU architectures: A100 (Ampere, 3rd-gen Tensor Cores), H100 (Hopper, 4th-gen), and RTX 5070 Ti (Blackwell, 5th-gen).
+**⚠️ TAIGR deadline: April 24 (17 days away). Cross-GPU results are the paper's core contribution — prioritize data collection.**
 
-**⚠️ TAIGR deadline: April 24 (17 days away). Cross-GPU results are the paper's core contribution — prioritize these experiments.**
-
-**Tasks — Experiments:**
-- **Cross-architecture generalization experiments:**
-  1. Train on cloud A100/H100 data (Weeks 3-5), test on local RTX 5070 Ti data: does the 95.65% binary accuracy hold on Blackwell?
-  2. Train on RTX 5070 Ti data alone, test on cloud data: do local signatures transfer to datacenter GPUs?
-  3. Pool all three GPU types and retrain: does the combined classifier improve or degrade?
-  4. Feature stability analysis: which of the 122 features are stable across architectures? Power CV and power ACF1 were the best discriminators on A100/H100 -- do they hold on Blackwell?
-- **Fill data gaps to strengthen three-way classifier** (currently 69-76% accuracy vs 80% target):
-  - FFmpeg NVENC telemetry (new workload class, only possible on local hardware)
-  - GROMACS with GPU-enabled build (blocked on Vast.ai)
-  - More diverse inference workloads on RTX 5070 Ti (Blackwell tensor core behavior may differ)
-- Add cross-metric features (power/utilization ratio, memory allocation rate, PCIe burstiness)
-- Test window sizes: 5s, 15s, 30s, 60s, 120s -- report accuracy vs. window size across GPUs
-- Train time-series models (1D CNN, LSTM) on raw metric sequences; compare with feature-engineered approach
+**Tasks — Cloud experiments:**
+- Continue cloud B100/B200 Blackwell data collection: run full workload suite (same as A100 Week 3 protocol) to get Tier 1 + Tier 2 data on Blackwell architecture
+- Preliminary cross-architecture analysis using cloud data only (A100 vs H100 vs B100/B200)
 
 **Tasks — Paper writing:**
 - **Draft Experimental Setup section** with GPU specifications table, workload registry, data collection methodology
-- **Draft Results section — Part 1:** cross-GPU generalization tables and figures (accuracy per train/test GPU split, feature stability heatmap)
+- **Draft Results section — Part 1:** preliminary cross-GPU generalization tables and figures using cloud data
 - Generate publication-quality figures: confusion matrices, feature importance plots, cross-GPU accuracy comparison bars
 - **Draft Introduction:** frame the governance gap, state contributions (3 GPU architectures, adversarial robustness, Tier 1 vs Tier 3 tradeoff, policy recommendations)
 
-**Checkpoint:** Cross-GPU generalization results documented (3 architectures). Three-way classifier accuracy improved. Feature stability across architectures analyzed. **Paper Introduction, Experimental Setup, and cross-GPU Results drafted.**
+**Checkpoint:** Cloud Blackwell data collected. Preliminary cross-GPU analysis complete. **Paper Introduction, Experimental Setup, and initial Results drafted.**
 
-### Week 8: Local Hardware Data Collection + Adversarial Experiments (~April 6 – April 10)
+### Week 8: Local Hardware Setup + Data Collection + Adversarial Experiments (~April 6 – April 10)
 
 **⚠️ TAIGR deadline: April 24 (14 days away). This is the final data-collection week — every experiment must serve a table or figure in the paper.**
 
-**Status entering Week 8:** All 60+ parquet files are A100-only. No local GPU data exists yet. The midterm report classifier (100% binary, 95.6% 15-class) is trained exclusively on A100 data. The paper's core claim — cross-architecture generalization — has zero supporting data. This week fills that gap on two new architectures simultaneously.
+**Status entering Week 8:** 60+ parquet files on A100, plus cloud B100/B200 Blackwell data from Week 7. No local GPU data exists yet. The midterm report classifier (100% binary, 95.6% 15-class) is trained exclusively on A100 data. This week adds local RTX 5080 data (with Tier 5 side channels) and laptop RTX 4050 data to complete the cross-architecture picture.
+
+**Local hardware setup (first priority):**
+- Set up loaned desktop (Dell, 1000W PSU) with RTX 5080:
+  - Verify NVIDIA drivers and CUDA (12.9 pre-installed, Driver 576.83)
+  - Install pynvml, Nsight Compute, PyTorch 2.x, Hugging Face Transformers, scikit-learn, XGBoost
+  - Clone project repository and verify all scripts run on Windows
+  - Note: DCGM profiling fields (Tier 2) are unavailable on the RTX 5080 — consumer GPUs do not expose profiling metrics (tensor_active, fp16/32/64 pipes, SM occupancy) regardless of OS. DCGM is also Linux-only and does not run on Windows, WSL2, or local VMs. Tier 2 data is collected exclusively from cloud data-center GPUs (A100, H100, B100/B200).
+  - Test Nsight Compute (Tier 3) — unrestricted on local hardware (blocked on cloud by `RmProfilingAdminOnly`)
+- Set up Shelly Plus Plug US for automated wall-power logging; write Python polling script
+- Run `nvml_smoke_test.py` to verify telemetry pipeline
+- **Validation runs:** Execute 1 run of each workload category on RTX 5080 to establish local baselines and validate against Week 2 cloud RTX 5080 results
 
 **Local hardware available:**
-| Machine | GPU | Arch | VRAM | TDP | Unique capabilities |
-|---------|-----|------|------|-----|---------------------|
-| HP Z640 desktop | RTX 5070 Ti | Blackwell (SM 10.0) | 16 GB GDDR7 | 300W | Tier 5 wall power (Shelly Plug), NVENC Gen 9, unrestricted Nsight, full DCGM |
-| Laptop | RTX 4050 Laptop | Ada Lovelace (SM 8.9) | 6 GB GDDR6 | 60W | 3rd consumer architecture, laptop thermal throttling regime |
+| Machine | GPU | Arch | VRAM | TDP | PSU | Unique capabilities |
+|---------|-----|------|------|-----|-----|---------------------|
+| Loaned desktop (Dell) | RTX 5080 | Blackwell (GB203) | 16 GB GDDR7 | 360W | 1000W | Tier 5 wall power (Shelly Plug), NVENC Gen 9, unrestricted Nsight |
+| Laptop | RTX 4050 Laptop | Ada Lovelace (SM 8.9) | 6 GB GDDR6 | 60W | — | Additional consumer architecture, laptop thermal throttling regime |
 
 ---
 
-#### Monday April 6: Desktop RTX 5070 Ti — Full Workload Suite (P0)
+#### Monday April 6: Desktop RTX 5080 — Full Workload Suite (P0)
 
-This is the highest-priority day. The 5070 Ti runs every workload at the same parameters as the A100 baseline, producing directly comparable cross-architecture data.
+This is the highest-priority day. The RTX 5080 runs every workload at the same parameters as the A100 baseline, producing directly comparable cross-architecture data.
 
 **Tasks:**
-- Verify desktop setup: drivers, CUDA, pynvml, DCGM, project repo cloned, `collect_telemetry.py` smoke test
+- Verify desktop setup: drivers, CUDA, pynvml, project repo cloned, `collect_telemetry.py` smoke test
 - Run 3 reps of each workload (same parameters as A100 Week 3 collection):
 
 | Workload | Label | Batch size | Duration/Epochs | Notes |
@@ -292,9 +273,8 @@ This is the highest-priority day. The 5070 Ti runs every workload at the same pa
 | FFmpeg NVENC | `ffmpeg_nvenc` | — | 300s | **New: impossible on A100** |
 
 - Collect Tier 1 (pynvml) for all runs
-- Collect Tier 2 (DCGM) in parallel where possible
 - Set up Shelly Plus Plug US wall-power logging; record Tier 5 power for every run
-- Save as `{workload}_NVIDIA_GeForce_RTX_5070_Ti_{hash}_{timestamp}.parquet`
+- Save as `{workload}_NVIDIA_GeForce_RTX_5080_{hash}_{timestamp}.parquet`
 
 **Target:** ~42 parquet files (14 workloads × 3 reps). This is the single biggest data-collection push of the week.
 
@@ -302,7 +282,7 @@ This is the highest-priority day. The 5070 Ti runs every workload at the same pa
 
 #### Tuesday April 7: Laptop RTX 4050 — Cross-Architecture Holdout Set (P0)
 
-The laptop provides Ada Lovelace data — the 3rd architecture for generalization testing. All batch sizes reduced to fit 6 GB VRAM.
+The laptop provides Ada Lovelace data — a fourth GPU type for generalization testing (alongside A100, H100/B100/B200, RTX 5080). All batch sizes reduced to fit 6 GB VRAM.
 
 **Tasks:**
 - Verify laptop setup: pynvml installed, `collect_telemetry.py` runs, CUDA functional
@@ -325,7 +305,7 @@ The laptop provides Ada Lovelace data — the 3rd architecture for generalizatio
 | Rendering proxy | `rendering_proxy` | 32768 rays | 600s | Fits as-is |
 | FFmpeg NVENC | `ffmpeg_nvenc` | — | 300s | Fits as-is |
 
-- Collect Tier 1 only (DCGM may not be available on laptop; don't waste time debugging it)
+- Collect Tier 1 only (DCGM is unavailable — Linux-only and consumer GPU limitation)
 - Save as `{workload}_NVIDIA_GeForce_RTX_4050_Laptop_{hash}_{timestamp}.parquet`
 - **Monitor thermal throttling**: log `nvidia-smi` temperature alongside telemetry; note any clock drops during sustained runs — this is itself an interesting data point (laptop thermal signatures differ from desktop/server)
 
@@ -335,7 +315,7 @@ The laptop provides Ada Lovelace data — the 3rd architecture for generalizatio
 
 #### Wednesday April 8: Adversarial Workloads on Desktop (P0)
 
-Run on the 5070 Ti where wall-power ground truth is available via Shelly Plug.
+Run on the RTX 5080 where wall-power ground truth is available via Shelly Plug.
 
 **Tasks — Implement and run 5 adversarial disguise strategies (3 reps each):**
 
@@ -350,7 +330,7 @@ Run on the 5070 Ti where wall-power ground truth is available via Shelly Plug.
 - Use ResNet-18 CIFAR-10 as the base training workload for all strategies (fastest iteration)
 - Collect **all three tiers simultaneously** for each adversarial run:
   - Tier 1: pynvml (always)
-  - Tier 3: Nsight Compute 1 run per strategy (unrestricted on local 5070 Ti)
+  - Tier 3: Nsight Compute 1 run per strategy (unrestricted on local RTX 5080)
   - Tier 5: Shelly Plug wall power (key question: does physical power reveal true training even when software telemetry is spoofed?)
 - Record training throughput (samples/sec) and total energy for each strategy vs. clean baseline — this becomes the cost-of-evasion table
 
@@ -363,16 +343,17 @@ Run on the 5070 Ti where wall-power ground truth is available via Shelly Plug.
 No new data collection. This is analysis day — the results feed directly into paper tables and figures.
 
 **Tasks — Cross-architecture generalization experiments:**
-1. **A100-only → 5070 Ti:** Train on A100 data (Weeks 3–5), test on 5070 Ti data from Monday. Report binary and multi-class accuracy.
+1. **A100-only → Blackwell:** Train on A100 data (Weeks 3–5), test on Blackwell data (cloud B100/B200 from Week 7 + local RTX 5080 from Monday). Report binary and multi-class accuracy.
 2. **A100-only → 4050:** Train on A100 data, test on 4050 laptop data from Tuesday. Report same.
-3. **Leave-one-GPU-out:** For each of the 3 GPUs, train on the other two, test on the held-out GPU. 3×2 accuracy matrix.
-4. **Pooled classifier:** Train on all 3 GPUs combined, report accuracy via grouped cross-validation (group = GPU type).
+3. **Leave-one-architecture-out:** For each architecture generation (Ampere, Hopper, Blackwell, Ada Lovelace), train on the others, test on the held-out. Accuracy matrix.
+4. **Pooled classifier:** Train on all GPUs combined, report accuracy via grouped cross-validation (group = GPU architecture).
 5. **Feature stability heatmap:** For top-20 features by importance, compute mean ± std per workload on each GPU. Which features are architecture-invariant? Which break?
+6. **WAVE vs. Tier 1 comparison:** Train a parallel classifier using WAVE's 9 Nsight Compute PMC metrics (Tier 3) as features, now possible with unrestricted local Nsight access on RTX 5080. Compare against the Tier 1 NVML classifier on accuracy and F1. Report the accuracy/overhead tradeoff.
 
 **Tasks — Adversarial robustness evaluation:**
-6. Evaluate the A100-trained classifier on Wednesday's adversarial runs: detection rate per strategy
-7. Evaluate Tier 5 wall-power classifier: train a simple model on clean wall-power data, test on adversarial wall-power data
-8. **Key result for paper:** detection rate table (5 strategies × {Tier 1, Tier 5}), plus cost-of-evasion columns
+7. Evaluate the A100-trained classifier on Wednesday's adversarial runs: detection rate per strategy
+8. Evaluate Tier 5 wall-power classifier: train a simple model on clean wall-power data, test on adversarial wall-power data
+9. **Key result for paper:** detection rate table (5 strategies × {Tier 1, Tier 5}), plus cost-of-evasion columns
 
 **Tasks — Generate paper figures:**
 - Cross-GPU accuracy comparison bar chart (Figure for Section 5)
@@ -407,8 +388,8 @@ No new data collection. This is analysis day — the results feed directly into 
 
 By end of Friday April 10:
 - [ ] **~84 new parquet files** across 2 local GPUs (42 per GPU), covering all 14 workload types × 3 reps
-- [ ] **15 adversarial parquet files** on 5070 Ti with simultaneous Tier 1 + Tier 5 collection
-- [ ] **Cross-GPU generalization table** (3 architectures: A100, 5070 Ti, 4050 Laptop) — the paper's central result
+- [ ] **15 adversarial parquet files** on RTX 5080 with simultaneous Tier 1 + Tier 5 collection
+- [ ] **Cross-GPU generalization table** (3 architecture generations: Ampere/A100, Hopper/H100, Blackwell/B100/B200/RTX 5080 + Ada Lovelace/4050 Laptop) — the paper's central result
 - [ ] **Adversarial robustness table** (5 strategies × Tier 1 + Tier 5 detection rate + cost-of-evasion)
 - [ ] **Wall-power vs. software-power comparison** showing Tier 5 evasion resistance
 - [ ] **Paper Results section** first draft complete with figures
@@ -434,7 +415,7 @@ By end of Friday April 10:
 - **Tiered monitoring proposal:** always-on Tier 1 NVML as low-cost continuous filter; triggered Tier 2/3 sampling for flagged sessions; physical side-channel (wall power) as tamper-resistant ground truth
 - **Must-have metrics:** instruction type counters, cumulative FLOP counters, memory allocation patterns
 - **Should-have:** power draw time series, SM utilization, PCIe/NVLink volumes
-- **Physical side-channel recommendation:** grounded in empirical Tier 5 data from local RTX 5070 Ti showing wall-power signatures that resist software spoofing
+- **Physical side-channel recommendation:** grounded in empirical Tier 5 data from local RTX 5080 showing wall-power signatures that resist software spoofing
 - For each metric: cite experimental evidence, evasion difficulty, recommended sampling rate, hardware vs. firmware implementation
 - Address privacy, tamper resistance, false positive considerations
 
@@ -475,7 +456,7 @@ By end of Friday April 10:
   1. Introduction and research questions -- frame contributions explicitly relative to WAVE and Differential Architecture
   2. Literature review (Deliverable 1) -- WAVE, Differential Architecture, prior work; what each establishes and what gap we fill
   3. Workload characterization (Deliverable 2) -- cite Differential Architecture for bottleneck analysis; contribute training/inference distinction and temporal signatures
-  4. Experimental setup -- three GPU architectures (A100, H100, RTX 5070 Ti), cloud + local, Tiers 1-5
+  4. Experimental setup -- three GPU architecture generations (Ampere, Hopper, Blackwell) across cloud (A100, H100, B100/B200) + local (RTX 5080), Tiers 1-5
   5. Classification results (Deliverable 3) -- Tier 1 vs. Tier 3 accuracy/overhead tradeoff; cross-GPU generalization across 3 architectures
   6. Signal comparison table (Deliverable 4)
   7. Adversarial testing results -- 5 strategies x 3 tiers (Tier 1 NVML, Tier 3 Nsight, Tier 5 wall power), two rounds of iteration
@@ -494,7 +475,7 @@ By end of Friday April 10:
 - [ ] Signal comparison table/chart
 - [ ] HEM telemetry design proposal (with physical side-channel empirical grounding)
 - [ ] Classifier code repository with README and demo
-- [ ] Collected dataset with documentation (3 GPU architectures: A100, H100, RTX 5070 Ti)
+- [ ] Collected dataset with documentation (3 GPU architecture generations: A100, H100, B100/B200, RTX 5080)
 - [ ] Presentation slides
 - [ ] Revised ISCA paper draft
 - [ ] TODO (repo cleanup): Remove PDFs from `literature/` and replace with a `literature/bibliography.md` containing full citations and links.
@@ -510,12 +491,11 @@ By end of Friday April 10:
 
 | Risk | Mitigation |
 |------|-----------|
-| RTX 5070 Ti incompatible with HP Z640 (power connectors, BIOS, PCIe) | Test immediately upon receipt; Z640 925W PSU should handle 300W GPU; worst case, purchase a different workstation with remaining grant funds |
-| CPU bottleneck (Haswell-EP E5-2640 v3 is 10+ years old) | Use small datasets (CIFAR-10, SST-2, WikiText-2) that fit in GPU memory; pre-load data; CPU bottleneck affects throughput but not telemetry signatures, which is what we're measuring |
+| Loaned desktop must be returned after 3 weeks | Prioritize all local-hardware experiments (cross-GPU, adversarial, Tier 5) during Weeks 8–10; analysis and paper writing can continue without local hardware |
 | 16GB VRAM insufficient for some workloads | All current workloads (BERT-base, GPT-2 124M, ResNet) fit in 16GB; reduce batch size if needed; monitor with `nvidia-smi` |
 | Cloud budget exhaustion | Monitor spending weekly; prioritize key workloads; use spot instances; most cloud work already complete (Weeks 3-5) |
 | Cloud platform blocks mining software | Use benchmark mode or custom CUDA kernels mimicking mining patterns |
-| Nsight Compute unavailable on cloud host | Now mitigated: unrestricted Nsight access on local RTX 5070 Ti |
+| Nsight Compute unavailable on cloud host | Now mitigated: unrestricted Nsight access on local RTX 5080 |
 | Adversarial strategies too effective | This is a valid research finding -- document fragility and recommend hardened metrics; test wall-power side channel as evasion-resistant fallback |
 | Insufficient data for robust classifier | Three GPU architectures now available; augment with varied hyperparameters; use smaller windows for more samples |
 
