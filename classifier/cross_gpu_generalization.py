@@ -51,6 +51,10 @@ def identify_gpu_type(gpu_name: str) -> str:
         return "H100_NVL"
     if "H100" in gpu_name:
         return "H100_80GB"
+    if "5080" in gpu_name:
+        return "RTX_5080"
+    if "4050" in gpu_name:
+        return "RTX_4050"
     return "unknown"
 
 
