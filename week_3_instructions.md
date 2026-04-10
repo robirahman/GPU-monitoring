@@ -4,15 +4,16 @@
 
 Week 3 is the main data collection campaign. The goal is **30+ labeled workload runs** on a cloud A100 covering all workload categories, with Tier 1 + Tier 2 metrics for every run and Tier 3 (Nsight Compute) profiles for at least 1 run per workload type.
 
-### What was completed in Week 2 (on RTX 5080)
+### What was completed in Week 2 (on cloud RTX 5080)
 
 - Telemetry pipeline built and validated (`scripts/collect_telemetry.py`, `scripts/run_workload.py`)
 - Tier 1 (pynvml) collection working: 15 metrics at 1 Hz
 - Tier 3 NCU script written and ready (`scripts/collect_ncu_metrics.py`)
-- 12 Tier 1 runs collected on RTX 5080 (3 runs each: idle, ResNet-18 FP32, ResNet-18 AMP, MLP)
+- 12 Tier 1 runs collected on a cloud RTX 5080 instance (3 runs each: idle, ResNet-18 FP32, ResNet-18 AMP, MLP)
 - DCGM installed and tested; profiling fields confirmed to require data-center GPUs
+- **Note:** These cloud RTX 5080 results will be validated against a local RTX 5080 desktop (loaned starting Week 8) to compare cloud vs. local telemetry on identical GPU hardware.
 
-### What RTX 5080 could NOT do (and why you need a data-center GPU)
+### What cloud RTX 5080 could NOT do (and why you need a data-center GPU)
 
 | Feature | RTX 5080 limitation | A100/H100 capability |
 |---------|---------------------|----------------------|

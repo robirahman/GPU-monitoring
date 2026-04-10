@@ -24,26 +24,25 @@ Neither paper addresses ML *training* workloads. Neither paper addresses an adve
 
 ## Key Changes to the Plan
 
-### Hardware Grant Update (March 2026)
+### Local Hardware Update (April 2026)
 
-**Hardware grant approved and hardware purchased.** The original plan deferred local hardware to "if grant approved." The grant has been approved and the following equipment has been ordered:
+**Desktop with RTX 5080 loaned for 3 weeks from another researcher.** The original plan deferred local hardware to "if grant approved." A desktop with an RTX 5080 has been loaned starting Week 8, providing local Blackwell-architecture GPU access for cross-GPU and adversarial experiments.
 
-| Item | Cost | Notes |
-|------|------|-------|
-| ASUS PRIME RTX 5070 Ti OC 16GB GDDR7 | $1,099 | Blackwell architecture — 3rd GPU arch alongside cloud A100 (Ampere) and H100 (Hopper) |
-| HP Z640 Tower (Xeon E5-2640 v3, 32GB DDR4, 925W PSU) | $533 | Refurbished; PCIe 3.0 x16 slots; 925W PSU handles 300W GPU |
-| Kill-A-Watt P4400 + Shelly Plus Plug US | ~$55 | Manual + automated wall-power measurement |
-| **Total** | **~$1,687** | |
+| Item | Notes |
+|------|-------|
+| NVIDIA GeForce RTX 5080, 16GB GDDR7 | Blackwell architecture — complements cloud B100/B200; enables Tier 5 physical side channels |
+| Desktop (Intel Core Ultra 9 285K, 32GB RAM, 2TB NVMe) | Loaned; PCIe 5.0 x16; Windows 11 |
+| Kill-A-Watt P4400 + Shelly Plus Plug US | ~$55 — manual + automated wall-power measurement |
 
-**What this enables (Weeks 6+):**
-- Cross-architecture generalization: Ampere (A100) vs Hopper (H100) vs **Blackwell (RTX 5070 Ti)** — three GPU generations
+**What this enables (Weeks 8+):**
+- Cross-architecture generalization: Ampere (A100) vs Hopper (H100) vs **Blackwell (cloud B100/B200 + local RTX 5080)** — three GPU generations
 - FFmpeg NVENC video encoding workload (A100/H100 lack NVENC hardware encoder)
 - GROMACS with proper GPU build (blocked on Vast.ai)
-- Unrestricted Nsight Compute (Tier 3) and DCGM (Tier 2) access — blocked by virtualization on cloud
+- Unrestricted Nsight Compute (Tier 3) access on local hardware — blocked by virtualization on cloud. Note: DCGM Tier 2 profiling fields are unavailable on consumer GPUs (RTX 5080) regardless of OS; Tier 2 data from cloud data-center GPUs only.
 - Tier 5 physical side channels: automated wall-power logging via Shelly Plug REST API (~1 Hz)
 - Adversarial workloads with simultaneous Tier 1 + Tier 3 + Tier 5 measurement
 
-**Timeline:** Hardware ships and is set up during Week 6 (1 week). Local experiments begin Week 7. Project extended to 11 weeks to accommodate.
+**Timeline:** Loaned desktop available starting Week 8. Local experiments begin immediately. Project extended to 11 weeks to accommodate.
 
 ### TAIGR Workshop Paper (Added March 2026)
 
@@ -71,14 +70,14 @@ Neither paper addresses ML *training* workloads. Neither paper addresses an adve
 | Area | Before | After |
 |------|--------|-------|
 | Weeks 1–5 | Split between local + cloud | **Cloud-only** (Vast.ai A100 + H100). Full $1,000 cloud budget. |
-| Week 6 | Classifier refinement | **Hardware setup + validation** (RTX 5070 Ti in HP Z640) + WAVE vs Tier 1 comparison + **paper scaffold** |
-| Week 7 | Adversarial workloads | **Cross-GPU generalization** (3 architectures) + classifier refinement + fill data gaps (NVENC, GROMACS) + **paper results draft** |
-| Week 8 | Adversarial robustness | **Adversarial workloads** (5 strategies) + **Tier 5 physical side channels** + **paper ~80% complete** |
+| Week 6 | Classifier refinement | **Paper scaffold** + cloud B100/B200 Blackwell data collection begins |
+| Week 7 | Adversarial workloads | **Cloud Blackwell experiments** + preliminary cross-GPU analysis + **paper results draft** |
+| Week 8 | Adversarial robustness | **Local desktop setup (loaned RTX 5080)** + local/laptop data collection + **adversarial workloads** (5 strategies) + **Tier 5 physical side channels** + **paper ~80% complete** |
 | Week 9 | HEM proposal | **Adversarial robustness testing** + HEM proposal + **TAIGR paper finalized and submitted (April 24)** |
 | Week 10 | Report | Code cleanup + expand paper into full technical report |
 | Week 11 (new) | — | **Final report + deliverables** |
-| Tier 5 | Deferred/future work | **Empirically grounded** with Kill-A-Watt + Shelly Plug on local RTX 5070 Ti |
-| Cross-GPU | A100 vs 3090 (if grant) | **A100 vs H100 vs RTX 5070 Ti** (3 architectures, 3 GPU generations) |
+| Tier 5 | Deferred/future work | **Empirically grounded** with Kill-A-Watt + Shelly Plug on local RTX 5080 |
+| Cross-GPU | A100 vs 3090 (if grant) | **A100 vs H100 vs B100/B200/RTX 5080** (3 architecture generations: Ampere, Hopper, Blackwell) |
 | ISCA paper | Limited to cloud data | **Revised** with cross-GPU generalization and adversarial robustness across 3 tiers |
 | Publication | No external submission | **TAIGR @ ICML 2026 workshop paper** (deadline April 24) |
 | Week 1 reading list | 4 papers | +2 papers (WAVE, Differential Architecture) |
