@@ -59,15 +59,18 @@ def main():
     mass = torch.ones(args.particles, device=device, dtype=torch.float32) / args.particles
 
     wall_start = time.time()
+    last_print = wall_start
     steps = 0
 
     while (time.time() - wall_start) < args.duration and not stopped:
         pos, vel = nbody_step(pos, vel, mass, dt=args.dt)
         torch.cuda.synchronize()
         steps += 1
-        if steps % 100 == 0:
-            elapsed = time.time() - wall_start
+        now = time.time()
+        if now - last_print >= 30:
+            elapsed = now - wall_start
             print(f"  Step {steps}, {elapsed:.0f}s elapsed")
+            last_print = now
 
     wall_time = time.time() - wall_start
     print(

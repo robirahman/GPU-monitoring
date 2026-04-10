@@ -38,6 +38,7 @@ def main():
     x = torch.randn(args.batch, args.size, args.size, dtype=torch.float32, device=device)
 
     wall_start = time.time()
+    last_print = wall_start
     iterations = 0
 
     while (time.time() - wall_start) < args.duration and not stopped:
@@ -47,9 +48,11 @@ def main():
         z = torch.fft.ifft2(y)
         torch.cuda.synchronize()
         iterations += 1
-        if iterations % 50 == 0:
-            elapsed = time.time() - wall_start
+        now = time.time()
+        if now - last_print >= 30:
+            elapsed = now - wall_start
             print(f"  {iterations} iters, {elapsed:.0f}s elapsed")
+            last_print = now
 
     wall_time = time.time() - wall_start
     total_ffts = iterations * args.batch * 2  # forward + inverse
