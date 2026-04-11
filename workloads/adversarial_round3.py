@@ -159,6 +159,8 @@ def strategy_l_diluted(args, device):
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
                 del output, loss
+                # Prevent GPU memory fragmentation from mode switching
+                torch.cuda.empty_cache()
                 train_batches += 1
             else:
                 # Inference batch: forward only
