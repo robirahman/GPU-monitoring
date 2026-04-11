@@ -368,6 +368,31 @@ WORKLOAD_REGISTRY = {
         "description": "Strategy G: Training at 100W power limit with locked low clocks",
         "default_timeout": 360,
     },
+    # --- Round 2 Adversarial (counter-hardened classifier) ---
+    "adversarial_H_mimicry_mining": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+                    "--strategy", "H", "--duration", "300", "--target", "mining"],
+        "description": "Strategy H: Training disguised as mining via feedback-controlled mimicry",
+        "default_timeout": 360,
+    },
+    "adversarial_H_mimicry_cufft": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+                    "--strategy", "H", "--duration", "300", "--target", "cufft"],
+        "description": "Strategy H: Training disguised as cuFFT via feedback-controlled mimicry",
+        "default_timeout": 360,
+    },
+    "adversarial_I_stochastic_30": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+                    "--strategy", "I", "--duration", "300", "--train-frac", "0.3"],
+        "description": "Strategy I: Stochastic interleaving (30% training, random phases)",
+        "default_timeout": 360,
+    },
+    "adversarial_J_pid_75": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+                    "--strategy", "J", "--duration", "300", "--target-util", "75"],
+        "description": "Strategy J: PID-controlled util-matched training (target 75%)",
+        "default_timeout": 360,
+    },
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [
