@@ -62,6 +62,10 @@ TRAINING_LABELS = {
     "adversarial_E_memory_minimal",
     "adversarial_F_interleave_30", "adversarial_F_interleave_50",
     "adversarial_G_clock_throttled",
+    # Round 2 adversarial (counter-hardened classifier)
+    "adversarial_H_mimicry_mining", "adversarial_H_mimicry_cufft",
+    "adversarial_I_stochastic_30",
+    "adversarial_J_pid_75",
 }
 
 INFERENCE_LABELS = {
