@@ -66,6 +66,10 @@ TRAINING_LABELS = {
     "adversarial_H_mimicry_mining", "adversarial_H_mimicry_cufft",
     "adversarial_I_stochastic_30",
     "adversarial_J_pid_75",
+    # Round 3 adversarial (training-as-inference)
+    "adversarial_K_online_learning",
+    "adversarial_L_diluted_2", "adversarial_L_diluted_5",
+    "adversarial_L_diluted_10", "adversarial_L_diluted_20",
 }
 
 INFERENCE_LABELS = {
