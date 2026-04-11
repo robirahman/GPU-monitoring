@@ -393,6 +393,37 @@ WORKLOAD_REGISTRY = {
         "description": "Strategy J: PID-controlled util-matched training (target 75%)",
         "default_timeout": 360,
     },
+    # --- Round 3 Adversarial (strongest possible: training-as-inference) ---
+    "adversarial_K_online_learning": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "K", "--duration", "300", "--batch-size", "256"],
+        "description": "Strategy K: Online learning — inference + backward pass per batch",
+        "default_timeout": 360,
+    },
+    "adversarial_L_diluted_2": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--duration", "300", "--dilution", "2"],
+        "description": "Strategy L: Diluted training — backward pass on 1/2 batches",
+        "default_timeout": 360,
+    },
+    "adversarial_L_diluted_5": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--duration", "300", "--dilution", "5"],
+        "description": "Strategy L: Diluted training — backward pass on 1/5 batches",
+        "default_timeout": 360,
+    },
+    "adversarial_L_diluted_10": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--duration", "300", "--dilution", "10"],
+        "description": "Strategy L: Diluted training — backward pass on 1/10 batches",
+        "default_timeout": 360,
+    },
+    "adversarial_L_diluted_20": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--duration", "300", "--dilution", "20"],
+        "description": "Strategy L: Diluted training — backward pass on 1/20 batches",
+        "default_timeout": 360,
+    },
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [
