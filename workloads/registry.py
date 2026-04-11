@@ -324,6 +324,50 @@ WORKLOAD_REGISTRY = {
         "description": "Whisper large-v3-turbo audio transcription (synthetic audio)",
         "default_timeout": 420,
     },
+    # --- Advanced Adversarial ---
+    "adversarial_E_memory_minimal": {
+        "command": [
+            sys.executable,
+            os.path.join(_WORKLOADS_DIR, "adversarial_advanced.py"),
+            "--strategy", "E",
+            "--duration", "300",
+        ],
+        "description": "Strategy E: Gradient checkpointing + tiny batch to minimize memory",
+        "default_timeout": 360,
+    },
+    "adversarial_F_interleave_30": {
+        "command": [
+            sys.executable,
+            os.path.join(_WORKLOADS_DIR, "adversarial_advanced.py"),
+            "--strategy", "F",
+            "--duration", "300",
+            "--train-frac", "0.3",
+        ],
+        "description": "Strategy F: 30% training interleaved with mining/cuFFT",
+        "default_timeout": 360,
+    },
+    "adversarial_F_interleave_50": {
+        "command": [
+            sys.executable,
+            os.path.join(_WORKLOADS_DIR, "adversarial_advanced.py"),
+            "--strategy", "F",
+            "--duration", "300",
+            "--train-frac", "0.5",
+        ],
+        "description": "Strategy F: 50% training interleaved with mining/cuFFT",
+        "default_timeout": 360,
+    },
+    "adversarial_G_clock_throttled": {
+        "command": [
+            sys.executable,
+            os.path.join(_WORKLOADS_DIR, "adversarial_advanced.py"),
+            "--strategy", "G",
+            "--duration", "300",
+            "--power-limit", "100",
+        ],
+        "description": "Strategy G: Training at 100W power limit with locked low clocks",
+        "default_timeout": 360,
+    },
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [

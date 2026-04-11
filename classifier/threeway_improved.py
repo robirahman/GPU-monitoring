@@ -58,6 +58,10 @@ TRAINING_LABELS = {
     "adversarial_composite_60", "adversarial_composite_70",
     "adversarial_composite_80", "adversarial_composite_90",
     "adversarial_composite_95",
+    # Advanced evasion strategies (still training, just better disguised)
+    "adversarial_E_memory_minimal",
+    "adversarial_F_interleave_30", "adversarial_F_interleave_50",
+    "adversarial_G_clock_throttled",
 }
 
 INFERENCE_LABELS = {
