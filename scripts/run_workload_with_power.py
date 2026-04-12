@@ -3,13 +3,16 @@
 
 Wraps run_workload.py to simultaneously collect:
   - Tier 1 GPU telemetry (pynvml via TelemetryCollector)
-  - Tier 5 wall power (Shelly Plus Plug US via ShellyPowerLogger)
+  - Tier 5 wall power (Shelly Plus Plug US or Tapo P115 smart plug)
 
 Both outputs share the same run_id so they can be joined by timestamp.
 
-Usage:
+Usage (Shelly):
     python run_workload_with_power.py --shelly-ip 192.168.1.100 --workload idle --no-dcgm
-    python run_workload_with_power.py --shelly-ip 192.168.1.100 --workload pytorch_resnet_cifar10 --no-dcgm
+
+Usage (Tapo P115 — reads credentials from tplink.env):
+    python run_workload_with_power.py --tapo --workload idle --no-dcgm
+    python run_workload_with_power.py --tapo --tapo-ip 192.168.0.154 --workload idle --no-dcgm
 """
 
 import argparse
@@ -27,6 +30,7 @@ sys.path.insert(0, _REPO_ROOT)
 
 from scripts.collect_telemetry import TelemetryCollector
 from scripts.shelly_power_logger import ShellyPowerLogger
+from scripts.tapo_power_logger import TapoPowerLogger, _load_env as _load_tapo_env
 from workloads.registry import get_workload, list_workloads, WORKLOAD_REGISTRY
 
 log = logging.getLogger("spar.launcher_power")
@@ -43,7 +47,6 @@ def main():
         description="Run workload with simultaneous GPU telemetry + wall-power logging.",
     )
     parser.add_argument("--workload", type=str, required=True, help="Workload label from registry")
-    parser.add_argument("--shelly-ip", type=str, required=True, help="Shelly Plus Plug US IP address")
     parser.add_argument("--gpu-index", type=int, default=0, help="GPU device index")
     parser.add_argument("--output-dir", type=str, default="data/", help="Output directory")
     parser.add_argument("--interval", type=float, default=1.0, help="Telemetry polling interval (seconds)")
@@ -51,6 +54,13 @@ def main():
     parser.add_argument("--timeout", type=int, default=None, help="Kill workload after N seconds")
     parser.add_argument("--ncu", action="store_true", help="Also run Nsight Compute Tier 3")
     parser.add_argument("--list", action="store_true", help="List available workloads and exit")
+
+    # Power plug options (pick one)
+    plug_group = parser.add_mutually_exclusive_group()
+    plug_group.add_argument("--shelly-ip", type=str, default=None, help="Shelly Plus Plug US IP address")
+    plug_group.add_argument("--tapo", action="store_true", help="Use Tapo P115 plug (credentials from tplink.env)")
+    parser.add_argument("--tapo-ip", type=str, default=None, help="Override Tapo plug IP (default: from tplink.env)")
+    parser.add_argument("--tapo-env", type=str, default=None, help="Path to tplink.env credentials file")
 
     args, extra_cmd = parser.parse_known_args()
 
@@ -92,19 +102,41 @@ def main():
         enable_dcgm=not args.no_dcgm,
     )
 
-    # Initialize Shelly power logger
-    power_logger = ShellyPowerLogger(
-        shelly_ip=args.shelly_ip,
-        interval_sec=args.interval,
-        run_id=run_id,
-        workload_label=workload_label,
-    )
+    # Initialize wall-power logger (Shelly or Tapo)
+    power_logger = None
+    plug_name = None
 
-    # Test Shelly connection
-    print(f"Testing Shelly connection at {args.shelly_ip}...")
-    if not power_logger.test_connection():
-        print("WARNING: Shelly plug not reachable. Proceeding with GPU telemetry only.")
-        power_logger = None
+    if args.shelly_ip:
+        plug_name = f"Shelly at {args.shelly_ip}"
+        power_logger = ShellyPowerLogger(
+            shelly_ip=args.shelly_ip,
+            interval_sec=args.interval,
+            run_id=run_id,
+            workload_label=workload_label,
+        )
+    elif args.tapo:
+        tapo_env = _load_tapo_env(args.tapo_env)
+        tapo_ip = args.tapo_ip or tapo_env.get("local_ip")
+        tapo_email = tapo_env.get("username")
+        tapo_password = tapo_env.get("password")
+        if not all([tapo_ip, tapo_email, tapo_password]):
+            print("ERROR: Tapo credentials missing. Check tplink.env or provide --tapo-ip.", file=sys.stderr)
+            sys.exit(1)
+        plug_name = f"Tapo P115 at {tapo_ip}"
+        power_logger = TapoPowerLogger(
+            tapo_ip=tapo_ip,
+            tapo_email=tapo_email,
+            tapo_password=tapo_password,
+            interval_sec=args.interval,
+            run_id=run_id,
+            workload_label=workload_label,
+        )
+
+    if power_logger is not None:
+        print(f"Testing {plug_name} connection...")
+        if not power_logger.test_connection():
+            print(f"WARNING: {plug_name} not reachable. Proceeding with GPU telemetry only.")
+            power_logger = None
 
     # Generate output filenames
     ext = "parquet"
