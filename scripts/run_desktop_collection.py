@@ -5,11 +5,12 @@ Runs all workloads at desktop-scale parameters with Tier 1 NVML telemetry.
 Progress is tracked in a JSON file — if the process is interrupted (e.g. by
 Windows Update), rerun the script and it will resume where it left off.
 
-Optional Tier 5 wall-power logging via Shelly Plus Plug US.
+Optional Tier 5 wall-power logging via Shelly Plus Plug US or Tapo P115.
 
 Usage:
-    python scripts/run_desktop_collection.py                          # full run, no Shelly
-    python scripts/run_desktop_collection.py --shelly-ip 192.168.1.X  # with wall power
+    python scripts/run_desktop_collection.py                          # full run, no power
+    python scripts/run_desktop_collection.py --shelly-ip 192.168.1.X  # with Shelly wall power
+    python scripts/run_desktop_collection.py --tapo                   # with Tapo P115 wall power
     python scripts/run_desktop_collection.py --reps 1                 # single-rep test
     python scripts/run_desktop_collection.py --dry-run                # preview workload list
     python scripts/run_desktop_collection.py --reset                  # clear progress, start fresh
@@ -71,10 +72,27 @@ WORKLOADS = [
     # ── Other ─────────────────────────────────────────────────────────
     # ffmpeg_nvenc excluded: requires ffmpeg installation
 
-    # ── Adversarial Training ──────────────────────────────────────────
+    # ── Adversarial Round 1 ──────────────────────────────────────────
     _wl("adversarial_A_util_modulation", 360),
     _wl("adversarial_B_low_util", 360),
     _wl("adversarial_D_temporal_disruption", 360),
+    _wl("adversarial_E_memory_minimal", 360),
+    _wl("adversarial_F_interleave_30", 360),
+    _wl("adversarial_F_interleave_50", 360),
+    _wl("adversarial_G_clock_throttled", 360),
+
+    # ── Adversarial Round 2 ──────────────────────────────────────────
+    _wl("adversarial_H_mimicry_mining", 360),
+    _wl("adversarial_H_mimicry_cufft", 360),
+    _wl("adversarial_I_stochastic_30", 360),
+    _wl("adversarial_J_pid_75", 360),
+
+    # ── Adversarial Round 3 ──────────────────────────────────────────
+    _wl("adversarial_K_online_learning", 360),
+    _wl("adversarial_L_diluted_20", 360),
+    _wl("adversarial_L_diluted_10", 360),
+    _wl("adversarial_L_diluted_5", 360),
+    _wl("adversarial_L_diluted_2", 360),  # crash-prone, run last
 
     # ── Adversarial Composite Sweep ───────────────────────────────────
     _wl("adversarial_composite_00", 180),
@@ -110,17 +128,22 @@ def save_progress(completed: set, failed: list):
 # ── Run a Single Workload ─────────────────────────────────────────────────
 
 def run_one(wl: dict, rep: int, env: dict, cooldown: int,
-            shelly_ip: str | None = None) -> tuple[bool, str]:
+            shelly_ip: str | None = None,
+            tapo: bool = False) -> tuple[bool, str]:
     """Run a single workload via run_workload.py. Returns (success, message)."""
 
     label = wl["label"]
     timeout = wl["timeout"]
 
-    # Choose launcher: with or without Shelly power logging
-    if shelly_ip:
+    # Choose launcher: with or without wall-power logging
+    if shelly_ip or tapo:
         launcher = RUN_WORKLOAD_POWER
         base = [PY, launcher, "--workload", label, "--no-dcgm",
-                "--timeout", str(timeout), "--shelly-ip", shelly_ip]
+                "--timeout", str(timeout)]
+        if shelly_ip:
+            base += ["--shelly-ip", shelly_ip]
+        elif tapo:
+            base += ["--tapo"]
     else:
         launcher = RUN_WORKLOAD
         base = [PY, launcher, "--workload", label, "--no-dcgm",
@@ -131,9 +154,10 @@ def run_one(wl: dict, rep: int, env: dict, cooldown: int,
     else:
         cmd = base
 
+    power = "tapo" if tapo else ("shelly" if shelly_ip else "no")
     print(f"\n{'='*60}")
     print(f"  {label}  (rep {rep})")
-    print(f"  timeout={timeout}s  shelly={'yes' if shelly_ip else 'no'}")
+    print(f"  timeout={timeout}s  wall_power={power}")
     print(f"{'='*60}")
 
     start = time.time()
@@ -178,6 +202,8 @@ def main():
                         help="Seconds between runs (default: 15)")
     parser.add_argument("--shelly-ip", type=str, default=None,
                         help="Shelly Plus Plug IP for Tier 5 wall-power logging")
+    parser.add_argument("--tapo", action="store_true",
+                        help="Use Tapo P115 for Tier 5 wall-power logging")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print workload list and exit")
     parser.add_argument("--reset", action="store_true",
@@ -244,7 +270,8 @@ def main():
     print(f"  Already done:  {len(completed)}")
     print(f"  Remaining:     {remaining}")
     print(f"  Cooldown:      {args.cooldown}s")
-    print(f"  Shelly:        {args.shelly_ip or 'disabled'}")
+    power_mode = "Tapo P115" if args.tapo else (args.shelly_ip if args.shelly_ip else "disabled")
+    print(f"  Wall power:    {power_mode}")
     print(f"  Started:       {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"  Progress file: {PROGRESS_FILE}")
     print(f"{'='*60}")
@@ -265,7 +292,8 @@ def main():
                   f"ETA {timedelta(seconds=int(eta))}")
 
             success, msg = run_one(wl, rep, env, args.cooldown,
-                                   shelly_ip=args.shelly_ip)
+                                   shelly_ip=args.shelly_ip,
+                                   tapo=args.tapo)
 
             if success:
                 completed.add((wl["label"], rep))
