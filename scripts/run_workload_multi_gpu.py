@@ -53,13 +53,13 @@ def run_multi_gpu(args, workload_cmd):
     for i in range(num_gpus):
         c = TelemetryCollector(
             gpu_index=i,
-            interval=args.interval,
-            label=args.workload,
+            interval_sec=args.interval,
+            workload_label=args.workload,
             enable_dcgm=not args.no_dcgm,
         )
         c.start()
         collectors.append(c)
-        log.info(f"  GPU {i}: telemetry started ({c.gpu_name})")
+        log.info(f"  GPU {i}: telemetry started ({c.metadata.gpu_name})")
 
     # Brief baseline
     time.sleep(2)
@@ -89,7 +89,7 @@ def run_multi_gpu(args, workload_cmd):
     # Stop telemetry and save
     for i, c in enumerate(collectors):
         c.stop()
-        fname = generate_filename(args.workload, c.gpu_name, i, run_id)
+        fname = generate_filename(args.workload, c.metadata.gpu_name, i, run_id)
         fpath = str(output_dir / fname)
         c.save(fpath)
         rows = len(c.to_dataframe()) if hasattr(c, 'to_dataframe') else '?'
@@ -123,8 +123,8 @@ def run_parallel_single_gpu(args, workload_labels):
 
         c = TelemetryCollector(
             gpu_index=gpu_idx,
-            interval=args.interval,
-            label=label,
+            interval_sec=args.interval,
+            workload_label=label,
             enable_dcgm=not args.no_dcgm,
         )
         c.start()
@@ -153,7 +153,7 @@ def run_parallel_single_gpu(args, workload_labels):
         time.sleep(1)
         c.stop()
 
-        fname = generate_filename(label, c.gpu_name, gpu_idx, gpu_run_id)
+        fname = generate_filename(label, c.metadata.gpu_name, gpu_idx, gpu_run_id)
         fpath = str(output_dir / fname)
         c.save(fpath)
         log.info(f"  GPU {gpu_idx}: {label} {status} -> {fname}")
