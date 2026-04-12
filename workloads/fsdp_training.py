@@ -39,7 +39,7 @@ MODEL_CONFIGS = {
     "70b": (8192, 80, 64, 28672, 32000),   # ~70B
 }
 
-BATCH_DEFAULTS = {"1b": 8, "7b": 4, "13b": 2, "30b": 2, "70b": 1}
+BATCH_DEFAULTS = {"1b": 8, "7b": 4, "13b": 2, "30b": 1, "70b": 1}
 
 
 # ── Model definition ────────────────────────────────────────────────────────
@@ -118,14 +118,17 @@ def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False):
 
     offload = CPUOffload(offload_params=True) if cpu_offload else None
 
+    # When CPU offloading, materialize params on CPU; FSDP moves them as needed
+    init_device = torch.device("cpu") if cpu_offload else device
+
     fsdp_model = FSDP(
         model,
         sharding_strategy=ShardingStrategy.FULL_SHARD,
         mixed_precision=mp_policy,
         auto_wrap_policy=wrap_policy,
         cpu_offload=offload,
-        device_id=device,
-        param_init_fn=functools.partial(param_init_fn, device=device),
+        device_id=device if not cpu_offload else None,
+        param_init_fn=functools.partial(param_init_fn, device=init_device),
         limit_all_gathers=True,
     )
 
@@ -203,7 +206,14 @@ def main():
         cpu_offload=args.cpu_offload,
     )
 
-    optimizer = torch.optim.AdamW(fsdp_model.parameters(), lr=1e-4)
+    # Use SGD for 30b+ (AdamW's 2 fp32 state tensors per param exceed 80GB/GPU).
+    # 70b needs plain SGD (no momentum) to fit in 80GB; 30b uses momentum.
+    if args.size == "70b":
+        optimizer = torch.optim.SGD(fsdp_model.parameters(), lr=1e-3)
+    elif args.size == "30b":
+        optimizer = torch.optim.SGD(fsdp_model.parameters(), lr=1e-3, momentum=0.9)
+    else:
+        optimizer = torch.optim.AdamW(fsdp_model.parameters(), lr=1e-4)
 
     if rank == 0:
         mem_gb = torch.cuda.max_memory_allocated(device) / 1e9
