@@ -563,13 +563,13 @@ can be kept low without meaningful accuracy loss.
 
 **Datacenter power & economics:**
 - Choukse et al. (2025) — Power Stabilization for AI Training Datacenters [2508.14318]
-- You, Owen, Porter & Wilson (2025) — Scaling Intelligence: Exponential Growth of AI's Power Needs (EPRI)
+- You & Owen (2025) — Scaling Intelligence: Exponential Growth of AI's Power Needs (EPRI+Epoch)
 
 **Performance modeling:**
 - Williams, Waterman & Patterson (2009) — Roofline: Visual Performance Model (CACM)
 
 **Other:**
-- Rahman (2024) — AI training costs [2405.21015]
+- Cottier, Rahman, et al. (2024) — AI training costs [2405.21015]
 - Anonymous (2026) — Differential Architecture (ISCA, under review)
 
 ---
@@ -578,9 +578,9 @@ can be kept low without meaningful accuracy loss.
 
 ### Experiments
 - [ ] More adversary-defender rounds on local hardware (Robi)
-- [ ] Datacenter adversarial experiments on H100 (Sabiha?)
+- [ ] Datacenter adversarial experiments on A100/H100/B100
 - [ ] Controlled batch-size dilution sweep (consistent batch size across all N)
-- [ ] Wall-power analysis (data collection in progress now)
+- [ ] Wall-power analysis (Robi)
 
 ### Analysis & figures
 - [ ] Generate cross-GPU heatmap (Figure 1)
