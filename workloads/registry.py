@@ -396,7 +396,7 @@ WORKLOAD_REGISTRY = {
     # --- Round 3 Adversarial (strongest possible: training-as-inference) ---
     "adversarial_K_online_learning": {
         "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
-                    "--strategy", "K", "--duration", "300", "--batch-size", "256"],
+                    "--strategy", "K", "--duration", "300", "--batch-size", "128"],
         "description": "Strategy K: Online learning — inference + backward pass per batch",
         "default_timeout": 360,
     },
@@ -435,6 +435,90 @@ WORKLOAD_REGISTRY = {
             "--duration", "300",
         ],
         "description": "FFmpeg NVENC hardware video encoding (requires ffmpeg + NVENC)",
+        "default_timeout": 360,
+    },
+    # --- DDP (Multi-GPU) Training ---
+    # Note: these use torchrun, not sys.executable. Launch via run_workload_multi_gpu.py.
+    "ddp_resnet18_cifar10": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "pytorch_training_ddp.py"),
+            "--model", "resnet18", "--duration", "300",
+        ],
+        "description": "DDP ResNet-18 training on 8 GPUs, CIFAR-10, 300s",
+        "default_timeout": 360,
+    },
+    "ddp_resnet50_cifar10": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "pytorch_training_ddp.py"),
+            "--model", "resnet50", "--duration", "300",
+        ],
+        "description": "DDP ResNet-50 training on 8 GPUs, CIFAR-10, 300s",
+        "default_timeout": 360,
+    },
+    "ddp_resnet18_cifar10_amp": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "pytorch_training_ddp.py"),
+            "--model", "resnet18", "--duration", "300", "--amp",
+        ],
+        "description": "DDP ResNet-18 AMP training on 8 GPUs, CIFAR-10, 300s",
+        "default_timeout": 360,
+    },
+    # --- DDP Adversarial ---
+    "adversarial_K_ddp": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "K", "--duration", "300",
+        ],
+        "description": "DDP online learning camouflage on 8 GPUs, 300s",
+        "default_timeout": 360,
+    },
+    "adversarial_L_ddp_5": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "L", "--dilution", "5", "--duration", "300",
+        ],
+        "description": "DDP diluted training 1/5 on 8 GPUs, 300s",
+        "default_timeout": 360,
+    },
+    "adversarial_L_ddp_10": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "L", "--dilution", "10", "--duration", "300",
+        ],
+        "description": "DDP diluted training 1/10 on 8 GPUs, 300s",
+        "default_timeout": 360,
+    },
+    "adversarial_L_ddp_stagger_5": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "L-stagger", "--dilution", "5", "--duration", "300",
+        ],
+        "description": "DDP staggered diluted training 1/5 on 8 GPUs, 300s",
+        "default_timeout": 360,
+    },
+    "adversarial_K_ddp_accum_4": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "K-accum", "--accum", "4", "--duration", "300",
+        ],
+        "description": "DDP online learning with 4-step gradient accumulation, 300s",
+        "default_timeout": 360,
+    },
+    "adversarial_K_ddp_accum_8": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "K-accum", "--accum", "8", "--duration", "300",
+        ],
+        "description": "DDP online learning with 8-step gradient accumulation, 300s",
         "default_timeout": 360,
     },
 }
