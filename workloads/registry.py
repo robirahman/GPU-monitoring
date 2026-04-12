@@ -521,6 +521,45 @@ WORKLOAD_REGISTRY = {
         "description": "DDP online learning with 8-step gradient accumulation, 300s",
         "default_timeout": 360,
     },
+    # --- FSDP (NVLink Stress) ---
+    # Model-sharded training via FSDP FULL_SHARD. Heavy AllGather/ReduceScatter
+    # on every forward/backward step. Launch via run_workload_multi_gpu.py.
+    "fsdp_7b_nvlink": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "fsdp_training.py"),
+            "--size", "7b", "--duration", "300",
+        ],
+        "description": "FSDP 6.7B transformer on 8 GPUs, NVLink stress (300s)",
+        "default_timeout": 420,
+    },
+    "fsdp_13b_nvlink": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "fsdp_training.py"),
+            "--size", "13b", "--duration", "300",
+        ],
+        "description": "FSDP 13B transformer on 8 GPUs, NVLink stress (300s)",
+        "default_timeout": 420,
+    },
+    "fsdp_30b_nvlink": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "fsdp_training.py"),
+            "--size", "30b", "--duration", "600",
+        ],
+        "description": "FSDP 30B transformer on 8 GPUs, heavy NVLink stress (600s)",
+        "default_timeout": 720,
+    },
+    "fsdp_70b_nvlink": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "fsdp_training.py"),
+            "--size", "70b", "--duration", "600",
+        ],
+        "description": "FSDP 70B transformer on 8 GPUs, maximum NVLink stress (600s)",
+        "default_timeout": 780,
+    },
 }
 
 

@@ -140,6 +140,41 @@ DDP_ADVERSARIAL = [
     },
 ]
 
+# ── Phase 4: FSDP NVLink stress workloads ───────────────────────────────────
+# Model-sharded training via FSDP FULL_SHARD. Heavy AllGather/ReduceScatter
+# on every forward/backward step — maximizes NVLink interconnect traffic.
+
+FSDP_NVLINK = [
+    {
+        "label": "fsdp_7b_nvlink",
+        "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
+                str(REPO_ROOT / "workloads" / "fsdp_training.py"),
+                "--size", "7b", "--duration", "300"],
+        "timeout": 420,
+    },
+    {
+        "label": "fsdp_13b_nvlink",
+        "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
+                str(REPO_ROOT / "workloads" / "fsdp_training.py"),
+                "--size", "13b", "--duration", "300"],
+        "timeout": 420,
+    },
+    {
+        "label": "fsdp_30b_nvlink",
+        "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
+                str(REPO_ROOT / "workloads" / "fsdp_training.py"),
+                "--size", "30b", "--duration", "600"],
+        "timeout": 720,
+    },
+    {
+        "label": "fsdp_70b_nvlink",
+        "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
+                str(REPO_ROOT / "workloads" / "fsdp_training.py"),
+                "--size", "70b", "--duration", "600"],
+        "timeout": 780,
+    },
+]
+
 
 def load_progress():
     if PROGRESS_FILE.exists():
@@ -280,7 +315,7 @@ def main():
     parser.add_argument("--reset", action="store_true")
     args = parser.parse_args()
 
-    phases = [args.phase] if args.phase else [1, 2, 3]
+    phases = [args.phase] if args.phase else [1, 2, 3, 4]
 
     if args.dry_run:
         print(f"Datacenter collection plan ({args.num_gpus} GPUs)\n")
@@ -303,6 +338,11 @@ def main():
             for entry in DDP_ADVERSARIAL:
                 print(f"  - {entry['label']} ({entry['timeout']}s)")
             print(f"  -> ~{len(DDP_ADVERSARIAL) * 6} min\n")
+        if 4 in phases:
+            print(f"Phase 4: {len(FSDP_NVLINK)} FSDP NVLink stress workloads")
+            for entry in FSDP_NVLINK:
+                print(f"  - {entry['label']} ({entry['timeout']}s)")
+            print(f"  -> ~{sum(e['timeout'] for e in FSDP_NVLINK) // 60} min\n")
         return
 
     if args.reset:
@@ -347,6 +387,14 @@ def main():
             print(f"PHASE 3: DDP Adversarial Strategies")
             print(f"{'='*60}")
             for entry in DDP_ADVERSARIAL:
+                run_multi_gpu_workload(entry, args.num_gpus, progress,
+                                       no_dcgm=args.no_dcgm)
+
+        if 4 in phases:
+            print(f"\n{'='*60}")
+            print(f"PHASE 4: FSDP NVLink Stress")
+            print(f"{'='*60}")
+            for entry in FSDP_NVLINK:
                 run_multi_gpu_workload(entry, args.num_gpus, progress,
                                        no_dcgm=args.no_dcgm)
 
