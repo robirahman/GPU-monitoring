@@ -1,6 +1,6 @@
 """
-Energy-Based Theoretical Detection Bound
-=========================================
+Energy-Based Theoretical Detection Bound + Wall-Power Correlation
+==================================================================
 
 Computes the minimum detectable training fraction based on the physics
 of GPU computation:
@@ -8,10 +8,16 @@ of GPU computation:
 - Energy consumption is proportional to FLOPS on the same hardware
 - The backward pass stores activations, increasing memory
 
+Also validates NVML power_draw_w against Tapo P115 wall-power measurements:
+- GPU power vs wall power correlation (R²)
+- System overhead (PSU + CPU + RAM)
+- Wall-power energy profiles by workload category
+
 This script:
 1. Measures energy-per-sample for inference vs training from RTX 5080 data
 2. Computes the theoretical minimum detectable training fraction
 3. Compares with empirical detection from the dilution sweep (Strategy L)
+4. Validates GPU power against wall power from Tapo P115 smart plug
 
 Usage:
     python -m classifier.energy_bound
@@ -32,6 +38,34 @@ warnings.filterwarnings("ignore")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = PROJECT_ROOT / "classifier" / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
+
+
+def load_wall_power_runs(label_pattern: str) -> list[pd.DataFrame]:
+    """Load wall-power parquets matching a label pattern."""
+    files = sorted(glob.glob(str(PROJECT_ROOT / "data" / "wall_power" / f"{label_pattern}*5080*_wall_power.parquet")))
+    runs = []
+    for f in files:
+        df = pd.read_parquet(f)
+        runs.append(df)
+    return runs
+
+
+def load_matched_pairs(label_pattern: str) -> list[tuple[pd.DataFrame, pd.DataFrame]]:
+    """Load matched GPU + wall-power parquet pairs by run_id."""
+    gpu_files = sorted(glob.glob(str(PROJECT_ROOT / "data" / f"{label_pattern}*5080*.parquet")))
+    wall_dir = PROJECT_ROOT / "data" / "wall_power"
+    pairs = []
+    for gf in gpu_files:
+        gdf = pd.read_parquet(gf)
+        if "run_id" not in gdf.columns:
+            continue
+        run_id = gdf["run_id"].iloc[0]
+        # Find matching wall-power file
+        wall_files = list(wall_dir.glob(f"{label_pattern}*{run_id[:8]}*_wall_power.parquet"))
+        if wall_files:
+            wdf = pd.read_parquet(wall_files[0])
+            pairs.append((gdf, wdf))
+    return pairs
 
 
 def load_rtx5080_runs(label_pattern: str) -> list[pd.DataFrame]:
@@ -211,6 +245,195 @@ def main():
     df_stats = pd.DataFrame(list(stats.values()))
     df_stats.to_csv(RESULTS_DIR / "energy_profiles_5080.csv", index=False)
     log.info(f"  Saved: {RESULTS_DIR / 'energy_profiles_5080.csv'}")
+
+    # ── Wall-Power Correlation Analysis ─────────────────────────────────
+    log.info(f"\n{'='*70}")
+    log.info("WALL-POWER CORRELATION ANALYSIS (Tapo P115)")
+    log.info(f"{'='*70}")
+
+    all_labels = {
+        "idle": "idle",
+        "resnet50_inference": "resnet50_inference",
+        "pytorch_resnet_cifar10": "pytorch_resnet_cifar10",
+        "pytorch_resnet_cifar10_amp": "pytorch_resnet_cifar10_amp",
+        "pytorch_mlp_cifar10": "pytorch_mlp_cifar10",
+        "gpt2_wikitext2": "gpt2_wikitext2",
+        "gpt2_wikitext2_amp": "gpt2_wikitext2_amp",
+        "bert_sst2": "bert_sst2",
+        "bert_sst2_amp": "bert_sst2_amp",
+        "cufft_benchmark": "cufft_benchmark",
+        "nbody_sim": "nbody_sim",
+        "mining_ethash_proxy": "mining_ethash_proxy",
+        "rendering_proxy": "rendering_proxy",
+        "adversarial_K_online_learning": "adversarial_K_online_learning",
+        "adversarial_L_diluted_2": "adversarial_L_diluted_2",
+        "adversarial_L_diluted_5": "adversarial_L_diluted_5",
+        "adversarial_L_diluted_10": "adversarial_L_diluted_10",
+        "adversarial_L_diluted_20": "adversarial_L_diluted_20",
+    }
+
+    # Collect per-second aligned GPU vs wall power across all workloads
+    all_gpu_power = []
+    all_wall_power = []
+    per_workload_summary = []
+
+    for name, pattern in all_labels.items():
+        pairs = load_matched_pairs(pattern)
+        if not pairs:
+            continue
+
+        # Aggregate all matched pairs for this workload into one entry
+        wl_gpu = []
+        wl_wall = []
+        for gdf, wdf in pairs:
+            # Align by rounding timestamps to nearest second
+            gdf = gdf.copy()
+            wdf = wdf.copy()
+            gdf["ts_round"] = gdf["timestamp_epoch"].round(0)
+            wdf["ts_round"] = wdf["timestamp_epoch"].round(0)
+
+            merged = pd.merge(gdf[["ts_round", "power_draw_w"]],
+                              wdf[["ts_round", "wall_power_w"]],
+                              on="ts_round", how="inner")
+
+            if len(merged) < 10:
+                continue
+
+            wl_gpu.extend(merged["power_draw_w"].values)
+            wl_wall.extend(merged["wall_power_w"].values)
+
+        if not wl_gpu:
+            continue
+
+        gpu_mean = np.mean(wl_gpu)
+        wall_mean = np.mean(wl_wall)
+        overhead = wall_mean - gpu_mean
+
+        all_gpu_power.extend(wl_gpu)
+        all_wall_power.extend(wl_wall)
+
+        per_workload_summary.append({
+            "workload": name,
+            "gpu_power_mean_w": gpu_mean,
+            "wall_power_mean_w": wall_mean,
+            "overhead_w": overhead,
+            "n_samples": len(wl_gpu),
+        })
+
+    if not per_workload_summary:
+        log.info("  No matched GPU + wall-power pairs found. Skipping.")
+    else:
+        gpu_arr = np.array(all_gpu_power)
+        wall_arr = np.array(all_wall_power)
+
+        # Overall correlation
+        corr = np.corrcoef(gpu_arr, wall_arr)[0, 1]
+        r_squared = corr ** 2
+
+        # Linear fit: wall = slope * gpu + intercept
+        slope, intercept = np.polyfit(gpu_arr, wall_arr, 1)
+        residuals = wall_arr - (slope * gpu_arr + intercept)
+        rmse = np.sqrt(np.mean(residuals ** 2))
+
+        log.info(f"\n--- Sample-Level Correlation ({len(gpu_arr)} paired samples) ---")
+        log.info(f"  Pearson r:     {corr:.4f}")
+        log.info(f"  R²:            {r_squared:.4f}")
+        log.info(f"  Linear fit:    wall_power = {slope:.3f} * gpu_power + {intercept:.1f}")
+        log.info(f"  RMSE:          {rmse:.1f} W")
+        log.info(f"  Interpretation: slope={slope:.3f} accounts for PSU efficiency (~{1/slope:.0%})")
+
+        # Per-workload summary
+        df_summary = pd.DataFrame(per_workload_summary)
+        log.info(f"\n--- Per-Workload Power Summary ---")
+        log.info(f"{'Workload':35s} {'GPU (W)':>10s} {'Wall (W)':>10s} {'Overhead':>10s}")
+        log.info("-" * 70)
+
+        # Categorize workloads
+        categories = {
+            "idle": "Idle",
+            "resnet50_inference": "Inference",
+            "cufft_benchmark": "HPC",
+            "nbody_sim": "HPC",
+            "mining_ethash_proxy": "Mining",
+            "rendering_proxy": "Rendering",
+        }
+        training_prefixes = ["pytorch_", "gpt2_", "bert_"]
+        adversarial_prefixes = ["adversarial_"]
+
+        for _, row in df_summary.sort_values("gpu_power_mean_w").iterrows():
+            wl = row["workload"]
+            cat = categories.get(wl)
+            if cat is None:
+                if any(wl.startswith(p) for p in training_prefixes):
+                    cat = "Training"
+                elif any(wl.startswith(p) for p in adversarial_prefixes):
+                    cat = "Adversarial"
+                else:
+                    cat = "Other"
+            log.info(f"  {wl:35s} {row['gpu_power_mean_w']:8.1f}  {row['wall_power_mean_w']:8.1f}  "
+                     f"{row['overhead_w']:+8.1f}  [{cat}]")
+
+        # System overhead analysis
+        overheads = df_summary["overhead_w"].values
+        log.info(f"\n--- System Overhead (Wall - GPU) ---")
+        log.info(f"  Mean:   {np.mean(overheads):.1f} W")
+        log.info(f"  Std:    {np.std(overheads):.1f} W")
+        log.info(f"  Min:    {np.min(overheads):.1f} W (at lowest GPU load)")
+        log.info(f"  Max:    {np.max(overheads):.1f} W (at highest GPU load)")
+        log.info(f"  This overhead = CPU + RAM + PSU losses + motherboard + fans")
+
+        # Re-compute energy bound using wall power
+        wall_stats = {}
+        for name, pattern in {"inference": "resnet50_inference", "training": "pytorch_resnet_cifar10"}.items():
+            sub = df_summary[df_summary["workload"] == pattern]
+            if not sub.empty:
+                wall_stats[name] = sub.iloc[0]["wall_power_mean_w"]
+
+        if "inference" in wall_stats and "training" in wall_stats:
+            W_inf = wall_stats["inference"]
+            W_train = wall_stats["training"]
+            wall_ratio = W_train / W_inf
+
+            log.info(f"\n--- Wall-Power Energy Bound ---")
+            log.info(f"  Inference wall power:  {W_inf:.1f} W")
+            log.info(f"  Training wall power:   {W_train:.1f} W")
+            log.info(f"  Wall ratio (train/inf): {wall_ratio:.2f}x")
+            log.info(f"  (GPU-only ratio was {ratio:.2f}x)")
+
+            # Wall power noise for inference
+            inf_pairs = load_matched_pairs("resnet50_inference")
+            if inf_pairs:
+                wall_samples = []
+                for _, wdf in inf_pairs:
+                    wall_samples.extend(wdf["wall_power_w"].values)
+                sigma_wall = np.std(wall_samples)
+                se_wall = sigma_wall / np.sqrt(N_window)
+                delta_W = W_train - W_inf
+                if delta_W > 0:
+                    f_min_wall = 1.96 * se_wall / delta_W
+                    log.info(f"  Wall power noise (σ):  {sigma_wall:.1f} W")
+                    log.info(f"  Wall power SE (60s):   {se_wall:.1f} W")
+                    log.info(f"  Min detectable f (95%): {f_min_wall:.4f} ({f_min_wall*100:.2f}%)")
+                    log.info(f"  → Dilution ratio N = {1/f_min_wall:.1f}")
+
+        # Save results
+        df_summary.to_csv(RESULTS_DIR / "wall_power_correlation.csv", index=False)
+        log.info(f"\n  Saved: {RESULTS_DIR / 'wall_power_correlation.csv'}")
+
+        # Save correlation stats
+        corr_stats = {
+            "pearson_r": corr,
+            "r_squared": r_squared,
+            "slope": slope,
+            "intercept": intercept,
+            "rmse": rmse,
+            "n_paired_samples": len(gpu_arr),
+            "n_workloads": len(df_summary),
+            "overhead_mean_w": np.mean(overheads),
+            "overhead_std_w": np.std(overheads),
+        }
+        pd.DataFrame([corr_stats]).to_csv(RESULTS_DIR / "wall_power_fit.csv", index=False)
+        log.info(f"  Saved: {RESULTS_DIR / 'wall_power_fit.csv'}")
 
     log.info(f"\n{'='*70}")
     log.info("ENERGY BOUND ANALYSIS COMPLETE")
