@@ -168,15 +168,15 @@ FSDP_NVLINK = [
         "timeout": 720,
     },
     # 70B does not fit on 8x A100-80GB even with SGD (no momentum).
-    # Needs H200 or instances with >80GB/GPU. Skipped here.
-    # {
-    #     "label": "fsdp_70b_nvlink",
-    #     "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
-    #             str(REPO_ROOT / "workloads" / "fsdp_training.py"),
-    #             "--size", "70b", "--duration", "600",
-    #             "--batch-size", "1", "--seq-len", "256"],
-    #     "timeout": 780,
-    # },
+    # Needs H200 or instances with >80GB/GPU. Enabled on B200 (183GB/GPU).
+    {
+        "label": "fsdp_70b_nvlink",
+        "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
+                str(REPO_ROOT / "workloads" / "fsdp_training.py"),
+                "--size", "70b", "--duration", "600",
+                "--batch-size", "1", "--seq-len", "256"],
+        "timeout": 780,
+    },
 ]
 
 
