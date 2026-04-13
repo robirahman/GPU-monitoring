@@ -334,15 +334,25 @@ avoids the need for mid-run data evacuation.
   so FSDP throughput may be higher
 - Expected total time: ~90 min (Phases 1-4)
 
-### 8x B100 (Blackwell datacenter) -- TODO
-- **No existing data** -- run with `--include-baselines` to collect clean
-  baselines too
-- **Allocate >=100GB root disk**
-- May need PyTorch nightly for Blackwell support (see Known Issue #4)
-- If B100 has 80GB VRAM: same FSDP limits as A100/H100
-- If B100 has 192GB VRAM (B200 variant): 70B should fit with AdamW
-- Expected total time: ~110 min (Phases 1-4 + baselines)
-- This adds a 6th architecture to the cross-GPU generalization story
+### 8x B200 (Blackwell) -- COMPLETED 2026-04-12
+- **All 39 workloads completed successfully** (Phases 1-4 + baselines)
+- Plus 3 bonus 70B FSDP variants (2 OK, 1 OOM)
+- Driver 580.126.09, CUDA 13.0, PyTorch 2.11.0+cu130, NCCL 2.28.9
+- Ubuntu 24.04, 8x B200 183GB VRAM, 2x Xeon 8570 (224 threads), 3.9 TiB RAM
+- DCGM installed (v3.3.9); profiling fields blocked (container) but basic fields
+  (clock, power, temp, util) collected via auto-fallback. Ran *without* `--no-dcgm`.
+- Phase 1: 26/26 OK (~24 min) -- 13 adversarial + 13 baselines
+- Phase 2: 3/3 OK (~18 min)
+- Phase 3: 6/6 OK (~36 min)
+- Phase 4: 4/4 OK (~39 min) -- 7B, 13B, 30B, **70B** (new!)
+- **70B FSDP fits on B200** at 131.8 GB/GPU with plain SGD (OOM on 80GB GPUs)
+- 70B variant runs:
+  - SGD+momentum: OK, 103.5 GB/GPU, 415 steps
+  - seq_len=512 (2x default): OK, 179.8 GB/GPU (97.7% utilization!), 191 steps
+  - AdamW: OOM at step 0, 183.1 GB/GPU -- even 183GB insufficient for 2x fp32 states
+- Total: 154 parquet files, 55,724 telemetry rows
+- Data pushed to GitHub via LFS
+- Total collection time: ~2h 15min (including variants)
 
 ---
 
