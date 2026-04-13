@@ -551,6 +551,16 @@ WORKLOAD_REGISTRY = {
         "description": "FSDP 30B transformer on 8 GPUs, heavy NVLink stress (600s)",
         "default_timeout": 720,
     },
+    "fsdp_30b_adamw_nvlink": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "fsdp_training.py"),
+            "--size", "30b", "--duration", "600",
+            "--optimizer", "adamw",
+        ],
+        "description": "FSDP 30B transformer on 8 GPUs, AdamW optimizer, NVLink stress (600s)",
+        "default_timeout": 720,
+    },
     "fsdp_70b_nvlink": {
         "command": [
             "torchrun", "--nproc_per_node=8",

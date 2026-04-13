@@ -167,13 +167,25 @@ FSDP_NVLINK = [
                 "--batch-size", "1", "--seq-len", "512"],
         "timeout": 720,
     },
-    # 70B does not fit on 8x A100-80GB even with SGD (no momentum).
-    # Needs H200 or instances with >80GB/GPU. Enabled on B200 (183GB/GPU).
+    # 30B with AdamW — OOMs on 80GB GPUs but fits on H200 (141GB).
+    # Same model as above but with heavier optimizer memory footprint (~67 GB/GPU).
+    {
+        "label": "fsdp_30b_adamw_nvlink",
+        "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
+                str(REPO_ROOT / "workloads" / "fsdp_training.py"),
+                "--size", "30b", "--duration", "600",
+                "--optimizer", "adamw",
+                "--batch-size", "1", "--seq-len", "512"],
+        "timeout": 720,
+    },
+    # 70B — OOMs on 80GB GPUs. Fits on H200 (141GB) with plain SGD (~66 GB/GPU).
+    # SGD+momentum OOMs at step 0 (70.7 GB peak + ~30 GB momentum buffer).
     {
         "label": "fsdp_70b_nvlink",
         "cmd": ["torchrun", "--nproc_per_node={num_gpus}",
                 str(REPO_ROOT / "workloads" / "fsdp_training.py"),
                 "--size", "70b", "--duration", "600",
+                "--optimizer", "sgd",
                 "--batch-size", "1", "--seq-len", "256"],
         "timeout": 780,
     },
