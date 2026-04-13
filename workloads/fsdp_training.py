@@ -163,6 +163,9 @@ def main():
                         help="Per-GPU micro-batch size (auto if omitted)")
     parser.add_argument("--seq-len", type=int, default=1024,
                         help="Sequence length (default: 1024)")
+    parser.add_argument("--optimizer", type=str, default=None,
+                        choices=["adamw", "sgd", "sgd_momentum"],
+                        help="Override optimizer (default: auto based on model size)")
     parser.add_argument("--cpu-offload", action="store_true",
                         help="Offload optimizer states to CPU")
     parser.add_argument("--no-activation-ckpt", action="store_true",
@@ -206,17 +209,29 @@ def main():
         cpu_offload=args.cpu_offload,
     )
 
-    # Use SGD for 30b+ (AdamW's 2 fp32 state tensors per param exceed 80GB/GPU).
-    # 70b needs plain SGD (no momentum) to fit in 80GB; 30b uses momentum.
-    if args.size == "70b":
-        optimizer = torch.optim.SGD(fsdp_model.parameters(), lr=1e-3)
-    elif args.size == "30b":
+    # Select optimizer. --optimizer overrides the automatic selection.
+    # Auto logic: AdamW for <=13b, SGD+momentum for 30b, plain SGD for 70b.
+    # On GPUs with >80GB (e.g. H200-141GB), callers can override to AdamW/SGD+momentum
+    # for larger models that would OOM on 80GB cards.
+    opt_choice = args.optimizer
+    if opt_choice is None:
+        if args.size == "70b":
+            opt_choice = "sgd"
+        elif args.size == "30b":
+            opt_choice = "sgd_momentum"
+        else:
+            opt_choice = "adamw"
+
+    if opt_choice == "adamw":
+        optimizer = torch.optim.AdamW(fsdp_model.parameters(), lr=1e-4)
+    elif opt_choice == "sgd_momentum":
         optimizer = torch.optim.SGD(fsdp_model.parameters(), lr=1e-3, momentum=0.9)
     else:
-        optimizer = torch.optim.AdamW(fsdp_model.parameters(), lr=1e-4)
+        optimizer = torch.optim.SGD(fsdp_model.parameters(), lr=1e-3)
 
     if rank == 0:
         mem_gb = torch.cuda.max_memory_allocated(device) / 1e9
+        print(f"  Optimizer: {opt_choice}")
         print(f"  Post-init GPU memory: {mem_gb:.1f} GB")
         print(f"  Training started...")
 
