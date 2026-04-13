@@ -211,8 +211,8 @@ def main():
 
     # Select optimizer. --optimizer overrides the automatic selection.
     # Auto logic: AdamW for <=13b, SGD+momentum for 30b, plain SGD for 70b.
-    # On GPUs with >80GB (e.g. H200-141GB), callers can override to AdamW/SGD+momentum
-    # for larger models that would OOM on 80GB cards.
+    # On GPUs with >80GB (e.g. H200-141GB, B200-183GB), callers can override
+    # to AdamW/SGD+momentum for larger models that would OOM on 80GB cards.
     opt_choice = args.optimizer
     if opt_choice is None:
         if args.size == "70b":
