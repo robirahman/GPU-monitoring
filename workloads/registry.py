@@ -427,6 +427,94 @@ WORKLOAD_REGISTRY = {
         "description": "Strategy L: Diluted training — backward pass on 1/20 batches",
         "default_timeout": 360,
     },
+    # --- Round 4 Adversarial (targeting LOO weaknesses) ---
+    "adversarial_M_composite_memmin_10": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "M", "--idle-fraction", "0.1", "--duration", "300"],
+        "description": "Strategy M: Composite + memory minimal, 10% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_M_composite_memmin_20": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "M", "--idle-fraction", "0.2", "--duration", "300"],
+        "description": "Strategy M: Composite + memory minimal, 20% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_M_composite_memmin_30": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "M", "--idle-fraction", "0.3", "--duration", "300"],
+        "description": "Strategy M: Composite + memory minimal, 30% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_M_composite_memmin_40": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "M", "--idle-fraction", "0.4", "--duration", "300"],
+        "description": "Strategy M: Composite + memory minimal, 40% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_N_grad_accum_4": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "N", "--accum-steps", "4", "--duration", "300"],
+        "description": "Strategy N: Gradient accumulation dilution, step every 4 batches",
+        "default_timeout": 360,
+    },
+    "adversarial_N_grad_accum_8": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "N", "--accum-steps", "8", "--duration", "300"],
+        "description": "Strategy N: Gradient accumulation dilution, step every 8 batches",
+        "default_timeout": 360,
+    },
+    "adversarial_N_grad_accum_16": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+                    "--strategy", "N", "--accum-steps", "16", "--duration", "300"],
+        "description": "Strategy N: Gradient accumulation dilution, step every 16 batches",
+        "default_timeout": 360,
+    },
+    # --- Controlled Dilution Sweep (consistent batch size = 128, ResNet-50) ---
+    # Pure inference baseline: same model/batch/data as Strategy L, no training
+    "dilution_sweep_inference": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "inference.py"),
+                    "--model", "resnet50", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: pure inference (ResNet-50, batch 128, 300s)",
+        "default_timeout": 360,
+    },
+    # N=1: every batch trains (= online learning with same code path as diluted)
+    "dilution_sweep_N1": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--dilution", "1", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: N=1, every batch trains (batch 128, 300s)",
+        "default_timeout": 360,
+    },
+    "dilution_sweep_N2": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--dilution", "2", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: N=2, 50% training fraction (batch 128, 300s)",
+        "default_timeout": 360,
+    },
+    "dilution_sweep_N3": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--dilution", "3", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: N=3, 33% training fraction (batch 128, 300s)",
+        "default_timeout": 360,
+    },
+    "dilution_sweep_N5": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--dilution", "5", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: N=5, 20% training fraction (batch 128, 300s)",
+        "default_timeout": 360,
+    },
+    "dilution_sweep_N10": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--dilution", "10", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: N=10, 10% training fraction (batch 128, 300s)",
+        "default_timeout": 360,
+    },
+    "dilution_sweep_N20": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round3.py"),
+                    "--strategy", "L", "--dilution", "20", "--batch-size", "128", "--duration", "300"],
+        "description": "Dilution sweep: N=20, 5% training fraction (batch 128, 300s)",
+        "default_timeout": 360,
+    },
     # --- Other ---
     "ffmpeg_nvenc": {
         "command": [
