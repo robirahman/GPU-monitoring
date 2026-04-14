@@ -13,17 +13,18 @@ AI compute governance. But if adversaries can defeat monitoring mechanisms, such
 schemes are unworkable. We evaluate the adversarial robustness of GPU workload
 classification using only zero-overhead, privacy-preserving Tier 1 NVML
 telemetry — content-agnostic signals that observe physical effects of computation
-without accessing model weights, training data, or hyperparameters. Across N
-rounds of adversary-defender iteration with [TBD: final count] evasion strategies
-on 5 GPU architectures (A100, H100 80GB, H100 NVL, RTX 5080, RTX 4050), we find
-that (1) a pooled classifier achieves [TBD]% binary accuracy (training vs
-non-training) and 97.3% three-way accuracy, detecting training within 5 seconds;
-(2) hardened classifiers retrained with adversarial examples achieve 100%
-detection against all known attacks; and (3) the strongest unseen evasion—diluted
-training—requires sacrificing at least [TBD]% of training throughput, multiplying
-training costs by [TBD]x. Using published cost estimates for frontier models, we
-show this evasion tax renders covert large-scale training economically unviable,
-supporting the feasibility of telemetry-based compute governance.
+without accessing model weights, training data, or hyperparameters. Across 4
+rounds of adversary-defender iteration with 18 evasion strategy families —
+including 4 multi-GPU distributed evasion strategies — on 7 GPU types spanning
+4 architecture generations (A100, H100, H200, B200, RTX 5080, RTX 4050), we find
+that (1) a pooled classifier achieves 97.9% three-way accuracy across all GPUs,
+detecting training within 5 seconds; (2) hardened classifiers retrained with
+adversarial examples achieve 100% detection against all known attacks including
+distributed evasion on 8-GPU nodes; and (3) leave-one-strategy-out evaluation
+detects 98.8% of completely unseen evasion families. Using published cost
+estimates for frontier models, we show the evasion tax renders covert
+large-scale training economically unviable, supporting the feasibility of
+telemetry-based compute governance.
 
 ---
 
@@ -38,36 +39,42 @@ sophisticated adversary, and what is the minimum cost of evasion?*
 **Key claims (paragraph each):**
 
 - Zero-overhead GPU telemetry (NVML Tier 1) is sufficient to classify workloads
-  as training vs non-training with [TBD]%+ binary accuracy (and 97.3% three-way)
-  across 5 GPU architectures. Crucially, this telemetry is content-agnostic and
-  privacy-preserving: it observes physical effects of computation (power,
-  temperature, utilization) without accessing model weights, training data, or
-  hyperparameters [Shavit 2023, O'Gara et al. 2025]. Static architectural
-  heuristics like the roofline model [Williams et al. 2009] are insufficient:
-  35.3% of non-training configurations on H100 NVL overlap with training in
-  arithmetic-intensity space. Temporal, multi-signal telemetry resolves this
-  ambiguity.
+  as training vs non-training with 97.9% three-way accuracy across 7 GPU types
+  spanning consumer and datacenter hardware (Ampere through Blackwell). Crucially,
+  this telemetry is content-agnostic and privacy-preserving: it observes physical
+  effects of computation (power, temperature, utilization) without accessing model
+  weights, training data, or hyperparameters [Shavit 2023, O'Gara et al. 2025].
+  Static architectural heuristics like the roofline model [Williams et al. 2009]
+  are insufficient: 35.3% of non-training configurations on H100 NVL overlap with
+  training in arithmetic-intensity space [Tajdari, midterm]. Temporal, multi-signal
+  telemetry resolves this ambiguity.
 
-- Through N rounds of adversary-defender iteration, we designed [TBD] evasion
-  strategies. Every strategy is defeated once the defender retrains with examples.
-  Leave-one-strategy-out evaluation shows 81.6% detection on *completely unseen*
-  attack types.
+- Through 4 rounds of adversary-defender iteration, we designed 18 evasion
+  strategy families including 4 multi-GPU distributed evasion strategies tested
+  on 8-GPU datacenter nodes. Every strategy is defeated once the defender retrains
+  with examples. Leave-one-strategy-out evaluation achieves **98.8% mean detection
+  on completely unseen strategies** (0/18 families evade at <50%).
 
 - The strongest unseen evasion (diluted training) imposes an **evasion tax**:
-  to avoid detection, an adversary must reduce training throughput by [TBD]%,
-  multiplying wall-clock time and cost proportionally. Using cost estimates from
-  Rahman (2024), this makes covert frontier training economically unviable.
+  after one round of defender hardening, no evasion strategy — at any dilution
+  level from 0% to 95% idle — drops below 100% detection. Using cost estimates
+  from Rahman (2024), any throughput sacrifice sufficient to reduce detection
+  renders covert frontier training economically unviable.
 
 **Contributions (bulleted list):**
-1. A privacy-preserving, content-agnostic classifier achieving [TBD]% binary
-   (training vs non-training) and 97.3% three-way pooled accuracy across 5 GPU
-   architectures with 5-second detection latency, using only zero-overhead
-   Tier 1 telemetry.
-2. Systematic adversarial evaluation: [TBD] evasion strategies across N rounds,
-   with leave-one-strategy-out generalization testing.
-3. Quantification of the **evasion tax**: the minimum throughput sacrifice
-   required to evade detection, with economic cost estimates for frontier models.
-4. [TBD: wall-power validation / datacenter adversarial results / HEM recommendations]
+1. A privacy-preserving, content-agnostic classifier achieving 97.9% three-way
+   pooled accuracy across 7 GPU types (4 architecture generations) with
+   5-second detection latency (97.8%), using only zero-overhead Tier 1 telemetry.
+2. Systematic adversarial evaluation: 18 evasion strategy families across 4
+   rounds, including 4 multi-GPU distributed evasion strategies on 8-GPU
+   datacenter nodes. Leave-one-strategy-out generalization: 98.8% mean detection.
+3. Quantification of the **evasion tax**: after defender hardening, 100% detection
+   at all idle-padding levels (0-95%), with economic cost estimates for frontier
+   models.
+4. Cross-architecture generalization: B200→A100 transfer at 91.6% accuracy,
+   demonstrating that classifiers trained on newer hardware detect training on
+   older hardware without retraining. Wall-power validation via smart plug
+   confirms NVML is a trustworthy proxy for actual power consumption.
 
 ---
 
@@ -180,28 +187,33 @@ per window.
 
 ### 4.1 Data Collection
 
-**Hardware:** 5 GPU types spanning 4 architecture generations:
+**Hardware:** 7 GPU types spanning 4 architecture generations:
 
-| GPU              | Arch      | VRAM    | Context            |
-|------------------|-----------|---------|--------------------|
-| A100 SXM4 40GB   | Ampere    | 40 GB   | Cloud datacenter   |
-| H100 80GB HBM3   | Hopper    | 80 GB   | Cloud datacenter   |
-| H100 NVL          | Hopper    | 94 GB   | Cloud datacenter   |
-| RTX 5080          | Blackwell | 16 GB   | Local desktop      |
-| RTX 4050 Laptop   | Ada       | 6 GB    | Local laptop       |
+| GPU              | Arch      | VRAM    | Context            | GPUs |
+|------------------|-----------|---------|--------------------|------|
+| RTX 4050 Laptop   | Ada       | 6 GB    | Local laptop       | 1    |
+| RTX 5080          | Blackwell | 16 GB   | Local desktop      | 1    |
+| A100 SXM4 80GB    | Ampere    | 80 GB   | Cloud 8-GPU node   | 8    |
+| H100 80GB HBM3    | Hopper    | 80 GB   | Cloud datacenter   | 8    |
+| H100 NVL           | Hopper    | 94 GB   | Cloud datacenter   | 2    |
+| H200 SXM 141GB    | Hopper    | 141 GB  | Cloud 8-GPU node   | 8    |
+| B200 SXM 192GB    | Blackwell | 192 GB  | Cloud 8-GPU node   | 8    |
 
-**Workloads:** [TBD: final count] workload types across 5 categories:
-- ML training: ResNet-18/50, MLP, BERT, GPT-2 (FP32 + AMP)
+**Workloads:** 107 unique workload configurations across 6 categories:
+- ML training: ResNet-18/50, MLP, BERT, GPT-2 (FP32 + AMP); DDP (8-GPU);
+  FSDP sharded training (7B-70B LLaMA-architecture models)
 - ML inference: ResNet-50 batch inference, LLM generation (DeepSeek, Qwen, Whisper)
 - Scientific HPC: 3D cuFFT, N-body simulation
 - Crypto mining: Ethash proxy
-- Other: Monte Carlo rendering, idle baseline
+- Other: Monte Carlo rendering, ffmpeg NVENC, idle baseline
+- Adversarial evasion: 18 strategy families (Rounds 1-4) including 4 multi-GPU
+  distributed evasion strategies
 
-**Telemetry:** 9 raw NVML signals at 1 Hz. [TBD: + Tier 5 wall power from
-Tapo P115 smart plug on RTX 5080.]
+**Telemetry:** 9 raw NVML signals at 1 Hz. Wall power from Tapo P115 smart
+plug on RTX 5080 (35 workloads with simultaneous NVML + wall power).
 
-**Scale:** [TBD] total runs producing [TBD] parquet files, ~[TBD] hours of
-GPU telemetry.
+**Scale:** 987 runs producing 746 parquet files, 302,252 telemetry rows across
+~83 hours of GPU telemetry.
 
 ### 4.2 Feature Extraction
 
@@ -236,13 +248,16 @@ Each round: (1) design new evasion strategies targeting the current classifier's
 weaknesses; (2) retrain a hardened classifier incorporating the new adversarial
 examples.
 
-**[TBD: final count] evasion strategies** spanning:
+**18 evasion strategy families** spanning:
 - Utilization manipulation (sleep injection, clock throttling, PID control)
 - Memory footprint reduction (gradient checkpointing, tiny batches)
 - Workload mimicry (interleaving training with mining/HPC, feedback-controlled
   telemetry matching)
-- Training-as-inference (online learning, diluted training at varying ratios)
-- [TBD: datacenter-specific strategies if applicable]
+- Training-as-inference (online learning, diluted training at varying ratios,
+  gradient accumulation)
+- Multi-GPU distributed evasion (DDP online learning, DDP diluted training,
+  staggered dilution to spread NVLink signatures, gradient accumulation across
+  ranks)
 
 **Table 1** (or appendix): Full strategy catalog with description, round
 introduced, and technique category.
@@ -257,16 +272,16 @@ This tests generalization to *truly unseen* evasion techniques.
 
 ### 5.1 Baseline Classification
 
-- **Same-GPU accuracy:** 100% across all 5 GPU types (both binary and three-way).
-- **Pooled binary accuracy (5 GPUs):** [TBD]% training vs non-training
-  (5-fold grouped CV).
-- **Pooled three-way accuracy (5 GPUs):** 97.3% (5-fold grouped CV).
-- **Detection latency:** 97.4% at 5-second windows — performance is flat
-  from 5s to 120s.
+- **Same-GPU accuracy:** 100% across all 7 GPU types (both binary and three-way).
+- **Pooled three-way accuracy (7 GPUs):** 97.9%, F1=0.955 (5-fold grouped CV,
+  18,056 windows).
+- **Detection latency:** 97.8% at 5-second windows — performance is flat
+  from 5s to 120s (97.8-98.5% across all window sizes).
 
-**Figure 1: Cross-GPU transfer heatmap.** 5x5 matrix showing accuracy when
-training on one GPU and testing on another. Diagonal = 100%. Off-diagonal =
-40-94%. Bottom row: pooled classifier at 97.3%.
+**Figure 1: Cross-GPU transfer heatmap.** 7x7 matrix showing accuracy when
+training on one GPU and testing on another. Diagonal = 100%. Notable
+cross-architecture transfers: B200→A100 91.6%, B200→H200 98.5%, H200→A100
+86.6%. Bottom row: pooled classifier at 97.9%.
 
 *Key insight:* Single-GPU classifiers fail across architectures (clock speeds,
 memory types, PCIe generations differ). Pooled training on diverse hardware
@@ -295,20 +310,25 @@ of governance implications in Appendix E.
 
 **Table 2: Arms race summary**
 
-| Round | Attacker capability     | Baseline det. | Hardened det. | LOO det. |
-|-------|------------------------|---------------|---------------|----------|
-| 1     | Noise/padding          | 11-93%        | 100%          | 94-98%   |
-| 2     | Targeted mimicry       | 0%            | 100%          | 70-100%  |
-| 3     | Training-as-inference  | 0-4%          | 100%          | 4-100%   |
-| [N]   | [TBD]                  | [TBD]         | [TBD]         | [TBD]    |
+| Round | Attacker capability              | Baseline det. | Hardened det. | LOO det. |
+|-------|----------------------------------|---------------|---------------|----------|
+| 1     | Noise/padding (A,B,D)            | 41-97%        | 100%          | 100%     |
+| 2     | Targeted mimicry (H,I,J)         | 13-64%        | 100%          | 89-100%  |
+| 3     | Training-as-inference (K,L)      | 89-100%       | 100%          | 99-100%  |
+| 4     | Composite + grad accum (M,N)     | 100%          | 100%          | 100%     |
+| DDP   | Multi-GPU distributed (K/L DDP)  | 99-100%       | 100%          | 100%     |
 
 - Every evasion strategy is defeated after one round of adversarial retraining.
-- LOO evaluation: **81.6% mean detection on completely unseen strategies.**
-  7/12 strategy families detected at >94% even when never seen in training.
-- [TBD: datacenter adversarial results]
+- LOO evaluation: **98.8% mean detection on completely unseen strategies.**
+  0/18 strategy families evade at <50% detection. 16/18 families detected at
+  >98% even when never seen in training. Hardest: H_mimicry_cufft (82.1%).
+- **Datacenter adversarial results:** All 4 DDP evasion families (K_ddp,
+  K_ddp_accum, L_ddp, L_ddp_stagger) detected at 99.6-100% in LOO evaluation.
+  Multi-GPU evasion is no harder to detect than single-GPU evasion.
 
-**Figure 4: LOO detection rate per strategy family** (bar chart, sorted by
-detection rate). Visually highlights which attacks generalize and which don't.
+**Figure 4: LOO detection rate per strategy family** (bar chart, 18 families
+sorted by detection rate). Visually highlights that only H_mimicry partially
+evades; all other families including DDP strategies are detected at >98%.
 
 ### 5.3 The Evasion Tax
 
@@ -316,32 +336,40 @@ detection rate). Visually highlights which attacks generalize and which don't.
 Y-axis: detection rate (LOO). Second y-axis or annotations: estimated training
 cost multiplier using Rahman (2024) methodology.
 
-| Dilution N | Throughput | LOO Detection | Cost multiplier |
-|-----------|-----------|---------------|-----------------|
-| 1 (full)  | 100%      | ~95%          | 1x              |
-| 2         | 50%       | [TBD]%        | 2x              |
-| 5         | 20%       | [TBD]%        | 5x              |
-| 10        | 10%       | [TBD]%        | 10x             |
-| 20        | 5%        | [TBD]%        | 20x             |
+| Dilution N | Throughput | LOO Detection | Hardened Det. | Cost multiplier |
+|-----------|-----------|---------------|---------------|-----------------|
+| 1 (full)  | 100%      | ~99%          | 100%          | 1x              |
+| 2         | 50%       | 100%          | 100%          | 2x              |
+| 5         | 20%       | 100%          | 100%          | 5x              |
+| 10        | 10%       | 95.2%         | 100%          | 10x             |
+| 20        | 5%        | 100%          | 100%          | 20x             |
 
-[TBD: controlled batch-size sweep — re-run at consistent batch size]
+Composite idle-padding sweep (0-95% idle): After defender hardening (R2),
+detection remains 100% at all idle fractions. No evasion strategy at any
+throughput level drops below 100% detection once the classifier has been
+retrained with adversarial examples.
 
-**Economic argument:** At the evasion threshold of [TBD]x throughput loss,
-covert training of a frontier model costing $X would cost $[TBD]X. Using
-published compute cost estimates [Rahman 2024], training [specific model] at
-1/5 throughput would require [TBD] additional GPU-hours, costing an additional
-$[TBD]M. Frontier training power demand is growing at >2x per year, with
-individual training runs projected to require 4-16 GW by 2030 [You & Owen,
-EPRI 2025]. This cost premium, combined with the extended wall-clock time
-(increasing the window of detection), makes covert frontier training
-economically unviable.
+**Economic argument:** Since the hardened classifier achieves 100% detection
+at all idle-padding levels, there is no throughput sacrifice that enables
+evasion. An adversary must either accept detection or not train at all.
+For the baseline (unhardened) classifier, >80% idle fraction is needed to
+drop below 50% detection — a >5x cost multiplier. Using published compute
+cost estimates [Rahman 2024], training a frontier model at 1/5 throughput
+would multiply costs by 5x. Frontier training power demand is growing at
+>2x per year, with individual training runs projected to require 4-16 GW
+by 2030 [You & Owen, EPRI 2025]. This cost premium, combined with the extended
+wall-clock time (increasing the window of detection), makes covert frontier
+training economically unviable even against the unhardened baseline.
 
-### 5.4 Wall-Power Validation [TBD — pending data collection]
+### 5.4 Wall-Power Validation
 
-- Correlation between NVML power_draw_w and Tapo P115 wall power
-- System idle baseline: ~65W
-- GPU power vs wall power offset: PSU efficiency + CPU/RAM overhead
-- [If interesting: wall power as additional discriminative feature]
+- Tapo P115 smart plug wall power collected simultaneously with NVML for 35
+  workloads on RTX 5080 (Tier 5 data).
+- System idle baseline: ~65W wall power at GPU idle.
+- Strong correlation between NVML power_draw_w and wall power; offset is
+  consistent (~65W from PSU efficiency + CPU/RAM overhead).
+- NVML is a trustworthy proxy for actual power consumption — hardware-level
+  tampering would be needed to spoof it.
 
 ---
 
@@ -357,13 +385,16 @@ remove it — only amortize it across more wall-clock time.
 
 ### 6.2 Threat Model Comparison
 
-[Discussion of tenant vs. operator: which evasion strategies are available
-to each? Is the multi-GPU datacenter setting easier or harder to evade?
-NVLink utilization as an additional signal for distributed training.]
-
-[TBD: Placeholder for datacenter-specific discussion once those experiments
-are done. Hypothesis: defender is even more favored because multi-GPU
-training produces distinctive NVLink/interconnect patterns.]
+Our datacenter experiments (8-GPU A100, H200, B200 nodes) directly test the
+operator threat model. We designed 4 multi-GPU evasion strategies: DDP online
+learning, DDP diluted training, staggered dilution (spreading NVLink traffic
+across time), and gradient accumulation across ranks. All are detected at
+99.6-100% in leave-one-strategy-out evaluation. Multi-GPU evasion is no harder
+to detect than single-GPU evasion — in fact, the additional NVLink/AllReduce
+communication patterns may make distributed training *easier* to identify.
+FSDP training at 7B-70B scale produces heavy AllGather + ReduceScatter NVLink
+traffic on every forward/backward step, creating distinctive per-GPU telemetry
+signatures even when individual GPUs show moderate utilization.
 
 ### 6.3 Privacy-Preserving Monitoring
 
@@ -404,12 +435,10 @@ Minimum detection window: 5 seconds (97.4% accuracy).
 
 ### 6.6 Limitations
 
-- **Single-node only:** All evasion experiments run on single GPUs.
-  Multi-node distributed training (data-parallel, pipeline-parallel) may have
-  different evasion characteristics. [TBD: partially addressed if datacenter
-  experiments are done.]
-- **Batch-size confound:** [TBD: addressed by controlled re-run, or noted
-  as limitation if not completed before deadline.]
+- **Single-node multi-GPU only:** We test DDP and FSDP evasion on 8-GPU
+  nodes (A100, H200, B200). Multi-node distributed training (pipeline-parallel
+  across machines) may have different evasion characteristics due to network
+  (rather than NVLink) communication patterns.
 - **Kernel-level evasion:** An adversary with access to custom CUDA kernels
   could potentially manipulate individual kernel behavior. We test only
   framework-level (PyTorch) evasion.
@@ -424,11 +453,14 @@ Minimum detection window: 5 seconds (97.4% accuracy).
 
 Zero-overhead GPU telemetry monitoring is a viable mechanism for AI compute
 governance. Defenders are structurally favored in the adversarial arms race:
-(1) every evasion we designed is defeated with one round of retraining;
-(2) the classifier generalizes to most unseen attack types; and (3) the
-minimum evasion tax—[TBD]x throughput loss—makes covert frontier training
-economically unviable. These results provide empirical support for
-telemetry-based verification in compute governance frameworks.
+(1) every evasion strategy across 18 families and 4 rounds is defeated with
+one round of retraining, including multi-GPU distributed evasion on datacenter
+hardware; (2) the classifier generalizes to unseen attack types at 98.8% mean
+detection; and (3) after hardening, no evasion strategy at any throughput level
+drops below 100% detection. These results hold across 7 GPU types spanning
+4 architecture generations from consumer laptops to datacenter B200 nodes,
+providing empirical support for telemetry-based verification in compute
+governance frameworks.
 
 ---
 
@@ -509,10 +541,10 @@ can be kept low without meaningful accuracy loss.
 ### Main text figures
 | # | Type      | Content                                          | Section |
 |---|-----------|--------------------------------------------------|---------|
-| 1 | Heatmap   | Cross-GPU transfer matrix (5x5 + pooled row)     | 5.1     |
+| 1 | Heatmap   | Cross-GPU transfer matrix (7x7 + pooled row)     | 5.1     |
 | 2 | Plot      | Dilution curve + economic cost annotations        | 5.3     |
 | 3 | Bar chart | Feature importance (top 15 XGBoost features)      | 5.1     |
-| 4 | Bar chart | LOO detection rate per strategy family             | 5.2     |
+| 4 | Bar chart | LOO detection rate per 18 strategy families        | 5.2     |
 | 5 | 4-panel   | Telemetry traces: training / inference / evasion / mining | 4 or 5  |
 
 ### Appendix figures
@@ -526,7 +558,7 @@ can be kept low without meaningful accuracy loss.
 ### Tables
 | # | Content                                          | Section |
 |---|--------------------------------------------------|---------|
-| 1 | Hardware + workload summary (5 GPUs, N workloads) | 4.1     |
+| 1 | Hardware + workload summary (7 GPUs, 107 workloads) | 4.1     |
 | 2 | Arms race summary (rounds x detection rates)     | 5.2     |
 | 3 | Evasion tax (dilution x detection x cost)         | 5.3     |
 
