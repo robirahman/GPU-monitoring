@@ -3,9 +3,8 @@ Cross-GPU Generalization Analysis (A1) + Detection Latency Curve (A5)
 =====================================================================
 
 A1: Train classifier on one GPU's data, test on another's.
-    - Train A100 → Test H100 NVL
-    - Train H100 NVL → Test A100
-    - Train H100 80GB → Test H100 NVL
+    - All pairwise transfers across GPU types
+    - GPUs: RTX 4050, RTX 5080, A100, H200, B200 (+ H100 NVL/80GB if present)
     - Pool all GPUs → retrain
     - Feature stability analysis across GPUs
 
@@ -51,6 +50,10 @@ def identify_gpu_type(gpu_name: str) -> str:
         return "H100_NVL"
     if "H100" in gpu_name:
         return "H100_80GB"
+    if "H200" in gpu_name:
+        return "H200"
+    if "B200" in gpu_name:
+        return "B200"
     if "5080" in gpu_name:
         return "RTX_5080"
     if "4050" in gpu_name:

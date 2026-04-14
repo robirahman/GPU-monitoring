@@ -63,6 +63,22 @@ STRATEGY_FAMILIES = {
         "adversarial_composite_80", "adversarial_composite_90",
         "adversarial_composite_95",
     ],
+    "M_composite_memmin": [
+        "adversarial_M_composite_memmin_10",
+        "adversarial_M_composite_memmin_20",
+        "adversarial_M_composite_memmin_30",
+        "adversarial_M_composite_memmin_40",
+    ],
+    "N_grad_accum": [
+        "adversarial_N_grad_accum_4",
+        "adversarial_N_grad_accum_8",
+        "adversarial_N_grad_accum_16",
+    ],
+    # DDP adversarial families (datacenter multi-GPU evasion)
+    "K_ddp": ["adversarial_K_ddp"],
+    "K_ddp_accum": ["adversarial_K_ddp_accum_4", "adversarial_K_ddp_accum_8"],
+    "L_ddp": ["adversarial_L_ddp_5", "adversarial_L_ddp_10"],
+    "L_ddp_stagger": ["adversarial_L_ddp_stagger_5"],
 }
 
 
