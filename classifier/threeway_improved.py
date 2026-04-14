@@ -70,6 +70,24 @@ TRAINING_LABELS = {
     "adversarial_K_online_learning",
     "adversarial_L_diluted_2", "adversarial_L_diluted_5",
     "adversarial_L_diluted_10", "adversarial_L_diluted_20",
+    # Controlled dilution sweep (consistent batch size = 128)
+    "dilution_sweep_N1", "dilution_sweep_N2", "dilution_sweep_N3",
+    "dilution_sweep_N5", "dilution_sweep_N10", "dilution_sweep_N20",
+    # Round 4: composite + memory minimal
+    "adversarial_M_composite_memmin_10", "adversarial_M_composite_memmin_20",
+    "adversarial_M_composite_memmin_30", "adversarial_M_composite_memmin_40",
+    # Round 4: gradient accumulation dilution
+    "adversarial_N_grad_accum_4", "adversarial_N_grad_accum_8",
+    "adversarial_N_grad_accum_16",
+    # DDP baseline training (datacenter multi-GPU runs)
+    "ddp_resnet18_cifar10", "ddp_resnet18_cifar10_amp", "ddp_resnet50_cifar10",
+    # FSDP training (datacenter multi-GPU runs)
+    "fsdp_7b_nvlink", "fsdp_13b_nvlink", "fsdp_30b_nvlink", "fsdp_30b_adamw_nvlink",
+    "fsdp_70b_nvlink", "fsdp_70b_seq512_nvlink", "fsdp_70b_seqlen512",
+    "fsdp_70b_adamw", "fsdp_70b_sgd_momentum",
+    # DDP adversarial (datacenter multi-GPU evasion)
+    "adversarial_K_ddp", "adversarial_K_ddp_accum_4", "adversarial_K_ddp_accum_8",
+    "adversarial_L_ddp_5", "adversarial_L_ddp_10", "adversarial_L_ddp_stagger_5",
 }
 
 INFERENCE_LABELS = {
@@ -82,6 +100,8 @@ INFERENCE_LABELS = {
     "deepseek_r1_inference",
     "qwen25_inference",
     "whisper_inference",
+    # Controlled dilution sweep: pure inference baseline
+    "dilution_sweep_inference",
 }
 
 OTHER_LABELS = {
@@ -107,7 +127,8 @@ def threeway_label(label: str) -> str:
         return "other"
     # Heuristic fallback
     lc = label.lower()
-    if any(k in lc for k in ("train", "bert", "gpt", "resnet_cifar", "mlp_cifar")):
+    if any(k in lc for k in ("train", "bert", "gpt", "resnet_cifar", "mlp_cifar",
+                              "fsdp_", "ddp_", "adversarial_")):
         return "ml_training"
     if any(k in lc for k in ("infer",)):
         return "ml_inference"

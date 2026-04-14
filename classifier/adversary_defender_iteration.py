@@ -1,10 +1,13 @@
 """
-Adversary-Defender Iteration on RTX 5080 Data
-==============================================
+Adversary-Defender Iteration (All GPUs)
+=======================================
 
 Round 1 (Baseline):  Train on clean data → evaluate on adversarial
 Round 2 (Hardened):  Retrain with adversarial examples → re-evaluate
 Round 3 (Features):  Add evasion-resistant features → re-evaluate
+
+Includes single-GPU adversarial (A-N), composite sweep, and DDP adversarial
+strategies from datacenter runs (H200, B200, A100).
 
 Produces:
   - classifier/results/adv_defender_rounds.csv   (detection rates per round)
@@ -131,7 +134,7 @@ def run_analysis():
     import xgboost as xgb
 
     log.info("=" * 70)
-    log.info("ADVERSARY-DEFENDER ITERATION — RTX 5080 + ALL GPU DATA")
+    log.info("ADVERSARY-DEFENDER ITERATION — ALL GPUs (5080/4050/A100/H200/B200)")
     log.info("=" * 70)
 
     # ── Load all data ────────────────────────────────────────────────────
