@@ -88,6 +88,10 @@ TRAINING_LABELS = {
     # DDP adversarial (datacenter multi-GPU evasion)
     "adversarial_K_ddp", "adversarial_K_ddp_accum_4", "adversarial_K_ddp_accum_8",
     "adversarial_L_ddp_5", "adversarial_L_ddp_10", "adversarial_L_ddp_stagger_5",
+    # Round 5: White-box evasion at relevant model scale
+    "whitebox_diluted_N5", "whitebox_diluted_N10", "whitebox_diluted_N20", "whitebox_diluted_N50",
+    "whitebox_diluted_N5_ckpt", "whitebox_diluted_N10_ckpt", "whitebox_diluted_N20_ckpt",
+    "whitebox_oracle",
 }
 
 INFERENCE_LABELS = {
@@ -102,6 +106,8 @@ INFERENCE_LABELS = {
     "whisper_inference",
     # Controlled dilution sweep: pure inference baseline
     "dilution_sweep_inference",
+    # Round 5: White-box inference baseline (control)
+    "whitebox_inference",
 }
 
 OTHER_LABELS = {

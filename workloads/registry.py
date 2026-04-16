@@ -609,6 +609,61 @@ WORKLOAD_REGISTRY = {
         "description": "DDP online learning with 8-step gradient accumulation, 300s",
         "default_timeout": 360,
     },
+    # --- Round 5: White-Box Evasion (relevant model scale) ---
+    "whitebox_inference": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-I", "--duration", "300"],
+        "description": "White-box inference baseline: GPT-2 Medium (345M) forward-only",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N5": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "5", "--duration", "300"],
+        "description": "White-box diluted full fine-tuning: GPT-2 Medium, N=5 (20% training)",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N10": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "10", "--duration", "300"],
+        "description": "White-box diluted full fine-tuning: GPT-2 Medium, N=10 (10% training)",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N20": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "20", "--duration", "300"],
+        "description": "White-box diluted full fine-tuning: GPT-2 Medium, N=20 (5% training)",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N50": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "50", "--duration", "300"],
+        "description": "White-box diluted full fine-tuning: GPT-2 Medium, N=50 (2% training)",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N5_ckpt": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "5", "--grad-ckpt", "--duration", "300"],
+        "description": "White-box diluted + gradient checkpointing: GPT-2 Medium, N=5",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N10_ckpt": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "10", "--grad-ckpt", "--duration", "300"],
+        "description": "White-box diluted + gradient checkpointing: GPT-2 Medium, N=10",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N20_ckpt": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-D", "--dilution", "20", "--grad-ckpt", "--duration", "300"],
+        "description": "White-box diluted + gradient checkpointing: GPT-2 Medium, N=20",
+        "default_timeout": 420,
+    },
+    "whitebox_oracle": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+                    "--strategy", "WB-O", "--dilution", "10", "--duration", "300"],
+        "description": "White-box oracle-guided training: GPT-2 Medium, classifier in the loop",
+        "default_timeout": 600,
+    },
     # --- FSDP (NVLink Stress) ---
     # Model-sharded training via FSDP FULL_SHARD. Heavy AllGather/ReduceScatter
     # on every forward/backward step. Launch via run_workload_multi_gpu.py.
