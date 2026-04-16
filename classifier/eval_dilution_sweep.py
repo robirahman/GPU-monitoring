@@ -33,6 +33,7 @@ warnings.filterwarnings("ignore")
 
 from classifier.threeway_improved import (
     load_all_data, sliding_windows, get_feature_cols,
+    balanced_subsample,
     TRAINING_LABELS, INFERENCE_LABELS, OTHER_LABELS,
 )
 
@@ -165,8 +166,11 @@ def main():
         log.info(f"\n  BASELINE (clean only):")
         X_tr = df_win.loc[clean_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_tr = le.transform(df_win.loc[clean_mask, "threeway_label"].values)
+        groups_tr = df_win.loc[clean_mask, "run_id"].values
+        X_bal, y_bal = balanced_subsample(X_tr, y_tr, groups_tr, random_state=42)
+        log.info(f"    Balanced: {len(y_tr)} -> {len(y_bal)} windows")
         clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_tr, y_tr)
+        clf.fit(X_bal, y_bal)
         all_results.extend(evaluate_condition(
             clf, le, df_win, feature_cols, sweep_present, "baseline", WIN_SEC))
 
@@ -175,8 +179,11 @@ def main():
         loo_mask = clean_mask | non_dilution_adv_mask
         X_tr = df_win.loc[loo_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_tr = le.transform(df_win.loc[loo_mask, "threeway_label"].values)
+        groups_tr = df_win.loc[loo_mask, "run_id"].values
+        X_bal, y_bal = balanced_subsample(X_tr, y_tr, groups_tr, random_state=42)
+        log.info(f"    Balanced: {len(y_tr)} -> {len(y_bal)} windows")
         clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_tr, y_tr)
+        clf.fit(X_bal, y_bal)
         all_results.extend(evaluate_condition(
             clf, le, df_win, feature_cols, sweep_present, "LOO", WIN_SEC))
 
@@ -185,8 +192,11 @@ def main():
         hard_mask = clean_mask | hardening_adv_mask
         X_tr = df_win.loc[hard_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_tr = le.transform(df_win.loc[hard_mask, "threeway_label"].values)
+        groups_tr = df_win.loc[hard_mask, "run_id"].values
+        X_bal, y_bal = balanced_subsample(X_tr, y_tr, groups_tr, random_state=42)
+        log.info(f"    Balanced: {len(y_tr)} -> {len(y_bal)} windows")
         clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_tr, y_tr)
+        clf.fit(X_bal, y_bal)
         all_results.extend(evaluate_condition(
             clf, le, df_win, feature_cols, sweep_present, "hardened", WIN_SEC))
 
