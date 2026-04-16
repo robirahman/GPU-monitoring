@@ -523,6 +523,76 @@ def get_feature_cols(df: pd.DataFrame) -> list:
     return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]
 
 
+def balanced_subsample(X, y, groups=None, random_state=42):
+    """Downsample to equal class counts, sampling by group (run_id).
+
+    When adversarial examples (all labeled ml_training) are added to the
+    training set, ml_training can outnumber ml_inference and other by 5-10x.
+    This causes the classifier to predict "training" for everything.
+
+    This function downsamples the majority class(es) to match the minority
+    class, preserving the group structure to avoid data leakage from
+    overlapping sliding windows within the same run.
+
+    Parameters
+    ----------
+    X : np.ndarray — feature matrix
+    y : np.ndarray — class labels (encoded or string)
+    groups : np.ndarray or None — run_id per sample (if None, sample by row)
+    random_state : int
+
+    Returns
+    -------
+    X_bal, y_bal : balanced feature matrix and labels
+    """
+    rng = np.random.RandomState(random_state)
+    classes = np.unique(y)
+
+    if groups is None:
+        # Simple per-row sampling
+        class_indices = {cls: np.where(y == cls)[0] for cls in classes}
+        target = min(len(idxs) for idxs in class_indices.values())
+        selected = []
+        for cls in classes:
+            idxs = class_indices[cls]
+            chosen = rng.choice(idxs, size=target, replace=False)
+            selected.extend(chosen)
+        selected = sorted(selected)
+        return X[selected], y[selected]
+
+    # Group-aware sampling: sample whole runs to avoid leaking overlapping windows
+    # Build mapping: class -> list of (group_id, [indices])
+    class_groups = {cls: [] for cls in classes}
+    group_to_indices = {}
+    for i, (g, c) in enumerate(zip(groups, y)):
+        key = (g, c)
+        if key not in group_to_indices:
+            group_to_indices[key] = []
+        group_to_indices[key].append(i)
+
+    for (g, c), idxs in group_to_indices.items():
+        class_groups[c].append((g, idxs))
+
+    # Target: match the smallest class's total window count
+    class_counts = {cls: sum(len(idxs) for _, idxs in glist)
+                    for cls, glist in class_groups.items()}
+    target = min(class_counts.values())
+
+    selected = []
+    for cls in classes:
+        glist = class_groups[cls].copy()
+        rng.shuffle(glist)
+        count = 0
+        for g, idxs in glist:
+            if count >= target:
+                break
+            selected.extend(idxs)
+            count += len(idxs)
+
+    selected = sorted(selected)
+    return X[selected], y[selected]
+
+
 def train_and_evaluate():
     """Main training and evaluation pipeline."""
     from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
