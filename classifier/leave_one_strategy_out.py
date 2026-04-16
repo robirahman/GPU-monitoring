@@ -31,6 +31,7 @@ warnings.filterwarnings("ignore")
 
 from classifier.threeway_improved import (
     load_all_data, sliding_windows, get_feature_cols,
+    balanced_subsample,
     TRAINING_LABELS,
 )
 
@@ -126,16 +127,18 @@ def main():
 
         X_train = df_win.loc[train_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_train = df_win.loc[train_mask, "threeway_label"].values
+        groups_train = df_win.loc[train_mask, "run_id"].values
         X_test = df_win.loc[test_mask, feature_cols].fillna(0).values.astype(np.float32)
 
         y_train_enc = le.transform(y_train)
+        X_bal, y_bal = balanced_subsample(X_train, y_train_enc, groups_train, random_state=42)
 
         clf = xgb.XGBClassifier(
             n_estimators=500, max_depth=6, learning_rate=0.05,
             subsample=0.8, colsample_bytree=0.8,
             eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
         )
-        clf.fit(X_train, y_train_enc)
+        clf.fit(X_bal, y_bal)
 
         y_pred = le.inverse_transform(clf.predict(X_test))
         det_rate = (y_pred == "ml_training").mean()
