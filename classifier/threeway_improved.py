@@ -88,10 +88,12 @@ TRAINING_LABELS = {
     # DDP adversarial (datacenter multi-GPU evasion)
     "adversarial_K_ddp", "adversarial_K_ddp_accum_4", "adversarial_K_ddp_accum_8",
     "adversarial_L_ddp_5", "adversarial_L_ddp_10", "adversarial_L_ddp_stagger_5",
-    # Round 5: White-box evasion at relevant model scale
+    # Round 5: White-box evasion at relevant model scale (full fine-tuning)
     "whitebox_diluted_N5", "whitebox_diluted_N10", "whitebox_diluted_N20", "whitebox_diluted_N50",
     "whitebox_diluted_N5_ckpt", "whitebox_diluted_N10_ckpt", "whitebox_diluted_N20_ckpt",
     "whitebox_oracle",
+    # Round 5: White-box LoRA fine-tuning
+    "whitebox_lora_N5", "whitebox_lora_N10", "whitebox_lora_N20",
 }
 
 INFERENCE_LABELS = {
