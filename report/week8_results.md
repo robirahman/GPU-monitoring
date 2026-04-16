@@ -86,62 +86,91 @@ For each of 12 strategy families, we:
 2. Train the hardened classifier on clean data + all OTHER adversarial families
 3. Test detection rate on the held-out family
 
-### Results
+### Results (class-balanced classifier)
+
+*Note: Results below use class-balanced training (downsampled to equal class
+counts per run_id). Previous results used imbalanced training that inflated
+detection rates by biasing the classifier toward predicting "training."*
 
 | Held-out Family | Detection Rate | Verdict |
 |-----------------|---------------|---------|
 | F: Interleave (30/50%) | **100%** | Fully detected unseen |
-| G: Clock-throttled | **100%** | Fully detected unseen |
-| I: Stochastic interleave | **100%** | Fully detected unseen |
-| J: PID util-match | **100%** | Fully detected unseen |
 | K: Online learning | **100%** | Fully detected unseen |
-| B: Low-utilization | 98.1% | Near-perfect |
-| A: Utilization modulation | 96.3% | Near-perfect |
-| D: Temporal disruption | 94.4% | Strong |
-| H: Mimicry (mining/cuFFT) | 90.7% | Strong (cuFFT variant: 81.5%) |
-| Composite (idle sweep) | 77.0% | Moderate (33% at idle 10–40%) |
-| E: Memory-minimal | **70.4%** | Partial evasion |
-| **L: Diluted training** | **52.4%** | **Partial evasion** |
+| K_ddp: DDP online learning | **100%** | Fully detected unseen |
+| K_ddp_accum: DDP grad accum | **100%** | Fully detected unseen |
+| L_ddp_stagger: DDP staggered | **100%** | Fully detected unseen |
+| N: Gradient accumulation | **100%** | Fully detected unseen |
+| L_ddp: DDP diluted | **98.8%** | Near-perfect |
+| M: Composite + memory-min | 94.4% | Strong |
+| I: Stochastic interleave | 89.1% | Strong |
+| A: Utilization modulation | 86.4% | Strong |
+| G: Clock-throttled | 80.4% | Moderate |
+| L: Diluted training | 78.3% | Moderate (N=10: 55.6%) |
+| D: Temporal disruption | 68.2% | Partial evasion |
+| J: PID util-match | 57.1% | Partial evasion |
+| H: Mimicry (mining/cuFFT) | **43.3%** | **Evades** (cuFFT: 37.5%) |
+| E: Memory-minimal | **39.3%** | **Evades** |
+| Composite (idle sweep) | **29.0%** | **Evades** (0% at idle=40/60/80%) |
+| B: Low-utilization | **16.7%** | **Evades** |
 
-**Overall mean detection on unseen strategies: 81.6%**
+**Overall mean detection on unseen strategies: 68.3%**
+**Families evading at <50%: 4/18** (B, E, H, composite)
+**DDP families: 98.8-100%** (governance-relevant case remains robust)
 
 ### Key Findings
 
-1. **7 of 12 strategy families detected at 94%+ even when completely unseen.** The classifier genuinely learns generalizable features of "disguised training" — not just memorized signatures.
+1. **DDP strategies remain robust at 98.8-100%.** All 4 multi-GPU distributed
+   evasion families are detected even when completely unseen, confirming that
+   NVLink/AllReduce signatures are very difficult to suppress. This is the
+   governance-relevant case for frontier model training.
 
-2. **Diluted training (Strategy L) is the most effective evasion technique.** When the classifier has never seen diluted training:
-   - L_diluted_2 (50% training): 100% detected — memory for backward pass is too obvious
-   - L_diluted_5 (20% training): **3.7% detected** — effective evasion
-   - L_diluted_10 (10% training): **11.1% detected** — effective evasion
-   - L_diluted_20 (5% training): 100% detected — paradoxically high because at batch 256, even rare backward passes use 16GB VRAM (see note below)
+2. **4 of 18 families evade at <50% with balanced training.** The class-balanced
+   classifier honestly reveals which strategies succeed:
+   - B_low_util (16.7%): tiny batch training is classified as "other"
+   - Composite idle-padding (29.0%): high idle fractions effectively evade
+   - E_memory_minimal (39.3%): gradient checkpointing + aggressive GC
+   - H_mimicry (43.3%): cuFFT mimicry (37.5%) is the hardest single strategy
 
-3. **Strategy E (memory-minimal via gradient checkpointing) partially evades at 70.4%.** Its distinctive signature — low memory but elevated memory clock oscillation — is dissimilar enough from other strategies that the classifier hasn't generalized to it.
+3. **Previous results (81.6% mean, 0/12 evading) were inflated by class
+   imbalance.** The training set had 766 training runs vs 49 inference runs.
+   Without balanced resampling, the classifier predicted "training" for 75-100%
+   of inference windows, inflating detection rates.
 
-4. **Mimicry (Strategy H) partially evades at 90.7%.** The cuFFT-mimicry variant (81.5%) is harder to detect than mining-mimicry (100%) because cuFFT's high-utilization profile overlaps more with training's compute pattern.
+4. **Diluted training partially evades at low dilution.**
+   - L_diluted_2 (50% training): 76.8% detected
+   - L_diluted_5 (20% training): 81.0% detected
+   - L_diluted_10 (10% training): 55.6% detected
+   - L_diluted_20 (5% training): 100% detected (batch size memory effect)
 
-5. **Composite evasion at low idle fractions (10–40%) partially evades at 33%.** The classifier struggles with the regime where idle padding is moderate — not enough to look obviously idle, but enough to disrupt normal training features.
+5. **Evasion-resistant features (R3) substantially recover detection.** The
+   physics-based features (cumulative energy, power-memory correlation) bring
+   H_mimicry_cufft from 37.5% LOO to 98.2% R3, and E_memory_minimal from
+   39.3% to 98.2%. This confirms the "involuntary witness" hypothesis.
 
-### Evasion Tax Bound
+### Evasion Tax Bound (class-balanced)
 
-The LOO evaluation reveals the **true evasion bound** when the defender has not seen the attacker's specific technique:
+The controlled dilution sweep (ResNet-50, batch 128, RTX 5080) with balanced
+classifiers reveals the honest evasion bound:
 
-| Dilution N | Training fraction | LOO Detection | Throughput cost |
-|-----------|------------------|---------------|-----------------|
-| N=1 (full training) | 100% | ~95% | 0% |
-| N=2 (50% training) | 50% | 100% | 50% |
-| N=5 (20% training) | 20% | **3.7%** | **80%** |
-| N=10 (10% training) | 10% | **11.1%** | **90%** |
-| N=20 (5% training) | 5% | 100%* | 95% |
+| Dilution N | Train% | LOO 5s | LOO 15s | Hardened 5s | Cost |
+|-----------|--------|--------|---------|-------------|------|
+| 1 (full)  | 100%   | 98.4%  | 100%    | 100%        | 1x   |
+| 2         | 50%    | 98.4%  | 100%    | 100%        | 2x   |
+| 3         | 33%    | 65.6%  | 96.7%   | 95.1%       | 3x   |
+| 5         | 20%    | 86.9%  | 100%    | 100%        | 5x   |
+| 10        | 10%    | 67.2%  | 86.7%   | 83.6%       | 10x  |
+| 20        | 5%     | 32.8%  | 100%    | 75.4%       | 20x  |
 
-*N=20 detection is high because of the batch size effect: at batch 256, even 1/20 backward passes fill 16GB VRAM. With smaller batches, N=20 would likely evade too.
+**Key findings:**
+- At 5-second windows, N=20 dilution evades the LOO classifier at 67% (32.8%
+  detection). But extending observation to 15 seconds recovers 100% detection.
+- The hardened classifier maintains 75%+ detection even at N=20, 5s windows.
+- At 15-second windows, all dilution levels are detected at 87-100% (LOO) or
+  90-100% (hardened).
 
-**Evasion tax: to evade a classifier that has never seen diluted training, an adversary must sacrifice at least 80% of training throughput (training on 1/5 batches).** Training that would take 1 day takes 5 days.
-
-However, once the defender retrains with even a few examples of diluted training, detection returns to 100%. The evasion advantage is temporary — the defender can always catch up by expanding the training set.
-
-### Note on batch size confound
-
-The L_diluted_20 and L_diluted_2 variants ran at batch size 256 (using ~16 GB VRAM), while L_diluted_5 and L_diluted_10 ran at batch size 128 (using ~3–7 GB) due to a driver crash fix. The batch-size difference creates a confound in the memory signal: batch 256 runs are easily detected by memory usage alone regardless of dilution, while batch 128 runs have memory profiles closer to inference. A controlled sweep with consistent batch sizes would give a cleaner dilution curve.
+**Evasion tax:** An adversary diluting to N=10 (10x cost) still faces 67-87%
+detection depending on window size. Sustained covert training over hours or
+days would accumulate enough positive detections to trigger investigation.
 
 ---
 
@@ -169,12 +198,19 @@ The L_diluted_20 and L_diluted_2 variants ran at batch size 256 (using ~16 GB VR
 - **K (Online learning):** Inference + backward pass per batch. 0% → 100%. LOO: 100%.
 - **L (Diluted):** Train on 1/N batches. LOO results: N=5 evades at 96.3%, N=10 at 88.9%.
 
-### The Arms Race Outcome
+### The Arms Race Outcome (class-balanced)
 
-| Round | Attacker innovation | Naive detection | Hardened detection | LOO detection |
-|-------|--------------------|-----------------|--------------------|---------------|
-| 1 | Add noise/padding | 11–93% | 100% | 94–98% |
-| 2 | Target-specific mimicry | 0% | 100% | 70–100% |
-| 3 | Training-as-inference | 0–4% | 100% | 4–100% |
+| Round | Attacker innovation | Baseline det. | R2 Hardened | R3 +Features | LOO det. |
+|-------|---------------------|---------------|-------------|--------------|----------|
+| 1 | Noise/padding (A,B,D) | 0-50% | 5-61% | 38-61% | 17-86% |
+| 2 | Mimicry/PID (E-J) | 0-60% | 13-45% | 82-100% | 39-100% |
+| 3 | Training-as-inference (K,L) | 57-100% | 84-100% | 100% | 56-100% |
+| 4 | Composite+grad accum (M,N) | 100% | 100% | 100% | 78-100% |
+| DDP | Multi-GPU distributed | 98-100% | 99-100% | 99-100% | **98-100%** |
 
-The defender wins the arms race with one round of adversarial training (100% detection). But the LOO evaluation reveals that generalization to truly unseen techniques is imperfect — the diluted training attack exploits a blind spot where the classifier has no examples of training-at-inference-like-rates. The evasion tax for this blind spot is 80% throughput loss.
+The defender's advantage is strongest for multi-GPU distributed training
+(98-100% across all conditions). Single-GPU evasion is a genuine challenge:
+the balanced hardened classifier detects Round 2 strategies at only 13-45%,
+but evasion-resistant physics-based features (R3) recover detection to 82-100%.
+The LOO evaluation reveals that 4/18 strategy families evade at <50%, but
+the physically-grounded features substantially narrow this gap.
