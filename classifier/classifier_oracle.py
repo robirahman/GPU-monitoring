@@ -78,7 +78,7 @@ class ClassifierOracle:
 
         from classifier.threeway_improved import (
             load_all_data, sliding_windows, get_feature_cols,
-            balanced_subsample,
+            compute_sample_weights,
         )
 
         log.info("Oracle: training classifier from existing data...")
@@ -98,21 +98,21 @@ class ClassifierOracle:
         le = LabelEncoder()
         y_enc = le.fit_transform(y)
 
-        # Balanced training (same as defender)
-        X_bal, y_bal = balanced_subsample(X, y_enc, groups, random_state=42)
+        # Class-weighted training (same as defender)
+        w = compute_sample_weights(y_enc)
 
         clf = xgb.XGBClassifier(
             n_estimators=500, max_depth=6, learning_rate=0.05,
             subsample=0.8, colsample_bytree=0.8,
             eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
         )
-        clf.fit(X_bal, y_bal)
+        clf.fit(X, y_enc, sample_weight=w)
 
         self._clf = clf
         self._le = le
         self._feature_cols = feature_cols
         log.info(f"Oracle: classifier ready ({len(feature_cols)} features, "
-                 f"{len(X_bal)} balanced training windows)")
+                 f"{len(X)} class-weighted training windows)")
 
     # ── Telemetry polling ──────────────────────────────────────────────
 
