@@ -69,6 +69,52 @@ Metric to track per round: **oracle training throughput** (`train` counter at en
 
 The WB-O startup does one backward pass to allocate optimizer buffers, then tries to look like inference. This is detectable — no legitimate inference workload allocates AdamW state at startup. A feature like "memory footprint delta in first 30s after process start" could explicitly catch this. Or alternatively, don't treat it as a false positive — treat "training prep detected" as a valid signal in its own right.
 
+## Cross-GPU replication: RTX 5080 (local) vs RTX 5090 (cloud)
+
+All 14 workloads were re-run on an RTX 5090 (32 GB, dual-GPU cloud host, GPU 0; driver 580.142). Same registry, same 300 s duration, same TinyLlama-1.1B model. Gives us paired telemetry for each workload across two Blackwell cards.
+
+### Aggregate medians across the 14 matched workloads
+
+| Variable              | RTX 5080 | RTX 5090 |   Δ     |
+|-----------------------|---------:|---------:|--------:|
+| gpu_utilization_pct   |    68.0  |    54.5  |  −13.5  |
+| mem_utilization_pct   |    36.0  |    21.5  |  −14.5  |
+| mem_used_mb           | 13249.5  | 12230.0  | −1019.5 |
+| power_draw_w          |   156.4  |   228.1  |  +71.7  |
+| temperature_c         |    58.0  |    43.0  |  −15.0  |
+| sm_clock_mhz          |  2733.5  |  2913.5  | +180.0  |
+| mem_clock_mhz         | 14801.0  | 13801.0  | −1000.0 |
+
+(Medians over samples with `gpu_utilization_pct > 5`, then aggregated across workloads.)
+
+### Key findings
+
+1. **5090 is faster on the same job.** Lower GPU-util (−14 pts) and lower mem-util (−15 pts) across the board, with SM clock boosting ~180 MHz higher. The 5090 is not saturated by these 1B-scale workloads.
+
+2. **Power tracks capability, not workload.** 5090 draws ~72 W more on the same code — consistent with 575 W TDP vs. 360 W TDP. Gap widens on LLM-heavy runs (whitebox_lora, whitebox_oracle) where the 5090 has headroom to boost. Shapes are similar; magnitudes differ.
+
+3. **GPU util traces diverge in shape, not just scale.** Same work completes faster on the 5090, so it idles more between iterations:
+   - `adversarial_K_online_learning`: 5080 pegged at ~100 %, 5090 swinging 0–100 % — 5090 has only 133 "active" samples (util > 5 %) vs 5080's 298 in the same 300 s run.
+   - `whitebox_inference`: 5080 ~66 %, 5090 ~50 %.
+   - `whitebox_lora_*`: 5080 ~80–85 %, 5090 ~55–60 %.
+
+4. **Memory footprint is lower on the 5090** (~1 GB less on average for the same workload). Different driver (580.142 vs 581.95) and a larger total pool (32 GB vs 16 GB) change CUDA caching/alloc behavior.
+
+5. **Memory clock difference is a spec/reporting quirk, not a bug.** 5080 reports 14801 MHz, 5090 reports 13801 MHz — both GDDR7 at similar effective bandwidths, NVML reports the nominal base memory clock. Not a data-quality issue; don't use as a discriminating feature.
+
+6. **All NVML fields readable on both cards.** Fan, encoder, decoder, PCIe — no NaN or `-1` sentinels on either device. The 9-variable check_telemetry.py script works identically on 5080 and 5090.
+
+### Implications for classifier feature engineering
+
+The same workload produces meaningfully different traces on different GPU classes. Raw magnitudes (`mem_used_mb`, `mem_clock_mhz`, `power_draw_w`, `gpu_utilization_pct`) are per-GPU-specific. Preferred normalized features:
+
+- `mem_used_mb / mem_total_mb` — fraction of total memory, not absolute MB
+- `power_draw_w / TDP` — fraction of rated power (requires per-GPU TDP table)
+- `gpu_utilization_pct` trajectory features — variance, FFT peaks, autocorrelation — rather than raw level, since the level shifts with GPU class
+- Power/util *shape* features (spike frequency, spike amplitude ratio) should generalize; *level* features will not
+
+For Round 6, adding `mem_total_mb`-relative features and a TDP lookup would let the classifier transfer across GPU classes without needing per-GPU training data for every card.
+
 ## Also found / fixed this round
 
 - Bug in `classifier/classifier_oracle.py:214`: was calling `.index()` on a list of class-name strings with an integer argument returned by `LabelEncoder.transform()`. Fixed to use `int(transform([...])[0])` directly. Oracle runs now work.
