@@ -211,8 +211,7 @@ class ClassifierOracle:
 
         # Query classifier
         proba = self._clf.predict_proba(x)[0]
-        training_idx = list(self._le.classes_).index(
-            self._le.transform(["ml_training"])[0])
+        training_idx = int(self._le.transform(["ml_training"])[0])
         return float(proba[training_idx])
 
 
