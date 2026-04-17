@@ -531,33 +531,42 @@ def get_feature_cols(df: pd.DataFrame) -> list:
     return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]
 
 
-def balanced_subsample(X, y, groups=None, random_state=42):
-    """Downsample to equal class counts, sampling by group (run_id).
+def compute_sample_weights(y):
+    """Compute per-sample weights inversely proportional to class frequency.
 
-    When adversarial examples (all labeled ml_training) are added to the
-    training set, ml_training can outnumber ml_inference and other by 5-10x.
-    This causes the classifier to predict "training" for everything.
+    Achieves the same class-balancing effect as downsampling but retains all
+    training data.  Every sample contributes to learning, but the weighted
+    loss treats classes equally regardless of how many samples each has.
 
-    This function downsamples the majority class(es) to match the minority
-    class, preserving the group structure to avoid data leakage from
-    overlapping sliding windows within the same run.
+    Weight for class c = total_samples / (n_classes * count_c)
+
+    This is the same formula used by scikit-learn's class_weight="balanced".
 
     Parameters
     ----------
-    X : np.ndarray — feature matrix
-    y : np.ndarray — class labels (encoded or string)
-    groups : np.ndarray or None — run_id per sample (if None, sample by row)
-    random_state : int
+    y : array-like — class labels (encoded integers or strings)
 
     Returns
     -------
-    X_bal, y_bal : balanced feature matrix and labels
+    weights : np.ndarray of shape (len(y),), dtype float32
+    """
+    classes, counts = np.unique(y, return_counts=True)
+    n_classes = len(classes)
+    total = len(y)
+    class_weight = {c: total / (n_classes * cnt) for c, cnt in zip(classes, counts)}
+    return np.array([class_weight[yi] for yi in y], dtype=np.float32)
+
+
+# Keep balanced_subsample for backward compatibility but prefer compute_sample_weights
+def balanced_subsample(X, y, groups=None, random_state=42):
+    """Downsample to equal class counts, sampling by group (run_id).
+
+    DEPRECATED: prefer compute_sample_weights() which retains all data.
     """
     rng = np.random.RandomState(random_state)
     classes = np.unique(y)
 
     if groups is None:
-        # Simple per-row sampling
         class_indices = {cls: np.where(y == cls)[0] for cls in classes}
         target = min(len(idxs) for idxs in class_indices.values())
         selected = []
@@ -568,8 +577,6 @@ def balanced_subsample(X, y, groups=None, random_state=42):
         selected = sorted(selected)
         return X[selected], y[selected]
 
-    # Group-aware sampling: sample whole runs to avoid leaking overlapping windows
-    # Build mapping: class -> list of (group_id, [indices])
     class_groups = {cls: [] for cls in classes}
     group_to_indices = {}
     for i, (g, c) in enumerate(zip(groups, y)):
@@ -581,7 +588,6 @@ def balanced_subsample(X, y, groups=None, random_state=42):
     for (g, c), idxs in group_to_indices.items():
         class_groups[c].append((g, idxs))
 
-    # Target: match the smallest class's total window count
     class_counts = {cls: sum(len(idxs) for _, idxs in glist)
                     for cls, glist in class_groups.items()}
     target = min(class_counts.values())
@@ -681,12 +687,13 @@ def train_and_evaluate():
                 X_tr, X_te = X[tr_idx], X[te_idx]
                 y_tr, y_te = y[tr_idx], y[te_idx]
 
-                # Handle XGBoost label encoding
+                # Handle XGBoost label encoding + class weights
                 if clf_name == "XGBoost":
                     from sklearn.preprocessing import LabelEncoder
                     le = LabelEncoder()
                     y_tr_enc = le.fit_transform(y_tr)
-                    clf.fit(X_tr, y_tr_enc)
+                    w_tr = compute_sample_weights(y_tr_enc)
+                    clf.fit(X_tr, y_tr_enc, sample_weight=w_tr)
                     y_pred_enc = clf.predict(X_te)
                     y_pred = le.inverse_transform(y_pred_enc)
                 else:
