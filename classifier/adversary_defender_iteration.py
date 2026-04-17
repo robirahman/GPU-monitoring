@@ -32,7 +32,7 @@ warnings.filterwarnings("ignore")
 
 from classifier.threeway_improved import (
     load_all_data, sliding_windows, get_feature_cols, extract_enhanced_features,
-    balanced_subsample,
+    compute_sample_weights,
     RAW_SIGNALS, threeway_label, TRAINING_LABELS, INFERENCE_LABELS, OTHER_LABELS,
 )
 
@@ -200,27 +200,27 @@ def run_analysis():
     y_enc = le.transform(y_clean)
     cv_accs = []
     for tr_idx, te_idx in cv.split(X_clean, y_enc, groups_clean):
-        X_fold, y_fold = balanced_subsample(
-            X_clean[tr_idx], y_enc[tr_idx], groups_clean[tr_idx], random_state=42)
+        w_fold = compute_sample_weights(y_enc[tr_idx])
         clf = xgb.XGBClassifier(
             n_estimators=500, max_depth=6, learning_rate=0.05,
             subsample=0.8, colsample_bytree=0.8,
             eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
         )
-        clf.fit(X_fold, y_fold)
+        clf.fit(X_clean[tr_idx], y_enc[tr_idx], sample_weight=w_fold)
         cv_accs.append(accuracy_score(y_enc[te_idx], clf.predict(X_clean[te_idx])))
 
     log.info(f"  Clean 5-fold CV accuracy: {np.mean(cv_accs):.4f} ± {np.std(cv_accs):.4f}")
 
-    # Train final baseline on all clean data (balanced)
-    X_bal, y_bal = balanced_subsample(X_clean, le.transform(y_clean), groups_clean, random_state=42)
-    log.info(f"  Balanced: {len(y_clean)} -> {len(y_bal)} windows")
+    # Train final baseline on all clean data (class-weighted)
+    y_clean_enc = le.transform(y_clean)
+    w_clean = compute_sample_weights(y_clean_enc)
+    log.info(f"  Class-weighted: {len(y_clean)} windows (all data retained)")
     clf_baseline = xgb.XGBClassifier(
         n_estimators=500, max_depth=6, learning_rate=0.05,
         subsample=0.8, colsample_bytree=0.8,
         eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
     )
-    clf_baseline.fit(X_bal, y_bal)
+    clf_baseline.fit(X_clean, y_clean_enc, sample_weight=w_clean)
 
     # Evaluate baseline on adversarial strategies
     results = []
@@ -287,27 +287,26 @@ def run_analysis():
     cv_accs_hard = []
     cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
     for tr_idx, te_idx in cv.split(X_hard, y_hard_enc, groups_hard):
-        X_fold, y_fold = balanced_subsample(
-            X_hard[tr_idx], y_hard_enc[tr_idx], groups_hard[tr_idx], random_state=42)
+        w_fold = compute_sample_weights(y_hard_enc[tr_idx])
         clf = xgb.XGBClassifier(
             n_estimators=500, max_depth=6, learning_rate=0.05,
             subsample=0.8, colsample_bytree=0.8,
             eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
         )
-        clf.fit(X_fold, y_fold)
+        clf.fit(X_hard[tr_idx], y_hard_enc[tr_idx], sample_weight=w_fold)
         cv_accs_hard.append(accuracy_score(y_hard_enc[te_idx], clf.predict(X_hard[te_idx])))
 
     log.info(f"  Hardened 5-fold CV accuracy: {np.mean(cv_accs_hard):.4f} ± {np.std(cv_accs_hard):.4f}")
 
-    # Train final hardened classifier (balanced)
-    X_bal, y_bal = balanced_subsample(X_hard, y_hard_enc, groups_hard, random_state=42)
-    log.info(f"  Balanced: {len(y_hard_enc)} -> {len(y_bal)} windows")
+    # Train final hardened classifier (class-weighted)
+    w_hard = compute_sample_weights(y_hard_enc)
+    log.info(f"  Class-weighted: {len(y_hard_enc)} windows (all data retained)")
     clf_hardened = xgb.XGBClassifier(
         n_estimators=500, max_depth=6, learning_rate=0.05,
         subsample=0.8, colsample_bytree=0.8,
         eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
     )
-    clf_hardened.fit(X_bal, y_bal)
+    clf_hardened.fit(X_hard, y_hard_enc, sample_weight=w_hard)
 
     # Evaluate hardened on ALL adversarial (including held-out composite 70-95%)
     for label in sorted(set(strategy_labels) | set(composite_labels)):
@@ -365,14 +364,14 @@ def run_analysis():
     groups_r3 = df_r3_train["run_id"].values
     y_r3_enc = le.transform(y_r3)
 
-    X_r3_bal, y_r3_bal = balanced_subsample(X_r3, y_r3_enc, groups_r3, random_state=42)
-    log.info(f"  Balanced: {len(y_r3_enc)} -> {len(y_r3_bal)} windows")
+    w_r3 = compute_sample_weights(y_r3_enc)
+    log.info(f"  Class-weighted: {len(y_r3_enc)} windows (all data retained)")
     clf_r3 = xgb.XGBClassifier(
         n_estimators=500, max_depth=6, learning_rate=0.05,
         subsample=0.8, colsample_bytree=0.8,
         eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
     )
-    clf_r3.fit(X_r3_bal, y_r3_bal)
+    clf_r3.fit(X_r3, y_r3_enc, sample_weight=w_r3)
 
     # Feature importance for new features
     importance = clf_r3.feature_importances_

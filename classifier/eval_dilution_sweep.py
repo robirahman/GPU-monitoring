@@ -33,7 +33,7 @@ warnings.filterwarnings("ignore")
 
 from classifier.threeway_improved import (
     load_all_data, sliding_windows, get_feature_cols,
-    balanced_subsample,
+    compute_sample_weights,
     TRAINING_LABELS, INFERENCE_LABELS, OTHER_LABELS,
 )
 
@@ -167,10 +167,10 @@ def main():
         X_tr = df_win.loc[clean_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_tr = le.transform(df_win.loc[clean_mask, "threeway_label"].values)
         groups_tr = df_win.loc[clean_mask, "run_id"].values
-        X_bal, y_bal = balanced_subsample(X_tr, y_tr, groups_tr, random_state=42)
-        log.info(f"    Balanced: {len(y_tr)} -> {len(y_bal)} windows")
+        w_tr = compute_sample_weights(y_tr)
+        log.info(f"    Class-weighted: {len(y_tr)} windows (all data retained)")
         clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_bal, y_bal)
+        clf.fit(X_tr, y_tr, sample_weight=w_tr)
         all_results.extend(evaluate_condition(
             clf, le, df_win, feature_cols, sweep_present, "baseline", WIN_SEC))
 
@@ -179,11 +179,10 @@ def main():
         loo_mask = clean_mask | non_dilution_adv_mask
         X_tr = df_win.loc[loo_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_tr = le.transform(df_win.loc[loo_mask, "threeway_label"].values)
-        groups_tr = df_win.loc[loo_mask, "run_id"].values
-        X_bal, y_bal = balanced_subsample(X_tr, y_tr, groups_tr, random_state=42)
-        log.info(f"    Balanced: {len(y_tr)} -> {len(y_bal)} windows")
+        w_tr = compute_sample_weights(y_tr)
+        log.info(f"    Class-weighted: {len(y_tr)} windows (all data retained)")
         clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_bal, y_bal)
+        clf.fit(X_tr, y_tr, sample_weight=w_tr)
         all_results.extend(evaluate_condition(
             clf, le, df_win, feature_cols, sweep_present, "LOO", WIN_SEC))
 
@@ -192,11 +191,10 @@ def main():
         hard_mask = clean_mask | hardening_adv_mask
         X_tr = df_win.loc[hard_mask, feature_cols].fillna(0).values.astype(np.float32)
         y_tr = le.transform(df_win.loc[hard_mask, "threeway_label"].values)
-        groups_tr = df_win.loc[hard_mask, "run_id"].values
-        X_bal, y_bal = balanced_subsample(X_tr, y_tr, groups_tr, random_state=42)
-        log.info(f"    Balanced: {len(y_tr)} -> {len(y_bal)} windows")
+        w_tr = compute_sample_weights(y_tr)
+        log.info(f"    Class-weighted: {len(y_tr)} windows (all data retained)")
         clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_bal, y_bal)
+        clf.fit(X_tr, y_tr, sample_weight=w_tr)
         all_results.extend(evaluate_condition(
             clf, le, df_win, feature_cols, sweep_present, "hardened", WIN_SEC))
 
