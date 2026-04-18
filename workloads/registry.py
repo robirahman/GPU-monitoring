@@ -405,6 +405,86 @@ WORKLOAD_REGISTRY = {
         "description": "Qwen 2.5 1.5B long-generation — KV cache growth pattern",
         "default_timeout": 480,
     },
+    # --- Round 5b (phase 3): Long-context LLM inference (KV-cache growth anchors) ---
+    "llm_infer_phi3_mini_seq2048": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "phi3_mini",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "2048",
+            "--max-tokens", "256",
+        ],
+        "description": "Phi-3-Mini seq=2048 — long-context prefill + decode",
+        "default_timeout": 480,
+    },
+    "llm_infer_tinyllama_seq2048": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "2048",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B seq=2048 — mid KV-cache sweep cell",
+        "default_timeout": 480,
+    },
+    "llm_infer_tinyllama_seq4096": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "4096",
+            "--max-tokens", "512",
+        ],
+        "description": "TinyLlama-1.1B seq=4096 — large KV-cache decode (memory-growing inference anchor)",
+        "default_timeout": 540,
+    },
+    "llm_infer_qwen25_1p5b_seq4096": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "qwen25_1p5b",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "4096",
+            "--max-tokens", "512",
+        ],
+        "description": "Qwen 2.5 1.5B seq=4096 — GQA KV-cache shape at large context",
+        "default_timeout": 540,
+    },
+    # --- Round 5b (phase 3): Large-batch inference (sustained high-util regime) ---
+    "llm_infer_qwen25_3b_bs16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "qwen25_3b",
+            "--duration", "300", "--batch-size", "16", "--seq-len", "256",
+            "--max-tokens", "128",
+        ],
+        "description": "Qwen 2.5 3B bs=16 — sustained high-util inference",
+        "default_timeout": 480,
+    },
+    "llm_infer_clip_embed_bs256": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "clip_l14",
+            "--duration", "300", "--batch-size", "256",
+        ],
+        "description": "CLIP ViT-L/14 image embedding @ batch 256 — max-throughput feature extractor",
+        "default_timeout": 420,
+    },
+    "llm_infer_bge_embed_bs128": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "bge_large",
+            "--duration", "300", "--batch-size", "128",
+        ],
+        "description": "BGE-large-en-v1.5 text embedding @ batch 128 — bidirectional encoder inference",
+        "default_timeout": 420,
+    },
+    # --- Round 5b (phase 3): Vision transformer classification ---
+    "llm_infer_vit_l_bs64": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "vit_l",
+            "--duration", "300", "--batch-size", "64",
+        ],
+        "description": "ViT-L/16 ImageNet classification @ batch 64 — non-CLIP encoder-only vision path",
+        "default_timeout": 420,
+    },
     # --- Round 5b: Non-LLM inference (underrepresented modalities) ---
     "llm_infer_sdxl": {
         "command": [
