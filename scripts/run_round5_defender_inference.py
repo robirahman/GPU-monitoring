@@ -38,27 +38,45 @@ PY = sys.executable
 # --- Workload tiers --------------------------------------------------------
 
 CONSUMER_WORKLOADS = [
-    # 1-8: single-GPU LLMs (all open-license, fit ≤16 GB FP16)
+    # Base single-GPU LLMs (open-license, fit ≤16 GB FP16)
     "llm_infer_phi3_mini",
     "llm_infer_qwen25_1p5b",
     "llm_infer_qwen25_3b",
     "llm_infer_smollm2_1p7b",
+    "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8",
     "llm_infer_tinyllama_seq1024",
     "llm_infer_qwen25_3b_bs4",
     "llm_infer_qwen25_1p5b_streaming",
-    # 9-10: non-LLM inference
+    # Non-LLM inference
     "llm_infer_sdxl",
     "llm_infer_clip_embed_batched",
+    # Phase 3: long-context (KV-cache growth anchors)
+    "llm_infer_phi3_mini_seq2048",
+    "llm_infer_tinyllama_seq2048",
+    "llm_infer_tinyllama_seq4096",
+    "llm_infer_qwen25_1p5b_seq4096",
+    # Phase 3: large-batch (sustained high-util)
+    "llm_infer_qwen25_3b_bs16",
+    "llm_infer_clip_embed_bs256",
+    "llm_infer_bge_embed_bs128",
+    # Phase 3: vision encoder-only
+    "llm_infer_vit_l_bs64",
 ]
 
-# Subset of consumer workloads to replicate on datacenter for transfer checks
+# Subset of consumer workloads to replicate on datacenter for cross-GPU
+# transfer checks. Cover one model from each class plus the two phase-3
+# shape cells (KV growth, sustained high-util) the Round 5 oracle exploited.
 DATACENTER_SUBSET_CONSUMER = [
     "llm_infer_phi3_mini",
     "llm_infer_qwen25_3b",
+    "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8",
     "llm_infer_qwen25_3b_bs4",
     "llm_infer_sdxl",
+    "llm_infer_tinyllama_seq4096",
+    "llm_infer_qwen25_3b_bs16",
+    "llm_infer_vit_l_bs64",
 ]
 
 DATACENTER_LARGE_WORKLOADS = [
