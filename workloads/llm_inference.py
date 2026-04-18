@@ -69,11 +69,11 @@ def run_llm(args, device: str) -> None:
     model_id, dtype_tag = MODEL_REGISTRY[args.model]
     print(f"Loading {args.model} ({model_id}, {dtype_tag})")
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=False)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    load_kwargs = {"device_map": device, "trust_remote_code": True}
+    load_kwargs = {"device_map": device, "trust_remote_code": False}
     if dtype_tag == "fp16":
         load_kwargs["torch_dtype"] = torch.float16
     elif dtype_tag == "bf16":
