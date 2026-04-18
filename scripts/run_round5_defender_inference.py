@@ -38,17 +38,16 @@ PY = sys.executable
 # --- Workload tiers --------------------------------------------------------
 
 CONSUMER_WORKLOADS = [
-    # 1-9: single-GPU LLMs (all fit in ≤16 GB FP16 or via 4-bit), all open-license
+    # 1-8: single-GPU LLMs (all open-license, fit ≤16 GB FP16)
     "llm_infer_phi3_mini",
     "llm_infer_qwen25_1p5b",
     "llm_infer_qwen25_3b",
     "llm_infer_smollm2_1p7b",
-    "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8",
     "llm_infer_tinyllama_seq1024",
     "llm_infer_qwen25_3b_bs4",
     "llm_infer_qwen25_1p5b_streaming",
-    # 10-11: non-LLM inference
+    # 9-10: non-LLM inference
     "llm_infer_sdxl",
     "llm_infer_clip_embed_batched",
 ]
@@ -57,7 +56,6 @@ CONSUMER_WORKLOADS = [
 DATACENTER_SUBSET_CONSUMER = [
     "llm_infer_phi3_mini",
     "llm_infer_qwen25_3b",
-    "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8",
     "llm_infer_qwen25_3b_bs4",
     "llm_infer_sdxl",

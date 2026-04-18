@@ -365,16 +365,6 @@ WORKLOAD_REGISTRY = {
         "description": "SmolLM2 1.7B Instruct (HuggingFace, Apache 2.0) — vendor/arch diversity (replaces Gemma 2 2B)",
         "default_timeout": 420,
     },
-    "llm_infer_mistral_7b_q4": {
-        "command": [
-            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
-            "--model", "mistral_7b_q4",
-            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
-            "--max-tokens", "256",
-        ],
-        "description": "Mistral 7B Instruct GPTQ 4-bit — quantised inference path",
-        "default_timeout": 480,
-    },
     "llm_infer_tinyllama_bs8": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
