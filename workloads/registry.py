@@ -345,24 +345,24 @@ WORKLOAD_REGISTRY = {
         "description": "Qwen 2.5 1.5B Instruct, FP16 — mid-size LLM inference anchor",
         "default_timeout": 420,
     },
-    "llm_infer_llama32_3b": {
+    "llm_infer_qwen25_3b": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
-            "--model", "llama32_3b",
+            "--model", "qwen25_3b",
             "--duration", "300", "--batch-size", "1", "--seq-len", "256",
             "--max-tokens", "256",
         ],
-        "description": "Llama 3.2 3B Instruct, FP16 — paper's headline inference scale",
+        "description": "Qwen 2.5 3B Instruct, FP16 — open-license 3B inference anchor (replaces Llama 3.2 3B)",
         "default_timeout": 420,
     },
-    "llm_infer_gemma2_2b": {
+    "llm_infer_smollm2_1p7b": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
-            "--model", "gemma2_2b",
+            "--model", "smollm2_1p7b",
             "--duration", "300", "--batch-size", "1", "--seq-len", "256",
             "--max-tokens", "256",
         ],
-        "description": "Gemma 2 2B Instruct, FP16 — architecture diversity (non-Llama)",
+        "description": "SmolLM2 1.7B Instruct (HuggingFace, Apache 2.0) — vendor/arch diversity (replaces Gemma 2 2B)",
         "default_timeout": 420,
     },
     "llm_infer_mistral_7b_q4": {
@@ -395,14 +395,14 @@ WORKLOAD_REGISTRY = {
         "description": "TinyLlama-1.1B seq=1024 — sequence-length sweep",
         "default_timeout": 420,
     },
-    "llm_infer_llama32_3b_bs4": {
+    "llm_infer_qwen25_3b_bs4": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
-            "--model", "llama32_3b",
+            "--model", "qwen25_3b",
             "--duration", "300", "--batch-size", "4", "--seq-len", "256",
             "--max-tokens", "256",
         ],
-        "description": "Llama 3.2 3B bs=4 — scale x batch cell",
+        "description": "Qwen 2.5 3B bs=4 — scale x batch cell (replaces Llama 3.2 3B bs=4)",
         "default_timeout": 420,
     },
     "llm_infer_qwen25_1p5b_streaming": {
@@ -436,13 +436,13 @@ WORKLOAD_REGISTRY = {
     },
     # --- Round 5b: Datacenter-only large-LLM inference (>80 GB memory) ---
     # Must be run on H200 (141 GB) or B200 (192 GB); won't fit on A100-80/5080/5090.
-    "llm_infer_llama33_70b_fp16": {
+    "llm_infer_qwen25_72b_fp16": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
-            "--model", "llama33_70b_fp16",
+            "--model", "qwen25_72b_fp16",
             "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
         ],
-        "description": "Llama 3.3 70B Instruct FP16 (~140 GB) via vLLM — frontier dense inference",
+        "description": "Qwen 2.5 72B Instruct FP16 (~144 GB) via vLLM — open-license frontier dense inference (replaces Llama 3.3 70B)",
         "default_timeout": 900,
     },
     "llm_infer_mixtral_8x7b": {
@@ -463,24 +463,24 @@ WORKLOAD_REGISTRY = {
         "description": "Qwen 2.5 72B AWQ-4bit via vLLM — quantised-mega inference path",
         "default_timeout": 900,
     },
-    "llm_infer_llama31_70b_tp2": {
+    "llm_infer_qwen25_72b_tp2": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
-            "--model", "llama31_70b_tp2",
+            "--model", "qwen25_72b_tp2",
             "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
             "--tensor-parallel-size", "2",
         ],
-        "description": "Llama 3.1 70B FP16 tensor-parallel across 2 GPUs — NVLink all-reduce signature",
+        "description": "Qwen 2.5 72B FP16 tensor-parallel across 2 GPUs — open-license NVLink all-reduce signature (replaces Llama 3.1 70B TP2)",
         "default_timeout": 900,
     },
-    "llm_infer_llama31_405b_tp8": {
+    "llm_infer_deepseek_v3_tp8": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
-            "--model", "llama31_405b_tp8",
+            "--model", "deepseek_v3_tp8",
             "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
             "--tensor-parallel-size", "8",
         ],
-        "description": "Llama 3.1 405B FP8 tensor-parallel across 8 GPUs — frontier-scale stretch",
+        "description": "DeepSeek-V3 671B MoE (~37B active, FP8) tensor-parallel across 8 GPUs — open-license frontier stretch (replaces Llama 3.1 405B)",
         "default_timeout": 1800,
     },
     # --- Advanced Adversarial ---

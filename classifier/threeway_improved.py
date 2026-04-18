@@ -122,23 +122,23 @@ INFERENCE_LABELS = {
     "dilution_sweep_inference",
     # Round 5: White-box inference baseline (control)
     "whitebox_inference",
-    # Round 5b: new large-LLM inference anchors (single-GPU)
-    "llm_infer_phi3_mini", "llm_infer_qwen25_1p5b", "llm_infer_llama32_3b",
-    "llm_infer_gemma2_2b", "llm_infer_mistral_7b_q4",
+    # Round 5b: new large-LLM inference anchors (single-GPU, open-license)
+    "llm_infer_phi3_mini", "llm_infer_qwen25_1p5b", "llm_infer_qwen25_3b",
+    "llm_infer_smollm2_1p7b", "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8", "llm_infer_tinyllama_seq1024",
-    "llm_infer_llama32_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
+    "llm_infer_qwen25_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
     "llm_infer_sdxl", "llm_infer_clip_embed_batched",
-    # Round 5b: datacenter-only large-LLM inference (>80 GB)
-    "llm_infer_llama33_70b_fp16", "llm_infer_mixtral_8x7b",
+    # Round 5b: datacenter-only large-LLM inference (>80 GB, open-license)
+    "llm_infer_qwen25_72b_fp16", "llm_infer_mixtral_8x7b",
     "llm_infer_qwen25_72b_fp8",
 }
 
 # Multi-GPU TP inference emits per-GPU parquets with _NgpuN suffix;
 # enumerate them explicitly so the label sets cover every file.
 for _n in (0, 1):
-    INFERENCE_LABELS.add(f"llm_infer_llama31_70b_tp2_2gpu_gpu{_n}")
+    INFERENCE_LABELS.add(f"llm_infer_qwen25_72b_tp2_2gpu_gpu{_n}")
 for _n in range(8):
-    INFERENCE_LABELS.add(f"llm_infer_llama31_405b_tp8_8gpu_gpu{_n}")
+    INFERENCE_LABELS.add(f"llm_infer_deepseek_v3_tp8_8gpu_gpu{_n}")
 
 OTHER_LABELS = {
     "idle", "idle_h100",
