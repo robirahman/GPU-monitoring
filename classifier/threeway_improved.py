@@ -124,7 +124,7 @@ INFERENCE_LABELS = {
     "whitebox_inference",
     # Round 5b: new large-LLM inference anchors (single-GPU, open-license)
     "llm_infer_phi3_mini", "llm_infer_qwen25_1p5b", "llm_infer_qwen25_3b",
-    "llm_infer_smollm2_1p7b",
+    "llm_infer_smollm2_1p7b", "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8", "llm_infer_tinyllama_seq1024",
     "llm_infer_qwen25_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
     "llm_infer_sdxl", "llm_infer_clip_embed_batched",
