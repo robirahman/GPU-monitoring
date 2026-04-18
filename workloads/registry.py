@@ -324,6 +324,165 @@ WORKLOAD_REGISTRY = {
         "description": "Whisper large-v3-turbo audio transcription (synthetic audio)",
         "default_timeout": 420,
     },
+    # --- Round 5b: Large-LLM inference anchors (single-GPU) ---
+    "llm_infer_phi3_mini": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "phi3_mini",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Phi-3-Mini-4K 3.8B, FP16, bs=1, seq=256 — 5080-class single-GPU",
+        "default_timeout": 420,
+    },
+    "llm_infer_qwen25_1p5b": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "qwen25_1p5b",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 1.5B Instruct, FP16 — mid-size LLM inference anchor",
+        "default_timeout": 420,
+    },
+    "llm_infer_llama32_3b": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "llama32_3b",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Llama 3.2 3B Instruct, FP16 — paper's headline inference scale",
+        "default_timeout": 420,
+    },
+    "llm_infer_gemma2_2b": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "gemma2_2b",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Gemma 2 2B Instruct, FP16 — architecture diversity (non-Llama)",
+        "default_timeout": 420,
+    },
+    "llm_infer_mistral_7b_q4": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "mistral_7b_q4",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Mistral 7B Instruct GPTQ 4-bit — quantised inference path",
+        "default_timeout": 480,
+    },
+    "llm_infer_tinyllama_bs8": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "8", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B bs=8 — batch sweep vs Round 5 whitebox_inference (bs=1)",
+        "default_timeout": 420,
+    },
+    "llm_infer_tinyllama_seq1024": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "1024",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B seq=1024 — sequence-length sweep",
+        "default_timeout": 420,
+    },
+    "llm_infer_llama32_3b_bs4": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "llama32_3b",
+            "--duration", "300", "--batch-size", "4", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Llama 3.2 3B bs=4 — scale x batch cell",
+        "default_timeout": 420,
+    },
+    "llm_infer_qwen25_1p5b_streaming": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "qwen25_1p5b",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "1024",
+        ],
+        "description": "Qwen 2.5 1.5B long-generation — KV cache growth pattern",
+        "default_timeout": 480,
+    },
+    # --- Round 5b: Non-LLM inference (underrepresented modalities) ---
+    "llm_infer_sdxl": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "sdxl",
+            "--duration", "300", "--sdxl-steps", "30", "--sdxl-size", "1024",
+        ],
+        "description": "Stable Diffusion XL 1024x1024 / 30 steps — diffusion path",
+        "default_timeout": 600,
+    },
+    "llm_infer_clip_embed_batched": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "clip_l14",
+            "--duration", "300", "--batch-size", "64",
+        ],
+        "description": "CLIP ViT-L/14 image embedding @ batch 64 — feature-extractor path",
+        "default_timeout": 420,
+    },
+    # --- Round 5b: Datacenter-only large-LLM inference (>80 GB memory) ---
+    # Must be run on H200 (141 GB) or B200 (192 GB); won't fit on A100-80/5080/5090.
+    "llm_infer_llama33_70b_fp16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "llama33_70b_fp16",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Llama 3.3 70B Instruct FP16 (~140 GB) via vLLM — frontier dense inference",
+        "default_timeout": 900,
+    },
+    "llm_infer_mixtral_8x7b": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "mixtral_8x7b",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Mixtral 8x7B MoE (~90 GB FP16) via vLLM — sparse expert activation",
+        "default_timeout": 900,
+    },
+    "llm_infer_qwen25_72b_fp8": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_72b_fp8",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 72B AWQ-4bit via vLLM — quantised-mega inference path",
+        "default_timeout": 900,
+    },
+    "llm_infer_llama31_70b_tp2": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "llama31_70b_tp2",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+            "--tensor-parallel-size", "2",
+        ],
+        "description": "Llama 3.1 70B FP16 tensor-parallel across 2 GPUs — NVLink all-reduce signature",
+        "default_timeout": 900,
+    },
+    "llm_infer_llama31_405b_tp8": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "llama31_405b_tp8",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+            "--tensor-parallel-size", "8",
+        ],
+        "description": "Llama 3.1 405B FP8 tensor-parallel across 8 GPUs — frontier-scale stretch",
+        "default_timeout": 1800,
+    },
     # --- Advanced Adversarial ---
     "adversarial_E_memory_minimal": {
         "command": [

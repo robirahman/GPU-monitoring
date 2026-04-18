@@ -94,6 +94,15 @@ TRAINING_LABELS = {
     "whitebox_oracle",
     # Round 5: White-box LoRA fine-tuning
     "whitebox_lora_N5", "whitebox_lora_N10", "whitebox_lora_N20",
+    # Generic training labels seen in datacenter runs
+    "adversarial_training",
+    "adversarial_training_2gpu_gpu0", "adversarial_training_2gpu_gpu1",
+    "bert_finetune",
+    "bert_finetune_2gpu_gpu0", "bert_finetune_2gpu_gpu1",
+    "gpt2_finetune",
+    "gpt2_finetune_2gpu_gpu0", "gpt2_finetune_2gpu_gpu1",
+    "pytorch_training",
+    "pytorch_training_2gpu_gpu0", "pytorch_training_2gpu_gpu1",
 }
 
 INFERENCE_LABELS = {
@@ -101,27 +110,52 @@ INFERENCE_LABELS = {
     "resnet50_inference_standalone",
     "resnet50_inference_large_bs1024", "resnet50_inference_small_bs32",
     "resnet50_concurrent_concurrent",
+    "resnet50_inference_2gpu_gpu0", "resnet50_inference_2gpu_gpu1",
     "BASELINE_INFER", "EC1", "EC4",
     # Modern inference models
     "deepseek_r1_inference",
     "qwen25_inference",
     "whisper_inference",
+    "modern_inference",
+    "modern_inference_2gpu_gpu0", "modern_inference_2gpu_gpu1",
     # Controlled dilution sweep: pure inference baseline
     "dilution_sweep_inference",
     # Round 5: White-box inference baseline (control)
     "whitebox_inference",
+    # Round 5b: new large-LLM inference anchors (single-GPU)
+    "llm_infer_phi3_mini", "llm_infer_qwen25_1p5b", "llm_infer_llama32_3b",
+    "llm_infer_gemma2_2b", "llm_infer_mistral_7b_q4",
+    "llm_infer_tinyllama_bs8", "llm_infer_tinyllama_seq1024",
+    "llm_infer_llama32_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
+    "llm_infer_sdxl", "llm_infer_clip_embed_batched",
+    # Round 5b: datacenter-only large-LLM inference (>80 GB)
+    "llm_infer_llama33_70b_fp16", "llm_infer_mixtral_8x7b",
+    "llm_infer_qwen25_72b_fp8",
 }
+
+# Multi-GPU TP inference emits per-GPU parquets with _NgpuN suffix;
+# enumerate them explicitly so the label sets cover every file.
+for _n in (0, 1):
+    INFERENCE_LABELS.add(f"llm_infer_llama31_70b_tp2_2gpu_gpu{_n}")
+for _n in range(8):
+    INFERENCE_LABELS.add(f"llm_infer_llama31_405b_tp8_8gpu_gpu{_n}")
 
 OTHER_LABELS = {
     "idle", "idle_h100",
+    "idle_2gpu_gpu0", "idle_2gpu_gpu1",
     "cufft_benchmark", "cufft_benchmark_standalone",
     "cufft_short_dur120", "cufft_concurrent_concurrent",
+    "cufft_benchmark_2gpu_gpu0", "cufft_benchmark_2gpu_gpu1",
     "nbody_sim", "nbody_sim_standalone", "nbody_short_dur120",
+    "nbody_sim_2gpu_gpu0", "nbody_sim_2gpu_gpu1",
     "mining_ethash_proxy", "ethash_cuda",
     "rendering_proxy", "blender_bmw",
     "ffmpeg_nvenc",
     "gromacs_adh",
     "nvlink_bandwidth", "nvlink_latency",
+    "nvlink_p2p", "nvlink_p2p_2gpu_gpu0", "nvlink_p2p_2gpu_gpu1",
+    "scientific_hpc",
+    "scientific_hpc_2gpu_gpu0", "scientific_hpc_2gpu_gpu1",
 }
 
 
@@ -531,30 +565,91 @@ def get_feature_cols(df: pd.DataFrame) -> list:
     return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]
 
 
-def compute_sample_weights(y):
-    """Compute per-sample weights inversely proportional to class frequency.
+def compute_sample_weights(y, groups=None, beta=None, per_run=None):
+    """Compute per-sample weights with class + (optional) per-run reweighting.
 
-    Achieves the same class-balancing effect as downsampling but retains all
-    training data.  Every sample contributes to learning, but the weighted
-    loss treats classes equally regardless of how many samples each has.
+    Default behaviour (groups=None, beta=None) matches the original
+    sklearn-"balanced" scheme exactly, so existing callers are unaffected.
 
-    Weight for class c = total_samples / (n_classes * count_c)
+    When `groups` is provided, two additional corrections kick in:
 
-    This is the same formula used by scikit-learn's class_weight="balanced".
+    1. **Effective-number-of-samples class weighting** (Cui et al. 2019).
+       Replaces inverse frequency with `(1 - beta) / (1 - beta ** n_c)`.
+       With beta close to 1 (default 0.9999) this flattens the diminishing
+       returns of near-duplicate samples — useful when one class has many
+       files from a single workload and another has fewer files from
+       several workloads.
+
+    2. **Per-run normalisation.** Each sample's weight is scaled by
+       `1 / n_windows_in_its_run`, so a 300s run producing ~9 windows does
+       not dominate a 30s run producing ~1 window. Activated by
+       `per_run=True` (the default when groups is given).
+
+    Final weights are renormalised so their mean is 1.0.
 
     Parameters
     ----------
-    y : array-like — class labels (encoded integers or strings)
+    y : array-like — class labels (encoded integers or strings).
+    groups : array-like, optional — run_id per sample. Required for per-run
+        normalisation.
+    beta : float, optional — effective-number-of-samples smoothing (in [0,1)).
+        When None, falls back to the classic inverse-frequency formula.
+    per_run : bool, optional — if True, divide by windows-per-run. Defaults
+        to True when `groups` is given, False otherwise.
 
     Returns
     -------
-    weights : np.ndarray of shape (len(y),), dtype float32
+    weights : np.ndarray of shape (len(y),), dtype float32, mean ≈ 1.
     """
-    classes, counts = np.unique(y, return_counts=True)
+    y_arr = np.asarray(y)
+    n = len(y_arr)
+
+    if per_run is None:
+        per_run = groups is not None
+    if per_run and groups is None:
+        raise ValueError("per_run=True requires groups to be provided")
+
+    # Step 1: per-run weight — each sample gets 1/n_samples_in_run, so every
+    # run contributes a total weight of 1 (a 10-window run no longer
+    # outweighs a 1-window run).
+    if per_run:
+        groups_arr = np.asarray(groups)
+        if len(groups_arr) != n:
+            raise ValueError("groups must have the same length as y")
+        _, inverse_g = np.unique(groups_arr, return_inverse=True)
+        counts_g = np.bincount(inverse_g)
+        w_run = 1.0 / counts_g[inverse_g]
+    else:
+        w_run = np.ones(n, dtype=np.float64)
+
+    # Step 2: class weights computed on *effective* class counts
+    # (i.e., counts after per-run normalisation). This lets a class with
+    # many runs-per-class still balance against one with few runs,
+    # independent of how long any single run happens to be.
+    classes, inverse_c = np.unique(y_arr, return_inverse=True)
     n_classes = len(classes)
-    total = len(y)
-    class_weight = {c: total / (n_classes * cnt) for c, cnt in zip(classes, counts)}
-    return np.array([class_weight[yi] for yi in y], dtype=np.float32)
+    eff_counts = np.bincount(inverse_c, weights=w_run)
+
+    if beta is None:
+        # Classic inverse-frequency, on effective counts.
+        # (Reduces to sklearn's "balanced" when per_run is False.)
+        total_eff = eff_counts.sum()
+        class_w = total_eff / (n_classes * eff_counts)
+    else:
+        if not (0.0 <= beta < 1.0):
+            raise ValueError(f"beta must be in [0, 1); got {beta}")
+        # Round effective counts for the Cui formula's integer-n assumption;
+        # with beta=0.9999 this is not sensitive.
+        eff_n_cui = (1.0 - np.power(beta, eff_counts)) / (1.0 - beta)
+        raw = 1.0 / eff_n_cui
+        class_w = raw / raw.mean()
+
+    w = w_run * class_w[inverse_c]
+
+    mean_w = w.mean()
+    if mean_w > 0:
+        w = w / mean_w
+    return w.astype(np.float32)
 
 
 # Keep balanced_subsample for backward compatibility but prefer compute_sample_weights
