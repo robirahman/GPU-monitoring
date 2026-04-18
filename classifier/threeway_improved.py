@@ -128,6 +128,13 @@ INFERENCE_LABELS = {
     "llm_infer_tinyllama_bs8", "llm_infer_tinyllama_seq1024",
     "llm_infer_qwen25_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
     "llm_infer_sdxl", "llm_infer_clip_embed_batched",
+    # Round 5b phase 3: long-context, large-batch, encoder-only inference
+    "llm_infer_phi3_mini_seq2048",
+    "llm_infer_tinyllama_seq2048", "llm_infer_tinyllama_seq4096",
+    "llm_infer_qwen25_1p5b_seq4096",
+    "llm_infer_qwen25_3b_bs16",
+    "llm_infer_clip_embed_bs256", "llm_infer_bge_embed_bs128",
+    "llm_infer_vit_l_bs64",
     # Round 5b: datacenter-only large-LLM inference (>80 GB, open-license)
     "llm_infer_qwen25_72b_fp16", "llm_infer_mixtral_8x7b",
     "llm_infer_qwen25_72b_fp8",
