@@ -165,6 +165,70 @@ def run_sdxl(args, device: str) -> None:
     print(f"SDXL done: {iterations} images in {elapsed:.1f}s")
 
 
+def run_vit_l(args, device: str) -> None:
+    """ViT-L/16 ImageNet classification at batch — encoder-only vision path."""
+    from transformers import ViTForImageClassification
+
+    model_id = "google/vit-large-patch16-224"
+    print(f"Loading {model_id}")
+    model = ViTForImageClassification.from_pretrained(
+        model_id, torch_dtype=torch.float16,
+    ).to(device).eval()
+
+    def fake_batch(n):
+        return torch.randn(n, 3, 224, 224, dtype=torch.float16, device=device)
+
+    start = time.time()
+    iterations = 0
+    while time.time() - start < args.duration:
+        imgs = fake_batch(args.batch_size)
+        with torch.no_grad():
+            _ = model(pixel_values=imgs).logits
+        iterations += 1
+        if iterations % 25 == 0:
+            elapsed = time.time() - start
+            print(f"  batch {iterations}: {elapsed:.0f}s, "
+                  f"{iterations*args.batch_size/elapsed:.1f} img/s")
+
+    elapsed = time.time() - start
+    print(f"ViT-L done: {iterations} batches, {iterations*args.batch_size} images, "
+          f"{iterations*args.batch_size/elapsed:.1f} img/s in {elapsed:.1f}s")
+
+
+def run_bge_embed(args, device: str) -> None:
+    """BGE-large-en-v1.5 batch text embedding — bidirectional encoder path."""
+    from transformers import AutoModel, AutoTokenizer
+
+    model_id = "BAAI/bge-large-en-v1.5"
+    print(f"Loading {model_id}")
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModel.from_pretrained(model_id, torch_dtype=torch.float16).to(device).eval()
+
+    # Build a stable batch of tokenised text (vary length across the batch
+    # so attention masks exercise both padded and full positions).
+    texts = [PROMPTS[i % len(PROMPTS)] * ((i % 3) + 1) for i in range(args.batch_size)]
+    encoded = tokenizer(
+        texts, padding=True, truncation=True, max_length=512, return_tensors="pt",
+    ).to(device)
+
+    start = time.time()
+    iterations = 0
+    while time.time() - start < args.duration:
+        with torch.no_grad():
+            out = model(**encoded)
+            mask = encoded["attention_mask"].unsqueeze(-1).float()
+            pooled = (out.last_hidden_state * mask).sum(1) / mask.sum(1)
+            _ = torch.nn.functional.normalize(pooled, p=2, dim=-1)
+        iterations += 1
+        if iterations % 50 == 0:
+            elapsed = time.time() - start
+            print(f"  batch {iterations}: {iterations*args.batch_size/elapsed:.1f} texts/s, {elapsed:.0f}s")
+
+    elapsed = time.time() - start
+    print(f"BGE done: {iterations} batches, {iterations*args.batch_size} texts, "
+          f"{iterations*args.batch_size/elapsed:.1f} texts/s in {elapsed:.1f}s")
+
+
 def run_clip_embed(args, device: str) -> None:
     """CLIP ViT-L/14 image embedding at batch."""
     from transformers import CLIPModel, CLIPProcessor
@@ -201,7 +265,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--model", required=True,
-        choices=list(MODEL_REGISTRY.keys()) + ["sdxl", "clip_l14"],
+        choices=list(MODEL_REGISTRY.keys()) + ["sdxl", "clip_l14", "vit_l", "bge_large"],
     )
     ap.add_argument("--duration", type=int, default=300)
     ap.add_argument("--batch-size", type=int, default=1)
@@ -224,6 +288,10 @@ def main():
         run_sdxl(args, args.device)
     elif args.model == "clip_l14":
         run_clip_embed(args, args.device)
+    elif args.model == "vit_l":
+        run_vit_l(args, args.device)
+    elif args.model == "bge_large":
+        run_bge_embed(args, args.device)
     else:
         run_llm(args, args.device)
 
