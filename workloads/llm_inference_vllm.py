@@ -25,10 +25,11 @@ import os
 import time
 
 
-# Registry: short-name -> (HF id, dtype, required_min_gpus, default TP)
+# Registry: short-name -> (HF id, dtype, required_min_gpus, default TP).
+# All entries are non-gated (Qwen, Mistral, DeepSeek) to avoid HF access gates.
 VLLM_MODELS = {
-    "llama33_70b_fp16": (
-        "meta-llama/Llama-3.3-70B-Instruct",
+    "qwen25_72b_fp16": (
+        "Qwen/Qwen2.5-72B-Instruct",
         "float16",
         1, 1,
     ),
@@ -42,13 +43,13 @@ VLLM_MODELS = {
         "auto",
         1, 1,
     ),
-    "llama31_70b_tp2": (
-        "meta-llama/Llama-3.1-70B-Instruct",
+    "qwen25_72b_tp2": (
+        "Qwen/Qwen2.5-72B-Instruct",
         "float16",
         2, 2,
     ),
-    "llama31_405b_tp8": (
-        "meta-llama/Llama-3.1-405B-Instruct-FP8",
+    "deepseek_v3_tp8": (
+        "deepseek-ai/DeepSeek-V3",        # 671B MoE (~37B active), FP8 native
         "auto",
         8, 8,
     ),

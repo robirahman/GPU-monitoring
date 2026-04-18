@@ -31,8 +31,8 @@ import torch
 MODEL_REGISTRY = {
     "phi3_mini":        ("microsoft/Phi-3-mini-4k-instruct",              "fp16"),
     "qwen25_1p5b":      ("Qwen/Qwen2.5-1.5B-Instruct",                    "fp16"),
-    "llama32_3b":       ("meta-llama/Llama-3.2-3B-Instruct",              "fp16"),
-    "gemma2_2b":        ("google/gemma-2-2b-it",                          "fp16"),
+    "qwen25_3b":        ("Qwen/Qwen2.5-3B-Instruct",                      "fp16"),
+    "smollm2_1p7b":     ("HuggingFaceTB/SmolLM2-1.7B-Instruct",           "fp16"),
     "mistral_7b_q4":    ("TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",        "gptq"),
     "tinyllama":        ("TinyLlama/TinyLlama-1.1B-Chat-v1.0",            "fp16"),
     "qwen25_0p5b":      ("Qwen/Qwen2.5-0.5B-Instruct",                    "fp16"),

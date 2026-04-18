@@ -38,15 +38,15 @@ PY = sys.executable
 # --- Workload tiers --------------------------------------------------------
 
 CONSUMER_WORKLOADS = [
-    # 1-9: single-GPU LLMs (all fit in ≤16 GB FP16 or via 4-bit)
+    # 1-9: single-GPU LLMs (all fit in ≤16 GB FP16 or via 4-bit), all open-license
     "llm_infer_phi3_mini",
     "llm_infer_qwen25_1p5b",
-    "llm_infer_llama32_3b",
-    "llm_infer_gemma2_2b",
+    "llm_infer_qwen25_3b",
+    "llm_infer_smollm2_1p7b",
     "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8",
     "llm_infer_tinyllama_seq1024",
-    "llm_infer_llama32_3b_bs4",
+    "llm_infer_qwen25_3b_bs4",
     "llm_infer_qwen25_1p5b_streaming",
     # 10-11: non-LLM inference
     "llm_infer_sdxl",
@@ -56,25 +56,25 @@ CONSUMER_WORKLOADS = [
 # Subset of consumer workloads to replicate on datacenter for transfer checks
 DATACENTER_SUBSET_CONSUMER = [
     "llm_infer_phi3_mini",
-    "llm_infer_llama32_3b",
+    "llm_infer_qwen25_3b",
     "llm_infer_mistral_7b_q4",
     "llm_infer_tinyllama_bs8",
-    "llm_infer_llama32_3b_bs4",
+    "llm_infer_qwen25_3b_bs4",
     "llm_infer_sdxl",
 ]
 
 DATACENTER_LARGE_WORKLOADS = [
-    # 12-14: single-GPU big models (>80 GB memory on H200/B200)
-    "llm_infer_llama33_70b_fp16",
+    # 12-14: single-GPU big models (>80 GB memory on H200/B200), all open-license
+    "llm_infer_qwen25_72b_fp16",
     "llm_infer_mixtral_8x7b",
     "llm_infer_qwen25_72b_fp8",
     # 15: 2-GPU TP — standard datacenter workload
-    "llm_infer_llama31_70b_tp2",
+    "llm_infer_qwen25_72b_tp2",
 ]
 
 DATACENTER_STRETCH_WORKLOADS = [
     # 16: 8-GPU TP — run only if 8×H200 is already allocated
-    "llm_infer_llama31_405b_tp8",
+    "llm_infer_deepseek_v3_tp8",
 ]
 
 
