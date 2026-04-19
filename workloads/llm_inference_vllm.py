@@ -28,6 +28,23 @@ import time
 # Registry: short-name -> (HF id, dtype, required_min_gpus, default TP).
 # All entries are non-gated (Qwen, Mistral, DeepSeek) to avoid HF access gates.
 VLLM_MODELS = {
+    # Single-GPU dense inference at FSDP-matched sizes (phase 5).
+    # 7B/14B/32B fit in 16/32/64 GB FP16 — any datacenter GPU.
+    "qwen25_7b_fp16": (
+        "Qwen/Qwen2.5-7B-Instruct",
+        "float16",
+        1, 1,
+    ),
+    "qwen25_14b_fp16": (
+        "Qwen/Qwen2.5-14B-Instruct",
+        "float16",
+        1, 1,
+    ),
+    "qwen25_32b_fp16": (
+        "Qwen/Qwen2.5-32B-Instruct",
+        "float16",
+        1, 1,
+    ),
     "qwen25_72b_fp16": (
         "Qwen/Qwen2.5-72B-Instruct",
         "float16",

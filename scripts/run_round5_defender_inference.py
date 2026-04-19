@@ -89,11 +89,15 @@ DATACENTER_SUBSET_CONSUMER = [
 ]
 
 DATACENTER_LARGE_WORKLOADS = [
-    # 12-14: single-GPU big models (>80 GB memory on H200/B200), all open-license
+    # Phase 5: dense single-GPU inference at FSDP-matched sizes (fits any DC GPU)
+    "llm_infer_qwen25_7b_fp16",
+    "llm_infer_qwen25_14b_fp16",
+    "llm_infer_qwen25_32b_fp16",
+    # Single-GPU big models (>80 GB memory on H200/B200), all open-license
     "llm_infer_qwen25_72b_fp16",
     "llm_infer_mixtral_8x7b",
     "llm_infer_qwen25_72b_fp8",
-    # 15: 2-GPU TP — standard datacenter workload
+    # 2-GPU TP — standard datacenter workload
     "llm_infer_qwen25_72b_tp2",
 ]
 
