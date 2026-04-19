@@ -534,8 +534,9 @@ WORKLOAD_REGISTRY = {
             "--model", "microsoft/Phi-3-mini-4k-instruct",
             "--duration", "300", "--batch-size", "1", "--seq-len", "256",
             "--rank", "16", "--grad-ckpt",
+            "--target-modules", "qkv_proj,o_proj",
         ],
-        "description": "Phi-3-Mini 3.8B LoRA FT (grad-ckpt on) — matched-pair train for llm_infer_phi3_mini",
+        "description": "Phi-3-Mini 3.8B LoRA FT (grad-ckpt on, qkv_proj fused) — matched-pair train for llm_infer_phi3_mini",
         "default_timeout": 600,
     },
     "llm_train_mistral_7b_lora": {

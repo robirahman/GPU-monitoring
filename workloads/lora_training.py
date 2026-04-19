@@ -47,8 +47,14 @@ def load_model(model_id: str, device: str):
     return model, tokenizer
 
 
-def apply_lora(model, rank: int, alpha: int):
-    """Attach LoRA adapters to attention projections."""
+def apply_lora(model, rank: int, alpha: int, target_modules):
+    """Attach LoRA adapters to the given target modules.
+
+    `target_modules` may be a list of module-name substrings
+    (e.g. ['q_proj', 'v_proj']) or the string 'all-linear' (PEFT will
+    then apply LoRA to every nn.Linear in the model — works for any arch
+    but produces a larger adapter).
+    """
     from peft import LoraConfig, TaskType, get_peft_model
 
     config = LoraConfig(
@@ -56,7 +62,7 @@ def apply_lora(model, rank: int, alpha: int):
         r=rank,
         lora_alpha=alpha,
         lora_dropout=0.05,
-        target_modules=["q_proj", "v_proj"],
+        target_modules=target_modules,
     )
     peft_model = get_peft_model(model, config)
     n_trainable = sum(p.numel() for p in peft_model.parameters() if p.requires_grad)
@@ -124,6 +130,12 @@ def main():
     ap.add_argument("--seq-len", type=int, default=256)
     ap.add_argument("--rank", type=int, default=16)
     ap.add_argument("--lora-alpha", type=int, default=32)
+    ap.add_argument(
+        "--target-modules", default="q_proj,v_proj",
+        help="Comma-separated list of module-name substrings, or 'all-linear' "
+             "for every nn.Linear in the model. Defaults to Llama/Qwen-style "
+             "'q_proj,v_proj'; Phi-3 needs 'qkv_proj' (fused QKV).",
+    )
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--grad-ckpt", action="store_true",
                     help="Enable gradient checkpointing (fits larger models)")
@@ -136,8 +148,12 @@ def main():
 
     os.environ.setdefault("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
 
+    tm = args.target_modules.strip()
+    target_modules = tm if tm == "all-linear" else [s.strip() for s in tm.split(",") if s.strip()]
+
     model, tokenizer = load_model(args.model, args.device)
-    model = apply_lora(model, rank=args.rank, alpha=args.lora_alpha)
+    model = apply_lora(model, rank=args.rank, alpha=args.lora_alpha,
+                       target_modules=target_modules)
     train_loop(model, tokenizer, args, args.device)
 
 
