@@ -495,6 +495,59 @@ WORKLOAD_REGISTRY = {
         "description": "ViT-L/16 ImageNet classification @ batch 64 — non-CLIP encoder-only vision path",
         "default_timeout": 420,
     },
+    # --- Round 5b (phase 4): Matched-pair LoRA training (consumer tier) ---
+    # Paired with existing llm_infer_* workloads at the same model scale so
+    # the classifier can learn train-vs-infer on the same GPU / same model.
+    "llm_train_qwen25_1p5b_lora": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_training.py"),
+            "--model", "Qwen/Qwen2.5-1.5B-Instruct",
+            "--duration", "300", "--batch-size", "2", "--seq-len", "256",
+            "--rank", "16",
+        ],
+        "description": "Qwen 2.5 1.5B LoRA FT — matched-pair train for llm_infer_qwen25_1p5b",
+        "default_timeout": 480,
+    },
+    "llm_train_smollm2_1p7b_lora": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_training.py"),
+            "--model", "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+            "--duration", "300", "--batch-size", "2", "--seq-len", "256",
+            "--rank", "16",
+        ],
+        "description": "SmolLM2 1.7B LoRA FT — matched-pair train for llm_infer_smollm2_1p7b",
+        "default_timeout": 480,
+    },
+    "llm_train_qwen25_3b_lora": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_training.py"),
+            "--model", "Qwen/Qwen2.5-3B-Instruct",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--rank", "16",
+        ],
+        "description": "Qwen 2.5 3B LoRA FT — matched-pair train for llm_infer_qwen25_3b",
+        "default_timeout": 540,
+    },
+    "llm_train_phi3_mini_lora": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_training.py"),
+            "--model", "microsoft/Phi-3-mini-4k-instruct",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--rank", "16", "--grad-ckpt",
+        ],
+        "description": "Phi-3-Mini 3.8B LoRA FT (grad-ckpt on) — matched-pair train for llm_infer_phi3_mini",
+        "default_timeout": 600,
+    },
+    "llm_train_mistral_7b_lora": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_training.py"),
+            "--model", "mistralai/Mistral-7B-Instruct-v0.2",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--rank", "16", "--grad-ckpt",
+        ],
+        "description": "Mistral 7B LoRA FT (grad-ckpt on) — matched-pair train for llm_infer_mistral_7b_q4. Won't fit 16 GB; run on 24 GB+ hardware.",
+        "default_timeout": 720,
+    },
     # --- Round 5b: Non-LLM inference (underrepresented modalities) ---
     "llm_infer_sdxl": {
         "command": [
