@@ -141,6 +141,9 @@ INFERENCE_LABELS = {
     "llm_infer_qwen25_3b_bs16",
     "llm_infer_clip_embed_bs256", "llm_infer_bge_embed_bs128",
     "llm_infer_vit_l_bs64",
+    # Round 5b phase 5: matched-pair dense inference at FSDP sizes
+    "llm_infer_qwen25_7b_fp16", "llm_infer_qwen25_14b_fp16",
+    "llm_infer_qwen25_32b_fp16",
     # Round 5b: datacenter-only large-LLM inference (>80 GB, open-license)
     "llm_infer_qwen25_72b_fp16", "llm_infer_mixtral_8x7b",
     "llm_infer_qwen25_72b_fp8",

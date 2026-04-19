@@ -10,11 +10,6 @@ type × model size**, by training on pooled telemetry from every GPU we
 have access to. The classifier's primary output is P(training) for a
 GPU telemetry window; secondary output is P(training | ML activity).
 
-Consumer→datacenter *transfer* is not the task any more — we don't test
-generalisation to unseen GPUs because we collect from every GPU of
-interest instead. The framing from `docs/normalized_features_ablation.md`
-(now archived) is retired.
-
 ## What matters for this task
 
 A classifier that learns train-vs-infer *robustly* needs **matched
@@ -117,14 +112,9 @@ classifier, it's worth collecting:
 
 - `classifier/twostage.py` now uses the simpler two-binary-classifier
   structure: Stage 1 = `ml_training vs not-training`, Stage 2 =
-  `ml_training vs ml_inference` (conditional on ML activity). Stage 1 is
-  the primary defender signal; Stage 2 is the sanity-check sub-detector
-  that forces the train↔infer decision onto shape features only (level
-  features — absolute memory/power/clock means, percentiles, min/max —
-  are dropped from Stage 2 input).
+  `ml_training vs ml_inference` (conditional on ML activity).
 - `classifier/cross_gpu_generalization.py` and
-  `classifier/results/cross_gpu_results.csv` removed (misaligned with
-  the pooled-training goal).
+  `classifier/results/cross_gpu_results.csv` removed.
 - `classifier/consumer_to_datacenter_transfer.py` and
   `docs/normalized_features_ablation.md` (on `normalized-features`
   branch) retired with the branch.
@@ -139,12 +129,12 @@ classifier, it's worth collecting:
 
 ## Open TODOs
 
-- [ ] Add phase-5 registry entries (`llm_infer_qwen25_7b_fp16`,
+- [x] Add phase-5 registry entries (`llm_infer_qwen25_7b_fp16`,
       `llm_infer_qwen25_14b_fp16`, `llm_infer_qwen25_32b_fp16`) and
       corresponding `INFERENCE_LABELS` entries.
-- [ ] Update `DATACENTER_SUBSET_CONSUMER` / `DATACENTER_LARGE_WORKLOADS`
-      in `scripts/run_round5_defender_inference.py` to include phase-5
-      workloads once registry is in.
+- [x] Update `DATACENTER_LARGE_WORKLOADS` in
+      `scripts/run_round5_defender_inference.py` to include phase-5
+      workloads.
 - [ ] Host-aware progress JSON: rename to include `hostname` so
       multi-host runs don't stomp each other. Currently mitigated by
       `--reset` on each new host.
