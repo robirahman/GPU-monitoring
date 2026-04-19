@@ -561,7 +561,9 @@ WORKLOAD_REGISTRY = {
             "--tensor-parallel-size", "8",
         ],
         "description": "DeepSeek-V3 671B MoE (~37B active, FP8) tensor-parallel across 8 GPUs — open-license frontier stretch (replaces Llama 3.1 405B)",
-        "default_timeout": 1800,
+        # First rep has to download ~685 GB of weights; subsequent reps reuse
+        # the HF cache and finish in ~15 min. 2 h accommodates a 1 Gbps pipe.
+        "default_timeout": 7200,
     },
     # --- Advanced Adversarial ---
     "adversarial_E_memory_minimal": {
