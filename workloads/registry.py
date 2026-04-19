@@ -567,6 +567,38 @@ WORKLOAD_REGISTRY = {
         "description": "CLIP ViT-L/14 image embedding @ batch 64 — feature-extractor path",
         "default_timeout": 420,
     },
+    # --- Round 5b (phase 5): Matched-pair dense inference at FSDP sizes ---
+    # 7B / 14B / 32B FP16 via vLLM — single-GPU, fits any datacenter GPU
+    # (A100-80, H100-80, H200, B200). Paired with existing FSDP-7B/13B/30B
+    # training runs so the classifier can learn train-vs-infer at matched
+    # scale on datacenter hardware.
+    "llm_infer_qwen25_7b_fp16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_7b_fp16",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 7B Instruct FP16 (~14 GB) via vLLM — matched-pair for fsdp_7b training",
+        "default_timeout": 600,
+    },
+    "llm_infer_qwen25_14b_fp16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_14b_fp16",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 14B Instruct FP16 (~28 GB) via vLLM — matched-pair for fsdp_13b training",
+        "default_timeout": 720,
+    },
+    "llm_infer_qwen25_32b_fp16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_32b_fp16",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 32B Instruct FP16 (~64 GB) via vLLM — matched-pair for fsdp_30b training",
+        "default_timeout": 900,
+    },
     # --- Round 5b: Datacenter-only large-LLM inference (>80 GB memory) ---
     # Must be run on H200 (141 GB) or B200 (192 GB); won't fit on A100-80/5080/5090.
     "llm_infer_qwen25_72b_fp16": {
