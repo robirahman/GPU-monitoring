@@ -103,6 +103,12 @@ TRAINING_LABELS = {
     "gpt2_finetune_2gpu_gpu0", "gpt2_finetune_2gpu_gpu1",
     "pytorch_training",
     "pytorch_training_2gpu_gpu0", "pytorch_training_2gpu_gpu1",
+    # Round 5b (phase 4): matched-pair LoRA training on consumer tier
+    "llm_train_qwen25_1p5b_lora",
+    "llm_train_smollm2_1p7b_lora",
+    "llm_train_qwen25_3b_lora",
+    "llm_train_phi3_mini_lora",
+    "llm_train_mistral_7b_lora",
 }
 
 INFERENCE_LABELS = {
@@ -525,6 +531,54 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
     return feats
 
 
+# ── Run-level features (pre-allocation detection) ───────────────────────────
+
+def run_level_features(run_df: pd.DataFrame) -> dict:
+    """Features that need the whole run, not just a window.
+
+    Designed to catch the WB-O startup signature: Round 5 showed the oracle
+    runs a dummy backward+step at init to materialize AdamW buffers (~6.3 GB
+    of optimizer state) before trying to look like inference. No legitimate
+    inference workload allocates optimizer state at startup, so a sharp
+    first-30s memory jump is a strong pre-training tell.
+    """
+    feats = {}
+    mem = run_df["mem_used_mb"].fillna(0).values.astype(float)
+    mem_total = float(run_df["mem_total_mb"].iloc[0]) if "mem_total_mb" in run_df.columns else 1.0
+
+    # Telemetry is ~1 Hz; first 30 samples ≈ first 30 s of the run.
+    first_n = min(30, len(mem))
+    if first_n >= 5 and len(mem) >= 5:
+        mem_start = float(np.median(mem[:3]))
+        mem_peak_first = float(np.max(mem[:first_n]))
+        delta = mem_peak_first - mem_start
+        feats["first_30s_mem_delta_mb"] = delta
+        feats["first_30s_mem_delta_frac"] = delta / max(mem_total, 1.0)
+        feats["first_30s_mem_ratio"] = mem_peak_first / max(mem_start, 1.0)
+    else:
+        feats["first_30s_mem_delta_mb"] = 0.0
+        feats["first_30s_mem_delta_frac"] = 0.0
+        feats["first_30s_mem_ratio"] = 1.0
+
+    # Time to 90 % of plateau memory — slow ramp = true training init,
+    # near-zero samples = pre-allocation trick.
+    if len(mem) >= 10:
+        plateau = float(np.median(mem[-min(30, len(mem)):]))
+        mem0 = float(mem[0])
+        span = plateau - mem0
+        if abs(span) < 1e-6:
+            feats["time_to_mem_plateau_samples"] = 0.0
+        else:
+            threshold = mem0 + 0.9 * span
+            target = mem >= threshold if span > 0 else mem <= threshold
+            hits = np.where(target)[0]
+            feats["time_to_mem_plateau_samples"] = float(hits[0]) if len(hits) > 0 else float(len(mem))
+    else:
+        feats["time_to_mem_plateau_samples"] = 0.0
+
+    return feats
+
+
 # ── Sliding window extraction ────────────────────────────────────────────────
 
 def sliding_windows(df: pd.DataFrame, window_sec: float, stride_sec: float) -> pd.DataFrame:
@@ -540,11 +594,13 @@ def sliding_windows(df: pd.DataFrame, window_sec: float, stride_sec: float) -> p
         duration = t_end - t_start
         label = run_df["threeway_label"].iloc[0]
         wl_label = run_df["workload_label"].iloc[0]
+        run_feats = run_level_features(run_df)
 
         def emit(chunk):
             if len(chunk) < 5:
                 return
             feats = extract_enhanced_features(chunk)
+            feats.update(run_feats)
             feats["run_id"] = run_id
             feats["threeway_label"] = label
             feats["workload_label"] = wl_label
