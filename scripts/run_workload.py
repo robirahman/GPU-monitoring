@@ -266,6 +266,10 @@ def main():
     if args.ncu:
         run_ncu_profiling(workload_command, workload_label, output_dir, args.gpu_index)
 
+    # Propagate the workload's exit code — otherwise orchestrators treat a
+    # crashed workload as "completed" because telemetry saved successfully.
+    sys.exit(exit_code if exit_code is not None else 0)
+
 
 if __name__ == "__main__":
     main()

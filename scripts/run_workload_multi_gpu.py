@@ -69,6 +69,7 @@ def run_multi_gpu(args, workload_cmd):
     env = os.environ.copy()
     env["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in range(num_gpus))
 
+    workload_rc = 0
     try:
         timeout = args.timeout + 60 if args.timeout else None
         result = subprocess.run(
@@ -77,11 +78,14 @@ def run_multi_gpu(args, workload_cmd):
             env=env,
             timeout=timeout,
         )
+        workload_rc = result.returncode
         log.info(f"  Workload exited with code {result.returncode}")
     except subprocess.TimeoutExpired:
         log.warning(f"  Workload timed out after {args.timeout}s")
+        workload_rc = 124
     except Exception as e:
         log.error(f"  Workload error: {e}")
+        workload_rc = 1
 
     # Brief cooldown
     time.sleep(2)
@@ -95,7 +99,7 @@ def run_multi_gpu(args, workload_cmd):
         rows = len(c.to_dataframe()) if hasattr(c, 'to_dataframe') else '?'
         log.info(f"  GPU {i}: saved {fpath} ({rows} rows)")
 
-    return run_id
+    return run_id, workload_rc
 
 
 def run_parallel_single_gpu(args, workload_labels):
@@ -131,13 +135,14 @@ def run_parallel_single_gpu(args, workload_labels):
         time.sleep(1)
 
         # Build command for this GPU
-        cmd_entry = get_workload(label)
-        if cmd_entry is None:
+        try:
+            wl = get_workload(label)
+        except ValueError:
             log.error(f"  GPU {gpu_idx}: unknown workload '{label}'")
             c.stop()
             return
 
-        cmd = [sys.executable] + cmd_entry
+        cmd = list(wl["command"])
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = str(gpu_idx)
 
@@ -197,15 +202,18 @@ def main():
             workload_cmd = args.cmd
         else:
             # Look up in registry
-            cmd_entry = get_workload(args.workload)
-            if cmd_entry:
-                workload_cmd = [sys.executable] + cmd_entry
-            else:
-                log.error(f"Workload '{args.workload}' not in registry and no command given")
+            try:
+                wl = get_workload(args.workload)
+            except ValueError as e:
+                log.error(str(e))
                 sys.exit(1)
+            workload_cmd = list(wl["command"])
+            if args.timeout is None:
+                args.timeout = wl.get("default_timeout")
 
-        run_id = run_multi_gpu(args, workload_cmd)
-        log.info(f"Multi-GPU run complete: {run_id[:12]}")
+        run_id, rc = run_multi_gpu(args, workload_cmd)
+        log.info(f"Multi-GPU run complete: {run_id[:12]} (rc={rc})")
+        sys.exit(rc)
 
 
 if __name__ == "__main__":

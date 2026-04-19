@@ -33,7 +33,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PROGRESS_FILE = REPO_ROOT / "data" / "round5_defender_inference_progress.json"
 RUN_WORKLOAD = str(REPO_ROOT / "scripts" / "run_workload.py")
 RUN_WORKLOAD_POWER = str(REPO_ROOT / "scripts" / "run_workload_with_power.py")
+RUN_WORKLOAD_MULTI = str(REPO_ROOT / "scripts" / "run_workload_multi_gpu.py")
 PY = sys.executable
+
+# Tensor-parallel workloads need all N GPUs visible to vLLM. The single-GPU
+# launcher pins CUDA_VISIBLE_DEVICES to one device, so we route these to the
+# multi-GPU launcher (which also collects per-GPU telemetry).
+TP_WORKLOAD_GPUS: dict[str, int] = {
+    "llm_infer_qwen25_72b_tp2": 2,
+    "llm_infer_deepseek_v3_tp8": 8,
+}
 
 # --- Workload tiers --------------------------------------------------------
 
@@ -122,12 +131,22 @@ def save_progress(progress: dict) -> None:
 
 def run_one(label: str, rep: int, use_tapo: bool, no_dcgm: bool) -> int:
     """Spawn run_workload[_with_power].py for a single (label, rep) pair."""
-    script = RUN_WORKLOAD_POWER if use_tapo else RUN_WORKLOAD
-    cmd = [PY, script, "--workload", label]
-    if use_tapo:
-        cmd.append("--tapo")
-    if no_dcgm:
-        cmd.append("--no-dcgm")
+    num_gpus = TP_WORKLOAD_GPUS.get(label)
+    if num_gpus is not None:
+        # Tensor-parallel path: multi-GPU launcher expects --num-gpus,
+        # exposes all of 0..N-1 to vLLM, and writes one parquet per GPU.
+        # Tapo wall-power logging isn't wired through the multi-GPU launcher,
+        # so it's silently ignored for TP runs.
+        cmd = [PY, RUN_WORKLOAD_MULTI, "--workload", label, "--num-gpus", str(num_gpus)]
+        if no_dcgm:
+            cmd.append("--no-dcgm")
+    else:
+        script = RUN_WORKLOAD_POWER if use_tapo else RUN_WORKLOAD
+        cmd = [PY, script, "--workload", label]
+        if use_tapo:
+            cmd.append("--tapo")
+        if no_dcgm:
+            cmd.append("--no-dcgm")
 
     print(f"\n{'='*60}")
     print(f"  Running: {label} (rep {rep})")
