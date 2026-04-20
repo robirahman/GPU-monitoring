@@ -207,6 +207,23 @@ STAT_NAMES = ["mean", "std", "min", "max", "p25", "p50", "p75", "p95",
 
 # ── Data loading ─────────────────────────────────────────────────────────────
 
+# GPU name aliases: SKUs NVML reports differently that we want to treat as
+# one class. H200 SXM and H200 NVL are the same silicon / 141 GB HBM3e —
+# only the form factor differs, so we merge them for classifier training.
+# A100-SXM4-40GB vs 80GB stay separate (different memory capacity matters),
+# H100-80GB HBM3 vs H100-NVL stay separate (different memory + TDP class).
+GPU_NAME_ALIASES: dict[str, str] = {
+    "NVIDIA H200 NVL": "NVIDIA H200",
+}
+
+
+def _normalize_gpu_name(name):
+    if name is None:
+        return None
+    s = str(name).strip()
+    return GPU_NAME_ALIASES.get(s, s)
+
+
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Rename variant column names to the standard schema."""
     rename = {
@@ -228,6 +245,9 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     for sig in RAW_SIGNALS:
         if sig not in df.columns:
             df[sig] = 0.0
+
+    if "gpu_name" in df.columns:
+        df["gpu_name"] = df["gpu_name"].map(_normalize_gpu_name)
 
     return df
 
