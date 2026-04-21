@@ -1,10 +1,8 @@
-# Midterm Report: Classifying GPU Workloads via Always-Available Telemetry for AI Compute Governance
+# Classifying GPU Workloads via Always-Available Telemetry for AI Compute Governance
 
 **Sabiha Tajdari**, University of Virginia, jvx2tt@virginia.edu
 
 **Robi Rahman**, Machine Intelligence Research Institute, robi@intelligence.org
-
-*Supervised Program for Alignment Research --- Spring 2026*
 
 ---
 
