@@ -9,14 +9,17 @@ Round 3 (Features):  Add evasion-resistant features → re-evaluate
 Includes single-GPU adversarial (A-N), composite sweep, and DDP adversarial
 strategies from datacenter runs (H200, B200, A100).
 
-Produces:
-  - classifier/results/adv_defender_rounds.csv   (detection rates per round)
-  - classifier/results/evasion_tax_5080.csv      (tight evasion tax curve)
+Produces (depending on --classifier):
+  - classifier/results/adv_defender_rounds.csv          (threeway, default)
+  - classifier/results/adv_defender_rounds_twostage.csv (twostage)
+  - classifier/results/evasion_tax_5080.csv             (threeway only; composite sweep)
 
 Usage:
     python -m classifier.adversary_defender_iteration
+    python -m classifier.adversary_defender_iteration --classifier twostage
 """
 
+import argparse
 import logging
 import warnings
 from collections import defaultdict
@@ -128,14 +131,33 @@ def add_evasion_resistant_features(df_win: pd.DataFrame, df_raw: pd.DataFrame) -
 
 # ── Core analysis ────────────────────────────────────────────────────────────
 
-def run_analysis():
+def _train_predictor(variant, X, y_str, groups, feature_cols, xgb_params, le):
+    """Fit a classifier and return a predict_str callable (X) -> str labels."""
+    if variant == "threeway":
+        import xgboost as xgb
+        y_enc = le.transform(y_str)
+        w = compute_sample_weights(y_enc)
+        log.info(f"  Class-weighted: {len(y_enc)} windows (all data retained)")
+        clf = xgb.XGBClassifier(**xgb_params)
+        clf.fit(X, y_enc, sample_weight=w)
+        return clf, (lambda X_te: le.inverse_transform(clf.predict(X_te)))
+    else:
+        from classifier.twostage import TwoStageClassifier
+        log.info(f"  Two-stage: {len(y_str)} windows (all data retained)")
+        clf = TwoStageClassifier().fit(
+            X, y_str, groups=groups, feature_cols=feature_cols,
+        )
+        return clf, (lambda X_te: clf.predict(X_te))
+
+
+def run_analysis(variant="threeway"):
     from sklearn.metrics import accuracy_score, classification_report
     from sklearn.model_selection import StratifiedGroupKFold
     from sklearn.preprocessing import LabelEncoder
     import xgboost as xgb
 
     log.info("=" * 70)
-    log.info("ADVERSARY-DEFENDER ITERATION — ALL GPUs (5080/4050/A100/H200/B200)")
+    log.info(f"ADVERSARY-DEFENDER ITERATION — ALL GPUs (classifier={variant})")
     log.info("=" * 70)
 
     # ── Load all data ────────────────────────────────────────────────────
@@ -195,32 +217,29 @@ def run_analysis():
     le = LabelEncoder()
     le.fit(sorted(set(y_clean)))
 
-    # Cross-validated clean accuracy (with balanced resampling per fold)
-    cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
-    y_enc = le.transform(y_clean)
-    cv_accs = []
-    for tr_idx, te_idx in cv.split(X_clean, y_enc, groups_clean):
-        w_fold = compute_sample_weights(y_enc[tr_idx])
-        clf = xgb.XGBClassifier(
-            n_estimators=500, max_depth=6, learning_rate=0.05,
-            subsample=0.8, colsample_bytree=0.8,
-            eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
-        )
-        clf.fit(X_clean[tr_idx], y_enc[tr_idx], sample_weight=w_fold)
-        cv_accs.append(accuracy_score(y_enc[te_idx], clf.predict(X_clean[te_idx])))
-
-    log.info(f"  Clean 5-fold CV accuracy: {np.mean(cv_accs):.4f} ± {np.std(cv_accs):.4f}")
-
-    # Train final baseline on all clean data (class-weighted)
-    y_clean_enc = le.transform(y_clean)
-    w_clean = compute_sample_weights(y_clean_enc)
-    log.info(f"  Class-weighted: {len(y_clean)} windows (all data retained)")
-    clf_baseline = xgb.XGBClassifier(
+    xgb_params = dict(
         n_estimators=500, max_depth=6, learning_rate=0.05,
         subsample=0.8, colsample_bytree=0.8,
         eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
     )
-    clf_baseline.fit(X_clean, y_clean_enc, sample_weight=w_clean)
+
+    # Cross-validated clean accuracy (threeway only — CV is identical across
+    # variants so we skip it for the two-stage rerun)
+    if variant == "threeway":
+        cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
+        y_enc = le.transform(y_clean)
+        cv_accs = []
+        for tr_idx, te_idx in cv.split(X_clean, y_enc, groups_clean):
+            w_fold = compute_sample_weights(y_enc[tr_idx])
+            clf = xgb.XGBClassifier(**xgb_params)
+            clf.fit(X_clean[tr_idx], y_enc[tr_idx], sample_weight=w_fold)
+            cv_accs.append(accuracy_score(y_enc[te_idx], clf.predict(X_clean[te_idx])))
+        log.info(f"  Clean 5-fold CV accuracy: {np.mean(cv_accs):.4f} ± {np.std(cv_accs):.4f}")
+
+    # Train final baseline on all clean data
+    clf_baseline, predict_baseline = _train_predictor(
+        variant, X_clean, y_clean, groups_clean, feature_cols, xgb_params, le,
+    )
 
     # Evaluate baseline on adversarial strategies
     results = []
@@ -229,7 +248,7 @@ def run_analysis():
         if mask.sum() == 0:
             continue
         X_adv = df_win.loc[mask, feature_cols].fillna(0).values.astype(np.float32)
-        y_pred = le.inverse_transform(clf_baseline.predict(X_adv))
+        y_pred = predict_baseline(X_adv)
         det_rate = (y_pred == "ml_training").mean()
         n_win = len(X_adv)
 
@@ -282,31 +301,22 @@ def run_analysis():
     log.info(f"  Hardened training set: {len(X_hard)} windows "
              f"({len(df_clean)} clean + {hardening_mask.sum()} adversarial)")
 
-    # Cross-validate hardened classifier (with balanced resampling per fold)
-    y_hard_enc = le.transform(y_hard)
-    cv_accs_hard = []
-    cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
-    for tr_idx, te_idx in cv.split(X_hard, y_hard_enc, groups_hard):
-        w_fold = compute_sample_weights(y_hard_enc[tr_idx])
-        clf = xgb.XGBClassifier(
-            n_estimators=500, max_depth=6, learning_rate=0.05,
-            subsample=0.8, colsample_bytree=0.8,
-            eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
-        )
-        clf.fit(X_hard[tr_idx], y_hard_enc[tr_idx], sample_weight=w_fold)
-        cv_accs_hard.append(accuracy_score(y_hard_enc[te_idx], clf.predict(X_hard[te_idx])))
+    # Cross-validated hardened accuracy (threeway only)
+    if variant == "threeway":
+        y_hard_enc = le.transform(y_hard)
+        cv_accs_hard = []
+        cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
+        for tr_idx, te_idx in cv.split(X_hard, y_hard_enc, groups_hard):
+            w_fold = compute_sample_weights(y_hard_enc[tr_idx])
+            clf = xgb.XGBClassifier(**xgb_params)
+            clf.fit(X_hard[tr_idx], y_hard_enc[tr_idx], sample_weight=w_fold)
+            cv_accs_hard.append(accuracy_score(y_hard_enc[te_idx], clf.predict(X_hard[te_idx])))
+        log.info(f"  Hardened 5-fold CV accuracy: {np.mean(cv_accs_hard):.4f} ± {np.std(cv_accs_hard):.4f}")
 
-    log.info(f"  Hardened 5-fold CV accuracy: {np.mean(cv_accs_hard):.4f} ± {np.std(cv_accs_hard):.4f}")
-
-    # Train final hardened classifier (class-weighted)
-    w_hard = compute_sample_weights(y_hard_enc)
-    log.info(f"  Class-weighted: {len(y_hard_enc)} windows (all data retained)")
-    clf_hardened = xgb.XGBClassifier(
-        n_estimators=500, max_depth=6, learning_rate=0.05,
-        subsample=0.8, colsample_bytree=0.8,
-        eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
+    # Train final hardened classifier
+    clf_hardened, predict_hardened = _train_predictor(
+        variant, X_hard, y_hard, groups_hard, feature_cols, xgb_params, le,
     )
-    clf_hardened.fit(X_hard, y_hard_enc, sample_weight=w_hard)
 
     # Evaluate hardened on ALL adversarial (including held-out composite 70-95%)
     for label in sorted(set(strategy_labels) | set(composite_labels)):
@@ -314,7 +324,7 @@ def run_analysis():
         if mask.sum() == 0:
             continue
         X_adv = df_win.loc[mask, feature_cols].fillna(0).values.astype(np.float32)
-        y_pred = le.inverse_transform(clf_hardened.predict(X_adv))
+        y_pred = predict_hardened(X_adv)
         det_rate = (y_pred == "ml_training").mean()
         n_win = len(X_adv)
 
@@ -362,24 +372,19 @@ def run_analysis():
     X_r3 = df_r3_train[r3_feature_cols].fillna(0).values.astype(np.float32)
     y_r3 = df_r3_train["threeway_label"].values
     groups_r3 = df_r3_train["run_id"].values
-    y_r3_enc = le.transform(y_r3)
 
-    w_r3 = compute_sample_weights(y_r3_enc)
-    log.info(f"  Class-weighted: {len(y_r3_enc)} windows (all data retained)")
-    clf_r3 = xgb.XGBClassifier(
-        n_estimators=500, max_depth=6, learning_rate=0.05,
-        subsample=0.8, colsample_bytree=0.8,
-        eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
+    clf_r3, predict_r3 = _train_predictor(
+        variant, X_r3, y_r3, groups_r3, r3_feature_cols, xgb_params, le,
     )
-    clf_r3.fit(X_r3, y_r3_enc, sample_weight=w_r3)
 
-    # Feature importance for new features
-    importance = clf_r3.feature_importances_
-    feat_imp = sorted(zip(r3_feature_cols, importance), key=lambda x: -x[1])
-    log.info("\n  Top 15 features (Round 3 classifier):")
-    for feat, imp in feat_imp[:15]:
-        marker = " <-- NEW" if feat in existing_new else ""
-        log.info(f"    {feat:45s} importance={imp:.4f}{marker}")
+    # Feature importance (threeway only — two-stage has split feature sets per stage)
+    if variant == "threeway":
+        importance = clf_r3.feature_importances_
+        feat_imp = sorted(zip(r3_feature_cols, importance), key=lambda x: -x[1])
+        log.info("\n  Top 15 features (Round 3 classifier):")
+        for feat, imp in feat_imp[:15]:
+            marker = " <-- NEW" if feat in existing_new else ""
+            log.info(f"    {feat:45s} importance={imp:.4f}{marker}")
 
     # Evaluate Round 3 on all adversarial
     for label in sorted(set(strategy_labels) | set(composite_labels)):
@@ -387,7 +392,7 @@ def run_analysis():
         if mask.sum() == 0:
             continue
         X_adv = df_win_r3.loc[mask, r3_feature_cols].fillna(0).values.astype(np.float32)
-        y_pred = le.inverse_transform(clf_r3.predict(X_adv))
+        y_pred = predict_r3(X_adv)
         det_rate = (y_pred == "ml_training").mean()
         n_win = len(X_adv)
 
@@ -413,8 +418,10 @@ def run_analysis():
 
     # ── Save results ─────────────────────────────────────────────────────
     df_results = pd.DataFrame(results)
-    df_results.to_csv(RESULTS_DIR / "adv_defender_rounds.csv", index=False)
-    log.info(f"\nSaved: {RESULTS_DIR / 'adv_defender_rounds.csv'}")
+    out_name = "adv_defender_rounds.csv" if variant == "threeway" else "adv_defender_rounds_twostage.csv"
+    out_path = RESULTS_DIR / out_name
+    df_results.to_csv(out_path, index=False)
+    log.info(f"\nSaved: {out_path}")
 
     # ── Evasion tax curve (composite only, all 3 rounds) ─────────────────
     log.info("\n" + "=" * 70)
@@ -422,7 +429,7 @@ def run_analysis():
     log.info("=" * 70)
 
     composite_results = df_results[df_results["idle_fraction"].notna()].copy()
-    if not composite_results.empty:
+    if not composite_results.empty and variant == "threeway":
         composite_results.to_csv(RESULTS_DIR / "evasion_tax_5080.csv", index=False)
         log.info(f"Saved: {RESULTS_DIR / 'evasion_tax_5080.csv'}")
 
@@ -467,4 +474,7 @@ def run_analysis():
 
 
 if __name__ == "__main__":
-    run_analysis()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--classifier", choices=["threeway", "twostage"], default="threeway")
+    args = ap.parse_args()
+    run_analysis(variant=args.classifier)
