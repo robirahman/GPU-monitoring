@@ -361,8 +361,9 @@ them into a single H200 class. H100 80GB HBM3 and H100 NVL are kept separate
 
 **Telemetry:** 9 raw NVML signals at 1 Hz (GPU utilization, memory utilization,
 memory used, power draw, temperature, SM clock, memory clock, PCIe TX/RX).
-Wall power from Tapo P115 smart plug on RTX 5080 (18 workloads with
-simultaneous NVML + wall-plug power).
+Wall power from Tapo P115 smart plug on RTX 5080 (49 workload labels,
+one run each, with simultaneous NVML + wall-plug power; 13,571 paired
+1 Hz seconds).
 
 **Scale:** **1,437 parquet files**, **1,424 labeled runs** (867 training,
 352 inference, 205 other), **445,330 telemetry rows** across **~124 hours**
@@ -706,23 +707,42 @@ training but do not undermine the core governance use case.
 
 ### 5.4 Wall-Power Validation
 
-- Tapo P115 smart plug wall power collected simultaneously with NVML for 18
-  workloads on RTX 5080 (source: `wall_power_correlation.csv`).
+- Tapo P115 smart plug wall power collected simultaneously with NVML for
+  **49 workload labels on RTX 5080** (one run each; 13,571 paired 1 Hz
+  seconds; source: `wall_power_correlation.csv`,
+  `wall_power_fit.csv`). The corpus covers the idle baseline, 12 clean
+  workloads (ML training, inference, HPC, mining, rendering), and 36
+  adversarial / dilution-sweep runs spanning every single-GPU strategy
+  family in R1–R4 plus the controlled dilution sweep.
 - System idle baseline: ~48 W wall power at GPU idle (~22 W NVML + ~26 W
   system overhead).
 - **Strong correlation between NVML `power_draw_w` and wall power**:
-  Pearson *r* = 0.90, *R²* = 0.81 (*p* = 4 × 10⁻⁷). Linear fit wall ≈
-  1.47 × NVML + 28 W.
-- Per-workload overhead (wall − NVML) is 68-80 W for clean ML workloads
-  (consistent PSU efficiency + CPU/RAM background), rising to ~218 W for
-  `adversarial_K_online_learning` because that strategy deliberately drives
-  the CPU to sustained 100% to mask training on the GPU — a side effect
-  that is itself an evasion-detection signal, observable at the wall.
-- NVML is a trustworthy proxy for actual GPU power consumption; hardware-
-  level tampering (not software-level evasion) would be needed to spoof it.
-  The wall-level signal is in fact *richer* than the GPU-level signal,
-  because it captures CPU-side helper processes that adversarial evasion
-  often requires.
+  Pearson *r* = 0.878, *R²* = 0.770 (*p* < 10⁻³⁰⁰; *n* = 13,571
+  paired seconds across 49 workloads). Linear fit wall ≈ 1.50 × NVML
+  + 42.7 W (slope SE ± 0.007). The slope above 1 captures PSU
+  inefficiency (the wall-plug sees the power draw before the PSU's
+  ~67 % ML-load efficiency applies).
+- Per-workload overhead (wall − NVML) is **107.8 ± 64.2 W** across the
+  49-workload corpus: 68–80 W for clean ML and HPC workloads
+  (consistent PSU efficiency + CPU/RAM background), rising to
+  180–230 W for `adversarial_K_online_learning`,
+  `adversarial_N_grad_accum_*`, `adversarial_D_temporal_disruption`,
+  `adversarial_L_diluted_*`, and every `dilution_sweep_N*` variant —
+  these strategies deliberately drive the CPU to sustained high
+  utilization to mask training on the GPU, a side effect that is
+  itself an evasion-detection signal observable at the wall. The
+  heavier-CPU-overhead strategies are the reason *R²* drops from the
+  ~0.9 a clean-workload-only subset would report to 0.77 on the full
+  corpus: adversarial dilution widens the overhead distribution from
+  a tight ~70 W band to a bimodal one with an additional ~200 W
+  CPU-overhead mode.
+- NVML is a trustworthy proxy for actual GPU power consumption;
+  hardware-level tampering (not software-level evasion) would be needed
+  to spoof it. The wall-level signal is in fact *richer* than the
+  GPU-level signal — the widened overhead distribution on adversarial
+  runs is a direct marker of CPU-side helper processes that adversarial
+  evasion often requires, and it is observable on any
+  commodity-plug-level power meter.
 
 ---
 
@@ -1026,21 +1046,31 @@ pooled-training normalization.
 ### D. Wall-Power Validation
 
 **Figure D1** (`wall_power_scatter.{png,pdf}`): scatter of Tapo P115 wall
-power vs. NVML `power_draw_w` for 18 workloads on the RTX 5080.
+power vs. NVML `power_draw_w` for 49 workloads on the RTX 5080
+(13,571 paired 1 Hz seconds; Pearson *r* = 0.878, *R²* = 0.770, slope
+1.50 ± 0.007, intercept 42.7 W).
 
-- Pearson *r* = 0.899, *R²* = 0.81 (*p* = 4 × 10⁻⁷). Linear fit:
-  wall ≈ 1.47 × NVML + 28 W.
+- Pearson *r* = 0.878, *R²* = 0.770 (*p* < 10⁻³⁰⁰; *n* = 13,571
+  paired seconds across 49 workloads). Linear fit: wall ≈ 1.50 × NVML
+  + 42.7 W (slope SE ± 0.007).
 - Clean ML workloads (ResNet-50 inference, GPT-2 training, BERT,
   MLP, etc.), HPC (cuFFT, N-body), mining, and rendering all sit within
-  ±10 W of the fit line — the NVML signal explains the wall signal well,
-  with a consistent ~68-80 W system overhead (PSU efficiency + CPU/RAM
-  background).
-- Adversarial strategies that rely on CPU-side helper processes — most
-  dramatically `adversarial_K_online_learning` (~218 W overhead) and
-  `adversarial_L_diluted_5`/`L_diluted_10` (~200 W overhead) — sit
-  substantially *above* the fit line. These strategies deliberately
-  shift work off the GPU to reduce NVML-visible telemetry, but the extra
-  CPU load is visible at the wall.
+  ±10 W of the fit line — the NVML signal explains the wall signal well
+  for these, with a consistent ~68–80 W system overhead (PSU efficiency +
+  CPU/RAM background). These are the workloads that dominated the
+  earlier 18-workload correlation subset and account for the cleaner
+  *R²* ≈ 0.9 that subset reported.
+- Adversarial / dilution strategies that rely on CPU-side helper
+  processes — `adversarial_K_online_learning` (+218 W overhead),
+  `adversarial_N_grad_accum_*` (+216–227 W), `adversarial_D_temporal_disruption`
+  (+217 W), `adversarial_L_diluted_*` (+80–200 W), and every
+  `dilution_sweep_N*` variant (+173–207 W) — sit substantially *above*
+  the fit line. These strategies deliberately shift work off the GPU to
+  reduce NVML-visible telemetry, but the extra CPU load is visible at
+  the wall. They are also the reason the full-corpus *R²* (0.770) is
+  lower than the clean-workload-only subset: adversarial dilution
+  widens the overhead distribution from a tight ~70 W band into a
+  bimodal one with an additional ~200 W CPU-overhead mode.
 - NVML is a trustworthy GPU-power proxy; hardware-level (not
   software-level) tampering would be needed to spoof it. The wall signal
   is *richer* than NVML alone, because it exposes exactly the CPU-side

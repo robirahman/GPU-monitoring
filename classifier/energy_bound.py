@@ -68,6 +68,37 @@ def load_matched_pairs(label_pattern: str) -> list[tuple[pd.DataFrame, pd.DataFr
     return pairs
 
 
+def discover_all_wall_power_pairs() -> list[tuple[str, pd.DataFrame, pd.DataFrame]]:
+    """Discover every (label, gpu_df, wall_df) triple by scanning data/wall_power/.
+
+    Each wall-power parquet contains `workload_label` and `run_id` columns;
+    we match the GPU parquet that shares the same run_id (first 8 hex chars).
+    This replaces the earlier hard-coded label dictionary and captures every
+    Tapo P115-instrumented run in the corpus.
+    """
+    wall_dir = PROJECT_ROOT / "data" / "wall_power"
+    data_dir = PROJECT_ROOT / "data"
+    triples = []
+    for wf in sorted(wall_dir.glob("*_wall_power.parquet")):
+        wdf = pd.read_parquet(wf)
+        if "run_id" not in wdf.columns or "workload_label" not in wdf.columns:
+            continue
+        if wdf.empty:
+            continue
+        run_id = str(wdf["run_id"].iloc[0])
+        label = str(wdf["workload_label"].iloc[0])
+        # Find GPU parquet with the same run_id prefix (exclude the wall_power file itself).
+        candidates = [
+            p for p in data_dir.glob(f"*{run_id[:8]}*.parquet")
+            if "wall_power" not in p.name
+        ]
+        if not candidates:
+            continue
+        gdf = pd.read_parquet(candidates[0])
+        triples.append((label, gdf, wdf))
+    return triples
+
+
 def load_rtx5080_runs(label_pattern: str) -> list[pd.DataFrame]:
     """Load all RTX 5080 parquet files matching a label pattern."""
     files = sorted(glob.glob(str(PROJECT_ROOT / "data" / f"{label_pattern}*5080*.parquet")))
@@ -251,69 +282,53 @@ def main():
     log.info("WALL-POWER CORRELATION ANALYSIS (Tapo P115)")
     log.info(f"{'='*70}")
 
-    all_labels = {
-        "idle": "idle",
-        "resnet50_inference": "resnet50_inference",
-        "pytorch_resnet_cifar10": "pytorch_resnet_cifar10",
-        "pytorch_resnet_cifar10_amp": "pytorch_resnet_cifar10_amp",
-        "pytorch_mlp_cifar10": "pytorch_mlp_cifar10",
-        "gpt2_wikitext2": "gpt2_wikitext2",
-        "gpt2_wikitext2_amp": "gpt2_wikitext2_amp",
-        "bert_sst2": "bert_sst2",
-        "bert_sst2_amp": "bert_sst2_amp",
-        "cufft_benchmark": "cufft_benchmark",
-        "nbody_sim": "nbody_sim",
-        "mining_ethash_proxy": "mining_ethash_proxy",
-        "rendering_proxy": "rendering_proxy",
-        "adversarial_K_online_learning": "adversarial_K_online_learning",
-        "adversarial_L_diluted_2": "adversarial_L_diluted_2",
-        "adversarial_L_diluted_5": "adversarial_L_diluted_5",
-        "adversarial_L_diluted_10": "adversarial_L_diluted_10",
-        "adversarial_L_diluted_20": "adversarial_L_diluted_20",
-    }
+    triples = discover_all_wall_power_pairs()
+    log.info(f"  Discovered {len(triples)} (label, gpu, wall) triples in data/wall_power/")
 
-    # Collect per-second aligned GPU vs wall power across all workloads
+    # Aggregate paired seconds by workload label. Multiple runs for the same
+    # label accumulate into one summary row; if only one run exists per label,
+    # the aggregate is just that run's paired samples.
+    wl_gpu_by_label: dict[str, list[float]] = {}
+    wl_wall_by_label: dict[str, list[float]] = {}
+    wl_runs_by_label: dict[str, int] = {}
+
+    for label, gdf, wdf in triples:
+        gdf = gdf.copy()
+        wdf = wdf.copy()
+        gdf["ts_round"] = gdf["timestamp_epoch"].round(0)
+        wdf["ts_round"] = wdf["timestamp_epoch"].round(0)
+
+        merged = pd.merge(gdf[["ts_round", "power_draw_w"]],
+                          wdf[["ts_round", "wall_power_w"]],
+                          on="ts_round", how="inner")
+
+        if len(merged) < 10:
+            continue
+
+        wl_gpu_by_label.setdefault(label, []).extend(merged["power_draw_w"].values)
+        wl_wall_by_label.setdefault(label, []).extend(merged["wall_power_w"].values)
+        wl_runs_by_label[label] = wl_runs_by_label.get(label, 0) + 1
+
     all_gpu_power = []
     all_wall_power = []
     per_workload_summary = []
 
-    for name, pattern in all_labels.items():
-        pairs = load_matched_pairs(pattern)
-        if not pairs:
-            continue
-
-        # Aggregate all matched pairs for this workload into one entry
-        wl_gpu = []
-        wl_wall = []
-        for gdf, wdf in pairs:
-            # Align by rounding timestamps to nearest second
-            gdf = gdf.copy()
-            wdf = wdf.copy()
-            gdf["ts_round"] = gdf["timestamp_epoch"].round(0)
-            wdf["ts_round"] = wdf["timestamp_epoch"].round(0)
-
-            merged = pd.merge(gdf[["ts_round", "power_draw_w"]],
-                              wdf[["ts_round", "wall_power_w"]],
-                              on="ts_round", how="inner")
-
-            if len(merged) < 10:
-                continue
-
-            wl_gpu.extend(merged["power_draw_w"].values)
-            wl_wall.extend(merged["wall_power_w"].values)
-
+    for label in sorted(wl_gpu_by_label):
+        wl_gpu = wl_gpu_by_label[label]
+        wl_wall = wl_wall_by_label[label]
         if not wl_gpu:
             continue
 
-        gpu_mean = np.mean(wl_gpu)
-        wall_mean = np.mean(wl_wall)
+        gpu_mean = float(np.mean(wl_gpu))
+        wall_mean = float(np.mean(wl_wall))
         overhead = wall_mean - gpu_mean
 
         all_gpu_power.extend(wl_gpu)
         all_wall_power.extend(wl_wall)
 
         per_workload_summary.append({
-            "workload": name,
+            "workload": label,
+            "n_runs": wl_runs_by_label[label],
             "gpu_power_mean_w": gpu_mean,
             "wall_power_mean_w": wall_mean,
             "overhead_w": overhead,
