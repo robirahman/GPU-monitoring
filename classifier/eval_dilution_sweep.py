@@ -13,13 +13,16 @@ under three classifier conditions to produce the evasion tax curve:
 Runs at multiple window sizes (5s, 15s, 30s, 60s) to validate detection
 latency claims.
 
-Produces:
-  - classifier/results/dilution_sweep_eval.csv
+Produces (depending on --classifier):
+  - classifier/results/dilution_sweep_eval.csv          (threeway, default)
+  - classifier/results/dilution_sweep_eval_twostage.csv (twostage)
 
 Usage:
     python -m classifier.eval_dilution_sweep
+    python -m classifier.eval_dilution_sweep --classifier twostage
 """
 
+import argparse
 import logging
 import warnings
 from pathlib import Path
@@ -69,16 +72,20 @@ def train_frac(label):
     return 0.0 if n == float("inf") else 1.0 / n
 
 
-def evaluate_condition(clf, le, df_win, feature_cols, sweep_present,
+def evaluate_condition(predict_str, df_win, feature_cols, sweep_present,
                        condition_name, win_sec):
-    """Evaluate one classifier condition on all sweep labels."""
+    """Evaluate one classifier condition on all sweep labels.
+
+    predict_str: callable (X) -> ndarray of str labels in {ml_training,
+                 ml_inference, other}.
+    """
     rows = []
     for label in sweep_present:
         mask = df_win["workload_label"] == label
         if mask.sum() == 0:
             continue
         X_test = df_win.loc[mask, feature_cols].fillna(0).values.astype(np.float32)
-        y_pred = le.inverse_transform(clf.predict(X_test))
+        y_pred = predict_str(X_test)
 
         is_training = label != "dilution_sweep_inference"
         n_t = int((y_pred == "ml_training").sum())
@@ -111,12 +118,35 @@ def evaluate_condition(clf, le, df_win, feature_cols, sweep_present,
     return rows
 
 
+def _train_predictor(variant, X, y_str, groups, feature_cols, xgb_params, le):
+    """Fit a classifier and return a predict_str callable (X) -> str labels."""
+    if variant == "threeway":
+        import xgboost as xgb
+        y_enc = le.transform(y_str)
+        w = compute_sample_weights(y_enc)
+        log.info(f"    Class-weighted: {len(y_enc)} windows (all data retained)")
+        clf = xgb.XGBClassifier(**xgb_params)
+        clf.fit(X, y_enc, sample_weight=w)
+        return lambda X_te: le.inverse_transform(clf.predict(X_te))
+    else:
+        from classifier.twostage import TwoStageClassifier
+        log.info(f"    Two-stage: {len(y_str)} windows (all data retained)")
+        clf = TwoStageClassifier().fit(
+            X, y_str, groups=groups, feature_cols=feature_cols,
+        )
+        return lambda X_te: clf.predict(X_te)
+
+
 def main():
     from sklearn.preprocessing import LabelEncoder
-    import xgboost as xgb
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--classifier", choices=["threeway", "twostage"], default="threeway")
+    args = ap.parse_args()
+    variant = args.classifier
 
     log.info("=" * 70)
-    log.info("CONTROLLED DILUTION SWEEP EVALUATION")
+    log.info(f"CONTROLLED DILUTION SWEEP EVALUATION  (classifier={variant})")
     log.info("=" * 70)
 
     log.info("Loading all telemetry data...")
@@ -162,45 +192,26 @@ def main():
                  f"Non-dilution adv: {non_dilution_adv_mask.sum()} | "
                  f"Hardening adv: {hardening_adv_mask.sum()}")
 
-        # ── Baseline ────────────────────────────────────────────────────
-        log.info(f"\n  BASELINE (clean only):")
-        X_tr = df_win.loc[clean_mask, feature_cols].fillna(0).values.astype(np.float32)
-        y_tr = le.transform(df_win.loc[clean_mask, "threeway_label"].values)
-        groups_tr = df_win.loc[clean_mask, "run_id"].values
-        w_tr = compute_sample_weights(y_tr)
-        log.info(f"    Class-weighted: {len(y_tr)} windows (all data retained)")
-        clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_tr, y_tr, sample_weight=w_tr)
-        all_results.extend(evaluate_condition(
-            clf, le, df_win, feature_cols, sweep_present, "baseline", WIN_SEC))
-
-        # ── LOO ─────────────────────────────────────────────────────────
-        log.info(f"\n  LOO (clean + non-dilution adversarial):")
-        loo_mask = clean_mask | non_dilution_adv_mask
-        X_tr = df_win.loc[loo_mask, feature_cols].fillna(0).values.astype(np.float32)
-        y_tr = le.transform(df_win.loc[loo_mask, "threeway_label"].values)
-        w_tr = compute_sample_weights(y_tr)
-        log.info(f"    Class-weighted: {len(y_tr)} windows (all data retained)")
-        clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_tr, y_tr, sample_weight=w_tr)
-        all_results.extend(evaluate_condition(
-            clf, le, df_win, feature_cols, sweep_present, "LOO", WIN_SEC))
-
-        # ── Hardened ────────────────────────────────────────────────────
-        log.info(f"\n  HARDENED (clean + all adversarial incl. L_diluted):")
-        hard_mask = clean_mask | hardening_adv_mask
-        X_tr = df_win.loc[hard_mask, feature_cols].fillna(0).values.astype(np.float32)
-        y_tr = le.transform(df_win.loc[hard_mask, "threeway_label"].values)
-        w_tr = compute_sample_weights(y_tr)
-        log.info(f"    Class-weighted: {len(y_tr)} windows (all data retained)")
-        clf = xgb.XGBClassifier(**xgb_params)
-        clf.fit(X_tr, y_tr, sample_weight=w_tr)
-        all_results.extend(evaluate_condition(
-            clf, le, df_win, feature_cols, sweep_present, "hardened", WIN_SEC))
+        for cond_name, cond_mask in [
+            ("baseline", clean_mask),
+            ("LOO", clean_mask | non_dilution_adv_mask),
+            ("hardened", clean_mask | hardening_adv_mask),
+        ]:
+            log.info(f"\n  {cond_name.upper()} ({(cond_mask).sum()} training windows):")
+            X_tr = df_win.loc[cond_mask, feature_cols].fillna(0).values.astype(np.float32)
+            y_tr_str = df_win.loc[cond_mask, "threeway_label"].values
+            groups_tr = df_win.loc[cond_mask, "run_id"].values
+            predict_str = _train_predictor(
+                variant, X_tr, y_tr_str, groups_tr, feature_cols, xgb_params, le,
+            )
+            all_results.extend(evaluate_condition(
+                predict_str, df_win, feature_cols, sweep_present, cond_name, WIN_SEC,
+            ))
 
     # ── Save all results ────────────────────────────────────────────────
     df_results = pd.DataFrame(all_results)
-    out_path = RESULTS_DIR / "dilution_sweep_eval.csv"
+    out_name = "dilution_sweep_eval.csv" if variant == "threeway" else "dilution_sweep_eval_twostage.csv"
+    out_path = RESULTS_DIR / out_name
     df_results.to_csv(out_path, index=False)
     log.info(f"\nSaved: {out_path}")
 
