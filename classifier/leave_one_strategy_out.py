@@ -11,13 +11,16 @@ If detection stays high on held-out strategies, the classifier is
 learning generalizable features of "disguised training" rather than
 memorizing specific evasion signatures.
 
-Produces:
-  - classifier/results/leave_one_out.csv
+Produces (depending on --classifier):
+  - classifier/results/leave_one_out.csv          (threeway, default)
+  - classifier/results/leave_one_out_twostage.csv (twostage)
 
 Usage:
     python -m classifier.leave_one_strategy_out
+    python -m classifier.leave_one_strategy_out --classifier twostage
 """
 
+import argparse
 import logging
 import warnings
 from pathlib import Path
@@ -98,9 +101,15 @@ def main():
     from sklearn.metrics import accuracy_score
     from sklearn.preprocessing import LabelEncoder
     import xgboost as xgb
+    from classifier.twostage import TwoStageClassifier
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--classifier", choices=["threeway", "twostage"], default="threeway")
+    args = ap.parse_args()
+    variant = args.classifier
 
     log.info("=" * 70)
-    log.info("LEAVE-ONE-STRATEGY-OUT EVALUATION")
+    log.info(f"LEAVE-ONE-STRATEGY-OUT EVALUATION  (classifier={variant})")
     log.info("=" * 70)
 
     # Load and window all data
@@ -141,17 +150,23 @@ def main():
         groups_train = df_win.loc[train_mask, "run_id"].values
         X_test = df_win.loc[test_mask, feature_cols].fillna(0).values.astype(np.float32)
 
-        y_train_enc = le.transform(y_train)
-        w_train = compute_sample_weights(y_train_enc)
+        if variant == "threeway":
+            y_train_enc = le.transform(y_train)
+            w_train = compute_sample_weights(y_train_enc)
+            clf = xgb.XGBClassifier(
+                n_estimators=500, max_depth=6, learning_rate=0.05,
+                subsample=0.8, colsample_bytree=0.8,
+                eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
+            )
+            clf.fit(X_train, y_train_enc, sample_weight=w_train)
+            predict_str = lambda X: le.inverse_transform(clf.predict(X))
+        else:  # twostage
+            clf = TwoStageClassifier().fit(
+                X_train, y_train, groups=groups_train, feature_cols=feature_cols,
+            )
+            predict_str = lambda X: clf.predict(X)
 
-        clf = xgb.XGBClassifier(
-            n_estimators=500, max_depth=6, learning_rate=0.05,
-            subsample=0.8, colsample_bytree=0.8,
-            eval_metric="mlogloss", random_state=42, n_jobs=-1, verbosity=0,
-        )
-        clf.fit(X_train, y_train_enc, sample_weight=w_train)
-
-        y_pred = le.inverse_transform(clf.predict(X_test))
+        y_pred = predict_str(X_test)
         det_rate = (y_pred == "ml_training").mean()
         n_as_inference = (y_pred == "ml_inference").sum()
         n_as_other = (y_pred == "other").sum()
@@ -167,7 +182,7 @@ def main():
             if label_mask.sum() == 0:
                 continue
             X_l = df_win.loc[label_mask, feature_cols].fillna(0).values.astype(np.float32)
-            y_l = le.inverse_transform(clf.predict(X_l))
+            y_l = predict_str(X_l)
             det_l = (y_l == "ml_training").mean()
 
             results.append({
@@ -189,8 +204,10 @@ def main():
 
     # Save results
     df_results = pd.DataFrame(results)
-    df_results.to_csv(RESULTS_DIR / "leave_one_out.csv", index=False)
-    log.info(f"\nSaved: {RESULTS_DIR / 'leave_one_out.csv'}")
+    out_name = "leave_one_out.csv" if variant == "threeway" else "leave_one_out_twostage.csv"
+    out_path = RESULTS_DIR / out_name
+    df_results.to_csv(out_path, index=False)
+    log.info(f"\nSaved: {out_path}")
 
     # Summary
     log.info(f"\n{'='*70}")

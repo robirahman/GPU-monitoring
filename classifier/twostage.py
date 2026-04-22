@@ -1,41 +1,52 @@
 """
-Two-Stage GPU Workload Classifier (Round 5b)
-=============================================
-Two parallel binary XGBoost classifiers, each answering a different question:
+Two-Stage GPU Workload Classifier
+=================================
+A pipeline of two binary XGBoost classifiers that decompose the governance
+classification task along its natural decision tree:
 
-  Stage 1 — "Is this workload training?"
-           labels: ml_training  vs  not-training (= ml_inference ∪ other)
+  Stage 1 — "Is this workload ML?"
+           labels: ml_training ∪ ml_inference  vs  other
            features: full feature set
-           This is the *primary* defender detector. `predict_proba_training(X)`
-           returns P(training) directly.
+           The ML-vs-non-ML gate. Level signals (peak memory, sustained
+           tensor-core utilization, power draw) carry most of the ML-vs-other
+           information, so the full feature set is retained here.
 
-  Stage 2 — "If this is ML activity, is it training or inference?"
+  Stage 2 — "Given ML activity, is it training or inference?"
            labels: ml_training  vs  ml_inference
                    (trained only on rows where true label is training or inference)
            features: level-features (absolute memory/power/clock means,
-                     percentiles, min, max) are DROPPED — the decision must
-                     rest on shape/periodicity/FFT/autocorrelation only.
-           This is the specialist that catches train↔infer flips that memory
-           footprint alone can't separate (the Round 5 WB-O oracle flip).
+                     percentiles, min, max, range) are DROPPED — the decision
+                     rests on shape/periodicity/FFT/autocorrelation only.
+           This restriction is the Round 5 WB-O defense: an adversary who
+           spoofs memory levels to make training look like inference cannot
+           drag the Stage 2 decision, because Stage 2 has never seen the
+           levels.
+
+Governance P(train) is the probabilistic composition
+    P(train) = P_stage1(ML) × P_stage2(train | ML)
+    P(infer) = P_stage1(ML) × (1 − P_stage2(train | ML))
+    P(other) = 1 − P_stage1(ML)
+with an optional **Stage 2 rescue rule** that reclassifies borderline
+Stage-1-negative rows when Stage 2 is highly confident they're training.
+The rescue fires when P_stage2(train|ML) > `rescue_tau` AND
+P_stage1(ML) > `rescue_floor`: a fraction of the "other" probability mass
+(proportional to Stage 2's confidence above `rescue_tau`) moves into
+P(train). Defaults `rescue_tau=0.7` / `rescue_floor=0.1` recover held-out
+low-utilization training (e.g., B_low_util LOO) without affecting
+confident non-ML rows. Set `rescue_tau=1.0` to disable. Each stage is
+still an independently calibratable binary head.
 
 Wire interface (sklearn-compatible):
     clf = TwoStageClassifier()
-    clf.fit(X, y, groups=run_ids)
-    p_train = clf.predict_proba_training(X)            # shape (n,), the primary P(train)
+    clf.fit(X, y, groups=run_ids, feature_cols=feature_cols)
+    p_ml = clf.predict_proba_ml(X)                     # shape (n,), P(ML)
     p_train_given_ml = clf.predict_proba_train_vs_infer(X)   # shape (n,) in [0,1]
-    proba = clf.predict_proba(X)                       # shape (n, 3) for legacy callers
+    p_train = clf.predict_proba_training(X)            # shape (n,), composed P(train)
+    proba = clf.predict_proba(X)                       # shape (n, 3)
     clf.classes_                                       # ['other','ml_training','ml_inference']
 
-The 3-class `predict_proba` decomposes as:
-    P(train) = P1(train)                               # direct
-    P(infer) = P1(train) * (1 - P2) / P2               # derived from Bayes
-    P(other) = 1 - P(train) - P(infer)
-Both stages are trained independently, so the combination is a post-hoc
-reconciliation, not a calibrated joint distribution.
-
-Preserves the contract consumed by `classifier/classifier_oracle.py`:
-`predict_proba` returns a 3-column array and the ml_training column is at a
-stable index resolved via `classes_`.
+Preserves the consumer contract: `predict_proba` returns a 3-column array
+and `ml_training` is at a stable index resolved via `classes_`.
 
 Usage:
     python -m classifier.twostage --train
@@ -100,19 +111,23 @@ def stage2_feature_mask(feature_cols: list[str]) -> np.ndarray:
 
 
 class TwoStageClassifier:
-    """Two parallel binary XGBoost classifiers.
+    """Pipeline of two binary XGBoost classifiers.
 
-    Stage 1 decides ml_training vs NOT-training (= ml_inference ∪ other),
-    using the full feature set. This is the primary defender detector.
+    Stage 1 decides ML (ml_training ∪ ml_inference) vs non-ML (other),
+    using the full feature set — the ML-vs-other boundary leans heavily on
+    level signals (peak memory, sustained utilization, power draw) that
+    shouldn't be dropped.
+
     Stage 2 decides ml_training vs ml_inference, trained only on rows where
     the true label ∈ {ml_training, ml_inference}, and only on shape /
     periodicity features (level features — absolute memory, power, clock
-    means/percentiles — are dropped so the decision cannot lean on
-    absolute magnitudes).
+    means/percentiles, range — are dropped so the decision cannot lean on
+    absolute magnitudes; this is the WB-O defense).
 
-    `predict_proba_training(X)` and `predict_proba_train_vs_infer(X)` are
-    the clean per-stage outputs. `predict_proba(X)` composes them into a
-    3-class distribution for legacy callers (e.g. `classifier_oracle.py`).
+    Governance composition is exact:
+        P(train) = P_stage1(ML) × P_stage2(train | ML)
+        P(infer) = P_stage1(ML) × (1 − P_stage2(train | ML))
+        P(other) = 1 − P_stage1(ML)
     """
 
     classes_ = np.array(["other", "ml_training", "ml_inference"])
@@ -126,6 +141,8 @@ class TwoStageClassifier:
         learning_rate: float = 0.05,
         beta: float = 0.9999,
         random_state: int = 42,
+        rescue_tau: float = 0.7,
+        rescue_floor: float = 0.1,
     ):
         self.stage1_n_estimators = stage1_n_estimators
         self.stage1_max_depth = stage1_max_depth
@@ -134,6 +151,8 @@ class TwoStageClassifier:
         self.learning_rate = learning_rate
         self.beta = beta
         self.random_state = random_state
+        self.rescue_tau = rescue_tau
+        self.rescue_floor = rescue_floor
 
         self._feature_cols: list[str] | None = None
         self._stage2_mask: np.ndarray | None = None
@@ -153,8 +172,8 @@ class TwoStageClassifier:
             # Fall back: don't filter stage 2 features if we weren't told the names.
             self._stage2_mask = np.ones(X.shape[1], dtype=bool)
 
-        # --- Stage 1: ml_training vs NOT-training (inference + other) ---
-        y_s1 = np.where(y == "ml_training", 1, 0).astype(np.int32)
+        # --- Stage 1: ML (ml_training ∪ ml_inference) vs non-ML (other) ---
+        y_s1 = np.where(y != "other", 1, 0).astype(np.int32)
         w_s1 = compute_sample_weights(y_s1, groups=groups, beta=self.beta)
         self._stage1 = xgb.XGBClassifier(
             n_estimators=self.stage1_n_estimators,
@@ -169,7 +188,7 @@ class TwoStageClassifier:
             verbosity=0,
         )
         self._stage1.fit(X, y_s1, sample_weight=w_s1)
-        log.info(f"Stage 1 fit: {(y_s1 == 1).sum()} training / {(y_s1 == 0).sum()} not-training")
+        log.info(f"Stage 1 fit: {(y_s1 == 1).sum()} ML / {(y_s1 == 0).sum()} non-ML")
 
         # --- Stage 2: ml_training vs ml_inference (on ml rows only) ---
         is_ml = y != "other"
@@ -202,53 +221,69 @@ class TwoStageClassifier:
         if self._stage1 is None or self._stage2 is None:
             raise RuntimeError("TwoStageClassifier must be fit before calling predict_proba")
 
-    def predict_proba_training(self, X) -> np.ndarray:
-        """P(training) from Stage 1 — the primary defender signal."""
+    def predict_proba_ml(self, X) -> np.ndarray:
+        """P(ML) from Stage 1 — the front-gate probability."""
         self._assert_fit()
         X = np.asarray(X, dtype=np.float32)
         return self._stage1.predict_proba(X)[:, 1]
 
     def predict_proba_train_vs_infer(self, X) -> np.ndarray:
-        """P(training | workload is training or inference) from Stage 2.
+        """P(training | ML) from Stage 2.
 
-        Defined on the ML-activity subset. Applied to any row the caller
-        passes — useful for cross-checks even on rows Stage 1 thinks are
-        'not-training', but callers should be aware the stage 2 classifier
-        has never seen 'other' rows during training.
+        Defined on the ML-activity subset. Callable on any row, but Stage 2
+        has never seen 'other' rows during training, so the value is only
+        operationally meaningful after Stage 1 has admitted the row.
         """
         self._assert_fit()
         X = np.asarray(X, dtype=np.float32)
         X_s2 = X[:, self._stage2_mask]
         return self._stage2.predict_proba(X_s2)[:, 1]
 
-    def predict_proba(self, X) -> np.ndarray:
-        """Legacy 3-class output [P(other), P(training), P(inference)].
+    def _apply_rescue(self, p_ml, p_t_given_ml, p_train, p_infer, p_other):
+        """Move "other" probability mass into "training" when Stage 2 is
+        highly confident this is training AND Stage 1 is not confidently
+        non-ML. Preserves the sum-to-1 invariant.
+        """
+        if self.rescue_tau >= 1.0:
+            return p_train, p_infer, p_other
+        denom = max(1.0 - self.rescue_tau, 1e-6)
+        rescue_strength = np.clip((p_t_given_ml - self.rescue_tau) / denom, 0.0, 1.0)
+        gate = (p_ml > self.rescue_floor).astype(np.float32)
+        rescue_strength = rescue_strength * gate
+        rescue_mass = rescue_strength * p_other
+        return p_train + rescue_mass, p_infer, p_other - rescue_mass
 
-        Derived from the two stages via Bayes:
-            P(train) = P1(train)
-            P(infer) = P1(train) * (1 - P2(train|ml)) / P2(train|ml)
-            P(other) = 1 - P(train) - P(infer)
-        Clamped to [0, 1] and renormalized row-wise for numerical safety.
+    def predict_proba_training(self, X) -> np.ndarray:
+        """Composed governance P(train), with rescue applied."""
+        return self.predict_proba(X)[:, 1]
+
+    def predict_proba(self, X) -> np.ndarray:
+        """3-class output [P(other), P(training), P(inference)].
+
+        Pipeline composition:
+            P(train) = P_stage1(ML) × P_stage2(train | ML)
+            P(infer) = P_stage1(ML) × (1 − P_stage2(train | ML))
+            P(other) = 1 − P_stage1(ML)
+        Plus Stage 2 rescue (see `_apply_rescue`): when Stage 2 is highly
+        confident training-shape AND Stage 1 isn't confidently non-ML,
+        mass migrates from P(other) to P(train). Sum-to-1 preserved.
         """
         self._assert_fit()
         X = np.asarray(X, dtype=np.float32)
 
-        p_train = self._stage1.predict_proba(X)[:, 1]
+        p_ml = self._stage1.predict_proba(X)[:, 1]
         X_s2 = X[:, self._stage2_mask]
-        p2 = self._stage2.predict_proba(X_s2)[:, 1]
-        p2 = np.clip(p2, 1e-6, 1.0 - 1e-6)
+        p_t_given_ml = self._stage2.predict_proba(X_s2)[:, 1]
 
-        # P(infer) derivation from P(train) / P(train∪infer) = P2
-        p_infer = p_train * (1.0 - p2) / p2
-        p_other = 1.0 - p_train - p_infer
+        p_train = p_ml * p_t_given_ml
+        p_infer = p_ml * (1.0 - p_t_given_ml)
+        p_other = 1.0 - p_ml
 
-        # Numerical clamp + row-wise renorm.
-        stacked = np.stack([p_other, p_train, p_infer], axis=1)
-        stacked = np.clip(stacked, 0.0, None)
-        row_sums = stacked.sum(axis=1, keepdims=True)
-        row_sums = np.where(row_sums > 0, row_sums, 1.0)
-        proba = stacked / row_sums
-        return proba
+        p_train, p_infer, p_other = self._apply_rescue(
+            p_ml, p_t_given_ml, p_train, p_infer, p_other
+        )
+
+        return np.stack([p_other, p_train, p_infer], axis=1)
 
     def predict(self, X) -> np.ndarray:
         proba = self.predict_proba(X)
