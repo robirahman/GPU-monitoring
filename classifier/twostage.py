@@ -36,8 +36,17 @@ low-utilization training (e.g., B_low_util LOO) without affecting
 confident non-ML rows. Set `rescue_tau=1.0` to disable. Each stage is
 still an independently calibratable binary head.
 
+Default backend: `random_forest` (Appendix G hyperparameters — 400 trees,
+unlimited depth, min-leaf=2, sqrt features). RandomForest is the
+report's headline classifier for the three-way baseline and — under
+matched LOO evaluation — produces fewer catastrophic single-variant
+failures than XGBoost on the Round-5 whitebox families (see
+`classifier/results/twostage_backends.md`). Pass `backend="xgboost"`
+to reproduce the earlier XGBoost-backed pipeline.
+
 Wire interface (sklearn-compatible):
-    clf = TwoStageClassifier()
+    clf = TwoStageClassifier()                         # RF backend
+    clf = TwoStageClassifier(backend="xgboost")        # XGB backend
     clf.fit(X, y, groups=run_ids, feature_cols=feature_cols)
     p_ml = clf.predict_proba_ml(X)                     # shape (n,), P(ML)
     p_train_given_ml = clf.predict_proba_train_vs_infer(X)   # shape (n,) in [0,1]
@@ -143,6 +152,7 @@ class TwoStageClassifier:
         random_state: int = 42,
         rescue_tau: float = 0.7,
         rescue_floor: float = 0.1,
+        backend: str = "random_forest",
     ):
         self.stage1_n_estimators = stage1_n_estimators
         self.stage1_max_depth = stage1_max_depth
@@ -153,16 +163,47 @@ class TwoStageClassifier:
         self.random_state = random_state
         self.rescue_tau = rescue_tau
         self.rescue_floor = rescue_floor
+        if backend not in ("xgboost", "random_forest"):
+            raise ValueError(f"backend must be 'xgboost' or 'random_forest', got {backend!r}")
+        self.backend = backend
 
         self._feature_cols: list[str] | None = None
         self._stage2_mask: np.ndarray | None = None
         self._stage1 = None
         self._stage2 = None
 
+    def _make_head(self, n_estimators: int, max_depth: int):
+        """Instantiate a single binary classifier for one pipeline stage."""
+        if self.backend == "xgboost":
+            import xgboost as xgb
+            return xgb.XGBClassifier(
+                n_estimators=n_estimators,
+                max_depth=max_depth,
+                learning_rate=self.learning_rate,
+                subsample=0.8,
+                colsample_bytree=0.8,
+                use_label_encoder=False,
+                eval_metric="logloss",
+                random_state=self.random_state,
+                n_jobs=-1,
+                verbosity=0,
+            )
+        # random_forest — Appendix G hyperparameters (depth unlimited, sqrt
+        # features, min-leaf=2). max_depth/n_estimators/lr from the XGB path
+        # are ignored because RF ignores learning rate and RF trees need
+        # unlimited depth to match the Appendix G baseline.
+        from sklearn.ensemble import RandomForestClassifier
+        return RandomForestClassifier(
+            n_estimators=400,
+            max_depth=None,
+            min_samples_leaf=2,
+            max_features="sqrt",
+            random_state=self.random_state,
+            n_jobs=-1,
+        )
+
     # ------------------------------------------------------------------
     def fit(self, X, y, groups=None, feature_cols: list[str] | None = None):
-        import xgboost as xgb
-
         X = np.asarray(X, dtype=np.float32)
         y = np.asarray(y)
         if feature_cols is not None:
@@ -175,20 +216,9 @@ class TwoStageClassifier:
         # --- Stage 1: ML (ml_training ∪ ml_inference) vs non-ML (other) ---
         y_s1 = np.where(y != "other", 1, 0).astype(np.int32)
         w_s1 = compute_sample_weights(y_s1, groups=groups, beta=self.beta)
-        self._stage1 = xgb.XGBClassifier(
-            n_estimators=self.stage1_n_estimators,
-            max_depth=self.stage1_max_depth,
-            learning_rate=self.learning_rate,
-            subsample=0.8,
-            colsample_bytree=0.8,
-            use_label_encoder=False,
-            eval_metric="logloss",
-            random_state=self.random_state,
-            n_jobs=-1,
-            verbosity=0,
-        )
+        self._stage1 = self._make_head(self.stage1_n_estimators, self.stage1_max_depth)
         self._stage1.fit(X, y_s1, sample_weight=w_s1)
-        log.info(f"Stage 1 fit: {(y_s1 == 1).sum()} ML / {(y_s1 == 0).sum()} non-ML")
+        log.info(f"Stage 1 ({self.backend}) fit: {(y_s1 == 1).sum()} ML / {(y_s1 == 0).sum()} non-ML")
 
         # --- Stage 2: ml_training vs ml_inference (on ml rows only) ---
         is_ml = y != "other"
@@ -196,21 +226,10 @@ class TwoStageClassifier:
         y_s2 = np.where(y[is_ml] == "ml_training", 1, 0).astype(np.int32)
         g_s2 = np.asarray(groups)[is_ml] if groups is not None else None
         w_s2 = compute_sample_weights(y_s2, groups=g_s2, beta=self.beta)
-        self._stage2 = xgb.XGBClassifier(
-            n_estimators=self.stage2_n_estimators,
-            max_depth=self.stage2_max_depth,
-            learning_rate=self.learning_rate,
-            subsample=0.8,
-            colsample_bytree=0.8,
-            use_label_encoder=False,
-            eval_metric="logloss",
-            random_state=self.random_state,
-            n_jobs=-1,
-            verbosity=0,
-        )
+        self._stage2 = self._make_head(self.stage2_n_estimators, self.stage2_max_depth)
         self._stage2.fit(X_s2, y_s2, sample_weight=w_s2)
         log.info(
-            f"Stage 2 fit: {(y_s2 == 1).sum()} train / {(y_s2 == 0).sum()} infer "
+            f"Stage 2 ({self.backend}) fit: {(y_s2 == 1).sum()} train / {(y_s2 == 0).sum()} infer "
             f"on {int(self._stage2_mask.sum())} shape features "
             f"({int((~self._stage2_mask).sum())} level features dropped)"
         )
