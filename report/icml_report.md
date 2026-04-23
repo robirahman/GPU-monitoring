@@ -25,10 +25,11 @@ achieves 98.4% three-way accuracy (RandomForest, 30 s windows; 5-fold
 cross-validation grouped by run to prevent leakage) with detection in 5 seconds
 (97.8%); (2) leave-one-strategy-out (LOO) evaluation — holding an entire
 evasion family out of training — detects unseen strategies at a 93.9%
-unweighted family mean across the 18 R1–R4 strategy families (95.3%
-for the deployed two-stage pipeline; § 2.3), with all 4 DDP families at
-98.4–100% and the remaining single-family misses concentrated in
-Round-5 whitebox LoRA fine-tuning (46–35% family mean); and
+unweighted family mean across the 18 R1–R4 strategy families (95.2%
+for the deployed RF-backed two-stage pipeline; § 2.3), with all 4
+DDP families at 98.4–100% and the remaining single-family misses
+concentrated in Round-5 whitebox LoRA fine-tuning (46 % / 43 %
+family mean); and
 (3) a hardened classifier closes the remaining gaps — no evasion strategy
 reduces detection below the economic break-even threshold. Using published
 cost estimates for frontier models, we show the evasion tax renders covert
@@ -72,12 +73,12 @@ classifier as a prerequisite, then spend most of our effort attacking it.
   Round-5 whitebox families (`whitebox_full`, `whitebox_lora`) evaluated
   under the same LOO protocol.
   Leave-one-strategy-out evaluation with a class-balanced classifier shows
-  an **unweighted family mean of 93.9%** (three-way) / **95.3%**
-  (deployed two-stage, § 2.3) on the 18 R1–R4 strategy families, with
-  all 4 DDP families detected at 98.4–100%. Single-family misses
-  concentrate in Round-5 whitebox LoRA (`whitebox_lora` at 46.3%
-  three-way / 35.2% two-stage) where dilution + low trainable-parameter
-  footprint weakens the level signal. Physics-based evasion-resistant
+  an **unweighted family mean of 93.9%** (three-way) / **95.2%**
+  (deployed RF two-stage, § 2.3) on the 18 R1–R4 strategy families,
+  with all 4 DDP families detected at 98.4–100%. Single-family
+  misses concentrate in Round-5 whitebox LoRA (`whitebox_lora` at
+  46.3% three-way / 42.6% two-stage) where dilution + low
+  trainable-parameter footprint weakens the level signal. Physics-based evasion-resistant
   features (cumulative energy, power-memory correlation, pre-allocation
   memory-plateau features) close the remaining gap for the hardest
   single-GPU strategies in the in-distribution hardened state.
@@ -102,10 +103,10 @@ classifier as a prerequisite, then spend most of our effort attacking it.
    5b (dense LLM inference at matched sizes), including 4 multi-GPU
    distributed strategies on 8-GPU datacenter nodes, plus 2 Round-5 whitebox
    families (20 families total under LOO). Class-balanced LOO
-   generalization: **93.9% (three-way) / 95.3% (two-stage) unweighted family
-   mean** on the 18 R1–R4 strategy families, with DDP strategies at
-   98.4–100% and the one sub-50% outlier being Round-5 `whitebox_lora`
-   (heavy-dilution LoRA fine-tuning).
+   generalization: **93.9% (three-way) / 95.2% (RF two-stage) unweighted
+   family mean** on the 18 R1–R4 strategy families, with DDP
+   strategies at 98.4–100% and the one sub-50% outlier being
+   Round-5 `whitebox_lora` (heavy-dilution LoRA fine-tuning).
 3. Quantification of the **evasion tax**: with a balanced hardened classifier,
    detection on the composite sweep remains above economic break-even at all
    idle fractions; evasion-resistant physics-based features recover 95-100%
@@ -202,13 +203,15 @@ training a model?" needs a training-versus-not-training decision, not a
 fine-grained workload taxonomy. The operational form we deploy is a
 **two-stage pipeline** that factors the decision along its natural tree:
 
-- **Stage 1 — "Is this workload ML?"** A binary XGBoost head on the full
-  166-feature window classifies `ml_training ∪ ml_inference` versus
-  `other`. The ML-vs-non-ML boundary leans heavily on level signals
-  (peak memory footprint, sustained tensor-core utilization, power draw),
-  so the full feature set is retained.
+- **Stage 1 — "Is this workload ML?"** A binary RandomForest head
+  (Appendix G hyperparameters: 400 trees, unlimited depth, min-leaf = 2,
+  sqrt-feature splits) on the full 166-feature window classifies
+  `ml_training ∪ ml_inference` versus `other`. The ML-vs-non-ML boundary
+  leans heavily on level signals (peak memory footprint, sustained
+  tensor-core utilization, power draw), so the full feature set is
+  retained.
 - **Stage 2 — "Given ML activity, is it training or inference?"** A
-  binary XGBoost head trained only on rows where the true label is
+  binary RandomForest head trained only on rows where the true label is
   `ml_training` or `ml_inference`, with level features dropped
   (absolute memory/power/clock means, percentiles, min, max, range). The
   train-vs-infer decision rests on shape, periodicity, FFT, and
@@ -220,10 +223,21 @@ fine-grained workload taxonomy. The operational form we deploy is a
 Governance P(train) is the exact probabilistic composition
 P(train) = P_stage1(ML) × P_stage2(train | ML), with
 P(infer) = P_stage1(ML) × (1 − P_stage2(train | ML)) and
-P(other) = 1 − P_stage1(ML); these sum to 1 by construction. Each stage
-is independently calibratable — operators can tune the ML-gate
+P(other) = 1 − P_stage1(ML); these sum to 1 by construction. A
+threshold-based **Stage 2 rescue rule** reclassifies borderline
+Stage-1-negative rows when Stage 2 confidently says training
+(P_stage2(train | ML) > 0.7 and P_stage1(ML) > 0.1), moving mass from
+`other` to `ml_training` proportional to Stage 2's confidence.
+Without the rescue the held-out LOO family mean drops ~4 pp on
+low-utilization training families (`B_low_util`, `D_temporal`). Each
+stage is independently calibratable — operators can tune the ML-gate
 permissiveness (Stage 1 threshold) and the train-vs-infer cutoff
 (Stage 2 threshold) separately. Implementation: `classifier/twostage.py`.
+RandomForest was chosen over XGBoost as the default backend because RF
+produces fewer catastrophic single-variant LOO failures (variant-level
+mean 91.7 % vs XGB 88.7 % on the same splits) and a smaller worst-case
+oracle-regression tail (p95 on `whitebox_inference` 0.61 vs 0.89); full
+head-to-head in `classifier/results/twostage_backends.md`.
 
 **We evaluate the strictly harder three-way task** (`ml_training` /
 `ml_inference` / `other`) as the headline benchmark. A classifier that
@@ -233,15 +247,18 @@ lower bound on the binary-governance accuracy we would report. Three-way
 is also the form in which the adversarial rounds and the
 leave-one-strategy-out evaluation were run, so it is the form in which
 our headline numbers (§ 5.1-5.3) are stated. Pooled 5-fold CV on the
-refactored two-stage pipeline tracks the strictly-harder three-way
-(XGBoost) number within 0.6-0.9 pp across 15-60 s windows — three-way
-97.98% vs two-stage 97.14% at 30 s (Δ = −0.84 pp;
-`classifier/results/twostage_vs_threeway.md`). On the Round-5 oracle
-regression test (`whitebox_inference` held out at training time), the
-two-stage's median P(train) on the held-out 20 inference windows is
-0.040 (vs 0.056 for three-way), well below the governance threshold.
-The two-stage classifier is the deployed artefact; the three-way
-classifier is the evaluation vehicle.
+refactored RF two-stage pipeline tracks the matched XGBoost three-way
+within 0.7 pp at 30 s (three-way 97.98 % vs two-stage 97.24 %, Δ = −0.74 pp)
+and 1.1 pp at 60 s (`classifier/results/twostage_vs_threeway.md`); the
+wider 60 s gap reflects RF's unbounded trees slightly overfitting at
+larger window sizes where per-window sample counts drop. On the Round-5
+oracle regression test (`whitebox_inference` held out at training time),
+the two-stage's median P(train) on the held-out 20 inference windows is
+0.32 (vs 0.06 for three-way) and 10 % of windows exceed the 0.5
+governance threshold (vs 20 % for three-way) — RF distributes
+probability more evenly, trading a higher median for a smaller
+worst-case tail (p95 0.61 vs 0.82). The two-stage classifier is the
+deployed artefact; the three-way classifier is the evaluation vehicle.
 
 Sliding windows of 5-60 seconds over 1 Hz telemetry. 166 features per window
 (159 statistical base features + 7 window-level); detection-latency analysis
@@ -553,14 +570,14 @@ parity runs `adv_defender_rounds_twostage.csv` /
 over all variants; "3-way" is the three-way XGBoost evaluation vehicle,
 "2-stage" is the deployed pipeline (§ 2.3):
 
-| Round | Attacker capability                                                | Baseline det. | Hardened det. | Ev.-resistant | LOO 3-way | LOO 2-stage |
-|-------|--------------------------------------------------------------------|---------------|---------------|---------------|-----------|-------------|
-| 1     | Utilization manipulation (A, B, D)                                  | 30-95%        | 100%          | 100%          | 61-97%    | 65-92%      |
-| 2     | Memory reduction / mimicry (E, F, G, H, I, J)                      | 2-47%         | 100%          | 100%          | 82-100%   | 95-100%     |
-| 3     | Training-as-inference (K online, L diluted)                         | 89-100%       | 100%          | 100%          | 93-99%    | 85-100%     |
-| 4     | Composite + grad accum (M, N, composite 0–95 % idle)                | 0-100%        | 100%          | 100%          | 93-100%   | 92-100%     |
-| 4-DDP | Multi-GPU distributed (K/L DDP + stagger)                           | 98-100%       | 100%          | 100%          | 99-100%   | 100%        |
-| 5     | White-box (WB-D/L/O, WB+grad-accum) — classifier internals exposed  | —             | —             | 100%          | 46-94%    | 35-79%      |
+| Round | Attacker capability                                                | Baseline det. | Hardened det. | Ev.-resistant | LOO 3-way | LOO 2-stage (RF) |
+|-------|--------------------------------------------------------------------|---------------|---------------|---------------|-----------|------------------|
+| 1     | Utilization manipulation (A, B, D)                                  | 30-95%        | 100%          | 100%          | 61-97%    | 59-100%          |
+| 2     | Memory reduction / mimicry (E, F, G, H, I, J)                      | 2-47%         | 100%          | 100%          | 82-100%   | 80-100%          |
+| 3     | Training-as-inference (K online, L diluted)                         | 89-100%       | 100%          | 100%          | 93-99%    | 87-100%          |
+| 4     | Composite + grad accum (M, N, composite 0–95 % idle)                | 0-100%        | 100%          | 100%          | 93-100%   | 98-100%          |
+| 4-DDP | Multi-GPU distributed (K/L DDP + stagger)                           | 98-100%       | 100%          | 100%          | 99-100%   | 100%             |
+| 5     | White-box (WB-D/L/O, WB+grad-accum) — classifier internals exposed  | —             | —             | 100%          | 46-94%    | 43-87%           |
 
 All classifiers use class-balanced training (effective-number-of-samples
 sample weights). The "Ev.-resistant" column is three-way R3 in-distribution
@@ -572,20 +589,23 @@ three-way on `B_low_util` and `D_temporal`) are a consequence of adding
 Round-5b whitebox data to the training pool — when a held-out family is
 low-utilization training, the classifier learns to associate low
 utilization with the Round-5b LoRA inference signature, hurting
-generalisation. Rescue (§ 2.3) recovers most of this on the two-stage
-side. Round-5 `whitebox_lora` remains the dominant LOO weakness for
-both classifiers (46% / 35% family mean) — low trainable-parameter
-footprint + heavy dilution is the current frontier for LOO
-generalisation.
+generalisation. Stage 2 rescue (§ 2.3) recovers `D_temporal` (LOO =
+100 %) and `composite` (98 %) on the RF two-stage; `B_low_util` (59 %)
+and `J_pid` (80 %) remain Stage 1 failures where RF's unbounded trees
+lean on util-based splits that don't generalise when the family is
+held out. Round-5 `whitebox_lora` remains the dominant LOO weakness
+for both classifiers (46 % three-way / 43 % two-stage family mean) —
+low trainable-parameter footprint + heavy dilution is the current
+frontier for LOO generalisation.
 
-**LOO evaluation — 93.9% (three-way) / 95.3% (two-stage) unweighted
-family mean** across the 18 R1–R4 strategy families; 91.6% / 91.5% when
-the two Round-5 whitebox families are included (20 families total, 51
-variant rows). Each family averages its own variant rows; see
-Appendix A for the per-family table. Key facts:
+**LOO evaluation — 93.9% (three-way) / 95.2% (two-stage, RF default)
+unweighted family mean** across the 18 R1–R4 strategy families;
+91.6% / 92.2% when the two Round-5 whitebox families are included
+(20 families total, 51 variant rows). Each family averages its own
+variant rows; see Appendix A for the per-family table. Key facts:
 
 - **Single family below 50% detection:** `whitebox_lora` at 46.3%
-  three-way / 35.2% two-stage. Every other family lands above the
+  three-way / 42.6% two-stage. Every other family lands above the
   coin-flip threshold. Within `whitebox_lora`, the `_N20` variant
   (20× dilution) is the worst variant for both classifiers
   (11.1% three-way / 0.0% two-stage) — a combination of extreme
@@ -593,18 +613,19 @@ Appendix A for the per-family table. Key facts:
   training signature almost completely.
 - **Families below 90% (three-way):** `B_low_util` (60.6%),
   `D_temporal` (67.9%), `F_interleave` (82.1%), `whitebox_lora`
-  (46.3%). **Families below 90% (two-stage):** `B_low_util` (65.2%),
-  `L_diluted` (84.5%), `whitebox_full` (79.1%), `whitebox_lora`
-  (35.2%). The two-stage rescue rule (§ 2.3) recovers
-  `A_util_modulation`, `D_temporal`, `E_memory_minimal`, and
-  `composite` vs a no-rescue baseline, at a cost on Round-5
-  whitebox families (where Stage 2's shape-only feature restriction
-  discards level information that would help on heavy LoRA dilution).
+  (46.3%). **Families below 90% (two-stage, RF):** `B_low_util`
+  (59.1%), `J_pid` (80.4%), `L_diluted` (87.3%), `whitebox_full`
+  (87.4%), `whitebox_lora` (42.6%). The RF two-stage beats XGBoost
+  at the variant-level (fewer catastrophic single-variant failures)
+  and recovers `D_temporal` fully (LOO 100 %), at the cost of
+  `J_pid` (three-way LOO 100 % → RF 80 %) where RF's unbounded
+  trees latch onto util-modulation patterns that don't generalise.
+  The Stage 2 rescue rule (§ 2.3) is what closes `D_temporal` and
+  `composite`; without rescue the two-stage family mean drops ~4 pp.
 - **Weakest *variant rows* (three-way):** `whitebox_lora_N20` 11.1%,
   `composite_10` 50.0%, `B_low_util` 60.6%, `whitebox_lora_N5` 61.1%,
-  `whitebox_diluted_N50` 61.1%. The composite, B_low_util, and
-  whitebox_full variants all recover to 100% in the hardened and
-  evasion-resistant in-distribution states.
+  `whitebox_diluted_N50` 61.1%. All R1–R4 variants recover to 100%
+  in the hardened and evasion-resistant in-distribution states.
 - **Datacenter adversarial results:** All 4 DDP evasion families
   (K_ddp, K_ddp_accum, L_ddp, L_ddp_stagger) are detected at
   **98.4–100% in LOO** for both classifier forms — multi-GPU evasion
@@ -612,17 +633,21 @@ Appendix A for the per-family table. Key facts:
   NVLink/AllReduce communication pattern of distributed training is a
   strong, hard-to-suppress signal that shows up on every rank's PCIe
   and power traces.
-- Variant-level mean = 92.0% (three-way) / 88.7% (two-stage) across
-  all 51 variants; we report the unweighted family mean as the more
-  adversarially conservative number, since DDP variants dominate
-  window count and would otherwise mask the long-tail whitebox misses.
+- Variant-level mean = 92.0% (three-way) / 91.7% (RF two-stage)
+  across all 51 variants; the three-way and RF two-stage are
+  essentially tied at variant level, while XGBoost two-stage on the
+  same splits trails both at 88.7 % (source:
+  `classifier/results/twostage_backends.md`). We report the unweighted
+  family mean as the more adversarially conservative number, since
+  DDP variants dominate window count and would otherwise mask the
+  long-tail whitebox misses.
 
 **Figure 4: LOO detection rate per strategy family** (bar chart, 20
 families sorted by detection rate; error bars show min/max across
 variants). Visually highlights `whitebox_lora` as the outlier below
-the coin-flip threshold, `B_low_util` / `D_temporal` /
-`whitebox_full` as the second-tier sub-90% cluster, and all 4 DDP
-families at ≥98.4%.
+the coin-flip threshold, `B_low_util` / `J_pid` /
+`whitebox_full` as the second-tier sub-90% cluster for the RF
+two-stage, and all 4 DDP families at ≥98.4%.
 
 ### 5.3 The Evasion Tax
 
@@ -923,9 +948,10 @@ governance. Defenders are structurally favored for the governance-relevant case:
 conditions including balanced LOO evaluation on 8-GPU datacenter nodes —
 the NVLink/AllReduce signatures of distributed training are extremely difficult
 to suppress; (2) single-GPU evasion partially succeeds against a balanced
-classifier at a 93.9% (three-way) / 95.3% (two-stage) unweighted family
-mean on the 18 R1–R4 strategy families, with Round-5 `whitebox_lora` the
-sole family below 50% (LoRA's low trainable-parameter footprint plus
+classifier at a 93.9% (three-way) / 95.2% (RF two-stage) unweighted
+family mean on the 18 R1–R4 strategy families, with Round-5
+`whitebox_lora` the sole family below 50% (LoRA's low
+trainable-parameter footprint plus
 heavy dilution is the open frontier); evasion-resistant physics-based
 features (pre-allocation memory-plateau, power-memory correlation,
 cumulative energy) close the remaining gaps for the R1–R4 families in
@@ -964,28 +990,30 @@ unweighted mean across variants (family mean) and the weakest variant
 for each classifier form. DDP variants collected in the multi-GPU block;
 Round-5 whitebox families added at the bottom.
 
+"2s" columns report the RF two-stage pipeline (§ 2.3 default backend).
+
 | Family | Round | Technique | Baseline | Hardened | Ev.-resistant | LOO 3w mean | LOO 3w worst | LOO 2s mean | LOO 2s worst | Variants |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `A_util_modulation`     | 1 | Utilization manipulation | 95 %        | 100 % | 100 % | 97.0 %     | 97.0 %             | 92.4 %     | 92.4 %              | 1 |
-| `B_low_util`            | 1 | Utilization manipulation | 30 %        | 100 % | 100 % | **60.6 %** | **60.6 %**         | **65.2 %** | **65.2 %**          | 1 |
-| `D_temporal_disruption` | 1 | Utilization manipulation | 91 %        | 100 % | 100 % | **67.9 %** | **67.9 %**         | 91.7 %     | 91.7 %              | 1 |
-| `E_memory_minimal`      | 2 | Memory reduction         | 23 %        | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 1 |
-| `F_interleave`          | 2 | Workload mimicry         | 2-16 %      | 100 % | 100 % | **82.1 %** | **64.3 %** (30)    | 99.1 %     | 98.2 % (50)         | 2 |
-| `G_clock_throttled`     | 2 | Utilization manipulation | 30 %        | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 1 |
-| `H_mimicry`             | 2 | Workload mimicry         | 29-30 %     | 100 % | 100 % | 99.2 %     | 98.4 % (mining)    | 96.0 %     | 93.8 % (mining)     | 2 |
+| `A_util_modulation`     | 1 | Utilization manipulation | 95 %        | 100 % | 100 % | 97.0 %     | 97.0 %             | 93.9 %     | 93.9 %              | 1 |
+| `B_low_util`            | 1 | Utilization manipulation | 30 %        | 100 % | 100 % | **60.6 %** | **60.6 %**         | **59.1 %** | **59.1 %**          | 1 |
+| `D_temporal_disruption` | 1 | Utilization manipulation | 91 %        | 100 % | 100 % | **67.9 %** | **67.9 %**         | 100 %      | 100 %               | 1 |
+| `E_memory_minimal`      | 2 | Memory reduction         | 23 %        | 100 % | 100 % | 100 %      | 100 %              | 98.2 %     | 98.2 %              | 1 |
+| `F_interleave`          | 2 | Workload mimicry         | 2-16 %      | 100 % | 100 % | **82.1 %** | **64.3 %** (30)    | 100 %      | 100 %               | 2 |
+| `G_clock_throttled`     | 2 | Utilization manipulation | 30 %        | 100 % | 100 % | 100 %      | 100 %              | 98.2 %     | 98.2 %              | 1 |
+| `H_mimicry`             | 2 | Workload mimicry         | 29-30 %     | 100 % | 100 % | 99.2 %     | 98.4 % (mining)    | 99.1 %     | 98.2 % (cufft)      | 2 |
 | `I_stochastic`          | 2 | Utilization manipulation | 47 %        | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 1 |
-| `J_pid`                 | 2 | Utilization manipulation | 11 %        | 100 % | 100 % | 100 %      | 100 %              | 94.6 %     | 94.6 %              | 1 |
+| `J_pid`                 | 2 | Utilization manipulation | 11 %        | 100 % | 100 % | 100 %      | 100 %              | **80.4 %** | **80.4 %**          | 1 |
 | `K_online_learning`     | 3 | Training-as-inference    | 100 %       | 100 % | 100 % | 92.9 %     | 92.9 %             | 100 %      | 100 %               | 1 |
-| `L_diluted`             | 3 | Training-as-inference    | 89-100 %    | 100 % | 100 % | 99.2 %     | 98.4 % (N=5)       | **84.5 %** | **76.1 %** (N=20)   | 4 |
+| `L_diluted`             | 3 | Training-as-inference    | 89-100 %    | 100 % | 100 % | 99.2 %     | 98.4 % (N=5)       | **87.3 %** | **74.6 %** (N=20)   | 4 |
 | `M_composite_memmin`    | 4 | Composite                | 100 %       | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 4 |
 | `N_grad_accum`          | 4 | Training-as-inference    | 100 %       | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 3 |
-| `composite` (idle-pad)  | 4 | Composite idle-padding   | **0-100 %** | 100 % | 100 % | 92.6 %     | **50.0 %** (10)    | 92.0 %     | **66.7 %** (60)     | 11 |
+| `composite` (idle-pad)  | 4 | Composite idle-padding   | **0-100 %** | 100 % | 100 % | 92.6 %     | **50.0 %** (10)    | 97.6 %     | 83.3 % (20)         | 11 |
 | `K_ddp`                 | 4 | Multi-GPU DDP            | 100 %       | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 1 |
 | `K_ddp_accum`           | 4 | Multi-GPU DDP            | 100 %       | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 2 |
-| `L_ddp`                 | 4 | Multi-GPU DDP            | 99-100 %    | 100 % | 100 % | 99.0 %     | 98.4 % (5)         | 99.8 %     | 99.6 % (5)          | 2 |
+| `L_ddp`                 | 4 | Multi-GPU DDP            | 99-100 %    | 100 % | 100 % | 99.0 %     | 98.4 % (5)         | 99.6 %     | 99.2 % (N=5)        | 2 |
 | `L_ddp_stagger`         | 4 | Multi-GPU DDP            | 100 %       | 100 % | 100 % | 100 %      | 100 %              | 100 %      | 100 %               | 1 |
-| `whitebox_full`         | 5 | Whitebox dilution + ckpt | —           | —     | 100 % | 94.4 %     | 61.1 % (N50)       | **79.1 %** | **55.0 %** (oracle) | 8 |
-| `whitebox_lora`         | 5 | Whitebox LoRA + dilution | —           | —     | 100 % | **46.3 %** | **11.1 %** (N20)   | **35.2 %** | **0.0 %** (N20)     | 3 |
+| `whitebox_full`         | 5 | Whitebox dilution + ckpt | —           | —     | 100 % | 94.4 %     | 61.1 % (N50)       | **87.4 %** | **60.0 %** (oracle) | 8 |
+| `whitebox_lora`         | 5 | Whitebox LoRA + dilution | —           | —     | 100 % | **46.3 %** | **11.1 %** (N20)   | **42.6 %** | **5.6 %** (N20)     | 3 |
 
 Bolded cells mark LOO family means or worst variants below 90 %.
 Round-5 whitebox families were introduced in Round 5b and added to the

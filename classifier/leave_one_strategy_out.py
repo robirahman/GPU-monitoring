@@ -105,8 +105,11 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--classifier", choices=["threeway", "twostage"], default="threeway")
+    ap.add_argument("--backend", choices=["xgboost", "random_forest"], default="random_forest",
+                    help="Classifier backend for --classifier twostage. Ignored for threeway.")
     args = ap.parse_args()
     variant = args.classifier
+    backend = args.backend
 
     log.info("=" * 70)
     log.info(f"LEAVE-ONE-STRATEGY-OUT EVALUATION  (classifier={variant})")
@@ -161,7 +164,7 @@ def main():
             clf.fit(X_train, y_train_enc, sample_weight=w_train)
             predict_str = lambda X: le.inverse_transform(clf.predict(X))
         else:  # twostage
-            clf = TwoStageClassifier().fit(
+            clf = TwoStageClassifier(backend=backend).fit(
                 X_train, y_train, groups=groups_train, feature_cols=feature_cols,
             )
             predict_str = lambda X: clf.predict(X)
@@ -202,9 +205,16 @@ def main():
                          f"infer={int((y_l=='ml_inference').sum())}, "
                          f"other={int((y_l=='other').sum())})")
 
-    # Save results
+    # Save results. Canonical "twostage" filename holds the default
+    # backend (random_forest); non-default backends get a suffix so
+    # comparison runs don't overwrite the deployed artifact's CSV.
     df_results = pd.DataFrame(results)
-    out_name = "leave_one_out.csv" if variant == "threeway" else "leave_one_out_twostage.csv"
+    if variant == "threeway":
+        out_name = "leave_one_out.csv"
+    elif backend == "random_forest":
+        out_name = "leave_one_out_twostage.csv"
+    else:
+        out_name = f"leave_one_out_twostage_{backend}.csv"
     out_path = RESULTS_DIR / out_name
     df_results.to_csv(out_path, index=False)
     log.info(f"\nSaved: {out_path}")
