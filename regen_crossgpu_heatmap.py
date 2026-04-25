@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42  # ICML: TrueType, avoid Type-3
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score
@@ -51,17 +53,53 @@ run_first = df_win.groupby("run_id").agg(
 class_counts = run_first.groupby(["gpu", "label"]).size().unstack(fill_value=0)
 log.info(f"Runs per GPU × class:\n{class_counts}")
 
-train_gpus = [g for g in class_counts.index
-              if (class_counts.loc[g] >= MIN_RUNS_PER_CLASS).all()]
-all_gpus = sorted(class_counts.index.tolist())
+# Drop NaN/"unknown" GPU buckets — these are 15 legacy runs whose parquets
+# predate the gpu_name field and all roll up into a uniform mostly-training
+# bucket that isn't informative for cross-GPU transfer.
+eligible = [g for g in class_counts.index if str(g) not in ("unknown", "nan")]
+train_gpus = sorted(
+    [g for g in eligible
+     if (class_counts.loc[g] >= MIN_RUNS_PER_CLASS).all()],
+    key=gpu_sort_key,
+)
+# Match test columns to the set of GPUs that also qualify as train sources,
+# so the heatmap is symmetric on named GPUs.
+all_gpus = train_gpus
 log.info(f"GPUs eligible as training source: {train_gpus}")
 log.info(f"All GPUs (as eval targets): {all_gpus}")
 
 
+_SHORT_NAME_OVERRIDES = {
+    "A100-SXM4-40GB": "A100 40GB",
+    "A100-SXM4-80GB": "A100 80GB",
+    "RTX 4050 Laptop GPU": "RTX 4050 Laptop",
+    "H100 80GB HBM3": "H100 80GB",
+}
+
+GPU_ORDER = [
+    "RTX 4050 Laptop",
+    "RTX 5080",
+    "RTX 5090",
+    "A100 40GB",
+    "A100 80GB",
+    "H100 80GB",
+    "H100 NVL",
+    "H200",
+    "B200",
+]
+
+
 def short_name(g):
-    """Shorten 'NVIDIA GeForce RTX 5080' → 'RTX 5080'."""
+    """Canonical short display name for a GPU."""
     s = str(g).replace("NVIDIA ", "").replace("GeForce ", "")
-    return s
+    return _SHORT_NAME_OVERRIDES.get(s, s)
+
+
+def gpu_sort_key(g):
+    s = short_name(g)
+    if s in GPU_ORDER:
+        return (0, GPU_ORDER.index(s))
+    return (1, s)  # anything unrecognized (e.g. "unknown") goes to the end
 
 
 # ── Per-GPU → per-GPU transfer matrix ─────────────────────────────────────

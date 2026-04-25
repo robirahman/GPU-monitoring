@@ -18,6 +18,8 @@ from pathlib import Path
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42  # ICML: TrueType, avoid Type-3
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
@@ -54,7 +56,7 @@ with open(SRC) as f:
     data = json.load(f)
 log.info(f"Loaded {len(data)} corner-case runs from {SRC.name}")
 
-fig, ax = plt.subplots(figsize=(8.0, 5.5))
+fig, ax = plt.subplots(figsize=(11.0, 5.5))
 
 # --- rooflines + ridges ---
 ai_axis = np.logspace(0, 3.8, 500)  # 1 to ~6300
@@ -106,9 +108,6 @@ ax.set_xlim(1, ai_axis.max())
 ax.set_ylim(0.05, FP16_CEIL * 2)
 ax.set_xlabel("Arithmetic intensity (FLOP / byte)")
 ax.set_ylabel("Achieved throughput (TFLOPS)")
-ax.set_title("H100-NVL roofline — 286 corner-case inference configurations\n"
-             "overlaid on a dense-FP32 training sweep",
-             fontsize=11)
 ax.grid(which="both", alpha=0.2)
 ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=7, framealpha=0.95)
 

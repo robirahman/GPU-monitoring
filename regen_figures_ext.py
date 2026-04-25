@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42  # ICML: TrueType, avoid Type-3
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
@@ -18,13 +20,16 @@ FIG.mkdir(parents=True, exist_ok=True)
 RES = ROOT / "classifier" / "results"
 
 # ── Figure 4: LOO detection bar chart ─────────────────────────────────────
-loo = pd.read_csv(RES / "leave_one_out.csv")
-# Aggregate per family: windows-weighted mean detection rate
-agg = (loo.assign(_num=loo["detection_rate"] * loo["n_windows"])
-          .groupby("held_out_family")
-          .agg(detection_rate=("_num", "sum"),
-               n_windows=("n_windows", "sum")))
-agg["detection_rate"] /= agg["n_windows"]
+loo = pd.read_csv(RES / "leave_one_out_twostage.csv")
+# Aggregate per family: unweighted mean across variants (matches Table 7).
+# Each variant counts equally regardless of how many windows it contributes.
+agg = (loo.groupby("held_out_family")
+          .agg(detection_rate=("detection_rate", "mean"),
+               n_windows=("n_windows", "sum"),
+               min_rate=("detection_rate", "min"),
+               max_rate=("detection_rate", "max"),
+               n_variants=("detection_rate", "count")))
+# Sort ascending so highest rate ends up at top of horizontal bar chart
 agg = agg.sort_values("detection_rate")
 
 DDP_FAMS = {"K_ddp", "K_ddp_accum", "L_ddp", "L_ddp_stagger"}
@@ -33,20 +38,37 @@ colors = ["#1f77b4" if is_ddp else "#d62728" if rate < 0.5
           else "#ff7f0e" if rate < 0.8 else "#2ca02c"
           for rate, is_ddp in zip(agg["detection_rate"], agg["is_ddp"])]
 
-fig, ax = plt.subplots(figsize=(7.5, 5.0))
+# Asymmetric error bars: [rate - min, max - rate] (in percent).
+# Clip tiny negative drift from windows-weighted mean falling just outside
+# [min, max] due to FP precision; matplotlib rejects negative xerr.
+xerr = np.vstack([
+    np.clip((agg["detection_rate"] - agg["min_rate"]).values, 0, None),
+    np.clip((agg["max_rate"] - agg["detection_rate"]).values, 0, None),
+]) * 100
+
+fig, ax = plt.subplots(figsize=(10.0, 8.0))
 y = np.arange(len(agg))
-ax.barh(y, agg["detection_rate"] * 100, color=colors, edgecolor="black", linewidth=0.3)
+ax.barh(y, agg["detection_rate"] * 100, color=colors,
+        edgecolor="black", linewidth=0.3,
+        xerr=xerr,
+        error_kw={"ecolor": "black", "capsize": 3,
+                  "elinewidth": 0.9, "capthick": 0.9})
 ax.set_yticks(y)
-ax.set_yticklabels(agg.index, fontsize=8)
+ax.set_yticklabels(agg.index, fontsize=9)
 ax.set_xlabel("LOO detection rate (%)")
-ax.set_xlim(0, 105)
+ax.set_xlim(0, 132)
+ax.set_xticks([0, 20, 40, 60, 80, 100])
 ax.axvline(50, color="gray", linestyle=":", linewidth=0.8)
 ax.axvline(90, color="gray", linestyle=":", linewidth=0.8)
-for i, (rate, n) in enumerate(zip(agg["detection_rate"], agg["n_windows"])):
-    ax.text(rate * 100 + 1, i, f"{rate*100:.1f}% (n={n})",
-            va="center", fontsize=7)
-ax.set_title(f"Leave-one-strategy-out detection — {len(agg)} families\n"
-             "(class-balanced hardened classifier, 15s windows)")
+for i, (rate, n, mx, nv) in enumerate(zip(
+        agg["detection_rate"], agg["n_windows"],
+        agg["max_rate"], agg["n_variants"])):
+    # Place label just past the upper error-bar cap
+    x_text = mx * 100 + 1.5
+    label = f"{rate*100:.1f}% (n={n}"
+    label += f", k={nv})" if nv > 1 else ")"
+    ax.text(x_text, i, label, va="center", fontsize=8)
+ax.set_ylim(-0.6, len(agg) - 0.4)
 from matplotlib.patches import Patch
 legend_elems = [
     Patch(facecolor="#1f77b4", label="Multi-GPU (DDP)"),
@@ -54,7 +76,8 @@ legend_elems = [
     Patch(facecolor="#ff7f0e", label="Single-GPU, 50-80%"),
     Patch(facecolor="#d62728", label="Single-GPU, <50%"),
 ]
-ax.legend(handles=legend_elems, loc="lower right", fontsize=8)
+ax.legend(handles=legend_elems, loc="lower right", fontsize=9,
+          framealpha=0.95)
 ax.grid(axis="x", alpha=0.3)
 fig.tight_layout()
 fig.savefig(FIG / "loo_detection_bar.png", dpi=150)
