@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adversarial Classification of ML Training on GPUs</title>
+  <title>Detecting Hidden ML Training With Zero-Overhead Telemetry</title>
   <style>
     :root {
       --bg: #fafafa;
@@ -31,13 +31,14 @@
       line-height: 1.7;
       padding: 2rem 1rem;
     }
-    .container { max-width: 800px; margin: 0 auto; }
+    .container { max-width: 880px; margin: 0 auto; }
     header { margin-bottom: 3rem; }
     h1 {
-      font-size: 1.75rem;
+      font-size: 1.85rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
       letter-spacing: -0.02em;
+      line-height: 1.25;
     }
     .subtitle {
       color: var(--muted);
@@ -54,51 +55,71 @@
       border-radius: 999px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
     }
     h2 {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 600;
       margin-top: 2.5rem;
       margin-bottom: 0.75rem;
       letter-spacing: -0.01em;
     }
+    h3 {
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
     p { margin-bottom: 1rem; }
+    ul, ol { margin: 0 0 1rem 1.5rem; }
+    li { margin-bottom: 0.35rem; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .card h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-    }
-    .card p { color: var(--muted); font-size: 0.92rem; margin-bottom: 0; }
-    .questions { list-style: none; padding: 0; }
-    .questions li {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.95rem;
-    }
-    .questions li:last-child { border-bottom: none; }
-    .questions li::before {
-      content: "?";
-      display: inline-block;
-      width: 1.5em;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .tier-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 1rem; }
-    .tier-table th, .tier-table td {
+    .links { font-size: 0.95rem; color: var(--muted); }
+    code, kbd { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.9em; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 1rem; }
+    .data-table th, .data-table td {
       text-align: left;
       padding: 0.5rem 0.75rem;
       border-bottom: 1px solid var(--border);
+      vertical-align: top;
     }
-    .tier-table th { font-weight: 600; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .data-table th { font-weight: 600; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .data-table td.num { font-variant-numeric: tabular-nums; }
+    .figure { margin: 1.25rem 0 1.75rem 0; }
+    .figure img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+    }
+    .figure figcaption {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+    .headline {
+      background: var(--card-bg);
+      border-left: 3px solid var(--accent);
+      padding: 0.65rem 1rem;
+      margin: 0.75rem 0 1rem 0;
+      font-size: 0.95rem;
+    }
+    .callout {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .callout h3 {
+      margin-top: 0;
+      font-size: 0.95rem;
+    }
     footer {
       margin-top: 3rem;
       padding-top: 1.5rem;
@@ -106,95 +127,394 @@
       color: var(--muted);
       font-size: 0.85rem;
     }
-    .status-placeholder {
-      background: var(--card-bg);
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <span class="badge">Research in progress</span>
-      <h1>Adversarial Classification of ML Training on GPUs</h1>
+      <span class="badge">Anonymous &middot; under review at ICML 2026</span>
+      <h1>Detecting Hidden ML Training With Zero-Overhead Telemetry</h1>
       <p class="subtitle">
-        Can always-available GPU telemetry detect ML training &mdash; even when someone is trying to hide it?
+        Adversarial-robust GPU workload classification for AI compute governance,
+        using only always-available NVML signals.
       </p>
-      <p style="color: var(--muted); font-size: 0.9rem;">
-        A <a href="https://www.sparkrp.org/">SPAR</a> research project
-        &middot; <a href="https://github.com/robirahman/SPAR-GPU-monitoring">GitHub</a>
+      <p class="links">
+        <a href="report/adversarial_gpu_monitoring.pdf">Read the paper (PDF)</a>
       </p>
     </header>
 
     <h2>Motivation</h2>
     <p>
-      Hardware governance proposals increasingly suggest monitoring GPUs to detect
-      unauthorized frontier model training. But how reliably can we distinguish ML training
-      from other intensive workloads like scientific computing, rendering, or crypto mining
-      &mdash; using only the telemetry that cloud providers already collect?
-      And what happens when the user actively tries to disguise their workload?
+      Compute-governance proposals call for verifying what workloads run on
+      regulated hardware: identifying training runs above specified compute
+      thresholds, restricting them, and confirming that registered hardware is
+      not being misused. Registration and geolocation alone are insufficient
+      unless the regulator knows what the chips are doing. The hard part is
+      detecting training that an operator is actively trying to disguise as
+      something else.
     </p>
-
-    <h2>Research questions</h2>
-    <ul class="questions">
-      <li>Which GPU telemetry signals most clearly distinguish ML training from other workloads?</li>
-      <li>Can low-overhead Tier&nbsp;1 metrics (nvidia-smi level) substitute for expensive per-kernel profiling?</li>
-      <li>What temporal patterns &mdash; epoch periodicity, memory growth, forward/backward asymmetry &mdash; are unique to training?</li>
-      <li>Can a determined adversary disguise training to evade detection, and at what cost?</li>
-      <li>What should a hardware-embedded monitoring module measure to catch unauthorized training?</li>
-    </ul>
-
-    <h2>Approach</h2>
     <p>
-      We collect GPU telemetry across a three-tier monitoring hierarchy while running
-      a diverse set of GPU workloads on data-center GPUs (A100, H100):
+      We evaluate the adversarial robustness of GPU workload classification using
+      only zero-overhead, privacy-preserving NVML telemetry &mdash; content-agnostic
+      signals that observe the physical effects of computation without accessing
+      model weights, training data, or hyperparameters. Across 5 rounds of
+      monitor-evader iteration we evaluate 20 evasion strategy families on
+      9 GPU models spanning 4 architecture generations.
     </p>
-    <table class="tier-table">
-      <tr><th>Tier</th><th>Source</th><th>Metrics</th><th>Overhead</th></tr>
-      <tr><td>1</td><td>NVML (pynvml)</td><td>GPU/mem utilization, power, temperature, clocks, PCIe throughput</td><td>~0%</td></tr>
-      <tr><td>2</td><td>DCGM profiling</td><td>Tensor core activity, FP16/32/64 pipe utilization, SM occupancy, DRAM bandwidth</td><td>~0%</td></tr>
-      <tr><td>3</td><td>Nsight Compute</td><td>Per-kernel PMCs: instruction mix, memory transactions, FLOP counts</td><td>1,200&ndash;5,300%</td></tr>
+
+    <h3>Threat model</h3>
+    <p>
+      Two evaders. A <strong>cloud tenant</strong> rents GPU time and tries to
+      disguise training as inference or non-ML workloads to evade the cloud
+      provider's monitoring. A <strong>hardware operator</strong> owns the
+      datacenter and tries to hide unauthorized training from an external
+      regulator; they control the full software stack. Both evaders share a
+      fundamental physical constraint: a backward pass requires roughly twice
+      the FLOPs of a forward pass and so flips more transistors and consumes
+      more energy. Evasion strategies designed against either evader transfer
+      reasonably well to the other.
+    </p>
+
+    <h2>Data collection</h2>
+    <p>
+      We sample 9 raw NVML signals at 1&nbsp;Hz: GPU utilization, memory
+      utilization, memory used, power draw, temperature, SM clock, memory clock,
+      and PCIe TX/RX bandwidth. These counters are available on every NVIDIA
+      GPU from Pascal onwards with no measurable runtime overhead. We collected
+      <strong>1,404 runs of 162 distinct workloads, totalling 117 GPU-hours
+      and 445,310 telemetry readings &times; 9 signals</strong>.
+    </p>
+
+    <h3>Hardware</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>GPU model</th><th>Architecture</th><th>VRAM</th><th>Context</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>RTX 4050 Laptop</td><td>Ada</td><td class="num">6&nbsp;GB</td><td>Laptop</td></tr>
+        <tr><td>RTX 5080</td><td>Blackwell</td><td class="num">16&nbsp;GB</td><td>Desktop</td></tr>
+        <tr><td>RTX 5090</td><td>Blackwell</td><td class="num">32&nbsp;GB</td><td>Cloud</td></tr>
+        <tr><td>A100 SXM4 40&nbsp;GB</td><td>Ampere</td><td class="num">40&nbsp;GB</td><td>Cloud (1, 8 GPU)</td></tr>
+        <tr><td>A100 SXM4 80&nbsp;GB</td><td>Ampere</td><td class="num">80&nbsp;GB</td><td>Cloud (1, 8 GPU)</td></tr>
+        <tr><td>H100 80&nbsp;GB HBM3</td><td>Hopper</td><td class="num">80&nbsp;GB</td><td>Cloud (1, 8 GPU)</td></tr>
+        <tr><td>H100 NVL</td><td>Hopper</td><td class="num">94&nbsp;GB</td><td>Cloud (1, 2 GPU)</td></tr>
+        <tr><td>H200 / H200 NVL</td><td>Hopper</td><td class="num">141&nbsp;GB</td><td>Cloud (1, 2, 8 GPU)</td></tr>
+        <tr><td>B200</td><td>Blackwell</td><td class="num">192&nbsp;GB</td><td>Cloud (1, 2, 8 GPU)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Workload corpus</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Category</th><th>Distinct workloads</th><th>Runs</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ML training</td><td class="num">106</td><td class="num">867</td></tr>
+        <tr><td>ML inference</td><td class="num">40</td><td class="num">352</td></tr>
+        <tr><td>Non-ML (HPC, mining, rendering, idle)</td><td class="num">16</td><td class="num">185</td></tr>
+      </tbody>
     </table>
     <p>
-      We then build a temporal-pattern classifier that uses features like autocorrelation
-      (epoch periodicity), memory trajectory slope, rolling utilization variance, and
-      compute duty cycle to classify workloads. This temporal approach is novel &mdash;
-      prior work (WAVE, Differential Architecture) uses only aggregate or per-kernel
-      statistics.
+      ML training spans supervised image and language models (ResNet on CIFAR-10,
+      GPT-2 on WikiText, BERT fine-tuning), 72 runs of distributed data-parallel,
+      152 runs of fully-sharded data-parallel at <strong>7B&ndash;70B parameters</strong>,
+      42 runs of LoRA fine-tuning, and 369 adversarial-evasion runs. Inference
+      covers image classification (ResNet-50) and modern LLMs &mdash; TinyLlama,
+      Phi-3, Qwen-2.5 (3B&ndash;72B), Mistral / Mixtral, DeepSeek-V3 and R1
+      &mdash; plus other modalities (Whisper STT, SDXL text-to-image diffusion).
+      Non-ML covers FFT, n-body simulation, Ethash mining, Blender rendering,
+      FFmpeg video processing, and idle baselines.
     </p>
 
-    <h2>Workloads</h2>
-    <div class="card"><h3>ML Training</h3><p>ResNet-18, MLP, GPT-2 fine-tuning, BERT fine-tuning (FP32 and AMP variants)</p></div>
-    <div class="card"><h3>ML Inference</h3><p>ResNet-50 batch inference (no gradients)</p></div>
-    <div class="card"><h3>Scientific HPC</h3><p>GROMACS molecular dynamics, cuFFT benchmark, N-body simulation</p></div>
-    <div class="card"><h3>Crypto mining</h3><p>Ethash-like memory-hard CUDA kernel</p></div>
-    <div class="card"><h3>Rendering</h3><p>Blender Cycles GPU rendering (BMW benchmark)</p></div>
-    <div class="card"><h3>Video encoding</h3><p>FFmpeg NVENC hardware encoding</p></div>
+    <h3>Wall-power validation</h3>
+    <p>
+      For 49 RTX 5080 workloads we cross-validated NVML power readings against
+      external measurements from a TP-Link Tapo P115 smart plug, collecting
+      <strong>13,571 paired second-by-second readings</strong> (median offset
+      78&nbsp;ms). Across all workloads we observed
+      Wall&nbsp;&asymp;&nbsp;1.50&nbsp;&times;&nbsp;NVML&nbsp;+&nbsp;42.7&nbsp;W
+      (Pearson <i>r</i>&nbsp;=&nbsp;0.878, R<sup>2</sup>&nbsp;=&nbsp;0.770).
+      Per-workload host overhead is 68&ndash;80&nbsp;W on non-adversarial
+      workloads but rises to 180&ndash;230&nbsp;W on evasion strategies that
+      shift work to the CPU &mdash; an effect invisible to NVML but visible at
+      the wall, and a useful complementary signal for layered monitoring.
+    </p>
+    <figure class="figure">
+      <img src="report/figures/wall_power_scatter.png" alt="Scatter plot of wall power versus NVML-reported GPU power for 13,571 paired readings across 49 workloads on RTX 5080.">
+      <figcaption>
+        Wall power vs. NVML power across 49 RTX 5080 workloads. The slope &gt; 1 reflects PSU inefficiency; outliers above the trend are CPU-heavy adversarial strategies whose host overhead NVML cannot see.
+      </figcaption>
+    </figure>
 
-    <h2>Results</h2>
-    <div class="status-placeholder">
-      Data collection and analysis in progress. Results and figures will appear here.
+    <h2>Classifier</h2>
+    <p>
+      The deployed form is a <strong>two-stage RandomForest</strong>
+      (n_estimators&nbsp;=&nbsp;400, max_depth&nbsp;=&nbsp;None,
+      class_weight&nbsp;=&nbsp;balanced):
+    </p>
+    <ol>
+      <li><strong>Stage&nbsp;1 &mdash; Is the workload ML?</strong> Binary head (ML vs. non-ML) using all 166 features, including absolute level signals.</li>
+      <li><strong>Stage&nbsp;2 &mdash; Is the workload training?</strong> Binary head (training vs. inference) on ML-classified inputs, with all level features <em>dropped</em>: only shape, periodicity, FFT, and autocorrelation features. This prevents an evader from defeating stage&nbsp;2 by modulating absolute power, memory, or clock levels to mimic an inference profile.</li>
+    </ol>
+    <p>
+      The two-stage form matches the governance decision surface, makes both
+      stages independently auditable, and avoids the failure mode where a
+      multi-class head splits probability mass between training and inference
+      and labels a non-ML workload as most probable.
+    </p>
+    <p>
+      We extract <strong>166 features</strong> from sliding telemetry windows:
+      117 base statistics (9&nbsp;signals &times; 13 stats: mean / std / min / max /
+      p25 / p50 / p75 / p95 / IQR / range / CV / skew / kurtosis), 15
+      autocorrelation features (utilization / power / memory at lags 1, 2, 5, 10,
+      20), cross-signal ratios (power/util, PCIe total, util-per-SM), training-
+      specific temporal features (memory-slope, FFT-of-power for epoch
+      periodicity), memory-plateau features (motivated by an adversary that
+      pre-allocated memory to spoof training memory growth), and inference-
+      specific features (duty cycle, idle fraction).
+    </p>
+    <figure class="figure">
+      <img src="report/figures/classifier_summary.png" alt="Bar chart of classifier accuracy and macro-F1 across binary, three-way, 7-category, and multi-class tasks for Logistic Regression, RandomForest, and SVM-RBF.">
+      <figcaption>
+        Headline classifier comparison across tasks. RandomForest and XGBoost dominate by ~3&nbsp;pp over SVM-RBF and ~10&nbsp;pp over logistic regression: tree ensembles exploit feature interactions (power CV &times; memory slope, autocorrelation &times; FFT periodicity) that linear methods cannot.
+      </figcaption>
+    </figure>
+
+    <h2>Baseline classification</h2>
+    <p class="headline">
+      Pooled across all 9 GPU models, RandomForest achieves
+      <strong>98.58% &plusmn; 0.57% binary accuracy</strong>
+      (training&nbsp;vs.&nbsp;non-training) with macro-F1&nbsp;=&nbsp;0.986 on
+      30&nbsp;s windows, 5-fold grouped cross-validation, 26,496 windows
+      across 1,404 runs. Detection latency is essentially flat from 15&nbsp;s
+      onwards: <strong>97.76% at 5&nbsp;s, 98.35% at 30&nbsp;s</strong>.
+    </p>
+
+    <h3>Cross-GPU generalization</h3>
+    <figure class="figure">
+      <img src="report/figures/cross_gpu_heatmap.png" alt="Cross-GPU three-way classification transfer matrix. Datacenter-to-datacenter transfer stays above 90 percent; consumer-to-datacenter transfer drops below 50 percent on many cells. Bottom row shows pooled 5-fold cross-validation.">
+      <figcaption>
+        Cross-GPU three-way transfer. Datacenter-to-datacenter transfer holds at &geq;&nbsp;90% on most pairs. Consumer/datacenter transfer is weaker because consumer GPUs have very different clock and PCIe characteristics. Pooling all GPUs in 5-fold CV recovers per-GPU accuracy to 87&ndash;100% &mdash; the practical deployment recommendation.
+      </figcaption>
+    </figure>
+    <p>
+      Per-GPU pooled-CV accuracy: A100-SXM4 80&nbsp;GB 99.94%, A100-SXM4 40&nbsp;GB
+      99.93%, H200 99.64%, H100 NVL 99.57%, B200 99.26%, H100 80&nbsp;GB 97.83%,
+      RTX 5090 93.91%, RTX 5080 87.65%. Datacenter targets are &gt;&nbsp;99% on
+      every Hopper/Ampere/Blackwell card &mdash; precisely the hardware that
+      compute governance proposals target.
+    </p>
+
+    <h3>Detection latency</h3>
+    <figure class="figure">
+      <img src="report/figures/accuracy_vs_window.png" alt="Three-way classification accuracy vs window size, showing flat ~98% accuracy across 15-60 second windows.">
+      <figcaption>
+        Accuracy vs. window size. 5-second windows reach 97.76%; 15&ndash;60&nbsp;s sit at 98.2&ndash;98.5%. Real-time monitoring at 15&nbsp;s alert latency is feasible without meaningful accuracy loss.
+      </figcaption>
+    </figure>
+
+    <h3>Why static heuristics aren't enough</h3>
+    <p>
+      We also ran a 286-configuration roofline corner-case sweep on H100 NVL
+      across CNN inference, LLM prefill, LLM decode, quantization variants,
+      forward-only execution, and ViT inference.
+      <strong>101 of 286 (35.3%) non-training configurations fall inside the
+      training arithmetic-intensity band</strong> &mdash; including FP32 LLM
+      prefill, which is essentially indistinguishable from training on roofline
+      alone. Static architectural heuristics are insufficient; temporal
+      telemetry is required.
+    </p>
+    <figure class="figure">
+      <img src="report/figures/roofline_corner_cases.png" alt="Roofline plot of 286 corner-case inference configurations overlaid on a dense FP32 training reference sweep, showing CNN-inference, LLM-prefill, and quantization clouds inside the training arithmetic-intensity band.">
+      <figcaption>
+        H100 NVL roofline with 286 corner-case inference configurations. CNN-inference, LLM-prefill, and quantization clouds land squarely inside the training arithmetic-intensity band, confirming that static heuristics cannot separate these inference workloads from training.
+      </figcaption>
+    </figure>
+
+    <h2>Adversarial evaluation</h2>
+    <p>
+      We iterate on the classifier and the evader through five rounds of
+      co-evolution. In each round, the attacker designs new evasion strategies
+      targeting the existing classifier's weaknesses; the defender then trains a
+      hardened classifier incorporating the new adversarial examples. The
+      classifier qualitatively progresses through stages described as
+      <strong>baseline</strong> (clean data only) &rarr; <strong>hardened</strong>
+      (resists earlier rounds) &rarr; <strong>evasion-resistant</strong> (adds
+      physics-based features that capture computational invariants the adversary
+      cannot suppress without aborting training).
+    </p>
+    <p>
+      The full sweep produced <strong>20 evasion strategy families</strong>
+      across five technique classes:
+    </p>
+    <ul>
+      <li><strong>Utilization manipulation</strong> &mdash; modulation, low-utilization training, temporal disruption, clock throttling, PID controllers, stochastic timing.</li>
+      <li><strong>Memory reduction</strong> &mdash; gradient checkpointing, aggressive GC, memory-minimal training.</li>
+      <li><strong>Workload mimicry</strong> &mdash; mimicking FFT or cryptocurrency-mining signatures, interleaving training with non-ML work.</li>
+      <li><strong>Training-as-inference</strong> &mdash; online learning (one backward pass per inference batch), training diluted with N&nbsp;&times;&nbsp;{2,&nbsp;5,&nbsp;10,&nbsp;20} inference batches.</li>
+      <li><strong>Multi-GPU evasion</strong> &mdash; DDP variants of online learning and dilution, gradient accumulation across ranks, staggered NVLink traffic.</li>
+      <li><strong>White-box adversary (Round&nbsp;5)</strong> &mdash; attacker has the classifier internals: memory-profile spoofing, label-smeared dilution, optimizer-phase hiding, white-box LoRA + dilution.</li>
+    </ul>
+
+    <h3>Arms-race summary</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Round</th><th>Attacker introduces</th><th>Baseline</th><th>Hardened (in-dist)</th><th>Hardened (unseen)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>(no evasion; clean workloads)</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">97.6%</td></tr>
+        <tr><td>1</td><td>Utilization manipulation (A, B, D)</td><td class="num">6&ndash;96%</td><td class="num">100%</td><td class="num">59&ndash;100%</td></tr>
+        <tr><td>2</td><td>Memory reduction + mimicry (E&ndash;J)</td><td class="num">4&ndash;91%</td><td class="num">100%</td><td class="num">80&ndash;100%</td></tr>
+        <tr><td>3</td><td>Training-as-inference (K, L)</td><td class="num">52&ndash;60%</td><td class="num">100%</td><td class="num">87&ndash;100%</td></tr>
+        <tr><td>4 (single)</td><td>Composite + grad-accum (M, N, idle-pad)</td><td class="num">24&ndash;100%</td><td class="num">100%</td><td class="num">98&ndash;100%</td></tr>
+        <tr><td>4 (multi)</td><td>Multi-GPU DDP variants</td><td class="num">72&ndash;100%</td><td class="num">100%</td><td class="num">100%</td></tr>
+        <tr><td>5</td><td>White-box (WB-D / L / O / +grad-accum)</td><td class="num">&mdash;</td><td class="num">100%</td><td class="num">43&ndash;87%</td></tr>
+      </tbody>
+    </table>
+    <p>
+      &ldquo;Unseen&rdquo; is leave-one-strategy-out: train on every other
+      family in the round and test on the held-out family. Headline result:
+      across all 18 non-white-box families the mean evasion rate is
+      <strong>4.8%</strong> &mdash; even against unseen strategies, the
+      classifier catches training over 95% of the time. Multi-GPU DDP families
+      stay at <strong>98&ndash;100%</strong> in every condition: the governance-
+      relevant case for frontier-scale training is the most robust.
+    </p>
+
+    <figure class="figure">
+      <img src="report/figures/loo_detection_bar.png" alt="Bar chart of leave-one-strategy-out detection rates across 20 evasion strategy families, color-coded by detection band (multi-GPU DDP, single-GPU 80%+, 50-80%, below 50%).">
+      <figcaption>
+        Leave-one-strategy-out detection rate per family, ordered by detection. All multi-GPU DDP families (blue) hit 100%. The hardest single-GPU strategy without white-box access is B_low_util (59.1%). The hardest strategy overall is whitebox_lora (42.6%): LoRA's small trainable-parameter footprint combined with heavy dilution strips the training signature near the noise floor.
+      </figcaption>
+    </figure>
+
+    <h3>The evasion tax</h3>
+    <p>
+      How much does evasion cost? The dilution sweep measures detection vs.
+      cost multiplier when an adversary interleaves real training with idle or
+      inference work. The hardened classifier maintains 100% detection up to
+      20&times; cost; the baseline collapses past 10&times;. An attacker
+      diluting their training to 5% throughput is sustaining a 20&times;
+      compute bill to evade a baseline classifier that the hardened defender
+      would still catch immediately.
+    </p>
+    <figure class="figure">
+      <img src="report/figures/dilution_curve.png" alt="Detection rate vs dilution factor for baseline, leave-one-out, and hardened classifiers. Hardened classifier remains at 100 percent across all dilution levels.">
+      <figcaption>
+        Composite idle-padding dilution sweep on RTX 5080, 5&nbsp;s windows. Hardened classifier (green) stays at 100% across all dilution levels; baseline (gray) drops to 44% at 20&times; cost.
+      </figcaption>
+    </figure>
+
+    <h3>The involuntary witness</h3>
+    <p>
+      Why does the defender keep winning? Because a backward pass requires
+      roughly twice the FLOPs of a forward pass, training is roughly
+      <strong>three times as energy-intensive as inference for the same number
+      of tokens processed</strong>. An adversary can shuffle energy consumption
+      around in time, or reduce the amount of training they conduct, but they
+      cannot make training and inference use the same total energy without
+      eliminating the weight-update step &mdash; at which point the workload
+      stops training. Evasion-resistant features anchored on this physical
+      floor (cumulative energy, power-memory correlation, pre-allocation
+      memory-plateau features) catch the hardest single-GPU strategies that
+      level-mimicry alone could fool.
+    </p>
+
+    <h2>Privacy preservation</h2>
+    <p>
+      The NVML metrics our classifier observes are <strong>content-agnostic</strong>:
+      power draw, temperature, utilization, memory used, clock frequencies, PCIe
+      bandwidth. None of these reveal model weights, training data, hyperparameters,
+      or application logic. This addresses a central deployment concern in shared
+      cloud settings &mdash; governance mechanisms that require inspecting
+      proprietary information face legal, operational, and ethical objections
+      that physical-counter-only monitoring does not.
+    </p>
+
+    <h2>Layered defense and minimum HEM requirements</h2>
+    <p>
+      Software-level monitoring requires hardware support to be tamper-resistant.
+      A deployable system needs three hardware-enabled-mechanism (HEM) components
+      in addition to the classifier:
+    </p>
+    <div class="callout">
+      <h3>1. Tamper-resistant NVML read path</h3>
+      <p>
+        The monitoring agent must read counter values from a source the
+        adversary cannot tamper with &mdash; an attested enclave on the GPU
+        firmware boundary, or a verified read path through secure-boot-chained
+        firmware. Without this, an adversary with software privilege simply
+        returns forged values.
+      </p>
     </div>
+    <div class="callout">
+      <h3>2. Authenticated telemetry channel</h3>
+      <p>
+        Telemetry in transit from the GPU agent to the verifier must be signed
+        with a hardware-rooted key so an in-path adversary cannot substitute a
+        permitted workload's telemetry for the actual workload. Rate-limiting
+        and nonce-binding prevent replay of previously-observed benign
+        signatures.
+      </p>
+    </div>
+    <div class="callout">
+      <h3>3. Secure boot of the monitoring software</h3>
+      <p>
+        The monitor process, its classifier weights, and its feature-extraction
+        code must be attested so an adversary cannot replace them with a
+        permissive version (e.g., a classifier that labels everything as
+        inference).
+      </p>
+    </div>
+    <p>
+      Layered monitoring strengthens the picture further. If telemetry is
+      collected at multiple layers (device, cluster, facility), an adversary
+      must evade all layers simultaneously and the evasion cost is cumulative.
+      DCGM counters and rack-level wall power add signal that NVML alone
+      misses &mdash; our Tapo cross-validation already shows where wall power
+      catches host-side activity that NVML cannot see.
+    </p>
+
+    <h2>Limitations</h2>
+    <ul>
+      <li><strong>Single-node only.</strong> Experiments use up to 8 GPUs per node. Multi-node evasion may differ because of inter-server interconnect (InfiniBand) signatures, though large-scale training is likely to remain highly distinctive.</li>
+      <li><strong>Framework-level evasion.</strong> Adversarial strategies are PyTorch-level; an attacker with custom CUDA kernels has more options than we tested.</li>
+      <li><strong>Telemetry integrity is assumed.</strong> Our results presuppose the HEM components above. Other work (Monfared et al., 2026) addresses what can be done if NVML cannot be trusted at all.</li>
+      <li><strong>NVIDIA only.</strong> AMD, Huawei, Google TPU, and AWS Trainium / Inferentia are not in scope; the same telemetry approach should apply but is untested.</li>
+      <li><strong>1&nbsp;Hz sampling, narrow window range.</strong> Higher sampling rates and additional window sizes are unexplored.</li>
+      <li><strong>White-box round is small.</strong> Round&nbsp;5 evaluated four families; further white-box iteration is the main outstanding question for whether resistance generalizes or whether full classifier knowledge always beats the defender.</li>
+    </ul>
 
     <h2>Related work</h2>
     <p>
-      <strong>WAVE</strong> (Xu et al., ASPLOS 2026) fingerprints LLM inference workloads using
-      Nsight Compute PMCs with 87&ndash;93% accuracy, but at 1,200&ndash;5,300% overhead.
-      <strong>Differential Architecture</strong> (Anonymous, ISCA 2026) analytically characterizes
-      hardware bottlenecks across GPU workload classes. Our work extends both by focusing on
-      ML <em>training</em> (not just inference), using zero-overhead Tier&nbsp;1 telemetry,
-      exploiting temporal patterns, and evaluating adversarial evasion.
+      Compute-governance proposals (Shavit&nbsp;2023; Heim&nbsp;&amp;&nbsp;Koessler&nbsp;2024;
+      Sastry et&nbsp;al.&nbsp;2024; Baker et&nbsp;al.&nbsp;2025; Scher et&nbsp;al.&nbsp;2025;
+      O'Gara et&nbsp;al.&nbsp;2025) implicitly rely on the ability to identify training
+      workloads on monitored hardware. Seferis&nbsp;&amp;&nbsp;Fist&nbsp;(2025) argue compute-
+      structuring evasion is detectable conditional on per-host classification;
+      our work supplies and stress-tests exactly that classifier.
+      <strong>WAVE</strong> (Xu et&nbsp;al.,&nbsp;ASPLOS&nbsp;2026) fingerprints LLM
+      <em>inference</em> with 87&ndash;93% accuracy using Nsight Compute counters
+      at 1,200&ndash;5,300% overhead; our task is training-vs-rest at zero
+      overhead.
+      <strong>ShadowScope</strong> (Almusaddar et&nbsp;al.,&nbsp;ASPLOS&nbsp;2026)
+      uses composable side-channel signals for GPU integrity validation.
+      <strong>Monfared et&nbsp;al.&nbsp;(2026)</strong> design timing/memory observables
+      for the case where NVML cannot be trusted &mdash; complementary lower
+      floor to our upper bound on what an adversary can hide inside trustable
+      NVML.
+      Gangwal et&nbsp;al.&nbsp;(2019) used hardware performance counters for covert-
+      cryptomining detection &mdash; the conceptual precursor.
+      Maia et&nbsp;al.&nbsp;(2022), Arefin&nbsp;&amp;&nbsp;Serwadda&nbsp;(2025), and
+      Latif et&nbsp;al.&nbsp;(2024) demonstrate that physical side channels carry
+      workload-identifying information; we extend this to software-accessible
+      telemetry for governance.
     </p>
 
     <footer>
       <p>
-        SPAR GPU Monitoring Project &middot; 2026
-        &middot; <a href="https://github.com/robirahman/SPAR-GPU-monitoring">Source code</a>
+        Anonymous SPAR research project &middot; last updated April&nbsp;2026 &middot;
+        <a href="report/adversarial_gpu_monitoring.pdf">Read the paper</a>
       </p>
     </footer>
   </div>
