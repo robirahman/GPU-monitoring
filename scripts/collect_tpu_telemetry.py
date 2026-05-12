@@ -98,24 +98,41 @@ class TpuTelemetryCollector:
                 self._stop_event.wait(sleep_time)
 
     def _sample_metrics(self) -> dict:
-        """Sample metrics. Placeholder for TPU-specific metrics."""
+        """Sample metrics using tpu_info if available."""
         now = datetime.now(timezone.utc)
-        
-        # Placeholder metrics - in a real implementation, we would call 
-        # Cloud Monitoring API or use a local TPU profiling tool.
-        # For now, we'll collect system-level metrics that correlate with TPU use.
-        import psutil
         
         row = {
             "timestamp_utc": now.isoformat(),
             "timestamp_epoch": now.timestamp(),
-            "cpu_utilization_pct": psutil.cpu_percent(),
-            "mem_used_gb": psutil.virtual_memory().used / (1024**3),
-            "mem_total_gb": psutil.virtual_memory().total / (1024**3),
-            # TPU-specific placeholders (would be populated via Cloud Monitoring)
-            "tpu_utilization_pct": 0.0, 
-            "tpu_memory_used_gb": 0.0,
         }
+
+        # System metrics
+        try:
+            import psutil
+            row["cpu_utilization_pct"] = psutil.cpu_percent()
+            row["sys_mem_used_gb"] = psutil.virtual_memory().used / (1024**3)
+        except ImportError:
+            pass
+
+        # TPU-specific metrics
+        try:
+            from tpu_info import metrics, device
+            chip_type, _ = device.get_local_chips()
+            usage = metrics.get_chip_usage(chip_type)
+            # usage is typically a list of Usage objects (one per chip)
+            if usage and len(usage) > 0:
+                u = usage[0]
+                row["tpu_utilization_pct"] = getattr(u, "duty_cycle_pct", 0.0)
+                row["tpu_mem_used_gb"] = getattr(u, "memory_usage", 0.0) / (1024**3)
+                row["tpu_mem_total_gb"] = getattr(u, "total_memory", 0.0) / (1024**3)
+            else:
+                row["tpu_utilization_pct"] = 0.0
+                row["tpu_mem_used_gb"] = 0.0
+        except Exception:
+            # Fallback to 0.0 if tpu_info fails (e.g. connection refused)
+            row["tpu_utilization_pct"] = 0.0
+            row["tpu_mem_used_gb"] = 0.0
+
         return row
 
     def to_dataframe(self) -> pd.DataFrame:
