@@ -28,11 +28,19 @@ try:
         print("ERROR: amdsmi reports no GPUs. Check ROCm install and `rocm-smi` output.")
         sys.exit(1)
 
+    # amdsmi enumerates AMD CPU sockets alongside GPUs and reports the CPU as
+    # processor_type AMD_GPU as well (library quirk). The CPU socket fails
+    # amdsmi_get_gpu_activity with UNEXPECTED_DATA — use that as the filter.
     for i, h in enumerate(handles):
         asic = amdsmi.amdsmi_get_gpu_asic_info(h) or {}
         name = asic.get("market_name") or asic.get("vendor_name") or "unknown"
 
-        activity = amdsmi.amdsmi_get_gpu_activity(h) or {}
+        try:
+            activity = amdsmi.amdsmi_get_gpu_activity(h) or {}
+        except amdsmi.AmdSmiLibraryException:
+            print(f"Processor {i}: {name}  (skipping — not a graphics device)")
+            continue
+
         mem_type = _enum("AmdSmiMemoryType", "VRAM")
         used = amdsmi.amdsmi_get_gpu_memory_usage(h, mem_type)
         total = amdsmi.amdsmi_get_gpu_memory_total(h, mem_type)
