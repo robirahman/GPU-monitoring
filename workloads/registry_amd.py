@@ -450,6 +450,52 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "Qwen 2.5 3B inference — larger end of the consumer LLM tier",
         "default_timeout": 420,
     },
+
+    # --- Tier 3: whitebox evasion strategies (Round 5 in the paper) ---
+    # The paper identifies WB-L (LoRA + heavy dilution) as the single
+    # evasion family that drops below 50% detection. We replicate the 4
+    # whitebox variants on AMD so we can test cross-vendor classifier
+    # robustness to whitebox attack.
+    "whitebox_WB-I_inference": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-I", "--duration", "300",
+            "--model", "Qwen/Qwen2.5-0.5B-Instruct",
+            "--batch-size", "1", "--seq-len", "256",
+        ],
+        "description": "WB-I: pure inference baseline (negative control)",
+        "default_timeout": 420,
+    },
+    "whitebox_WB-D_diluted": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-D", "--duration", "300",
+            "--model", "Qwen/Qwen2.5-0.5B-Instruct",
+            "--batch-size", "1", "--seq-len", "256", "--dilution", "10",
+        ],
+        "description": "WB-D: diluted training (backward 1/10 batches) with whitebox knowledge",
+        "default_timeout": 420,
+    },
+    "whitebox_WB-L_lora": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-L", "--duration", "300",
+            "--model", "Qwen/Qwen2.5-0.5B-Instruct",
+            "--batch-size", "1", "--seq-len", "256", "--dilution", "10",
+        ],
+        "description": "WB-L: LoRA adapters + heavy dilution (paper headline hardest strategy)",
+        "default_timeout": 420,
+    },
+    "whitebox_WB-O_oracle": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-O", "--duration", "300",
+            "--model", "Qwen/Qwen2.5-0.5B-Instruct",
+            "--batch-size", "1", "--seq-len", "256",
+        ],
+        "description": "WB-O: oracle-rate-limited (memory-level spoofing, paper Stage-2 WB defense target)",
+        "default_timeout": 420,
+    },
 }
 
 
