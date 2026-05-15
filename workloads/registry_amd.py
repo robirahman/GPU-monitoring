@@ -296,6 +296,114 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "Strategy L: diluted training, backward on 1/10 batches",
         "default_timeout": 360,
     },
+
+    # --- Tier 2: missing adversarial families ported from NVIDIA registry ---
+    # Strategies G (clock_throttled) and J (PID thermal-matched) require
+    # NVIDIA-specific tooling (nvidia-smi -pl, pynvml) and are intentionally
+    # omitted from this AMD registry. The remaining 8 single-GPU evasion
+    # families ought to run as-is on ROCm since they are pure PyTorch +
+    # subprocess + sleep mechanics.
+
+    "adversarial_E_memory_minimal": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_advanced.py"),
+            "--strategy", "E", "--duration", "300",
+        ],
+        "description": "Strategy E: gradient checkpointing + aggressive GC",
+        "default_timeout": 360,
+    },
+    "adversarial_F_interleave": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_advanced.py"),
+            "--strategy", "F", "--duration", "300",
+            "--train-frac", "0.3", "--interleave-sec", "10",
+        ],
+        "description": "Strategy F: train/inference interleaving (30% train)",
+        "default_timeout": 360,
+    },
+    "adversarial_H_mimicry_mining": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+            "--strategy", "H", "--duration", "300", "--target", "mining",
+        ],
+        "description": "Strategy H: train while mimicking mining telemetry profile",
+        "default_timeout": 360,
+    },
+    "adversarial_H_mimicry_cufft": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+            "--strategy", "H", "--duration", "300", "--target", "cufft",
+        ],
+        "description": "Strategy H: train while mimicking cuFFT telemetry profile",
+        "default_timeout": 360,
+    },
+    "adversarial_I_stochastic": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+            "--strategy", "I", "--duration", "300",
+        ],
+        "description": "Strategy I: stochastic phase switching (kills autocorrelation)",
+        "default_timeout": 360,
+    },
+    "adversarial_M_composite_memmin": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+            "--strategy", "M", "--duration", "300",
+            "--idle-fraction", "0.2", "--prealloc-mb", "4096",
+        ],
+        "description": "Strategy M: composite + memory minimal (idle=20%, prealloc=4GB)",
+        "default_timeout": 360,
+    },
+    "adversarial_N_grad_accum": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
+            "--strategy", "N", "--duration", "300", "--accum-steps", "8",
+        ],
+        "description": "Strategy N: grad-accum dilution (step every 8 batches)",
+        "default_timeout": 360,
+    },
+
+    # composite_idle_pad sweep — 5 idle fractions over the [0, 95] range
+    "adversarial_composite_idle_00": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+            "--idle-fraction", "0.00", "--duration", "300",
+        ],
+        "description": "Composite evasion @ 0% idle (full throughput baseline)",
+        "default_timeout": 360,
+    },
+    "adversarial_composite_idle_20": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+            "--idle-fraction", "0.20", "--duration", "300",
+        ],
+        "description": "Composite evasion @ 20% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_composite_idle_50": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+            "--idle-fraction", "0.50", "--duration", "300",
+        ],
+        "description": "Composite evasion @ 50% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_composite_idle_80": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+            "--idle-fraction", "0.80", "--duration", "300",
+        ],
+        "description": "Composite evasion @ 80% idle",
+        "default_timeout": 360,
+    },
+    "adversarial_composite_idle_95": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+            "--idle-fraction", "0.95", "--duration", "300",
+        ],
+        "description": "Composite evasion @ 95% idle (near full evasion attempt)",
+        "default_timeout": 360,
+    },
 }
 
 
