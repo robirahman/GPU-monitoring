@@ -404,6 +404,52 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "Composite evasion @ 95% idle (near full evasion attempt)",
         "default_timeout": 360,
     },
+
+    # --- Tier 4: broader workload diversity ---
+    "sdxl_inference": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "sdxl_inference.py"),
+            "--duration", "300", "--steps", "4", "--batch-size", "1",
+        ],
+        "description": "SDXL Turbo image generation (4-step distilled, fp16)",
+        "default_timeout": 420,
+    },
+    "lora_finetune_qwen25_0p5b": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_finetune.py"),
+            "--base", "qwen25_0p5b", "--steps", "200",
+            "--batch-size", "2", "--seq-len", "256",
+        ],
+        "description": "LoRA fine-tune Qwen 2.5 0.5B on WikiText-2",
+        "default_timeout": 600,
+    },
+    "lora_finetune_smollm2_135m": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "lora_finetune.py"),
+            "--base", "smollm2_135m", "--steps", "300",
+            "--batch-size", "4", "--seq-len", "256",
+        ],
+        "description": "LoRA fine-tune SmolLM2 135M on WikiText-2 (smallest training run)",
+        "default_timeout": 600,
+    },
+    "yolo_train_coco128": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "yolo_train.py"),
+            "--duration", "300", "--imgsz", "320", "--batch", "16",
+        ],
+        "description": "YOLOv8n training on COCO128 — object detection (different gradient pattern than classification)",
+        "default_timeout": 420,
+    },
+    "llm_infer_qwen25_3b": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "qwen25_3b",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 3B inference — larger end of the consumer LLM tier",
+        "default_timeout": 420,
+    },
 }
 
 
