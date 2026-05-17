@@ -549,6 +549,20 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "White-box diluted LoRA fine-tuning: TinyLlama-1.1B, N=20 (5%)",
         "default_timeout": 420,
     },
+    "whitebox_oracle": {
+        # Requires ClassifierOracle with amdsmi backend (added 2026-05-17).
+        # The oracle polls amdsmi at 1 Hz, runs the same classifier the
+        # defender uses, and rate-limits training steps when P(training)
+        # exceeds --oracle-threshold. Paper's Stage-2 WB defense target.
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-O", "--grad-ckpt",
+            "--batch-size", "1", "--seq-len", "256", "--duration", "300",
+            "--oracle-threshold", "0.3",
+        ],
+        "description": "White-box oracle-guided fine-tuning: TinyLlama-1.1B, in-loop classifier feedback",
+        "default_timeout": 420,
+    },
 }
 
 
