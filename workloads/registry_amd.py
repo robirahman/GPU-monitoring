@@ -496,6 +496,59 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "WB-O: oracle-rate-limited (memory-level spoofing, paper Stage-2 WB defense target)",
         "default_timeout": 420,
     },
+
+    # --- Tier 3 extended: paper-canonical whitebox sweep (matches NVIDIA registry) ---
+    # The existing whitebox_WB-* entries use Qwen 0.5B + dilution=10. The
+    # paper's Round-5 sweep uses TinyLlama-1.1B + grad-ckpt + dilution
+    # N in {5, 10, 20}. These entries match the paper exactly so we can
+    # compute the dilution-vs-detection curve on AMD comparable to NVIDIA
+    # Figure 2 / Table 7. Names match TRAINING_LABELS / INFERENCE_LABELS in
+    # classifier/threeway_improved.py.
+    "whitebox_inference": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-I", "--batch-size", "1", "--seq-len", "256",
+            "--duration", "300",
+        ],
+        "description": "White-box inference baseline: TinyLlama-1.1B forward-only (paper WB-I)",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N5": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-D", "--dilution", "5", "--grad-ckpt",
+            "--batch-size", "1", "--seq-len", "256", "--duration", "300",
+        ],
+        "description": "White-box diluted full fine-tuning: TinyLlama-1.1B, N=5 (20%)",
+        "default_timeout": 420,
+    },
+    "whitebox_diluted_N20": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-D", "--dilution", "20", "--grad-ckpt",
+            "--batch-size", "1", "--seq-len", "256", "--duration", "300",
+        ],
+        "description": "White-box diluted full fine-tuning: TinyLlama-1.1B, N=20 (5%)",
+        "default_timeout": 420,
+    },
+    "whitebox_lora_N5": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-L", "--dilution", "5", "--grad-ckpt",
+            "--batch-size", "2", "--seq-len", "256", "--duration", "300",
+        ],
+        "description": "White-box diluted LoRA fine-tuning: TinyLlama-1.1B, N=5 (20%)",
+        "default_timeout": 420,
+    },
+    "whitebox_lora_N20": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_whitebox.py"),
+            "--strategy", "WB-L", "--dilution", "20", "--grad-ckpt",
+            "--batch-size", "2", "--seq-len", "256", "--duration", "300",
+        ],
+        "description": "White-box diluted LoRA fine-tuning: TinyLlama-1.1B, N=20 (5%)",
+        "default_timeout": 420,
+    },
 }
 
 
