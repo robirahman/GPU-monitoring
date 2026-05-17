@@ -67,8 +67,10 @@ def main():
         if c in raw.columns:
             raw[c] = raw[c].where(raw[c] >= 0, np.nan).fillna(0.0)
 
-    # Identify the AMD WB-* runs to hold out
-    wb_mask = raw["workload_label"].astype(str).str.startswith("whitebox_WB-")
+    # Identify the AMD WB-* runs to hold out. Match both naming conventions:
+    # legacy "whitebox_WB-{I,D,L,O}_*" entries (Qwen 0.5B, dilution=10 only)
+    # and paper-canonical "whitebox_{inference,diluted_N5,lora_N5,oracle,...}"
+    wb_mask = raw["workload_label"].astype(str).str.startswith("whitebox_")
     amd_mask = raw["vendor"] == "amd"
     held_out = wb_mask & amd_mask
     n_held = raw.loc[held_out, "run_id"].nunique()
