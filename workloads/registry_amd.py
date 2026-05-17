@@ -345,6 +345,16 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "Strategy I: stochastic phase switching (kills autocorrelation)",
         "default_timeout": 360,
     },
+    "adversarial_J_pid_75": {
+        # Now works on AMD: adversarial_round2.py auto-detects pynvml vs amdsmi
+        # for the PID feedback loop's util/power reads.
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round2.py"),
+            "--strategy", "J", "--duration", "300", "--target-util", "75",
+        ],
+        "description": "Strategy J: PID thermal-matched training (util target 75%)",
+        "default_timeout": 360,
+    },
     "adversarial_M_composite_memmin": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_round4.py"),
