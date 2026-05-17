@@ -559,6 +559,64 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "White-box diluted LoRA fine-tuning: TinyLlama-1.1B, N=20 (5%)",
         "default_timeout": 420,
     },
+    # --- Multi-GPU DDP adversarial families (datacenter MI300X 8x nodes only) ---
+    # These will fail on the local RX 9070 XT (1 GPU). Run them on a rented
+    # MI300X 8x node — torchrun + RCCL substitute for NCCL.
+    "adversarial_K_ddp": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "K", "--duration", "300",
+        ],
+        "description": "DDP Strategy K: online learning, all ranks every batch (datacenter)",
+        "default_timeout": 420,
+    },
+    "adversarial_L_ddp_5": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "L", "--dilution", "5", "--duration", "300",
+        ],
+        "description": "DDP Strategy L: diluted training, all ranks, N=5 (datacenter)",
+        "default_timeout": 420,
+    },
+    "adversarial_L_ddp_10": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "L", "--dilution", "10", "--duration", "300",
+        ],
+        "description": "DDP Strategy L: diluted training, all ranks, N=10 (datacenter)",
+        "default_timeout": 420,
+    },
+    "adversarial_L_ddp_stagger_5": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "L-stagger", "--dilution", "5", "--duration", "300",
+        ],
+        "description": "DDP Strategy L (staggered): per-rank dilution offsets (datacenter)",
+        "default_timeout": 420,
+    },
+    "adversarial_K_ddp_accum_4": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "K-accum", "--accum", "4", "--duration", "300",
+        ],
+        "description": "DDP Strategy K with grad-accum=4 (datacenter)",
+        "default_timeout": 420,
+    },
+    "adversarial_K_ddp_accum_8": {
+        "command": [
+            "torchrun", "--nproc_per_node=8",
+            os.path.join(_WORKLOADS_DIR, "adversarial_ddp.py"),
+            "--strategy", "K-accum", "--accum", "8", "--duration", "300",
+        ],
+        "description": "DDP Strategy K with grad-accum=8 (datacenter)",
+        "default_timeout": 420,
+    },
+
     "whitebox_oracle": {
         # Requires ClassifierOracle with amdsmi backend (added 2026-05-17).
         # The oracle polls amdsmi at 1 Hz, runs the same classifier the
