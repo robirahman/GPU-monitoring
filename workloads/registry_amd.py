@@ -225,6 +225,22 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "TinyLlama-1.1B bs=8 — batch sweep",
         "default_timeout": 420,
     },
+    # Matched-pair to whitebox_inference (WB-I): TinyLlama 1.1B at batch=1,
+    # seq=256, same duration. Added to fix the corpus-coverage gap where
+    # eval_whitebox_amd showed WB-I being classified as training 100% of
+    # the time — the training pool had many TinyLlama-class TRAINING runs
+    # (whitebox_diluted_*, whitebox_lora_*) but zero TinyLlama-class
+    # INFERENCE runs at bs=1.
+    "llm_infer_tinyllama_bs1": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B bs=1 — matched-pair inference for whitebox_inference",
+        "default_timeout": 420,
+    },
 
     # --- Image / vision inference ---
     "llm_infer_clip_embed_bs64": {
