@@ -241,6 +241,65 @@ WORKLOAD_REGISTRY_AMD = {
         "description": "TinyLlama-1.1B bs=1 — matched-pair inference for whitebox_inference",
         "default_timeout": 420,
     },
+    # Variety pack added to give the classifier more TinyLlama-class
+    # inference examples. WB-I detection rose 0% -> 18% after just 3 bs=1
+    # reps; the rest of these expand batch / sequence / compute-pattern
+    # coverage so the classifier learns the full "TinyLlama inference"
+    # distribution rather than overfitting to a single point.
+    "llm_infer_tinyllama_bs2": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "2", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B bs=2 — batch sweep cell between bs1 and bs8",
+        "default_timeout": 420,
+    },
+    "llm_infer_tinyllama_bs4": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "4", "--seq-len", "256",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B bs=4 — batch sweep cell",
+        "default_timeout": 420,
+    },
+    "llm_infer_tinyllama_seq1024": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "1024",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B seq=1024 — KV-cache pressure variant",
+        "default_timeout": 420,
+    },
+    "llm_infer_tinyllama_seq2048": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "2048",
+            "--max-tokens", "256",
+        ],
+        "description": "TinyLlama-1.1B seq=2048 — larger KV-cache",
+        "default_timeout": 480,
+    },
+    "llm_infer_tinyllama_synthetic_bs1": {
+        # Same compute pattern as whitebox_inference (WB-I): random token
+        # batches at fixed (bs, seq), pure forward passes via torch.no_grad,
+        # no autoregressive generation, no KV cache. This is the most direct
+        # corpus-coverage fix — it gives the classifier the exact telemetry
+        # shape that WB-I produces, labeled as inference.
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "tinyllama", "--synthetic-forward",
+            "--duration", "300", "--batch-size", "1", "--seq-len", "256",
+        ],
+        "description": "TinyLlama-1.1B synthetic-batch forward-only (mirrors WB-I exactly)",
+        "default_timeout": 420,
+    },
 
     # --- Image / vision inference ---
     "llm_infer_clip_embed_bs64": {

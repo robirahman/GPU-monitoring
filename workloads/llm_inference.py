@@ -64,6 +64,62 @@ def _pad_prompt_to_len(tokenizer, prompt: str, target_len: int) -> str:
     return (" ".join([prompt] * repeat))
 
 
+def run_llm_synthetic_forward(args, device: str) -> None:
+    """Synthetic-batch forward-only inference loop.
+
+    Mirrors workloads/adversarial_whitebox.py's strategy_wb_inference exactly:
+    generates random token batches at fixed (batch_size, seq_len) and runs
+    pure forward passes with torch.no_grad(). No autoregressive generation,
+    no KV-cache, no sampling. The point is to give the classifier a labeled
+    INFERENCE example that has the same telemetry shape as whitebox_inference
+    (WB-I), which the autoregressive .generate() path does NOT produce.
+    """
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    model_id, dtype_tag = MODEL_REGISTRY[args.model]
+    print(f"Loading {args.model} ({model_id}, {dtype_tag}) — synthetic forward mode")
+
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=False)
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
+    load_kwargs = {"device_map": device, "trust_remote_code": False}
+    if dtype_tag == "fp16":
+        load_kwargs["torch_dtype"] = torch.float16
+    elif dtype_tag == "bf16":
+        load_kwargs["torch_dtype"] = torch.bfloat16
+    model = AutoModelForCausalLM.from_pretrained(model_id, **load_kwargs)
+    model.eval()
+
+    params_b = sum(p.numel() for p in model.parameters()) / 1e9
+    vocab = model.config.vocab_size
+    print(f"  params: {params_b:.2f}B | vocab: {vocab} | "
+          f"batch_size={args.batch_size} | seq_len={args.seq_len}")
+
+    start = time.time()
+    iters = 0
+    while time.time() - start < args.duration:
+        input_ids = torch.randint(
+            0, vocab,
+            (args.batch_size, args.seq_len),
+            device=device,
+            dtype=torch.long,
+        )
+        attention_mask = torch.ones_like(input_ids)
+        with torch.no_grad():
+            _ = model(input_ids=input_ids, attention_mask=attention_mask)
+        iters += 1
+        if iters % 10 == 0:
+            elapsed = time.time() - start
+            tok = iters * args.batch_size * args.seq_len
+            print(f"  iter {iters}: {tok} tokens forward, "
+                  f"{tok/elapsed:.0f} tok/s, {elapsed:.0f}s")
+    elapsed = time.time() - start
+    tok = iters * args.batch_size * args.seq_len
+    print(f"{args.model} synthetic forward done: {iters} iters, "
+          f"{tok} tokens, {tok/elapsed:.1f} tok/s, {elapsed:.1f}s")
+
+
 def run_llm(args, device: str) -> None:
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -276,6 +332,10 @@ def main():
     ap.add_argument("--sdxl-steps", type=int, default=30)
     ap.add_argument("--sdxl-size", type=int, default=1024)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--synthetic-forward", action="store_true",
+                    help="Use synthetic-batch forward-only loop (matches "
+                         "whitebox_inference exactly). Implies no autoregressive "
+                         "generation, no KV-cache, no sampling.")
     args = ap.parse_args()
 
     if args.device == "cuda" and not torch.cuda.is_available():
@@ -293,6 +353,8 @@ def main():
         run_vit_l(args, args.device)
     elif args.model == "bge_large":
         run_bge_embed(args, args.device)
+    elif args.synthetic_forward:
+        run_llm_synthetic_forward(args, args.device)
     else:
         run_llm(args, args.device)
 
