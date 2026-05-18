@@ -1,0 +1,41 @@
+# AMD GPU Monitoring on Windows — Python dependencies.
+#
+# This is a separate stack from requirements_amd.txt (which targets Linux/ROCm)
+# because Windows-AMD has no ROCm runtime, no `amdsmi` Python bindings, no RDC
+# daemon, and no ffmpeg-vaapi. Telemetry comes from a different combination of
+# sources:
+#
+#   - amd-smi.exe via subprocess (HIP SDK or AMD Software PRO Edition install
+#     drops the binary at C:\Program Files\AMD\ROCm\<ver>\bin\amd-smi.exe).
+#     See scripts/collect_amdsmi_windows.py.
+#
+#   - Windows PDH counters via win32pdh (pywin32). Provides per-engine GPU
+#     util (3D / Compute / Copy / VideoEncode / VideoDecode) and adapter
+#     memory. See scripts/collect_pdh_windows.py.
+#
+#   - LibreHardwareMonitor WMI namespace (root\LibreHardwareMonitor) for
+#     power, temps (core/hotspot/VRAM), clocks, fan. Requires LHM running
+#     as admin with "WMI Provider Enabled" option set. See tools/
+#     LibreHardwareMonitor/start-lhm.ps1.
+#
+# Install order:
+#   1. winget install Python.Python.3.11 Gyan.FFmpeg Git.Git
+#   2. python -m pip install -r requirements_amd_windows.txt
+#   3. (optional, ~1.5 GB) Install AMD HIP SDK for Windows from:
+#        https://www.amd.com/en/developer/resources/rocm-hub/hip-sdk.html
+#      Provides amd-smi.exe + HIP runtime for native AMD compute on Windows.
+#   4. Launch tools/LibreHardwareMonitor/LibreHardwareMonitor.exe AS ADMIN,
+#      enable Options -> WMI Provider Enabled, leave running during collection.
+#   5. (For ML workloads, separate install step) torch-directml or
+#      onnxruntime-directml. Pin to a Python 3.11-compatible build.
+
+# Telemetry collection
+numpy>=2.0,<3
+pandas>=2.2,<4
+pyarrow>=18,<25
+pywin32>=306        # win32pdh — Windows performance counters
+wmi>=1.5            # LibreHardwareMonitor WMI namespace
+psutil>=5.9         # process introspection
+
+# Workload runner / external power validation
+requests>=2.31      # Tapo P115 wall-power logger

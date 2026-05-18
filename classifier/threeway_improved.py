@@ -94,6 +94,12 @@ TRAINING_LABELS = {
     "whitebox_oracle",
     # Round 5: White-box LoRA fine-tuning
     "whitebox_lora_N5", "whitebox_lora_N10", "whitebox_lora_N20",
+    # Round 5 — AMD registry names (Tier 3 collection)
+    "whitebox_WB-D_diluted", "whitebox_WB-L_lora", "whitebox_WB-O_oracle",
+    # Tier 4 LoRA fine-tunes (AMD registry)
+    "lora_finetune_qwen25_0p5b", "lora_finetune_smollm2_135m",
+    # YOLO training (object detection)
+    "yolo_train_coco128",
     # Generic training labels seen in datacenter runs
     "adversarial_training",
     "adversarial_training_2gpu_gpu0", "adversarial_training_2gpu_gpu1",
@@ -128,10 +134,15 @@ INFERENCE_LABELS = {
     "dilution_sweep_inference",
     # Round 5: White-box inference baseline (control)
     "whitebox_inference",
+    "whitebox_WB-I_inference",
+    # Tier 4 image-generation inference (SDXL)
+    "sdxl_inference",
     # Round 5b: new large-LLM inference anchors (single-GPU, open-license)
     "llm_infer_phi3_mini", "llm_infer_qwen25_1p5b", "llm_infer_qwen25_3b",
     "llm_infer_smollm2_1p7b", "llm_infer_mistral_7b_q4",
+    "llm_infer_tinyllama_bs1", "llm_infer_tinyllama_bs2", "llm_infer_tinyllama_bs4",
     "llm_infer_tinyllama_bs8", "llm_infer_tinyllama_seq1024",
+    "llm_infer_tinyllama_synthetic_bs1",
     "llm_infer_qwen25_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
     "llm_infer_sdxl", "llm_infer_clip_embed_batched",
     # Round 5b phase 3: long-context, large-batch, encoder-only inference

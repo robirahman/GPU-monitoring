@@ -34,6 +34,19 @@ try:
 except ImportError:
     HAS_PYNVML = False
 
+# AMD backend: amdsmi ships with ROCm under /opt/rocm/share/amd_smi or as a
+# pip package after `pip install amdsmi`. We import lazily here; collectors
+# use the same module so the import surface is well-known.
+import os, sys
+_AMDSMI_PATH = "/opt/rocm/share/amd_smi"
+if os.path.isdir(_AMDSMI_PATH) and _AMDSMI_PATH not in sys.path:
+    sys.path.insert(0, _AMDSMI_PATH)
+try:
+    import amdsmi as _amdsmi
+    HAS_AMDSMI = True
+except ImportError:
+    HAS_AMDSMI = False
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -47,19 +60,73 @@ class ClassifierOracle:
     4. Returns P(ml_training) from the same XGBoost model
     """
 
-    def __init__(self, gpu_index=0, max_buffer_sec=120):
+    def __init__(self, gpu_index=0, max_buffer_sec=120, backend="auto"):
+        """
+        backend:
+          "nvidia" — force pynvml/NVML
+          "amd"    — force amdsmi/ROCm
+          "auto"   — try pynvml first, then amdsmi
+        """
         self.gpu_index = gpu_index
         self.max_buffer_sec = max_buffer_sec
         self._buffer = []       # list of dicts (one per 1Hz sample)
         self._lock = threading.Lock()
         self._polling = False
         self._poll_thread = None
+        self._backend = None
+        self._handle = None
 
-        # Initialize pynvml
-        if not HAS_PYNVML:
-            raise RuntimeError("pynvml required for ClassifierOracle")
+        if backend == "auto":
+            if HAS_PYNVML:
+                self._init_nvidia()
+            elif HAS_AMDSMI:
+                self._init_amd()
+            else:
+                raise RuntimeError(
+                    "Neither pynvml nor amdsmi is installed — "
+                    "ClassifierOracle needs at least one GPU telemetry backend"
+                )
+        elif backend == "nvidia":
+            if not HAS_PYNVML:
+                raise RuntimeError("pynvml not installed but backend='nvidia' requested")
+            self._init_nvidia()
+        elif backend == "amd":
+            if not HAS_AMDSMI:
+                raise RuntimeError("amdsmi not installed but backend='amd' requested")
+            self._init_amd()
+        else:
+            raise ValueError(f"Unknown backend: {backend!r}")
+
+    def _init_nvidia(self):
         pynvml.nvmlInit()
-        self._handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_index)
+        self._handle = pynvml.nvmlDeviceGetHandleByIndex(self.gpu_index)
+        self._backend = "nvidia"
+        log.info(f"ClassifierOracle: pynvml backend, gpu_index={self.gpu_index}")
+
+    def _init_amd(self):
+        _amdsmi.amdsmi_init()
+        handles = _amdsmi.amdsmi_get_processor_handles()
+        # Filter out CPU sockets — amdsmi reports them as AMD_GPU too on some
+        # systems; the actual graphics device is the one where
+        # amdsmi_get_gpu_activity succeeds.
+        gpu_handles = []
+        for h in handles:
+            try:
+                _amdsmi.amdsmi_get_gpu_activity(h)
+                gpu_handles.append(h)
+            except Exception:
+                continue
+        if not gpu_handles:
+            raise RuntimeError("amdsmi found no GPU-capable processors")
+        if self.gpu_index >= len(gpu_handles):
+            raise RuntimeError(
+                f"gpu_index={self.gpu_index} but only {len(gpu_handles)} GPUs visible"
+            )
+        self._handle = gpu_handles[self.gpu_index]
+        self._backend = "amd"
+        asic = _amdsmi.amdsmi_get_gpu_asic_info(self._handle) or {}
+        log.info(f"ClassifierOracle: amdsmi backend, "
+                 f"gpu_index={self.gpu_index}, {asic.get('market_name', '?')}")
 
         # Load or train the classifier
         self._clf = None
@@ -117,7 +184,14 @@ class ClassifierOracle:
     # ── Telemetry polling ──────────────────────────────────────────────
 
     def _read_sample(self):
-        """Read one telemetry sample from pynvml."""
+        """Read one telemetry sample from the active backend."""
+        if self._backend == "nvidia":
+            return self._read_sample_nvidia()
+        if self._backend == "amd":
+            return self._read_sample_amd()
+        return None
+
+    def _read_sample_nvidia(self):
         try:
             util = pynvml.nvmlDeviceGetUtilizationRates(self._handle)
             mem_info = pynvml.nvmlDeviceGetMemoryInfo(self._handle)
@@ -129,7 +203,6 @@ class ClassifierOracle:
             mem_clk = pynvml.nvmlDeviceGetClockInfo(
                 self._handle, pynvml.NVML_CLOCK_MEM)
 
-            # PCIe throughput
             try:
                 pcie_tx = pynvml.nvmlDeviceGetPcieThroughput(
                     self._handle, pynvml.NVML_PCIE_UTIL_TX_BYTES) / 1024.0
@@ -152,6 +225,43 @@ class ClassifierOracle:
                 "pcie_rx_mbps": pcie_rx,
             }
         except pynvml.NVMLError:
+            return None
+
+    def _read_sample_amd(self):
+        """Mirror of _read_sample_nvidia using amdsmi (matches the 9-signal
+        schema used by scripts/collect_amdsmi_telemetry.py)."""
+        try:
+            activity = _amdsmi.amdsmi_get_gpu_activity(self._handle) or {}
+            mem_used = _amdsmi.amdsmi_get_gpu_memory_usage(
+                self._handle, _amdsmi.AmdSmiMemoryType.VRAM)
+            power_info = _amdsmi.amdsmi_get_power_info(self._handle) or {}
+            # current_socket_power can be sentinel "N/A"; fall back to socket_power
+            raw_power = power_info.get("current_socket_power")
+            if not isinstance(raw_power, (int, float)):
+                raw_power = power_info.get("socket_power") or \
+                            power_info.get("average_socket_power") or 0.0
+            metrics = _amdsmi.amdsmi_get_gpu_metrics_info(self._handle) or {}
+            edge_temp = metrics.get("temperature_edge", 0)
+            gfx_clk_info = _amdsmi.amdsmi_get_clock_info(
+                self._handle, _amdsmi.AmdSmiClkType.GFX) or {}
+            mem_clk_info = _amdsmi.amdsmi_get_clock_info(
+                self._handle, _amdsmi.AmdSmiClkType.MEM) or {}
+
+            # amdsmi doesn't expose PCIe TX/RX on consumer cards; use -1
+            # sentinel (matches the collector's convention).
+            return {
+                "ts": time.time(),
+                "gpu_utilization_pct": float(activity.get("gfx_activity", 0)),
+                "mem_utilization_pct": float(activity.get("umc_activity", 0)),
+                "mem_used_mb": float(mem_used) / (1024 * 1024),
+                "power_draw_w": float(raw_power),
+                "temperature_c": float(edge_temp),
+                "sm_clock_mhz": float(gfx_clk_info.get("clk", 0)),
+                "mem_clock_mhz": float(mem_clk_info.get("clk", 0)),
+                "pcie_tx_mbps": -1.0,
+                "pcie_rx_mbps": -1.0,
+            }
+        except Exception:
             return None
 
     def _poll_loop(self):

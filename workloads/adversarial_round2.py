@@ -39,6 +39,13 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+# Try NVIDIA (pynvml) first, fall back to AMD (amdsmi). On AMD machines
+# pynvml import fails cleanly; amdsmi ships with ROCm at /opt/rocm/share/amd_smi.
+HAS_NVML = False
+HAS_AMDSMI = False
+_NVML_HANDLE = None
+_AMDSMI_HANDLE = None
+
 try:
     import pynvml
     pynvml.nvmlInit()
@@ -47,16 +54,51 @@ try:
 except Exception:
     HAS_NVML = False
 
+if not HAS_NVML:
+    import os, sys as _sys
+    _AMDSMI_PATH = "/opt/rocm/share/amd_smi"
+    if os.path.isdir(_AMDSMI_PATH) and _AMDSMI_PATH not in _sys.path:
+        _sys.path.insert(0, _AMDSMI_PATH)
+    try:
+        import amdsmi as _amdsmi
+        _amdsmi.amdsmi_init()
+        # First handle that supports gpu_activity is the GPU (CPU sockets fail).
+        for _h in _amdsmi.amdsmi_get_processor_handles():
+            try:
+                _amdsmi.amdsmi_get_gpu_activity(_h)
+                _AMDSMI_HANDLE = _h
+                HAS_AMDSMI = True
+                break
+            except Exception:
+                continue
+    except Exception:
+        HAS_AMDSMI = False
+
 
 def _read_gpu_util():
     if HAS_NVML:
         return pynvml.nvmlDeviceGetUtilizationRates(_NVML_HANDLE).gpu
+    if HAS_AMDSMI:
+        try:
+            act = _amdsmi.amdsmi_get_gpu_activity(_AMDSMI_HANDLE) or {}
+            return float(act.get("gfx_activity", 0))
+        except Exception:
+            return -1
     return -1
 
 
 def _read_power():
     if HAS_NVML:
         return pynvml.nvmlDeviceGetPowerUsage(_NVML_HANDLE) / 1000.0
+    if HAS_AMDSMI:
+        try:
+            info = _amdsmi.amdsmi_get_power_info(_AMDSMI_HANDLE) or {}
+            p = info.get("current_socket_power")
+            if not isinstance(p, (int, float)):
+                p = info.get("socket_power") or info.get("average_socket_power") or 0.0
+            return float(p)
+        except Exception:
+            return -1
     return -1
 
 
