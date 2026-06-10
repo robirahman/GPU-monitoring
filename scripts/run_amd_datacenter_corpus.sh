@@ -58,7 +58,9 @@ echo "Detected ${N_GPUS} AMD GPU(s)."
 
 if [[ "${RUN_SINGLE}" == "1" ]]; then
     echo "=== Phase 1: single-GPU sweep (gpu 0, ${REPS} reps) ==="
-    scripts/run_amd_corpus.sh --reps "${REPS}" --all --gpu-index 0
+    # Datacenter cards (MI300X/MI325X/MI355) expose RDC Tier-2 rocprofiler
+    # counters — capture them (consumer corpus runs with --no-rdc).
+    scripts/run_amd_corpus.sh --reps "${REPS}" --all --gpu-index 0 --with-rdc
 fi
 
 if [[ "${RUN_MULTI}" == "1" && "${N_GPUS}" -ge 2 ]]; then

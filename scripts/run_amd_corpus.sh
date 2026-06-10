@@ -27,6 +27,10 @@ REPS=1
 SELECT="all"
 GPU_INDEX=0
 DRY_RUN=0
+# RDC Tier-2 is off by default (consumer RDNA cards expose no profiling
+# counters). On datacenter cards (MI300X) pass --with-rdc to capture the
+# rocprofiler fields (occupancy, tensor/VALU activity, FLOPS, active waves).
+RDC_FLAG="--no-rdc"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -35,6 +39,8 @@ while [[ $# -gt 0 ]]; do
         --adv-only) SELECT="adv"; shift ;;
         --all) SELECT="all"; shift ;;
         --gpu-index) GPU_INDEX="$2"; shift 2 ;;
+        --with-rdc) RDC_FLAG=""; shift ;;
+        --no-rdc) RDC_FLAG="--no-rdc"; shift ;;
         --dry-run) DRY_RUN=1; shift ;;
         *) echo "Unknown arg: $1"; exit 2 ;;
     esac
@@ -118,7 +124,7 @@ for wl in "${WORKLOADS[@]}"; do
             --workload "${wl}" \
             --gpu-index "${GPU_INDEX}" \
             --interval 1.0 \
-            --no-rdc \
+            ${RDC_FLAG} \
             > "${log}" 2>&1
         ec=$?
         set -e
