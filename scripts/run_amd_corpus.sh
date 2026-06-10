@@ -19,6 +19,10 @@ if [[ -z "${VIRTUAL_ENV:-}" ]]; then
     source "${REPO_ROOT}/.venv/bin/activate"
 fi
 
+# ROCm runtime env (LD_LIBRARY_PATH for RDC + PyTorch, RDC_HOME).
+# shellcheck disable=SC1091
+source "${REPO_ROOT}/scripts/rocm_env.sh"
+
 REPS=1
 SELECT="all"
 GPU_INDEX=0

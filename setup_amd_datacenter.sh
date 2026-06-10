@@ -120,17 +120,26 @@ echo ""
 echo "[7/7] Verifying installation..."
 sudo -u "${REAL_USER}" bash -lc "
     source '${VENV_DIR}/bin/activate'
+    source '${SCRIPT_DIR}/scripts/rocm_env.sh'
     rocminfo | grep 'Marketing Name' | head
     rocm-smi --showproductname --showmeminfo vram 2>&1 | grep -v WARNING | head -20
     python3 -c 'import amdsmi; amdsmi.amdsmi_init(); print(\"  amdsmi:\", amdsmi.__version__ if hasattr(amdsmi, \"__version__\") else \"OK\"); amdsmi.amdsmi_shut_down()'
     python3 -c 'import torch; print(f\"  PyTorch: {torch.__version__} (HIP avail: {torch.cuda.is_available()}, device count: {torch.cuda.device_count()})\")'
+    if command -v rdcd &>/dev/null; then
+        python3 -c 'import sys; sys.path[:0]=__import__(\"glob\").glob(\"/opt/rocm*/libexec/rdc/python_binding\")+[\"/opt/rocm/share/rdc/python\"]; import RdcReader, rdc_bootstrap; print(\"  RDC bindings: OK\")' \
+            || echo '  RDC bindings: NOT importable (Tier-2 will be skipped)'
+    fi
 "
 
 echo ""
 echo "=== Done ==="
-echo "Activate the env with: source ${VENV_DIR}/bin/activate"
+echo "Activate the env with:"
+echo "  source ${VENV_DIR}/bin/activate && source ${SCRIPT_DIR}/scripts/rocm_env.sh"
+echo "(rocm_env.sh sets LD_LIBRARY_PATH for RDC + PyTorch and RDC_HOME; the"
+echo " run_amd_*.sh scripts source it automatically.)"
 echo "Smoke test: python scripts/amdsmi_smoke_test.py"
 echo "Single-GPU sweep: scripts/run_amd_corpus.sh --reps 3"
 echo ""
-echo "For multi-GPU (8x MI300X) nodes, also run the DDP adversarial families:"
-echo "  scripts/run_amd_ddp_adversarial.sh   # NB: not yet written; see plan"
+echo "For multi-GPU (8x MI300X) nodes, run the full datacenter corpus"
+echo "(Phase 1 single-GPU + Phase 2 DDP adversarial):"
+echo "  scripts/run_amd_datacenter_corpus.sh --reps 3"
