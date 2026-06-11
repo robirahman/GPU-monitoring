@@ -129,8 +129,13 @@ def run_whisper(args, device):
     import whisper
 
     print("Loading Whisper large-v3-turbo...")
+    # Cache under the user's home (the old hardcoded /home/claude path does not
+    # exist on most boxes). Honour WHISPER_CACHE if set.
+    download_root = os.environ.get(
+        "WHISPER_CACHE", os.path.join(os.path.expanduser("~"), ".cache", "whisper"))
+    os.makedirs(download_root, exist_ok=True)
     model = whisper.load_model("large-v3-turbo", device=device,
-                               download_root="/home/claude/.cache/whisper")
+                               download_root=download_root)
     print(f"Whisper loaded: {sum(p.numel() for p in model.parameters())/1e6:.0f}M params")
 
     start = time.time()

@@ -343,6 +343,12 @@ class RdcCollector:
         _rdc_field_value = _rdcb.rdc_field_value
         _rdc_status_t = _rdcb.rdc_status_t
         double_type = int(self._rdc_field_type_t.DOUBLE)
+        # Kept for cleanup(): RdcReader has no stop()/destructor, so the field
+        # group and GPU group it creates on rdcd leak unless we destroy them.
+        # After enough runs rdcd returns RDC_ST_MAX_LIMIT and refuses new
+        # groups, silently disabling Tier-2 for the rest of a long sweep.
+        self._rdc = _rdc
+        self._rdc_status_t = _rdc_status_t
 
         class _CapturingRdcReader(self._RdcReader):  # type: ignore[misc, valid-type]
             def process(self_inner):
@@ -424,10 +430,31 @@ class RdcCollector:
         return result
 
     def cleanup(self):
-        try:
-            self._reader.stop()
-        except Exception:
-            pass
+        # RdcReader has no stop()/destructor. Release the watch and destroy the
+        # field + GPU groups it created, then disconnect — otherwise each run
+        # leaks two groups on rdcd until it hits RDC_ST_MAX_LIMIT.
+        r = getattr(self, "_reader", None)
+        if r is None:
+            return
+        handle = getattr(r, "rdc_handle", None)
+        ok = self._rdc_status_t.RDC_ST_OK
+        for fn, args in (
+            (self._rdc.rdc_field_unwatch,
+             (handle, getattr(r, "gpu_group_id", None), getattr(r, "field_group_id", None))),
+            (self._rdc.rdc_group_field_destroy,
+             (handle, getattr(r, "field_group_id", None))),
+            (self._rdc.rdc_group_gpu_destroy,
+             (handle, getattr(r, "gpu_group_id", None))),
+            (self._rdc.rdc_disconnect, (handle,)),
+        ):
+            try:
+                if any(a is None for a in args):
+                    continue
+                rc = fn(*args)
+                if self._rdc_status_t(rc) != ok:
+                    log.debug("RDC cleanup: %s returned %s", fn.__name__, rc)
+            except Exception as e:
+                log.debug("RDC cleanup: %s raised %s", getattr(fn, "__name__", fn), e)
 
 
 # ---------------------------------------------------------------------------
