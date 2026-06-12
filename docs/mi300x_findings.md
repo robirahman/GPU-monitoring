@@ -112,6 +112,35 @@ LoRA / dilution evasions (the paper's <50% case), which this tier set does not
 include. A **hard-evasion collection (whitebox LoRA + dilution × 3 reps)** is
 in progress to test exactly this; the Tier-2 ablation will be re-run on it.
 
+### 4.4 Tier-2 on the hard evasions (white-box LoRA + dilution) — does NOT rescue detection
+
+Trained a binary is-training detector on the Phase-1 MI300X corpus (which
+already includes dilution-style `adversarial_L_diluted_5/10`) and tested
+detection on the **held-out** white-box hard-evasion set (24 runs).
+Script: `classifier/eval_mi300x_hardevasion.py`.
+
+| Feature set | Recall on disguised training | FPR on inference control |
+|---|---|---|
+| Tier-1 | **2.8%** | 0.0% |
+| Tier-2 | 4.5% | 6.1% |
+| Tier-1 + Tier-2 | 2.4% | 0.0% |
+
+The white-box LoRA/dilution evasions **defeat the detector almost entirely**
+(recall <5%) — worse than the paper's NVIDIA white-box case (<50%), because
+this is a leave-the-family-out test. **Tier-2 does not close the gap**: the
+dilution attack hides training in the time-average (≤10% training fraction,
+0.22% trainable LoRA params), so 30 s window-aggregate stats — even of tensor
+activity — look like inference, and heavy inference (e.g. resnet50) also drives
+high tensor %, so tensor activity alone doesn't separate train from infer.
+Tier-2 nudges recall 2.8→4.5% but trivially and at higher FPR.
+
+**Implication:** Tier-2's marginal value is NOT free on disguised-training
+detection. What's likely needed: (a) train *with* white-box examples
+(adversary-defender loop on AMD, as the paper does for NVIDIA), and/or
+(b) finer-temporal / burst features rather than 30 s aggregates, since
+dilution specifically attacks the time-average. Re-running this with whitebox
+included in training (leave-one-whitebox-out) is the fair next test.
+
 ## 5. Recommendations / open work
 
 - Re-run the Tier-2 ablation on the hard-evasion set (in progress) — the
