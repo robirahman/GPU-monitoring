@@ -72,12 +72,27 @@ def experiment1(raw):
     run(X.values, "raw (baseline)")
     # Per-device z-score: each feature standardized within its own gpu_name.
     Xn = X.copy()
-    g = w["gpu_name"].values
     for col in feats:
         gm = X[col].groupby(w["gpu_name"]).transform("mean")
         gs = X[col].groupby(w["gpu_name"]).transform("std").replace(0, 1.0)
         Xn[col] = (X[col] - gm) / gs
     run(Xn.values, "per-device z-scored")
+
+    # Idle-baseline calibration: center each device at its own idle floor and
+    # scale by its device std. Preserves "how far above idle", which is the
+    # cross-device-comparable signal (unlike unconditional z-scoring, which
+    # also removes it). Falls back to device mean for devices lacking idle.
+    idle = w["workload_label"].astype(str).str.contains("idle", case=False, na=False)
+    Xb = X.copy()
+    for col in feats:
+        idle_mean = X.loc[idle, col].groupby(w.loc[idle, "gpu_name"]).mean()
+        dev_mean = X[col].groupby(w["gpu_name"]).mean()
+        dev_std = X[col].groupby(w["gpu_name"]).std().replace(0, 1.0)
+        base = w["gpu_name"].map(idle_mean).fillna(w["gpu_name"].map(dev_mean))
+        Xb[col] = (X[col] - base.values) / w["gpu_name"].map(dev_std).values
+    n_idle_dev = w.loc[idle, "gpu_name"].nunique()
+    log.info(f"  (idle baseline available for {n_idle_dev} GPU models)")
+    run(Xb.values, "idle-baseline calibrated")
 
 
 def _window_tier(df, cols, stats=("mean","std","min","max","p50")):
