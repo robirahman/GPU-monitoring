@@ -259,27 +259,75 @@ sizes) plus a full control panel, and compared the un-hardened ("baseline") vs h
 Adversarial training catches **unseen** dilution attacks at **zero false-positive cost** — cufft (the
 nearest "other", since the GEMM ballast resembles steady compute) stays correctly classified.
 
-**Round 2 — attack the hardened model** (`workloads/adversarial_physical_stealth2.py`): the hardened
-model now owns the "low-RMS + low-periodicity + high-power" region, so we moved to a different "other"
-region — **mimic cufft** with a continuous memory-bound cuFFT ballast (background thread) + diluted
-training, aiming for cufft's high-RMS / low-cv signature.
+**Rounds 2–3 — attack the hardened model by mimicking cufft.** The hardened model now owns the
+"low-RMS + low-periodicity + high-power" region (round-1's GEMM signature), so we moved to a different
+"other" region: **mimic cufft** with a continuous memory-bound cuFFT ballast (background thread/stream)
++ diluted training, aiming for cufft's high-RMS / low-cv signature.
+
+- **Round 2** (`adversarial_physical_stealth2.py`): 2D 512×512 FFT ballast — only reached RMS ~14.
+- **Round 3** (`adversarial_physical_stealth3.py`): the *exact* cufft loop (512×512×64 complex64
+  `fftn`/`ifftn`, mirroring `scientific_hpc.run_cufft`) as the ballast, sweeping dilution rate and
+  batch size (incl. tiny batch 8).
 
 | run | rms | cv | fft | baseline | hardened |
 |---|---|---|---|---|---|
-| `s2_fb16` / `s2_fb24` | ~14 | 0.33 | 0.17 | 0% (EVADE) | **100% (CATCH)** |
-| cufft (reference) | 31 | 0.19 | 0.10 | — | 0% (EVADE) |
+| `s2_fb16/24` (2D FFT) | ~14 | 0.33 | 0.17 | 0% EVADE | **100% CATCH** |
+| `s3_tp1/2/3` (exact cufft, batch 128) | **~31** | 0.37 | 0.30 | 0% EVADE | **100% CATCH** |
+| `s3_tiny8` (exact cufft, batch 8) | **30.7** | 0.36 | 0.31 | 0% EVADE | **100% CATCH** |
+| cufft (reference) | 31.2 | **0.19** | **0.10** | — | 0% EVADE |
 
-**Round 2 was caught.** The mimicry was imperfect — the background FFT ballast reached only RMS ~14 /
-cv ~0.33 (not cufft's 31 / 0.19), so it stayed in training territory. The hardened classifier is
-robust to this attack. **The arms race continues:** each defensive round forces the attacker into a
-narrower, harder-to-reach corner of the feature space, and the throughput tax compounds.
+**All cufft-mimicry attacks were caught.** Round 3 successfully matched cufft's RMS magnitude (~31)
+but **could not match its cv (0.19) or periodicity (0.10)** — they stayed at ~0.36 / ~0.30. The reason
+is structural and is the key finding of this round:
+
+> On a single GPU, real training and the cover workload **time-share** the device. Whenever a training
+> step runs, it displaces cover compute, so the total rail current is **modulated** (the steady cufft
+> draw dips and the training transient adds) — producing an anti-correlated per-second swing that
+> raises cv/periodicity above the cover's baseline. Tiny batches and heavier dilution did not fix it.
+> Injecting real computation into a steady cover **necessarily** perturbs the physical signal, and the
+> (hardened) classifier detects the perturbation.
+
+This strengthens §6.3: the physical channel is robust not just because of a "camouflage tax" but
+because **the act of hiding modulates the very signal being measured**. The only round that evaded
+(round-1 GEMM dilution) exploited a specific blind spot (compute-bound GEMM's intrinsically low
+current ripple), which adversarial training then closed.
 
 ### 7.1 Next steps
 
-- Beat the hardened model: a ballast tuned to genuinely occupy cufft's high-RMS/low-cv region (larger
-  FFT batch, heavier dilution, possibly power-capping if permissions allow), then re-harden — iterate
-  as Phase-1 did for NVML (5 rounds).
-- Push the attacker below 50× throughput cost with finer concurrent co-scheduling.
+- Attack vectors not yet tried (likely needed to beat the hardened model): **multi-GPU offloading**
+  (train on a GPU whose clamp the defender doesn't read), a cover workload whose current is large and
+  variable enough to *absorb* training swings, hardware-level power conditioning, or driving training
+  current down with `--cap` clock/power limits (needs permissions).
+- Re-harden on rounds 2–3 and iterate, as Phase-1 did for NVML (5 rounds).
+- Add the dropped high-rate `wave[]` arrays (200 kHz mic, 100 kHz scope) as features — a far richer
+  signature than the 1-Hz scalars, likely raising the attacker's cost further.
+
+### 7.2 Multi-GPU coverage (IN PROGRESS — code ready, data collection pending GPU cleanup)
+
+**Vulnerability:** the original physical classifier only used the **GPU0** clamp, so an adversary
+trivially evades it by training on **GPU1/GPU2** — those clamps weren't watched at all.
+
+**Fix (committed):** `classifier/physical_sensor_classifier.py` now uses **every** GPU clamp
+(`GPU0/1/2`) plus node-level aggregates — `anyGPU_rms_mv` (max over clamps), `sumGPU_rms_mv`,
+`nGPU_active` — and runs the temporal features on `anyGPU_rms_mv`. This makes detection
+permutation-invariant to *which* GPU trains, and covers multi-GPU jobs. See `GPU_CLAMPS`,
+`augment_aggregates()`, `TEMPORAL`. Supporting pieces: `scripts/run_workload_with_sensors.py --cuda-devices`
+(target GPU1, GPU2, or `0,1,2`) and `workloads/multigpu_training.py` (DataParallel).
+
+**To resume (once the GPU is healthy):**
+1. `export SAIGE_USER=... SAIGE_PASS=...`
+2. `bash scripts/collect_multigpu.sh` — collects training on GPU1, GPU2, GPU0+1+2, GPU1+2, plus
+   non-training (cufft/idle) on GPU1/GPU2.
+3. `python classifier/eval_multigpu_demo.py` — shows the OLD GPU0-only model being evaded by
+   GPU1/GPU2/multi-GPU training vs. the NEW all-clamp model catching it (with no new false positives).
+
+**⚠️ Incident / blocker:** the first multi-GPU collection was launched in a bare SSH session that
+dropped, which killed the orchestrator and **orphaned the workload's timeout parent**. The training
+process wedged in the NVIDIA UVM driver (`uvm_gpu_retain_by_uuid`, **D-state, unkillable from
+userspace**) on **GPU1**; `nvidia-smi` then hung on GPU1/GPU2 (GPU0 stayed responsive). **No `mg_*`
+data was saved.** Clear it host-side before resuming: `sudo nvidia-smi --gpu-reset -i 1` (or reload
+`nvidia_uvm` / reboot node1). **Run long collections under `nohup`/`tmux` on the host**, never a bare
+SSH session, so a dropped connection can't orphan a GPU workload again.
 - Add the dropped high-rate `wave[]` arrays (200 kHz mic spectrum, 100 kHz scope) as features — likely
   a much stronger acoustic/electrical signature than the 1-Hz scalars.
 - Multi-GPU concurrent collection needs per-GPU isolation for the shared mic/MOBO rail.
@@ -295,5 +343,6 @@ narrower, harder-to-reach corner of the feature space, and the throughput tax co
 | `classifier/harden_physical_classifier.py` | Adversarial-training + retest (hardening experiment) |
 | `workloads/adversarial_physical_stealth.py` | Round-1 attack: ballast-masking + dilution |
 | `workloads/adversarial_physical_evasion2.py` | Round-1 throughput-preserving attacks (gradaccum/aperiodic/cofill/combo/gapfill) |
-| `workloads/adversarial_physical_stealth2.py` | Round-2 attack: cufft-mimicry vs the hardened model |
+| `workloads/adversarial_physical_stealth2.py` | Round-2 attack: cufft-mimicry (2D FFT ballast) |
+| `workloads/adversarial_physical_stealth3.py` | Round-3 attack: exact-cufft-loop ballast + diluted/tiny-batch training |
 | `regen_crossgpu_heatmap_binary_rf.py` | LOGO heatmap (3090 added to `GPU_ORDER`) |

@@ -35,12 +35,36 @@ from classifier.threeway_improved import threeway_label  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 log = logging.getLogger(__name__)
 
-# Physical channels only (NO NVML power). active_gpu is filled per --gpu.
-def physical_channels(active_gpu="GPU0"):
-    return [f"{active_gpu}_rms_mv", f"{active_gpu}_peak_mv", "MOBO_rms_mv",
-            "mic_rms", "mic_dbfs", "mic_peak", "mic_dominant_hz"]
+# Physical channels only (NO NVML power). We watch EVERY GPU current clamp plus
+# node-level aggregates, so training on any GPU (or several) is visible -- a
+# classifier that only watched GPU0 was trivially evaded by training on GPU1/2.
+GPU_CLAMPS = ["GPU0", "GPU1", "GPU2"]
+TEMPORAL = ["anyGPU_rms_mv", "mic_rms"]   # signals used for acf/fft temporal features
 
-STAT_CHANNELS_FOR_TEMPORAL = None  # set at runtime to active-gpu rms + mic_rms
+
+def physical_channels(active_gpu=None):
+    """All physical channels: every GPU clamp + node aggregates + MOBO + mic.
+    `active_gpu` is accepted for backward-compat but ignored (we watch all GPUs)."""
+    ch = []
+    for g in GPU_CLAMPS:
+        ch += [f"{g}_rms_mv", f"{g}_peak_mv"]
+    ch += ["anyGPU_rms_mv", "anyGPU_peak_mv", "sumGPU_rms_mv", "nGPU_active",
+           "MOBO_rms_mv", "mic_rms", "mic_dbfs", "mic_peak", "mic_dominant_hz"]
+    return ch
+
+
+def augment_aggregates(df, active_thresh_mv=8.0):
+    """Add node-level aggregate clamp signals (permutation-invariant to which GPU):
+    anyGPU = max over clamps, sumGPU = total, nGPU_active = count of busy clamps."""
+    rms = [f"{g}_rms_mv" for g in GPU_CLAMPS if f"{g}_rms_mv" in df.columns]
+    pk = [f"{g}_peak_mv" for g in GPU_CLAMPS if f"{g}_peak_mv" in df.columns]
+    if rms:
+        df["anyGPU_rms_mv"] = df[rms].max(axis=1)
+        df["sumGPU_rms_mv"] = df[rms].sum(axis=1)
+        df["nGPU_active"] = (df[rms] > active_thresh_mv).sum(axis=1)
+    if pk:
+        df["anyGPU_peak_mv"] = df[pk].max(axis=1)
+    return df
 
 
 def _acf(x, lag):
@@ -99,6 +123,7 @@ def load_sensor_data(sensor_dir):
     if not frames:
         raise RuntimeError(f"No *_sensors.parquet in {sensor_dir}")
     df = pd.concat(frames, ignore_index=True)
+    df = augment_aggregates(df)
     df["threeway_label"] = df["workload_label"].apply(threeway_label)
     return df
 
@@ -139,12 +164,11 @@ def windows(df, channels, temporal_channels, window_sec, stride_sec):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sensor-dir", default=str(PROJECT_ROOT / "sensor_logs"))
-    ap.add_argument("--gpu", default="GPU0", help="active GPU clamp label (runs target this GPU)")
     ap.add_argument("--out", default=str(PROJECT_ROOT / "classifier" / "results" / "physical_binary_results.csv"))
     args = ap.parse_args()
 
-    channels = physical_channels(args.gpu)
-    temporal = [f"{args.gpu}_rms_mv", "mic_rms"]
+    channels = physical_channels()       # all GPU clamps + node aggregates + MOBO + mic
+    temporal = TEMPORAL
 
     df = load_sensor_data(args.sensor_dir)
     log.info("Loaded %d sensor rows across %d runs", len(df), df["run_id"].nunique())

@@ -41,6 +41,9 @@ def main():
     p = argparse.ArgumentParser(description="Run workload with NVML + physical-sensor logging.")
     p.add_argument("--workload", required=True)
     p.add_argument("--gpu-index", type=int, default=0)
+    p.add_argument("--cuda-devices", type=str, default=None,
+                   help="override CUDA_VISIBLE_DEVICES (e.g. '1' or '0,1,2' for multi-GPU). "
+                        "NVML telemetry still targets --gpu-index.")
     p.add_argument("--output-dir", default="data/")
     p.add_argument("--interval", type=float, default=1.0)
     p.add_argument("--timeout", type=int, default=None)
@@ -106,7 +109,7 @@ def main():
         time.sleep(3)
 
         env = os.environ.copy()
-        env["CUDA_VISIBLE_DEVICES"] = str(args.gpu_index)
+        env["CUDA_VISIBLE_DEVICES"] = args.cuda_devices if args.cuda_devices else str(args.gpu_index)
         print(f"Launching: {' '.join(cmd)}\n" + "-" * 40)
         t0 = time.time()
         proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr, env=env, cwd=_REPO_ROOT)
