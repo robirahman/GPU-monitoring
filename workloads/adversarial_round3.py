@@ -169,6 +169,13 @@ def strategy_l_diluted(args, device):
                     _ = model(data)
                 infer_batches += 1
 
+            # Per-step ground truth for window re-scoring (see
+            # scripts/label_windows_by_training.py). Deterministic schedule
+            # (batch_idx % dilution), but per-batch wall-clock timing is not
+            # otherwise recorded, so log it.
+            print(f"STEP ts={time.time():.3f} "
+                  f"kind={'train' if batch_idx % dilution == 0 else 'infer'} "
+                  f"batch_idx={batch_idx}", flush=True)
             total_samples += data.size(0)
             batch_idx += 1
             del data, target

@@ -180,6 +180,13 @@ def _run_diluted_loop(model, optimizer, tokenizer, args, device, oracle=None):
             infer_batches += 1
             del output
 
+        # Per-step ground truth for window re-scoring: a telemetry window is
+        # only a training window if it overlaps a STEP with kind=train. Shares
+        # the time.time() epoch with the 1 Hz telemetry collector, so steps
+        # bin directly into windows. Covers WB-O too (kind reflects the live
+        # oracle decision, which is otherwise unrecoverable).
+        print(f"STEP ts={time.time():.3f} kind={'train' if should_train else 'infer'} "
+              f"batch_idx={batch_idx} tokens={args.batch_size * args.seq_len}", flush=True)
         total_tokens += args.batch_size * args.seq_len
         batch_idx += 1
         del batch
@@ -231,6 +238,8 @@ def strategy_wb_inference(args, device):
             output = model(**batch)
         total_tokens += args.batch_size * args.seq_len
         batches += 1
+        print(f"STEP ts={time.time():.3f} kind=infer batch_idx={batches - 1} "
+              f"tokens={args.batch_size * args.seq_len}", flush=True)
         del output, batch
 
         now = time.time()
