@@ -615,8 +615,32 @@ def run_level_features(run_df: pd.DataFrame) -> dict:
 
 # ── Sliding window extraction ────────────────────────────────────────────────
 
-def sliding_windows(df: pd.DataFrame, window_sec: float, stride_sec: float) -> pd.DataFrame:
-    """Extract sliding-window feature vectors per run."""
+def sliding_windows(
+    df: pd.DataFrame,
+    window_sec: float,
+    stride_sec: float,
+    run_level_mode: str = "orig",
+) -> pd.DataFrame:
+    """Extract sliding-window feature vectors per run.
+
+    ``run_level_mode`` controls the whole-run "pre-allocation" features
+    (``first_30s_mem_*``, ``time_to_mem_plateau_samples``):
+
+      - ``"orig"``   – computed once over the entire run and attached to every
+        window. The plateau term reads ``mem[-30:]`` (the end of the run), so
+        early windows carry information from their own future. Kept as the
+        default only to reproduce pre-fix numbers.
+      - ``"none"``   – run-level features omitted entirely. This is the
+        leak-free floor and matches what the real-time ``ClassifierOracle``
+        actually sees (it fills these columns with 0.0 at serve time).
+      - ``"causal"`` – run-level features recomputed per window from run start
+        up to that window's end only, so no window sees its own future while
+        still exploiting the genuinely-observable startup signature.
+    """
+    if run_level_mode not in ("orig", "none", "causal"):
+        raise ValueError(
+            f"run_level_mode must be 'orig', 'none', or 'causal', got {run_level_mode!r}")
+
     results = []
     for run_id, run_df in df.groupby("run_id"):
         run_df = run_df.sort_values("ts").reset_index(drop=True)
@@ -628,25 +652,33 @@ def sliding_windows(df: pd.DataFrame, window_sec: float, stride_sec: float) -> p
         duration = t_end - t_start
         label = run_df["threeway_label"].iloc[0]
         wl_label = run_df["workload_label"].iloc[0]
-        run_feats = run_level_features(run_df)
+        gpu_name = run_df["gpu_name"].iloc[0] if "gpu_name" in run_df.columns else ""
+        run_feats_full = run_level_features(run_df) if run_level_mode == "orig" else None
 
-        def emit(chunk):
+        def emit(chunk, wstart, wend):
             if len(chunk) < 5:
                 return
             feats = extract_enhanced_features(chunk)
-            feats.update(run_feats)
+            if run_level_mode == "orig":
+                feats.update(run_feats_full)
+            elif run_level_mode == "causal":
+                # Only samples observable by the window's end — no look-ahead.
+                feats.update(run_level_features(run_df[run_df["ts"] < wend]))
             feats["run_id"] = run_id
             feats["threeway_label"] = label
             feats["workload_label"] = wl_label
+            feats["gpu_name"] = gpu_name
+            feats["window_start"] = wstart
+            feats["window_end"] = wend
             results.append(feats)
 
         if duration < window_sec:
-            emit(run_df)
+            emit(run_df, t_start, t_end)
         else:
             wstart = t_start
             while wstart + window_sec <= t_end + 1:
                 chunk = run_df[(run_df["ts"] >= wstart) & (run_df["ts"] < wstart + window_sec)]
-                emit(chunk)
+                emit(chunk, wstart, wstart + window_sec)
                 wstart += stride_sec
 
     if not results:
@@ -658,7 +690,8 @@ def sliding_windows(df: pd.DataFrame, window_sec: float, stride_sec: float) -> p
 
 def get_feature_cols(df: pd.DataFrame) -> list:
     """Return all numeric feature columns (exclude metadata)."""
-    exclude = {"run_id", "threeway_label", "workload_label", "window_start", "window_sec", "n_samples"}
+    exclude = {"run_id", "threeway_label", "workload_label", "gpu_name",
+               "window_start", "window_end", "window_sec", "n_samples"}
     return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]
 
 

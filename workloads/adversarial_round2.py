@@ -302,6 +302,10 @@ def strategy_i_stochastic(args, device):
                 loss.backward()
                 optimizer.step()
                 train_steps += 1
+                # Per-step ground truth for window re-scoring. The phase
+                # schedule is stochastic (unseeded RNG), so this log is the
+                # ONLY way to know which telemetry windows actually trained.
+                print(f"STEP ts={time.time():.3f} kind=train batch_idx={train_steps}", flush=True)
                 del data, target, output, loss
         else:
             # Non-training phase: randomly pick a workload
@@ -327,6 +331,7 @@ def strategy_i_stochastic(args, device):
                 else:
                     time.sleep(0.1)
                 other_steps += 1
+                print(f"STEP ts={time.time():.3f} kind=infer batch_idx={other_steps}", flush=True)
 
         now = time.time()
         if now - last_print >= 30:

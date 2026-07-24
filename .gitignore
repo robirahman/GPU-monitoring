@@ -55,3 +55,17 @@ Wave/**/*.csv
 Wave/**/*.parquet
 Wave/**/*.log
 Wave/**/*timing*.json
+
+# Confidential peer reviews — never commit (double-blind anonymity + review confidentiality)
+report/neurips review *.md
+report/icml review *.md
+
+# Regenerable per-window prediction / analysis artifacts (dump_window_predictions.py,
+# run_level_detection.py). Large and reproducible on any machine from data/ + code;
+# the computed numbers live in report/neurips_rebuttal.md.
+classifier/results/window_preds/
+classifier/results/window_predictions.parquet
+classifier/results/*_cv_combined.parquet
+classifier/results/leakage_before_after.csv
+classifier/results/run_level*.csv
+classifier/results/whitebox_rescored*

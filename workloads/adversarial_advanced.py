@@ -217,6 +217,10 @@ def strategy_f_interleaving(args, device):
             loss.backward()
             optimizer.step()
             train_steps += 1
+            # Per-step ground truth for window re-scoring. Phase schedule is
+            # deterministic (fixed train/other windows off wall_start), but
+            # per-step wall-clock is otherwise unrecorded.
+            print(f"STEP ts={time.time():.3f} kind=train batch_idx={train_steps}", flush=True)
             del data, target, output, loss
 
         else:
@@ -241,6 +245,7 @@ def strategy_f_interleaving(args, device):
                 del y, z
 
             other_iters += 1
+            print(f"STEP ts={time.time():.3f} kind=infer batch_idx={other_iters}", flush=True)
 
         now = time.time()
         if now - last_print >= 30:
