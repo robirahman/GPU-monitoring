@@ -1,7 +1,10 @@
 # SPAR GPU Telemetry Pipeline
 
 # GPU monitoring (Tier 1 NVML)
-nvidia-ml-py3>=7.352.0
+# Use nvidia-ml-py (NVIDIA's maintained binding), NOT the abandoned nvidia-ml-py3
+# fork: both install a top-level pynvml module, so having both pinned means the
+# effective NVML binding depends on pip's install order.
+nvidia-ml-py>=12.535.108
 
 # Data handling
 pandas>=2.0.0
@@ -15,6 +18,14 @@ torchvision>=0.16.0
 transformers>=4.36.0
 datasets>=2.16.0
 accelerate>=0.25.0
+# LoRA — required by adversarial_whitebox.py WB-L (the 8 h rebuttal long run)
+peft>=0.7.0
+
+# Classifier / oracle. Note: classifier_oracle.py degrades SILENTLY without
+# xgboost (logs a warning, then returns None predictions), so a WB-O run would
+# collect telemetry that is not actually oracle-guided. Keep this pinned.
+scikit-learn>=1.3.0
+xgboost>=2.0.0
 
 # Utilities
 tqdm>=4.65.0

@@ -108,6 +108,12 @@ def main():
     )
     parser.add_argument("--interval", type=float, default=1.0, help="Telemetry polling interval (seconds)")
     parser.add_argument("--no-dcgm", action="store_true", help="Disable DCGM Tier 2")
+    parser.add_argument(
+        "--checkpoint-sec",
+        type=float,
+        default=300.0,
+        help="Flush a crash-safety telemetry snapshot every N seconds (0 to disable)",
+    )
     parser.add_argument("--timeout", type=int, default=None, help="Kill workload after N seconds")
     parser.add_argument("--ncu", action="store_true", help="Also run Nsight Compute Tier 3")
     parser.add_argument(
@@ -167,6 +173,7 @@ def main():
             workload_label=workload_label,
             run_id=run_id,
             enable_dcgm=not args.no_dcgm,
+            checkpoint_sec=args.checkpoint_sec,
         )
     except Exception as e:
         print(f"ERROR: Failed to initialize telemetry: {e}", file=sys.stderr)
@@ -179,6 +186,11 @@ def main():
     )
     output_path = os.path.join(output_dir, filename)
 
+    # The filename depends on collector.metadata.gpu_name, so the checkpoint
+    # path can only be set once the collector exists — do it before start().
+    if args.checkpoint_sec > 0:
+        collector.checkpoint_path = output_path + ".partial"
+
     # Print run summary
     print("=" * 60)
     print("SPAR Workload Run")
@@ -190,6 +202,7 @@ def main():
     print(f"  Output:      {output_path}")
     print(f"  Interval:    {args.interval}s")
     print(f"  DCGM:        {'disabled' if args.no_dcgm else 'enabled (if available)'}")
+    print(f"  Checkpoint:  {f'every {args.checkpoint_sec:.0f}s -> {output_path}.partial' if args.checkpoint_sec > 0 else 'disabled'}")
     print(f"  Timeout:     {timeout or 'none'}s")
     print(f"  NCU (Tier3): {'yes (second pass)' if args.ncu else 'no'}")
     print("=" * 60)

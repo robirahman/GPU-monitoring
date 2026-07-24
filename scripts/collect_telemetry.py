@@ -284,6 +284,8 @@ class TelemetryCollector:
         workload_label: str = "unknown",
         run_id: str | None = None,
         enable_dcgm: bool = True,
+        checkpoint_sec: float = 300.0,
+        checkpoint_path: str | None = None,
     ):
         self.metadata = GpuMetadata(gpu_index)
         self._handle = self.metadata.handle
@@ -293,6 +295,16 @@ class TelemetryCollector:
         self._records: list[dict] = []
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
+
+        # Periodic crash-safety checkpoint. Samples otherwise live only in
+        # self._records until save() runs after the workload exits, so a crash
+        # in hour 8 of an 8 h run would lose all 28,800 rows. Set
+        # checkpoint_path (or let run_workload.py set it) to flush a rolling
+        # snapshot; save() removes it on a clean finish.
+        self._checkpoint_sec = checkpoint_sec
+        self.checkpoint_path: str | None = checkpoint_path
+        self._last_checkpoint = 0.0
+        self._checkpoint_count = 0
 
         # Try to initialize DCGM (Tier 2)
         self._dcgm: DcgmCollector | None = None
@@ -332,6 +344,7 @@ class TelemetryCollector:
 
     def _poll_loop(self):
         """Main polling loop running in the background thread."""
+        self._last_checkpoint = time.monotonic()
         while not self._stop_event.is_set():
             t0 = time.monotonic()
             try:
@@ -347,6 +360,16 @@ class TelemetryCollector:
             row["workload_label"] = self._workload_label
             row["run_id"] = self._run_id
             self._records.append(row)
+
+            # Flush a crash-safety snapshot every checkpoint_sec. Runs in this
+            # thread (the only writer of _records), so no locking is needed.
+            if (
+                self.checkpoint_path
+                and self._checkpoint_sec > 0
+                and time.monotonic() - self._last_checkpoint >= self._checkpoint_sec
+            ):
+                self._write_checkpoint()
+                self._last_checkpoint = time.monotonic()
 
             # Sleep for the remainder of the interval
             elapsed = time.monotonic() - t0
@@ -444,6 +467,41 @@ class TelemetryCollector:
         df["driver_version"] = self.metadata.driver_version
         return df
 
+    def _write_parquet(self, df: pd.DataFrame, path: Path):
+        """Write df to a Parquet file, embedding GPU metadata in the schema."""
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+
+        table = pa.Table.from_pandas(df)
+        meta = table.schema.metadata or {}
+        meta[b"gpu_metadata"] = json.dumps(self.metadata.to_dict()).encode("utf-8")
+        table = table.replace_schema_metadata(meta)
+        pq.write_table(table, str(path))
+
+    def _write_checkpoint(self):
+        """Atomically write a rolling snapshot of the samples collected so far.
+
+        Best-effort: a checkpoint failure must never kill the polling thread,
+        so all exceptions are caught and logged.
+        """
+        if not self._records:
+            return
+        try:
+            path = Path(self.checkpoint_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(path.suffix + ".tmp")
+            self._write_parquet(self.to_dataframe(), tmp)
+            os.replace(tmp, path)  # atomic — readers never see a partial file
+            self._checkpoint_count += 1
+            log.info(
+                "Checkpoint %d: %d samples -> %s",
+                self._checkpoint_count,
+                len(self._records),
+                path,
+            )
+        except Exception as e:
+            log.warning("Checkpoint write failed (continuing): %s", e)
+
     def save(self, output_path: str, fmt: str = "parquet"):
         """Save collected data to Parquet or CSV."""
         df = self.to_dataframe()
@@ -451,19 +509,20 @@ class TelemetryCollector:
         path.parent.mkdir(parents=True, exist_ok=True)
 
         if fmt == "parquet":
-            # Store GPU metadata as Parquet file metadata
-            import pyarrow as pa
-            import pyarrow.parquet as pq
-
-            table = pa.Table.from_pandas(df)
-            meta = table.schema.metadata or {}
-            meta[b"gpu_metadata"] = json.dumps(self.metadata.to_dict()).encode("utf-8")
-            table = table.replace_schema_metadata(meta)
-            pq.write_table(table, str(path))
+            self._write_parquet(df, path)
         else:
             df.to_csv(str(path), index=False)
 
         log.info("Saved %d rows to %s", len(df), path)
+
+        # The run finished and the real output is on disk, so the crash-safety
+        # snapshot is now redundant.
+        if self.checkpoint_path:
+            try:
+                Path(self.checkpoint_path).unlink(missing_ok=True)
+            except OSError as e:
+                log.warning("Could not remove checkpoint %s: %s", self.checkpoint_path, e)
+
         return str(path)
 
     @property
@@ -527,6 +586,12 @@ def main():
         action="store_true",
         help="Disable DCGM Tier 2 collection",
     )
+    parser.add_argument(
+        "--checkpoint-sec",
+        type=float,
+        default=300.0,
+        help="Flush a crash-safety snapshot every N seconds (0 to disable; default: 300)",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -539,6 +604,8 @@ def main():
         interval_sec=args.interval,
         workload_label=args.label,
         enable_dcgm=not args.no_dcgm,
+        checkpoint_sec=args.checkpoint_sec,
+        checkpoint_path=f"{args.output}.partial" if args.checkpoint_sec > 0 else None,
     )
 
     print(f"Collecting telemetry for {args.duration}s (interval={args.interval}s)...")
