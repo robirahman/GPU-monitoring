@@ -1,0 +1,85 @@
+2026-07-25 20:54:56,510 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-07-25 20:54:56,511 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=whitebox_oracle, run=357618de6fbf)
+20:55:02 HTTP Request: HEAD https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+20:55:02 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+20:55:02 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/fe8a4ea1ffedaf415f4da2f062534de366a451e6/config.json "HTTP/1.1 200 OK"
+20:55:03 HTTP Request: HEAD https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+20:55:03 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/fe8a4ea1ffedaf415f4da2f062534de366a451e6/tokenizer_config.json "HTTP/1.1 200 OK"
+20:55:03 HTTP Request: GET https://huggingface.co/api/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+20:55:03 HTTP Request: GET https://huggingface.co/api/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+20:55:03 HTTP Request: HEAD https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+20:55:03 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/fe8a4ea1ffedaf415f4da2f062534de366a451e6/config.json "HTTP/1.1 200 OK"
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+20:55:03 HTTP Request: HEAD https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+20:55:03 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/fe8a4ea1ffedaf415f4da2f062534de366a451e6/config.json "HTTP/1.1 200 OK"
+Loading TinyLlama/TinyLlama-1.1B-Chat-v1.0 in torch.float16...
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights:  29%|██▉       | 58/201 [00:00<00:00, 570.79it/s]Loading weights:  58%|█████▊    | 116/201 [00:00<00:00, 557.63it/s]Loading weights:  86%|████████▌ | 172/201 [00:00<00:00, 529.09it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 534.18it/s]
+20:55:04 HTTP Request: HEAD https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0/resolve/main/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+20:55:04 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0/fe8a4ea1ffedaf415f4da2f062534de366a451e6/generation_config.json "HTTP/1.1 200 OK"
+20:55:05 ClassifierOracle: pynvml backend, gpu_index=0
+  1.10B params (1100M), model memory: 2098 MB
+Strategy WB-O: Oracle-guided full fine-tuning
+  Model: TinyLlama/TinyLlama-1.1B-Chat-v1.0, batch: 1, seq: 256
+  Fallback dilution: N=10, threshold: 0.3, grad ckpt: True
+  Pre-allocating optimizer states...
+  Post-init memory: 6315 MB (optimizer states materialized)
+  Loading classifier oracle...
+  Oracle ready. Will train when P(training) < 0.3
+  Warming up telemetry buffer (5s)...
+STEP ts=1785012910.156 kind=infer batch_idx=0 tokens=256
+STEP ts=1785012910.175 kind=infer batch_idx=1 tokens=256
+STEP ts=1785012910.196 kind=infer batch_idx=2 tokens=256
+STEP ts=1785012910.216 kind=infer batch_idx=3 tokens=256
+STEP ts=1785012910.235 kind=infer batch_idx=4 tokens=256
+STEP ts=1785012910.254 kind=infer batch_idx=5 tokens=256
+STEP ts=1785012910.273 kind=infer batch_idx=6 tokens=256
+STEP ts=1785012910.292 kind=infer batch_idx=7 tokens=256
+STEP ts=1785012910.311 kind=infer batch_idx=8 tokens=256
+STEP ts=1785012910.331 kind=infer batch_idx=9 tokens=256
+Traceback (most recent call last):
+  File "/root/GPU-monitoring/workloads/adversarial_whitebox.py", line 438, in <module>
+    main()
+  File "/root/GPU-monitoring/workloads/adversarial_whitebox.py", line 434, in main
+    strategies[args.strategy](args, device)
+  File "/root/GPU-monitoring/workloads/adversarial_whitebox.py", line 380, in strategy_wb_oracle
+    _run_diluted_loop(model, optimizer, tokenizer, args, device, oracle=oracle)
+  File "/root/GPU-monitoring/workloads/adversarial_whitebox.py", line 155, in _run_diluted_loop
+    p_training = oracle.query_p_training(window_sec=15)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/GPU-monitoring/classifier/classifier_oracle.py", line 300, in query_p_training
+    if self._clf is None:
+       ^^^^^^^^^
+AttributeError: 'ClassifierOracle' object has no attribute '_clf'
+2026-07-25 20:55:13,616 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-07-25 20:55:13,633 [spar.telemetry] INFO: Saved 18 rows to /root/GPU-monitoring/data/whitebox_oracle_NVIDIA_A100_SXM4_80GB_357618de_20260725_205456.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    whitebox_oracle
+  Command:     python3 workloads/adversarial_whitebox.py --strategy WB-O --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 --batch-size 1 --seq-len 256 --dilution 10 --grad-ckpt --duration 300
+  GPU:         NVIDIA A100-SXM4-80GB (index 0)
+  Run ID:      357618de6fbf
+  Output:      /root/GPU-monitoring/data/whitebox_oracle_NVIDIA_A100_SXM4_80GB_357618de_20260725_205456.parquet
+  Interval:    1.0s
+  DCGM:        enabled (if available)
+  Checkpoint:  every 300s -> /root/GPU-monitoring/data/whitebox_oracle_NVIDIA_A100_SXM4_80GB_357618de_20260725_205456.parquet.partial
+  Timeout:     1800s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: python3 workloads/adversarial_whitebox.py --strategy WB-O --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 --batch-size 1 --seq-len 256 --dilution 10 --grad-ckpt --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=1, duration=13.1s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 18
+  Workload exit code: 1
+  Output file: /root/GPU-monitoring/data/whitebox_oracle_NVIDIA_A100_SXM4_80GB_357618de_20260725_205456.parquet
+============================================================
