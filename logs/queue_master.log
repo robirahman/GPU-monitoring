@@ -68,3 +68,41 @@ NVIDIA A100-SXM4-80GB, 81920 MiB
 [2026-07-25T22:02:23Z] START L_diluted_20_rep2 -> logs/L_diluted_20_rep2.log
 [2026-07-25T22:08:27Z] FAIL  L_diluted_20_rep2 rc=247 (364s) -- continuing to next stage
 [2026-07-25T22:08:27Z] START I_stochastic_rep2 -> logs/I_stochastic_rep2.log
+[2026-07-25T22:14:32Z] FAIL  I_stochastic_rep2 rc=247 (365s) -- continuing to next stage
+[2026-07-25T22:14:32Z] START F_interleave_rep2 -> logs/F_interleave_rep2.log
+[2026-07-25T22:20:37Z] FAIL  F_interleave_rep2 rc=247 (365s) -- continuing to next stage
+[2026-07-25T22:20:37Z] START L_diluted_10_rep3 -> logs/L_diluted_10_rep3.log
+[2026-07-25T22:26:41Z] FAIL  L_diluted_10_rep3 rc=247 (364s) -- continuing to next stage
+[2026-07-25T22:26:41Z] START L_diluted_20_rep3 -> logs/L_diluted_20_rep3.log
+[2026-07-25T22:32:46Z] FAIL  L_diluted_20_rep3 rc=247 (365s) -- continuing to next stage
+[2026-07-25T22:32:46Z] START I_stochastic_rep3 -> logs/I_stochastic_rep3.log
+[2026-07-25T22:38:51Z] FAIL  I_stochastic_rep3 rc=247 (365s) -- continuing to next stage
+[2026-07-25T22:38:51Z] START F_interleave_rep3 -> logs/F_interleave_rep3.log
+[2026-07-25T22:44:56Z] FAIL  F_interleave_rep3 rc=247 (365s) -- continuing to next stage
+[2026-07-25T22:44:56Z] ===== queue complete =====
+[2026-07-25T22:44:56Z] done:   23 stages
+[2026-07-25T22:44:56Z] failed: 15 stages
+logs/.done/F_interleave_rep1.failed
+logs/.done/F_interleave_rep2.failed
+logs/.done/F_interleave_rep3.failed
+logs/.done/I_stochastic_rep1.failed
+logs/.done/I_stochastic_rep2.failed
+logs/.done/I_stochastic_rep3.failed
+logs/.done/L_diluted_10_rep1.failed
+logs/.done/L_diluted_10_rep2.failed
+logs/.done/L_diluted_10_rep3.failed
+logs/.done/L_diluted_20_rep1.failed
+logs/.done/L_diluted_20_rep2.failed
+logs/.done/L_diluted_20_rep3.failed
+logs/.done/wb_oracle_rep1.failed
+logs/.done/wb_oracle_rep2.failed
+logs/.done/wb_oracle_rep3.failed
+[2026-07-25T22:44:56Z] Analysis steps (CPU) were deliberately NOT queued -- see plan section 6.
+[2026-07-25T22:46:34Z] ===== queue v3 (retry of 13 failed stages) starting (pid 65904) =====
+[2026-07-25T22:46:34Z] START wb_oracle_rep1 -> logs/wb_oracle_rep1.log
+[2026-07-25T22:55:03Z] OK    wb_oracle_rep1 (509s)
+[2026-07-25T22:55:03Z] START wb_oracle_rep2 -> logs/wb_oracle_rep2.log
+[2026-07-25T23:03:24Z] OK    wb_oracle_rep2 (501s)
+[2026-07-25T23:03:24Z] START wb_oracle_rep3 -> logs/wb_oracle_rep3.log
+[2026-07-25T23:11:46Z] OK    wb_oracle_rep3 (502s)
+[2026-07-25T23:11:46Z] waiting for CIFAR-10 (md5-verified) before the family re-runs
