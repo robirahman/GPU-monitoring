@@ -1,0 +1,467 @@
+2026-07-26 18:18:38,801 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-07-26 18:18:38,801 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=whitebox_oracle_7b_long, run=dd20b78288c3)
+18:18:44 HTTP Request: HEAD https://huggingface.co/NousResearch/Llama-2-7b-hf/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+18:18:44 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/NousResearch/Llama-2-7b-hf/8efe6c9b93655b934e27bd9981e3ec13e55aee9d/config.json "HTTP/1.1 200 OK"
+18:18:45 HTTP Request: HEAD https://huggingface.co/NousResearch/Llama-2-7b-hf/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+18:18:45 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+18:18:45 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/NousResearch/Llama-2-7b-hf/8efe6c9b93655b934e27bd9981e3ec13e55aee9d/tokenizer_config.json "HTTP/1.1 200 OK"
+18:18:45 HTTP Request: GET https://huggingface.co/api/models/NousResearch/Llama-2-7b-hf/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+18:18:45 HTTP Request: GET https://huggingface.co/api/models/NousResearch/Llama-2-7b-hf/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+18:18:45 HTTP Request: HEAD https://huggingface.co/NousResearch/Llama-2-7b-hf/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+18:18:45 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/NousResearch/Llama-2-7b-hf/8efe6c9b93655b934e27bd9981e3ec13e55aee9d/config.json "HTTP/1.1 200 OK"
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+18:18:45 HTTP Request: HEAD https://huggingface.co/NousResearch/Llama-2-7b-hf/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+18:18:45 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/NousResearch/Llama-2-7b-hf/8efe6c9b93655b934e27bd9981e3ec13e55aee9d/config.json "HTTP/1.1 200 OK"
+Loading NousResearch/Llama-2-7b-hf in torch.float16...
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   0%|          | 1/291 [00:00<01:45,  2.76it/s]Loading weights:   1%|          | 2/291 [00:00<02:02,  2.36it/s]Loading weights:   1%|          | 3/291 [00:01<01:29,  3.23it/s]Loading weights:   1%|▏         | 4/291 [00:01<01:14,  3.87it/s]Loading weights:   2%|▏         | 6/291 [00:01<00:48,  5.89it/s]Loading weights:   3%|▎         | 9/291 [00:01<00:30,  9.35it/s]Loading weights:   4%|▍         | 11/291 [00:01<00:27, 10.23it/s]Loading weights:   4%|▍         | 13/291 [00:01<00:27, 10.03it/s]Loading weights:   5%|▌         | 15/291 [00:02<00:33,  8.19it/s]Loading weights:   6%|▌         | 18/291 [00:02<00:26, 10.28it/s]Loading weights:   7%|▋         | 20/291 [00:02<00:24, 10.99it/s]Loading weights:   8%|▊         | 22/291 [00:02<00:25, 10.67it/s]Loading weights:   8%|▊         | 24/291 [00:03<00:31,  8.52it/s]Loading weights:   9%|▉         | 27/291 [00:03<00:24, 10.62it/s]Loading weights:  10%|▉         | 29/291 [00:03<00:23, 11.01it/s]Loading weights:  11%|█         | 31/291 [00:03<00:23, 10.89it/s]Loading weights:  11%|█▏        | 33/291 [00:03<00:30,  8.59it/s]Loading weights:  12%|█▏        | 35/291 [00:04<00:26,  9.78it/s]Loading weights:  13%|█▎        | 37/291 [00:04<00:27,  9.18it/s]Loading weights:  13%|█▎        | 39/291 [00:04<00:24, 10.21it/s]Loading weights:  14%|█▍        | 41/291 [00:04<00:31,  7.82it/s]Loading weights:  14%|█▍        | 42/291 [00:05<00:35,  7.01it/s]Loading weights:  15%|█▌        | 45/291 [00:05<00:26,  9.42it/s]Loading weights:  16%|█▌        | 47/291 [00:05<00:24, 10.14it/s]Loading weights:  17%|█▋        | 49/291 [00:05<00:23, 10.09it/s]Loading weights:  18%|█▊        | 51/291 [00:06<00:34,  7.03it/s]Loading weights:  18%|█▊        | 53/291 [00:06<00:27,  8.64it/s]Loading weights:  19%|█▉        | 55/291 [00:06<00:24,  9.78it/s]Loading weights:  20%|█▉        | 58/291 [00:06<00:22, 10.44it/s]Loading weights:  21%|██        | 60/291 [00:07<00:31,  7.35it/s]Loading weights:  22%|██▏       | 63/291 [00:07<00:23,  9.58it/s]Loading weights:  22%|██▏       | 65/291 [00:07<00:23,  9.73it/s]Loading weights:  23%|██▎       | 67/291 [00:07<00:24,  9.21it/s]Loading weights:  24%|██▎       | 69/291 [00:08<00:27,  8.04it/s]Loading weights:  25%|██▍       | 72/291 [00:08<00:24,  9.04it/s]Loading weights:  26%|██▌       | 76/291 [00:08<00:19, 10.96it/s]Loading weights:  27%|██▋       | 78/291 [00:08<00:22,  9.39it/s]Loading weights:  28%|██▊       | 81/291 [00:09<00:21,  9.81it/s]Loading weights:  29%|██▊       | 83/291 [00:09<00:18, 11.15it/s]Loading weights:  29%|██▉       | 85/291 [00:09<00:18, 11.22it/s]Loading weights:  30%|██▉       | 87/291 [00:09<00:25,  7.97it/s]Loading weights:  31%|███       | 90/291 [00:10<00:19, 10.09it/s]Loading weights:  32%|███▏      | 92/291 [00:10<00:18, 10.85it/s]Loading weights:  32%|███▏      | 94/291 [00:10<00:18, 10.43it/s]Loading weights:  33%|███▎      | 96/291 [00:10<00:23,  8.38it/s]Loading weights:  34%|███▍      | 99/291 [00:10<00:18, 10.25it/s]Loading weights:  35%|███▍      | 101/291 [00:11<00:17, 10.87it/s]Loading weights:  35%|███▌      | 103/291 [00:11<00:17, 10.85it/s]Loading weights:  36%|███▌      | 105/291 [00:11<00:21,  8.71it/s]Loading weights:  37%|███▋      | 108/291 [00:11<00:17, 10.73it/s]Loading weights:  38%|███▊      | 110/291 [00:11<00:16, 11.29it/s]Loading weights:  38%|███▊      | 112/291 [00:12<00:15, 11.35it/s]Loading weights:  39%|███▉      | 114/291 [00:12<00:19,  9.23it/s]Loading weights:  40%|████      | 117/291 [00:12<00:15, 11.60it/s]Loading weights:  41%|████      | 119/291 [00:12<00:15, 11.12it/s]Loading weights:  42%|████▏     | 121/291 [00:12<00:15, 11.29it/s]Loading weights:  42%|████▏     | 123/291 [00:13<00:19,  8.80it/s]Loading weights:  43%|████▎     | 126/291 [00:13<00:14, 11.48it/s]Loading weights:  44%|████▍     | 128/291 [00:13<00:14, 11.22it/s]Loading weights:  45%|████▍     | 130/291 [00:13<00:14, 10.95it/s]Loading weights:  45%|████▌     | 132/291 [00:14<00:18,  8.52it/s]Loading weights:  46%|████▋     | 135/291 [00:14<00:15, 10.15it/s]Loading weights:  47%|████▋     | 137/291 [00:14<00:15,  9.79it/s]Loading weights:  48%|████▊     | 139/291 [00:14<00:16,  9.01it/s]Loading weights:  48%|████▊     | 140/291 [00:15<00:18,  8.29it/s]Loading weights:  48%|████▊     | 141/291 [00:15<00:20,  7.33it/s]Loading weights:  49%|████▉     | 144/291 [00:15<00:13, 10.60it/s]Loading weights:  50%|█████     | 146/291 [00:15<00:13, 11.12it/s]Loading weights:  51%|█████     | 148/291 [00:15<00:12, 11.34it/s]Loading weights:  52%|█████▏    | 150/291 [00:16<00:15,  8.94it/s]Loading weights:  52%|█████▏    | 152/291 [00:16<00:13, 10.09it/s]Loading weights:  53%|█████▎    | 154/291 [00:16<00:14,  9.57it/s]Loading weights:  54%|█████▎    | 156/291 [00:16<00:11, 11.34it/s]Loading weights:  54%|█████▍    | 158/291 [00:16<00:14,  9.02it/s]Loading weights:  55%|█████▍    | 160/291 [00:17<00:13,  9.56it/s]Loading weights:  56%|█████▌    | 162/291 [00:17<00:13,  9.75it/s]Loading weights:  56%|█████▋    | 164/291 [00:17<00:12, 10.10it/s]Loading weights:  57%|█████▋    | 166/291 [00:17<00:12, 10.04it/s]Loading weights:  58%|█████▊    | 168/291 [00:18<00:17,  6.90it/s]Loading weights:  59%|█████▉    | 171/291 [00:18<00:12,  9.47it/s]Loading weights:  59%|█████▉    | 173/291 [00:18<00:11,  9.84it/s]Loading weights:  60%|██████    | 175/291 [00:18<00:11, 10.32it/s]Loading weights:  61%|██████    | 177/291 [00:18<00:13,  8.35it/s]Loading weights:  62%|██████▏   | 180/291 [00:19<00:10, 11.03it/s]Loading weights:  63%|██████▎   | 182/291 [00:19<00:10, 10.20it/s]Loading weights:  63%|██████▎   | 184/291 [00:19<00:10, 10.54it/s]Loading weights:  64%|██████▍   | 186/291 [00:19<00:11,  8.89it/s]Loading weights:  65%|██████▍   | 189/291 [00:20<00:09, 10.95it/s]Loading weights:  66%|██████▌   | 191/291 [00:20<00:09, 10.70it/s]Loading weights:  66%|██████▋   | 193/291 [00:20<00:10,  9.50it/s]Loading weights:  67%|██████▋   | 195/291 [00:21<00:14,  6.59it/s]Loading weights:  68%|██████▊   | 198/291 [00:21<00:11,  8.38it/s]Loading weights:  69%|██████▊   | 200/291 [00:21<00:09,  9.33it/s]Loading weights:  69%|██████▉   | 202/291 [00:21<00:09,  9.89it/s]Loading weights:  70%|███████   | 204/291 [00:21<00:11,  7.36it/s]Loading weights:  71%|███████   | 207/291 [00:22<00:09,  9.10it/s]Loading weights:  72%|███████▏  | 209/291 [00:22<00:08, 10.05it/s]Loading weights:  73%|███████▎  | 211/291 [00:22<00:08,  9.70it/s]Loading weights:  73%|███████▎  | 213/291 [00:22<00:09,  7.84it/s]Loading weights:  74%|███████▍  | 216/291 [00:23<00:07, 10.16it/s]Loading weights:  75%|███████▍  | 218/291 [00:23<00:06, 10.92it/s]Loading weights:  76%|███████▌  | 220/291 [00:23<00:05, 12.01it/s]Loading weights:  76%|███████▋  | 222/291 [00:23<00:06,  9.98it/s]Loading weights:  78%|███████▊  | 226/291 [00:23<00:05, 12.09it/s]Loading weights:  78%|███████▊  | 226/291 [00:40<00:05, 12.09it/s]2026-07-26 18:23:38,886 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /root/GPU-monitoring/data/whitebox_oracle_7b_long_NVIDIA_A100_SXM4_80GB_dd20b782_20260726_181838.parquet.partial
+Loading weights:  79%|███████▊  | 229/291 [09:08<58:25, 56.54s/it]Loading weights:  79%|███████▉  | 230/291 [09:08<49:50, 49.03s/it]Loading weights:  80%|████████  | 233/291 [09:08<30:10, 31.22s/it]Loading weights:  81%|████████  | 236/291 [09:08<18:50, 20.56s/it]Loading weights:  82%|████████▏ | 238/291 [09:09<13:43, 15.54s/it]Loading weights:  83%|████████▎ | 241/291 [09:09<08:29, 10.19s/it]Loading weights:  84%|████████▎ | 243/291 [09:09<06:10,  7.71s/it]Loading weights:  85%|████████▍ | 246/291 [09:09<03:48,  5.07s/it]Loading weights:  85%|████████▌ | 248/291 [09:10<02:44,  3.84s/it]Loading weights:  86%|████████▌ | 250/291 [09:10<01:57,  2.87s/it]Loading weights:  88%|████████▊ | 256/291 [09:10<00:48,  1.37s/it]Loading weights:  89%|████████▊ | 258/291 [09:10<00:36,  1.12s/it]Loading weights:  90%|█████████ | 262/291 [09:10<00:20,  1.39it/s]Loading weights:  91%|█████████ | 264/291 [09:10<00:15,  1.71it/s]Loading weights:  91%|█████████▏| 266/291 [09:11<00:12,  2.05it/s]Loading weights:  93%|█████████▎| 271/291 [09:11<00:05,  3.42it/s]Loading weights:  94%|█████████▍| 274/291 [09:11<00:03,  4.32it/s]Loading weights:  95%|█████████▍| 276/291 [09:11<00:03,  4.97it/s]Loading weights:  96%|█████████▌| 280/291 [09:12<00:01,  6.82it/s]Loading weights:  97%|█████████▋| 283/291 [09:12<00:01,  7.91it/s]Loading weights:  98%|█████████▊| 285/291 [09:12<00:00,  8.27it/s]Loading weights:  99%|█████████▉| 288/291 [09:12<00:00, 10.05it/s]Loading weights: 100%|██████████| 291/291 [09:12<00:00,  1.90s/it]
+18:28:01 HTTP Request: HEAD https://huggingface.co/NousResearch/Llama-2-7b-hf/resolve/main/generation_config.json "HTTP/1.1 307 Temporary Redirect"
+18:28:01 HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/NousResearch/Llama-2-7b-hf/8efe6c9b93655b934e27bd9981e3ec13e55aee9d/generation_config.json "HTTP/1.1 200 OK"
+18:28:02 ClassifierOracle: pynvml backend, gpu_index=0
+18:28:02 Oracle: training classifier from existing data...
+18:28:11 Total rows: 656,345 | runs: 1701
+18:28:11 Three-way distribution (runs):
+threeway_label
+ml_inference     442
+ml_training     1044
+other            235
+2026-07-26 18:28:38,902 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /root/GPU-monitoring/data/whitebox_oracle_7b_long_NVIDIA_A100_SXM4_80GB_dd20b782_20260726_181838.parquet.partial
+18:31:06 Oracle: classifier ready (166 features, 18243 class-weighted training windows)
+  6.74B params (6738M), model memory: 12853 MB
+Strategy WB-O: Oracle-guided full fine-tuning
+  Model: NousResearch/Llama-2-7b-hf, batch: 6, seq: 512
+  Fallback dilution: N=10, threshold: 0.3, grad ckpt: False
+  Pre-allocating optimizer states...
+  Post-init memory: 38574 MB (optimizer states materialized)
+  Loading classifier oracle...
+  Oracle ready. Will train when P(training) < 0.3
+  Warming up telemetry buffer (5s)...
+STEP ts=1785090672.075 kind=infer batch_idx=0 tokens=3072
+STEP ts=1785090672.327 kind=infer batch_idx=1 tokens=3072
+STEP ts=1785090672.554 kind=infer batch_idx=2 tokens=3072
+STEP ts=1785090672.782 kind=infer batch_idx=3 tokens=3072
+STEP ts=1785090673.009 kind=infer batch_idx=4 tokens=3072
+STEP ts=1785090673.236 kind=infer batch_idx=5 tokens=3072
+STEP ts=1785090673.463 kind=infer batch_idx=6 tokens=3072
+STEP ts=1785090673.690 kind=infer batch_idx=7 tokens=3072
+STEP ts=1785090673.917 kind=infer batch_idx=8 tokens=3072
+STEP ts=1785090674.144 kind=infer batch_idx=9 tokens=3072
+STEP ts=1785090674.371 kind=infer batch_idx=10 tokens=3072
+STEP ts=1785090674.598 kind=infer batch_idx=11 tokens=3072
+STEP ts=1785090674.826 kind=infer batch_idx=12 tokens=3072
+STEP ts=1785090675.053 kind=infer batch_idx=13 tokens=3072
+STEP ts=1785090675.280 kind=infer batch_idx=14 tokens=3072
+STEP ts=1785090675.507 kind=infer batch_idx=15 tokens=3072
+STEP ts=1785090675.734 kind=infer batch_idx=16 tokens=3072
+STEP ts=1785090675.961 kind=infer batch_idx=17 tokens=3072
+STEP ts=1785090676.188 kind=infer batch_idx=18 tokens=3072
+STEP ts=1785090676.415 kind=infer batch_idx=19 tokens=3072
+STEP ts=1785090676.642 kind=infer batch_idx=20 tokens=3072
+STEP ts=1785090676.870 kind=infer batch_idx=21 tokens=3072
+STEP ts=1785090677.097 kind=infer batch_idx=22 tokens=3072
+STEP ts=1785090677.324 kind=infer batch_idx=23 tokens=3072
+STEP ts=1785090677.551 kind=infer batch_idx=24 tokens=3072
+STEP ts=1785090677.778 kind=infer batch_idx=25 tokens=3072
+STEP ts=1785090678.005 kind=infer batch_idx=26 tokens=3072
+STEP ts=1785090678.232 kind=infer batch_idx=27 tokens=3072
+STEP ts=1785090678.459 kind=infer batch_idx=28 tokens=3072
+STEP ts=1785090678.686 kind=infer batch_idx=29 tokens=3072
+STEP ts=1785090678.914 kind=infer batch_idx=30 tokens=3072
+STEP ts=1785090679.141 kind=infer batch_idx=31 tokens=3072
+STEP ts=1785090679.368 kind=infer batch_idx=32 tokens=3072
+STEP ts=1785090679.595 kind=infer batch_idx=33 tokens=3072
+STEP ts=1785090679.822 kind=infer batch_idx=34 tokens=3072
+STEP ts=1785090680.049 kind=infer batch_idx=35 tokens=3072
+STEP ts=1785090680.276 kind=infer batch_idx=36 tokens=3072
+STEP ts=1785090680.503 kind=infer batch_idx=37 tokens=3072
+STEP ts=1785090680.731 kind=infer batch_idx=38 tokens=3072
+STEP ts=1785090680.958 kind=infer batch_idx=39 tokens=3072
+STEP ts=1785090681.185 kind=infer batch_idx=40 tokens=3072
+STEP ts=1785090681.412 kind=infer batch_idx=41 tokens=3072
+STEP ts=1785090681.639 kind=infer batch_idx=42 tokens=3072
+STEP ts=1785090681.866 kind=infer batch_idx=43 tokens=3072
+STEP ts=1785090682.093 kind=infer batch_idx=44 tokens=3072
+STEP ts=1785090682.320 kind=infer batch_idx=45 tokens=3072
+STEP ts=1785090682.548 kind=infer batch_idx=46 tokens=3072
+STEP ts=1785090682.775 kind=infer batch_idx=47 tokens=3072
+STEP ts=1785090683.002 kind=infer batch_idx=48 tokens=3072
+STEP ts=1785090683.229 kind=infer batch_idx=49 tokens=3072
+STEP ts=1785090683.456 kind=infer batch_idx=50 tokens=3072
+STEP ts=1785090683.683 kind=infer batch_idx=51 tokens=3072
+STEP ts=1785090683.910 kind=infer batch_idx=52 tokens=3072
+STEP ts=1785090684.137 kind=infer batch_idx=53 tokens=3072
+STEP ts=1785090684.364 kind=infer batch_idx=54 tokens=3072
+STEP ts=1785090684.592 kind=infer batch_idx=55 tokens=3072
+STEP ts=1785090684.819 kind=infer batch_idx=56 tokens=3072
+STEP ts=1785090685.046 kind=infer batch_idx=57 tokens=3072
+STEP ts=1785090685.273 kind=infer batch_idx=58 tokens=3072
+STEP ts=1785090685.500 kind=infer batch_idx=59 tokens=3072
+STEP ts=1785090685.727 kind=infer batch_idx=60 tokens=3072
+STEP ts=1785090685.954 kind=infer batch_idx=61 tokens=3072
+STEP ts=1785090686.181 kind=infer batch_idx=62 tokens=3072
+STEP ts=1785090686.408 kind=infer batch_idx=63 tokens=3072
+STEP ts=1785090686.635 kind=infer batch_idx=64 tokens=3072
+STEP ts=1785090686.863 kind=infer batch_idx=65 tokens=3072
+STEP ts=1785090687.090 kind=infer batch_idx=66 tokens=3072
+STEP ts=1785090687.317 kind=infer batch_idx=67 tokens=3072
+STEP ts=1785090687.544 kind=infer batch_idx=68 tokens=3072
+STEP ts=1785090687.771 kind=infer batch_idx=69 tokens=3072
+STEP ts=1785090688.765 kind=train batch_idx=70 tokens=3072
+STEP ts=1785090688.838 kind=infer batch_idx=71 tokens=3072
+STEP ts=1785090689.066 kind=infer batch_idx=72 tokens=3072
+STEP ts=1785090689.293 kind=infer batch_idx=73 tokens=3072
+STEP ts=1785090689.520 kind=infer batch_idx=74 tokens=3072
+STEP ts=1785090689.747 kind=infer batch_idx=75 tokens=3072
+STEP ts=1785090689.974 kind=infer batch_idx=76 tokens=3072
+STEP ts=1785090690.201 kind=infer batch_idx=77 tokens=3072
+STEP ts=1785090690.428 kind=infer batch_idx=78 tokens=3072
+STEP ts=1785090690.655 kind=infer batch_idx=79 tokens=3072
+STEP ts=1785090691.649 kind=train batch_idx=80 tokens=3072
+STEP ts=1785090691.722 kind=infer batch_idx=81 tokens=3072
+STEP ts=1785090691.949 kind=infer batch_idx=82 tokens=3072
+STEP ts=1785090692.176 kind=infer batch_idx=83 tokens=3072
+STEP ts=1785090692.403 kind=infer batch_idx=84 tokens=3072
+STEP ts=1785090692.630 kind=infer batch_idx=85 tokens=3072
+STEP ts=1785090692.857 kind=infer batch_idx=86 tokens=3072
+STEP ts=1785090693.084 kind=infer batch_idx=87 tokens=3072
+STEP ts=1785090693.311 kind=infer batch_idx=88 tokens=3072
+STEP ts=1785090693.539 kind=infer batch_idx=89 tokens=3072
+STEP ts=1785090694.533 kind=train batch_idx=90 tokens=3072
+STEP ts=1785090694.606 kind=infer batch_idx=91 tokens=3072
+STEP ts=1785090694.833 kind=infer batch_idx=92 tokens=3072
+STEP ts=1785090695.060 kind=infer batch_idx=93 tokens=3072
+STEP ts=1785090695.287 kind=infer batch_idx=94 tokens=3072
+STEP ts=1785090695.514 kind=infer batch_idx=95 tokens=3072
+STEP ts=1785090695.741 kind=infer batch_idx=96 tokens=3072
+STEP ts=1785090695.968 kind=infer batch_idx=97 tokens=3072
+STEP ts=1785090696.195 kind=infer batch_idx=98 tokens=3072
+STEP ts=1785090696.422 kind=infer batch_idx=99 tokens=3072
+STEP ts=1785090697.416 kind=train batch_idx=100 tokens=3072
+STEP ts=1785090697.489 kind=infer batch_idx=101 tokens=3072
+STEP ts=1785090697.717 kind=infer batch_idx=102 tokens=3072
+STEP ts=1785090697.944 kind=infer batch_idx=103 tokens=3072
+STEP ts=1785090698.171 kind=infer batch_idx=104 tokens=3072
+STEP ts=1785090698.398 kind=infer batch_idx=105 tokens=3072
+STEP ts=1785090698.625 kind=infer batch_idx=106 tokens=3072
+STEP ts=1785090698.852 kind=infer batch_idx=107 tokens=3072
+STEP ts=1785090699.079 kind=infer batch_idx=108 tokens=3072
+STEP ts=1785090699.306 kind=infer batch_idx=109 tokens=3072
+STEP ts=1785090700.300 kind=train batch_idx=110 tokens=3072
+STEP ts=1785090700.374 kind=infer batch_idx=111 tokens=3072
+STEP ts=1785090700.601 kind=infer batch_idx=112 tokens=3072
+STEP ts=1785090700.828 kind=infer batch_idx=113 tokens=3072
+STEP ts=1785090701.055 kind=infer batch_idx=114 tokens=3072
+STEP ts=1785090701.282 kind=infer batch_idx=115 tokens=3072
+STEP ts=1785090701.509 kind=infer batch_idx=116 tokens=3072
+STEP ts=1785090701.737 kind=infer batch_idx=117 tokens=3072
+STEP ts=1785090701.964 kind=infer batch_idx=118 tokens=3072
+STEP ts=1785090702.191 kind=infer batch_idx=119 tokens=3072
+  30s: train=5, infer=115, 12204 tok/s, mem=38574MB, loss=nan, oracle=5/11, P(train)=0.185
+STEP ts=1785090703.185 kind=train batch_idx=120 tokens=3072
+STEP ts=1785090703.258 kind=infer batch_idx=121 tokens=3072
+STEP ts=1785090703.485 kind=infer batch_idx=122 tokens=3072
+STEP ts=1785090703.712 kind=infer batch_idx=123 tokens=3072
+STEP ts=1785090703.940 kind=infer batch_idx=124 tokens=3072
+STEP ts=1785090704.167 kind=infer batch_idx=125 tokens=3072
+STEP ts=1785090704.394 kind=infer batch_idx=126 tokens=3072
+STEP ts=1785090704.622 kind=infer batch_idx=127 tokens=3072
+STEP ts=1785090704.849 kind=infer batch_idx=128 tokens=3072
+STEP ts=1785090705.076 kind=infer batch_idx=129 tokens=3072
+STEP ts=1785090706.070 kind=train batch_idx=130 tokens=3072
+STEP ts=1785090706.143 kind=infer batch_idx=131 tokens=3072
+STEP ts=1785090706.370 kind=infer batch_idx=132 tokens=3072
+STEP ts=1785090706.597 kind=infer batch_idx=133 tokens=3072
+STEP ts=1785090706.824 kind=infer batch_idx=134 tokens=3072
+STEP ts=1785090707.051 kind=infer batch_idx=135 tokens=3072
+STEP ts=1785090707.278 kind=infer batch_idx=136 tokens=3072
+STEP ts=1785090707.505 kind=infer batch_idx=137 tokens=3072
+STEP ts=1785090707.732 kind=infer batch_idx=138 tokens=3072
+STEP ts=1785090707.960 kind=infer batch_idx=139 tokens=3072
+STEP ts=1785090708.954 kind=train batch_idx=140 tokens=3072
+STEP ts=1785090709.027 kind=infer batch_idx=141 tokens=3072
+STEP ts=1785090709.254 kind=infer batch_idx=142 tokens=3072
+STEP ts=1785090709.481 kind=infer batch_idx=143 tokens=3072
+STEP ts=1785090709.708 kind=infer batch_idx=144 tokens=3072
+STEP ts=1785090709.935 kind=infer batch_idx=145 tokens=3072
+STEP ts=1785090710.163 kind=infer batch_idx=146 tokens=3072
+STEP ts=1785090710.390 kind=infer batch_idx=147 tokens=3072
+STEP ts=1785090710.617 kind=infer batch_idx=148 tokens=3072
+STEP ts=1785090710.844 kind=infer batch_idx=149 tokens=3072
+STEP ts=1785090711.838 kind=train batch_idx=150 tokens=3072
+STEP ts=1785090711.911 kind=infer batch_idx=151 tokens=3072
+STEP ts=1785090712.138 kind=infer batch_idx=152 tokens=3072
+STEP ts=1785090712.365 kind=infer batch_idx=153 tokens=3072
+STEP ts=1785090712.592 kind=infer batch_idx=154 tokens=3072
+STEP ts=1785090712.819 kind=infer batch_idx=155 tokens=3072
+STEP ts=1785090713.046 kind=infer batch_idx=156 tokens=3072
+STEP ts=1785090713.273 kind=infer batch_idx=157 tokens=3072
+STEP ts=1785090713.501 kind=infer batch_idx=158 tokens=3072
+STEP ts=1785090713.728 kind=infer batch_idx=159 tokens=3072
+STEP ts=1785090714.722 kind=train batch_idx=160 tokens=3072
+STEP ts=1785090714.795 kind=infer batch_idx=161 tokens=3072
+STEP ts=1785090715.022 kind=infer batch_idx=162 tokens=3072
+STEP ts=1785090715.249 kind=infer batch_idx=163 tokens=3072
+STEP ts=1785090715.476 kind=infer batch_idx=164 tokens=3072
+STEP ts=1785090715.703 kind=infer batch_idx=165 tokens=3072
+STEP ts=1785090715.930 kind=infer batch_idx=166 tokens=3072
+STEP ts=1785090716.157 kind=infer batch_idx=167 tokens=3072
+STEP ts=1785090716.384 kind=infer batch_idx=168 tokens=3072
+STEP ts=1785090716.611 kind=infer batch_idx=169 tokens=3072
+STEP ts=1785090717.605 kind=train batch_idx=170 tokens=3072
+STEP ts=1785090717.678 kind=infer batch_idx=171 tokens=3072
+STEP ts=1785090717.906 kind=infer batch_idx=172 tokens=3072
+STEP ts=1785090718.133 kind=infer batch_idx=173 tokens=3072
+STEP ts=1785090718.360 kind=infer batch_idx=174 tokens=3072
+STEP ts=1785090718.587 kind=infer batch_idx=175 tokens=3072
+STEP ts=1785090718.814 kind=infer batch_idx=176 tokens=3072
+STEP ts=1785090719.041 kind=infer batch_idx=177 tokens=3072
+STEP ts=1785090719.268 kind=infer batch_idx=178 tokens=3072
+STEP ts=1785090719.495 kind=infer batch_idx=179 tokens=3072
+STEP ts=1785090720.490 kind=train batch_idx=180 tokens=3072
+STEP ts=1785090720.564 kind=infer batch_idx=181 tokens=3072
+STEP ts=1785090720.791 kind=infer batch_idx=182 tokens=3072
+STEP ts=1785090721.018 kind=infer batch_idx=183 tokens=3072
+STEP ts=1785090721.245 kind=infer batch_idx=184 tokens=3072
+STEP ts=1785090721.472 kind=infer batch_idx=185 tokens=3072
+STEP ts=1785090721.699 kind=infer batch_idx=186 tokens=3072
+STEP ts=1785090721.926 kind=infer batch_idx=187 tokens=3072
+STEP ts=1785090722.153 kind=infer batch_idx=188 tokens=3072
+STEP ts=1785090722.381 kind=infer batch_idx=189 tokens=3072
+STEP ts=1785090723.375 kind=train batch_idx=190 tokens=3072
+STEP ts=1785090723.447 kind=infer batch_idx=191 tokens=3072
+STEP ts=1785090723.674 kind=infer batch_idx=192 tokens=3072
+STEP ts=1785090723.902 kind=infer batch_idx=193 tokens=3072
+STEP ts=1785090724.129 kind=infer batch_idx=194 tokens=3072
+STEP ts=1785090724.356 kind=infer batch_idx=195 tokens=3072
+STEP ts=1785090724.583 kind=infer batch_idx=196 tokens=3072
+STEP ts=1785090724.810 kind=infer batch_idx=197 tokens=3072
+STEP ts=1785090725.037 kind=infer batch_idx=198 tokens=3072
+STEP ts=1785090725.264 kind=infer batch_idx=199 tokens=3072
+STEP ts=1785090726.258 kind=train batch_idx=200 tokens=3072
+STEP ts=1785090726.331 kind=infer batch_idx=201 tokens=3072
+STEP ts=1785090726.558 kind=infer batch_idx=202 tokens=3072
+STEP ts=1785090726.785 kind=infer batch_idx=203 tokens=3072
+STEP ts=1785090727.012 kind=infer batch_idx=204 tokens=3072
+STEP ts=1785090727.239 kind=infer batch_idx=205 tokens=3072
+STEP ts=1785090727.466 kind=infer batch_idx=206 tokens=3072
+STEP ts=1785090727.694 kind=infer batch_idx=207 tokens=3072
+STEP ts=1785090727.921 kind=infer batch_idx=208 tokens=3072
+STEP ts=1785090728.148 kind=infer batch_idx=209 tokens=3072
+STEP ts=1785090729.142 kind=train batch_idx=210 tokens=3072
+STEP ts=1785090729.215 kind=infer batch_idx=211 tokens=3072
+STEP ts=1785090729.442 kind=infer batch_idx=212 tokens=3072
+STEP ts=1785090729.669 kind=infer batch_idx=213 tokens=3072
+STEP ts=1785090729.896 kind=infer batch_idx=214 tokens=3072
+STEP ts=1785090730.123 kind=infer batch_idx=215 tokens=3072
+STEP ts=1785090730.350 kind=infer batch_idx=216 tokens=3072
+STEP ts=1785090730.577 kind=infer batch_idx=217 tokens=3072
+STEP ts=1785090730.804 kind=infer batch_idx=218 tokens=3072
+STEP ts=1785090731.032 kind=infer batch_idx=219 tokens=3072
+STEP ts=1785090732.025 kind=train batch_idx=220 tokens=3072
+STEP ts=1785090732.098 kind=infer batch_idx=221 tokens=3072
+STEP ts=1785090732.325 kind=infer batch_idx=222 tokens=3072
+  60s: train=16, infer=207, 11353 tok/s, mem=38574MB, loss=nan, oracle=16/22, P(train)=0.072
+STEP ts=1785090732.553 kind=infer batch_idx=223 tokens=3072
+STEP ts=1785090732.780 kind=infer batch_idx=224 tokens=3072
+STEP ts=1785090733.007 kind=infer batch_idx=225 tokens=3072
+STEP ts=1785090733.234 kind=infer batch_idx=226 tokens=3072
+STEP ts=1785090733.461 kind=infer batch_idx=227 tokens=3072
+STEP ts=1785090733.688 kind=infer batch_idx=228 tokens=3072
+STEP ts=1785090733.915 kind=infer batch_idx=229 tokens=3072
+STEP ts=1785090734.909 kind=train batch_idx=230 tokens=3072
+STEP ts=1785090734.983 kind=infer batch_idx=231 tokens=3072
+STEP ts=1785090735.210 kind=infer batch_idx=232 tokens=3072
+STEP ts=1785090735.437 kind=infer batch_idx=233 tokens=3072
+STEP ts=1785090735.664 kind=infer batch_idx=234 tokens=3072
+STEP ts=1785090735.891 kind=infer batch_idx=235 tokens=3072
+STEP ts=1785090736.118 kind=infer batch_idx=236 tokens=3072
+STEP ts=1785090736.345 kind=infer batch_idx=237 tokens=3072
+STEP ts=1785090736.572 kind=infer batch_idx=238 tokens=3072
+STEP ts=1785090736.800 kind=infer batch_idx=239 tokens=3072
+STEP ts=1785090737.794 kind=train batch_idx=240 tokens=3072
+STEP ts=1785090737.867 kind=infer batch_idx=241 tokens=3072
+STEP ts=1785090738.094 kind=infer batch_idx=242 tokens=3072
+STEP ts=1785090738.321 kind=infer batch_idx=243 tokens=3072
+STEP ts=1785090738.549 kind=infer batch_idx=244 tokens=3072
+STEP ts=1785090738.776 kind=infer batch_idx=245 tokens=3072
+STEP ts=1785090739.003 kind=infer batch_idx=246 tokens=3072
+STEP ts=1785090739.230 kind=infer batch_idx=247 tokens=3072
+STEP ts=1785090739.457 kind=infer batch_idx=248 tokens=3072
+STEP ts=1785090739.684 kind=infer batch_idx=249 tokens=3072
+STEP ts=1785090740.678 kind=train batch_idx=250 tokens=3072
+STEP ts=1785090740.751 kind=infer batch_idx=251 tokens=3072
+STEP ts=1785090740.978 kind=infer batch_idx=252 tokens=3072
+STEP ts=1785090741.205 kind=infer batch_idx=253 tokens=3072
+STEP ts=1785090741.432 kind=infer batch_idx=254 tokens=3072
+STEP ts=1785090741.659 kind=infer batch_idx=255 tokens=3072
+STEP ts=1785090741.886 kind=infer batch_idx=256 tokens=3072
+STEP ts=1785090742.114 kind=infer batch_idx=257 tokens=3072
+STEP ts=1785090742.341 kind=infer batch_idx=258 tokens=3072
+STEP ts=1785090742.568 kind=infer batch_idx=259 tokens=3072
+STEP ts=1785090743.562 kind=train batch_idx=260 tokens=3072
+STEP ts=1785090743.635 kind=infer batch_idx=261 tokens=3072
+STEP ts=1785090743.862 kind=infer batch_idx=262 tokens=3072
+STEP ts=1785090744.089 kind=infer batch_idx=263 tokens=3072
+STEP ts=1785090744.316 kind=infer batch_idx=264 tokens=3072
+STEP ts=1785090744.543 kind=infer batch_idx=265 tokens=3072
+STEP ts=1785090744.770 kind=infer batch_idx=266 tokens=3072
+STEP ts=1785090744.997 kind=infer batch_idx=267 tokens=3072
+STEP ts=1785090745.225 kind=infer batch_idx=268 tokens=3072
+STEP ts=1785090745.452 kind=infer batch_idx=269 tokens=3072
+STEP ts=1785090746.446 kind=train batch_idx=270 tokens=3072
+STEP ts=1785090746.519 kind=infer batch_idx=271 tokens=3072
+STEP ts=1785090746.746 kind=infer batch_idx=272 tokens=3072
+STEP ts=1785090746.973 kind=infer batch_idx=273 tokens=3072
+STEP ts=1785090747.200 kind=infer batch_idx=274 tokens=3072
+STEP ts=1785090747.427 kind=infer batch_idx=275 tokens=3072
+STEP ts=1785090747.654 kind=infer batch_idx=276 tokens=3072
+STEP ts=1785090747.881 kind=infer batch_idx=277 tokens=3072
+STEP ts=1785090748.108 kind=infer batch_idx=278 tokens=3072
+STEP ts=1785090748.335 kind=infer batch_idx=279 tokens=3072
+STEP ts=1785090749.329 kind=train batch_idx=280 tokens=3072
+STEP ts=1785090749.403 kind=infer batch_idx=281 tokens=3072
+STEP ts=1785090749.630 kind=infer batch_idx=282 tokens=3072
+STEP ts=1785090749.857 kind=infer batch_idx=283 tokens=3072
+STEP ts=1785090750.084 kind=infer batch_idx=284 tokens=3072
+STEP ts=1785090750.311 kind=infer batch_idx=285 tokens=3072
+STEP ts=1785090750.538 kind=infer batch_idx=286 tokens=3072
+STEP ts=1785090750.765 kind=infer batch_idx=287 tokens=3072
+STEP ts=1785090750.992 kind=infer batch_idx=288 tokens=3072
+STEP ts=1785090751.220 kind=infer batch_idx=289 tokens=3072
+STEP ts=1785090752.214 kind=train batch_idx=290 tokens=3072
+STEP ts=1785090752.287 kind=infer batch_idx=291 tokens=3072
+STEP ts=1785090752.514 kind=infer batch_idx=292 tokens=3072
+STEP ts=1785090752.741 kind=infer batch_idx=293 tokens=3072
+STEP ts=1785090752.968 kind=infer batch_idx=294 tokens=3072
+STEP ts=1785090753.196 kind=infer batch_idx=295 tokens=3072
+STEP ts=1785090753.423 kind=infer batch_idx=296 tokens=3072
+STEP ts=1785090753.650 kind=infer batch_idx=297 tokens=3072
+STEP ts=1785090753.877 kind=infer batch_idx=298 tokens=3072
+STEP ts=1785090754.104 kind=infer batch_idx=299 tokens=3072
+STEP ts=1785090755.098 kind=train batch_idx=300 tokens=3072
+STEP ts=1785090755.171 kind=infer batch_idx=301 tokens=3072
+STEP ts=1785090755.398 kind=infer batch_idx=302 tokens=3072
+STEP ts=1785090755.625 kind=infer batch_idx=303 tokens=3072
+STEP ts=1785090755.852 kind=infer batch_idx=304 tokens=3072
+STEP ts=1785090756.079 kind=infer batch_idx=305 tokens=3072
+STEP ts=1785090756.306 kind=infer batch_idx=306 tokens=3072
+STEP ts=1785090756.533 kind=infer batch_idx=307 tokens=3072
+STEP ts=1785090756.761 kind=infer batch_idx=308 tokens=3072
+STEP ts=1785090756.988 kind=infer batch_idx=309 tokens=3072
+STEP ts=1785090757.982 kind=train batch_idx=310 tokens=3072
+STEP ts=1785090758.055 kind=infer batch_idx=311 tokens=3072
+STEP ts=1785090758.282 kind=infer batch_idx=312 tokens=3072
+STEP ts=1785090758.509 kind=infer batch_idx=313 tokens=3072
+STEP ts=1785090758.736 kind=infer batch_idx=314 tokens=3072
+STEP ts=1785090758.963 kind=infer batch_idx=315 tokens=3072
+STEP ts=1785090759.191 kind=infer batch_idx=316 tokens=3072
+STEP ts=1785090759.418 kind=infer batch_idx=317 tokens=3072
+STEP ts=1785090759.645 kind=infer batch_idx=318 tokens=3072
+STEP ts=1785090759.872 kind=infer batch_idx=319 tokens=3072
+STEP ts=1785090760.866 kind=train batch_idx=320 tokens=3072
+STEP ts=1785090760.939 kind=infer batch_idx=321 tokens=3072
+STEP ts=1785090761.166 kind=infer batch_idx=322 tokens=3072
+STEP ts=1785090761.393 kind=infer batch_idx=323 tokens=3072
+STEP ts=1785090761.620 kind=infer batch_idx=324 tokens=3072
+STEP ts=1785090761.847 kind=infer batch_idx=325 tokens=3072
+STEP ts=1785090762.074 kind=infer batch_idx=326 tokens=3072
+STEP ts=1785090762.302 kind=infer batch_idx=327 tokens=3072
+STEP ts=1785090762.529 kind=infer batch_idx=328 tokens=3072
+  91s: train=26, infer=303, 11162 tok/s, mem=38574MB, loss=nan, oracle=26/32, P(train)=0.263
+STEP ts=1785090762.756 kind=infer batch_idx=329 tokens=3072
+STEP ts=1785090763.749 kind=train batch_idx=330 tokens=3072
+STEP ts=1785090763.822 kind=infer batch_idx=331 tokens=3072
+STEP ts=1785090764.050 kind=infer batch_idx=332 tokens=3072
+STEP ts=1785090764.277 kind=infer batch_idx=333 tokens=3072
+STEP ts=1785090764.504 kind=infer batch_idx=334 tokens=3072
+STEP ts=1785090764.731 kind=infer batch_idx=335 tokens=3072
+STEP ts=1785090764.958 kind=infer batch_idx=336 tokens=3072
+STEP ts=1785090765.185 kind=infer batch_idx=337 tokens=3072
+STEP ts=1785090765.412 kind=infer batch_idx=338 tokens=3072
+STEP ts=1785090765.639 kind=infer batch_idx=339 tokens=3072
+STEP ts=1785090766.632 kind=train batch_idx=340 tokens=3072
+STEP ts=1785090766.705 kind=infer batch_idx=341 tokens=3072
+STEP ts=1785090766.932 kind=infer batch_idx=342 tokens=3072
+STEP ts=1785090767.159 kind=infer batch_idx=343 tokens=3072
+STEP ts=1785090767.386 kind=infer batch_idx=344 tokens=3072
+STEP ts=1785090767.614 kind=infer batch_idx=345 tokens=3072
+STEP ts=1785090767.841 kind=infer batch_idx=346 tokens=3072
+STEP ts=1785090768.068 kind=infer batch_idx=347 tokens=3072
+STEP ts=1785090768.296 kind=infer batch_idx=348 tokens=3072
+STEP ts=1785090768.523 kind=infer batch_idx=349 tokens=3072
+STEP ts=1785090769.516 kind=train batch_idx=350 tokens=3072
+STEP ts=1785090769.590 kind=infer batch_idx=351 tokens=3072
+STEP ts=1785090769.817 kind=infer batch_idx=352 tokens=3072
+STEP ts=1785090770.044 kind=infer batch_idx=353 tokens=3072
+STEP ts=1785090770.271 kind=infer batch_idx=354 tokens=3072
+STEP ts=1785090770.499 kind=infer batch_idx=355 tokens=3072
+STEP ts=1785090770.726 kind=infer batch_idx=356 tokens=3072
+STEP ts=1785090770.953 kind=infer batch_idx=357 tokens=3072
+STEP ts=1785090771.180 kind=infer batch_idx=358 tokens=3072
+STEP ts=1785090771.407 kind=infer batch_idx=359 tokens=3072
+STEP ts=1785090772.401 kind=train batch_idx=360 tokens=3072
+STEP ts=1785090772.474 kind=infer batch_idx=361 tokens=3072
+STEP ts=1785090772.701 kind=infer batch_idx=362 tokens=3072
+STEP ts=1785090772.928 kind=infer batch_idx=363 tokens=3072
+STEP ts=1785090773.155 kind=infer batch_idx=364 tokens=3072
+STEP ts=1785090773.383 kind=infer batch_idx=365 tokens=3072
+STEP ts=1785090773.610 kind=infer batch_idx=366 tokens=3072
+STEP ts=1785090773.837 kind=infer batch_idx=367 tokens=3072
+STEP ts=1785090774.064 kind=infer batch_idx=368 tokens=3072
+STEP ts=1785090774.291 kind=infer batch_idx=369 tokens=3072
+STEP ts=1785090775.285 kind=train batch_idx=370 tokens=3072
+STEP ts=1785090775.358 kind=infer batch_idx=371 tokens=3072
+STEP ts=1785090775.585 kind=infer batch_idx=372 tokens=3072
+STEP ts=1785090775.812 kind=infer batch_idx=373 tokens=3072
+STEP ts=1785090776.039 kind=infer batch_idx=374 tokens=3072
+STEP ts=1785090776.266 kind=infer batch_idx=375 tokens=3072
+STEP ts=1785090776.493 kind=infer batch_idx=376 tokens=3072
+STEP ts=1785090776.720 kind=infer batch_idx=377 tokens=3072
+STEP ts=1785090776.947 kind=infer batch_idx=378 tokens=3072
+STEP ts=1785090777.174 kind=infer batch_idx=379 tokens=3072
+STEP ts=1785090778.168 kind=train batch_idx=380 tokens=3072
+STEP ts=1785090778.241 kind=infer batch_idx=381 tokens=3072
+STEP ts=1785090778.468 kind=infer batch_idx=382 tokens=3072
+STEP ts=1785090778.695 kind=infer batch_idx=383 tokens=3072
+STEP ts=1785090778.922 kind=infer batch_idx=384 tokens=3072
+STEP ts=1785090779.150 kind=infer batch_idx=385 tokens=3072
+STEP ts=1785090779.377 kind=infer batch_idx=386 tokens=3072
+STEP ts=1785090779.604 kind=infer batch_idx=387 tokens=3072
+STEP ts=1785090779.831 kind=infer batch_idx=388 tokens=3072
+STEP ts=1785090780.058 kind=infer batch_idx=389 tokens=3072
+STEP ts=1785090781.052 kind=train batch_idx=390 tokens=3072
+STEP ts=1785090781.124 kind=infer batch_idx=391 tokens=3072
+STEP ts=1785090781.352 kind=infer batch_idx=392 tokens=3072
+STEP ts=1785090781.579 kind=infer batch_idx=393 tokens=3072
+STEP ts=1785090781.806 kind=infer batch_idx=394 tokens=3072
+STEP ts=1785090782.033 kind=infer batch_idx=395 tokens=3072
+STEP ts=1785090782.260 kind=infer batch_idx=396 tokens=3072
+STEP ts=1785090782.487 kind=infer batch_idx=397 tokens=3072
+STEP ts=1785090782.714 kind=infer batch_idx=398 tokens=3072
+STEP ts=1785090782.941 kind=infer batch_idx=399 tokens=3072
+STEP ts=1785090783.935 kind=train batch_idx=400 tokens=3072
+STEP ts=1785090784.008 kind=infer batch_idx=401 tokens=3072
+STEP ts=1785090784.235 kind=infer batch_idx=402 tokens=3072
+STEP ts=1785090784.462 kind=infer batch_idx=403 tokens=3072
+STEP ts=1785090784.689 kind=infer batch_idx=404 tokens=3072
+STEP ts=1785090784.916 kind=infer batch_idx=405 tokens=3072
+STEP ts=1785090785.143 kind=infer batch_idx=406 tokens=3072
+STEP ts=1785090785.370 kind=infer batch_idx=407 tokens=3072
+STEP ts=1785090785.597 kind=infer batch_idx=408 tokens=3072
+STEP ts=1785090785.824 kind=infer batch_idx=409 tokens=3072
+STEP ts=1785090786.819 kind=train batch_idx=410 tokens=3072
+STEP ts=1785090786.892 kind=infer batch_idx=411 tokens=3072
+STEP ts=1785090787.119 kind=infer batch_idx=412 tokens=3072
+STEP ts=1785090787.346 kind=infer batch_idx=413 tokens=3072
+STEP ts=1785090787.573 kind=infer batch_idx=414 tokens=3072
+STEP ts=1785090787.800 kind=infer batch_idx=415 tokens=3072
+STEP ts=1785090788.028 kind=infer batch_idx=416 tokens=3072
+STEP ts=1785090788.255 kind=infer batch_idx=417 tokens=3072
+STEP ts=1785090788.482 kind=infer batch_idx=418 tokens=3072
+STEP ts=1785090788.709 kind=infer batch_idx=419 tokens=3072
+STEP ts=1785090789.702 kind=train batch_idx=420 tokens=3072
+STEP ts=1785090789.776 kind=infer batch_idx=421 tokens=3072
+STEP ts=1785090790.003 kind=infer batch_idx=422 tokens=3072
+STEP ts=1785090790.230 kind=infer batch_idx=423 tokens=3072
+STEP ts=1785090790.457 kind=infer batch_idx=424 tokens=3072
