@@ -178,3 +178,35 @@ NONE in band — not launching the long run. Observed rates: N=2:0.05, N=3:0.00,
 [2026-07-26T12:38:56Z] START wb_lora_7b_pilot_N6 -> logs/wb_lora_7b_pilot_N6.log
 [2026-07-26T12:54:19Z] OK    wb_lora_7b_pilot_N6 (923s)
 [2026-07-26T12:54:19Z] START wb_lora_7b_pilot_N7 -> logs/wb_lora_7b_pilot_N7.log
+[2026-07-26T13:09:40Z] OK    wb_lora_7b_pilot_N7 (921s)
+[2026-07-26T13:09:40Z] START wb_lora_7b_pilot_N8 -> logs/wb_lora_7b_pilot_N8.log
+[2026-07-26T13:25:02Z] OK    wb_lora_7b_pilot_N8 (922s)
+[2026-07-26T13:25:02Z] scoring the full pilot sweep
+13:25:12 Total rows: 651,795 | runs: 1696
+13:25:12 Three-way distribution (runs):
+threeway_label
+ml_inference     442
+ml_training     1039
+other            235
+  N= 2:   66 windows  alert_rate=0.045  p_train mean=0.459 max=0.913
+  N= 3:   60 windows  alert_rate=0.000  p_train mean=0.584 max=0.736
+  N= 5:   60 windows  alert_rate=0.000  p_train mean=0.525 max=0.671
+  N= 6:   60 windows  alert_rate=0.000  p_train mean=0.460 max=0.596
+  N= 7:   60 windows  alert_rate=0.000  p_train mean=0.443 max=0.631
+  N= 8:   60 windows  alert_rate=0.000  p_train mean=0.417 max=0.573
+
+=== existing 7B N=10 run: continuous p_train correlation (1920 windows) ===
+  p_train mean=0.328 sd=0.088 min=0.171 max=0.537  (alerts at tau=0.75: 0)
+  ACF of p_train  (window=30s stride=15s -> every 2nd window is disjoint)
+    lag   1: overlapping +0.422   disjoint -0.275
+    lag   2: overlapping -0.295   disjoint -0.123
+    lag   4: overlapping -0.117   disjoint -0.108
+    lag   8: overlapping -0.113   disjoint -0.067
+    lag  16: overlapping -0.064   disjoint -0.028
+    lag  40: overlapping +0.017   disjoint -0.105
+
+NONE in band — not launching the long run. Observed rates: N=2:0.05, N=3:0.00, N=5:0.00, N=6:0.00, N=7:0.00, N=8:0.00
+  all pilots BELOW band; try LESS dilution than N=2
+[2026-07-26T13:31:30Z] ABORT: no dilution landed in the 40-80% band across N=2,3,5,6,7,8
+[2026-07-26T13:31:30Z]   see /tmp/claude-0/-/787a5ab8-78a1-41cf-90e4-cc9f630c7038/scratchpad/pilot_scores.json for the measured curve and the suggested bracket
+[2026-07-26T13:31:30Z] ===== queue v5 aborted (no long run launched) =====
