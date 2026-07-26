@@ -97,6 +97,16 @@ class ClassifierOracle:
         else:
             raise ValueError(f"Unknown backend: {backend!r}")
 
+        # Load or train the classifier. This must live here, after the backend
+        # dispatch above, NOT inside one of the _init_* methods — it is
+        # backend-independent, and having it in _init_amd only meant _clf was
+        # never defined on NVIDIA, so the first query_p_training() raised
+        # AttributeError and every WB-O run died ~14 s in.
+        self._clf = None
+        self._le = None
+        self._feature_cols = None
+        self._build_classifier()
+
     def _init_nvidia(self):
         pynvml.nvmlInit()
         self._handle = pynvml.nvmlDeviceGetHandleByIndex(self.gpu_index)
@@ -127,12 +137,6 @@ class ClassifierOracle:
         asic = _amdsmi.amdsmi_get_gpu_asic_info(self._handle) or {}
         log.info(f"ClassifierOracle: amdsmi backend, "
                  f"gpu_index={self.gpu_index}, {asic.get('market_name', '?')}")
-
-        # Load or train the classifier
-        self._clf = None
-        self._le = None
-        self._feature_cols = None
-        self._build_classifier()
 
     def _build_classifier(self):
         """Train the same XGBoost classifier used by the defender."""
