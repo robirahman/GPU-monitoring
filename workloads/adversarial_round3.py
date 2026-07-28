@@ -33,8 +33,18 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 
-def get_cifar10_test_loader(batch_size):
-    """Same data pipeline as inference.py — test set, no augmentation."""
+def get_cifar10_test_loader(batch_size, num_workers=0):
+    """Same data pipeline as inference.py — test set, no augmentation.
+
+    num_workers defaults to 0 to preserve the behaviour every existing corpus
+    run was collected under. Note what that default costs: Resize(224) upsamples
+    32x32 CIFAR images 49x on a single CPU thread, so the loader — not the GPU —
+    sets the pace. Measured on an A100, batch 128 takes ~70 s/batch and the GPU
+    sits at ~0.5% utilisation, which is why an entire 300 s run yields only ~4
+    batches. Raising this makes the workload GPU-bound; that is a DIFFERENT
+    workload from the one in the corpus, so runs using it should carry a
+    distinct label rather than being pooled with the num_workers=0 runs.
+    """
     transform = transforms.Compose([
         transforms.Resize(224),
         transforms.ToTensor(),
@@ -44,7 +54,8 @@ def get_cifar10_test_loader(batch_size):
         root="data/cifar10", train=False, download=True, transform=transform
     )
     return DataLoader(dataset, batch_size=batch_size, shuffle=False,
-                      num_workers=0, pin_memory=False)
+                      num_workers=num_workers, pin_memory=num_workers > 0,
+                      persistent_workers=num_workers > 0)
 
 
 # ── Strategy K: Online Learning Camouflage ───────────────────────────────────
@@ -67,7 +78,7 @@ def strategy_k_online_learning(args, device):
     print(f"  Model: resnet50, Batch: {batch_size}, Duration: {args.duration}s")
     print(f"  Identical to inference except: backward pass + weight update per batch")
 
-    loader = get_cifar10_test_loader(batch_size)
+    loader = get_cifar10_test_loader(batch_size, args.num_workers)
 
     # Same model as inference workload
     model = torchvision.models.resnet50(weights=None, num_classes=10).to(device)
@@ -131,7 +142,7 @@ def strategy_l_diluted(args, device):
     print(f"  Model: resnet50, Batch: {batch_size}, Duration: {args.duration}s")
     print(f"  Training fraction: {1/dilution:.1%}")
 
-    loader = get_cifar10_test_loader(batch_size)
+    loader = get_cifar10_test_loader(batch_size, args.num_workers)
 
     model = torchvision.models.resnet50(weights=None, num_classes=10).to(device)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.0)
@@ -205,6 +216,10 @@ def main():
                         help="Batch size (default: 256, same as inference)")
     parser.add_argument("--dilution", type=int, default=5,
                         help="Strategy L: train on 1/N batches (default: 5)")
+    parser.add_argument("--num-workers", type=int, default=0,
+                        help="DataLoader workers. 0 (default) reproduces the corpus runs, "
+                             "which are CPU-bound on Resize(224); >0 makes the workload "
+                             "GPU-bound and is a different workload — label it separately.")
     parser.add_argument("--device", type=str, default="cuda")
     args = parser.parse_args()
 
