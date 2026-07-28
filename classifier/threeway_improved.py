@@ -196,6 +196,17 @@ def threeway_label(label: str) -> str:
         return "other"
     # Heuristic fallback
     lc = label.lower()
+    # White-box variants carry a model/duration suffix (whitebox_lora_7b_long,
+    # whitebox_diluted_7b_N10_1h, ...) that the explicit lists above do not
+    # enumerate, and none of them contain "train"/"adversarial_". Without these
+    # keys they fall through to "other", which silently puts LoRA/full-FT
+    # training runs into the negative class — both polluting the corpus and, if
+    # they are left in a classifier's training set, teaching it that this
+    # telemetry is NOT training. Checked before the "infer" rule so that only
+    # whitebox_inference_* is treated as inference.
+    if any(k in lc for k in ("whitebox_lora", "whitebox_diluted", "whitebox_oracle",
+                             "wb-l", "wb-d", "wb-o")):
+        return "ml_training"
     if any(k in lc for k in ("train", "bert", "gpt", "resnet_cifar", "mlp_cifar",
                               "fsdp_", "ddp_", "adversarial_")):
         return "ml_training"
