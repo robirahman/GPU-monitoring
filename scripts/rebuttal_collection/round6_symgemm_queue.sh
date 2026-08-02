@@ -29,9 +29,37 @@
 # Resumable: each completed stage drops logs/.done/<stage>.done and is skipped
 # on re-run. A failing stage is recorded and the queue CONTINUES.
 #
-# After rep 1 (~55 min) you already hold a complete 1-rep design. Everything
-# after that only adds statistical power, so the queue degrades gracefully if
-# the clock runs out.
+# Also collected, for Area Chair 1uob's training-heterogeneity question:
+#   P1  R rollout generations + 1 policy update   PPO shape (R = 8 and 32)
+#   DC  autoregressive decode only                memory-bandwidth-bound negative
+#
+# ── RUN THIS FIRST ──────────────────────────────────────────────────────────
+#   SMOKE=1 bash scripts/rebuttal_collection/round6_symgemm_queue.sh
+# One 60 s pass over every distinct cell including 7B, ~35 min. It exercises
+# the paths the CPU self-test cannot: model.generate(), the 7B load, and peak
+# memory. Cheap insurance against discovering an OOM four hours in. Smoke
+# stages write their own .done markers under a smoke_ prefix, so they do not
+# collide with the real run.
+#
+# Then the real run:
+#   nohup bash scripts/rebuttal_collection/round6_symgemm_queue.sh &
+#
+# ── TIME AND COST (A100-80GB at ~$1.2-1.7/hr) ───────────────────────────────
+#   rep 1   10 stages   core ladder + M=8192 pair + 3 generation cells
+#   rep 2   12 stages   the above + the 7B pair
+#   rep 3    8 stages   core ladder + generation cells
+#   rep 4    5 stages   core ladder only
+#   -------------------------------------------------------------------------
+#   REPS=4  35 stages   ~7.2 h wall  ~$9-12   (workload 5.8 h + gaps + loads)
+#   REPS=3  30 stages   ~6.2 h wall  ~$8-11
+#   REPS=2  22 stages   ~4.5 h wall  ~$6-8
+#   rep 1 alone         ~1.7 h wall  ~$3     <- already a complete 1-rep design
+#
+# Rep-major ordering means you can stop after any rep and still have a balanced
+# design. Set REPS to taste, or just kill the queue when the clock says so.
+#
+# Resumable: each completed stage drops logs/.done/<stage>.done and is skipped
+# on re-run. A failing stage is recorded and the queue CONTINUES.
 
 REPO=/root/GPU-monitoring
 cd "$REPO" || { echo "cannot cd $REPO"; exit 1; }
@@ -50,6 +78,25 @@ TIMEOUT7B=1500      # 7B needs longer to load
 GAP=60              # idle settle between stages
 REPS=${REPS:-4}
 RUN_TRITON=${RUN_TRITON:-0}   # gated; see G3 in the plan
+SMOKE=${SMOKE:-0}
+
+# Smoke mode: one 60 s pass over every distinct cell, 7B included. Stages are
+# prefixed so their .done markers cannot satisfy the real run, and the short
+# duration is the whole point -- this is a shakedown, not data.
+PREFIX=""
+OUTARG=()
+if [ "$SMOKE" = "1" ]; then
+  DUR=60; TIMEOUT=240; TIMEOUT7B=900; GAP=10; REPS=1; PREFIX="smoke_"
+  # Critically, smoke telemetry must NOT land in data/. load_all_data() rglobs
+  # data/**, and a "smoke_symgemm_L4_*" label does not match the symgemm_ rule
+  # in threeway_label, so it would fall through to the "other" class -- real
+  # training telemetry filed as a negative. Send it somewhere the loader
+  # never looks.
+  OUTARG=(--output-dir logs/smoke_data)
+  mkdir -p logs/smoke_data
+  echo "SMOKE MODE: 60 s per cell, 1 rep, ~35 min. Output goes to"
+  echo "logs/smoke_data/ and is NOT usable data -- this is a shakedown."
+fi
 
 mkdir -p logs logs/.done data
 MASTER=logs/round6_master.log
@@ -96,7 +143,7 @@ run_stage() {
 cell_1b() {  # cell_1b <stage-name> <mode> [extra args...]
   local name="$1" mode="$2"; shift 2
   run_stage "$name" \
-    $PY scripts/run_workload.py --workload "$name" \
+    $PY scripts/run_workload.py --workload "$name" "${OUTARG[@]}" \
       --timeout $TIMEOUT --checkpoint-sec $CKPT -- \
       $PY $WL --mode "$mode" --model "$M1" \
       --batch-size 4 --seq-len 512 --dtype bfloat16 --lr 1e-3 \
@@ -108,7 +155,7 @@ cell_1b() {  # cell_1b <stage-name> <mode> [extra args...]
 cell_1b_m8192() {
   local name="$1" mode="$2"; shift 2
   run_stage "$name" \
-    $PY scripts/run_workload.py --workload "$name" \
+    $PY scripts/run_workload.py --workload "$name" "${OUTARG[@]}" \
       --timeout $TIMEOUT --checkpoint-sec $CKPT -- \
       $PY $WL --mode "$mode" --model "$M1" \
       --batch-size 16 --seq-len 512 --dtype bfloat16 --lr 1e-3 \
@@ -123,7 +170,7 @@ cell_1b_m8192() {
 cell_gen() {  # cell_gen <stage-name> <mode> [extra args...]
   local name="$1" mode="$2"; shift 2
   run_stage "$name" \
-    $PY scripts/run_workload.py --workload "$name" \
+    $PY scripts/run_workload.py --workload "$name" "${OUTARG[@]}" \
       --timeout $TIMEOUT --checkpoint-sec $CKPT -- \
       $PY $WL --mode "$mode" --model "$M1" \
       --batch-size 4 --prompt-len 128 --gen-tokens 64 \
@@ -135,7 +182,7 @@ cell_gen() {  # cell_gen <stage-name> <mode> [extra args...]
 cell_7b() {
   local name="$1" mode="$2"; shift 2
   run_stage "$name" \
-    $PY scripts/run_workload.py --workload "$name" \
+    $PY scripts/run_workload.py --workload "$name" "${OUTARG[@]}" \
       --timeout $TIMEOUT7B --checkpoint-sec $CKPT -- \
       $PY $WL --mode "$mode" --model "$M7" \
       --batch-size 8 --seq-len 512 --dtype bfloat16 --lr 1e-3 \
@@ -155,8 +202,8 @@ if ! $PY $WL --self-test 2>&1 | tee -a "$MASTER" | grep -q "self-test PASS"; the
 fi
 
 # ── Stage 0: idle thermal baseline + queue smoke test ──────────────────────
-run_stage symgemm_idle \
-  $PY scripts/run_workload.py --workload symgemm_idle \
+run_stage "${PREFIX}symgemm_idle" \
+  $PY scripts/run_workload.py --workload "${PREFIX}symgemm_idle" "${OUTARG[@]}" \
     --timeout 400 --checkpoint-sec $CKPT -- \
     $PY workloads/idle.py --duration 300
 
@@ -166,31 +213,33 @@ for rep in $(seq 1 "$REPS"); do
 
   # Most-decisive first within the rep: attack, its matched control, then the
   # positive control that proves the pipeline can see ordinary training.
-  cell_1b "symgemm_L4_sgdfused_rep${rep}"     L4
-  cell_1b "symgemm_L1_fwd3_rep${rep}"         L1
-  cell_1b "symgemm_L5_adam_rep${rep}"         L5 --lr 1e-4
-  cell_1b "symgemm_L0_fwd1_rep${rep}"         L0
-  cell_1b "symgemm_L3_graddiscard_rep${rep}"  L3
+  cell_1b "${PREFIX}symgemm_L4_sgdfused_rep${rep}"     L4
+  cell_1b "${PREFIX}symgemm_L1_fwd3_rep${rep}"         L1
+  cell_1b "${PREFIX}symgemm_L5_adam_rep${rep}"         L5 --lr 1e-4
+  cell_1b "${PREFIX}symgemm_L0_fwd1_rep${rep}"         L0
+  cell_1b "${PREFIX}symgemm_L3_graddiscard_rep${rep}"  L3
 
   # The evader's main lever, collected early enough to survive a truncated run.
   if [ "$rep" -le 2 ]; then
-    cell_1b_m8192 "symgemm_L4_sgdfused_m8192_rep${rep}" L4
-    cell_1b_m8192 "symgemm_L1_fwd3_m8192_rep${rep}"     L1
+    cell_1b_m8192 "${PREFIX}symgemm_L4_sgdfused_m8192_rep${rep}" L4
+    cell_1b_m8192 "${PREFIX}symgemm_L1_fwd3_m8192_rep${rep}"     L1
   fi
 
   # Training-heterogeneity cells (Area Chair 1uob). PPO is the one regime the
   # corpus genuinely lacks and the one the meta-review names; decode is its
   # in-program inference partner. 3 reps is enough for a duty-cycle claim.
   if [ "$rep" -le 3 ]; then
-    cell_gen "symgemm_ppo_r8_rep${rep}"       P1 --rollout 8
-    cell_gen "symgemm_ppo_r32_rep${rep}"      P1 --rollout 32
-    cell_gen "symgemm_decode_g256_rep${rep}"  DC --gen-tokens 256
+    cell_gen "${PREFIX}symgemm_ppo_r8_rep${rep}"       P1 --rollout 8
+    cell_gen "${PREFIX}symgemm_ppo_r32_rep${rep}"      P1 --rollout 32
+    cell_gen "${PREFIX}symgemm_decode_g256_rep${rep}"  DC --gen-tokens 256
   fi
 
   # Scale check: does the result hold where it matters for governance?
-  if [ "$rep" -eq 2 ]; then
-    cell_7b "symgemm_L4_sgdfused_7b_rep1" L4
-    cell_7b "symgemm_L1_fwd3_7b_rep1"     L1
+  # In smoke mode run it in rep 1 -- 7B is the most likely thing to OOM,
+  # so it is exactly what a shakedown needs to touch.
+  if [ "$rep" -eq 2 ] || { [ "$SMOKE" = "1" ] && [ "$rep" -eq 1 ]; }; then
+    cell_7b "${PREFIX}symgemm_L4_sgdfused_7b_rep1" L4
+    cell_7b "${PREFIX}symgemm_L1_fwd3_7b_rep1"     L1
   fi
 done
 
@@ -201,8 +250,8 @@ done
 # comparison measures "is this Triton?" rather than "is this training?".
 if [ "$RUN_TRITON" = "1" ]; then
   for rep in 1 2 3; do
-    cell_1b "symgemm_L4_triton_rep${rep}" L4 --backend triton
-    cell_1b "symgemm_L1_triton_rep${rep}" L1 --backend triton
+    cell_1b "${PREFIX}symgemm_L4_triton_rep${rep}" L4 --backend triton
+    cell_1b "${PREFIX}symgemm_L1_triton_rep${rep}" L1 --backend triton
   done
 else
   say "SKIP  Triton cells (RUN_TRITON=0)"
@@ -212,5 +261,10 @@ say "===== Round 6 queue complete ====="
 say "done:   $(ls logs/.done/symgemm_*.done 2>/dev/null | wc -l) stages"
 say "failed: $(ls logs/.done/symgemm_*.failed 2>/dev/null | wc -l) stages"
 ls logs/.done/symgemm_*.failed 2>/dev/null | tee -a "$MASTER"
+if [ "$SMOKE" = "1" ]; then
+  say "SMOKE COMPLETE. If every stage says OK, clear the markers and run"
+  say "the real queue:  rm -f logs/.done/smoke_* && nohup bash $0 &"
+  exit 0
+fi
 say "Analysis (CPU) is deliberately NOT queued. Run:"
 say "  python classifier/rebuttal_analysis/symgemm_eval.py"

@@ -373,8 +373,10 @@ def run_generate_loop(args, model, tokenizer, device):
     n_rollout = 0
     n_update = 0
     loss_first = loss_last = None
+    seq = prompt = None
 
     while time.time() - wall_start < args.duration:
+        seq = None
         # ── rollout: R autoregressive generations, no weights change ────────
         for _ in range(R):
             if time.time() - wall_start >= args.duration:
@@ -396,8 +398,15 @@ def run_generate_loop(args, model, tokenizer, device):
             batch_idx += 1
             n_rollout += 1
 
+        # The rollout loop breaks on the duration check, so on the final cycle
+        # it can exit before generating anything. Without this guard `seq` is
+        # undefined and the run dies at the very end, after the telemetry that
+        # matters has already been collected -- the worst time to fail.
+        if seq is None:
+            break
         if not is_ppo:
             del seq, prompt
+            seq = None
             continue
 
         # ── policy update: one gradient step on the sampled trajectory ──────
@@ -416,6 +425,7 @@ def run_generate_loop(args, model, tokenizer, device):
             loss_first = loss_val
         loss_last = loss_val
         del out, inputs_embeds, seq, prompt
+        seq = None
 
         now = time.time()
         if now - last_print >= 30:
