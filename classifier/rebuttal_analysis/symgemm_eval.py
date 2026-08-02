@@ -165,6 +165,27 @@ CELLS = [
      "strongest attack: dW no longer thin-K, weight write diluted to 4.4%"),
     ("L4 vs L1  @ 7B", "L4_sgdfused_7b", "L1_fwd3_7b",
      "does the result hold at governance-relevant scale"),
+    # Area Chair 1uob asked how PPO-shaped workloads differ from vanilla
+    # dense sgd". PPO is a diluted trainer -- rollout generation interleaved
+    # with policy updates. Scored twice: against the FLOP-matched forward
+    # control, and against the generative inference it actually contains,
+    # which is the negative a real RLHF job would hide inside.
+    ("PPO r8 vs L1   (rollout:update 8:1)", "ppo_r8", "L1_fwd3",
+     "PPO shape vs compute-bound forward inference"),
+    ("PPO r8 vs decode", "ppo_r8", "decode_g256",
+     "PPO vs the generative inference it is made of -- the honest hard case"),
+    ("PPO r32 vs decode  (8x diluted)", "ppo_r32", "decode_g256",
+     "same, at a 4x longer rollout: does the duty cycle break detection?"),
+]
+
+# The prefill/decode axis is NOT an AUC question: both are negatives, so the
+# separability of p_train between them means nothing. What matters is whether
+# the detector stays quiet on every form of inference. Reported as clearance.
+NEGATIVE_CELLS = [
+    ("L0_fwd1", "1 forward/iter, token-matched"),
+    ("L1_fwd3", "3 forwards/iter, compute-bound (prefill-like)"),
+    ("L3_graddiscard", "fwd + dX + dW discarded, no learning"),
+    ("decode_g256", "autoregressive decode, memory-bandwidth-bound"),
 ]
 
 
@@ -230,6 +251,37 @@ def main():
                   f"{r['run_pos']['runs_alerting']}/{r['run_pos']['n_runs']:<4d} "
                   f"{r['run_neg']['runs_alerting']}/{r['run_neg']['n_runs']:<4d}")
         results.append(row)
+
+    # Negatives clearance: does the detector stay quiet across the whole
+    # prefill-to-decode span? This is the AC's axis, and the right metric is
+    # the false-alert rate on each, not separability between them.
+    neg_rows = []
+    have_neg = [(c, d) for c, d in NEGATIVE_CELLS
+                if wl.str.startswith(f"symgemm_{c}").sum() >= 10]
+    if have_neg:
+        # One classifier, the same one the comparisons use, scored on each.
+        pos_probe = (wl.str.startswith("symgemm_L4_sgdfused").values
+                     & ~wl.str.contains("_m8192|_7b|_triton").values)
+        print(f"\n### NEGATIVES CLEARANCE (tau={args.tau}, k={args.k}/m={args.m})")
+        print(f"  {'cell':22s} {'n win':>6s} {'mean p_train':>13s} "
+              f"{'window alert':>13s} {'runs alerting':>14s}   description")
+        for cell, desc in have_neg:
+            m = wl.str.startswith(f"symgemm_{cell}").values
+            if cell == "L1_fwd3":
+                m &= ~wl.str.contains("_m8192|_7b|_triton").values
+            r = score(win, feats_base, train_mask, pos_probe, m,
+                      args.tau, args.k, args.m)
+            print(f"  {cell:22s} {r['n_neg']:>6d} {r['p_train_neg']:>13.3f} "
+                  f"{r['window_alert_neg']:>13.3f} "
+                  f"{r['run_neg']['runs_alerting']:>6d}/"
+                  f"{r['run_neg']['n_runs']:<7d} {desc}")
+            neg_rows.append({"cell": cell, "description": desc,
+                             "n_windows": r["n_neg"],
+                             "mean_p_train": r["p_train_neg"],
+                             "window_alert_rate": r["window_alert_neg"],
+                             "run_alert": r["run_neg"]})
+        results.append({"comparison": "NEGATIVES CLEARANCE",
+                        "negatives": neg_rows})
 
     # Secondary: the attack against the whole benign corpus, which is the
     # denominator that makes per-family AUC look near-perfect. Reported so the

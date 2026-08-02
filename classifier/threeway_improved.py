@@ -230,6 +230,14 @@ def threeway_label(label: str) -> str:
     # learns that disguised training is not training -- the same failure the
     # whitebox rule above exists to prevent.
     if lc.startswith("symgemm_"):
+        # PPO shape: the rollout is generation, but the policy update is an
+        # ordinary gradient step that changes every trained weight, so the run
+        # as a whole is training at a duty cycle set by rollout:update.
+        if "_ppo" in lc:
+            return "ml_training"
+        # Pure autoregressive decode -- no weight ever changes.
+        if "_decode" in lc:
+            return "ml_inference"
         if "_l4" in lc or "_l5" in lc:
             return "ml_training"
         if "_l0" in lc or "_l1" in lc or "_l3" in lc:
