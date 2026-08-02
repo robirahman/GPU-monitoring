@@ -337,6 +337,112 @@ def run_loop(args, model, tokenizer, device, optimizer=None):
               f"taking effect (bf16 underflow?) before trusting this run.")
 
 
+# ── Generation-based cells: PPO shape and pure decode ───────────────────────
+
+def run_generate_loop(args, model, tokenizer, device):
+    """Autoregressive-generation cells, for Area Chair 1uob's question.
+
+    The meta-review asks why detection should generalise across regimes when
+    PPO differs from vanilla dense SGD and prefill and decode
+    are very different". Two cells answer it directly:
+
+    DC  pure autoregressive decode. Memory-bandwidth-bound, M = batch per step,
+        KV-cache streaming. The contrasting negative to L1's compute-bound
+        forward pass, collected inside the same program so the comparison
+        carries no program confound.
+
+    P1  PPO shape: R rollout generations, then one policy update on the
+        sampled trajectory. Structurally this is what PPO does -- generate,
+        score, update -- and in telemetry terms it is a diluted trainer whose
+        duty cycle is set by the rollout:update ratio. Rollout dominates
+        wall-clock, exactly as in real RLHF.
+
+    Every trained weight still changes once per update via the same fused
+    SymLinearFn epilogue, so the irreducible weight-write invariant is present
+    at whatever duty cycle R implies.
+    """
+    embed = model.get_input_embeddings()
+    is_ppo = args.mode == "P1"
+    R = args.rollout if is_ppo else 1
+
+    wall_start = time.time()
+    last_print = wall_start
+    gen_tokens_total = 0
+    train_tokens_total = 0
+    batch_idx = 0
+    n_rollout = 0
+    n_update = 0
+    loss_first = loss_last = None
+
+    while time.time() - wall_start < args.duration:
+        # ── rollout: R autoregressive generations, no weights change ────────
+        for _ in range(R):
+            if time.time() - wall_start >= args.duration:
+                break
+            prompt = make_synthetic_batch(
+                tokenizer, args.batch_size, args.prompt_len, device)
+            with torch.no_grad():
+                seq = model.generate(
+                    prompt,
+                    attention_mask=torch.ones_like(prompt),
+                    max_new_tokens=args.gen_tokens,
+                    do_sample=True, temperature=0.7, top_p=0.9,
+                    pad_token_id=tokenizer.pad_token_id,
+                )
+            n_new = (seq.shape[1] - prompt.shape[1]) * args.batch_size
+            gen_tokens_total += n_new
+            print(f"STEP ts={time.time():.3f} kind=infer batch_idx={batch_idx} "
+                  f"tokens={n_new} passes=1 phase=rollout", flush=True)
+            batch_idx += 1
+            n_rollout += 1
+
+        if not is_ppo:
+            del seq, prompt
+            continue
+
+        # ── policy update: one gradient step on the sampled trajectory ──────
+        inputs_embeds = embed(seq).detach().requires_grad_(True)
+        out = model(inputs_embeds=inputs_embeds, labels=seq)
+        out.loss.backward()          # fused SGD fires inside SymLinearFn
+        loss_val = float(out.loss.detach())
+        n_tok = seq.shape[0] * seq.shape[1]
+        train_tokens_total += n_tok
+        print(f"STEP ts={time.time():.3f} kind=train batch_idx={batch_idx} "
+              f"tokens={n_tok} passes=3 phase=update loss={loss_val:.4f}",
+              flush=True)
+        batch_idx += 1
+        n_update += 1
+        if loss_first is None:
+            loss_first = loss_val
+        loss_last = loss_val
+        del out, inputs_embeds, seq, prompt
+
+        now = time.time()
+        if now - last_print >= 30:
+            el = now - wall_start
+            print(f"  {el:.0f}s: rollouts={n_rollout} updates={n_update}, "
+                  f"{gen_tokens_total / el:.0f} gen-tok/s, "
+                  f"{train_tokens_total / el:.0f} train-tok/s, "
+                  f"mem={torch.cuda.memory_allocated() / 1024**2:.0f}MB, "
+                  f"loss={loss_val:.4f}", flush=True)
+            last_print = now
+
+    el = time.time() - wall_start
+    print(f"{args.mode} complete. rollouts={n_rollout} updates={n_update}, "
+          f"{gen_tokens_total / el:.0f} gen-tok/s, "
+          f"{train_tokens_total / el:.0f} train-tok/s, {el:.0f}s")
+    if is_ppo:
+        duty = n_update / max(n_rollout + n_update, 1)
+        print(f"  training duty cycle: {duty:.1%} of steps "
+              f"(rollout:update = {R}:1)")
+        if loss_first is not None:
+            drift = (loss_first - loss_last) / loss_first * 100.0
+            print(f"  loss {loss_first:.4f} -> {loss_last:.4f} ({drift:+.2f}%)")
+            if drift < 2.0:
+                print(f"  WARNING: loss fell only {drift:.2f}% -- verify the "
+                      f"policy update is taking effect before trusting this run.")
+
+
 # ── Self-test ───────────────────────────────────────────────────────────────
 
 def self_test(device):
@@ -451,8 +557,11 @@ def main():
   L1  3 forwards/iter                      negative, FLOP-matched  <- key control
   L3  fwd + dX + dW->scratch, no update    probe (same traffic as L1, no learning)
   L4  fwd + dX + fused-SGD dW              THE ATTACK
-  L5  fwd + dX + dW->grad + AdamW          positive control""")
-    ap.add_argument("--mode", choices=["L0", "L1", "L3", "L4", "L5"])
+  L5  fwd + dX + dW->grad + AdamW          positive control
+  DC  autoregressive generation only       negative, memory-bandwidth-bound
+  P1  R rollouts + 1 policy update         PPO shape (AC 1uob's question)""")
+    ap.add_argument("--mode",
+                    choices=["L0", "L1", "L3", "L4", "L5", "P1", "DC"])
     ap.add_argument("--model", default="TinyLlama/TinyLlama-1.1B-Chat-v1.0")
     ap.add_argument("--duration", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=4)
@@ -469,6 +578,15 @@ def main():
                          "is a completeness exercise -- and it needs its own "
                          "matched control (L1 --backend triton) because Triton "
                          "is slower than cuBLAS.")
+    # Generation cells (P1 / DC)
+    ap.add_argument("--rollout", type=int, default=8,
+                    help="P1: autoregressive rollouts per policy update. Sets "
+                         "the training duty cycle, as the rollout:update ratio "
+                         "does in real PPO.")
+    ap.add_argument("--prompt-len", type=int, default=128,
+                    help="P1/DC: prompt length fed to model.generate()")
+    ap.add_argument("--gen-tokens", type=int, default=64,
+                    help="P1/DC: new tokens generated per rollout")
     ap.add_argument("--self-test", action="store_true",
                     help="Verify SymLinearFn against nn.Linear autograd, then exit")
     args = ap.parse_args()
@@ -484,11 +602,17 @@ def main():
         ap.error("--mode is required unless --self-test is given")
 
     dtype = DTYPES[args.dtype]
-    M = args.batch_size * args.seq_len
-    print(f"Mode {args.mode}: M = batch*seq = {M} tokens/iter")
-    if M < 2048:
-        print(f"  NOTE: M={M} is small; dW becomes a thin-K GEMM and the "
-              f"disguise degrades. The attack wants M >= max(K,N).")
+    is_gen = args.mode in ("P1", "DC")
+    if is_gen:
+        print(f"Mode {args.mode}: prompt={args.prompt_len} "
+              f"gen={args.gen_tokens} batch={args.batch_size}"
+              + (f" rollout:update = {args.rollout}:1" if args.mode == "P1" else ""))
+    else:
+        M = args.batch_size * args.seq_len
+        print(f"Mode {args.mode}: M = batch*seq = {M} tokens/iter")
+        if M < 2048:
+            print(f"  NOTE: M={M} is small; dW becomes a thin-K GEMM and the "
+                  f"disguise degrades. The attack wants M >= max(K,N).")
 
     model, tokenizer = load_model_and_tokenizer(args.model, device, dtype)
     if args.grad_ckpt:
@@ -508,9 +632,12 @@ def main():
         n_train = sum(p.numel() for p in trainable)
         print(f"  L5: AdamW over {n_train / 1e6:.0f}M params "
               f"({n_train * 8 / 1e9:.2f} GB of optimizer state)")
-    elif args.mode in ("L3", "L4"):
+    elif args.mode in ("L3", "L4", "P1"):
+        # P1's policy update is the same fused-SGD epilogue as L4 -- the point
+        # is that PPO's update is structurally an ordinary gradient step.
         freeze_all(model)
-        n_swapped, n_params = swap_linears(model, args.mode, args.lr,
+        swap_mode = "L4" if args.mode == "P1" else args.mode
+        n_swapped, n_params = swap_linears(model, swap_mode, args.lr,
                                            backend=args.backend)
         print(f"  {args.mode}: swapped {n_swapped} linears "
               f"({n_params / 1e6:.0f}M params updated in the dW epilogue, "
@@ -519,7 +646,10 @@ def main():
         freeze_all(model)
 
     torch.cuda.reset_peak_memory_stats()
-    run_loop(args, model, tokenizer, device, optimizer)
+    if is_gen:
+        run_generate_loop(args, model, tokenizer, device)
+    else:
+        run_loop(args, model, tokenizer, device, optimizer)
     print(f"  peak memory: {torch.cuda.max_memory_allocated() / 1024**2:.0f} MB")
     return 0
 

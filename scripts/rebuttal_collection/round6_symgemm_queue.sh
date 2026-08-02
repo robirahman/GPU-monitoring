@@ -115,6 +115,21 @@ cell_1b_m8192() {
       --duration $DUR "$@"
 }
 
+# Generation cells for the Area Chair's training-heterogeneity question.
+# DC is pure autoregressive decode (memory-bandwidth-bound negative, the
+# contrasting partner to L1's compute-bound forward pass). P1 is the PPO shape:
+# R rollout generations then one policy update, so the training duty cycle is
+# 1/(R+1) of steps and far less in wall-clock, as in real RLHF.
+cell_gen() {  # cell_gen <stage-name> <mode> [extra args...]
+  local name="$1" mode="$2"; shift 2
+  run_stage "$name" \
+    $PY scripts/run_workload.py --workload "$name" \
+      --timeout $TIMEOUT --checkpoint-sec $CKPT -- \
+      $PY $WL --mode "$mode" --model "$M1" \
+      --batch-size 4 --prompt-len 128 --gen-tokens 64 \
+      --dtype bfloat16 --lr 1e-3 --duration $DUR "$@"
+}
+
 # 7B: K=4096, inter=11008, so M=8*512=4096 still leaves the MLP dW thin-K.
 # Grad checkpointing keeps activation memory bounded on the 80 GB card.
 cell_7b() {
@@ -161,6 +176,15 @@ for rep in $(seq 1 "$REPS"); do
   if [ "$rep" -le 2 ]; then
     cell_1b_m8192 "symgemm_L4_sgdfused_m8192_rep${rep}" L4
     cell_1b_m8192 "symgemm_L1_fwd3_m8192_rep${rep}"     L1
+  fi
+
+  # Training-heterogeneity cells (Area Chair 1uob). PPO is the one regime the
+  # corpus genuinely lacks and the one the meta-review names; decode is its
+  # in-program inference partner. 3 reps is enough for a duty-cycle claim.
+  if [ "$rep" -le 3 ]; then
+    cell_gen "symgemm_ppo_r8_rep${rep}"       P1 --rollout 8
+    cell_gen "symgemm_ppo_r32_rep${rep}"      P1 --rollout 32
+    cell_gen "symgemm_decode_g256_rep${rep}"  DC --gen-tokens 256
   fi
 
   # Scale check: does the result hold where it matters for governance?
