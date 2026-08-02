@@ -137,6 +137,15 @@ def main():
     ap.add_argument("--k", type=int, default=3)
     ap.add_argument("--m", type=int, default=5)
     ap.add_argument("--out-prefix", default=str(RESULTS_DIR / "run_level"))
+    ap.add_argument("--window-sec", type=float, default=None,
+                    help="Window size to score. REQUIRED in practice whenever "
+                         "the predictions file holds more than one: without it "
+                         "the per-run sequence interleaves windowings, the "
+                         "k-of-m trigger gets one chance per window per "
+                         "resolution, and both the missed-run rate and the "
+                         "time-to-first-alert come out better than any real "
+                         "operating point. A deployed monitor runs ONE "
+                         "windowing.")
     args = ap.parse_args()
 
     df = pd.read_parquet(args.predictions)
@@ -144,6 +153,23 @@ def main():
     if df.empty:
         raise SystemExit(f"No rows for eval={args.eval} variant={args.variant}. "
                          f"Available: {sorted(df['eval_name'].unique())}")
+
+    # Guard the pooling bug described above rather than silently averaging
+    # across resolutions.
+    sizes = sorted(df["window_sec"].dropna().unique()) if "window_sec" in df else []
+    if args.window_sec is not None:
+        df = df[df["window_sec"] == args.window_sec]
+        if df.empty:
+            raise SystemExit(f"No rows at window_sec={args.window_sec}. "
+                             f"Available: {sizes}")
+        print(f"Scoring window_sec={args.window_sec:g} only "
+              f"(file also holds {[s for s in sizes if s != args.window_sec]})"
+              if len(sizes) > 1 else f"Scoring window_sec={args.window_sec:g}")
+    elif len(sizes) > 1:
+        raise SystemExit(
+            f"Predictions hold {len(sizes)} window sizes {sizes} and "
+            f"--window-sec was not given. Pooling them interleaves resolutions "
+            f"within each run and inflates detection; pick one explicitly.")
     if "p_train" not in df or df["p_train"].isna().all():
         raise SystemExit("This eval has no p_train probabilities; pick a 3-class eval.")
 
