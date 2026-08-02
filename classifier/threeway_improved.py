@@ -115,6 +115,13 @@ TRAINING_LABELS = {
     "llm_train_qwen25_3b_lora",
     "llm_train_phi3_mini_lora",
     "llm_train_mistral_7b_lora",
+    # Round 6: symmetric-GEMM backprop disguise. Weights genuinely change in
+    # these, so they are training regardless of how the compute is shaped.
+    # L3 is deliberately NOT here: it runs the dW GEMM but discards the result,
+    # so no learning occurs and it belongs in INFERENCE_LABELS as a probe.
+    "symgemm_L4_sgdfused", "symgemm_L4_sgdfused_m8192",
+    "symgemm_L4_sgdfused_7b", "symgemm_L4_triton",
+    "symgemm_L5_adam",
 }
 
 INFERENCE_LABELS = {
@@ -135,6 +142,14 @@ INFERENCE_LABELS = {
     # Round 5: White-box inference baseline (control)
     "whitebox_inference",
     "whitebox_WB-I_inference",
+    # Round 6 negatives. L1 runs three forward passes per iteration so it is
+    # FLOP- and throughput-matched to a training step; L3 additionally runs the
+    # dW GEMM but discards the output, so it has identical compulsory DRAM
+    # traffic to L1 with no weight ever changing. Both are genuinely
+    # not-training: L1 vs L4 is the decisive comparison, L1 vs L3 the null pair.
+    "symgemm_L0_fwd1", "symgemm_L1_fwd3", "symgemm_L1_fwd3_m8192",
+    "symgemm_L1_fwd3_7b", "symgemm_L1_triton",
+    "symgemm_L3_graddiscard",
     # Tier 4 image-generation inference (SDXL)
     "sdxl_inference",
     # Round 5b: new large-LLM inference anchors (single-GPU, open-license)
@@ -207,6 +222,19 @@ def threeway_label(label: str) -> str:
     if any(k in lc for k in ("whitebox_lora", "whitebox_diluted", "whitebox_oracle",
                              "wb-l", "wb-d", "wb-o")):
         return "ml_training"
+    # Round 6 symmetric-GEMM ladder. Collection appends a _rep<N> suffix, and
+    # cells carry scale/backend suffixes (_m8192, _7b, _triton), so the
+    # explicit sets above cannot enumerate every run label. Classify by mode
+    # instead: L4/L5 change weights (training), L0/L1/L3 never do. Without
+    # this, a suffixed label falls through to "other" and the corpus quietly
+    # learns that disguised training is not training -- the same failure the
+    # whitebox rule above exists to prevent.
+    if lc.startswith("symgemm_"):
+        if "_l4" in lc or "_l5" in lc:
+            return "ml_training"
+        if "_l0" in lc or "_l1" in lc or "_l3" in lc:
+            return "ml_inference"
+        return "other"        # symgemm_idle
     if any(k in lc for k in ("train", "bert", "gpt", "resnet_cifar", "mlp_cifar",
                               "fsdp_", "ddp_", "adversarial_")):
         return "ml_training"
