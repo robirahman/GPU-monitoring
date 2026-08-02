@@ -1,0 +1,90 @@
+{
+  "model": "TinyLlama-1.1B",
+  "arch": {
+    "hidden": 2048,
+    "inter": 5632,
+    "layers": 22,
+    "kv_dim": 256,
+    "vocab": 32000
+  },
+  "M": 2048,
+  "batch": 4,
+  "seq": 512,
+  "sigma_mk": 811597824,
+  "sigma_mn": 872939520,
+  "sigma_kn_params": 1034420224,
+  "one_pass_elements": 2718957568,
+  "ladder": [
+    {
+      "mode": "L0",
+      "what": "1 forward pass",
+      "role": "negative, token-matched",
+      "gemm_passes": 1,
+      "dram_elements": 2718957568,
+      "pct_vs_L1": -66.66666666666666,
+      "learns": false
+    },
+    {
+      "mode": "L1",
+      "what": "3 forward passes",
+      "role": "negative, FLOP-matched",
+      "gemm_passes": 3,
+      "dram_elements": 8156872704,
+      "pct_vs_L1": 0.0,
+      "learns": false
+    },
+    {
+      "mode": "L3",
+      "what": "fwd + dX + dW->scratch",
+      "role": "probe: no update",
+      "gemm_passes": 3,
+      "dram_elements": 8156872704,
+      "pct_vs_L1": 0.0,
+      "learns": false
+    },
+    {
+      "mode": "L4",
+      "what": "fwd + dX + fused-SGD dW",
+      "role": "THE ATTACK",
+      "gemm_passes": 3,
+      "dram_elements": 9191292928,
+      "pct_vs_L1": 12.681578609075716,
+      "learns": true
+    },
+    {
+      "mode": "L5",
+      "what": "fwd + dX + dW + AdamW",
+      "role": "positive control",
+      "gemm_passes": 3,
+      "dram_elements": 21604335616,
+      "pct_vs_L1": 164.86052191798433,
+      "learns": true
+    }
+  ],
+  "m_sensitivity": [
+    {
+      "M": 512,
+      "gap_pct": 23.68902896593126
+    },
+    {
+      "M": 1024,
+      "gap_pct": 18.373143362667037
+    },
+    {
+      "M": 2048,
+      "gap_pct": 12.681578609075716
+    },
+    {
+      "M": 4096,
+      "gap_pct": 7.830297257610034
+    },
+    {
+      "M": 8192,
+      "gap_pct": 4.436200112422709
+    },
+    {
+      "M": 16384,
+      "gap_pct": 2.376220929532343
+    }
+  ]
+}
