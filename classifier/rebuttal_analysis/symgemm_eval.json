@@ -1,0 +1,581 @@
+{
+  "tau": 0.75,
+  "k": 3,
+  "m": 5,
+  "window_sec": 30.0,
+  "stride_sec": 15.0,
+  "n_windows": 38691,
+  "n_features_base": 166,
+  "results": [
+    {
+      "comparison": "L5 vs L1  (positive control)",
+      "pos_cell": "L5_adam",
+      "neg_cell": "L1_fwd3",
+      "note": "ordinary AdamW; if this is missed the pipeline is broken",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 1.0,
+        "ap": 0.9999999999999999,
+        "tpr_at_1pct_fpr": 1.0,
+        "p_train_pos": 0.910484533984534,
+        "p_train_neg": 0.27497400284900286,
+        "window_alert_pos": 1.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 4,
+          "run_alert_rate": 1.0,
+          "median_ttfa_s": 30.0
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 1.0,
+        "ap": 1.0,
+        "tpr_at_1pct_fpr": 1.0,
+        "p_train_pos": 0.9224198717948718,
+        "p_train_neg": 0.27804700854700853,
+        "window_alert_pos": 1.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 4,
+          "run_alert_rate": 1.0,
+          "median_ttfa_s": 30.0
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "L4 vs L1  (THE ATTACK)",
+      "pos_cell": "L4_sgdfused",
+      "neg_cell": "L1_fwd3",
+      "note": "same program, differs only by the weight write",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 0.987035667324129,
+        "ap": 0.9790663772491336,
+        "tpr_at_1pct_fpr": 0.26,
+        "p_train_pos": 0.555682505765839,
+        "p_train_neg": 0.27497400284900286,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 0.9944115713346483,
+        "ap": 0.9936670107207441,
+        "tpr_at_1pct_fpr": 0.717948717948718,
+        "p_train_pos": 0.6012710113960114,
+        "p_train_neg": 0.2780470085470086,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "L3 vs L1  (null pair)",
+      "pos_cell": "L3_graddiscard",
+      "neg_cell": "L1_fwd3",
+      "note": "identical compulsory traffic; separation here is the noise floor",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 0.9999178172255095,
+        "ap": 0.9999188575137941,
+        "tpr_at_1pct_fpr": 0.9935897435897436,
+        "p_train_pos": 0.7364569088319087,
+        "p_train_neg": 0.27497400284900286,
+        "window_alert_pos": 0.4551282051282051,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 4,
+          "run_alert_rate": 1.0,
+          "median_ttfa_s": 52.5
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 1.0,
+        "ap": 0.9999999999999999,
+        "tpr_at_1pct_fpr": 1.0,
+        "p_train_pos": 0.8088544634377968,
+        "p_train_neg": 0.27804700854700853,
+        "window_alert_pos": 0.8525641025641025,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 4,
+          "run_alert_rate": 1.0,
+          "median_ttfa_s": 45.0
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "L0 vs L1  (token vs FLOP)",
+      "pos_cell": "L0_fwd1",
+      "neg_cell": "L1_fwd3",
+      "note": "how much of any signal is just throughput",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 0.044769066403681786,
+        "ap": 0.32089736260857143,
+        "tpr_at_1pct_fpr": 0.0,
+        "p_train_pos": 0.18724603174603174,
+        "p_train_neg": 0.27497400284900286,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 156,
+        "auc": 0.03930391190006574,
+        "ap": 0.32013165128210547,
+        "tpr_at_1pct_fpr": 0.0,
+        "p_train_pos": 0.1704102564102564,
+        "p_train_neg": 0.27804700854700853,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "L4 vs L1  @ M=8192",
+      "pos_cell": "L4_sgdfused_m8192",
+      "neg_cell": "L1_fwd3_m8192",
+      "note": "strongest attack: dW no longer thin-K, weight write diluted to 4.4%",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 78,
+        "n_neg": 78,
+        "auc": 0.9999999999999999,
+        "ap": 0.9999999999999998,
+        "tpr_at_1pct_fpr": 1.0,
+        "p_train_pos": 0.9344389499389499,
+        "p_train_neg": 0.5127264618097953,
+        "window_alert_pos": 0.9743589743589743,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 2,
+          "runs_alerting": 2,
+          "run_alert_rate": 1.0,
+          "median_ttfa_s": 45.0
+        },
+        "run_neg": {
+          "n_runs": 2,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 78,
+        "n_neg": 78,
+        "auc": 1.0,
+        "ap": 0.9999999999999998,
+        "tpr_at_1pct_fpr": 1.0,
+        "p_train_pos": 0.8954738841405508,
+        "p_train_neg": 0.5466709401709402,
+        "window_alert_pos": 0.9743589743589743,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 2,
+          "runs_alerting": 2,
+          "run_alert_rate": 1.0,
+          "median_ttfa_s": 45.0
+        },
+        "run_neg": {
+          "n_runs": 2,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "L4 vs L1  @ 7B",
+      "pos_cell": "L4_sgdfused_7b",
+      "neg_cell": "L1_fwd3_7b",
+      "note": "does the result hold at governance-relevant scale",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 95,
+        "n_neg": 41,
+        "auc": 0.033889602053915294,
+        "ap": 0.4920096507027296,
+        "tpr_at_1pct_fpr": 0.0,
+        "p_train_pos": 0.47079565580618216,
+        "p_train_neg": 0.6723523035230352,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.024390243902439025,
+        "run_pos": {
+          "n_runs": 1,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 1,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 95,
+        "n_neg": 41,
+        "auc": 0.04698331193838256,
+        "ap": 0.49446591805769735,
+        "tpr_at_1pct_fpr": 0.0,
+        "p_train_pos": 0.48779188248398786,
+        "p_train_neg": 0.6913333333333335,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.12195121951219512,
+        "run_pos": {
+          "n_runs": 1,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 1,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "PPO r8 vs L1   (rollout:update 8:1)",
+      "pos_cell": "ppo_r8",
+      "neg_cell": "L1_fwd3",
+      "note": "PPO shape vs compute-bound forward inference",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 117,
+        "n_neg": 156,
+        "auc": 0.9605522682445757,
+        "ap": 0.9058830090166075,
+        "tpr_at_1pct_fpr": 0.0,
+        "p_train_pos": 0.49896773391217836,
+        "p_train_neg": 0.27497400284900286,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 117,
+        "n_neg": 156,
+        "auc": 0.9429651545036161,
+        "ap": 0.8284371188335352,
+        "tpr_at_1pct_fpr": 0.0,
+        "p_train_pos": 0.4198594265816488,
+        "p_train_neg": 0.27804700854700853,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "PPO r8 vs decode",
+      "pos_cell": "ppo_r8",
+      "neg_cell": "decode_g256",
+      "note": "PPO vs the generative inference it is made of -- the honest hard case",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 117,
+        "n_neg": 117,
+        "auc": 0.9794725692161588,
+        "ap": 0.9889178120885437,
+        "tpr_at_1pct_fpr": 0.9743589743589743,
+        "p_train_pos": 0.49896773391217836,
+        "p_train_neg": 0.29717521367521377,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 117,
+        "n_neg": 117,
+        "auc": 0.8995909124114251,
+        "ap": 0.9005344257084285,
+        "tpr_at_1pct_fpr": 0.2564102564102564,
+        "p_train_pos": 0.4198594265816488,
+        "p_train_neg": 0.36523364084475185,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "PPO r32 vs decode  (8x diluted)",
+      "pos_cell": "ppo_r32",
+      "neg_cell": "decode_g256",
+      "note": "same, at a 4x longer rollout: does the duty cycle break detection?",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 117,
+        "n_neg": 117,
+        "auc": 0.9924757104244284,
+        "ap": 0.9959984459984458,
+        "tpr_at_1pct_fpr": 0.9914529914529915,
+        "p_train_pos": 0.48303089811423144,
+        "p_train_neg": 0.29717521367521377,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      },
+      "+DRAM (174)": {
+        "n_train_windows": 37249,
+        "n_pos": 117,
+        "n_neg": 117,
+        "auc": 0.9661041712323764,
+        "ap": 0.9699690672806928,
+        "tpr_at_1pct_fpr": 0.6752136752136753,
+        "p_train_pos": 0.46262016687016694,
+        "p_train_neg": 0.36523364084475185,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 3,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    },
+    {
+      "comparison": "NEGATIVES CLEARANCE",
+      "negatives": [
+        {
+          "cell": "L0_fwd1",
+          "description": "1 forward/iter, token-matched",
+          "n_windows": 156,
+          "mean_p_train": 0.18724603174603174,
+          "window_alert_rate": 0.0,
+          "run_alert": {
+            "n_runs": 4,
+            "runs_alerting": 0,
+            "run_alert_rate": 0.0,
+            "median_ttfa_s": null
+          }
+        },
+        {
+          "cell": "L1_fwd3",
+          "description": "3 forwards/iter, compute-bound (prefill-like)",
+          "n_windows": 156,
+          "mean_p_train": 0.27497400284900286,
+          "window_alert_rate": 0.0,
+          "run_alert": {
+            "n_runs": 4,
+            "runs_alerting": 0,
+            "run_alert_rate": 0.0,
+            "median_ttfa_s": null
+          }
+        },
+        {
+          "cell": "L3_graddiscard",
+          "description": "fwd + dX + dW discarded, no learning",
+          "n_windows": 156,
+          "mean_p_train": 0.7364569088319087,
+          "window_alert_rate": 0.4551282051282051,
+          "run_alert": {
+            "n_runs": 4,
+            "runs_alerting": 4,
+            "run_alert_rate": 1.0,
+            "median_ttfa_s": 52.5
+          }
+        },
+        {
+          "cell": "decode_g256",
+          "description": "autoregressive decode, memory-bandwidth-bound",
+          "n_windows": 117,
+          "mean_p_train": 0.29717521367521377,
+          "window_alert_rate": 0.0,
+          "run_alert": {
+            "n_runs": 3,
+            "runs_alerting": 0,
+            "run_alert_rate": 0.0,
+            "median_ttfa_s": null
+          }
+        }
+      ]
+    },
+    {
+      "comparison": "L4 vs full benign corpus (SECONDARY)",
+      "paper (166)": {
+        "n_train_windows": 37249,
+        "n_pos": 156,
+        "n_neg": 15627,
+        "auc": 0.9999885142906837,
+        "ap": 0.9990245261984392,
+        "tpr_at_1pct_fpr": 1.0,
+        "p_train_pos": 0.555682505765839,
+        "p_train_neg": 0.00989983219387376,
+        "window_alert_pos": 0.0,
+        "window_alert_neg": 0.0,
+        "run_pos": {
+          "n_runs": 4,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        },
+        "run_neg": {
+          "n_runs": 648,
+          "runs_alerting": 0,
+          "run_alert_rate": 0.0,
+          "median_ttfa_s": null
+        }
+      }
+    }
+  ]
+}
