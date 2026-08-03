@@ -36,51 +36,13 @@ from __future__ import annotations
 
 import argparse
 import glob
-import re
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-STEP_RE = re.compile(
-    r"STEP\s+ts=(?P<ts>[\d.]+)\s+kind=(?P<kind>train|infer)\s+batch_idx=(?P<idx>\d+)")
-RUNID_RE = re.compile(r"Run ID:\s*(?P<run_id>\S+)")
-
-
-def parse_step_log(path: str) -> tuple[str | None, pd.DataFrame]:
-    """Return (run_id, DataFrame[ts, kind]) parsed from one teed launcher log."""
-    run_id = None
-    steps = []
-    with open(path, "r", encoding="utf-8", errors="ignore") as f:
-        for line in f:
-            if run_id is None:
-                mr = RUNID_RE.search(line)
-                if mr:
-                    run_id = mr.group("run_id")
-            ms = STEP_RE.search(line)
-            if ms:
-                steps.append((float(ms.group("ts")), ms.group("kind")))
-    df = pd.DataFrame(steps, columns=["ts", "kind"])
-    return run_id, df
-
-
-def match_run_id(log_run_id: str | None, override: str | None, pred_run_ids) -> str | None:
-    """Resolve the log's run to a run_id present in the predictions table.
-
-    Tolerates the launcher's full run_id vs the truncated id that may appear in
-    the telemetry/predictions by matching on a shared prefix in either
-    direction.
-    """
-    candidate = override or log_run_id
-    if candidate is None:
-        return None
-    pred_run_ids = list(pred_run_ids)
-    if candidate in pred_run_ids:
-        return candidate
-    for rid in pred_run_ids:
-        if str(rid).startswith(candidate) or candidate.startswith(str(rid)):
-            return rid
-    return None
+# Single source of truth for STEP-log parsing / window activity.
+from classifier.window_labels import parse_step_log, match_run_id, window_activity
 
 
 def rescore(predictions: pd.DataFrame, logs: list[str], run_id_overrides: dict) -> pd.DataFrame:
@@ -106,13 +68,11 @@ def rescore(predictions: pd.DataFrame, logs: list[str], run_id_overrides: dict) 
             print(f"[warn] {log_path}: run {rid} not in predictions; skipping")
             continue
 
-        ws = rows["window_start"].values
-        we = rows["window_end"].values
-        n_train = np.array([int(((train_ts >= s) & (train_ts < e)).sum()) for s, e in zip(ws, we)])
-        n_infer = np.array([int(((infer_ts >= s) & (infer_ts < e)).sum()) for s, e in zip(ws, we)])
-        rows["n_train_steps"] = n_train
-        rows["n_infer_steps"] = n_infer
-        rows["train_active"] = n_train > 0
+        act = window_activity(rows["window_start"].values,
+                              rows["window_end"].values, train_ts, infer_ts)
+        rows["n_train_steps"] = act["n_train_steps"]
+        rows["n_infer_steps"] = act["n_infer_steps"]
+        rows["train_active"] = act["train_active"]
         rows["step_log"] = Path(log_path).name
         annotated.append(rows)
         print(f"[ok ] {log_path}: run {rid}, {len(rows)} windows, "

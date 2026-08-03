@@ -61,13 +61,13 @@
 # Resumable: each completed stage drops logs/.done/<stage>.done and is skipped
 # on re-run. A failing stage is recorded and the queue CONTINUES.
 
-REPO=/root/GPU-monitoring
+REPO=${REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}
 cd "$REPO" || { echo "cannot cd $REPO"; exit 1; }
 
 export HF_HOME=${HF_HOME:-/workspace/hf-cache}
 export PYTHONPATH=$REPO
 
-PY=python3
+PY=${PY:-python3}   # overridable: this box's deps live in a venv (export PY=/root/rbenv/bin/python)
 WL=workloads/adversarial_symgemm.py
 M1=TinyLlama/TinyLlama-1.1B-Chat-v1.0
 M7=NousResearch/Llama-2-7b-hf

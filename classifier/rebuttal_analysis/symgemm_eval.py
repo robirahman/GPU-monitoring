@@ -57,8 +57,22 @@ OUT = Path(__file__).resolve().parent / "symgemm_eval.json"
 
 # ── The monitor-side candidate features ─────────────────────────────────────
 
+# The four DRAM-activity ratios. As of the Round-6 monitor response these are
+# computed inside extract_enhanced_features (threeway_improved.py), so they are
+# already in get_feature_cols(win). The ablation below drops them for the
+# "paper baseline" arm and keeps them for the "+DRAM" arm.
+DRAM_RATIO_COLS = ["mem_util_per_gpu_util", "mem_util_minus_gpu_util",
+                   "mem_util_per_gpu_util_p95", "power_per_mem_util",
+                   # peak/conditional weight-write features (PPO response)
+                   "mem_util_at_high_util", "mem_util_spike",
+                   "mem_util_burst_ratio", "mem_util_fft_peak_power"]
+
+
 def add_dram_ratios(win, feats):
     """Four cross-signal ratios the paper's feature set does not contain.
+
+    Retained for callers that window with an older extractor; when the features
+    already exist (the current default) this is a no-op that returns the union.
 
     ``extract_enhanced_features`` defines exactly three cross-signal features
     (power_per_util, pcie_total_mean, util_per_sm_pct) and none of them
@@ -73,16 +87,16 @@ def add_dram_ratios(win, feats):
     why it is tested rather than asserted.
     """
     eps = 1.0
-    new = {}
+    if all(c in win.columns for c in DRAM_RATIO_COLS):
+        # Already produced by the extractor — just make sure they're in the list.
+        return feats + [c for c in DRAM_RATIO_COLS if c not in feats]
     mu, gu = win["mem_utilization_pct_mean"], win["gpu_utilization_pct_mean"]
-    new["mem_util_per_gpu_util"] = mu / (gu + eps)
-    new["mem_util_minus_gpu_util"] = mu - gu
-    new["mem_util_per_gpu_util_p95"] = (
+    win["mem_util_per_gpu_util"] = mu / (gu + eps)
+    win["mem_util_minus_gpu_util"] = mu - gu
+    win["mem_util_per_gpu_util_p95"] = (
         win["mem_utilization_pct_p95"] / (win["gpu_utilization_pct_p95"] + eps))
-    new["power_per_mem_util"] = win["power_draw_w_mean"] / (mu + eps)
-    for k, v in new.items():
-        win[k] = v
-    return feats + list(new)
+    win["power_per_mem_util"] = win["power_draw_w_mean"] / (mu + eps)
+    return feats + list(DRAM_RATIO_COLS)
 
 
 # ── Metrics ─────────────────────────────────────────────────────────────────
@@ -202,8 +216,11 @@ def main():
     raw = load_all_data()
     win = sliding_windows(raw, args.window, args.stride,
                           run_level_mode="causal").reset_index(drop=True)
-    feats_base = get_feature_cols(win)
-    feats_dram = add_dram_ratios(win, feats_base)
+    # The DRAM ratios now live in the extractor, so get_feature_cols already
+    # returns them. "+DRAM" = the full upgraded set; "paper" = that set minus
+    # the four ratios (the pre-Round-6 monitor).
+    feats_dram = add_dram_ratios(win, get_feature_cols(win))
+    feats_base = [c for c in feats_dram if c not in DRAM_RATIO_COLS]
 
     wl = win["workload_label"].astype(str)
     is_sym = wl.str.startswith("symgemm_").values
@@ -240,8 +257,8 @@ def main():
                "neg_cell": neg_cell, "note": note}
         print(f"  {'features':16s} {'AUC':>6s} {'AP':>6s} {'TPR@1%':>7s} "
               f"{'alert+':>7s} {'alert-':>7s} {'run+':>6s} {'run-':>6s}")
-        for fname, fl in (("paper (166)", feats_base),
-                          ("+DRAM ratios", feats_dram)):
+        for fname, fl in ((f"paper ({len(feats_base)})", feats_base),
+                          (f"+DRAM ({len(feats_dram)})", feats_dram)):
             r = score(win, fl, train_mask, pos_mask, neg_mask,
                       args.tau, args.k, args.m)
             row[fname] = r
