@@ -47,6 +47,13 @@ def kofm_first_alert(p, tau, k, m):
     return None
 
 
+def hybrid_first_alert(p, tau, k, m, cusum_k, h):
+    """First-alert index of the union rule: 3-of-5 OR CUSUM (min of the two)."""
+    idx = [i for i in (kofm_first_alert(p, tau, k, m),
+                       cusum_first_alert(p, cusum_k, h)) if i is not None]
+    return min(idx) if idx else None
+
+
 def run_series(df):
     """Yield (run_id, workload_label, threeway_label, p_train[], gpu_hours)."""
     for rid, g in df.groupby("run_id"):
@@ -69,100 +76,91 @@ def main():
     ap.add_argument("--cusum-k", type=float, default=0.25,
                     help="CUSUM reference/drift (between inference and training bands)")
     ap.add_argument("--fp-budget", type=float, default=0.10,
-                    help="target benign false alerts per GPU-hour (calibrate h)")
+                    help="target benign false-alert budget (calibrate h to it)")
+    ap.add_argument("--fp-unit", choices=["hour", "run"], default="hour",
+                    help="'hour' = false alerts per benign run-hour; "
+                         "'run' = false-alert rate per benign run (fraction)")
     args = ap.parse_args()
 
     df = pd.read_parquet(args.preds)
-    wl = df["workload_label"].astype(str)
 
     # Categorize runs. Benign = non-symgemm; the calibration/false-alarm pool is
     # benign inference (+other). symgemm cells are the evasion test set.
-    is_sym = wl.str.startswith("symgemm_")
-    runs = list(run_series(df))
-
-    def cat(rid, wlabel, tlabel):
-        s = str(wlabel)
-        if s.startswith("symgemm_"):
+    def cat(wlabel, tlabel):
+        if str(wlabel).startswith("symgemm_"):
             return "symgemm"
         return "benign_train" if tlabel == "ml_training" else "benign_infer"
 
-    tagged = [(rid, wlabel, tlabel, p, gh, cat(rid, wlabel, tlabel))
-              for (rid, wlabel, tlabel, p, gh) in runs]
+    tagged = [(rid, wlabel, tlabel, p, gh, cat(wlabel, tlabel))
+              for (rid, wlabel, tlabel, p, gh) in run_series(df)]
     benign_infer = [t for t in tagged if t[5] == "benign_infer"]
     benign_gpu_h = sum(t[4] for t in benign_infer)
+    n_benign = len(benign_infer)
 
-    # Calibrate CUSUM h to the false-alert budget on benign inference runs.
-    def benign_fp_per_gpuh(h):
-        alerts = sum(1 for t in benign_infer
-                     if cusum_first_alert(t[3], args.cusum_k, h) is not None)
-        return alerts / benign_gpu_h if benign_gpu_h else float("inf")
+    def hyb(p, h):
+        return hybrid_first_alert(p, args.tau, args.k, args.m, args.cusum_k, h)
 
-    h = 0.5
-    for cand in np.arange(0.5, 60.0, 0.5):
-        if benign_fp_per_gpuh(cand) <= args.fp_budget:
+    def benign_fp(h):
+        """Benign false-alert rate of the HYBRID rule, in the chosen unit."""
+        alerts = sum(1 for t in benign_infer if hyb(t[3], h) is not None)
+        denom = benign_gpu_h if args.fp_unit == "hour" else n_benign
+        return alerts / denom if denom else float("inf")
+
+    # Calibrate the CUSUM threshold h so the combined (hybrid) benign FP meets budget.
+    h = 80.0
+    for cand in np.arange(2.0, 80.0, 0.5):
+        if benign_fp(cand) <= args.fp_budget:
             h = cand
             break
-    else:
-        h = 60.0
-    cusum_fp = benign_fp_per_gpuh(h)
 
-    # Baseline 3-of-5 benign false-alert rate at tau, same pool.
-    base_alerts = sum(1 for t in benign_infer
-                      if kofm_first_alert(t[3], args.tau, args.k, args.m) is not None)
-    base_fp = base_alerts / benign_gpu_h if benign_gpu_h else float("nan")
+    def fp_both(h):
+        a = sum(1 for t in benign_infer if hyb(t[3], h) is not None)
+        return (a / benign_gpu_h if benign_gpu_h else 0.0,
+                a / n_benign if n_benign else 0.0)
+    fh, fr = fp_both(h)
+    unit = "/run-hour" if args.fp_unit == "hour" else "/run"
+    print(f"Benign inference pool: {n_benign} runs, {benign_gpu_h:.1f} run-hours")
+    print(f"Hybrid 3-of-{args.m} (tau={args.tau}) OR CUSUM (k={args.cusum_k}), "
+          f"calibrated to {args.fp_budget}{unit} -> h={h:.1f}")
+    print(f"realized benign false alerts: {fh:.3f}/run-hour = {fr:.3f}/run\n")
 
-    print(f"Benign inference pool: {len(benign_infer)} runs, {benign_gpu_h:.1f} GPU-h")
-    print(f"3-of-5 @ tau={args.tau}: false alerts = {base_fp:.3f}/GPU-h")
-    print(f"CUSUM k={args.cusum_k}, calibrated h={h:.1f}: false alerts = {cusum_fp:.3f}/GPU-h")
-    print(f"(both at/below the {args.fp_budget}/GPU-h budget)\n")
+    STRIDE = 15.0
 
-    def detect(mask_fn):
-        sel = [t for t in tagged if mask_fn(t[1])]
-        if not sel:
-            return None
-        n = len(sel)
-        base = [kofm_first_alert(t[3], args.tau, args.k, args.m) for t in sel]
-        cus = [cusum_first_alert(t[3], args.cusum_k, h) for t in sel]
-        base_rate = np.mean([b is not None for b in base])
-        cus_rate = np.mean([c is not None for c in cus])
-        # median time-to-first-alert (windows -> seconds at 15 s stride) for CUSUM
-        ttfa = [c for c in cus if c is not None]
-        med_ttfa = f"{np.median(ttfa)*15:.0f}s" if ttfa else "-"
-        return n, base_rate, cus_rate, med_ttfa
+    def rates(sel):
+        base = np.mean([kofm_first_alert(t[3], args.tau, args.k, args.m) is not None for t in sel])
+        cus = np.mean([cusum_first_alert(t[3], args.cusum_k, h) is not None for t in sel])
+        hy = [hyb(t[3], h) for t in sel]
+        hyr = np.mean([x is not None for x in hy])
+        tt = [x for x in hy if x is not None]
+        med = f"{np.median(tt)*STRIDE/60:.1f}min" if tt else "-"
+        return base, cus, hyr, med
 
     cells = [
         ("L4 @1B (attack)", lambda s: s.startswith("symgemm_L4_sgdfused") and
-         "m8192" not in s and "7b" not in s and "triton" not in s),
+         not any(x in s for x in ("m8192", "7b", "triton", "long1b", "short7b"))),
         ("L4 @M=8192", lambda s: s.startswith("symgemm_L4_sgdfused_m8192")),
         ("L4 @7B", lambda s: s.startswith("symgemm_L4_sgdfused_7b")),
-        ("L5 AdamW (pos control)", lambda s: s.startswith("symgemm_L5")),
+        ("L4 @1B long", lambda s: s.startswith("symgemm_L4_sgdfused_long1b")),
+        ("L4 @7B short", lambda s: s.startswith("symgemm_L4_sgdfused_short7b")),
+        ("L5 AdamW (pos ctrl)", lambda s: s.startswith("symgemm_L5")),
         ("PPO (all)", lambda s: s.startswith("symgemm_ppo")),
-        ("benign training", lambda s: not s.startswith("symgemm_")),  # filtered below
+        ("benign training", None),
         ("-- negatives (want 0) --", None),
         ("L1 fwd (neg)", lambda s: s.startswith("symgemm_L1_fwd3") and
          "m8192" not in s and "7b" not in s),
         ("L3 discard (neg)", lambda s: s.startswith("symgemm_L3")),
         ("decode (neg)", lambda s: s.startswith("symgemm_decode")),
     ]
-    print(f"{'cell':26s} {'n':>4s} {'3-of-5':>8s} {'CUSUM':>8s} {'CUSUM ttfa':>11s}")
+    print(f"{'cell':22s} {'n':>4s} {'3-of-5':>8s} {'CUSUM':>8s} {'HYBRID':>8s} {'hyb ttfa':>9s}")
     for name, fn in cells:
-        if fn is None:
-            print(name)
+        if fn is None and name.startswith("--"):
+            print(name); continue
+        sel = ([t for t in tagged if t[5] == "benign_train"] if name == "benign training"
+               else [t for t in tagged if fn(t[1])])
+        if not sel:
             continue
-        if name == "benign training":
-            sel = [t for t in tagged if t[5] == "benign_train"]
-            if not sel:
-                continue
-            base_rate = np.mean([kofm_first_alert(t[3], args.tau, args.k, args.m) is not None
-                                 for t in sel])
-            cus_rate = np.mean([cusum_first_alert(t[3], args.cusum_k, h) is not None
-                                for t in sel])
-            print(f"{name:26s} {len(sel):>4d} {base_rate:>7.1%} {cus_rate:>7.1%} {'':>11s}")
-            continue
-        r = detect(fn)
-        if r:
-            n, base_rate, cus_rate, med = r
-            print(f"{name:26s} {n:>4d} {base_rate:>7.1%} {cus_rate:>7.1%} {med:>11s}")
+        base, cus, hyr, med = rates(sel)
+        print(f"{name:22s} {len(sel):>4d} {base:>7.1%} {cus:>7.1%} {hyr:>7.1%} {med:>9s}")
 
 
 if __name__ == "__main__":
