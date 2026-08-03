@@ -69,6 +69,11 @@ class ClassifierOracle:
         """
         self.gpu_index = gpu_index
         self.max_buffer_sec = max_buffer_sec
+        # Retain the first `_head_keep` samples of the run permanently. The
+        # causal run-level features (first_30s_mem_*, time_to_mem_plateau) need
+        # the run start, which a plain rolling buffer would discard. 60 samples
+        # (~60 s) covers the first-30 s window with margin.
+        self._head_keep = 60
         self._buffer = []       # list of dicts (one per 1Hz sample)
         self._lock = threading.Lock()
         self._polling = False
@@ -221,6 +226,7 @@ class ClassifierOracle:
                 "gpu_utilization_pct": float(util.gpu),
                 "mem_utilization_pct": float(util.memory),
                 "mem_used_mb": mem_info.used / (1024 * 1024),
+                "mem_total_mb": mem_info.total / (1024 * 1024),
                 "power_draw_w": power,
                 "temperature_c": float(temp),
                 "sm_clock_mhz": float(sm_clk),
@@ -238,6 +244,11 @@ class ClassifierOracle:
             activity = _amdsmi.amdsmi_get_gpu_activity(self._handle) or {}
             mem_used = _amdsmi.amdsmi_get_gpu_memory_usage(
                 self._handle, _amdsmi.AmdSmiMemoryType.VRAM)
+            try:
+                mem_total = _amdsmi.amdsmi_get_gpu_memory_total(
+                    self._handle, _amdsmi.AmdSmiMemoryType.VRAM)
+            except Exception:
+                mem_total = 0
             power_info = _amdsmi.amdsmi_get_power_info(self._handle) or {}
             # current_socket_power can be sentinel "N/A"; fall back to socket_power
             raw_power = power_info.get("current_socket_power")
@@ -258,6 +269,7 @@ class ClassifierOracle:
                 "gpu_utilization_pct": float(activity.get("gfx_activity", 0)),
                 "mem_utilization_pct": float(activity.get("umc_activity", 0)),
                 "mem_used_mb": float(mem_used) / (1024 * 1024),
+                "mem_total_mb": float(mem_total) / (1024 * 1024),
                 "power_draw_w": float(raw_power),
                 "temperature_c": float(edge_temp),
                 "sm_clock_mhz": float(gfx_clk_info.get("clk", 0)),
@@ -275,9 +287,13 @@ class ClassifierOracle:
             if sample is not None:
                 with self._lock:
                     self._buffer.append(sample)
-                    # Trim buffer to max size
-                    if len(self._buffer) > self.max_buffer_sec:
-                        self._buffer = self._buffer[-self.max_buffer_sec:]
+                    # Keep the run start (head) plus a rolling recent window
+                    # (tail). Window features use the tail; causal run-level
+                    # features use head+tail. This retains what a real-time
+                    # monitor legitimately observes from job start, bounded.
+                    if len(self._buffer) > self._head_keep + self.max_buffer_sec:
+                        self._buffer = (self._buffer[:self._head_keep]
+                                        + self._buffer[-self.max_buffer_sec:])
             time.sleep(1.0)
 
     def start_polling(self):
@@ -308,13 +324,21 @@ class ClassifierOracle:
             if len(self._buffer) < max(5, window_sec):
                 return None
             recent = self._buffer[-window_sec:]
+            history = list(self._buffer)   # run start (head) + recent (tail)
 
         # Build a DataFrame matching the format extract_enhanced_features expects
         df = pd.DataFrame(recent)
 
-        # Extract features using the same function as the classifier
-        from classifier.threeway_improved import extract_enhanced_features
+        # Extract features using the same functions as the classifier. The
+        # run-level features are computed CAUSALLY from all samples observed
+        # since job start (past+current only) — matching sliding_windows'
+        # run_level_mode="causal". Previously these four columns were left to
+        # fall through to 0.0, which mismatched the causally-trained model
+        # (report/neurips_rebuttal.md §1, Bug 2 train/serve mismatch).
+        from classifier.threeway_improved import (
+            extract_enhanced_features, run_level_features)
         feats = extract_enhanced_features(df)
+        feats.update(run_level_features(pd.DataFrame(history)))
 
         # Build feature vector in the same column order
         x = np.array(

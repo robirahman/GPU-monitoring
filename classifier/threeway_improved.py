@@ -497,6 +497,43 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
     feats["pcie_total_mean"] = (pcie_tx + pcie_rx).mean()
     feats["util_per_sm_pct"] = util.mean() / (sm_clk.mean() + 1.0) * 1000.0
 
+    # DRAM-activity cross-signal ratios (Round 6 monitor response). mem_util is
+    # NVML's fraction of the sample period spent reading/writing device memory —
+    # the one channel a weight write must touch and inference never does. These
+    # ratios make the DRAM-per-compute direction explicit, which the marginal
+    # stats alone leave diagonal. See classifier/rebuttal_analysis/symgemm_eval.py.
+    mem_util = chunk["mem_utilization_pct"].fillna(0).values.astype(float) \
+        if "mem_utilization_pct" in chunk.columns else np.zeros(max(len(chunk), 1))
+    mu_mean, gu_mean = mem_util.mean(), util.mean()
+    mu_p95 = np.percentile(mem_util, 95) if len(mem_util) > 1 else mu_mean
+    gu_p95 = np.percentile(util, 95) if len(util) > 1 else gu_mean
+    feats["mem_util_per_gpu_util"] = mu_mean / (gu_mean + 1.0)
+    feats["mem_util_minus_gpu_util"] = mu_mean - gu_mean
+    feats["mem_util_per_gpu_util_p95"] = mu_p95 / (gu_p95 + 1.0)
+    feats["power_per_mem_util"] = power.mean() / (mu_mean + 1.0)
+
+    # Peak / conditional DRAM-write features (Round 6, PPO response). A diluted
+    # trainer (PPO's sparse policy update, gradient accumulation) writes weights
+    # in a brief periodic BURST, so its window MEAN mem_util is indistinguishable
+    # from decode inference (both ~6%) while the update SPIKE is not (mem_util_max
+    # ~11 vs ~8). Mean-based ratios above miss that; these target the spike and
+    # its rhythm — the one channel a weight write must touch.
+    if len(util) > 1:
+        gu_hi = np.percentile(util, 75)
+        hi = util > gu_hi
+        if hi.sum() >= 1:
+            mem_hi = mem_util[hi].mean()          # DRAM during the compute bursts
+            gpu_hi = util[hi].mean()
+        else:                                     # flat window: fall back to means
+            mem_hi, gpu_hi = mu_mean, gu_mean
+    else:
+        mem_hi, gpu_hi = mu_mean, gu_mean
+    mu_p50 = np.percentile(mem_util, 50) if len(mem_util) > 1 else mu_mean
+    feats["mem_util_at_high_util"] = mem_hi
+    feats["mem_util_spike"] = mu_p95 - mu_p50
+    feats["mem_util_burst_ratio"] = mem_hi / (gpu_hi + 1.0)
+    feats["mem_util_fft_peak_power"] = fft_peak_power(mem_util)
+
     # ── 3. Autocorrelation at multiple lags (key for periodicity) ────────
     for lag in [1, 2, 5, 10, 20]:
         feats[f"acf{lag}_gpu_util"] = acf_lag(util, lag)
@@ -666,23 +703,24 @@ def sliding_windows(
     df: pd.DataFrame,
     window_sec: float,
     stride_sec: float,
-    run_level_mode: str = "orig",
+    run_level_mode: str = "causal",
+    step_log_map: dict | None = None,
 ) -> pd.DataFrame:
     """Extract sliding-window feature vectors per run.
 
     ``run_level_mode`` controls the whole-run "pre-allocation" features
     (``first_30s_mem_*``, ``time_to_mem_plateau_samples``):
 
+      - ``"causal"`` – (DEFAULT) run-level features recomputed per window from
+        run start up to that window's end only, so no window sees its own future
+        while still exploiting the genuinely-observable startup signature. This
+        is what a real-time monitor computes and is the reported/deployed
+        configuration (see report/neurips_rebuttal.md §1).
+      - ``"none"``   – run-level features omitted entirely. Leak-free floor.
       - ``"orig"``   – computed once over the entire run and attached to every
         window. The plateau term reads ``mem[-30:]`` (the end of the run), so
-        early windows carry information from their own future. Kept as the
-        default only to reproduce pre-fix numbers.
-      - ``"none"``   – run-level features omitted entirely. This is the
-        leak-free floor and matches what the real-time ``ClassifierOracle``
-        actually sees (it fills these columns with 0.0 at serve time).
-      - ``"causal"`` – run-level features recomputed per window from run start
-        up to that window's end only, so no window sees its own future while
-        still exploiting the genuinely-observable startup signature.
+        early windows carry information from their own future. LEAKY: retained
+        only to reproduce archived pre-fix numbers, never for training/serving.
     """
     if run_level_mode not in ("orig", "none", "causal"):
         raise ValueError(
@@ -701,6 +739,9 @@ def sliding_windows(
         wl_label = run_df["workload_label"].iloc[0]
         gpu_name = run_df["gpu_name"].iloc[0] if "gpu_name" in run_df.columns else ""
         run_feats_full = run_level_features(run_df) if run_level_mode == "orig" else None
+        # Per-window ground truth (train step timestamps), if a STEP log exists
+        # for this run. None => fall back to the run-level label downstream.
+        run_train_ts = step_log_map.get(run_id, {}).get("train_ts") if step_log_map else None
 
         def emit(chunk, wstart, wend):
             if len(chunk) < 5:
@@ -717,6 +758,14 @@ def sliding_windows(
             feats["gpu_name"] = gpu_name
             feats["window_start"] = wstart
             feats["window_end"] = wend
+            if step_log_map is not None:
+                # 1.0 = a real training step occurred in this window, 0.0 = none,
+                # NaN = no STEP log for this run (use the run-level label instead).
+                if run_train_ts is not None:
+                    active = bool(((run_train_ts >= wstart) & (run_train_ts < wend)).any())
+                    feats["window_train_active"] = 1.0 if active else 0.0
+                else:
+                    feats["window_train_active"] = np.nan
             results.append(feats)
 
         if duration < window_sec:
@@ -738,7 +787,8 @@ def sliding_windows(
 def get_feature_cols(df: pd.DataFrame) -> list:
     """Return all numeric feature columns (exclude metadata)."""
     exclude = {"run_id", "threeway_label", "workload_label", "gpu_name",
-               "window_start", "window_end", "window_sec", "n_samples"}
+               "window_start", "window_end", "window_sec", "n_samples",
+               "window_train_active"}   # per-window ground truth, never a feature
     return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]
 
 
@@ -900,7 +950,8 @@ def train_and_evaluate():
         log.info(f"Window: {win_sec}s, stride: {stride_sec}s")
         log.info(f"{'='*60}")
 
-        df_win = sliding_windows(df_raw, window_sec=win_sec, stride_sec=stride_sec)
+        df_win = sliding_windows(df_raw, window_sec=win_sec, stride_sec=stride_sec,
+                                 run_level_mode="causal")
         if df_win.empty:
             log.warning(f"No windows for {win_sec}s, skipping")
             continue

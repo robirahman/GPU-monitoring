@@ -203,7 +203,18 @@ class TwoStageClassifier:
         )
 
     # ------------------------------------------------------------------
-    def fit(self, X, y, groups=None, feature_cols: list[str] | None = None):
+    def fit(self, X, y, groups=None, feature_cols: list[str] | None = None,
+            train_active=None):
+        """Fit the two-stage head.
+
+        ``train_active`` (optional) is per-window ground truth from the STEP
+        logs: 1.0 = a real training step occurred in this window, 0.0 = none,
+        NaN = no per-window truth for this run. Where present it overrides the
+        run-level label for the Stage-2 (train-vs-infer) target, so the
+        inference-only windows of a diluted/PPO run are no longer taught as
+        training. Stage 1 (ML vs other) is unaffected — an inference window of a
+        training run is still ML.
+        """
         X = np.asarray(X, dtype=np.float32)
         y = np.asarray(y)
         if feature_cols is not None:
@@ -224,6 +235,14 @@ class TwoStageClassifier:
         is_ml = y != "other"
         X_s2 = X[is_ml][:, self._stage2_mask]
         y_s2 = np.where(y[is_ml] == "ml_training", 1, 0).astype(np.int32)
+        if train_active is not None:
+            # Per-window truth overrides the run-level label where available.
+            ta = np.asarray(train_active, dtype=float)[is_ml]
+            known = ~np.isnan(ta)
+            y_s2[known] = (ta[known] > 0.5).astype(np.int32)
+            if known.any():
+                log.info(f"Stage 2: {int(known.sum())} windows use per-window "
+                         f"train/infer truth (vs run-level label)")
         g_s2 = np.asarray(groups)[is_ml] if groups is not None else None
         w_s2 = compute_sample_weights(y_s2, groups=g_s2, beta=self.beta)
         self._stage2 = self._make_head(self.stage2_n_estimators, self.stage2_max_depth)
@@ -333,7 +352,8 @@ def train_and_evaluate_twostage(window_secs=(15, 30, 60), stride_ratio: float = 
         stride_sec = win_sec * stride_ratio
         log.info(f"\n{'='*60}\nWindow: {win_sec}s, stride: {stride_sec}s\n{'='*60}")
 
-        df_win = sliding_windows(df_raw, window_sec=win_sec, stride_sec=stride_sec)
+        df_win = sliding_windows(df_raw, window_sec=win_sec, stride_sec=stride_sec,
+                                 run_level_mode="causal")
         if df_win.empty:
             log.warning(f"No windows at {win_sec}s")
             continue
