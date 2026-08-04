@@ -1,0 +1,498 @@
+2026-08-03 00:59:42,370 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-08-03 00:59:42,370 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=symgemm_ppo_r8_rep2, run=ab3e57f563e9)
+Mode P1: prompt=128 gen=64 batch=4 rollout:update = 8:1
+Loading TinyLlama/TinyLlama-1.1B-Chat-v1.0 in torch.bfloat16...
+  1.10B params, 2100 MB allocated
+  P1: swapped 155 linears (1034M params updated in the dW epilogue, 0 bytes of optimizer state)
+STEP ts=1785718791.202 kind=infer batch_idx=0 tokens=256 passes=1 phase=rollout
+STEP ts=1785718792.742 kind=infer batch_idx=1 tokens=256 passes=1 phase=rollout
+STEP ts=1785718794.280 kind=infer batch_idx=2 tokens=256 passes=1 phase=rollout
+STEP ts=1785718795.815 kind=infer batch_idx=3 tokens=256 passes=1 phase=rollout
+STEP ts=1785718797.345 kind=infer batch_idx=4 tokens=256 passes=1 phase=rollout
+STEP ts=1785718798.885 kind=infer batch_idx=5 tokens=256 passes=1 phase=rollout
+STEP ts=1785718800.421 kind=infer batch_idx=6 tokens=256 passes=1 phase=rollout
+STEP ts=1785718801.950 kind=infer batch_idx=7 tokens=256 passes=1 phase=rollout
+STEP ts=1785718802.207 kind=train batch_idx=8 tokens=768 passes=3 phase=update loss=8.9142
+STEP ts=1785718803.782 kind=infer batch_idx=9 tokens=256 passes=1 phase=rollout
+STEP ts=1785718805.358 kind=infer batch_idx=10 tokens=256 passes=1 phase=rollout
+STEP ts=1785718806.908 kind=infer batch_idx=11 tokens=256 passes=1 phase=rollout
+STEP ts=1785718808.458 kind=infer batch_idx=12 tokens=256 passes=1 phase=rollout
+STEP ts=1785718810.006 kind=infer batch_idx=13 tokens=256 passes=1 phase=rollout
+STEP ts=1785718811.543 kind=infer batch_idx=14 tokens=256 passes=1 phase=rollout
+STEP ts=1785718813.081 kind=infer batch_idx=15 tokens=256 passes=1 phase=rollout
+STEP ts=1785718814.624 kind=infer batch_idx=16 tokens=256 passes=1 phase=rollout
+STEP ts=1785718814.689 kind=train batch_idx=17 tokens=768 passes=3 phase=update loss=8.4901
+STEP ts=1785718816.227 kind=infer batch_idx=18 tokens=256 passes=1 phase=rollout
+STEP ts=1785718817.766 kind=infer batch_idx=19 tokens=256 passes=1 phase=rollout
+STEP ts=1785718819.314 kind=infer batch_idx=20 tokens=256 passes=1 phase=rollout
+STEP ts=1785718820.871 kind=infer batch_idx=21 tokens=256 passes=1 phase=rollout
+STEP ts=1785718822.427 kind=infer batch_idx=22 tokens=256 passes=1 phase=rollout
+STEP ts=1785718823.973 kind=infer batch_idx=23 tokens=256 passes=1 phase=rollout
+STEP ts=1785718825.516 kind=infer batch_idx=24 tokens=256 passes=1 phase=rollout
+STEP ts=1785718827.043 kind=infer batch_idx=25 tokens=256 passes=1 phase=rollout
+STEP ts=1785718827.107 kind=train batch_idx=26 tokens=768 passes=3 phase=update loss=8.3528
+  38s: rollouts=24 updates=3, 161 gen-tok/s, 61 train-tok/s, mem=2116MB, loss=8.3528
+STEP ts=1785718828.630 kind=infer batch_idx=27 tokens=256 passes=1 phase=rollout
+STEP ts=1785718830.159 kind=infer batch_idx=28 tokens=256 passes=1 phase=rollout
+STEP ts=1785718831.698 kind=infer batch_idx=29 tokens=256 passes=1 phase=rollout
+STEP ts=1785718833.235 kind=infer batch_idx=30 tokens=256 passes=1 phase=rollout
+STEP ts=1785718834.773 kind=infer batch_idx=31 tokens=256 passes=1 phase=rollout
+STEP ts=1785718836.315 kind=infer batch_idx=32 tokens=256 passes=1 phase=rollout
+STEP ts=1785718837.862 kind=infer batch_idx=33 tokens=256 passes=1 phase=rollout
+STEP ts=1785718839.397 kind=infer batch_idx=34 tokens=256 passes=1 phase=rollout
+STEP ts=1785718839.461 kind=train batch_idx=35 tokens=768 passes=3 phase=update loss=8.0513
+STEP ts=1785718840.996 kind=infer batch_idx=36 tokens=256 passes=1 phase=rollout
+STEP ts=1785718842.539 kind=infer batch_idx=37 tokens=256 passes=1 phase=rollout
+STEP ts=1785718844.075 kind=infer batch_idx=38 tokens=256 passes=1 phase=rollout
+STEP ts=1785718845.611 kind=infer batch_idx=39 tokens=256 passes=1 phase=rollout
+STEP ts=1785718847.144 kind=infer batch_idx=40 tokens=256 passes=1 phase=rollout
+STEP ts=1785718848.675 kind=infer batch_idx=41 tokens=256 passes=1 phase=rollout
+STEP ts=1785718850.206 kind=infer batch_idx=42 tokens=256 passes=1 phase=rollout
+STEP ts=1785718851.740 kind=infer batch_idx=43 tokens=256 passes=1 phase=rollout
+STEP ts=1785718851.805 kind=train batch_idx=44 tokens=768 passes=3 phase=update loss=7.8505
+STEP ts=1785718853.348 kind=infer batch_idx=45 tokens=256 passes=1 phase=rollout
+STEP ts=1785718854.887 kind=infer batch_idx=46 tokens=256 passes=1 phase=rollout
+STEP ts=1785718856.426 kind=infer batch_idx=47 tokens=256 passes=1 phase=rollout
+STEP ts=1785718857.967 kind=infer batch_idx=48 tokens=256 passes=1 phase=rollout
+STEP ts=1785718859.506 kind=infer batch_idx=49 tokens=256 passes=1 phase=rollout
+STEP ts=1785718861.042 kind=infer batch_idx=50 tokens=256 passes=1 phase=rollout
+STEP ts=1785718862.578 kind=infer batch_idx=51 tokens=256 passes=1 phase=rollout
+STEP ts=1785718864.112 kind=infer batch_idx=52 tokens=256 passes=1 phase=rollout
+STEP ts=1785718864.174 kind=train batch_idx=53 tokens=768 passes=3 phase=update loss=7.9728
+  75s: rollouts=48 updates=6, 164 gen-tok/s, 61 train-tok/s, mem=2116MB, loss=7.9728
+STEP ts=1785718865.707 kind=infer batch_idx=54 tokens=256 passes=1 phase=rollout
+STEP ts=1785718867.239 kind=infer batch_idx=55 tokens=256 passes=1 phase=rollout
+STEP ts=1785718868.775 kind=infer batch_idx=56 tokens=256 passes=1 phase=rollout
+STEP ts=1785718870.314 kind=infer batch_idx=57 tokens=256 passes=1 phase=rollout
+STEP ts=1785718871.848 kind=infer batch_idx=58 tokens=256 passes=1 phase=rollout
+STEP ts=1785718873.387 kind=infer batch_idx=59 tokens=256 passes=1 phase=rollout
+STEP ts=1785718874.929 kind=infer batch_idx=60 tokens=256 passes=1 phase=rollout
+STEP ts=1785718876.472 kind=infer batch_idx=61 tokens=256 passes=1 phase=rollout
+STEP ts=1785718876.536 kind=train batch_idx=62 tokens=768 passes=3 phase=update loss=8.0402
+STEP ts=1785718878.067 kind=infer batch_idx=63 tokens=256 passes=1 phase=rollout
+STEP ts=1785718879.600 kind=infer batch_idx=64 tokens=256 passes=1 phase=rollout
+STEP ts=1785718881.135 kind=infer batch_idx=65 tokens=256 passes=1 phase=rollout
+STEP ts=1785718882.667 kind=infer batch_idx=66 tokens=256 passes=1 phase=rollout
+STEP ts=1785718884.201 kind=infer batch_idx=67 tokens=256 passes=1 phase=rollout
+STEP ts=1785718885.747 kind=infer batch_idx=68 tokens=256 passes=1 phase=rollout
+STEP ts=1785718887.293 kind=infer batch_idx=69 tokens=256 passes=1 phase=rollout
+STEP ts=1785718888.839 kind=infer batch_idx=70 tokens=256 passes=1 phase=rollout
+STEP ts=1785718888.902 kind=train batch_idx=71 tokens=768 passes=3 phase=update loss=7.6808
+STEP ts=1785718890.443 kind=infer batch_idx=72 tokens=256 passes=1 phase=rollout
+STEP ts=1785718891.977 kind=infer batch_idx=73 tokens=256 passes=1 phase=rollout
+STEP ts=1785718893.508 kind=infer batch_idx=74 tokens=256 passes=1 phase=rollout
+STEP ts=1785718895.038 kind=infer batch_idx=75 tokens=256 passes=1 phase=rollout
+STEP ts=1785718896.576 kind=infer batch_idx=76 tokens=256 passes=1 phase=rollout
+STEP ts=1785718898.106 kind=infer batch_idx=77 tokens=256 passes=1 phase=rollout
+STEP ts=1785718899.635 kind=infer batch_idx=78 tokens=256 passes=1 phase=rollout
+STEP ts=1785718901.165 kind=infer batch_idx=79 tokens=256 passes=1 phase=rollout
+STEP ts=1785718901.227 kind=train batch_idx=80 tokens=768 passes=3 phase=update loss=7.5487
+  112s: rollouts=72 updates=9, 164 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.5487
+STEP ts=1785718902.751 kind=infer batch_idx=81 tokens=256 passes=1 phase=rollout
+STEP ts=1785718904.284 kind=infer batch_idx=82 tokens=256 passes=1 phase=rollout
+STEP ts=1785718905.812 kind=infer batch_idx=83 tokens=256 passes=1 phase=rollout
+STEP ts=1785718907.349 kind=infer batch_idx=84 tokens=256 passes=1 phase=rollout
+STEP ts=1785718908.886 kind=infer batch_idx=85 tokens=256 passes=1 phase=rollout
+STEP ts=1785718910.425 kind=infer batch_idx=86 tokens=256 passes=1 phase=rollout
+STEP ts=1785718911.959 kind=infer batch_idx=87 tokens=256 passes=1 phase=rollout
+STEP ts=1785718913.493 kind=infer batch_idx=88 tokens=256 passes=1 phase=rollout
+STEP ts=1785718913.556 kind=train batch_idx=89 tokens=768 passes=3 phase=update loss=7.6803
+STEP ts=1785718915.084 kind=infer batch_idx=90 tokens=256 passes=1 phase=rollout
+STEP ts=1785718916.611 kind=infer batch_idx=91 tokens=256 passes=1 phase=rollout
+STEP ts=1785718918.149 kind=infer batch_idx=92 tokens=256 passes=1 phase=rollout
+STEP ts=1785718919.688 kind=infer batch_idx=93 tokens=256 passes=1 phase=rollout
+STEP ts=1785718921.223 kind=infer batch_idx=94 tokens=256 passes=1 phase=rollout
+STEP ts=1785718922.757 kind=infer batch_idx=95 tokens=256 passes=1 phase=rollout
+STEP ts=1785718924.289 kind=infer batch_idx=96 tokens=256 passes=1 phase=rollout
+STEP ts=1785718925.818 kind=infer batch_idx=97 tokens=256 passes=1 phase=rollout
+STEP ts=1785718925.881 kind=train batch_idx=98 tokens=768 passes=3 phase=update loss=7.9070
+STEP ts=1785718927.413 kind=infer batch_idx=99 tokens=256 passes=1 phase=rollout
+STEP ts=1785718928.942 kind=infer batch_idx=100 tokens=256 passes=1 phase=rollout
+STEP ts=1785718930.472 kind=infer batch_idx=101 tokens=256 passes=1 phase=rollout
+STEP ts=1785718931.999 kind=infer batch_idx=102 tokens=256 passes=1 phase=rollout
+STEP ts=1785718933.526 kind=infer batch_idx=103 tokens=256 passes=1 phase=rollout
+STEP ts=1785718935.054 kind=infer batch_idx=104 tokens=256 passes=1 phase=rollout
+STEP ts=1785718936.594 kind=infer batch_idx=105 tokens=256 passes=1 phase=rollout
+STEP ts=1785718938.129 kind=infer batch_idx=106 tokens=256 passes=1 phase=rollout
+STEP ts=1785718938.192 kind=train batch_idx=107 tokens=768 passes=3 phase=update loss=7.9446
+  149s: rollouts=96 updates=12, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.9446
+STEP ts=1785718939.720 kind=infer batch_idx=108 tokens=256 passes=1 phase=rollout
+STEP ts=1785718941.252 kind=infer batch_idx=109 tokens=256 passes=1 phase=rollout
+STEP ts=1785718942.791 kind=infer batch_idx=110 tokens=256 passes=1 phase=rollout
+STEP ts=1785718944.327 kind=infer batch_idx=111 tokens=256 passes=1 phase=rollout
+STEP ts=1785718945.867 kind=infer batch_idx=112 tokens=256 passes=1 phase=rollout
+STEP ts=1785718947.402 kind=infer batch_idx=113 tokens=256 passes=1 phase=rollout
+STEP ts=1785718948.938 kind=infer batch_idx=114 tokens=256 passes=1 phase=rollout
+STEP ts=1785718950.477 kind=infer batch_idx=115 tokens=256 passes=1 phase=rollout
+STEP ts=1785718950.540 kind=train batch_idx=116 tokens=768 passes=3 phase=update loss=7.7011
+STEP ts=1785718952.089 kind=infer batch_idx=117 tokens=256 passes=1 phase=rollout
+STEP ts=1785718953.636 kind=infer batch_idx=118 tokens=256 passes=1 phase=rollout
+STEP ts=1785718955.186 kind=infer batch_idx=119 tokens=256 passes=1 phase=rollout
+STEP ts=1785718956.733 kind=infer batch_idx=120 tokens=256 passes=1 phase=rollout
+STEP ts=1785718958.273 kind=infer batch_idx=121 tokens=256 passes=1 phase=rollout
+STEP ts=1785718959.807 kind=infer batch_idx=122 tokens=256 passes=1 phase=rollout
+STEP ts=1785718961.341 kind=infer batch_idx=123 tokens=256 passes=1 phase=rollout
+STEP ts=1785718962.877 kind=infer batch_idx=124 tokens=256 passes=1 phase=rollout
+STEP ts=1785718962.942 kind=train batch_idx=125 tokens=768 passes=3 phase=update loss=7.7212
+STEP ts=1785718964.476 kind=infer batch_idx=126 tokens=256 passes=1 phase=rollout
+STEP ts=1785718966.013 kind=infer batch_idx=127 tokens=256 passes=1 phase=rollout
+STEP ts=1785718967.548 kind=infer batch_idx=128 tokens=256 passes=1 phase=rollout
+STEP ts=1785718969.088 kind=infer batch_idx=129 tokens=256 passes=1 phase=rollout
+STEP ts=1785718970.625 kind=infer batch_idx=130 tokens=256 passes=1 phase=rollout
+STEP ts=1785718972.161 kind=infer batch_idx=131 tokens=256 passes=1 phase=rollout
+STEP ts=1785718973.695 kind=infer batch_idx=132 tokens=256 passes=1 phase=rollout
+STEP ts=1785718975.233 kind=infer batch_idx=133 tokens=256 passes=1 phase=rollout
+STEP ts=1785718975.298 kind=train batch_idx=134 tokens=768 passes=3 phase=update loss=7.4778
+  186s: rollouts=120 updates=15, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.4778
+STEP ts=1785718976.832 kind=infer batch_idx=135 tokens=256 passes=1 phase=rollout
+STEP ts=1785718978.361 kind=infer batch_idx=136 tokens=256 passes=1 phase=rollout
+STEP ts=1785718979.899 kind=infer batch_idx=137 tokens=256 passes=1 phase=rollout
+STEP ts=1785718981.438 kind=infer batch_idx=138 tokens=256 passes=1 phase=rollout
+STEP ts=1785718982.976 kind=infer batch_idx=139 tokens=256 passes=1 phase=rollout
+STEP ts=1785718984.514 kind=infer batch_idx=140 tokens=256 passes=1 phase=rollout
+STEP ts=1785718986.049 kind=infer batch_idx=141 tokens=256 passes=1 phase=rollout
+STEP ts=1785718987.580 kind=infer batch_idx=142 tokens=256 passes=1 phase=rollout
+STEP ts=1785718987.642 kind=train batch_idx=143 tokens=768 passes=3 phase=update loss=7.5999
+STEP ts=1785718989.167 kind=infer batch_idx=144 tokens=256 passes=1 phase=rollout
+STEP ts=1785718990.701 kind=infer batch_idx=145 tokens=256 passes=1 phase=rollout
+STEP ts=1785718992.235 kind=infer batch_idx=146 tokens=256 passes=1 phase=rollout
+STEP ts=1785718993.766 kind=infer batch_idx=147 tokens=256 passes=1 phase=rollout
+STEP ts=1785718995.297 kind=infer batch_idx=148 tokens=256 passes=1 phase=rollout
+STEP ts=1785718996.826 kind=infer batch_idx=149 tokens=256 passes=1 phase=rollout
+STEP ts=1785718998.356 kind=infer batch_idx=150 tokens=256 passes=1 phase=rollout
+STEP ts=1785718999.887 kind=infer batch_idx=151 tokens=256 passes=1 phase=rollout
+STEP ts=1785718999.949 kind=train batch_idx=152 tokens=768 passes=3 phase=update loss=7.5563
+STEP ts=1785719001.481 kind=infer batch_idx=153 tokens=256 passes=1 phase=rollout
+STEP ts=1785719003.009 kind=infer batch_idx=154 tokens=256 passes=1 phase=rollout
+STEP ts=1785719004.538 kind=infer batch_idx=155 tokens=256 passes=1 phase=rollout
+STEP ts=1785719006.068 kind=infer batch_idx=156 tokens=256 passes=1 phase=rollout
+STEP ts=1785719007.599 kind=infer batch_idx=157 tokens=256 passes=1 phase=rollout
+STEP ts=1785719009.127 kind=infer batch_idx=158 tokens=256 passes=1 phase=rollout
+STEP ts=1785719010.662 kind=infer batch_idx=159 tokens=256 passes=1 phase=rollout
+STEP ts=1785719012.195 kind=infer batch_idx=160 tokens=256 passes=1 phase=rollout
+STEP ts=1785719012.257 kind=train batch_idx=161 tokens=768 passes=3 phase=update loss=7.5163
+  223s: rollouts=144 updates=18, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.5163
+STEP ts=1785719013.782 kind=infer batch_idx=162 tokens=256 passes=1 phase=rollout
+STEP ts=1785719015.313 kind=infer batch_idx=163 tokens=256 passes=1 phase=rollout
+STEP ts=1785719016.865 kind=infer batch_idx=164 tokens=256 passes=1 phase=rollout
+STEP ts=1785719018.411 kind=infer batch_idx=165 tokens=256 passes=1 phase=rollout
+STEP ts=1785719019.961 kind=infer batch_idx=166 tokens=256 passes=1 phase=rollout
+STEP ts=1785719021.504 kind=infer batch_idx=167 tokens=256 passes=1 phase=rollout
+STEP ts=1785719023.041 kind=infer batch_idx=168 tokens=256 passes=1 phase=rollout
+STEP ts=1785719024.577 kind=infer batch_idx=169 tokens=256 passes=1 phase=rollout
+STEP ts=1785719024.640 kind=train batch_idx=170 tokens=768 passes=3 phase=update loss=7.4756
+STEP ts=1785719026.167 kind=infer batch_idx=171 tokens=256 passes=1 phase=rollout
+STEP ts=1785719027.694 kind=infer batch_idx=172 tokens=256 passes=1 phase=rollout
+STEP ts=1785719029.227 kind=infer batch_idx=173 tokens=256 passes=1 phase=rollout
+STEP ts=1785719030.760 kind=infer batch_idx=174 tokens=256 passes=1 phase=rollout
+STEP ts=1785719032.296 kind=infer batch_idx=175 tokens=256 passes=1 phase=rollout
+STEP ts=1785719033.831 kind=infer batch_idx=176 tokens=256 passes=1 phase=rollout
+STEP ts=1785719035.381 kind=infer batch_idx=177 tokens=256 passes=1 phase=rollout
+STEP ts=1785719036.919 kind=infer batch_idx=178 tokens=256 passes=1 phase=rollout
+STEP ts=1785719036.982 kind=train batch_idx=179 tokens=768 passes=3 phase=update loss=8.1900
+STEP ts=1785719038.511 kind=infer batch_idx=180 tokens=256 passes=1 phase=rollout
+STEP ts=1785719040.044 kind=infer batch_idx=181 tokens=256 passes=1 phase=rollout
+STEP ts=1785719041.581 kind=infer batch_idx=182 tokens=256 passes=1 phase=rollout
+STEP ts=1785719043.116 kind=infer batch_idx=183 tokens=256 passes=1 phase=rollout
+STEP ts=1785719044.652 kind=infer batch_idx=184 tokens=256 passes=1 phase=rollout
+STEP ts=1785719046.184 kind=infer batch_idx=185 tokens=256 passes=1 phase=rollout
+STEP ts=1785719047.721 kind=infer batch_idx=186 tokens=256 passes=1 phase=rollout
+STEP ts=1785719049.256 kind=infer batch_idx=187 tokens=256 passes=1 phase=rollout
+STEP ts=1785719049.319 kind=train batch_idx=188 tokens=768 passes=3 phase=update loss=7.4850
+  260s: rollouts=168 updates=21, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.4850
+STEP ts=1785719050.851 kind=infer batch_idx=189 tokens=256 passes=1 phase=rollout
+STEP ts=1785719052.382 kind=infer batch_idx=190 tokens=256 passes=1 phase=rollout
+STEP ts=1785719053.918 kind=infer batch_idx=191 tokens=256 passes=1 phase=rollout
+STEP ts=1785719055.453 kind=infer batch_idx=192 tokens=256 passes=1 phase=rollout
+STEP ts=1785719056.985 kind=infer batch_idx=193 tokens=256 passes=1 phase=rollout
+STEP ts=1785719058.517 kind=infer batch_idx=194 tokens=256 passes=1 phase=rollout
+STEP ts=1785719060.047 kind=infer batch_idx=195 tokens=256 passes=1 phase=rollout
+STEP ts=1785719061.580 kind=infer batch_idx=196 tokens=256 passes=1 phase=rollout
+STEP ts=1785719061.644 kind=train batch_idx=197 tokens=768 passes=3 phase=update loss=7.4421
+STEP ts=1785719063.178 kind=infer batch_idx=198 tokens=256 passes=1 phase=rollout
+STEP ts=1785719064.712 kind=infer batch_idx=199 tokens=256 passes=1 phase=rollout
+STEP ts=1785719066.254 kind=infer batch_idx=200 tokens=256 passes=1 phase=rollout
+STEP ts=1785719067.802 kind=infer batch_idx=201 tokens=256 passes=1 phase=rollout
+STEP ts=1785719069.339 kind=infer batch_idx=202 tokens=256 passes=1 phase=rollout
+STEP ts=1785719070.880 kind=infer batch_idx=203 tokens=256 passes=1 phase=rollout
+STEP ts=1785719072.418 kind=infer batch_idx=204 tokens=256 passes=1 phase=rollout
+STEP ts=1785719073.959 kind=infer batch_idx=205 tokens=256 passes=1 phase=rollout
+STEP ts=1785719074.023 kind=train batch_idx=206 tokens=768 passes=3 phase=update loss=7.3063
+STEP ts=1785719075.555 kind=infer batch_idx=207 tokens=256 passes=1 phase=rollout
+STEP ts=1785719077.091 kind=infer batch_idx=208 tokens=256 passes=1 phase=rollout
+STEP ts=1785719078.631 kind=infer batch_idx=209 tokens=256 passes=1 phase=rollout
+STEP ts=1785719080.165 kind=infer batch_idx=210 tokens=256 passes=1 phase=rollout
+STEP ts=1785719081.712 kind=infer batch_idx=211 tokens=256 passes=1 phase=rollout
+2026-08-03 01:04:42,465 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /workspace/GPU-monitoring/data/symgemm_ppo_r8_rep2_NVIDIA_A100_SXM4_80GB_ab3e57f5_20260803_005942.parquet.partial
+STEP ts=1785719083.260 kind=infer batch_idx=212 tokens=256 passes=1 phase=rollout
+STEP ts=1785719084.809 kind=infer batch_idx=213 tokens=256 passes=1 phase=rollout
+STEP ts=1785719086.354 kind=infer batch_idx=214 tokens=256 passes=1 phase=rollout
+STEP ts=1785719086.418 kind=train batch_idx=215 tokens=768 passes=3 phase=update loss=7.6228
+  297s: rollouts=192 updates=24, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.6228
+STEP ts=1785719087.953 kind=infer batch_idx=216 tokens=256 passes=1 phase=rollout
+STEP ts=1785719089.489 kind=infer batch_idx=217 tokens=256 passes=1 phase=rollout
+STEP ts=1785719091.031 kind=infer batch_idx=218 tokens=256 passes=1 phase=rollout
+STEP ts=1785719092.576 kind=infer batch_idx=219 tokens=256 passes=1 phase=rollout
+STEP ts=1785719094.116 kind=infer batch_idx=220 tokens=256 passes=1 phase=rollout
+STEP ts=1785719095.653 kind=infer batch_idx=221 tokens=256 passes=1 phase=rollout
+STEP ts=1785719097.189 kind=infer batch_idx=222 tokens=256 passes=1 phase=rollout
+STEP ts=1785719098.726 kind=infer batch_idx=223 tokens=256 passes=1 phase=rollout
+STEP ts=1785719098.790 kind=train batch_idx=224 tokens=768 passes=3 phase=update loss=7.3298
+STEP ts=1785719100.542 kind=infer batch_idx=225 tokens=256 passes=1 phase=rollout
+STEP ts=1785719102.072 kind=infer batch_idx=226 tokens=256 passes=1 phase=rollout
+STEP ts=1785719103.600 kind=infer batch_idx=227 tokens=256 passes=1 phase=rollout
+STEP ts=1785719105.131 kind=infer batch_idx=228 tokens=256 passes=1 phase=rollout
+STEP ts=1785719106.659 kind=infer batch_idx=229 tokens=256 passes=1 phase=rollout
+STEP ts=1785719108.190 kind=infer batch_idx=230 tokens=256 passes=1 phase=rollout
+STEP ts=1785719109.727 kind=infer batch_idx=231 tokens=256 passes=1 phase=rollout
+STEP ts=1785719111.258 kind=infer batch_idx=232 tokens=256 passes=1 phase=rollout
+STEP ts=1785719111.322 kind=train batch_idx=233 tokens=768 passes=3 phase=update loss=7.4310
+STEP ts=1785719112.854 kind=infer batch_idx=234 tokens=256 passes=1 phase=rollout
+STEP ts=1785719114.392 kind=infer batch_idx=235 tokens=256 passes=1 phase=rollout
+STEP ts=1785719115.929 kind=infer batch_idx=236 tokens=256 passes=1 phase=rollout
+STEP ts=1785719117.463 kind=infer batch_idx=237 tokens=256 passes=1 phase=rollout
+STEP ts=1785719119.005 kind=infer batch_idx=238 tokens=256 passes=1 phase=rollout
+STEP ts=1785719120.540 kind=infer batch_idx=239 tokens=256 passes=1 phase=rollout
+STEP ts=1785719122.073 kind=infer batch_idx=240 tokens=256 passes=1 phase=rollout
+STEP ts=1785719123.606 kind=infer batch_idx=241 tokens=256 passes=1 phase=rollout
+STEP ts=1785719123.669 kind=train batch_idx=242 tokens=768 passes=3 phase=update loss=7.3384
+  335s: rollouts=216 updates=27, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.3384
+STEP ts=1785719125.201 kind=infer batch_idx=243 tokens=256 passes=1 phase=rollout
+STEP ts=1785719126.736 kind=infer batch_idx=244 tokens=256 passes=1 phase=rollout
+STEP ts=1785719128.275 kind=infer batch_idx=245 tokens=256 passes=1 phase=rollout
+STEP ts=1785719129.814 kind=infer batch_idx=246 tokens=256 passes=1 phase=rollout
+STEP ts=1785719131.356 kind=infer batch_idx=247 tokens=256 passes=1 phase=rollout
+STEP ts=1785719132.897 kind=infer batch_idx=248 tokens=256 passes=1 phase=rollout
+STEP ts=1785719134.434 kind=infer batch_idx=249 tokens=256 passes=1 phase=rollout
+STEP ts=1785719135.972 kind=infer batch_idx=250 tokens=256 passes=1 phase=rollout
+STEP ts=1785719136.039 kind=train batch_idx=251 tokens=768 passes=3 phase=update loss=7.3871
+STEP ts=1785719137.567 kind=infer batch_idx=252 tokens=256 passes=1 phase=rollout
+STEP ts=1785719139.098 kind=infer batch_idx=253 tokens=256 passes=1 phase=rollout
+STEP ts=1785719140.632 kind=infer batch_idx=254 tokens=256 passes=1 phase=rollout
+STEP ts=1785719142.166 kind=infer batch_idx=255 tokens=256 passes=1 phase=rollout
+STEP ts=1785719143.698 kind=infer batch_idx=256 tokens=256 passes=1 phase=rollout
+STEP ts=1785719145.233 kind=infer batch_idx=257 tokens=256 passes=1 phase=rollout
+STEP ts=1785719146.784 kind=infer batch_idx=258 tokens=256 passes=1 phase=rollout
+STEP ts=1785719148.332 kind=infer batch_idx=259 tokens=256 passes=1 phase=rollout
+STEP ts=1785719148.395 kind=train batch_idx=260 tokens=768 passes=3 phase=update loss=7.3529
+STEP ts=1785719149.942 kind=infer batch_idx=261 tokens=256 passes=1 phase=rollout
+STEP ts=1785719151.485 kind=infer batch_idx=262 tokens=256 passes=1 phase=rollout
+STEP ts=1785719153.023 kind=infer batch_idx=263 tokens=256 passes=1 phase=rollout
+STEP ts=1785719154.557 kind=infer batch_idx=264 tokens=256 passes=1 phase=rollout
+STEP ts=1785719156.090 kind=infer batch_idx=265 tokens=256 passes=1 phase=rollout
+STEP ts=1785719157.623 kind=infer batch_idx=266 tokens=256 passes=1 phase=rollout
+STEP ts=1785719159.160 kind=infer batch_idx=267 tokens=256 passes=1 phase=rollout
+STEP ts=1785719160.694 kind=infer batch_idx=268 tokens=256 passes=1 phase=rollout
+STEP ts=1785719160.758 kind=train batch_idx=269 tokens=768 passes=3 phase=update loss=7.3255
+  372s: rollouts=240 updates=30, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.3255
+STEP ts=1785719162.289 kind=infer batch_idx=270 tokens=256 passes=1 phase=rollout
+STEP ts=1785719163.822 kind=infer batch_idx=271 tokens=256 passes=1 phase=rollout
+STEP ts=1785719165.369 kind=infer batch_idx=272 tokens=256 passes=1 phase=rollout
+STEP ts=1785719166.903 kind=infer batch_idx=273 tokens=256 passes=1 phase=rollout
+STEP ts=1785719168.441 kind=infer batch_idx=274 tokens=256 passes=1 phase=rollout
+STEP ts=1785719169.975 kind=infer batch_idx=275 tokens=256 passes=1 phase=rollout
+STEP ts=1785719171.505 kind=infer batch_idx=276 tokens=256 passes=1 phase=rollout
+STEP ts=1785719173.036 kind=infer batch_idx=277 tokens=256 passes=1 phase=rollout
+STEP ts=1785719173.099 kind=train batch_idx=278 tokens=768 passes=3 phase=update loss=7.5015
+STEP ts=1785719174.631 kind=infer batch_idx=279 tokens=256 passes=1 phase=rollout
+STEP ts=1785719176.163 kind=infer batch_idx=280 tokens=256 passes=1 phase=rollout
+STEP ts=1785719177.694 kind=infer batch_idx=281 tokens=256 passes=1 phase=rollout
+STEP ts=1785719179.233 kind=infer batch_idx=282 tokens=256 passes=1 phase=rollout
+STEP ts=1785719180.770 kind=infer batch_idx=283 tokens=256 passes=1 phase=rollout
+STEP ts=1785719182.306 kind=infer batch_idx=284 tokens=256 passes=1 phase=rollout
+STEP ts=1785719183.839 kind=infer batch_idx=285 tokens=256 passes=1 phase=rollout
+STEP ts=1785719185.372 kind=infer batch_idx=286 tokens=256 passes=1 phase=rollout
+STEP ts=1785719185.435 kind=train batch_idx=287 tokens=768 passes=3 phase=update loss=7.4195
+STEP ts=1785719186.969 kind=infer batch_idx=288 tokens=256 passes=1 phase=rollout
+STEP ts=1785719188.508 kind=infer batch_idx=289 tokens=256 passes=1 phase=rollout
+STEP ts=1785719190.046 kind=infer batch_idx=290 tokens=256 passes=1 phase=rollout
+STEP ts=1785719191.588 kind=infer batch_idx=291 tokens=256 passes=1 phase=rollout
+STEP ts=1785719193.120 kind=infer batch_idx=292 tokens=256 passes=1 phase=rollout
+STEP ts=1785719194.649 kind=infer batch_idx=293 tokens=256 passes=1 phase=rollout
+STEP ts=1785719196.186 kind=infer batch_idx=294 tokens=256 passes=1 phase=rollout
+STEP ts=1785719197.720 kind=infer batch_idx=295 tokens=256 passes=1 phase=rollout
+STEP ts=1785719197.784 kind=train batch_idx=296 tokens=768 passes=3 phase=update loss=7.3153
+  409s: rollouts=264 updates=33, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.3153
+STEP ts=1785719199.320 kind=infer batch_idx=297 tokens=256 passes=1 phase=rollout
+STEP ts=1785719200.852 kind=infer batch_idx=298 tokens=256 passes=1 phase=rollout
+STEP ts=1785719202.385 kind=infer batch_idx=299 tokens=256 passes=1 phase=rollout
+STEP ts=1785719203.916 kind=infer batch_idx=300 tokens=256 passes=1 phase=rollout
+STEP ts=1785719205.450 kind=infer batch_idx=301 tokens=256 passes=1 phase=rollout
+STEP ts=1785719206.983 kind=infer batch_idx=302 tokens=256 passes=1 phase=rollout
+STEP ts=1785719208.514 kind=infer batch_idx=303 tokens=256 passes=1 phase=rollout
+STEP ts=1785719210.049 kind=infer batch_idx=304 tokens=256 passes=1 phase=rollout
+STEP ts=1785719210.113 kind=train batch_idx=305 tokens=768 passes=3 phase=update loss=7.4463
+STEP ts=1785719211.658 kind=infer batch_idx=306 tokens=256 passes=1 phase=rollout
+STEP ts=1785719213.200 kind=infer batch_idx=307 tokens=256 passes=1 phase=rollout
+STEP ts=1785719214.751 kind=infer batch_idx=308 tokens=256 passes=1 phase=rollout
+STEP ts=1785719216.296 kind=infer batch_idx=309 tokens=256 passes=1 phase=rollout
+STEP ts=1785719217.835 kind=infer batch_idx=310 tokens=256 passes=1 phase=rollout
+STEP ts=1785719219.371 kind=infer batch_idx=311 tokens=256 passes=1 phase=rollout
+STEP ts=1785719220.908 kind=infer batch_idx=312 tokens=256 passes=1 phase=rollout
+STEP ts=1785719222.445 kind=infer batch_idx=313 tokens=256 passes=1 phase=rollout
+STEP ts=1785719222.509 kind=train batch_idx=314 tokens=768 passes=3 phase=update loss=8.9050
+STEP ts=1785719224.039 kind=infer batch_idx=315 tokens=256 passes=1 phase=rollout
+STEP ts=1785719225.570 kind=infer batch_idx=316 tokens=256 passes=1 phase=rollout
+STEP ts=1785719227.104 kind=infer batch_idx=317 tokens=256 passes=1 phase=rollout
+STEP ts=1785719228.641 kind=infer batch_idx=318 tokens=256 passes=1 phase=rollout
+STEP ts=1785719230.179 kind=infer batch_idx=319 tokens=256 passes=1 phase=rollout
+STEP ts=1785719231.724 kind=infer batch_idx=320 tokens=256 passes=1 phase=rollout
+STEP ts=1785719233.257 kind=infer batch_idx=321 tokens=256 passes=1 phase=rollout
+STEP ts=1785719234.788 kind=infer batch_idx=322 tokens=256 passes=1 phase=rollout
+STEP ts=1785719234.852 kind=train batch_idx=323 tokens=768 passes=3 phase=update loss=7.5920
+  446s: rollouts=288 updates=36, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.5920
+STEP ts=1785719236.384 kind=infer batch_idx=324 tokens=256 passes=1 phase=rollout
+STEP ts=1785719237.917 kind=infer batch_idx=325 tokens=256 passes=1 phase=rollout
+STEP ts=1785719239.451 kind=infer batch_idx=326 tokens=256 passes=1 phase=rollout
+STEP ts=1785719240.982 kind=infer batch_idx=327 tokens=256 passes=1 phase=rollout
+STEP ts=1785719242.515 kind=infer batch_idx=328 tokens=256 passes=1 phase=rollout
+STEP ts=1785719244.047 kind=infer batch_idx=329 tokens=256 passes=1 phase=rollout
+STEP ts=1785719245.577 kind=infer batch_idx=330 tokens=256 passes=1 phase=rollout
+STEP ts=1785719247.109 kind=infer batch_idx=331 tokens=256 passes=1 phase=rollout
+STEP ts=1785719247.173 kind=train batch_idx=332 tokens=768 passes=3 phase=update loss=7.3481
+STEP ts=1785719248.699 kind=infer batch_idx=333 tokens=256 passes=1 phase=rollout
+STEP ts=1785719250.228 kind=infer batch_idx=334 tokens=256 passes=1 phase=rollout
+STEP ts=1785719251.754 kind=infer batch_idx=335 tokens=256 passes=1 phase=rollout
+STEP ts=1785719253.279 kind=infer batch_idx=336 tokens=256 passes=1 phase=rollout
+STEP ts=1785719254.810 kind=infer batch_idx=337 tokens=256 passes=1 phase=rollout
+STEP ts=1785719256.344 kind=infer batch_idx=338 tokens=256 passes=1 phase=rollout
+STEP ts=1785719257.874 kind=infer batch_idx=339 tokens=256 passes=1 phase=rollout
+STEP ts=1785719259.403 kind=infer batch_idx=340 tokens=256 passes=1 phase=rollout
+STEP ts=1785719259.466 kind=train batch_idx=341 tokens=768 passes=3 phase=update loss=7.2624
+STEP ts=1785719260.992 kind=infer batch_idx=342 tokens=256 passes=1 phase=rollout
+STEP ts=1785719262.517 kind=infer batch_idx=343 tokens=256 passes=1 phase=rollout
+STEP ts=1785719264.052 kind=infer batch_idx=344 tokens=256 passes=1 phase=rollout
+STEP ts=1785719265.582 kind=infer batch_idx=345 tokens=256 passes=1 phase=rollout
+STEP ts=1785719267.111 kind=infer batch_idx=346 tokens=256 passes=1 phase=rollout
+STEP ts=1785719268.642 kind=infer batch_idx=347 tokens=256 passes=1 phase=rollout
+STEP ts=1785719270.174 kind=infer batch_idx=348 tokens=256 passes=1 phase=rollout
+STEP ts=1785719271.702 kind=infer batch_idx=349 tokens=256 passes=1 phase=rollout
+STEP ts=1785719271.765 kind=train batch_idx=350 tokens=768 passes=3 phase=update loss=7.3600
+  483s: rollouts=312 updates=39, 165 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.3600
+STEP ts=1785719273.293 kind=infer batch_idx=351 tokens=256 passes=1 phase=rollout
+STEP ts=1785719274.819 kind=infer batch_idx=352 tokens=256 passes=1 phase=rollout
+STEP ts=1785719276.356 kind=infer batch_idx=353 tokens=256 passes=1 phase=rollout
+STEP ts=1785719277.894 kind=infer batch_idx=354 tokens=256 passes=1 phase=rollout
+STEP ts=1785719279.436 kind=infer batch_idx=355 tokens=256 passes=1 phase=rollout
+STEP ts=1785719280.983 kind=infer batch_idx=356 tokens=256 passes=1 phase=rollout
+STEP ts=1785719282.512 kind=infer batch_idx=357 tokens=256 passes=1 phase=rollout
+STEP ts=1785719284.040 kind=infer batch_idx=358 tokens=256 passes=1 phase=rollout
+STEP ts=1785719284.102 kind=train batch_idx=359 tokens=768 passes=3 phase=update loss=7.5175
+STEP ts=1785719285.624 kind=infer batch_idx=360 tokens=256 passes=1 phase=rollout
+STEP ts=1785719287.148 kind=infer batch_idx=361 tokens=256 passes=1 phase=rollout
+STEP ts=1785719288.679 kind=infer batch_idx=362 tokens=256 passes=1 phase=rollout
+STEP ts=1785719290.211 kind=infer batch_idx=363 tokens=256 passes=1 phase=rollout
+STEP ts=1785719291.744 kind=infer batch_idx=364 tokens=256 passes=1 phase=rollout
+STEP ts=1785719293.275 kind=infer batch_idx=365 tokens=256 passes=1 phase=rollout
+STEP ts=1785719294.800 kind=infer batch_idx=366 tokens=256 passes=1 phase=rollout
+STEP ts=1785719296.333 kind=infer batch_idx=367 tokens=256 passes=1 phase=rollout
+STEP ts=1785719296.395 kind=train batch_idx=368 tokens=768 passes=3 phase=update loss=7.3392
+STEP ts=1785719297.915 kind=infer batch_idx=369 tokens=256 passes=1 phase=rollout
+STEP ts=1785719299.447 kind=infer batch_idx=370 tokens=256 passes=1 phase=rollout
+STEP ts=1785719300.978 kind=infer batch_idx=371 tokens=256 passes=1 phase=rollout
+STEP ts=1785719302.505 kind=infer batch_idx=372 tokens=256 passes=1 phase=rollout
+STEP ts=1785719304.032 kind=infer batch_idx=373 tokens=256 passes=1 phase=rollout
+STEP ts=1785719305.557 kind=infer batch_idx=374 tokens=256 passes=1 phase=rollout
+STEP ts=1785719307.083 kind=infer batch_idx=375 tokens=256 passes=1 phase=rollout
+STEP ts=1785719308.612 kind=infer batch_idx=376 tokens=256 passes=1 phase=rollout
+STEP ts=1785719308.676 kind=train batch_idx=377 tokens=768 passes=3 phase=update loss=7.2742
+  520s: rollouts=336 updates=42, 166 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.2742
+STEP ts=1785719310.219 kind=infer batch_idx=378 tokens=256 passes=1 phase=rollout
+STEP ts=1785719311.747 kind=infer batch_idx=379 tokens=256 passes=1 phase=rollout
+STEP ts=1785719313.273 kind=infer batch_idx=380 tokens=256 passes=1 phase=rollout
+STEP ts=1785719314.797 kind=infer batch_idx=381 tokens=256 passes=1 phase=rollout
+STEP ts=1785719316.327 kind=infer batch_idx=382 tokens=256 passes=1 phase=rollout
+STEP ts=1785719317.852 kind=infer batch_idx=383 tokens=256 passes=1 phase=rollout
+STEP ts=1785719319.383 kind=infer batch_idx=384 tokens=256 passes=1 phase=rollout
+STEP ts=1785719320.918 kind=infer batch_idx=385 tokens=256 passes=1 phase=rollout
+STEP ts=1785719320.982 kind=train batch_idx=386 tokens=768 passes=3 phase=update loss=7.2786
+STEP ts=1785719322.509 kind=infer batch_idx=387 tokens=256 passes=1 phase=rollout
+STEP ts=1785719324.041 kind=infer batch_idx=388 tokens=256 passes=1 phase=rollout
+STEP ts=1785719325.570 kind=infer batch_idx=389 tokens=256 passes=1 phase=rollout
+STEP ts=1785719327.097 kind=infer batch_idx=390 tokens=256 passes=1 phase=rollout
+STEP ts=1785719328.632 kind=infer batch_idx=391 tokens=256 passes=1 phase=rollout
+STEP ts=1785719330.170 kind=infer batch_idx=392 tokens=256 passes=1 phase=rollout
+STEP ts=1785719331.700 kind=infer batch_idx=393 tokens=256 passes=1 phase=rollout
+STEP ts=1785719333.230 kind=infer batch_idx=394 tokens=256 passes=1 phase=rollout
+STEP ts=1785719333.294 kind=train batch_idx=395 tokens=768 passes=3 phase=update loss=7.4112
+STEP ts=1785719334.819 kind=infer batch_idx=396 tokens=256 passes=1 phase=rollout
+STEP ts=1785719336.347 kind=infer batch_idx=397 tokens=256 passes=1 phase=rollout
+STEP ts=1785719337.875 kind=infer batch_idx=398 tokens=256 passes=1 phase=rollout
+STEP ts=1785719339.406 kind=infer batch_idx=399 tokens=256 passes=1 phase=rollout
+STEP ts=1785719340.945 kind=infer batch_idx=400 tokens=256 passes=1 phase=rollout
+STEP ts=1785719342.491 kind=infer batch_idx=401 tokens=256 passes=1 phase=rollout
+STEP ts=1785719344.037 kind=infer batch_idx=402 tokens=256 passes=1 phase=rollout
+STEP ts=1785719345.585 kind=infer batch_idx=403 tokens=256 passes=1 phase=rollout
+STEP ts=1785719345.649 kind=train batch_idx=404 tokens=768 passes=3 phase=update loss=7.2432
+  557s: rollouts=360 updates=45, 166 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.2432
+STEP ts=1785719347.188 kind=infer batch_idx=405 tokens=256 passes=1 phase=rollout
+STEP ts=1785719348.715 kind=infer batch_idx=406 tokens=256 passes=1 phase=rollout
+STEP ts=1785719350.249 kind=infer batch_idx=407 tokens=256 passes=1 phase=rollout
+STEP ts=1785719351.776 kind=infer batch_idx=408 tokens=256 passes=1 phase=rollout
+STEP ts=1785719353.304 kind=infer batch_idx=409 tokens=256 passes=1 phase=rollout
+STEP ts=1785719354.837 kind=infer batch_idx=410 tokens=256 passes=1 phase=rollout
+STEP ts=1785719356.365 kind=infer batch_idx=411 tokens=256 passes=1 phase=rollout
+STEP ts=1785719357.894 kind=infer batch_idx=412 tokens=256 passes=1 phase=rollout
+STEP ts=1785719357.958 kind=train batch_idx=413 tokens=768 passes=3 phase=update loss=7.2524
+STEP ts=1785719359.488 kind=infer batch_idx=414 tokens=256 passes=1 phase=rollout
+STEP ts=1785719361.019 kind=infer batch_idx=415 tokens=256 passes=1 phase=rollout
+STEP ts=1785719362.555 kind=infer batch_idx=416 tokens=256 passes=1 phase=rollout
+STEP ts=1785719364.086 kind=infer batch_idx=417 tokens=256 passes=1 phase=rollout
+STEP ts=1785719365.618 kind=infer batch_idx=418 tokens=256 passes=1 phase=rollout
+STEP ts=1785719367.149 kind=infer batch_idx=419 tokens=256 passes=1 phase=rollout
+STEP ts=1785719368.676 kind=infer batch_idx=420 tokens=256 passes=1 phase=rollout
+STEP ts=1785719370.211 kind=infer batch_idx=421 tokens=256 passes=1 phase=rollout
+STEP ts=1785719370.277 kind=train batch_idx=422 tokens=768 passes=3 phase=update loss=7.2715
+STEP ts=1785719371.799 kind=infer batch_idx=423 tokens=256 passes=1 phase=rollout
+STEP ts=1785719373.322 kind=infer batch_idx=424 tokens=256 passes=1 phase=rollout
+STEP ts=1785719374.851 kind=infer batch_idx=425 tokens=256 passes=1 phase=rollout
+STEP ts=1785719376.375 kind=infer batch_idx=426 tokens=256 passes=1 phase=rollout
+STEP ts=1785719377.898 kind=infer batch_idx=427 tokens=256 passes=1 phase=rollout
+STEP ts=1785719379.423 kind=infer batch_idx=428 tokens=256 passes=1 phase=rollout
+STEP ts=1785719380.953 kind=infer batch_idx=429 tokens=256 passes=1 phase=rollout
+STEP ts=1785719382.479 kind=infer batch_idx=430 tokens=256 passes=1 phase=rollout
+2026-08-03 01:09:42,486 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /workspace/GPU-monitoring/data/symgemm_ppo_r8_rep2_NVIDIA_A100_SXM4_80GB_ab3e57f5_20260803_005942.parquet.partial
+STEP ts=1785719382.543 kind=train batch_idx=431 tokens=768 passes=3 phase=update loss=7.2842
+  594s: rollouts=384 updates=48, 166 gen-tok/s, 62 train-tok/s, mem=2116MB, loss=7.2842
+STEP ts=1785719384.068 kind=infer batch_idx=432 tokens=256 passes=1 phase=rollout
+STEP ts=1785719385.592 kind=infer batch_idx=433 tokens=256 passes=1 phase=rollout
+STEP ts=1785719387.117 kind=infer batch_idx=434 tokens=256 passes=1 phase=rollout
+STEP ts=1785719388.643 kind=infer batch_idx=435 tokens=256 passes=1 phase=rollout
+STEP ts=1785719390.172 kind=infer batch_idx=436 tokens=256 passes=1 phase=rollout
+STEP ts=1785719390.236 kind=train batch_idx=437 tokens=768 passes=3 phase=update loss=7.2479
+P1 complete. rollouts=389 updates=49, 166 gen-tok/s, 63 train-tok/s, 601s
+  training duty cycle: 11.2% of steps (rollout:update = 8:1)
+  loss 8.9142 -> 7.2479 (+18.69%)
+  peak memory: 3896 MB
+2026-08-03 01:09:53,276 [spar.telemetry] INFO: Telemetry stopped. 611 samples collected.
+2026-08-03 01:09:53,289 [spar.telemetry] INFO: Saved 611 rows to /workspace/GPU-monitoring/data/symgemm_ppo_r8_rep2_NVIDIA_A100_SXM4_80GB_ab3e57f5_20260803_005942.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    symgemm_ppo_r8_rep2
+  Command:     /root/rbenv/bin/python workloads/adversarial_symgemm.py --mode P1 --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 --batch-size 4 --prompt-len 128 --gen-tokens 64 --dtype bfloat16 --lr 1e-3 --duration 600 --rollout 8
+  GPU:         NVIDIA A100-SXM4-80GB (index 0)
+  Run ID:      ab3e57f563e9
+  Output:      /workspace/GPU-monitoring/data/symgemm_ppo_r8_rep2_NVIDIA_A100_SXM4_80GB_ab3e57f5_20260803_005942.parquet
+  Interval:    1.0s
+  DCGM:        enabled (if available)
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring/data/symgemm_ppo_r8_rep2_NVIDIA_A100_SXM4_80GB_ab3e57f5_20260803_005942.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /root/rbenv/bin/python workloads/adversarial_symgemm.py --mode P1 --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 --batch-size 4 --prompt-len 128 --gen-tokens 64 --dtype bfloat16 --lr 1e-3 --duration 600 --rollout 8
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=606.9s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 611
+  Workload exit code: 0
+  Output file: /workspace/GPU-monitoring/data/symgemm_ppo_r8_rep2_NVIDIA_A100_SXM4_80GB_ab3e57f5_20260803_005942.parquet
+============================================================

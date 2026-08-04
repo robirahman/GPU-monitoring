@@ -119,9 +119,13 @@ STRATEGY_FAMILIES = {
     # the eval matters: most windows are rollout (inference), only the update
     # steps are training. decode (symgemm_decode_*) is NOT a family -- it is the
     # inference control, excluded from clean training by the symgemm_ filter.
-    "symgemm_ppo": [
-        "symgemm_ppo_r8_rep1", "symgemm_ppo_r8_rep2", "symgemm_ppo_r8_rep3",
-        "symgemm_ppo_r32_rep1", "symgemm_ppo_r32_rep2", "symgemm_ppo_r32_rep3",
+    # DISGUISED PPO only. The undisguised variant (ppo_rlhf_*) is a legitimate
+    # RL training regime in the baseline corpus and must NOT be held out here --
+    # it belongs in the training pool so the monitor is calibrated on RL.
+    "symgemm_ppo_fused": [
+        "symgemm_ppo_fused_r8_rep1", "symgemm_ppo_fused_r8_rep2",
+        "symgemm_ppo_fused_r8_rep3", "symgemm_ppo_fused_r32_rep1",
+        "symgemm_ppo_fused_r32_rep2", "symgemm_ppo_fused_r32_rep3",
     ],
 }
 

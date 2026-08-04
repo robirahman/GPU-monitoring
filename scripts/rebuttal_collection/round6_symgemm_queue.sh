@@ -229,9 +229,18 @@ for rep in $(seq 1 "$REPS"); do
   # corpus genuinely lacks and the one the meta-review names; decode is its
   # in-program inference partner. 3 reps is enough for a duty-cycle claim.
   if [ "$rep" -le 3 ]; then
-    cell_gen "${PREFIX}symgemm_ppo_r8_rep${rep}"       P1 --rollout 8
-    cell_gen "${PREFIX}symgemm_ppo_r32_rep${rep}"      P1 --rollout 32
-    cell_gen "${PREFIX}symgemm_decode_g256_rep${rep}"  DC --gen-tokens 256
+    # DISGUISED PPO (P1: fused-SGD policy update) -- a Round 6 evasion cell,
+    # because it stacks temporal dilution on write minimisation. The label says
+    # "fused" so it is never mistaken for the legitimate RL regime below.
+    cell_gen "${PREFIX}symgemm_ppo_fused_r8_rep${rep}"   P1 --rollout 8
+    cell_gen "${PREFIX}symgemm_ppo_fused_r32_rep${rep}"  P1 --rollout 32
+    cell_gen "${PREFIX}symgemm_decode_g256_rep${rep}"    DC --gen-tokens 256
+    # UNDISGUISED PPO (P0: ordinary autograd + AdamW) -- this is what a real
+    # RLHF job runs, so it belongs in the BASELINE corpus as legitimate
+    # training, NOT as an evasion. Deliberately not symgemm_*-prefixed: that
+    # prefix is excluded from the clean training pool by the analysis scripts.
+    cell_gen "${PREFIX}ppo_rlhf_r8_rep${rep}"            P0 --rollout 8 --lr 1e-5
+    cell_gen "${PREFIX}ppo_rlhf_r32_rep${rep}"           P0 --rollout 32 --lr 1e-5
   fi
 
   # Scale check: does the result hold where it matters for governance?

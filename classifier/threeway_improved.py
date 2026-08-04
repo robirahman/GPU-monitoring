@@ -122,6 +122,12 @@ TRAINING_LABELS = {
     "symgemm_L4_sgdfused", "symgemm_L4_sgdfused_m8192",
     "symgemm_L4_sgdfused_7b", "symgemm_L4_triton",
     "symgemm_L5_adam",
+    # Round 6 evasion: DISGUISED PPO (fused-SGD policy update) -- stacks
+    # temporal dilution on write minimisation.
+    "symgemm_ppo_fused_r8", "symgemm_ppo_fused_r32",
+    # BASELINE corpus: undisguised PPO (ordinary autograd + AdamW). A real RLHF
+    # training regime, added so the corpus covers RL; not an evasion.
+    "ppo_rlhf_r8", "ppo_rlhf_r32",
 }
 
 INFERENCE_LABELS = {
@@ -229,10 +235,19 @@ def threeway_label(label: str) -> str:
     # this, a suffixed label falls through to "other" and the corpus quietly
     # learns that disguised training is not training -- the same failure the
     # whitebox rule above exists to prevent.
+    # Undisguised PPO (mode P0: rollout + ordinary autograd/AdamW update). This
+    # is a legitimate RL *training regime* for the baseline corpus, not an
+    # evasion, so it is deliberately NOT symgemm_*-prefixed (that prefix is held
+    # out of the clean training pool). Without this rule "ppo_rlhf_*" matches
+    # none of the keywords below and would land in "other" -- teaching the
+    # corpus that RL training is not training.
+    if lc.startswith("ppo_"):
+        return "ml_training"
     if lc.startswith("symgemm_"):
         # PPO shape: the rollout is generation, but the policy update is an
         # ordinary gradient step that changes every trained weight, so the run
         # as a whole is training at a duty cycle set by rollout:update.
+        # (symgemm_ppo_fused_* = the DISGUISED variant, an evasion cell.)
         if "_ppo" in lc:
             return "ml_training"
         # Pure autoregressive decode -- no weight ever changes.
