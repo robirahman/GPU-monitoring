@@ -339,30 +339,38 @@ def run_loop(args, model, tokenizer, device, optimizer=None):
 
 # ── Generation-based cells: PPO shape and pure decode ───────────────────────
 
-def run_generate_loop(args, model, tokenizer, device):
+def run_generate_loop(args, model, tokenizer, device, optimizer=None):
     """Autoregressive-generation cells, for Area Chair 1uob's question.
 
     The meta-review asks why detection should generalise across regimes when
     PPO differs from vanilla dense SGD and prefill and decode
-    are very different". Two cells answer it directly:
+    differ from each other. Three cells answer it directly:
 
     DC  pure autoregressive decode. Memory-bandwidth-bound, M = batch per step,
         KV-cache streaming. The contrasting negative to L1's compute-bound
         forward pass, collected inside the same program so the comparison
         carries no program confound.
 
-    P1  PPO shape: R rollout generations, then one policy update on the
-        sampled trajectory. Structurally this is what PPO does -- generate,
-        score, update -- and in telemetry terms it is a diluted trainer whose
-        duty cycle is set by the rollout:update ratio. Rollout dominates
-        wall-clock, exactly as in real RLHF.
+    P0  *Undisguised* PPO: R rollout generations, then one ordinary
+        autograd + AdamW policy update. This is what a real RLHF job runs, so
+        it belongs in the BASELINE corpus as legitimate training -- it is a
+        training-regime-coverage cell, not an evasion. Its update materialises
+        the gradient tensor and touches ~16 bytes/param of optimizer state, so
+        it carries the full ordinary-training DRAM signature at whatever duty
+        cycle R implies.
 
-    Every trained weight still changes once per update via the same fused
-    SymLinearFn epilogue, so the irreducible weight-write invariant is present
-    at whatever duty cycle R implies.
+    P1  DISGUISED PPO: identical rollout/update structure, but the policy update
+        goes through the fused SymLinearFn epilogue (as L4), so no gradient
+        tensor is materialised and no optimizer state exists. This stacks two
+        evasions -- temporal dilution (rollouts) and write minimisation
+        (fusion) -- and is therefore a Round 6 evasion cell, not a baseline one.
+
+    In both P0 and P1 every trained weight still changes once per update, so the
+    irreducible weight-write invariant is present; they differ in how much
+    additional traffic the update carries with it.
     """
     embed = model.get_input_embeddings()
-    is_ppo = args.mode == "P1"
+    is_ppo = args.mode in ("P0", "P1")
     R = args.rollout if is_ppo else 1
 
     wall_start = time.time()
@@ -410,9 +418,16 @@ def run_generate_loop(args, model, tokenizer, device):
             continue
 
         # ── policy update: one gradient step on the sampled trajectory ──────
+        # P1 (disguised): the update fires inside SymLinearFn's fused epilogue,
+        # so no gradient tensor and no optimizer state ever exist.
+        # P0 (undisguised): ordinary autograd populates .grad and AdamW steps,
+        # which is what a real RLHF job does.
         inputs_embeds = embed(seq).detach().requires_grad_(True)
         out = model(inputs_embeds=inputs_embeds, labels=seq)
-        out.loss.backward()          # fused SGD fires inside SymLinearFn
+        out.loss.backward()
+        if optimizer is not None:
+            optimizer.step()
+            optimizer.zero_grad(set_to_none=True)
         loss_val = float(out.loss.detach())
         n_tok = seq.shape[0] * seq.shape[1]
         train_tokens_total += n_tok
@@ -569,9 +584,10 @@ def main():
   L4  fwd + dX + fused-SGD dW              THE ATTACK
   L5  fwd + dX + dW->grad + AdamW          positive control
   DC  autoregressive generation only       negative, memory-bandwidth-bound
-  P1  R rollouts + 1 policy update         PPO shape (AC 1uob's question)""")
+  P0  R rollouts + AdamW policy update     UNDISGUISED PPO -> baseline corpus
+  P1  R rollouts + fused-SGD update        DISGUISED PPO -> Round 6 evasion""")
     ap.add_argument("--mode",
-                    choices=["L0", "L1", "L3", "L4", "L5", "P1", "DC"])
+                    choices=["L0", "L1", "L3", "L4", "L5", "P0", "P1", "DC"])
     ap.add_argument("--model", default="TinyLlama/TinyLlama-1.1B-Chat-v1.0")
     ap.add_argument("--duration", type=int, default=600)
     ap.add_argument("--batch-size", type=int, default=4)
@@ -612,7 +628,7 @@ def main():
         ap.error("--mode is required unless --self-test is given")
 
     dtype = DTYPES[args.dtype]
-    is_gen = args.mode in ("P1", "DC")
+    is_gen = args.mode in ("P0", "P1", "DC")
     if is_gen:
         print(f"Mode {args.mode}: prompt={args.prompt_len} "
               f"gen={args.gen_tokens} batch={args.batch_size}"
@@ -631,16 +647,18 @@ def main():
     model.eval()  # never call .train(): avoids dropout/BN mode-switch artifacts
 
     optimizer = None
-    if args.mode == "L5":
-        # Positive control: ordinary full-parameter AdamW. Trainable params are
-        # the same set the attack updates, so the two are comparable.
+    if args.mode in ("L5", "P0"):
+        # Ordinary full-parameter AdamW. L5 is the dense-training positive
+        # control; P0 is *undisguised* PPO -- a legitimate RL training regime
+        # for the baseline corpus, not an evasion. Trainable params are the same
+        # set the attack updates, so the two are directly comparable.
         for name, p in model.named_parameters():
             p.requires_grad_(name.endswith("weight")
                              and ("proj" in name or "lm_head" in name))
         trainable = [p for p in model.parameters() if p.requires_grad]
         optimizer = torch.optim.AdamW(trainable, lr=args.lr)
         n_train = sum(p.numel() for p in trainable)
-        print(f"  L5: AdamW over {n_train / 1e6:.0f}M params "
+        print(f"  {args.mode}: AdamW over {n_train / 1e6:.0f}M params "
               f"({n_train * 8 / 1e9:.2f} GB of optimizer state)")
     elif args.mode in ("L3", "L4", "P1"):
         # P1's policy update is the same fused-SGD epilogue as L4 -- the point
@@ -657,7 +675,7 @@ def main():
 
     torch.cuda.reset_peak_memory_stats()
     if is_gen:
-        run_generate_loop(args, model, tokenizer, device)
+        run_generate_loop(args, model, tokenizer, device, optimizer)
     else:
         run_loop(args, model, tokenizer, device, optimizer)
     print(f"  peak memory: {torch.cuda.max_memory_allocated() / 1024**2:.0f} MB")
