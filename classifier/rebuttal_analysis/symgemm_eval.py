@@ -180,15 +180,19 @@ CELLS = [
     ("L4 vs L1  @ 7B", "L4_sgdfused_7b", "L1_fwd3_7b",
      "does the result hold at governance-relevant scale"),
     # Area Chair 1uob asked how PPO-shaped workloads differ from vanilla
-    # dense sgd". PPO is a diluted trainer -- rollout generation interleaved
-    # with policy updates. Scored twice: against the FLOP-matched forward
-    # control, and against the generative inference it actually contains,
-    # which is the negative a real RLHF job would hide inside.
-    ("PPO r8 vs L1   (rollout:update 8:1)", "ppo_r8", "L1_fwd3",
-     "PPO shape vs compute-bound forward inference"),
-    ("PPO r8 vs decode", "ppo_r8", "decode_g256",
-     "PPO vs the generative inference it is made of -- the honest hard case"),
-    ("PPO r32 vs decode  (8x diluted)", "ppo_r32", "decode_g256",
+    # dense SGD training. These cells are the DISGUISED PPO variant (mode P1: the policy
+    # update is fused into the dW epilogue), which is why they belong in this
+    # evasion ladder. Undisguised PPO (ppo_rlhf_*, mode P0, ordinary AdamW) is a
+    # legitimate RL regime in the baseline corpus and is scored separately by
+    # classifier/rebuttal_analysis/ppo_plain_vs_disguised.py -- do not mix them.
+    # Scored against the FLOP-matched forward control and against the generative
+    # inference the rollout actually is, which is the negative a real RLHF job
+    # would hide inside.
+    ("PPO-fused r8 vs L1  (rollout:update 8:1)", "ppo_fused_r8", "L1_fwd3",
+     "disguised PPO shape vs compute-bound forward inference"),
+    ("PPO-fused r8 vs decode", "ppo_fused_r8", "decode_g256",
+     "disguised PPO vs the generative inference it is made of -- the hard case"),
+    ("PPO-fused r32 vs decode  (4x longer rollout)", "ppo_fused_r32", "decode_g256",
      "same, at a 4x longer rollout: does the duty cycle break detection?"),
 ]
 

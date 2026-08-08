@@ -1,0 +1,9 @@
+18:00:23 Three-way distribution (runs):
+Loading + windowing (causal)...
+  plain-PPO windows=234 (6 runs) | fused-PPO=234 | decode=117
+[A] Zero-shot: NO RL of any kind in training (h=2.0, benign FP=0.023/run-h)
+  ordinary PPO (ppo_rlhf_*)              AUC(vs decode)=1.000  window p_train=0.553  run-alert=6/6
+  disguised PPO (ppo_fused_*)            AUC(vs decode)=1.000  window p_train=0.391  run-alert=6/6
+[B] Calibrated on ordinary RL (h=2.0, benign FP=0.023/run-h)
+  ordinary PPO (in training corpus)      AUC(vs decode)=1.000  window p_train=0.978  run-alert=6/6
+  disguised PPO (still unseen)           AUC(vs decode)=1.000  window p_train=0.638  run-alert=6/6
