@@ -139,3 +139,144 @@ CIFAR-10 extracted and verified
 [2026-07-26T00:38:23Z] ===== queue v3 complete =====
 [2026-07-26T00:38:23Z] done:   38 stages
 [2026-07-26T00:38:23Z] failed: 0 stages
+[2026-07-26T11:25:30Z] ===== queue v4 (window-correlation experiment) starting (pid 84429) =====
+[2026-07-26T11:25:30Z] waiting for the section-6 analysis to finish before collecting
+[2026-07-26T11:44:30Z] proceeding after 1140s wait
+[2026-07-26T11:44:30Z] START wb_lora_7b_pilot_N2 -> logs/wb_lora_7b_pilot_N2.log
+[2026-07-26T12:01:18Z] OK    wb_lora_7b_pilot_N2 (1008s)
+[2026-07-26T12:01:18Z] START wb_lora_7b_pilot_N3 -> logs/wb_lora_7b_pilot_N3.log
+[2026-07-26T12:08:25Z] ===== queue v5 (extend pilot sweep to N=6,7,8) waiting for v4 =====
+[2026-07-26T12:16:45Z] OK    wb_lora_7b_pilot_N3 (927s)
+[2026-07-26T12:16:45Z] START wb_lora_7b_pilot_N5 -> logs/wb_lora_7b_pilot_N5.log
+[2026-07-26T12:32:05Z] OK    wb_lora_7b_pilot_N5 (920s)
+[2026-07-26T12:32:05Z] scoring pilots to pick a mid-band dilution
+12:32:15 Total rows: 649,029 | runs: 1693
+12:32:15 Three-way distribution (runs):
+threeway_label
+ml_inference     442
+ml_training     1039
+other            232
+  N= 2:   66 windows  alert_rate=0.045  p_train mean=0.459 max=0.913
+  N= 3:   60 windows  alert_rate=0.000  p_train mean=0.584 max=0.736
+  N= 5:   60 windows  alert_rate=0.000  p_train mean=0.525 max=0.671
+
+=== existing 7B N=10 run: continuous p_train correlation (1920 windows) ===
+  p_train mean=0.328 sd=0.088 min=0.171 max=0.537  (alerts at tau=0.75: 0)
+  ACF of p_train  (window=30s stride=15s -> every 2nd window is disjoint)
+    lag   1: overlapping +0.422   disjoint -0.275
+    lag   2: overlapping -0.295   disjoint -0.123
+    lag   4: overlapping -0.117   disjoint -0.108
+    lag   8: overlapping -0.113   disjoint -0.067
+    lag  16: overlapping -0.064   disjoint -0.028
+    lag  40: overlapping +0.017   disjoint -0.105
+
+NONE in band — not launching the long run. Observed rates: N=2:0.05, N=3:0.00, N=5:0.00
+  all pilots BELOW band; try LESS dilution than N=2
+[2026-07-26T12:38:34Z] ABORT: pilot scoring produced no dilution choice
+[2026-07-26T12:38:34Z] ===== queue v4 aborted =====
+[2026-07-26T12:38:56Z] v4 exited
+[2026-07-26T12:38:56Z] START wb_lora_7b_pilot_N6 -> logs/wb_lora_7b_pilot_N6.log
+[2026-07-26T12:54:19Z] OK    wb_lora_7b_pilot_N6 (923s)
+[2026-07-26T12:54:19Z] START wb_lora_7b_pilot_N7 -> logs/wb_lora_7b_pilot_N7.log
+[2026-07-26T13:09:40Z] OK    wb_lora_7b_pilot_N7 (921s)
+[2026-07-26T13:09:40Z] START wb_lora_7b_pilot_N8 -> logs/wb_lora_7b_pilot_N8.log
+[2026-07-26T13:25:02Z] OK    wb_lora_7b_pilot_N8 (922s)
+[2026-07-26T13:25:02Z] scoring the full pilot sweep
+13:25:12 Total rows: 651,795 | runs: 1696
+13:25:12 Three-way distribution (runs):
+threeway_label
+ml_inference     442
+ml_training     1039
+other            235
+  N= 2:   66 windows  alert_rate=0.045  p_train mean=0.459 max=0.913
+  N= 3:   60 windows  alert_rate=0.000  p_train mean=0.584 max=0.736
+  N= 5:   60 windows  alert_rate=0.000  p_train mean=0.525 max=0.671
+  N= 6:   60 windows  alert_rate=0.000  p_train mean=0.460 max=0.596
+  N= 7:   60 windows  alert_rate=0.000  p_train mean=0.443 max=0.631
+  N= 8:   60 windows  alert_rate=0.000  p_train mean=0.417 max=0.573
+
+=== existing 7B N=10 run: continuous p_train correlation (1920 windows) ===
+  p_train mean=0.328 sd=0.088 min=0.171 max=0.537  (alerts at tau=0.75: 0)
+  ACF of p_train  (window=30s stride=15s -> every 2nd window is disjoint)
+    lag   1: overlapping +0.422   disjoint -0.275
+    lag   2: overlapping -0.295   disjoint -0.123
+    lag   4: overlapping -0.117   disjoint -0.108
+    lag   8: overlapping -0.113   disjoint -0.067
+    lag  16: overlapping -0.064   disjoint -0.028
+    lag  40: overlapping +0.017   disjoint -0.105
+
+NONE in band — not launching the long run. Observed rates: N=2:0.05, N=3:0.00, N=5:0.00, N=6:0.00, N=7:0.00, N=8:0.00
+  all pilots BELOW band; try LESS dilution than N=2
+[2026-07-26T13:31:30Z] ABORT: no dilution landed in the 40-80% band across N=2,3,5,6,7,8
+[2026-07-26T13:31:30Z]   see /tmp/claude-0/-/787a5ab8-78a1-41cf-90e4-cc9f630c7038/scratchpad/pilot_scores.json for the measured curve and the suggested bracket
+[2026-07-26T13:31:30Z] ===== queue v5 aborted (no long run launched) =====
+[2026-07-26T17:02:48Z] ===== queue v6 (L_diluted dataloader fix + mixed-class runs) starting (pid 92772) =====
+[2026-07-26T17:02:48Z] START L_diluted_10_mw8_rep1 -> logs/L_diluted_10_mw8_rep1.log
+[2026-07-26T17:07:58Z] OK    L_diluted_10_mw8_rep1 (310s)
+[2026-07-26T17:07:58Z] START L_diluted_10_mw8_rep2 -> logs/L_diluted_10_mw8_rep2.log
+[2026-07-26T17:13:08Z] OK    L_diluted_10_mw8_rep2 (310s)
+[2026-07-26T17:13:08Z] START L_diluted_10_mw8_rep3 -> logs/L_diluted_10_mw8_rep3.log
+[2026-07-26T17:18:18Z] OK    L_diluted_10_mw8_rep3 (310s)
+[2026-07-26T17:18:18Z] START L_diluted_200_mw8_rep1 -> logs/L_diluted_200_mw8_rep1.log
+[2026-07-26T17:48:28Z] OK    L_diluted_200_mw8_rep1 (1810s)
+[2026-07-26T17:48:28Z] START L_diluted_200_mw8_rep2 -> logs/L_diluted_200_mw8_rep2.log
+[2026-07-26T18:18:38Z] OK    L_diluted_200_mw8_rep2 (1810s)
+[2026-07-26T18:18:38Z] START wb_oracle_7b_long -> logs/wb_oracle_7b_long.log
+[2026-07-26T20:31:16Z] OK    wb_oracle_7b_long (7958s)
+[2026-07-26T20:31:16Z] START wb_lora_7b_N500_long -> logs/wb_lora_7b_N500_long.log
+[2026-07-26T22:31:45Z] OK    wb_lora_7b_N500_long (7229s)
+[2026-07-26T22:31:45Z] ===== queue v6 complete =====
+[2026-07-26T22:31:45Z] then re-run: python3 <scratch>/q2_confusion.py   (add the new families)
+[2026-07-27T09:55:32Z] ===== queue v7 (deadline day, most-decisive-first) starting (pid 101196) =====
+[2026-07-27T09:55:32Z] START wb_inference_7b_1h -> logs/wb_inference_7b_1h.log
+[2026-07-27T11:08:23Z] OK    wb_inference_7b_1h (4371s)
+[2026-07-27T11:08:23Z] START wb_lora_7b_N1_1h -> logs/wb_lora_7b_N1_1h.log
+[2026-07-27T11:41:45Z] ===== queue v8 waiting for v7 =====
+[2026-07-27T12:19:46Z] OK    wb_lora_7b_N1_1h (4283s)
+[2026-07-27T12:19:46Z] START wb_diluted_7b_N10_1h -> logs/wb_diluted_7b_N10_1h.log
+[2026-07-27T13:20:28Z] OK    wb_diluted_7b_N10_1h (3642s)
+[2026-07-27T13:20:28Z] START wb_lora_7b_N3_1h -> logs/wb_lora_7b_N3_1h.log
+[2026-07-27T14:20:55Z] OK    wb_lora_7b_N3_1h (3627s)
+[2026-07-27T14:20:55Z] ===== queue v7 complete =====
+[2026-07-27T14:21:16Z] ===== queue v8 starting (pid 106151) =====
+[2026-07-27T14:21:16Z] START wb_lora_7b_N20_1h -> logs/wb_lora_7b_N20_1h.log
+[2026-07-27T15:21:45Z] OK    wb_lora_7b_N20_1h (3629s)
+[2026-07-27T15:21:45Z] START wb_lora_7b_N50_1h -> logs/wb_lora_7b_N50_1h.log
+[2026-07-27T16:22:14Z] OK    wb_lora_7b_N50_1h (3629s)
+[2026-07-27T16:22:14Z] START wb_lora_7b_N100_1h -> logs/wb_lora_7b_N100_1h.log
+[2026-07-27T17:33:43Z] OK    wb_lora_7b_N100_1h (4289s)
+[2026-07-27T17:33:43Z] START wb_lora_1b_N1_1h -> logs/wb_lora_1b_N1_1h.log
+[2026-07-27T17:48:50Z] ===== queue v9 waiting for v8 =====
+[2026-07-27T18:34:03Z] OK    wb_lora_1b_N1_1h (3620s)
+[2026-07-27T18:34:03Z] SKIP  wb_lora_7b_N500_8h
+[2026-07-27T18:34:03Z] ===== queue v8 complete =====
+[2026-07-27T18:34:20Z] ===== queue v9 starting (pid 116742) =====
+[2026-07-27T18:34:20Z] START wb_diluted_7b_N1_1h -> logs/wb_diluted_7b_N1_1h.log
+[2026-07-27T19:49:25Z] FAIL  wb_diluted_7b_N1_1h rc=247 (4505s)
+[2026-07-27T19:49:25Z] START wb_lora_3b_N1_1h -> logs/wb_lora_3b_N1_1h.log
+[2026-07-27T20:50:43Z] OK    wb_lora_3b_N1_1h (3678s)
+[2026-07-27T20:50:43Z] START wb_inference_3b_1h -> logs/wb_inference_3b_1h.log
+[2026-07-27T21:50:58Z] OK    wb_inference_3b_1h (3615s)
+[2026-07-27T21:50:58Z] START wb_inference_7b_2h -> logs/wb_inference_7b_2h.log
+[2026-07-27T22:18:29Z] ===== queue v10 waiting for v9 =====
+[2026-07-27T22:20:39Z] waiting for queue v10 before the LoRA-in-training ablation
+[2026-07-27T23:58:49Z] OK    wb_inference_7b_2h (7671s)
+[2026-07-27T23:58:49Z] START wb_diluted_1b_N1_1h -> logs/wb_diluted_1b_N1_1h.log
+[2026-07-28T00:59:10Z] OK    wb_diluted_1b_N1_1h (3621s)
+[2026-07-28T00:59:10Z] ===== queue v9 complete =====
+[2026-07-28T00:59:31Z] ===== queue v10 starting (pid 123153) =====
+[2026-07-28T00:59:31Z] START wb_diluted_3b_N1_1h -> logs/wb_diluted_3b_N1_1h.log
+[2026-07-28T02:00:03Z] OK    wb_diluted_3b_N1_1h (3632s)
+[2026-07-28T02:00:03Z] START wb_inference_3b_rep2 -> logs/wb_inference_3b_rep2.log
+[2026-07-28T03:00:32Z] OK    wb_inference_3b_rep2 (3629s)
+[2026-07-28T03:00:32Z] START wb_lora_3b_N1_rep2 -> logs/wb_lora_3b_N1_rep2.log
+[2026-07-28T04:01:08Z] OK    wb_lora_3b_N1_rep2 (3636s)
+[2026-07-28T04:01:08Z] START wb_lora_7b_N10_rep2 -> logs/wb_lora_7b_N10_rep2.log
+[2026-07-28T05:09:02Z] OK    wb_lora_7b_N10_rep2 (4074s)
+[2026-07-28T05:09:02Z] START wb_inference_7b_rep3 -> logs/wb_inference_7b_rep3.log
+[2026-07-28T06:18:14Z] OK    wb_inference_7b_rep3 (4152s)
+[2026-07-28T06:18:14Z] START wb_inference_1b_matched -> logs/wb_inference_1b_matched.log
+[2026-07-28T07:18:33Z] OK    wb_inference_1b_matched (3619s)
+[2026-07-28T07:18:33Z] ===== queue v10 complete =====
+[2026-07-28T07:18:42Z] v10 done — starting LoRA-in-training ablation
+[2026-07-28T07:27:11Z] LoRA-in-training ablation exit=0 -> /tmp/claude-0/-/787a5ab8-78a1-41cf-90e4-cc9f630c7038/scratchpad/lora_in_training.log
