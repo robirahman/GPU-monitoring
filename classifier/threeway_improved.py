@@ -17,6 +17,7 @@ Usage:
 
 import json
 import logging
+import re
 import sys
 import warnings
 from pathlib import Path
@@ -215,8 +216,13 @@ def threeway_label(label: str) -> str:
         return "ml_inference"
     if label in OTHER_LABELS:
         return "other"
-    # Heuristic fallback
-    lc = label.lower()
+    # Heuristic fallback. Strip the per-stream rank token first so a multi-node
+    # filename label (e.g. s16_train_fsdp7b_node1_gpu3, or a TPU s16 analogue
+    # ..._w2c1) routes on its base label exactly as the single-stream label
+    # would -- otherwise the trailing token defeats the endswith/keyword checks.
+    lc = re.sub(r"_node\d+_gpu\d+$", "", label.lower())
+    lc = re.sub(r"_w\d+c\d+$", "", lc)
+    lc = re.sub(r"_gpu\d+$", "", lc)
     # White-box variants carry a model/duration suffix (whitebox_lora_7b_long,
     # whitebox_diluted_7b_N10_1h, ...) that the explicit lists above do not
     # enumerate, and none of them contain "train"/"adversarial_". Without these

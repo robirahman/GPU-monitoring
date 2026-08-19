@@ -24,6 +24,11 @@ import argparse
 import os
 import time
 
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `torchrun workloads/adversarial_ddp.py`
+    from _step import emit_step
+
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -76,6 +81,7 @@ def strategy_k_ddp(args, device, rank, world_size):
     wall_start = time.time()
     last_print = wall_start
     total_samples = 0
+    step = 0
     epoch = 0
 
     while time.time() - wall_start < args.duration:
@@ -91,6 +97,11 @@ def strategy_k_ddp(args, device, rank, world_size):
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
             total_samples += data.size(0) * world_size
+            step += 1
+            # Online learning: every batch is a real training step (rank 0).
+            if rank == 0:
+                emit_step("train", step, tokens=data.size(0) * world_size,
+                          passes=1, node=args.node_rank, rank=rank)
 
         epoch += 1
         now = time.time()
@@ -150,12 +161,20 @@ def strategy_l_ddp(args, device, rank, world_size):
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
                 train_batches += 1
+                kind = "train"
             else:
                 # Inference batch: no gradients, no communication
                 model.eval()
                 with torch.no_grad():
                     _ = model(data)
                 infer_batches += 1
+                kind = "infer"
+
+            # All ranks synchronized on the same batches, so rank 0's per-batch
+            # train/infer label is representative of the whole job.
+            if rank == 0:
+                emit_step(kind, batch_idx, tokens=data.size(0) * world_size,
+                          passes=1, node=args.node_rank, rank=rank)
 
             total_samples += data.size(0) * world_size
             batch_idx += 1
@@ -235,11 +254,18 @@ def strategy_l_stagger(args, device, rank, world_size):
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
                 train_batches += 1
+                kind = "train"
             else:
                 model.eval()
                 with torch.no_grad():
                     _ = model(data)
                 infer_batches += 1
+                kind = "infer"
+
+            # Emit from EVERY rank: ranks train on staggered batches, so rank 0
+            # is not representative -- the per-rank ground truth is the point.
+            emit_step(kind, batch_idx, tokens=data.size(0) * world_size,
+                      passes=1, node=args.node_rank, rank=rank)
 
             total_samples += data.size(0) * world_size
             batch_idx += 1
@@ -312,15 +338,22 @@ def strategy_k_accum(args, device, rank, world_size):
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
                 allreduce_count += 1
+                phase = "sync"
             else:
                 # Accumulate without allreduce
                 with model.no_sync():
                     output = model(data)
                     loss = criterion(output, target) / accum_steps
                     loss.backward()
+                phase = "accum"
 
             total_samples += data.size(0) * world_size
             micro_step += 1
+            # All micro-steps are training compute; phase marks which ones
+            # trigger the cross-rank allreduce burst.
+            if rank == 0:
+                emit_step("train", micro_step, tokens=data.size(0) * world_size,
+                          passes=1, node=args.node_rank, rank=rank, phase=phase)
 
         epoch += 1
         now = time.time()
@@ -363,6 +396,7 @@ def main():
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     world_size = int(os.environ.get("WORLD_SIZE", 1))
     rank = int(os.environ.get("RANK", 0))
+    args.node_rank = int(os.environ.get("GROUP_RANK", 0))  # this node's index
 
     dist.init_process_group(backend="nccl")
     torch.cuda.set_device(local_rank)

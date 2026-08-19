@@ -20,7 +20,6 @@ import subprocess
 import sys
 import time
 import uuid
-from datetime import datetime
 from pathlib import Path
 
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,20 +32,32 @@ log = logging.getLogger("spar.multi_gpu")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
 
 
-def generate_filename(label, gpu_name, gpu_index, run_id, ext="parquet"):
+def generate_filename(label, gpu_name, gpu_index, run_id, node_rank=0, ext="parquet"):
     gpu_short = gpu_name.replace(" ", "_").replace("-", "_")
-    date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-    return f"{label}_gpu{gpu_index}_{gpu_short}_{run_id[:12]}_{date_str}.{ext}"
+    # No timestamp: (label, node, gpu, run_id) already uniquely identifies a
+    # per-GPU stream, so dropping it lets a resumed cell overwrite its own
+    # partial output instead of leaving a stale duplicate. The _node token keeps
+    # node0-gpu0 and node1-gpu0 from colliding when both nodes of a multi-node
+    # job write under one shared run_id.
+    return f"{label}_node{node_rank}_gpu{gpu_index}_{gpu_short}_{run_id[:12]}.{ext}"
 
 
 def run_multi_gpu(args, workload_cmd):
     """Launch one multi-GPU workload with per-GPU telemetry."""
     num_gpus = args.num_gpus
-    run_id = uuid.uuid4().hex
+    # A multi-node job shares one run_id across both nodes so all 16 per-GPU
+    # streams group as a single job. The queue passes the same --run-id to
+    # every node; fall back to a fresh uuid for standalone single-node use.
+    run_id = args.run_id or uuid.uuid4().hex
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    log.info(f"Multi-GPU run: {args.workload}, {num_gpus} GPUs, run_id={run_id[:12]}")
+    log.info(f"Multi-GPU run: {args.workload}, {num_gpus} GPUs, "
+             f"node={args.node_rank}, run_id={run_id[:12]}")
+    # Emitted on stdout so the teed log carries the exact prefix that
+    # window_labels.RUNID_RE looks for; without it STEP lines cannot be joined
+    # back to this job's telemetry.
+    print(f"Run ID: {run_id}", flush=True)
 
     # Start telemetry on all GPUs
     collectors = []
@@ -55,6 +66,7 @@ def run_multi_gpu(args, workload_cmd):
             gpu_index=i,
             interval_sec=args.interval,
             workload_label=args.workload,
+            run_id=run_id,
             enable_dcgm=not args.no_dcgm,
         )
         c.start()
@@ -93,13 +105,58 @@ def run_multi_gpu(args, workload_cmd):
     # Stop telemetry and save
     for i, c in enumerate(collectors):
         c.stop()
-        fname = generate_filename(args.workload, c.metadata.gpu_name, i, run_id)
+        fname = generate_filename(args.workload, c.metadata.gpu_name, i, run_id,
+                                  node_rank=args.node_rank)
         fpath = str(output_dir / fname)
         c.save(fpath)
         rows = len(c.to_dataframe()) if hasattr(c, 'to_dataframe') else '?'
         log.info(f"  GPU {i}: saved {fpath} ({rows} rows)")
 
     return run_id, workload_rc
+
+
+def run_telemetry_only(args):
+    """Collect per-GPU telemetry for a fixed duration with no local workload.
+
+    Used on the non-head node of a Ray/vLLM sharded-inference cell: that node's
+    GPUs are driven by the remote Ray worker, so there is nothing to launch
+    here -- we only need to record telemetry under the job's shared run_id so
+    its streams join the head node's. --run-id is therefore required.
+    """
+    num_gpus = args.num_gpus
+    run_id = args.run_id or uuid.uuid4().hex
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    log.info(f"Telemetry-only: {args.workload}, {num_gpus} GPUs, "
+             f"node={args.node_rank}, run_id={run_id[:12]}, dur={args.duration}s")
+    print(f"Run ID: {run_id}", flush=True)
+
+    collectors = []
+    for i in range(num_gpus):
+        c = TelemetryCollector(
+            gpu_index=i,
+            interval_sec=args.interval,
+            workload_label=args.workload,
+            run_id=run_id,
+            enable_dcgm=not args.no_dcgm,
+        )
+        c.start()
+        collectors.append(c)
+
+    try:
+        time.sleep(args.duration if args.duration else 600)
+    except KeyboardInterrupt:
+        log.warning("  interrupted -- saving what we have")
+
+    for i, c in enumerate(collectors):
+        c.stop()
+        fname = generate_filename(args.workload, c.metadata.gpu_name, i, run_id,
+                                  node_rank=args.node_rank)
+        c.save(str(output_dir / fname))
+        log.info(f"  GPU {i}: saved {fname}")
+
+    return run_id, 0
 
 
 def run_parallel_single_gpu(args, workload_labels):
@@ -158,7 +215,8 @@ def run_parallel_single_gpu(args, workload_labels):
         time.sleep(1)
         c.stop()
 
-        fname = generate_filename(label, c.metadata.gpu_name, gpu_idx, gpu_run_id)
+        fname = generate_filename(label, c.metadata.gpu_name, gpu_idx, gpu_run_id,
+                                  node_rank=args.node_rank)
         fpath = str(output_dir / fname)
         c.save(fpath)
         log.info(f"  GPU {gpu_idx}: {label} {status} -> {fname}")
@@ -188,11 +246,29 @@ def main():
     parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--parallel", action="store_true",
                         help="Run independent single-GPU workloads in parallel")
+    parser.add_argument("--run-id", type=str, default=None,
+                        help="Shared run_id for this job. Pass the SAME value on "
+                             "every node of a multi-node job so all per-GPU "
+                             "streams group together; defaults to a fresh uuid.")
+    parser.add_argument("--node-rank", type=int,
+                        default=int(os.environ.get("GROUP_RANK",
+                                    os.environ.get("NODE_RANK", 0))),
+                        help="This node's rank (0-based). Tags the output "
+                             "filenames as _node{r}_ so nodes never collide.")
+    parser.add_argument("--telemetry-only", action="store_true",
+                        help="Collect telemetry for --duration with no local "
+                             "workload (non-head node of a Ray/vLLM cell).")
+    parser.add_argument("--duration", type=int, default=None,
+                        help="Seconds to collect in --telemetry-only mode.")
     parser.add_argument("cmd", nargs="*",
                         help="Custom command (after --)")
     args = parser.parse_args()
 
-    if args.parallel:
+    if args.telemetry_only:
+        run_id, rc = run_telemetry_only(args)
+        log.info(f"Telemetry-only run complete: {run_id[:12]} (rc={rc})")
+        sys.exit(rc)
+    elif args.parallel:
         # Parallel single-GPU mode
         results = run_parallel_single_gpu(args, [args.workload])
         log.info(f"Parallel run complete: {results}")

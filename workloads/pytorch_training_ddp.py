@@ -14,6 +14,11 @@ import argparse
 import os
 import time
 
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `torchrun workloads/pytorch_training_ddp.py`
+    from _step import emit_step
+
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -80,6 +85,7 @@ def main():
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     world_size = int(os.environ.get("WORLD_SIZE", 1))
     rank = int(os.environ.get("RANK", 0))
+    node_rank = int(os.environ.get("GROUP_RANK", 0))  # torchrun: this node's index
 
     dist.init_process_group(backend="nccl")
     torch.cuda.set_device(local_rank)
@@ -127,6 +133,7 @@ def main():
     wall_start = time.time()
     model.train()
     epoch = 0
+    global_step = 0  # monotonic across epochs, for STEP batch_idx
 
     while True:
         sampler.set_epoch(epoch)
@@ -149,6 +156,13 @@ def main():
             scaler.scale(loss).backward()
             scaler.step(optimizer)
             scaler.update()
+            global_step += 1
+
+            # Per-window ground truth (rank 0 only; synchronous DDP step).
+            if rank == 0:
+                emit_step("train", global_step,
+                          tokens=args.batch_size * world_size, passes=1,
+                          node=node_rank, rank=rank, loss=f"{loss.item():.4f}")
 
             running_loss += loss.item()
             _, predicted = output.max(1)

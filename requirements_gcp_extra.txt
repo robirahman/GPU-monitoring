@@ -1,0 +1,20 @@
+# Extra deps for the multi-node GCP collection, on TOP of requirements_v2.txt.
+#
+# requirements_v2.txt pins the telemetry + classifier + FSDP/DDP stack
+# (torch 2.5.1+cu121, triton, nvidia-ml-py, pandas, pyarrow, scikit-learn) but
+# omits the model libraries the training/inference workloads import. Install
+# both into the SAME venv (venv-main):
+#     pip install -r requirements_v2.txt -r requirements_gcp_extra.txt
+#
+# vllm is deliberately NOT here: it repins torch and would clobber the
+# 2.5.1+cu121 pin. Install it into a SEPARATE venv (venv-vllm) that only the
+# sharded/replicated serving workloads use:
+#     python -m venv venv-vllm && venv-vllm/bin/pip install vllm ray
+#
+# DCGM python bindings come from apt `datacenter-gpu-manager`, not pip (they
+# provide the NVLink TX/RX counters this round enables).
+
+transformers>=4.44
+peft>=0.11
+datasets>=2.19
+accelerate>=0.30

@@ -45,11 +45,20 @@ def main():
 
     # physical job id
     run_start = win.groupby("run_id")["window_start"].transform("min")
-    base = win["workload_label"].astype(str).str.replace(r"_gpu\d+", "", regex=True)
-    job = (base + "|" + win["gpu_name"].astype(str) + "|"
-           + (run_start / BUCKET).round().astype(int).astype(str))
-    win["run_grp"] = win["run_id"]
-    win["job_grp"] = job
+    # Strip every per-stream rank token so all ranks of one physical job share a
+    # base label: multi-node GPU (_node1_gpu3), single-node GPU (_gpu3), and TPU
+    # multi-host (_w2c1) conventions all collapse to the workload's base name.
+    base = (win["workload_label"].astype(str)
+            .str.replace(r"_node\d+_gpu\d+", "", regex=True)
+            .str.replace(r"_gpu\d+", "", regex=True)
+            .str.replace(r"_w\d+c\d+", "", regex=True))
+    # fillna + final astype(str) keep the key all-string; a stray NaN
+    # workload_label/gpu_name would otherwise make the group column mixed
+    # str/float, which numpy>=2 refuses to sort inside StratifiedGroupKFold.
+    job = (base.fillna("na") + "|" + win["gpu_name"].astype(str) + "|"
+           + (run_start.fillna(-1) / BUCKET).round().astype("int64").astype(str))
+    win["run_grp"] = win["run_id"].astype(str)
+    win["job_grp"] = job.astype(str)
 
     n_run = win["run_grp"].nunique(); n_job = win["job_grp"].nunique()
     print(f"windows={len(win)}  run_id groups={n_run}  job groups={n_job}  "
@@ -59,8 +68,9 @@ def main():
     yp_job = cv(win, feats, win["job_grp"].rename("grp"), "group=job    (fixed)")
 
     # multi-GPU family detection under each grouping
-    mg = win["workload_label"].astype(str).str.contains(r"2gpu|tp8|tp2|_ddp|fsdp|gpu[0-7]",
-                                                         case=False, regex=True)
+    mg = win["workload_label"].astype(str).str.contains(
+        r"2gpu|tp8|tp2|_ddp|fsdp|gpu[0-7]|_node\d+|_w\d+c\d+",
+        case=False, regex=True)
     tr = win["threeway_label"].values == "ml_training"
     for name, yp in [("run_id", yp_run), ("job", yp_job)]:
         m = mg.values & tr

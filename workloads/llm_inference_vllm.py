@@ -96,14 +96,25 @@ def run_vllm(args) -> None:
 
     model_id, dtype, min_gpus, default_tp = VLLM_MODELS[args.model]
     tp = args.tensor_parallel_size or default_tp
+    pp = args.pipeline_parallel_size
 
     print(f"Loading {args.model} via vLLM")
-    print(f"  model_id={model_id} dtype={dtype} tensor_parallel_size={tp}")
+    print(f"  model_id={model_id} dtype={dtype} "
+          f"tensor_parallel_size={tp} pipeline_parallel_size={pp} "
+          f"backend={args.distributed_executor_backend}")
 
+    # tensor_parallel_size shards each layer within a node (NVLink); with
+    # pipeline_parallel_size>1, vLLM splits the layer stack across pipeline
+    # stages, which is how a model spans two servers. TP8 x PP2 => a 16-GPU,
+    # 2-node serving job whose only cross-server traffic is pipeline activation
+    # hand-off -- the "sharded inference" negative for the S16 comparison. Ray
+    # is required for the multi-node case (mp is single-node only).
     llm = LLM(
         model=model_id,
         dtype=dtype,
         tensor_parallel_size=tp,
+        pipeline_parallel_size=pp,
+        distributed_executor_backend=args.distributed_executor_backend,
         gpu_memory_utilization=args.gpu_memory_utilization,
         trust_remote_code=True,
         max_model_len=args.max_model_len,
@@ -150,6 +161,15 @@ def main():
     ap.add_argument("--max-model-len", type=int, default=4096)
     ap.add_argument("--tensor-parallel-size", type=int, default=0,
                     help="0 = use model's default TP size")
+    ap.add_argument("--pipeline-parallel-size", type=int, default=1,
+                    help="Pipeline stages. >1 splits the layer stack across "
+                         "stages so the model spans multiple nodes (needs "
+                         "--distributed-executor-backend ray).")
+    ap.add_argument("--distributed-executor-backend", type=str, default=None,
+                    choices=["mp", "ray"],
+                    help="mp = single-node multiprocessing (default when "
+                         "unset); ray = multi-node (start the Ray cluster "
+                         "first with `ray start`).")
     ap.add_argument("--gpu-memory-utilization", type=float, default=0.9)
     ap.add_argument("--enforce-eager", action="store_true",
                     help="Skip CUDA graph capture (useful on short runs).")

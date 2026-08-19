@@ -24,30 +24,51 @@ Filled-in cells: ✓ = signal exists with the same semantics as NVML;
 ~ = exists but with materially different semantics (e.g. bundled / averaged /
 named differently); ✗ = not exposed at 1 Hz polling rate.
 
-| Signal | NVIDIA NVML | AMD ROCm amdsmi | Google TPU `tpu_info` | AWS Trainium `neuron-monitor` |
+| Signal | NVIDIA NVML | AMD ROCm amdsmi | Google TPU (libtpu / `tpu_info`) | AWS Trainium `neuron-monitor` |
 |---|---|---|---|---|
-| GPU utilization (%)    | ✓ `nvmlDeviceGetUtilizationRates().gpu` | ✓ `gfx_activity` | TODO | TODO |
-| Memory utilization (%) | ✓ `nvmlDeviceGetUtilizationRates().memory` | ✓ `umc_activity` | TODO | TODO |
-| Memory used (MB)       | ✓ `nvmlDeviceGetMemoryInfo().used` | ✓ `amdsmi_get_gpu_memory_usage` | TODO | TODO |
-| Power draw (W)         | ✓ `nvmlDeviceGetPowerUsage` | ✓ `current_socket_power` (or `socket_power`/`average_socket_power` fallback) | TODO | TODO |
-| Temperature (°C)       | ✓ `nvmlDeviceGetTemperature(GPU)` | ✓ `temperature_edge` (also `_hotspot`, `_vram`) | TODO | TODO |
-| SM clock (MHz)         | ✓ `nvmlDeviceGetClockInfo(SM)` | ✓ `amdsmi_get_clock_info(GFX).clk` | TODO | TODO |
-| Memory clock (MHz)     | ✓ `nvmlDeviceGetClockInfo(MEM)` | ✓ `amdsmi_get_clock_info(MEM).clk` | TODO | TODO |
-| PCIe TX (MB/s)         | ✓ `nvmlDeviceGetPcieThroughput(TX)` | ✗ not exposed on consumer cards (`-1` sentinel) | TODO | TODO |
-| PCIe RX (MB/s)         | ✓ `nvmlDeviceGetPcieThroughput(RX)` | ✗ not exposed on consumer cards (`-1` sentinel) | TODO | TODO |
+| GPU utilization (%)    | ✓ `nvmlDeviceGetUtilizationRates().gpu` | ✓ `gfx_activity` | ✓ `duty_cycle_pct` → `gpu_utilization_pct` (0.0 when dark) | TODO |
+| Memory utilization (%) | ✓ `nvmlDeviceGetUtilizationRates().memory` | ✓ `umc_activity` | ~ HBM **bandwidth** util → `mem_utilization_pct` (different semantics: BW, not occupancy) | TODO |
+| Memory used (MB)       | ✓ `nvmlDeviceGetMemoryInfo().used` | ✓ `amdsmi_get_gpu_memory_usage` | ✓ HBM `hbm_capacity_usage` → `mem_used_mb` | TODO |
+| Power draw (W)         | ✓ `nvmlDeviceGetPowerUsage` | ✓ `current_socket_power` (or `socket_power`/`average_socket_power` fallback) | ✗ not exposed at host level → **`-1` constant** | TODO |
+| Temperature (°C)       | ✓ `nvmlDeviceGetTemperature(GPU)` | ✓ `temperature_edge` (also `_hotspot`, `_vram`) | ✗ not exposed to the collector → **`-1` constant** | TODO |
+| SM clock (MHz)         | ✓ `nvmlDeviceGetClockInfo(SM)` | ✓ `amdsmi_get_clock_info(GFX).clk` | ✗ → **`-1` constant** | TODO |
+| Memory clock (MHz)     | ✓ `nvmlDeviceGetClockInfo(MEM)` | ✓ `amdsmi_get_clock_info(MEM).clk` | ✗ → **`-1` constant** | TODO |
+| PCIe TX (MB/s)         | ✓ `nvmlDeviceGetPcieThroughput(TX)` | ✗ not exposed on consumer cards (`-1` sentinel) | ✗ unified HBM, no host PCIe counter → **`-1` constant** | TODO |
+| PCIe RX (MB/s)         | ✓ `nvmlDeviceGetPcieThroughput(RX)` | ✗ not exposed on consumer cards (`-1` sentinel) | ✗ → **`-1` constant** | TODO |
 
 Additional signals available on some vendors but not in the 9-signal core set:
 
 | Extra signal | NVIDIA | AMD | TPU | Trainium |
 |---|---|---|---|---|
-| Encoder utilization (%)   | ✓ NVENC engine % | ~ `mm_activity` (bundled enc+dec) | TODO | TODO |
-| Decoder utilization (%)   | ✓ NVDEC engine % | ~ same as encoder | TODO | TODO |
-| Hotspot / junction temp (°C) | ✗ | ✓ `temperature_hotspot` | TODO | TODO |
-| VRAM / HBM temp (°C)      | ✗ (some H100/H200/B200 expose it) | ✓ `temperature_vram` | TODO | TODO |
-| Fan speed (RPM or %)      | ✓ (consumer cards) | ✓ (consumer cards, `-1` on datacenter) | TODO | TODO |
-| Power limit (W)           | ✓ | ✓ `power_limit` | TODO | TODO |
-| Throttling reasons / status | ✓ NVML throttle reason bitmask | ✓ `throttle_status` (boolean) | TODO | TODO |
-| TensorCore active (%)     | ✓ via DCGM (`SM_OCCUPANCY`, `TENSOR_ACTIVE`) | ✓ via RDC | TODO | TODO |
+| Encoder utilization (%)   | ✓ NVENC engine % | ~ `mm_activity` (bundled enc+dec) | ✗ → `-1` | TODO |
+| Decoder utilization (%)   | ✓ NVDEC engine % | ~ same as encoder | ✗ → `-1` | TODO |
+| Hotspot / junction temp (°C) | ✗ | ✓ `temperature_hotspot` | ✗ | TODO |
+| VRAM / HBM temp (°C)      | ✗ (some H100/H200/B200 expose it) | ✓ `temperature_vram` | ✗ | TODO |
+| Fan speed (RPM or %)      | ✓ (consumer cards) | ✓ (consumer cards, `-1` on datacenter) | ✗ → `-1` | TODO |
+| Power limit (W)           | ✓ | ✓ `power_limit` | ✗ | TODO |
+| Throttling reasons / status | ✓ NVML throttle reason bitmask | ✓ `throttle_status` (boolean) | ✗ | TODO |
+| TensorCore active (%)     | ✓ via DCGM (`SM_OCCUPANCY`, `TENSOR_ACTIVE`) | ✓ via RDC | ✓ `tensorcore_util` → `tensorcore_util_pct` (libtpu monitoring) | TODO |
+
+### TPU-native communication signals (no NVIDIA equivalent)
+
+The TPU exposes an inter-server communication channel NVML/DCGM does not, via
+`libtpu.sdk.tpumonitoring` (`list_supported_metrics()` / `get_metric(n).data()`).
+These become extra numeric columns (percentile-scalarised) that
+`get_feature_cols` auto-picks; they are `-1` when the metric is unsupported/dark:
+
+| TPU-native signal | Column(s) | Notes |
+|---|---|---|
+| HLO execution timing | `hlo_exec_us_p50/p90/p99` | **Always-on** comm channel — collective time is inside HLO exec, so this fires even inside a single slice where DCN metrics stay dark. |
+| HLO queue depth | `hlo_queue_size` | Scheduler backpressure. |
+| Collective / DCN latency | `dcn_collective_lat_us_p50/p90/p99` | Cross-**host** collective latency; guaranteed to fire on the `tpuTMS` (2× v6e-8 multislice) rung, may be dark within one slice (collectives ride ICI). |
+| Buffer transfer latency | `buffer_xfer_lat_us_p90` | Host↔device / inter-chip buffer moves. |
+| HBM bandwidth util | `hbm_bw_util_pct` | Native duplicate of `mem_utilization_pct` but `-1` (not 0.0) when dark. |
+| Duty cycle | `tpu_duty_cycle_pct` | Native duplicate of `gpu_utilization_pct` but `-1` (not 0.0) when dark. |
+| Metric liveness | `tpu_metrics_live` (0/1) | 1 when any device metric read this sample — lets the analysis filter dark rows. |
+
+Power/temp/clock/PCIe are hard-wired to `-1` (fleet-internal; matches the
+AMD-port sentinel precedent), so TPU Stage-1 (level features) is expected to be
+weak — the TPU rung leans on Stage-2 shape features plus the comm channel above.
 
 ## Phase 2 — probe procedure
 
