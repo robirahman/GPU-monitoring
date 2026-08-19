@@ -342,9 +342,9 @@ def run_loop(args, model, tokenizer, device, optimizer=None):
 def run_generate_loop(args, model, tokenizer, device, optimizer=None):
     """Autoregressive-generation cells, for Area Chair 1uob's question.
 
-    The meta-review asks why detection should generalise across regimes when
-    PPO differs from vanilla dense SGD and prefill and decode
-    differ from each other. Three cells answer it directly:
+    The meta-review asks why detection should generalise across training
+    regimes (PPO vs vanilla dense SGD) and across the prefill/decode split.
+    Three cells answer it directly:
 
     DC  pure autoregressive decode. Memory-bandwidth-bound, M = batch per step,
         KV-cache streaming. The contrasting negative to L1's compute-bound
