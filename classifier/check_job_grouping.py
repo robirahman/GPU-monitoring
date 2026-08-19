@@ -24,6 +24,12 @@ BUCKET = 20.0  # s; siblings start simultaneously, reps are far apart
 def cv(win, feats, groups, tag):
     X = win[feats].fillna(0).values.astype(np.float32)
     y = (win["threeway_label"].values == "ml_training").astype(int)
+    # Coerce group labels to a uniform <U string array. pandas>=3 astype(str)
+    # can hand back an arrow string dtype that reintroduces a float-like NA when
+    # sklearn calls np.asarray, and numpy>=2 refuses to sort a mixed str/float
+    # array inside StratifiedGroupKFold. A plain numpy string array sorts fine.
+    n_groups = pd.Series(groups).nunique()
+    groups = np.asarray(groups).astype(str)
     skf = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)
     accs, f1s = [], []
     yp_all = np.empty(len(y), dtype=int)
@@ -33,7 +39,7 @@ def cv(win, feats, groups, tag):
                                    random_state=42, n_jobs=-1).fit(X[tr], y[tr])
         p = c.predict(X[te]); yp_all[te] = p
         accs.append(accuracy_score(y[te], p)); f1s.append(f1_score(y[te], p, zero_division=0))
-    print(f"[{tag}] groups={groups.nunique()}  acc={np.mean(accs):.4f}±{np.std(accs):.4f}  "
+    print(f"[{tag}] groups={n_groups}  acc={np.mean(accs):.4f}±{np.std(accs):.4f}  "
           f"f1={np.mean(f1s):.4f}")
     return yp_all
 

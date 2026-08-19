@@ -115,6 +115,9 @@ def oof_probs(X, y, groups, n_splits):
     k = max(2, min(n_splits, ng, int(pd.Series(y).value_counts().min())))
     if k < 2:
         return None, 0
+    # Uniform <U string array: pandas>=3 arrow strings can reintroduce a
+    # float-like NA that numpy>=2 refuses to sort inside StratifiedGroupKFold.
+    groups = np.asarray(groups).astype(str)
     skf = StratifiedGroupKFold(n_splits=k, shuffle=True, random_state=42)
     p = np.full(len(y), np.nan)
     for tr, te in skf.split(X, y, groups):
