@@ -234,6 +234,26 @@ if ! have_phase repo; then
     "${VENV_VLLM}/bin/pip" install --upgrade pip
     "${VENV_VLLM}/bin/pip" install vllm ray
   fi
+  # Remove flashinfer, which vllm pulls in as an OPTIONAL accelerated-allreduce
+  # backend. Two reasons it cannot stay on these nodes:
+  #   1. flashinfer 0.6.x annotates `array.array[int]` at module scope in
+  #      comm/fd_exchange.py. array.array only became subscriptable in Python
+  #      3.13, so under this venv's 3.10 the import raises TypeError -- and vllm
+  #      guards that import with `except ImportError`, which does NOT catch it.
+  #      Every tensor-parallel worker then dies in init_device().
+  #   2. Patching that annotation only gets you further in: flashinfer then
+  #      JIT-compiles and needs nvcc, but these images ship the driver without
+  #      the CUDA toolkit, so workers die with "Could not find nvcc" -- and that
+  #      failure mode HANGS the engine instead of exiting, burning the cell's
+  #      whole timeout (~26 min of idle H100s per cell, observed 2026-08-20).
+  # Uninstalling makes the import a clean ImportError, which vllm's guard does
+  # catch: fi_ar_available=False and it falls back to custom allreduce / pynccl.
+  # Do NOT "fix" this by installing the CUDA toolkit: flashinfer would then JIT
+  # at cell start, inside the measurement window.
+  if "${VENV_VLLM}/bin/pip" show flashinfer-python >/dev/null 2>&1; then
+    "${VENV_VLLM}/bin/pip" uninstall -y flashinfer-python >/dev/null 2>&1 || true
+    log "    removed flashinfer-python (vllm falls back to custom allreduce)"
+  fi
   # DCGM python bindings come from the apt package, not pip -- expose them in venv-main
   # (mirrors setup.sh's dcgm.pth trick) so the collector's DCGM tier can import them.
   if [[ -d /usr/lib/python3/dist-packages ]]; then

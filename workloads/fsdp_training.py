@@ -19,8 +19,10 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads.dist_deadline import CollectiveDeadline, sync_teardown
 except ImportError:  # launched as `torchrun workloads/fsdp_training.py` (cwd on path)
     from _step import emit_step
+    from dist_deadline import CollectiveDeadline, sync_teardown
 
 import torch
 import torch.nn as nn
@@ -244,8 +246,12 @@ def main():
     # Training loop with synthetic data
     wall_start = time.time()
     step = 0
+    # Every rank must leave this loop on the SAME iteration. A local
+    # `time.time() - wall_start < duration` test does not guarantee that, and a
+    # rank that exits early strands its peers inside a ReduceScatter.
+    deadline = CollectiveDeadline(args.duration, device)
 
-    while time.time() - wall_start < args.duration:
+    while not deadline.expired():
         # Random token ids -- no real dataset needed
         input_ids = torch.randint(0, vocab, (batch_size, args.seq_len), device=device)
 
@@ -300,7 +306,7 @@ def main():
         print(f"  Throughput: {total_tokens / wall_time:.0f} tok/s")
         print(f"  Peak GPU memory: {torch.cuda.max_memory_allocated(device) / 1e9:.1f} GB")
 
-    dist.destroy_process_group()
+    sync_teardown()
 
 
 if __name__ == "__main__":

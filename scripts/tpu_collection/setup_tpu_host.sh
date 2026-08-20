@@ -56,6 +56,20 @@ else
   git clone --quiet "$REPO_URL" "$REPO_DIR"
 fi
 
+# Scrub any injected PAT from the SAVED remote. REPO_URL is passed in with a
+# token so the clone can authenticate, but git persists whatever URL it cloned
+# from into .git/config -- which would leave the credential sitting on all four
+# TPU workers. Rewrite the remote to the tokenless form (bootstrap_node.sh does
+# the same on the GPU nodes). Verify with: git -C "$REPO_DIR" remote -v
+TOKENLESS_URL="$(printf '%s' "$REPO_URL" | sed -E 's#https://[^@/]*@#https://#')"
+if [ -d "$REPO_DIR/.git" ]; then
+  git -C "$REPO_DIR" remote set-url origin "$TOKENLESS_URL" 2>/dev/null || true
+  case "$(git -C "$REPO_DIR" remote get-url origin 2>/dev/null)" in
+    *@github.com*) echo "  WARN: token may still be present in the saved remote" ;;
+    *) echo "  saved remote is tokenless" ;;
+  esac
+fi
+
 # ── 4. Clock discipline (STEP<->telemetry join needs <50 ms) ─────────────────
 echo "[4/5] checking clock sync..."
 if ! command -v chronyc >/dev/null 2>&1; then

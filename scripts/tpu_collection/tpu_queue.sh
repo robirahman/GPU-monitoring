@@ -59,12 +59,27 @@ ssh_all() {  # ssh_all "<remote command>"
 
 # ── G1 gate: math must be right before any TPU time is spent ─────────────────
 say "G1: CPU gradient self-test on worker 0"
-if ! ssh_all "cd $REPO_DIR && PYTHONPATH=$REPO_DIR python3 workloads/tpu_fsdp_training.py --self-test" \
-      2>&1 | tee -a "$MASTER" | grep -q "self-test PASS"; then
+# JAX_PLATFORMS=cpu is REQUIRED, not incidental: self_test() is documented as a
+# CPU-only gate, and on the TPU backend jnp matmuls default to bfloat16, so the
+# finite-difference check (lp-lm ~ 4e-6 against a loss of ~4.6) is pure noise --
+# it reported rel_err=6.1e-2 vs its 5e-2 tolerance and aborted the whole TPU run
+# even though the gradient was correct (9.4e-3 on CPU). The XLA flag gives the
+# mesh path 8 host devices to exercise, per the same docstring.
+# Capture first, THEN test. The old form piped ssh_all into `grep -q`, but grep
+# exits on its first match and SIGPIPEs the ssh upstream -- and under `pipefail`
+# that makes the whole pipeline non-zero, so the gate aborted even when the
+# self-test had printed PASS. Deciding on the captured text keeps the verdict
+# independent of ssh/tee exit status.
+G1_OUT="$(ssh_all "cd $REPO_DIR && JAX_PLATFORMS=cpu XLA_FLAGS=--xla_force_host_platform_device_count=8 PYTHONPATH=$REPO_DIR python3 workloads/tpu_fsdp_training.py --self-test" 2>&1)"
+printf '%s\n' "$G1_OUT" >> "$MASTER"
+printf '%s\n' "$G1_OUT" | grep -E 'loss0=|self-test' || true
+if printf '%s\n' "$G1_OUT" | grep -q "self-test FAIL" \
+   || ! printf '%s\n' "$G1_OUT" | grep -q "self-test PASS"; then
   say "ABORT: self-test did not report PASS -- the transformer/optimizer is wrong,"
   say "       every collected trace would be meaningless."
   exit 1
 fi
+say "G1 PASS: analytic gradient matches finite difference on CPU"
 
 # ── One cell across all workers, with GCS .done accounting ───────────────────
 run_cell() {

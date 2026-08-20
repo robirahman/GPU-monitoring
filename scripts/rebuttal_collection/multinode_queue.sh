@@ -35,6 +35,15 @@ export HF_HOME=${HF_HOME:-$HOME/.cache/huggingface}
 
 PY=${PY:-python3}                       # venv-main python (telemetry + training)
 PY_VLLM=${PY_VLLM:-$PY}                 # venv-vllm python (serving cells only)
+# `torchrun` and `ray` are venv console-scripts, and root's secure_path does NOT
+# include the venv bin dirs -- while run_workload_multi_gpu.py execs the command
+# vector directly (no shell), so a bare `torchrun` raises FileNotFoundError and
+# the cell dies in ~4 s having produced only baseline telemetry. A bare `ray`
+# fails the same way, but its failure was swallowed by `|| true`, leaving the
+# S16 shard cell to spin up a LOCAL 8-GPU Ray and block forever on a 16-GPU
+# placement group. Resolve both from the interpreter that owns them.
+TORCHRUN=${TORCHRUN:-$(dirname "$PY")/torchrun}
+RAY=${RAY:-$(dirname "$PY_VLLM")/ray}
 MASTER_ADDR=${MASTER_ADDR:?export MASTER_ADDR to the node0 internal IP}
 MASTER_PORT=${MASTER_PORT:-29500}
 NODE_RANK=${NODE_RANK:?export NODE_RANK (0 on node0, 1 on node1)}
@@ -47,9 +56,14 @@ TIMEOUT_BIG=${TIMEOUT_BIG:-1500}        # 30B / model loads
 GAP=${GAP:-60}
 REPS=${REPS:-3}
 RENDEZVOUS_TIMEOUT=${RENDEZVOUS_TIMEOUT:-120}
+RAY_JOIN_TIMEOUT=${RAY_JOIN_TIMEOUT:-300}   # both nodes must register their 8 GPUs
 INFER_MODEL=${INFER_MODEL:-llm_infer_qwen25_7b_fp16}   # replicated-inference registry label
 SHARD_MODEL=${SHARD_MODEL:-qwen25_72b_tp2}             # vLLM sharded model key
 SMOKE=${SMOKE:-0}
+# ONLY_CELLS: extended-regex whitelist of cell names. Everything else is skipped
+# cheaply. Used to smoke just the decisive cells, and to re-run one cell after a
+# preemption without walking the whole queue.
+ONLY_CELLS=${ONLY_CELLS:-}
 
 PREFIX=""
 OUTDIR="data"
@@ -60,7 +74,17 @@ if [ "$SMOKE" = "1" ]; then
   echo "SMOKE MODE: 60 s cells, output to logs/smoke_data/ (NOT usable data)."
 fi
 
-mkdir -p logs logs/.done "$OUTDIR"
+# Markers live under the run stamp and carry the smoke prefix: a smoke cell that
+# passed used to leave logs/.done/<cell>_node<N>.done, which the REAL run then
+# read as "already collected" and skipped -- banking zero data for that cell.
+MARKER_DIR="logs/.done/${RUN_STAMP}"
+mkdir -p logs "$MARKER_DIR" "$OUTDIR"
+
+# Fail fast: a missing launcher is a config error, not a per-cell failure, and
+# every cell in the queue would fail identically.
+for _b in "$TORCHRUN" "$RAY"; do
+  [ -x "$_b" ] || { echo "FATAL: launcher not executable: $_b (check PY / PY_VLLM)" >&2; exit 1; }
+done
 MASTER=logs/multinode_master.log
 stamp() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
 say()   { echo "[$(stamp)] node$NODE_RANK $*" | tee -a "$MASTER"; }
@@ -68,13 +92,21 @@ say()   { echo "[$(stamp)] node$NODE_RANK $*" | tee -a "$MASTER"; }
 # Deterministic shared run_id: identical on both nodes for the same cell+rep.
 rid_for() { printf '%s' "${RUN_STAMP}_$1_$2" | sha1sum | cut -c1-12; }
 
+# Cell whitelist gate. Checked by run_stage AND by mn_ray_shard -- the latter
+# brings a Ray cluster up before it ever reaches run_stage, so it has to test
+# the filter itself or a skipped cell would still pay the cluster setup.
+cell_enabled() {  # cell_enabled <stage>
+  [ -z "$ONLY_CELLS" ] && return 0
+  echo "$1" | grep -qE "$ONLY_CELLS"
+}
+
 # --- host-NIC sidecar: captures the inter-server channel NVML cannot see. ----
 SIDE_PID=""
 start_sidecar() {  # start_sidecar <label> <run_id>
   $PY scripts/collect_host_telemetry.py --duration $((DUR + 120)) \
       --output "$OUTDIR/nic_${1}_node${NODE_RANK}_${2}.parquet" \
       --run-id "$2" --label "$1" --node-rank "$NODE_RANK" \
-      --checkpoint-sec 60 >> "logs/${1}_node${NODE_RANK}.nic.log" 2>&1 &
+      --checkpoint-sec 60 >> "logs/${1}_node${NODE_RANK}_${2}.nic.log" 2>&1 &
   SIDE_PID=$!
 }
 stop_sidecar() { [ -n "$SIDE_PID" ] && kill "$SIDE_PID" 2>/dev/null; wait "$SIDE_PID" 2>/dev/null; SIDE_PID=""; }
@@ -82,8 +114,12 @@ stop_sidecar() { [ -n "$SIDE_PID" ] && kill "$SIDE_PID" 2>/dev/null; wait "$SIDE
 # --- generic stage wrapper: per-node marker, .failed on error, always continue.
 run_stage() {  # run_stage <stage> <run_id> -- <command...>
   local stage="$1" rid="$2"; shift 2; [ "$1" = "--" ] && shift
-  local marker="logs/.done/${stage}_node${NODE_RANK}.done"
-  local logf="logs/${stage}_node${NODE_RANK}.log"
+  cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
+  # rid = sha1(RUN_STAMP_cell_rep), so keying the marker on it makes it unique
+  # per REP. Keyed on cell alone, rep 2 and rep 3 saw rep 1's marker and skipped
+  # every cell -- REPS=3 silently collected a single rep.
+  local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
+  local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
   if [ -f "$marker" ]; then say "SKIP  $stage ($(cat "$marker"))"; return 0; fi
 
   local nproc; nproc=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
@@ -100,7 +136,7 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
     echo "$(stamp) rc=0 dur=${dur}s rid=$rid" > "$marker"
     say "OK    $stage (${dur}s)"
   else
-    echo "$(stamp) rc=$rc dur=${dur}s rid=$rid" > "logs/.done/${stage}_node${NODE_RANK}.failed"
+    echo "$(stamp) rc=$rc dur=${dur}s rid=$rid" > "${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.failed"
     say "FAIL  $stage rc=$rc (${dur}s) -- continuing"
     tail -5 "$logf" | sed 's/^/        /' | tee -a "$MASTER"
   fi
@@ -117,7 +153,7 @@ mn_torchrun() {  # mn_torchrun <stage> <run_id> <timeout> -- <workload.py args..
     $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
       --num-gpus 8 --run-id "$rid" --node-rank "$NODE_RANK" \
       --output-dir "$OUTDIR" --timeout "$to" -- \
-      torchrun --nnodes="$NNODES" --node-rank="$NODE_RANK" \
+      "$TORCHRUN" --nnodes="$NNODES" --node-rank="$NODE_RANK" \
         --rdzv-backend=c10d --rdzv-endpoint="${MASTER_ADDR}:${MASTER_PORT}" \
         --rdzv-conf="join_timeout=${RENDEZVOUS_TIMEOUT}" --nproc-per-node=8 \
         "$@"
@@ -126,36 +162,87 @@ mn_torchrun() {  # mn_torchrun <stage> <run_id> <timeout> -- <workload.py args..
 # Sharded vLLM inference across both nodes via Ray. Asymmetric: node0 is the
 # Ray head and drives the job + its own telemetry; node1 joins the Ray cluster
 # and only records telemetry (its GPUs are driven by the remote Ray worker).
+# Barrier on the Ray cluster really holding BOTH nodes' GPUs. There is no c10d
+# rendezvous in this cell, so without the barrier a half-formed cluster is
+# invisible: vLLM asks for a 16-GPU placement group, Ray can never schedule it,
+# and the cell burns its entire TIMEOUT_BIG with idle GPUs (seen 2026-08-20).
+wait_ray_gpus() {  # wait_ray_gpus <want> <timeout_s>
+  local want="$1" to="$2" t0=$SECONDS got=""
+  while [ $((SECONDS - t0)) -lt "$to" ]; do
+    got=$("$PY_VLLM" -c 'import ray;ray.init(address="auto",logging_level="ERROR");print(int(ray.cluster_resources().get("GPU",0)));ray.shutdown()' \
+          2>/dev/null | tail -1 | tr -dc '0-9')
+    if [ "${got:-0}" -ge "$want" ]; then say "ray cluster ready: ${got} GPUs"; return 0; fi
+    sleep 5
+  done
+  say "ray cluster NOT ready: ${got:-0}/${want} GPUs after ${to}s"
+  return 1
+}
+
 mn_ray_shard() {  # mn_ray_shard <stage> <run_id>
   local stage="$1" rid="$2"
+  cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
+  local raylog="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.ray.log"
+  local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
+  [ -f "$marker" ] && { say "SKIP  $stage ($(cat "$marker"))"; return 0; }
+
+  ray_bail() {  # ray_bail <why>
+    say "FAIL  $stage: $1 -- skipping cell (see $raylog)"
+    echo "$(stamp) $1" > "${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.failed"
+    "$RAY" stop >>"$raylog" 2>&1 || true
+    return 0
+  }
+
+  # Clear any leftover session first: `ray start` refuses to run when this node
+  # already has one, and a crashed/timed-out earlier cell leaves one behind
+  # (vLLM's own auto-started local instance counts). Idempotent, so a clean node
+  # is unaffected.
+  "$RAY" stop --force >>"$raylog" 2>&1 || true
+
   if [ "$NODE_RANK" -eq 0 ]; then
-    ray start --head --port=6379 --num-gpus=8 >/dev/null 2>&1 || true
-    sleep 10
+    "$RAY" start --head --port=6379 --num-gpus=8 >>"$raylog" 2>&1 \
+      || { ray_bail ray-head-start-failed; return 0; }
+  else
+    "$RAY" start --address="${MASTER_ADDR}:6379" --num-gpus=8 >>"$raylog" 2>&1 \
+      || { ray_bail ray-join-failed; return 0; }
+  fi
+
+  # Both nodes gate on the same GPU count, so this doubles as the cell barrier.
+  wait_ray_gpus $((NNODES * 8)) "$RAY_JOIN_TIMEOUT" \
+    || { ray_bail ray-cluster-incomplete; return 0; }
+
+  if [ "$NODE_RANK" -eq 0 ]; then
+    # RAY_ADDRESS pins vLLM to the cluster we just built. Without it ray.init()
+    # can quietly spin up a LOCAL single-node instance and then deadlock.
     run_stage "$stage" "$rid" -- \
+      env RAY_ADDRESS="${MASTER_ADDR}:6379" \
       $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
         --num-gpus 8 --run-id "$rid" --node-rank 0 --output-dir "$OUTDIR" \
         --timeout "$TIMEOUT_BIG" -- \
         $PY_VLLM workloads/llm_inference_vllm.py --model "$SHARD_MODEL" \
           --tensor-parallel-size 8 --pipeline-parallel-size 2 \
           --distributed-executor-backend ray --duration "$DUR"
-    ray stop >/dev/null 2>&1 || true
   else
-    ray start --address="${MASTER_ADDR}:6379" --num-gpus=8 >/dev/null 2>&1 || true
     # node1 records telemetry for the shared run_id while node0 drives vLLM.
     run_stage "$stage" "$rid" -- \
       $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
         --num-gpus 8 --run-id "$rid" --node-rank 1 --telemetry-only \
         --duration "$DUR" --output-dir "$OUTDIR"
-    ray stop >/dev/null 2>&1 || true
   fi
+  "$RAY" stop >>"$raylog" 2>&1 || true
 }
 
 # Replicated inference: 8 independent single-GPU replicas per node, no
 # rendezvous, per-replica run_ids. Both nodes run this independently.
 mn_replicated() {  # mn_replicated <stage> <run_id> <infer-label>
   local stage="$1" rid="$2" label="$3"
+  # --label: scope_ladder_eval derives the ladder rung from the s1_/s8_/s16_
+  # prefix of the RECORDED label, so the telemetry must carry the cell name --
+  # recording the registry label instead dropped this whole arm as scope "na".
+  # --workload-python: the registry command bakes in venv-main's interpreter,
+  # which has no vllm.
   run_stage "$stage" "$rid" -- \
     $PY scripts/run_workload_multi_gpu.py --parallel --workload "$label" \
+      --label "${PREFIX}${stage}" --workload-python "$PY_VLLM" \
       --num-gpus 8 --node-rank "$NODE_RANK" --output-dir "$OUTDIR" --timeout "$TIMEOUT"
 }
 
@@ -166,7 +253,7 @@ s8_torchrun() {  # s8_torchrun <stage> <run_id> <timeout> -- <workload.py args..
     $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
       --num-gpus 8 --run-id "$rid" --node-rank "$NODE_RANK" \
       --output-dir "$OUTDIR" --timeout "$to" -- \
-      torchrun --standalone --nproc-per-node=8 "$@"
+      "$TORCHRUN" --standalone --nproc-per-node=8 "$@"
 }
 
 # ── S1 cells (single-GPU: world=1 training, no collectives) ──────────────────
@@ -176,7 +263,7 @@ s1_train() {  # s1_train <stage> <run_id> -- <workload.py args...>
     $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
       --num-gpus 1 --run-id "$rid" --node-rank "$NODE_RANK" \
       --output-dir "$OUTDIR" --timeout "$TIMEOUT" -- \
-      torchrun --standalone --nproc-per-node=1 "$@"
+      "$TORCHRUN" --standalone --nproc-per-node=1 "$@"
 }
 s1_replicated() {  # s1_replicated <stage> <run_id> <label>
   mn_replicated "$1" "$2" "$3"
@@ -184,13 +271,13 @@ s1_replicated() {  # s1_replicated <stage> <run_id> <label>
 
 # ── The queue: Phase A (S16) -> B (S8) -> C (S1), rep-major, priority-first ──
 
-say "queue start: NNODES=$NNODES NODE_RANK=$NODE_RANK MASTER=$MASTER_ADDR:$MASTER_PORT REPS=$REPS DUR=$DUR SMOKE=$SMOKE"
+say "queue start: NNODES=$NNODES NODE_RANK=$NODE_RANK MASTER=$MASTER_ADDR:$MASTER_PORT REPS=$REPS DUR=$DUR SMOKE=$SMOKE ONLY_CELLS=${ONLY_CELLS:-<all>}"
 
 for rep in $(seq 1 "$REPS"); do
   say "===== rep $rep / $REPS ====="
 
   # -- Phase A: S16 (needs both nodes). Priority 1 cells first. --
-  c=s16_train_fsdp7b;              mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --duration "$DUR"
+  c=s16_train_fsdp7b;              mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 512 --duration "$DUR"
   c=s16_infershard_vllm_tp8pp2;    mn_ray_shard "$c" "$(rid_for "$c" "$rep")"
   c=s16_train_ddp_resnet50;        mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s16_inferrep_qwen7b;           mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
@@ -201,7 +288,7 @@ for rep in $(seq 1 "$REPS"); do
   fi
 
   # -- Phase B: S8 (each node runs its own single-node job) --
-  c=s8_train_fsdp7b;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --duration "$DUR"
+  c=s8_train_fsdp7b;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 512 --duration "$DUR"
   c=s8_train_ddp_resnet50;         s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s8_infershard_vllm_tp8;        run_stage "$c" "$(rid_for "$c" "$rep")" -- \
                                      $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${c}" --num-gpus 8 \
@@ -210,7 +297,7 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_inferrep_qwen7b;            mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
-  c=s1_train_fsdp7b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 7b --duration "$DUR"
+  c=s1_train_fsdp7b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 512 --duration "$DUR"
   c=s1_inferrep_qwen7b;            s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
 done
 

@@ -178,14 +178,18 @@ def run_parallel_single_gpu(args, workload_labels):
 
     results = [None] * num_gpus
 
+    # What gets RECORDED may differ from what gets RUN: --workload picks the
+    # registry entry, --label is the ladder cell name the analysis groups on.
+    out_label = args.label or args.workload
+
     def run_on_gpu(gpu_idx, label):
         gpu_run_id = uuid.uuid4().hex
-        log.info(f"  GPU {gpu_idx}: starting {label}")
+        log.info(f"  GPU {gpu_idx}: starting {label} (recorded as {out_label})")
 
         c = TelemetryCollector(
             gpu_index=gpu_idx,
             interval_sec=args.interval,
-            workload_label=label,
+            workload_label=out_label,
             enable_dcgm=not args.no_dcgm,
         )
         c.start()
@@ -197,9 +201,15 @@ def run_parallel_single_gpu(args, workload_labels):
         except ValueError:
             log.error(f"  GPU {gpu_idx}: unknown workload '{label}'")
             c.stop()
+            results[gpu_idx] = (label, "ERROR: unknown workload")
             return
 
         cmd = list(wl["command"])
+        # Registry commands hardcode sys.executable, which is venv-main here --
+        # and venv-main has no vllm, so every replica died with
+        # ModuleNotFoundError while the cell still reported success.
+        if args.workload_python and cmd and cmd[0] == sys.executable:
+            cmd[0] = args.workload_python
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = str(gpu_idx)
 
@@ -215,7 +225,7 @@ def run_parallel_single_gpu(args, workload_labels):
         time.sleep(1)
         c.stop()
 
-        fname = generate_filename(label, c.metadata.gpu_name, gpu_idx, gpu_run_id,
+        fname = generate_filename(out_label, c.metadata.gpu_name, gpu_idx, gpu_run_id,
                                   node_rank=args.node_rank)
         fpath = str(output_dir / fname)
         c.save(fpath)
@@ -239,6 +249,17 @@ def main():
     parser = argparse.ArgumentParser(description="Multi-GPU workload launcher")
     parser.add_argument("--workload", type=str, required=True,
                         help="Workload label (from registry or custom)")
+    parser.add_argument("--label", type=str, default=None,
+                        help="Telemetry label to record, when it must differ "
+                             "from --workload. In --parallel mode --workload "
+                             "names the REGISTRY entry to run, but the ladder "
+                             "analysis keys off the s1_/s8_/s16_ prefix of the "
+                             "recorded label, so the cell name has to win.")
+    parser.add_argument("--workload-python", type=str, default=None,
+                        help="Interpreter to run a registry command with, "
+                             "replacing the sys.executable baked in at import "
+                             "time. Needed because vllm lives in venv-vllm "
+                             "while this launcher runs under venv-main.")
     parser.add_argument("--num-gpus", type=int, default=8)
     parser.add_argument("--output-dir", type=str, default="data/")
     parser.add_argument("--interval", type=float, default=1.0)
@@ -272,6 +293,14 @@ def main():
         # Parallel single-GPU mode
         results = run_parallel_single_gpu(args, [args.workload])
         log.info(f"Parallel run complete: {results}")
+        # Without this the cell exits 0 even when every replica failed, so the
+        # queue writes a .done marker and a resumed run SKIPS a cell that never
+        # produced usable telemetry. Fail if any replica did not finish clean.
+        bad = [r for r in results if r is None or r[1] != "OK"]
+        if bad:
+            log.error(f"  {len(bad)}/{len(results)} replica(s) failed: {bad}")
+            sys.exit(1)
+        sys.exit(0)
     else:
         # Multi-GPU (DDP) mode
         if args.cmd:
@@ -284,6 +313,8 @@ def main():
                 log.error(str(e))
                 sys.exit(1)
             workload_cmd = list(wl["command"])
+            if args.workload_python and workload_cmd and workload_cmd[0] == sys.executable:
+                workload_cmd[0] = args.workload_python
             if args.timeout is None:
                 args.timeout = wl.get("default_timeout")
 

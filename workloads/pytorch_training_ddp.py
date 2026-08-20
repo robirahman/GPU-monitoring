@@ -16,8 +16,10 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads.dist_deadline import CollectiveDeadline, sync_teardown
 except ImportError:  # launched as `torchrun workloads/pytorch_training_ddp.py`
     from _step import emit_step
+    from dist_deadline import CollectiveDeadline, sync_teardown
 
 import torch
 import torch.distributed as dist
@@ -131,6 +133,9 @@ def main():
 
     # Training loop
     wall_start = time.time()
+    # Collective deadline: see workloads/dist_deadline.py. Exiting this loop at
+    # different iterations per rank kills the 2-node cell with ncclRemoteError.
+    deadline = CollectiveDeadline(args.duration, device)
     model.train()
     epoch = 0
     global_step = 0  # monotonic across epochs, for STEP batch_idx
@@ -143,7 +148,7 @@ def main():
         total = 0
 
         for data, target in train_loader:
-            if args.duration and time.time() - wall_start >= args.duration:
+            if deadline.expired():
                 break
 
             data, target = data.to(device), target.to(device)
@@ -179,7 +184,7 @@ def main():
                   f"time={epoch_time:.1f}s")
 
         # Check stopping conditions
-        if args.duration and time.time() - wall_start >= args.duration:
+        if deadline.expired():
             break
         if args.epochs and epoch >= args.epochs:
             break
@@ -188,7 +193,7 @@ def main():
     if rank == 0:
         print(f"DDP training complete. {epoch} epochs, {wall_time:.1f}s wall time")
 
-    dist.destroy_process_group()
+    sync_teardown()
 
 
 if __name__ == "__main__":

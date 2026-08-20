@@ -26,8 +26,10 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads.dist_deadline import CollectiveDeadline, sync_teardown
 except ImportError:  # launched as `torchrun workloads/adversarial_ddp.py`
     from _step import emit_step
+    from dist_deadline import CollectiveDeadline, sync_teardown
 
 import torch
 import torch.distributed as dist
@@ -79,15 +81,17 @@ def strategy_k_ddp(args, device, rank, world_size):
     criterion = nn.CrossEntropyLoss()
 
     wall_start = time.time()
+    # All ranks must leave the loop together; see dist_deadline.py.
+    deadline = CollectiveDeadline(args.duration, device)
     last_print = wall_start
     total_samples = 0
     step = 0
     epoch = 0
 
-    while time.time() - wall_start < args.duration:
+    while not deadline.expired():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.expired():
                 break
             data, target = data.to(device), target.to(device)
 
@@ -138,6 +142,8 @@ def strategy_l_ddp(args, device, rank, world_size):
     criterion = nn.CrossEntropyLoss()
 
     wall_start = time.time()
+    # All ranks must leave the loop together; see dist_deadline.py.
+    deadline = CollectiveDeadline(args.duration, device)
     last_print = wall_start
     total_samples = 0
     train_batches = 0
@@ -145,10 +151,10 @@ def strategy_l_ddp(args, device, rank, world_size):
     batch_idx = 0
     epoch = 0
 
-    while time.time() - wall_start < args.duration:
+    while not deadline.expired():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.expired():
                 break
             data, target = data.to(device), target.to(device)
 
@@ -223,6 +229,8 @@ def strategy_l_stagger(args, device, rank, world_size):
     criterion = nn.CrossEntropyLoss()
 
     wall_start = time.time()
+    # All ranks must leave the loop together; see dist_deadline.py.
+    deadline = CollectiveDeadline(args.duration, device)
     last_print = wall_start
     total_samples = 0
     train_batches = 0
@@ -233,10 +241,10 @@ def strategy_l_stagger(args, device, rank, world_size):
     # Each rank's training offset: rank 0 trains batch 0, rank 1 trains batch 1, etc.
     my_train_offset = rank
 
-    while time.time() - wall_start < args.duration:
+    while not deadline.expired():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.expired():
                 break
             data, target = data.to(device), target.to(device)
 
@@ -315,16 +323,18 @@ def strategy_k_accum(args, device, rank, world_size):
     criterion = nn.CrossEntropyLoss()
 
     wall_start = time.time()
+    # All ranks must leave the loop together; see dist_deadline.py.
+    deadline = CollectiveDeadline(args.duration, device)
     last_print = wall_start
     total_samples = 0
     micro_step = 0
     allreduce_count = 0
     epoch = 0
 
-    while time.time() - wall_start < args.duration:
+    while not deadline.expired():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.expired():
                 break
             data, target = data.to(device), target.to(device)
 
@@ -404,7 +414,7 @@ def main():
 
     STRATEGIES[args.strategy](args, device, rank, world_size)
 
-    dist.destroy_process_group()
+    sync_teardown()
 
 
 if __name__ == "__main__":
