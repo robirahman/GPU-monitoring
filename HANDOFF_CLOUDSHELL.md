@@ -5,6 +5,46 @@ its instructions are now WRONG and are called out below.
 
 ## PAUSED — RESUME HERE (05:06Z Aug 20)
 
+### TOMORROW'S AGREED PLAN (Robi, ~14:00Z Aug 20)
+In order:
+1. `prune_unmarked_cells.py` over whatever is already pulled/synced, so no
+   failed-cell telemetry reaches the classifier. Dry run first, then --apply.
+2. Start both instances, diff `.done` markers between nodes for symmetry, then
+   run the 3-cell validation smoke below. Do NOT start a long run until it passes.
+3. Finish the remaining H100 cell-reps (33 of 36 outstanding; ~6 h for all three
+   reps, ~2 h for the rest of rep 1).
+4. Bring up a NON-PREEMPTIBLE TPU: `SPOT=0 ZONE=us-east1-d bash
+   scripts/tpu_collection/provision_tpu.sh create`. No quota request needed
+   (v6e on-demand limit 512 chips vs 16 required). Check on-demand pricing first.
+
+### NEW PAT — WHERE IT GOES
+Write it to `~/.spar_pat` in Cloud Shell, mode 0600. That is the single location
+every script reads (`setup_tpu_all.sh` uses PAT_FILE=${PAT_FILE:-$HOME/.spar_pat}),
+and Cloud Shell's $HOME persists across sessions and VM recycles.
+
+Write it in a REAL terminal tab (the `+` in the Cloud Shell toolbar). Claude
+Code's `!` prefix has no TTY, so `read` there just times out -- and typing the
+token as a visible argument is what leaked the last one:
+
+    read -rsp "PAT: " P && printf '%s' "$P" > ~/.spar_pat && chmod 600 ~/.spar_pat && unset P
+
+`read -rsp` never echoes, so the token stays out of the terminal, out of
+~/.bash_history, and out of any assistant transcript.
+
+Scope it as a FINE-GRAINED token limited to robirahman/GPU-monitoring:
+  * Contents: Read       -- enough for TPU worker clones and `git pull` on nodes
+  * Contents: Read+Write -- needed if the branch is to be pushed from Cloud Shell
+Set a short expiry (this is a one-or-two-day job).
+
+After revoking the old token, the copy cached at `/etc/spar/git_pat` on both
+retained boot disks is dead. Nothing on resume needs it (the repo is already
+cloned), but to `git pull` the pushed fixes onto the nodes, refresh it:
+    gcloud compute ssh spar-gpu-$i --zone=us-central1-a \
+      --command="sudo install -m 600 /dev/stdin /etc/spar/git_pat < ~/.spar_pat"
+Then `sudo git -C /opt/spar/repo pull` picks up commits 7e391f8 + ceeeaf1, which
+is cleaner than the scp'd copies currently on the disks.
+
+
 Both GPU instances are STOPPED (status TERMINATED, no compute billing). The two
 500 GB pd-balanced BOOT DISKS ARE DELIBERATELY RETAINED (~$0.14/h total, ~$3.30/
 day) because they hold everything expensive to rebuild: the dkms-built nvidia
