@@ -1,7 +1,40 @@
-# HANDOFF — scope-ladder session (PAUSED 05:06Z Aug 20)
+# HANDOFF — scope-ladder session (COLLECTING, as of 15:15Z Aug 20)
 
 Supersedes the 00:45Z handoff. That version predates the smoke triage; three of
 its instructions are now WRONG and are called out below.
+
+## CURRENT STATE (15:15Z Aug 20) — REAL RUN IN PROGRESS
+
+Both a3-highgpu-8g instances RUNNING (restarted 13:19Z from the retained boot
+disks: driver 610.57.04, both venvs, 153 GB of Qwen weights and the CIFAR staging
+all survived the stop/start, so no re-bootstrap was needed). No TPU.
+
+REAL COLLECTION: RUN_STAMP=20260820c, launched 15:12Z on both nodes, REPS=3,
+GCS sync loops running. ~2.5 h/rep for reps 1-2 (15 cells), ~2 h for rep 3
+(12 cells) => roughly 7 h, ~$550. Rep-major, so stopping after any rep leaves
+usable data; markers are rid-keyed so a resume skips only complete cell-reps.
+
+EVERY CELL TYPE IS VALIDATED on real hardware before this run started (the full
+15-cell smoke gave 12/15 OK with BYTE-IDENTICAL cell lists on both nodes; the 3
+"failures" were only smoke's TIMEOUT being shorter than the inferrep cells' own
+hardcoded 300 s duration, since fixed by raising the smoke default to 420 s):
+
+    train  fsdp1b            s1 OK   s8 OK   s16 OK
+    train  ddp_resnet50              s8 OK   s16 OK
+    train  ddpstagger_k / ddpkaccum8         s16 OK  OK
+    train  fsdp30b                           s16 OK
+    inferrep 1.5B           s1 OK*  s8 OK*  s16 OK      (* at TIMEOUT=900)
+    infershard 1.5B matched         s8 OK   s16 OK
+    infershard 72B realistic        s8 OK   s16 OK
+
+## CELL LIST CHANGED — labels now name what actually runs
+    s{16,8,1}_train_fsdp1b            (was fsdp7b; see bug 18)
+    s{16,8,1}_inferrep_qwen1_5b       (was qwen7b;  see bug 19)
+    s16_infershard_qwen72b_tp8pp2  +  s16_infershard_qwen1_5b_tp4pp4
+    s8_infershard_qwen72b_tp8      +  s8_infershard_qwen1_5b_tp4pp2
+    s16_train_{ddp_resnet50,fsdp30b,ddpstagger_k,ddpkaccum8}, s8_train_ddp_resnet50
+Scope detection still works: it keys only on the s1_/s8_/s16_ prefix, and the
+negatives filter still matches the "inferrep"/"infershard" substrings.
 
 ## PAUSED — RESUME HERE (05:06Z Aug 20)
 
@@ -230,6 +263,56 @@ PAGE before committing; do not trust a remembered figure.
     Note: data/ IS CHECKED INTO THE REPO with ~1720 historical A100/B200/H200
     parquets, so raw file counts are NOT a measure of tonight's progress.
 
+## BUGS 16-22 (found 2026-08-20 by validating each fix on real hardware)
+16. Orphaned GPU processes. subprocess.run(timeout=) kills only the direct child;
+    vLLM forks EngineCore workers that survive holding the GPU. A timed-out cell
+    left 8 processes pinning 73 GB EACH, so every later cell on that node died of
+    CUDA OOM asking for ~7 GB. Fixed: workloads run in their own session and a
+    timeout killpg's the tree; the queue also REAPS strays before each cell (it
+    used to merely log WARN, which is useless unattended).
+17. SMOKE=1 reassigned TIMEOUT/DUR/GAP/REPS unconditionally, silently discarding
+    caller overrides -- a slow cell looked broken. Worse, smoke's TIMEOUT=240 was
+    below the inferrep cells' hardcoded 300 s duration, so those three cells could
+    NEVER pass in smoke however healthy. Overrides now respected; default 420 s.
+18. S1 fsdp7b is structurally impossible on one 80 GB H100: FULL_SHARD at
+    world_size=1 shards nothing, so AdamW's 53.6 GB of optimizer state + 42.4 GB
+    of params ~= 96 GB. BATCH SIZE IS IRRELEVANT (83.1 GB at batch1/seq512 vs
+    83.0 GB at defaults) -- the peak is params+optimizer, not activations. All
+    three fsdp rungs moved to --size 1b (10.7 GB at world_size=1), keeping AdamW.
+19. Scale confound: negatives were 7B/72B against a 1.3B train arm, so a
+    classifier could separate the arms by model size. Added qwen25_1_5b_fp16,
+    matched the inferrep arm to it, and now collect BOTH shard variants (matched
+    1.5B and realistic 72B). Note the matched cell CANNOT use TP8: Qwen2.5-1.5B
+    has 12 attention heads and vLLM needs num_heads % tp == 0, hence TP4xPP4.
+20. THE BIG ONE -- cross-node sharded inference had never once succeeded, and was
+    misdiagnosed twice (blamed on the Ray placement group, then on flashinfer/
+    nvcc; both were real bugs on the path but not this). The queue had a START
+    barrier and no COMPLETION barrier: the non-head node's --telemetry-only branch
+    runs DUR seconds while the head's cell also covers model load and vLLM
+    startup, so the non-head node always finished first and called `ray stop`,
+    killing the head's workers on its own GPUs mid-generation. That is the
+    "RayWorkerProc rank=[11] died unexpectedly" seen every time, and why it was
+    always a non-head rank. Fixed with wait_gpus_idle -- the head's workers are
+    LOCAL processes, so their exit is the completion signal, no channel needed.
+21. Per-cell `ray start`/`ray stop` raced: with two shard cells in a run the
+    second saw 8/16 GPUs on the head and 0/16 on the worker, one node tearing down
+    while the other built up. ensure_ray_cluster probes first and rebuilds only
+    when incomplete; the worker retries the join; teardown happens once at the end.
+    Bugs 20 and 21 only manifest when TWO shard cells run consecutively, which no
+    earlier run had ever reached.
+22. sync_data.sh pushed all of data/ as payload, uploading the 341 MB staged
+    CIFAR from every node and pulling it back at ingest -- vs 6 MB of real
+    telemetry. data/cifar10 now excluded.
+
+## DATA HYGIENE — TWO TRAPS
+* GCS rsync is APPEND-ONLY, so deleting a marker on a node does NOT remove it
+  from the bucket. A fresh pull_results.sh RESURRECTS invalidated markers (12 of
+  them on 2026-08-20: the mislabeled infershard telemetry-only "successes" and
+  every pre-decision fsdp7b marker). Those are set aside under
+  gcs_runs/invalidated_markers/ with WHY.txt. Check for them after every pull.
+* ALWAYS: pull -> prune_unmarked_cells.py -> ingest, in that order. A fresh pull
+  restores the 667 quarantined files. The pruner is idempotent, so just re-run it.
+
 ## S1 RUNG DECISION (2026-08-20, Robi)
 s1_train_fsdp7b OOMs: FSDP FULL_SHARD on a single rank shards nothing, so 6.7B
 params + optimizer (42.4 GB post-init) + activations peak at 83 GB on an 80 GB
@@ -270,6 +353,16 @@ bash scripts/tpu_collection/setup_tpu_all.sh     # scp + run on all 4 workers
 Then: `tmux new -s tpu; ZONE=$TPU_ZONE SMOKE=1 bash scripts/tpu_collection/tpu_queue.sh`
 then again without SMOKE.
 
+## TEARDOWN (the money step) — KEEP THE BOOT DISKS
+Robi's standing instruction (2026-08-20): RETAIN the two 500 GB boot disks even
+after tearing down the GPUs. They hold the dkms driver, both venvs, ~153 GB of
+model weights and the CIFAR staging; keeping them is ~$3.30/day against ~$50 of
+H100 time to rebuild. So STOP the instances rather than deleting them:
+    gcloud compute instances stop spar-gpu-0 spar-gpu-1 --zone=us-central1-a --discard-local-ssd=true
+--discard-local-ssd is REQUIRED: each instance has 16 local SSD (SCRATCH)
+devices and GCE refuses to stop with them attached. Nothing of value lives there.
+Stopped instances bill only the disks (~$0.14/h total). Resuming is
+`instances start`, which for Spot depends on capacity being available.
 ## TEARDOWN (the money step)
 On both nodes `bash scripts/gcp/sync_data.sh --final`; then
 `bash scripts/gcp/teardown.sh` and READ its verify-zero output (instances /
