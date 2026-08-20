@@ -337,6 +337,13 @@ def load_all_data() -> pd.DataFrame:
 
     # 1. Main data/ directory
     for p in sorted((PROJECT_ROOT / "data").rglob("*.parquet")):
+        # nic_*.parquet are host-NIC sidecar series, not per-GPU telemetry
+        # streams. multinode_features.attach_nic_sidecar joins them on
+        # (node_id, epoch second) from this same tree; loading them here as well
+        # injects rows with no `ts`/`gpu_name`, and the NaN run_start that
+        # follows crashes assign_stream_and_job_ids with IntCastingNaNError.
+        if p.name.startswith("nic_"):
+            continue
         try:
             df = pd.read_parquet(p)
             df = _normalize_columns(df)
@@ -418,6 +425,17 @@ def load_all_data() -> pd.DataFrame:
         raise RuntimeError("No telemetry data found")
 
     combined = pd.concat(frames, ignore_index=True)
+
+    # Drop rows with no timestamp. A few parquets carry an all-null padding row
+    # (every metric NaN, including ts/gpu_name/hostname) -- most likely a
+    # *.parquet.partial checkpoint flushed with a header and no sample. Such a
+    # row cannot be windowed, and it propagates a NaN run_start into
+    # assign_stream_and_job_ids, which then dies with IntCastingNaNError.
+    if "ts" in combined.columns:
+        n_bad = int(combined["ts"].isna().sum())
+        if n_bad:
+            log.warning(f"dropping {n_bad} row(s) with no timestamp")
+            combined = combined[combined["ts"].notna()].reset_index(drop=True)
 
     # Deduplicate: some files may appear in multiple directories
     if "ts" in combined.columns and "run_id" in combined.columns:
