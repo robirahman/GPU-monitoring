@@ -1,9 +1,46 @@
-# HANDOFF — scope-ladder session (state as of 03:35Z Aug 20)
+# HANDOFF — scope-ladder session (PAUSED 05:06Z Aug 20)
 
 Supersedes the 00:45Z handoff. That version predates the smoke triage; three of
 its instructions are now WRONG and are called out below.
 
-## LIVE RESOURCES (BILLING NOW)
+## PAUSED — RESUME HERE (05:06Z Aug 20)
+
+Both GPU instances are STOPPED (status TERMINATED, no compute billing). The two
+500 GB pd-balanced BOOT DISKS ARE DELIBERATELY RETAINED (~$0.14/h total, ~$3.30/
+day) because they hold everything expensive to rebuild: the dkms-built nvidia
+610.57.04 driver, venv-main + venv-vllm, ~148 GB of preloaded Qwen weights, the
+CIFAR-10 staging, and the .done markers. Re-provisioning from scratch instead
+would cost ~$50 of H100 time. Do NOT delete these disks without deciding to
+abandon that state.
+
+To resume (nothing else to set up):
+    gcloud config set project focus-surfer-494820-g0
+    gcloud compute instances start spar-gpu-0 spar-gpu-1 --zone=us-central1-a
+    # wait for ssh, then on BOTH nodes (node0 first):
+    gcloud compute ssh spar-gpu-$i --zone=us-central1-a \
+      --command="sudo RUN_STAMP=20260820b bash /opt/spar/repo/scripts/gcp/launch_queue.sh"
+    # and the GCS sync loop on both:
+    #   cd /opt/spar/repo && nohup bash scripts/gcp/sync_data.sh --loop 120 &
+CAVEAT: these are Spot instances, so `start` succeeds only if Spot capacity is
+available in us-central1-a at the time.
+
+FIRST THING TO DO ON RESUME: validate the three fixes that have never been
+observed working end-to-end -- vLLM sampler (VLLM_USE_FLASHINFER_SAMPLER=0), the
+S1 rung at --batch-size 1 --seq-len 512, and the adversarial_ddp collective
+deadline. Cheapest validation is a targeted smoke:
+    sudo RUN_STAMP=20260820val SMOKE=1 \
+      ONLY_CELLS='^(s1_train_fsdp7b|s16_inferrep_qwen7b|s16_train_ddpstagger_k)' \
+      bash /opt/spar/repo/scripts/gcp/launch_queue.sh
+Do NOT start a multi-hour run before those three pass.
+
+ALSO: keep the nodes SYMMETRIC. Any marker present on one node but not the other
+desyncs every S16 cell (the c10d rendezvous is the only cross-node barrier, and a
+lone node fails after RENDEZVOUS_TIMEOUT=120 s). Before relaunching, diff
+`logs/.done/$RUN_STAMP/` between the nodes and delete any S16 marker that is not
+on both. Two such markers were removed at 05:03Z (node1's telemetry-only
+"successes" for s16_infershard_vllm_tp8pp2, where node0's vLLM never served).
+
+## LIVE RESOURCES (all stopped/deleted -- see above)
 - spar-gpu-0/1: a3-highgpu-8g Spot, us-central1-a, RUNNING since 23:24Z (~$78/h pair).
 - NO TPU. The v6e-16 Spot was preempted THREE times in one night and collected
   ZERO cells: ~9 min (00:40-00:49), <=80 min (01:31-02:53), <=20 min (03:05-03:26,
@@ -80,6 +117,37 @@ Three of these produced *silent* wrong results -- worse than a crash.
 9. 72B/7B weights were not on disk; a ~145 GB download would land INSIDE the
    timed cell. Fixed: `scripts/gcp/preload_vllm_models.sh`, run on both nodes
    (~148 GB each, done). Re-run it after any re-provision.
+
+## WHAT IS ACTUALLY BANKED (verified via .done markers on BOTH nodes)
+Target matrix is 36 cell-reps: rep1 13 cells, rep2 13, rep3 10 (reps 1-2 add
+fsdp30b + ddpstagger + ddpkaccum; rep3 drops them). Confirmed valid:
+
+    s16_train_fsdp30b     rep1            (both nodes, 619 s)
+    s8_train_ddp_resnet50 rep1 + rep2     (both nodes -- the CIFAR fix working)
+
+That is 3 of 36 cell-reps. Everything else is still to collect. Note the
+s16/s8 fsdp7b cells DID collect successfully earlier, but were deliberately
+invalidated by the matched --batch-size 1 --seq-len 512 decision and their
+markers cleared, so they will be re-collected.
+
+Rough cost to finish: ~33 cell-reps at ~11 min for train / ~7 min inferrep /
+~17 min infershard is ~6 h ~= $480. Rep 1 alone (11 remaining cells) is ~2 h
+~= $160 and is enough for a first ladder evaluation, though with no bootstrap CI
+across reps.
+
+## TPU: QUOTA IS NOT THE PROBLEM
+Checked 2026-08-20 via `gcloud alpha services quota list --service=tpu.googleapis.com`:
+    tpu-v6e              (on-demand)   global limit = 512 chips
+    tpu-v6e-preemptible                global limit = 1536 chips
+A v6e-16 needs 16 chips, so NO quota request is required for on-demand. The three
+preemptions were Spot capacity reclamation, not a quota ceiling.
+
+To switch to on-demand, provision_tpu.sh already takes a flag -- it is one env var:
+    SPOT=0 ZONE=us-east1-d bash scripts/tpu_collection/provision_tpu.sh create
+(SPOT=1 is the default and appends --spot; SPOT=0 omits it.) On-demand cannot be
+preempted, but creation still depends on capacity being available in the zone at
+request time. On-demand v6e costs materially more than Spot -- CHECK THE PRICING
+PAGE before committing; do not trust a remembered figure.
 
 ## BUGS 10-14 (found after 01:45Z)
 10. CIFAR-10 was not on the nodes, and the workloads pass
