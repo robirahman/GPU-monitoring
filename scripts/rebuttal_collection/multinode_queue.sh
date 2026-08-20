@@ -64,6 +64,11 @@ REPS=${REPS:-3}
 RENDEZVOUS_TIMEOUT=${RENDEZVOUS_TIMEOUT:-120}
 RAY_JOIN_TIMEOUT=${RAY_JOIN_TIMEOUT:-300}   # both nodes must register their 8 GPUs
 INFER_MODEL=${INFER_MODEL:-llm_infer_qwen25_1_5b_fp16} # matched to the fsdp1b train arm
+# Second inference negative, same model at batch 1 (latency-bound) rather than
+# batch 8 (throughput-bound). Adding a DISTINCT cell doubles the inferrep job
+# count per rep, which is what clears the eval's low_n threshold; extra reps of
+# the same cell would only add correlated jobs.
+INFER_MODEL_BS1=${INFER_MODEL_BS1:-llm_infer_qwen25_1_5b_bs1}
 SHARD_MODEL=${SHARD_MODEL:-qwen25_72b_tp2}             # realistic sharded-inference model
 # Matched-scale sharded negative. Qwen2.5-1.5B has 12 attention heads, so TP8 is
 # impossible (vLLM needs num_heads % tp == 0); 16 ranks are reached as TP4xPP4,
@@ -367,6 +372,7 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infershard_qwen1_5b_tp4pp4;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 4
   c=s16_train_ddp_resnet50;        mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s16_inferrep_qwen1_5b;           mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
     c=s16_train_ddpstagger_k;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/adversarial_ddp.py --strategy L-stagger --dilution 5 --duration "$DUR"
@@ -379,10 +385,13 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_infershard_qwen72b_tp8;     s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL" 8 1
   c=s8_infershard_qwen1_5b_tp4pp2; s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 2
   c=s8_inferrep_qwen1_5b;            mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s8_inferrep_qwen1_5b_bs1;        mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
   c=s1_train_fsdp1b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 1b --duration "$DUR"
+  c=s1_train_ddp_resnet50;         s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s1_inferrep_qwen1_5b;            s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 done
 
 "$RAY" stop --force >/dev/null 2>&1 || true

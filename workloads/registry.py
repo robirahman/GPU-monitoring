@@ -573,6 +573,19 @@ WORKLOAD_REGISTRY = {
     # (A100-80, H100-80, H200, B200). Paired with existing FSDP-7B/13B/30B
     # training runs so the classifier can learn train-vs-infer at matched
     # scale on datacenter hardware.
+    "llm_infer_qwen25_1_5b_bs1": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_1_5b_fp16",
+            "--duration", "300", "--batch-size", "1", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 1.5B FP16 via vLLM, batch 1 — latency-bound second "
+                       "inference negative. Distinct workload from the batch-8 cell, "
+                       "so it contributes an INDEPENDENT job rather than a correlated "
+                       "repeat: each cell yields only one job per rep, and the ladder "
+                       "needs >=8 jobs per class to clear the eval's low_n flag.",
+        "default_timeout": 600,
+    },
     "llm_infer_qwen25_1_5b_fp16": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
