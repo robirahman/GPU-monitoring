@@ -573,6 +573,15 @@ WORKLOAD_REGISTRY = {
     # (A100-80, H100-80, H200, B200). Paired with existing FSDP-7B/13B/30B
     # training runs so the classifier can learn train-vs-infer at matched
     # scale on datacenter hardware.
+    "llm_infer_qwen25_1_5b_fp16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_1_5b_fp16",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 1.5B Instruct FP16 (~3 GB) via vLLM — matched-pair for fsdp_1b training",
+        "default_timeout": 600,
+    },
     "llm_infer_qwen25_7b_fp16": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),

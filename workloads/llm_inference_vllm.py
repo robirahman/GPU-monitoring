@@ -30,6 +30,15 @@ import time
 VLLM_MODELS = {
     # Single-GPU dense inference at FSDP-matched sizes (phase 5).
     # 7B/14B/32B fit in 16/32/64 GB FP16 — any datacenter GPU.
+    # Matched-pair partner for fsdp_1b training: the scope ladder must vary
+    # SCOPE only, so the inference negative has to sit at the same model scale as
+    # the training positive. With training at 1.3B, a 7B negative would let a
+    # classifier separate the arms by size rather than by train-vs-inference.
+    "qwen25_1_5b_fp16": (
+        "Qwen/Qwen2.5-1.5B-Instruct",
+        "float16",
+        1, 1,
+    ),
     "qwen25_7b_fp16": (
         "Qwen/Qwen2.5-7B-Instruct",
         "float16",

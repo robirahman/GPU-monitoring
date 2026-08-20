@@ -50,6 +50,12 @@ NODE_RANK=${NODE_RANK:?export NODE_RANK (0 on node0, 1 on node1)}
 RUN_STAMP=${RUN_STAMP:?export RUN_STAMP (identical string on both nodes)}
 NNODES=${NNODES:-2}
 
+# Remember whether the CALLER set these, so SMOKE mode does not clobber an
+# explicit override. Passing TIMEOUT=600 with SMOKE=1 previously had no effect --
+# the smoke block reassigned TIMEOUT=240 unconditionally, so a cell that needed
+# longer kept timing out and looked broken when it was only slow.
+_DUR_SET=${DUR+x}; _TIMEOUT_SET=${TIMEOUT+x}; _TIMEOUT_BIG_SET=${TIMEOUT_BIG+x}
+_GAP_SET=${GAP+x}; _REPS_SET=${REPS+x}
 DUR=${DUR:-600}                         # 600 s -> 39 windows at 30 s / 15 s
 TIMEOUT=${TIMEOUT:-900}
 TIMEOUT_BIG=${TIMEOUT_BIG:-1500}        # 30B / model loads
@@ -57,8 +63,14 @@ GAP=${GAP:-60}
 REPS=${REPS:-3}
 RENDEZVOUS_TIMEOUT=${RENDEZVOUS_TIMEOUT:-120}
 RAY_JOIN_TIMEOUT=${RAY_JOIN_TIMEOUT:-300}   # both nodes must register their 8 GPUs
-INFER_MODEL=${INFER_MODEL:-llm_infer_qwen25_7b_fp16}   # replicated-inference registry label
-SHARD_MODEL=${SHARD_MODEL:-qwen25_72b_tp2}             # vLLM sharded model key
+INFER_MODEL=${INFER_MODEL:-llm_infer_qwen25_1_5b_fp16} # matched to the fsdp1b train arm
+SHARD_MODEL=${SHARD_MODEL:-qwen25_72b_tp2}             # realistic sharded-inference model
+# Matched-scale sharded negative. Qwen2.5-1.5B has 12 attention heads, so TP8 is
+# impossible (vLLM needs num_heads % tp == 0); 16 ranks are reached as TP4xPP4,
+# which still keeps each TP group inside one node and crosses nodes on the
+# pipeline boundary, like the 72B cell's TP8xPP2. Documented because the
+# factorization differs between the two shard variants by necessity.
+SHARD_MODEL_SMALL=${SHARD_MODEL_SMALL:-qwen25_1_5b_fp16}
 SMOKE=${SMOKE:-0}
 # ONLY_CELLS: extended-regex whitelist of cell names. Everything else is skipped
 # cheaply. Used to smoke just the decisive cells, and to re-run one cell after a
@@ -68,7 +80,12 @@ ONLY_CELLS=${ONLY_CELLS:-}
 PREFIX=""
 OUTDIR="data"
 if [ "$SMOKE" = "1" ]; then
-  DUR=60; TIMEOUT=240; TIMEOUT_BIG=600; GAP=10; REPS=1; PREFIX="smoke_"
+  [ -z "$_DUR_SET" ]         && DUR=60
+  [ -z "$_TIMEOUT_SET" ]     && TIMEOUT=240
+  [ -z "$_TIMEOUT_BIG_SET" ] && TIMEOUT_BIG=600
+  [ -z "$_GAP_SET" ]         && GAP=10
+  [ -z "$_REPS_SET" ]        && REPS=1
+  PREFIX="smoke_"
   OUTDIR="logs/smoke_data"   # keep smoke telemetry out of data/ (loader rglobs data/**)
   mkdir -p logs/smoke_data
   echo "SMOKE MODE: 60 s cells, output to logs/smoke_data/ (NOT usable data)."
@@ -122,8 +139,29 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
   local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
   if [ -f "$marker" ]; then say "SKIP  $stage ($(cat "$marker"))"; return 0; fi
 
+  # Reap strays before starting. Nothing else should be holding a GPU between
+  # cells, and a leftover process is not benign: a timed-out vLLM cell used to
+  # orphan 8 processes pinning 73 GB each, after which every later cell on the
+  # node died of CUDA OOM while asking for ~7 GB. Warning about it was not
+  # enough -- the queue has to clear it, since the run is unattended.
   local nproc; nproc=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
-  [ "$nproc" -ne 0 ] && say "WARN  $stage: $nproc compute process(es) already resident"
+  if [ "$nproc" -ne 0 ]; then
+    say "WARN  $stage: $nproc stray compute process(es) resident -- reaping"
+    for spid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do
+      kill -TERM "$spid" 2>/dev/null || true
+    done
+    sleep 10
+    for spid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do
+      kill -KILL "$spid" 2>/dev/null || true
+    done
+    sleep 5
+    nproc=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
+    if [ "$nproc" -ne 0 ]; then
+      say "WARN  $stage: $nproc process(es) STILL resident after reap -- cell may OOM"
+    else
+      say "      reaped clean; GPUs free"
+    fi
+  fi
 
   say "START $stage (rid=$rid) -> $logf"
   start_sidecar "$stage" "$rid"
@@ -178,8 +216,52 @@ wait_ray_gpus() {  # wait_ray_gpus <want> <timeout_s>
   return 1
 }
 
-mn_ray_shard() {  # mn_ray_shard <stage> <run_id>
-  local stage="$1" rid="$2"
+# Wait until no compute process is left on THIS node's GPUs. Used by the non-head
+# node of a sharded cell: its telemetry window is only DUR seconds, but the head's
+# cell also covers model load and vLLM startup, so this node finishes first. If it
+# then leaves -- `ray stop`, or the next cell's stray-reap -- it kills the head's
+# workers that are running HERE, which surfaced as "RayWorkerProc rank=[11] died
+# unexpectedly" mid-generation and failed every cross-node shard cell we ever ran.
+# Polling local compute processes needs no coordination channel: the head's
+# workers ARE local processes, so their exit is the completion signal.
+wait_gpus_idle() {  # wait_gpus_idle <timeout_s>
+  local to="$1" t0=$SECONDS n=0
+  while [ $((SECONDS - t0)) -lt "$to" ]; do
+    n=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
+    if [ "$n" -eq 0 ]; then
+      say "      head's workers exited after $((SECONDS - t0))s; GPUs idle"
+      return 0
+    fi
+    sleep 15
+  done
+  say "WARN  $n compute process(es) still resident after ${to}s -- proceeding"
+  return 1
+}
+
+ensure_ray_cluster() {  # ensure_ray_cluster <logfile>
+  local rl="$1" want=$((NNODES * 8)) got
+  got=$("$PY_VLLM" -c 'import ray;ray.init(address="auto",logging_level="ERROR");print(int(ray.cluster_resources().get("GPU",0)));ray.shutdown()' \
+        2>/dev/null | tail -1 | tr -dc '0-9')
+  if [ "${got:-0}" -ge "$want" ]; then say "      reusing ray cluster (${got} GPUs)"; return 0; fi
+
+  "$RAY" stop --force >>"$rl" 2>&1 || true
+  sleep 5
+  if [ "$NODE_RANK" -eq 0 ]; then
+    "$RAY" start --head --port=6379 --num-gpus=8 >>"$rl" 2>&1 || return 1
+  else
+    # The head may still be binding; retry rather than failing the cell outright.
+    local waited=0
+    until "$RAY" start --address="${MASTER_ADDR}:6379" --num-gpus=8 >>"$rl" 2>&1; do
+      waited=$((waited + 10))
+      [ "$waited" -ge 120 ] && { say "      could not join ray head after ${waited}s"; return 1; }
+      sleep 10
+    done
+  fi
+  wait_ray_gpus "$want" "$RAY_JOIN_TIMEOUT"
+}
+
+mn_ray_shard() {  # mn_ray_shard <stage> <run_id> <model> <tp> <pp>
+  local stage="$1" rid="$2" model="${3:-$SHARD_MODEL}" tp="${4:-8}" pp="${5:-2}"
   cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
   local raylog="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.ray.log"
   local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
@@ -192,23 +274,12 @@ mn_ray_shard() {  # mn_ray_shard <stage> <run_id>
     return 0
   }
 
-  # Clear any leftover session first: `ray start` refuses to run when this node
-  # already has one, and a crashed/timed-out earlier cell leaves one behind
-  # (vLLM's own auto-started local instance counts). Idempotent, so a clean node
-  # is unaffected.
-  "$RAY" stop --force >>"$raylog" 2>&1 || true
-
-  if [ "$NODE_RANK" -eq 0 ]; then
-    "$RAY" start --head --port=6379 --num-gpus=8 >>"$raylog" 2>&1 \
-      || { ray_bail ray-head-start-failed; return 0; }
-  else
-    "$RAY" start --address="${MASTER_ADDR}:6379" --num-gpus=8 >>"$raylog" 2>&1 \
-      || { ray_bail ray-join-failed; return 0; }
-  fi
-
-  # Both nodes gate on the same GPU count, so this doubles as the cell barrier.
-  wait_ray_gpus $((NNODES * 8)) "$RAY_JOIN_TIMEOUT" \
-    || { ray_bail ray-cluster-incomplete; return 0; }
+  # Build the cluster ONCE and reuse it across shard cells. Starting and stopping
+  # it per cell raced: with two shard cells in a run, the second saw 8/16 GPUs on
+  # the head and 0/16 on the worker, because one node was tearing the cluster down
+  # while the other was bringing it up. ensure_ray_cluster is idempotent -- it
+  # probes first and only (re)builds when the cluster is not already complete.
+  ensure_ray_cluster "$raylog" || { ray_bail ray-cluster-incomplete; return 0; }
 
   if [ "$NODE_RANK" -eq 0 ]; then
     # RAY_ADDRESS pins vLLM to the cluster we just built. Without it ray.init()
@@ -218,8 +289,8 @@ mn_ray_shard() {  # mn_ray_shard <stage> <run_id>
       $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
         --num-gpus 8 --run-id "$rid" --node-rank 0 --output-dir "$OUTDIR" \
         --timeout "$TIMEOUT_BIG" -- \
-        $PY_VLLM workloads/llm_inference_vllm.py --model "$SHARD_MODEL" \
-          --tensor-parallel-size 8 --pipeline-parallel-size 2 \
+        $PY_VLLM workloads/llm_inference_vllm.py --model "$model" \
+          --tensor-parallel-size "$tp" --pipeline-parallel-size "$pp" \
           --distributed-executor-backend ray --duration "$DUR"
   else
     # node1 records telemetry for the shared run_id while node0 drives vLLM.
@@ -227,8 +298,11 @@ mn_ray_shard() {  # mn_ray_shard <stage> <run_id>
       $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
         --num-gpus 8 --run-id "$rid" --node-rank 1 --telemetry-only \
         --duration "$DUR" --output-dir "$OUTDIR"
+    # Do NOT tear down until the head's workers on this node have exited.
+    wait_gpus_idle "$TIMEOUT_BIG" || true
   fi
-  "$RAY" stop >>"$raylog" 2>&1 || true
+  # Deliberately NOT stopping Ray here: the next shard cell reuses this cluster.
+  # It is torn down once at the end of the queue.
 }
 
 # Replicated inference: 8 independent single-GPU replicas per node, no
@@ -256,6 +330,17 @@ s8_torchrun() {  # s8_torchrun <stage> <run_id> <timeout> -- <workload.py args..
       "$TORCHRUN" --standalone --nproc-per-node=8 "$@"
 }
 
+# Single-node sharded inference: collectives without training, inside one node.
+s8_shard() {  # s8_shard <stage> <run_id> <model> <tp> <pp>
+  local stage="$1" rid="$2" model="$3" tp="$4" pp="${5:-1}"
+  run_stage "$stage" "$rid" -- \
+    $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" --num-gpus 8 \
+      --run-id "$rid" --node-rank "$NODE_RANK" --output-dir "$OUTDIR" \
+      --timeout "$TIMEOUT_BIG" -- \
+      $PY_VLLM workloads/llm_inference_vllm.py --model "$model" \
+        --tensor-parallel-size "$tp" --pipeline-parallel-size "$pp" --duration "$DUR"
+}
+
 # ── S1 cells (single-GPU: world=1 training, no collectives) ──────────────────
 s1_train() {  # s1_train <stage> <run_id> -- <workload.py args...>
   local stage="$1" rid="$2"; shift 2; [ "$1" = "--" ] && shift
@@ -277,10 +362,11 @@ for rep in $(seq 1 "$REPS"); do
   say "===== rep $rep / $REPS ====="
 
   # -- Phase A: S16 (needs both nodes). Priority 1 cells first. --
-  c=s16_train_fsdp7b;              mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 512 --duration "$DUR"
-  c=s16_infershard_vllm_tp8pp2;    mn_ray_shard "$c" "$(rid_for "$c" "$rep")"
+  c=s16_train_fsdp1b;              mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 1b --duration "$DUR"
+  c=s16_infershard_qwen72b_tp8pp2;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL" 8 2
+  c=s16_infershard_qwen1_5b_tp4pp4;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 4
   c=s16_train_ddp_resnet50;        mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
-  c=s16_inferrep_qwen7b;           mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s16_inferrep_qwen1_5b;           mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
     c=s16_train_ddpstagger_k;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/adversarial_ddp.py --strategy L-stagger --dilution 5 --duration "$DUR"
@@ -288,17 +374,16 @@ for rep in $(seq 1 "$REPS"); do
   fi
 
   # -- Phase B: S8 (each node runs its own single-node job) --
-  c=s8_train_fsdp7b;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 512 --duration "$DUR"
+  c=s8_train_fsdp1b;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 1b --duration "$DUR"
   c=s8_train_ddp_resnet50;         s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
-  c=s8_infershard_vllm_tp8;        run_stage "$c" "$(rid_for "$c" "$rep")" -- \
-                                     $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${c}" --num-gpus 8 \
-                                       --run-id "$(rid_for "$c" "$rep")" --node-rank "$NODE_RANK" --output-dir "$OUTDIR" --timeout "$TIMEOUT_BIG" -- \
-                                       $PY_VLLM workloads/llm_inference_vllm.py --model "$SHARD_MODEL" --tensor-parallel-size 8 --duration "$DUR"
-  c=s8_inferrep_qwen7b;            mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s8_infershard_qwen72b_tp8;     s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL" 8 1
+  c=s8_infershard_qwen1_5b_tp4pp2; s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 2
+  c=s8_inferrep_qwen1_5b;            mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
-  c=s1_train_fsdp7b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 512 --duration "$DUR"
-  c=s1_inferrep_qwen7b;            s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s1_train_fsdp1b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 1b --duration "$DUR"
+  c=s1_inferrep_qwen1_5b;            s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
 done
 
+"$RAY" stop --force >/dev/null 2>&1 || true
 say "queue complete (node$NODE_RANK)."

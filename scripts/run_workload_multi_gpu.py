@@ -16,6 +16,7 @@ Single-GPU parallel mode (run 8 independent single-GPU workloads simultaneously)
 import argparse
 import logging
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -30,6 +31,49 @@ from workloads.registry import get_workload, WORKLOAD_REGISTRY
 
 log = logging.getLogger("spar.multi_gpu")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
+
+
+def _run_reaped(cmd, cwd, env, timeout):
+    """Run a workload; on timeout kill the whole process GROUP, not just the child.
+
+    subprocess.run(timeout=...) kills only the direct child. vLLM (and Ray) fork
+    EngineCore/worker processes that then survive as orphans holding the GPU --
+    observed 2026-08-20: a timed-out replicated-inference cell left 8 processes
+    pinning 73 GB each, so every later cell on that node died with CUDA OOM while
+    asking for only ~7 GB. start_new_session puts the workload in its own process
+    group so one killpg takes the whole tree with it.
+
+    Returns (returncode, status) where status is "OK" | "FAIL(rc)" | "TIMEOUT".
+    """
+    proc = subprocess.Popen(cmd, cwd=cwd, env=env, start_new_session=True)
+    try:
+        rc = proc.wait(timeout=timeout)
+        return rc, ("OK" if rc == 0 else f"FAIL({rc})")
+    except subprocess.TimeoutExpired:
+        log.warning(f"  Workload timed out after {timeout}s -- killing process group")
+        _killpg(proc)
+        return 124, "TIMEOUT"
+    except BaseException:
+        _killpg(proc)
+        raise
+
+
+def _killpg(proc):
+    """SIGTERM the workload's process group, then SIGKILL whatever is left."""
+    try:
+        pgid = os.getpgid(proc.pid)
+    except OSError:
+        return
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        try:
+            os.killpg(pgid, sig)
+        except OSError:
+            return
+        try:
+            proc.wait(timeout=10)
+            return
+        except subprocess.TimeoutExpired:
+            continue
 
 
 def generate_filename(label, gpu_name, gpu_index, run_id, node_rank=0, ext="parquet"):
@@ -84,17 +128,8 @@ def run_multi_gpu(args, workload_cmd):
     workload_rc = 0
     try:
         timeout = args.timeout + 60 if args.timeout else None
-        result = subprocess.run(
-            workload_cmd,
-            cwd=_REPO_ROOT,
-            env=env,
-            timeout=timeout,
-        )
-        workload_rc = result.returncode
-        log.info(f"  Workload exited with code {result.returncode}")
-    except subprocess.TimeoutExpired:
-        log.warning(f"  Workload timed out after {args.timeout}s")
-        workload_rc = 124
+        workload_rc, status = _run_reaped(workload_cmd, _REPO_ROOT, env, timeout)
+        log.info(f"  Workload finished: {status}")
     except Exception as e:
         log.error(f"  Workload error: {e}")
         workload_rc = 1
@@ -215,10 +250,7 @@ def run_parallel_single_gpu(args, workload_labels):
 
         try:
             timeout = args.timeout + 30 if args.timeout else None
-            result = subprocess.run(cmd, cwd=_REPO_ROOT, env=env, timeout=timeout)
-            status = "OK" if result.returncode == 0 else f"FAIL({result.returncode})"
-        except subprocess.TimeoutExpired:
-            status = "TIMEOUT"
+            _rc, status = _run_reaped(cmd, _REPO_ROOT, env, timeout)
         except Exception as e:
             status = f"ERROR: {e}"
 
