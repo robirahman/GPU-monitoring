@@ -37,8 +37,11 @@ push() {  # $1 local dir   $2 gcs subpath   [extra rsync args...]
 
 sync_once() {
   spar_say "sync --once  ${NODE} -> ${DEST}"
-  # data/ holds the parquets (incl. *.partial). Exclude nothing here -- it's the payload.
-  push data data
+  # data/ holds the parquets (incl. *.partial) -- the payload. The ONE exclusion is
+  # data/cifar10: that is a 341 MB staged INPUT dataset, not telemetry. Without
+  # this it is uploaded from every node and pulled back again at ingest, which
+  # dwarfs the actual telemetry (6 MB of ladder parquets vs 341 MB of CIFAR).
+  push data data -x '.*/cifar10/.*'
   # .done/.failed markers -> shared control/ so the other node / driver can account completion.
   # NB: use $CTRL directly, NOT a "../control" relative path -- gcloud does NOT normalise
   # ".." in gs:// URLs (it becomes a literal object-name component).

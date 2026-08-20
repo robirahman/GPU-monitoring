@@ -39,10 +39,16 @@ import shutil
 import sys
 from collections import defaultdict
 
-# Scope-ladder cells only: s1_/s8_/s16_ (GPU) and tpuT<N>_ (TPU).
-LADDER_RE = re.compile(r"^(?:smoke_)?(?:s(?:1|8|16)|tpuT\d+)_")
-# <label>_node<N>_gpu<I>_<gpu_name>_<rid>.parquet
+# Scope-ladder cells only: s1_/s8_/s16_ (GPU) and tpuT<N>_ (TPU). The optional
+# nic_ prefix is the host-NIC sidecar (collect_host_telemetry.py), which the
+# queue starts for EVERY cell -- including ones that fail, so it needs pruning
+# on exactly the same terms as the per-GPU streams.
+LADDER_RE = re.compile(r"^(?:nic_)?(?:smoke_)?(?:s(?:1|8|16)|tpuT\d+)_")
+# Per-GPU stream: <label>_node<N>_gpu<I>_<gpu_name>_<rid>.parquet
 FILE_RE = re.compile(r"^(?P<label>.+?)_node(?P<node>\d+)_gpu(?P<gpu>\d+)_.*?_(?P<rid>[0-9a-f]{12})\.parquet(?:\.partial)?$")
+# NIC sidecar: nic_<label>_node<N>_<rid>.parquet -- no _gpu<I>_<gpu_name> segment,
+# so FILE_RE cannot match it and it silently survived the prune.
+NIC_RE = re.compile(r"^nic_(?P<label>.+?)_node(?P<node>\d+)_(?P<rid>[0-9a-f]{12})\.parquet(?:\.partial)?$")
 # <label>_node<N>_<rid>.done
 MARK_RE = re.compile(r"^(?P<label>.+?)_node(?P<node>\d+)_(?P<rid>[0-9a-f]{12})\.done$")
 
@@ -94,7 +100,7 @@ def main():
         for fn in sorted(files):
             if not fn.endswith((".parquet", ".parquet.partial")):
                 continue
-            m = FILE_RE.match(fn)
+            m = FILE_RE.match(fn) or NIC_RE.match(fn)
             if not m or not LADDER_RE.match(fn):
                 skipped += 1          # historical / non-ladder data: untouched
                 continue
