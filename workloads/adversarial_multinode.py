@@ -1,0 +1,443 @@
+#!/usr/bin/env python3
+"""Multi-node evasive training: real distributed training that tries to read as
+inference or non-ML, with the sacrificed throughput measured rather than assumed.
+
+Why this file exists
+--------------------
+The honest scope ladder saturates. On the 2026-08-20 corpus, train-vs-inference
+AUC is 1.000 at S1, S8 AND S16, under every channel ablation including
+drop_all_comm -- honest training betrays itself through per-GPU power/utilisation/
+memory alone, so communication scope changes nothing measurable. There is no
+headroom for a scope effect to live in. The hypothesis only becomes testable
+against an adversary: an evader can spoof per-GPU levels, but cannot easily fake
+the ABSENCE of cross-node collectives while still training.
+
+Every existing evasion strategy in this repo is single-process except
+adversarial_ddp.py, whose two multi-node strategies (L-stagger, K-accum) both
+attack allreduce cadence -- the one channel the saturation result says the
+detector does not need. This file provides distributed disguises that attack the
+signals that actually carry the detection.
+
+Strategies
+----------
+MN-I  duty-cycle interleave: alternate genuine FSDP training with genuine non-ML
+      compute (memory-hard hashing, cuFFT) at train fraction F. The "ffmpeg 90%
+      of the time" case. Blends window features toward `other`.
+MN-O  collectively-gated oracle: dilution proposes a candidate step, the live
+      classifier vetoes it. Trains only while it believes it looks benign.
+
+Launch via torchrun (S16 / S8 / S1 respectively):
+    torchrun --nnodes=2 --nproc-per-node=8 workloads/adversarial_multinode.py \
+        --strategy MN-I --train-frac 0.1 --duration 600
+    torchrun --standalone --nproc-per-node=8 ... --strategy MN-O --dilution 10
+    torchrun --standalone --nproc-per-node=1 ... --strategy MN-I --train-frac 0.5
+
+THE RANK-UNIFORMITY RULE (read before editing)
+----------------------------------------------
+dist_deadline.CollectiveDeadline requires every rank to call expired() the same
+number of times, and every collective must be reached by every rank in the same
+order. So the DISGUISE DECISION ITSELF MUST BE COLLECTIVE. A per-rank decision --
+each rank asking its own oracle, or drawing its own phase length -- makes ranks
+execute different numbers of collectives and the job HANGS rather than producing
+a bad number. Two mechanisms are used here:
+
+  MN-I  rank 0 broadcasts one seed at startup; every rank then derives the same
+        schedule locally from (seed, step_index). No per-step communication.
+  MN-O  rank 0 alone queries the oracle; the allow/veto bit is spread with a
+        1-element all_reduce, exactly the CollectiveDeadline pattern.
+
+Cost accounting
+---------------
+Raw tok/s is a MISLEADING utility metric for these disguises. Measured WB-O logs
+show the oracle veto cutting useful gradient updates ~5x (992 -> ~180 steps)
+while RAISING tok/s, because vetoed work becomes forward-only. So this file
+reports useful work (tokens that actually moved weights) separately from
+attributed work (what an observer who believed the disguise would infer), via
+emit_step's tokens=/passes= fields, plus a machine-parseable EVASION_TAX_DATA
+line that classifier/rebuttal_analysis/evasion_cost_eval.py consumes.
+"""
+
+import argparse
+import os
+import time
+
+import torch
+import torch.distributed as dist
+import torch.nn.functional as F
+
+try:
+    from workloads._step import emit_step
+    from workloads.dist_deadline import CollectiveDeadline, sync_teardown
+    from workloads.fsdp_training import (
+        MODEL_CONFIGS, BATCH_DEFAULTS, RandomTransformerLM, build_fsdp_model,
+    )
+except ImportError:  # launched as `torchrun workloads/adversarial_multinode.py`
+    from _step import emit_step
+    from dist_deadline import CollectiveDeadline, sync_teardown
+    from fsdp_training import (
+        MODEL_CONFIGS, BATCH_DEFAULTS, RandomTransformerLM, build_fsdp_model,
+    )
+
+
+# ── Non-ML filler ────────────────────────────────────────────────────────────
+
+class NonMLFiller:
+    """Genuine non-ML GPU work, used to fill the non-training duty cycle.
+
+    Both kernels are lifted from adversarial_advanced.py strategy F, and both
+    correspond to labels already in OTHER_LABELS
+    (classifier/threeway_improved.py): memory-hard random access is the
+    `mining_ethash_proxy`/`ethash_cuda` profile, cuFFT is `cufft_benchmark`. The
+    disguise therefore imitates a genuine member of the `other` class instead of
+    an invented profile -- which matters, because the detector has been trained
+    on those real labels.
+
+    Allocated once and reused: a per-phase allocate/free cycle would itself be a
+    memory-slope signature, which is the opposite of the intent.
+    """
+
+    def __init__(self, device, dag_mb=512, fft_batch=8, fft_size=512):
+        self.device = device
+        self.dag_elements = (dag_mb * 1024 * 1024) // 64
+        self.dag = torch.randint(0, 2**31, (self.dag_elements, 16),
+                                 dtype=torch.int32, device=device)
+        self.fft_data = torch.randn(fft_batch, fft_size, fft_size,
+                                    dtype=torch.complex64, device=device)
+        self.iters = 0
+
+    def step(self):
+        """One unit of non-ML work. Alternates the two profiles."""
+        if self.iters % 2 == 0:
+            seeds = torch.randint(0, 2**31, (256, 8), dtype=torch.int32,
+                                  device=self.device)
+            mix = seeds.clone()
+            for _ in range(16):
+                indices = (mix[:, 0].abs() % self.dag_elements).long()
+                mix = mix ^ self.dag[indices][:, :8]
+            _ = mix.sum()
+            del seeds, mix
+        else:
+            y = torch.fft.fftn(self.fft_data)
+            z = torch.fft.ifftn(y)
+            _ = z.real.sum()
+            del y, z
+        self.iters += 1
+
+    def release(self):
+        del self.dag, self.fft_data
+
+
+# ── Collective disguise schedules ────────────────────────────────────────────
+
+def broadcast_seed(device, rank):
+    """Agree one integer seed across all ranks.
+
+    MN-I's phase schedule must be identical everywhere. Deriving it from a
+    shared seed means each rank computes the schedule locally with NO per-step
+    communication -- so the loop stays rank-uniform by construction and cannot
+    deadlock, however the schedule is shaped.
+    """
+    if not (dist.is_available() and dist.is_initialized()):
+        return 20260821
+    t = torch.zeros(1, dtype=torch.int64, device=device)
+    if rank == 0:
+        # time-derived, but broadcast so every rank shares it
+        t.fill_(int(time.time() * 1000) & 0x7FFFFFFF)
+    dist.broadcast(t, src=0)
+    return int(t.item())
+
+
+def _schedule_says_train(seed, step_index, train_frac, period):
+    """Deterministic, rank-independent duty cycle.
+
+    A pure function of (seed, step_index) -- so every rank reaches the same
+    verdict without talking. Two deliberate choices:
+
+    * An integer hash, not a seeded RNG: RNG state would have to advance
+      identically on every rank, which is a far easier invariant to break by
+      accident (any rank-conditional draw desyncs it and hangs the job).
+    * Hash-jittered rather than a strict `step % period < k` pattern: a
+      perfectly periodic duty cycle is exactly what the FFT-peak and
+      autocorrelation features catch -- adversarial_round2.py strategy I exists
+      because "Strategy F was betrayed by periodic autocorrelation (acf10/acf20)
+      from its fixed 10s cycle". The price is that the realised train fraction
+      only approaches `train_frac` asymptotically (observed 0.290 for a
+      requested 0.25 over 200 steps, ~1.3 sigma of binomial noise). That is
+      harmless here because the cost metric is derived from the COUNTED
+      train_steps, never from the requested fraction.
+    """
+    h = (seed ^ (step_index * 0x9E3779B1)) & 0xFFFFFFFF
+    h = (h ^ (h >> 16)) * 0x7FEB352D & 0xFFFFFFFF
+    h = (h ^ (h >> 15)) & 0xFFFFFFFF
+    return (h % period) < max(1, int(round(train_frac * period)))
+
+
+class CollectiveOracleGate:
+    """Rank 0 asks the classifier; every rank obeys the same answer.
+
+    The oracle lives on rank 0 only -- 16 ranks each polling NVML and scoring
+    windows would be 16x the cost for one decision, and their answers could
+    differ, which is precisely the rank-divergence that deadlocks the job. The
+    verdict is spread with a 1-element all_reduce (MAX), the same mechanism
+    CollectiveDeadline uses for its stop decision.
+    """
+
+    def __init__(self, device, rank, threshold, model_path=None):
+        self.device = device
+        self.rank = rank
+        self.threshold = threshold
+        self.oracle = None
+        self.queries = 0
+        self.allowed = 0
+        self._flag = torch.zeros(1, device=device)
+        self.last_p = None
+        if rank == 0:
+            self.oracle = self._build(model_path)
+
+    def _build(self, model_path):
+        try:
+            import sys
+            sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from classifier.classifier_oracle import ClassifierOracle
+        except Exception as e:  # oracle unavailable -> fail loudly, not silently
+            print(f"  WARN: oracle unavailable ({type(e).__name__}: {e}); "
+                  f"MN-O will train every candidate step", flush=True)
+            return None
+        kwargs = {"gpu_index": 0}
+        if model_path:
+            # honest-only persisted detector (classifier/model_store.py). Keeps the
+            # attacker querying the SAME model the evaluation scores against, and
+            # skips the ~182 s in-process retrain measured on the old path.
+            kwargs["model_path"] = model_path
+        # Construction can fail for reasons that have nothing to do with the
+        # experiment (no NVML backend, no persisted model, corpus unreadable).
+        # It must NEVER raise out of here: this runs on rank 0 only, so an
+        # exception kills rank 0 alone and leaves every other rank blocked on the
+        # next collective -- an asymmetric failure that looks like a hang. A None
+        # oracle degrades safely instead, because allows() still performs the
+        # same all_reduce and simply permits every candidate step.
+        try:
+            try:
+                oracle = ClassifierOracle(**kwargs)
+            except TypeError:
+                # older signature without model_path
+                oracle = ClassifierOracle(gpu_index=0)
+            oracle.start_polling()
+        except Exception as e:
+            print(f"  WARN: oracle unusable ({type(e).__name__}: {e}); MN-O will "
+                  f"train every candidate step -- this run measures dilution "
+                  f"alone, NOT oracle-guided evasion", flush=True)
+            return None
+        time.sleep(5)  # let the 1 Hz buffer fill enough to score a window
+        return oracle
+
+    def allows(self):
+        """Collective verdict: may this rank take a real training step?"""
+        local = 1.0
+        if self.rank == 0:
+            if self.oracle is not None:
+                p = self.oracle.query_p_training(window_sec=15)
+                self.queries += 1
+                self.last_p = p
+                # p is None until the buffer is warm; treat as "not yet known"
+                # and allow, so the run does not sit idle during warmup.
+                local = 1.0 if (p is None or p < self.threshold) else 0.0
+            else:
+                local = 1.0
+        if not (dist.is_available() and dist.is_initialized()):
+            ok = local > 0
+        else:
+            self._flag.fill_(local if self.rank == 0 else 0.0)
+            dist.all_reduce(self._flag, op=dist.ReduceOp.MAX)
+            ok = self._flag.item() > 0
+        if ok:
+            self.allowed += 1
+        return ok
+
+    def close(self):
+        if self.oracle is not None:
+            try:
+                self.oracle.stop_polling()
+            except Exception:
+                pass
+
+
+# ── Shared training step ─────────────────────────────────────────────────────
+
+def train_step(model, optimizer, batch_size, seq_len, vocab, device):
+    """One real FSDP training step. Returns the loss value."""
+    input_ids = torch.randint(0, vocab, (batch_size, seq_len), device=device)
+    logits = model(input_ids)
+    shift_logits = logits[:, :-1, :].contiguous()
+    shift_labels = input_ids[:, 1:].contiguous()
+    loss = F.cross_entropy(
+        shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+    loss.backward()
+    optimizer.step()
+    optimizer.zero_grad(set_to_none=True)
+    return float(loss.item())
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Multi-node evasive training")
+    ap.add_argument("--strategy", required=True, choices=["MN-I", "MN-O"])
+    ap.add_argument("--size", default="1b", choices=list(MODEL_CONFIGS.keys()),
+                    help="Model preset; 1b matches the honest s*_train_fsdp1b rungs")
+    ap.add_argument("--duration", type=int, default=600)
+    ap.add_argument("--batch-size", type=int, default=None)
+    ap.add_argument("--seq-len", type=int, default=1024)
+    # MN-I
+    ap.add_argument("--train-frac", type=float, default=0.1,
+                    help="MN-I: fraction of steps that really train")
+    ap.add_argument("--schedule-period", type=int, default=20,
+                    help="MN-I: duty-cycle period in steps")
+    # MN-O
+    ap.add_argument("--dilution", type=int, default=10,
+                    help="MN-O: every Nth step is a training CANDIDATE")
+    ap.add_argument("--oracle-threshold", type=float, default=0.3,
+                    help="MN-O: train only while P(training) < this")
+    ap.add_argument("--oracle-model", default=None,
+                    help="MN-O: path to the persisted honest-only detector")
+    args = ap.parse_args()
+
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    world_size = int(os.environ.get("WORLD_SIZE", 1))
+    rank = int(os.environ.get("RANK", 0))
+    node_rank = int(os.environ.get("GROUP_RANK", 0))
+
+    dist.init_process_group(backend="nccl")
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f"cuda:{local_rank}")
+
+    batch_size = args.batch_size or BATCH_DEFAULTS[args.size]
+    hidden, n_layers, n_heads, ffn, vocab = MODEL_CONFIGS[args.size]
+    tokens_per_step = batch_size * world_size * args.seq_len
+
+    if rank == 0:
+        print(f"Adversarial multinode: {args.strategy}, {args.size} on {world_size} GPUs")
+        print(f"  Per-GPU batch: {batch_size}, Seq len: {args.seq_len}")
+        if args.strategy == "MN-I":
+            print(f"  Train fraction: {args.train_frac:.0%} over a "
+                  f"{args.schedule_period}-step period")
+        else:
+            print(f"  Dilution: 1/{args.dilution}, oracle threshold: "
+                  f"{args.oracle_threshold}")
+        print(f"  Duration: {args.duration}s")
+
+    with torch.device("meta"):
+        model = RandomTransformerLM(args.size)
+    fsdp_model = build_fsdp_model(model, device, activation_ckpt=True,
+                                 cpu_offload=False)
+    optimizer = torch.optim.AdamW(fsdp_model.parameters(), lr=1e-4)
+
+    filler = NonMLFiller(device) if args.strategy == "MN-I" else None
+    gate = (CollectiveOracleGate(device, rank, args.oracle_threshold,
+                                 args.oracle_model)
+            if args.strategy == "MN-O" else None)
+    seed = broadcast_seed(device, rank)
+
+    if rank == 0:
+        mem_gb = torch.cuda.max_memory_allocated(device) / 1e9
+        print(f"  Post-init GPU memory: {mem_gb:.1f} GB")
+        print(f"  Schedule seed: {seed}")
+
+    deadline = CollectiveDeadline(args.duration, device)
+    wall_start = time.time()
+    step = 0            # every loop iteration
+    train_steps = 0     # iterations that actually moved weights
+    filler_steps = 0
+    useful_tokens = 0
+    attributed_tokens = 0
+    last_print = wall_start
+    loss_val = float("nan")
+
+    while not deadline.expired():
+        if args.strategy == "MN-I":
+            do_train = _schedule_says_train(seed, step, args.train_frac,
+                                            args.schedule_period)
+        else:
+            candidate = (step % args.dilution == 0) and step > 0
+            # allows() is collective, so EVERY rank must call it whenever the
+            # candidacy test passes -- candidacy depends only on `step`, which is
+            # rank-independent, so this stays uniform.
+            do_train = gate.allows() if candidate else False
+
+        if do_train:
+            loss_val = train_step(fsdp_model, optimizer, batch_size,
+                                  args.seq_len, vocab, device)
+            train_steps += 1
+            useful_tokens += tokens_per_step
+            attributed_tokens += tokens_per_step
+            if rank == 0:
+                extra = {"loss": f"{loss_val:.4f}"}
+                if gate is not None and gate.last_p is not None:
+                    extra["p_train"] = f"{gate.last_p:.3f}"
+                emit_step("train", step, tokens=tokens_per_step, passes=1,
+                          node=node_rank, rank=rank, **extra)
+        else:
+            if filler is not None:
+                filler.step()
+                filler_steps += 1
+            else:
+                # MN-O's non-training work is a forward pass: it keeps the GPU
+                # busy the way serving does, which is the whole point of the
+                # disguise. Counted as attributed-but-not-useful.
+                with torch.no_grad():
+                    input_ids = torch.randint(0, vocab,
+                                              (batch_size, args.seq_len),
+                                              device=device)
+                    fsdp_model(input_ids)
+                attributed_tokens += tokens_per_step
+            if rank == 0:
+                emit_step("infer", step, tokens=0, passes=1,
+                          node=node_rank, rank=rank)
+
+        step += 1
+
+        now = time.time()
+        if rank == 0 and now - last_print >= 30:
+            el = now - wall_start
+            line = (f"  {el:.0f}s: steps={step} train={train_steps} "
+                    f"useful={useful_tokens / el:.0f} tok/s")
+            if filler is not None:
+                line += f" filler={filler_steps}"
+            if gate is not None:
+                line += f" oracle={gate.allowed}/{gate.queries}"
+                if gate.last_p is not None:
+                    line += f" p_train={gate.last_p:.3f}"
+            print(line + f" loss={loss_val:.4f}", flush=True)
+            last_print = now
+
+    elapsed = time.time() - wall_start
+
+    if rank == 0:
+        print(f"\n{args.strategy} complete: {step} steps, {train_steps} training")
+        print(f"  Useful tokens: {useful_tokens:,} ({useful_tokens / elapsed:.0f} tok/s)")
+        print(f"  Attributed tokens: {attributed_tokens:,} "
+              f"({attributed_tokens / elapsed:.0f} tok/s)")
+        # Machine-parseable cost line, extending the idiom established at
+        # adversarial_composite.py:182 with the fields the evasion ladder needs.
+        # evasion_cost_eval.py parses this; keep the key=value shape stable.
+        print(f"  EVASION_TAX_DATA: strategy={args.strategy} world_size={world_size} "
+              f"train_frac={args.train_frac if args.strategy == 'MN-I' else ''} "
+              f"dilution={args.dilution if args.strategy == 'MN-O' else ''} "
+              f"steps={step} train_steps={train_steps} "
+              f"useful_tokens={useful_tokens} attributed_tokens={attributed_tokens} "
+              f"duration={elapsed:.1f} "
+              f"oracle_queries={gate.queries if gate else 0} "
+              f"oracle_allowed={gate.allowed if gate else 0}", flush=True)
+        if train_steps == 0:
+            # A disguise that never trains is not an evasion -- it is an
+            # inference job. Say so loudly; evasion_cost_eval.py rejects it too.
+            print("  WARN: zero training steps -- this run is not evidence of "
+                  "evasion, it never trained.", flush=True)
+
+    if gate is not None:
+        gate.close()
+    if filler is not None:
+        filler.release()
+    sync_teardown()
+
+
+if __name__ == "__main__":
+    main()

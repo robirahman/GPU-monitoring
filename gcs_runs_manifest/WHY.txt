@@ -1,0 +1,21 @@
+Markers moved out of the pulled control/ tree before running
+prune_unmarked_cells.py, because GCS rsync is append-only and therefore
+resurrected markers that were deliberately invalidated on the nodes.
+
+1. s16_infershard_vllm_tp8pp2_node1_{b403249218ed,bdc339d1e402}.done
+   node1's branch of that cell is --telemetry-only: it records DUR seconds and
+   marks success regardless of whether node0's vLLM actually served. node0
+   FAILED both reps, so this is ~600 s of IDLE GPUs labelled as sharded
+   inference. Deleted on node1 at 05:03Z 2026-08-20; GCS kept its copy.
+
+2. s16_train_fsdp7b_node{0,1}_{0c769ff82f74,e5014f3abf58}.done
+   s8_train_fsdp7b_node{0,1}_{231353550921,8f727604c366,ba9a2f8e65f3}.done
+   Collected at the DEFAULT batch size / seq-len 1024. Robi's 2026-08-20
+   decision runs all three fsdp7b rungs at --batch-size 1 --seq-len 512 so that
+   only SCOPE varies across the ladder; mixing the two settings under one cell
+   label would confound batch size with scope in dAUC(S8-S1). The relaunch that
+   would have produced matched data started 05:01Z and was stopped at 05:05Z, so
+   no new-settings fsdp7b data exists yet.
+
+Kept as valid: s16_train_fsdp30b (already batch1/seq512) and
+s8_train_ddp_resnet50 (unaffected by the batch decision; the CIFAR fix working).

@@ -76,6 +76,11 @@ SHARD_MODEL=${SHARD_MODEL:-qwen25_72b_tp2}             # realistic sharded-infer
 # pipeline boundary, like the 72B cell's TP8xPP2. Documented because the
 # factorization differs between the two shard variants by necessity.
 SHARD_MODEL_SMALL=${SHARD_MODEL_SMALL:-qwen25_1_5b_fp16}
+# Disguised-training cells (workloads/adversarial_multinode.py). ORACLE_MODEL is
+# the persisted honest-only detector the adversary queries; without it MN-O
+# degrades to plain dilution and says so in its own log.
+ORACLE_MODEL=${ORACLE_MODEL:-/opt/spar/repo/classifier/models/honest_detector.joblib}
+ADV_DILUTION=${ADV_DILUTION:-10}
 SMOKE=${SMOKE:-0}
 # ONLY_CELLS: extended-regex whitelist of cell names. Everything else is skipped
 # cheaply. Used to smoke just the decisive cells, and to re-run one cell after a
@@ -372,6 +377,16 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infershard_qwen1_5b_tp4pp4;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 4
   c=s16_train_ddp_resnet50;        mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s16_inferrep_qwen1_5b;           mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+
+  # -- Disguised training: real FSDP training that tries to read as inference or
+  # non-ML. Same --size 1b model as the honest s*_train_fsdp1b rungs, so the
+  # disguise is the ONLY difference. Run these with
+  #   ONLY_CELLS='advtrain'
+  # when the honest ladder is already banked under an earlier stamp.
+  c=s16_advtrain_interleave_f50;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.5 --duration "$DUR"
+  c=s16_advtrain_interleave_f20;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
+  c=s16_advtrain_interleave_f10;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.1 --duration "$DUR"
+  c=s16_advtrain_oracle;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
@@ -385,12 +400,23 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_infershard_qwen72b_tp8;     s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL" 8 1
   c=s8_infershard_qwen1_5b_tp4pp2; s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 2
   c=s8_inferrep_qwen1_5b;            mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  c=s8_advtrain_interleave_f50;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.5 --duration "$DUR"
+  c=s8_advtrain_interleave_f20;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
+  c=s8_advtrain_interleave_f10;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.1 --duration "$DUR"
+  c=s8_advtrain_oracle;            s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s8_inferrep_qwen1_5b_bs1;        mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
   c=s1_train_fsdp1b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 1b --duration "$DUR"
   c=s1_train_ddp_resnet50;         s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s1_inferrep_qwen1_5b;            s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
+  # S1 note: with one GPU there is no collective, so MN-O here reduces to the
+  # single-GPU oracle attack. Expect it to behave differently from S8/S16 by
+  # construction -- that difference IS the scope result.
+  c=s1_advtrain_interleave_f50;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.5 --duration "$DUR"
+  c=s1_advtrain_interleave_f20;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
+  c=s1_advtrain_interleave_f10;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.1 --duration "$DUR"
+  c=s1_advtrain_oracle;            s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 done
 

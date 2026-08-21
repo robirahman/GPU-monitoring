@@ -41,13 +41,27 @@ import pandas as pd
 STEP_RE = re.compile(
     r"STEP\s+ts=(?P<ts>[\d.]+)\s+kind=(?P<kind>train|infer)\s+batch_idx=(?P<idx>\d+)")
 RUNID_RE = re.compile(r"Run ID:\s*(?P<run_id>\S+)")
+# Trailing key=value fields, scanned after the positional prefix. Promoted from
+# rebuttal_analysis/symgemm_throughput.py, which was the ONLY tokens-aware STEP
+# parser in the repo -- this module's parser matched the prefix and then threw
+# `tokens=`/`passes=` away, so progress could never be joined to a window even
+# though every workload emits it. Tolerating any order and any extra fields also
+# means the superset dialect (node=/rank=/phase=/loss=/p_train=) parses here.
+FIELD_RE = re.compile(r"(\w+)=([-\w.]+)")
 
 
 def parse_step_log(path: str) -> tuple[str | None, pd.DataFrame]:
-    """Return ``(run_id, DataFrame[ts, kind])`` parsed from one teed launcher log.
+    """Return ``(run_id, DataFrame[ts, kind, tokens, passes])`` from one teed log.
 
     ``run_id`` is taken from the first ``Run ID:`` line (``None`` if absent, in
     which case the caller must supply an override).
+
+    ``tokens`` is the workload's own count of USEFUL work in that step and
+    ``passes`` what an observer who believed the disguise would attribute to it
+    (see workloads/_step.py). Both default to 0/1 when a workload omits them, so
+    older subset-dialect logs still parse. Keeping them is what lets progress be
+    joined to a telemetry window, which is the missing half of any
+    "detection rate vs throughput sacrificed" comparison.
     """
     run_id = None
     steps = []
@@ -59,9 +73,22 @@ def parse_step_log(path: str) -> tuple[str | None, pd.DataFrame]:
                     run_id = mr.group("run_id")
             ms = STEP_RE.search(line)
             if ms:
-                steps.append((float(ms.group("ts")), ms.group("kind")))
-    df = pd.DataFrame(steps, columns=["ts", "kind"])
+                fields = dict(FIELD_RE.findall(line[ms.end():]))
+                steps.append((
+                    float(ms.group("ts")),
+                    ms.group("kind"),
+                    _as_int(fields.get("tokens"), 0),
+                    _as_int(fields.get("passes"), 1),
+                ))
+    df = pd.DataFrame(steps, columns=["ts", "kind", "tokens", "passes"])
     return run_id, df
+
+
+def _as_int(v, default):
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return default
 
 
 def match_run_id(log_run_id: str | None, override: str | None, known_run_ids) -> str | None:
