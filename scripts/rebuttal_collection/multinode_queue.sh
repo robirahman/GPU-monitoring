@@ -387,6 +387,27 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_advtrain_interleave_f20;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
   c=s16_advtrain_interleave_f10;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.1 --duration "$DUR"
   c=s16_advtrain_oracle;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+
+  # filler_only is the CONTROL that decides whether MN-I can work at all: the
+  # disguise blends training with this filler, so if the filler ALONE does not
+  # read as `other` there is nothing for the blend to hide behind, and any
+  # MN-I result would be uninterpretable. --train-frac 0 now genuinely trains
+  # nothing (the old 1/period floor made that impossible).
+  c=s16_advtrain_filler_only;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.0 --duration "$DUR"
+  # Fine end of the sweep: where does detection actually break, and what does
+  # that cost? Only meaningful now that fractions below 0.05 are not clamped.
+  c=s16_advtrain_interleave_f05;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.05 --duration "$DUR"
+  c=s16_advtrain_interleave_f02;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.02 --duration "$DUR"
+
+  # Oracle-threshold sweep. At the default 0.3 the S16 oracle NEVER opens the
+  # gate: measured p_train stayed 0.66-0.88 for 600 s, so the only 3 training
+  # steps were cold-start allows and the attack degenerates to not training.
+  # One degenerate point is not a result; these trace the frontier, the MN-O
+  # analogue of MN-I's --train-frac sweep. A looser threshold buys real training
+  # steps at the price of scoring nearer the detector's alert region.
+  c=s16_advtrain_oracle_tau50;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.5 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+  c=s16_advtrain_oracle_tau70;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.7 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+  c=s16_advtrain_oracle_tau90;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.9 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
@@ -404,6 +425,27 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_advtrain_interleave_f20;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
   c=s8_advtrain_interleave_f10;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.1 --duration "$DUR"
   c=s8_advtrain_oracle;            s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+
+  # filler_only is the CONTROL that decides whether MN-I can work at all: the
+  # disguise blends training with this filler, so if the filler ALONE does not
+  # read as `other` there is nothing for the blend to hide behind, and any
+  # MN-I result would be uninterpretable. --train-frac 0 now genuinely trains
+  # nothing (the old 1/period floor made that impossible).
+  c=s8_advtrain_filler_only;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.0 --duration "$DUR"
+  # Fine end of the sweep: where does detection actually break, and what does
+  # that cost? Only meaningful now that fractions below 0.05 are not clamped.
+  c=s8_advtrain_interleave_f05;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.05 --duration "$DUR"
+  c=s8_advtrain_interleave_f02;    s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.02 --duration "$DUR"
+
+  # Oracle-threshold sweep. At the default 0.3 the S16 oracle NEVER opens the
+  # gate: measured p_train stayed 0.66-0.88 for 600 s, so the only 3 training
+  # steps were cold-start allows and the attack degenerates to not training.
+  # One degenerate point is not a result; these trace the frontier, the MN-O
+  # analogue of MN-I's --train-frac sweep. A looser threshold buys real training
+  # steps at the price of scoring nearer the detector's alert region.
+  c=s8_advtrain_oracle_tau50;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.5 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+  c=s8_advtrain_oracle_tau70;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.7 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+  c=s8_advtrain_oracle_tau90;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.9 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s8_inferrep_qwen1_5b_bs1;        mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
@@ -417,6 +459,27 @@ for rep in $(seq 1 "$REPS"); do
   c=s1_advtrain_interleave_f20;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
   c=s1_advtrain_interleave_f10;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.1 --duration "$DUR"
   c=s1_advtrain_oracle;            s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+
+  # filler_only is the CONTROL that decides whether MN-I can work at all: the
+  # disguise blends training with this filler, so if the filler ALONE does not
+  # read as `other` there is nothing for the blend to hide behind, and any
+  # MN-I result would be uninterpretable. --train-frac 0 now genuinely trains
+  # nothing (the old 1/period floor made that impossible).
+  c=s1_advtrain_filler_only;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.0 --duration "$DUR"
+  # Fine end of the sweep: where does detection actually break, and what does
+  # that cost? Only meaningful now that fractions below 0.05 are not clamped.
+  c=s1_advtrain_interleave_f05;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.05 --duration "$DUR"
+  c=s1_advtrain_interleave_f02;    s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.02 --duration "$DUR"
+
+  # Oracle-threshold sweep. At the default 0.3 the S16 oracle NEVER opens the
+  # gate: measured p_train stayed 0.66-0.88 for 600 s, so the only 3 training
+  # steps were cold-start allows and the attack degenerates to not training.
+  # One degenerate point is not a result; these trace the frontier, the MN-O
+  # analogue of MN-I's --train-frac sweep. A looser threshold buys real training
+  # steps at the price of scoring nearer the detector's alert region.
+  c=s1_advtrain_oracle_tau50;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.5 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+  c=s1_advtrain_oracle_tau70;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.7 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+  c=s1_advtrain_oracle_tau90;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.9 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 done
 

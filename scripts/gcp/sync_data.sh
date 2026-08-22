@@ -27,12 +27,41 @@ DEST="${BUCKET}/runs/${SESSION}/${NODE}"
 CTRL="${BUCKET}/runs/${SESSION}/control/${NODE}"
 mkdir -p data logs logs/.done
 
+# Serialise every rsync on this node. `gcloud storage rsync` keeps a per-invocation
+# listing cache under ~/.config/gcloud/surface_data/storage/rsync_files/, and two
+# concurrent invocations clobber each other's state:
+#
+#   ERROR: (gcloud.storage.rsync) Unable to read file
+#   [/root/.config/gcloud/.../rsync_files/FULL_900575....file:__data]: [Errno 2]
+#
+# On 2026-08-21 that raced the queue's between-cell sync against the shutdown
+# chain's sync on spar-gpu-1: the LOGS pass survived, the DATA pass died, and the
+# node powered off with a full run of telemetry still on local disk. Nothing
+# reported an error because every call ends in `|| true`. The data was recoverable
+# only because the boot disk is retained. flock makes the passes queue instead.
+SYNC_LOCK=${SYNC_LOCK:-/var/lock/spar_sync.lock}
+# _locked_rsync <timeout_s|0> <lock_wait_s> [gcloud storage rsync args...]
+# timeout is applied INSIDE the function: `timeout` cannot invoke a shell
+# function, so wrapping the call site would silently fail with
+# "failed to run command '_locked_rsync'".
+_locked_rsync() {
+  local t="$1" w="$2"; shift 2
+  if command -v flock >/dev/null 2>&1; then
+    flock -w "$w" 9 || echo "[sync] WARNING: no $SYNC_LOCK within ${w}s; running unlocked" >&2
+  fi
+  if [ "$t" != 0 ]; then
+    timeout "$t" gcloud storage rsync "$@"
+  else
+    gcloud storage rsync "$@"
+  fi
+} 9>>"$SYNC_LOCK"
+
 # one rsync pass of a local dir -> its GCS subprefix (skip if the dir is empty/missing)
 push() {  # $1 local dir   $2 gcs subpath   [extra rsync args...]
   local src="$1" sub="$2"; shift 2
   [[ -d "$src" ]] || return 0
   # -r recursive; -x excludes are regex on the full path
-  gcloud storage rsync -r "$@" "$src" "${DEST}/${sub}" 2>&1 | sed "s/^/[sync ${sub}] /" || true
+  _locked_rsync 0 "${SYNC_LOCK_WAIT:-900}" -r "$@" "$src" "${DEST}/${sub}" 2>&1 | sed "s/^/[sync ${sub}] /" || true
 }
 
 sync_once() {
@@ -45,7 +74,7 @@ sync_once() {
   # .done/.failed markers -> shared control/ so the other node / driver can account completion.
   # NB: use $CTRL directly, NOT a "../control" relative path -- gcloud does NOT normalise
   # ".." in gs:// URLs (it becomes a literal object-name component).
-  [[ -d logs/.done ]] && gcloud storage rsync -r logs/.done "$CTRL" 2>&1 | sed 's/^/[sync ctrl] /' || true
+  [[ -d logs/.done ]] && _locked_rsync 0 "${SYNC_LOCK_WAIT:-900}" -r logs/.done "$CTRL" 2>&1 | sed 's/^/[sync ctrl] /' || true
   # STEP logs (needed for the epoch join). Exclude the smoke sandbox + pycache.
   push logs logs -x '.*/smoke_data/.*' -x '.*/__pycache__/.*'
   # meta: bootstrap report etc.
@@ -66,9 +95,9 @@ case "$MODE" in
     # logs with whatever of the ~30 s window remains. Each step is time-boxed so one
     # slow transfer cannot eat the whole window.
     spar_say "sync --final (preemption/shutdown) ${NODE} -> ${DEST}"
-    timeout 18 gcloud storage rsync -r data "${DEST}/data" 2>&1 | sed 's/^/[final data] /' || true
-    timeout 4  gcloud storage rsync -r logs/.done "${CTRL}" 2>&1 | sed 's/^/[final ctrl] /' || true
-    timeout 6  gcloud storage rsync -r -x '.*/smoke_data/.*' -x '.*/__pycache__/.*' logs "${DEST}/logs" 2>&1 | sed 's/^/[final logs] /' || true
+    _locked_rsync 18 8 -r data "${DEST}/data" 2>&1 | sed 's/^/[final data] /' || true
+    _locked_rsync 4 2 -r logs/.done "${CTRL}" 2>&1 | sed 's/^/[final ctrl] /' || true
+    _locked_rsync 6 2 -r -x '.*/smoke_data/.*' -x '.*/__pycache__/.*' logs "${DEST}/logs" 2>&1 | sed 's/^/[final logs] /' || true
     # breadcrumb so ingest knows this node flushed on the way down
     printf 'final-sync %s\n' "$(spar_ts)" | gcloud storage cp - "${DEST}/meta/final_sync.txt" >/dev/null 2>&1 || true
     spar_say "sync --final done"

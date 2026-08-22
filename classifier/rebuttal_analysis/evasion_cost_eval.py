@@ -54,6 +54,11 @@ FIELD_RE = re.compile(r"(\w+)=([-\w.]*)")
 
 # Useful work below this is not an evasion, it is an inference job.
 MIN_USEFUL_TOKENS = 1000
+# An absolute token floor is the wrong test. The measured S16 MN-O run did
+# 393,216 useful tokens -- comfortably over any absolute floor, yet 0.25% of the
+# same-scope honest baseline (257k tok/s), i.e. it did not meaningfully train.
+# Degeneracy is therefore judged against the honest rung at the SAME scope.
+DEGENERATE_FRACTION = 0.01
 
 
 # ── cost side ────────────────────────────────────────────────────────────────
@@ -101,6 +106,54 @@ def parse_tax_lines(log_globs):
                                     if num("steps") else float("nan")),
                 "useful_tok_s": useful / dur if dur else float("nan"),
                 "attributed_tok_s": num("attributed_tokens") / dur if dur else float("nan"),
+            })
+    return pd.DataFrame(rows)
+
+
+def cost_from_step_logs(label, log_globs):
+    """Measured cost for `label` derived from its STEP lines.
+
+    Fallback for runs that predate the EVASION_TAX_DATA line -- the whole
+    existing whitebox/symgemm corpus. Uses window_labels.parse_step_log, which
+    now keeps tokens=/passes=, so this needs no fourth regex.
+
+    useful  = tokens on kind=train lines only (work that moved weights)
+    attributed = tokens x passes over ALL lines (what an observer who believed
+                 the disguise would credit the job with)
+
+    UNITS CAVEAT: adversarial_ddp.py and pytorch_training_ddp.py put SAMPLES in
+    the tokens= field while fsdp/whitebox/symgemm put real tokens. Only compare
+    vs_honest within a family that shares units.
+    """
+    from classifier.window_labels import parse_step_log
+
+    if isinstance(log_globs, str):
+        log_globs = [log_globs]
+    rows = []
+    for pattern in log_globs:
+        for path in sorted(glob.glob(pattern)):
+            if label not in Path(path).name:
+                continue
+            _, df = parse_step_log(path)
+            if df.empty:
+                continue
+            dur = float(df["ts"].max() - df["ts"].min())
+            if dur <= 0:
+                continue
+            is_tr = df["kind"] == "train"
+            useful = int(df.loc[is_tr, "tokens"].sum())
+            attributed = int((df["tokens"] * df["passes"]).sum())
+            rows.append({
+                "log": Path(path).name,
+                "steps": int(len(df)),
+                "train_steps": int(is_tr.sum()),
+                "useful_tokens": useful,
+                "attributed_tokens": attributed,
+                "duration_s": dur,
+                "train_frac_real": float(is_tr.mean()),
+                "useful_tok_s": useful / dur,
+                "attributed_tok_s": attributed / dur,
+                "source": "step_lines",
             })
     return pd.DataFrame(rows)
 
@@ -294,10 +347,12 @@ def main():
         raise SystemExit(synthetic_check())
 
     tax = parse_tax_lines(args.logs)
-    if tax.empty:
-        print(f"No EVASION_TAX_DATA lines found in {args.logs}. Nothing to score.")
-        print("Run the adversarial cells first; the disguised workload emits it.")
-        return
+    if not tax.empty:
+        tax["source"] = "tax_line"
+        print(f"cost: {len(tax)} run(s) with an EVASION_TAX_DATA line")
+    else:
+        print(f"no EVASION_TAX_DATA lines in {args.logs}; "
+              f"falling back to STEP-line accounting")
     base = honest_baselines()
     print(f"honest fsdp1b baselines (tok/s): {base}")
 
@@ -318,10 +373,15 @@ def main():
             continue
         scope = label.split("_")[0] if label.startswith("s") else "na"
         # cost rows whose log name mentions this cell
-        t = tax[tax["log"].str.contains(label, regex=False)]
+        t = (tax[tax["log"].str.contains(label, regex=False)]
+             if not tax.empty else pd.DataFrame())
+        if t.empty:
+            t = cost_from_step_logs(label, args.logs)
         useful_tok_s = float(t["useful_tok_s"].mean()) if not t.empty else float("nan")
         train_steps = float(t["train_steps"].sum()) if not t.empty else 0.0
         denom = base.get(scope)
+        _vs_honest = (round(useful_tok_s / denom, 3)
+                      if denom and useful_tok_s == useful_tok_s else None)
         row = {
             "label": label, "scope": scope,
             "n_runs": det["n_runs"],
@@ -335,9 +395,14 @@ def main():
             "useful_tok_s": round(useful_tok_s, 1) if useful_tok_s == useful_tok_s else None,
             "train_frac_real": (round(float(t["train_frac_real"].mean()), 4)
                                 if not t.empty else None),
-            "vs_honest": (round(useful_tok_s / denom, 3)
-                          if denom and useful_tok_s == useful_tok_s else None),
+            "vs_honest": _vs_honest,
             "benign_alert_rate": round(fp_neg, 3),
+            "cost_source": (t["source"].iloc[0] if not t.empty
+                            and "source" in t.columns else "none"),
+            # flagged, not silently dropped: "0 detections" on a cell that never
+            # trained is the single easiest way to overclaim evasion.
+            "degenerate": bool(_vs_honest is not None
+                               and _vs_honest < DEGENERATE_FRACTION),
         }
         # A disguise that never trained evaded nothing.
         row["valid"] = bool(not t.empty
@@ -351,6 +416,18 @@ def main():
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     csv = RESULTS_DIR / f"{args.out_prefix}_summary.csv"
     out.to_csv(csv, index=False)
+
+    # Persist the per-window scores. Detection depends entirely on the operating
+    # point (tau, h), and re-deriving them meant re-windowing 1.36 M rows -- ~20
+    # minutes per threshold, which is why the first pass reported exactly one
+    # operating point and no sensitivity at all. With this dump, sweeping tau is
+    # instant and offline. Keep every window, not just the family's: the benign
+    # ones ARE the calibration set.
+    wcols = [c for c in ["run_id", "window_start", "p_train", "threeway_label",
+                         "workload_label", "gpu_name", "gpu_model"] if c in win.columns]
+    wcsv = RESULTS_DIR / f"{args.out_prefix}_windows.csv.gz"
+    win[wcols].to_csv(wcsv, index=False, compression="gzip")
+    print(f"per-window scores -> {wcsv} ({len(win):,} windows)")
     print("\n" + out.to_string(index=False))
     print(f"\nSaved: {csv}")
     if (~out["valid"]).any():

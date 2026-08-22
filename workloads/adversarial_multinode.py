@@ -105,6 +105,24 @@ class NonMLFiller:
                                     dtype=torch.complex64, device=device)
         self.iters = 0
 
+    def run_for(self, seconds):
+        """Fill `seconds` of wall time with non-ML work.
+
+        THIS IS THE WHOLE POINT and the first version got it wrong. A duty cycle
+        counted in STEPS is not a duty cycle in TIME: one filler iteration is
+        ~170x cheaper than an FSDP training step (measured 0.003 s vs 0.52 s), so
+        "train on 10% of steps" still spent ~99% of the wall clock training and
+        reported 255,925 tok/s against a 257,000 tok/s honest baseline -- 99.6% of
+        full throughput, hiding nothing and costing nothing. The 1 Hz collector
+        sees time, not steps, so the filler has to occupy comparable time.
+        """
+        end = time.time() + max(0.0, seconds)
+        n = 0
+        while time.time() < end:
+            self.step()
+            n += 1
+        return n
+
     def step(self):
         """One unit of non-ML work. Alternates the two profiles."""
         if self.iters % 2 == 0:
@@ -147,7 +165,7 @@ def broadcast_seed(device, rank):
     return int(t.item())
 
 
-def _schedule_says_train(seed, step_index, train_frac, period):
+def _schedule_says_train(seed, step_index, train_frac, resolution=10000):
     """Deterministic, rank-independent duty cycle.
 
     A pure function of (seed, step_index) -- so every rank reaches the same
@@ -169,7 +187,13 @@ def _schedule_says_train(seed, step_index, train_frac, period):
     h = (seed ^ (step_index * 0x9E3779B1)) & 0xFFFFFFFF
     h = (h ^ (h >> 16)) * 0x7FEB352D & 0xFFFFFFFF
     h = (h ^ (h >> 15)) & 0xFFFFFFFF
-    return (h % period) < max(1, int(round(train_frac * period)))
+    # Threshold at full resolution, NOT quantised to `period`. The earlier
+    # `(h % period) < max(1, round(train_frac * period))` silently floored the
+    # fraction at 1/period: with period=20 every request below 0.05 became 0.05,
+    # and --train-frac 0 still trained one step in twenty, so a pure-filler
+    # CONTROL would quietly have trained. F=0.5/0.2/0.1 land on 10/4/2 of 20 and
+    # were unaffected, but the fine end of the sweep would have been fiction.
+    return (h % resolution) < int(round(train_frac * resolution))
 
 
 class CollectiveOracleGate:
@@ -189,6 +213,13 @@ class CollectiveOracleGate:
         self.oracle = None
         self.queries = 0
         self.allowed = 0
+        # Allows granted because the oracle had NO window yet (p is None) are
+        # not evasion -- they are the classifier's cold start. The 600 s S16 run
+        # trained exactly 3 steps and every one was a warmup allow, then 223
+        # consecutive vetoes; counted together they read as "trained a little",
+        # which is the wrong conclusion. Counted apart, the attack is visibly
+        # degenerate: it never trains once the detector is warm.
+        self.warmup_allowed = 0
         self._flag = torch.zeros(1, device=device)
         self.last_p = None
         if rank == 0:
@@ -241,7 +272,10 @@ class CollectiveOracleGate:
                 self.last_p = p
                 # p is None until the buffer is warm; treat as "not yet known"
                 # and allow, so the run does not sit idle during warmup.
-                local = 1.0 if (p is None or p < self.threshold) else 0.0
+                cold = p is None
+                local = 1.0 if (cold or p < self.threshold) else 0.0
+                if local and cold:
+                    self._cold_allow = True
             else:
                 local = 1.0
         if not (dist.is_available() and dist.is_initialized()):
@@ -252,6 +286,9 @@ class CollectiveOracleGate:
             ok = self._flag.item() > 0
         if ok:
             self.allowed += 1
+            if getattr(self, "_cold_allow", False):
+                self.warmup_allowed += 1
+                self._cold_allow = False
         return ok
 
     def close(self):
@@ -289,8 +326,14 @@ def main():
     # MN-I
     ap.add_argument("--train-frac", type=float, default=0.1,
                     help="MN-I: fraction of steps that really train")
-    ap.add_argument("--schedule-period", type=int, default=20,
-                    help="MN-I: duty-cycle period in steps")
+    ap.add_argument("--schedule-resolution", type=int, default=10000,
+                    help="MN-I: granularity of the train/fill threshold. The "
+                         "default resolves --train-frac to 1e-4; it is NOT a "
+                         "period (the schedule is hash-jittered, not cyclic).")
+    ap.add_argument("--slot-sec", type=float, default=0.0,
+                    help="MN-I: seconds of filler per non-training slot. 0 (the "
+                         "default) auto-matches the measured training-step time, "
+                         "which is what makes --train-frac a fraction of TIME.")
     # MN-O
     ap.add_argument("--dilution", type=int, default=10,
                     help="MN-O: every Nth step is a training CANDIDATE")
@@ -318,7 +361,7 @@ def main():
         print(f"  Per-GPU batch: {batch_size}, Seq len: {args.seq_len}")
         if args.strategy == "MN-I":
             print(f"  Train fraction: {args.train_frac:.0%} over a "
-                  f"{args.schedule_period}-step period")
+                  f"1/{args.schedule_resolution} threshold resolution")
         else:
             print(f"  Dilution: 1/{args.dilution}, oracle threshold: "
                   f"{args.oracle_threshold}")
@@ -343,6 +386,10 @@ def main():
 
     deadline = CollectiveDeadline(args.duration, device)
     wall_start = time.time()
+    # EMA of how long a real training step takes, used as the length of a filler
+    # slot so that "train fraction" means a fraction of TIME rather than of loop
+    # iterations. Seeded with a rough guess and corrected after the first step.
+    train_step_sec = args.slot_sec if args.slot_sec > 0 else 0.5
     step = 0            # every loop iteration
     train_steps = 0     # iterations that actually moved weights
     filler_steps = 0
@@ -354,7 +401,7 @@ def main():
     while not deadline.expired():
         if args.strategy == "MN-I":
             do_train = _schedule_says_train(seed, step, args.train_frac,
-                                            args.schedule_period)
+                                            args.schedule_resolution)
         else:
             candidate = (step % args.dilution == 0) and step > 0
             # allows() is collective, so EVERY rank must call it whenever the
@@ -363,8 +410,14 @@ def main():
             do_train = gate.allows() if candidate else False
 
         if do_train:
+            _t0 = time.time()
             loss_val = train_step(fsdp_model, optimizer, batch_size,
                                   args.seq_len, vocab, device)
+            _dt = time.time() - _t0
+            if args.slot_sec <= 0:
+                # EMA so a slow first step (cudagraph capture, allocator warmup)
+                # does not fix the slot length for the whole run.
+                train_step_sec = 0.8 * train_step_sec + 0.2 * _dt
             train_steps += 1
             useful_tokens += tokens_per_step
             attributed_tokens += tokens_per_step
@@ -376,8 +429,10 @@ def main():
                           node=node_rank, rank=rank, **extra)
         else:
             if filler is not None:
-                filler.step()
-                filler_steps += 1
+                # One fill slot costs about as much wall time as one training
+                # step, so the step-level schedule delivers the requested TIME
+                # fraction. (train_frac of steps train, each slot ~equal cost.)
+                filler_steps += filler.run_for(train_step_sec)
             else:
                 # MN-O's non-training work is a forward pass: it keeps the GPU
                 # busy the way serving does, which is the whole point of the
@@ -403,6 +458,7 @@ def main():
                 line += f" filler={filler_steps}"
             if gate is not None:
                 line += f" oracle={gate.allowed}/{gate.queries}"
+                line += f" warm_allow={gate.warmup_allowed}"
                 if gate.last_p is not None:
                     line += f" p_train={gate.last_p:.3f}"
             print(line + f" loss={loss_val:.4f}", flush=True)
@@ -413,6 +469,10 @@ def main():
     if rank == 0:
         print(f"\n{args.strategy} complete: {step} steps, {train_steps} training")
         print(f"  Useful tokens: {useful_tokens:,} ({useful_tokens / elapsed:.0f} tok/s)")
+        print(f"  Measured train-step time: {train_step_sec * 1000:.0f} ms "
+              f"(filler slot length)")
+        print(f"  Realised TIME fraction training: "
+              f"{train_steps * train_step_sec / elapsed:.1%}")
         print(f"  Attributed tokens: {attributed_tokens:,} "
               f"({attributed_tokens / elapsed:.0f} tok/s)")
         # Machine-parseable cost line, extending the idiom established at
@@ -423,9 +483,10 @@ def main():
               f"dilution={args.dilution if args.strategy == 'MN-O' else ''} "
               f"steps={step} train_steps={train_steps} "
               f"useful_tokens={useful_tokens} attributed_tokens={attributed_tokens} "
-              f"duration={elapsed:.1f} "
+              f"duration={elapsed:.1f} train_step_sec={train_step_sec:.4f} "
               f"oracle_queries={gate.queries if gate else 0} "
-              f"oracle_allowed={gate.allowed if gate else 0}", flush=True)
+              f"oracle_allowed={gate.allowed if gate else 0} "
+              f"oracle_warmup_allowed={gate.warmup_allowed if gate else 0}", flush=True)
         if train_steps == 0:
             # A disguise that never trains is not an evasion -- it is an
             # inference job. Say so loudly; evasion_cost_eval.py rejects it too.
