@@ -408,6 +408,22 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_advtrain_oracle_tau50;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.5 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s16_advtrain_oracle_tau70;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.7 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s16_advtrain_oracle_tau90;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.9 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+
+  # ---- HONEST controls: what actually makes filler_only score p_train ~0.49? --
+  # filler_only never trains yet alerts on 100% of windows, while honest H100
+  # non-ML scores 0.001 -- including the very cuFFT/ethash kernels it runs. It
+  # confounds three things: a resident sharded model, the filler's compute, and
+  # the deadline's collectives. These three cells separate them. Resident
+  # footprint measured from the pilot: 1.4 GB at s16.
+  #   stalled_train  model  + idle    + deadline comm   (labelled ml_training)
+  #   nonml_hpc      dummy  + filler  + deadline comm   (labelled other)
+  #   nonml_comm     none   + heavy all_reduce          (labelled other)
+  # nonml_hpc is the decisive one: identical to filler_only except the model is a
+  # dummy allocation of the same size. If it also scores ~0.49 the tell is just
+  # "big allocation + busy GPU" and we have a specificity problem, not a result.
+  c=s16_stalled_train_fsdp1b;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/stalled_training.py --size 1b --duration "$DUR"
+  c=s16_nonml_hpc;              mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.4 --duration "$DUR"
+  c=s16_nonml_comm;             mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration "$DUR"
   c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
@@ -446,6 +462,22 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_advtrain_oracle_tau50;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.5 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s8_advtrain_oracle_tau70;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.7 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s8_advtrain_oracle_tau90;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.9 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+
+  # ---- HONEST controls: what actually makes filler_only score p_train ~0.49? --
+  # filler_only never trains yet alerts on 100% of windows, while honest H100
+  # non-ML scores 0.001 -- including the very cuFFT/ethash kernels it runs. It
+  # confounds three things: a resident sharded model, the filler's compute, and
+  # the deadline's collectives. These three cells separate them. Resident
+  # footprint measured from the pilot: 1.8 GB at s8.
+  #   stalled_train  model  + idle    + deadline comm   (labelled ml_training)
+  #   nonml_hpc      dummy  + filler  + deadline comm   (labelled other)
+  #   nonml_comm     none   + heavy all_reduce          (labelled other)
+  # nonml_hpc is the decisive one: identical to filler_only except the model is a
+  # dummy allocation of the same size. If it also scores ~0.49 the tell is just
+  # "big allocation + busy GPU" and we have a specificity problem, not a result.
+  c=s8_stalled_train_fsdp1b;   s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/stalled_training.py --size 1b --duration "$DUR"
+  c=s8_nonml_hpc;              s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.8 --duration "$DUR"
+  c=s8_nonml_comm;             s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration "$DUR"
   c=s8_inferrep_qwen1_5b_bs1;        mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
@@ -480,6 +512,22 @@ for rep in $(seq 1 "$REPS"); do
   c=s1_advtrain_oracle_tau50;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.5 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s1_advtrain_oracle_tau70;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.7 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
   c=s1_advtrain_oracle_tau90;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-O --size 1b --dilution "$ADV_DILUTION" --oracle-threshold 0.9 --oracle-model "$ORACLE_MODEL" --duration "$DUR"
+
+  # ---- HONEST controls: what actually makes filler_only score p_train ~0.49? --
+  # filler_only never trains yet alerts on 100% of windows, while honest H100
+  # non-ML scores 0.001 -- including the very cuFFT/ethash kernels it runs. It
+  # confounds three things: a resident sharded model, the filler's compute, and
+  # the deadline's collectives. These three cells separate them. Resident
+  # footprint measured from the pilot: 10.7 GB at s1.
+  #   stalled_train  model  + idle    + deadline comm   (labelled ml_training)
+  #   nonml_hpc      dummy  + filler  + deadline comm   (labelled other)
+  #   nonml_comm     none   + heavy all_reduce          (labelled other)
+  # nonml_hpc is the decisive one: identical to filler_only except the model is a
+  # dummy allocation of the same size. If it also scores ~0.49 the tell is just
+  # "big allocation + busy GPU" and we have a specificity problem, not a result.
+  c=s1_stalled_train_fsdp1b;   s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/stalled_training.py --size 1b --duration "$DUR"
+  c=s1_nonml_hpc;              s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 10.7 --duration "$DUR"
+  c=s1_nonml_comm;             s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration "$DUR"
   c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 done
 
