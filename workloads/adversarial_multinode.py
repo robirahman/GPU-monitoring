@@ -97,7 +97,7 @@ class NonMLFiller:
     """
 
     def __init__(self, device, dag_mb=512, hash_rows=1 << 20,
-                 fft_batch=32, fft_size=1024):
+                 fft_batch=32, fft_size=1024, mode="mixed"):
         """Sized to SATURATE the GPU. The first version did not, and that
         invalidated the MN-I result rather than merely weakening it.
 
@@ -124,6 +124,11 @@ class NonMLFiller:
         self.fft_data = torch.randn(fft_batch, fft_size, fft_size,
                                     dtype=torch.complex64, device=device)
         self.acc = torch.zeros((), dtype=torch.int64, device=device)
+        # Honest HPC jobs are not all the same kernel mix. "mixed" alternates
+        # memory-bound gather with compute-bound fft2; "hash"/"fft" pin one of
+        # them, so the benign class covers a kernel axis and not just a duty axis.
+        assert mode in ("mixed", "hash", "fft"), mode
+        self.mode = mode
         self.iters = 0
 
     def run_for(self, seconds):
@@ -146,7 +151,9 @@ class NonMLFiller:
 
     def step(self):
         """One unit of non-ML work. Alternates the two profiles."""
-        if self.iters % 2 == 0:
+        do_hash = (self.mode == "hash" or
+                   (self.mode == "mixed" and self.iters % 2 == 0))
+        if do_hash:
             # Memory-bound random gather: hash_rows random reads x 8 rounds.
             # `& 0x7FFFFFFF` rather than .abs() because abs(INT32_MIN) overflows
             # and would index negatively.

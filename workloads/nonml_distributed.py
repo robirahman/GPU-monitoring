@@ -69,6 +69,9 @@ def main():
                          "10.7 at S1).")
     ap.add_argument("--comm-mb", type=float, default=256.0,
                     help="comm: all_reduce buffer size per iteration")
+    ap.add_argument("--filler-mode", choices=("mixed", "hash", "fft"),
+                    default="mixed",
+                    help="kernel mix for the honest non-ML profile")
     ap.add_argument("--duty", type=float, default=1.0,
                     help="hpc: fraction of each slot spent computing, the rest "
                          "idle. duty<1 gives the partial-utilisation / low-power "
@@ -101,7 +104,7 @@ def main():
     dummy = None
     comm_buf = None
     if args.mode == "hpc":
-        filler = NonMLFiller(device)
+        filler = NonMLFiller(device, mode=args.filler_mode)
         if args.alloc_gb > 0:
             # Held for the whole run, like a model would be. float32 = 4 B.
             n = int(args.alloc_gb * 1e9 / 4)
@@ -157,7 +160,7 @@ def main():
         print(f"  NONML_CONTROL_DATA: mode={args.mode} world_size={world_size} "
               f"iters={step} filler_iters={filler_iters} "
               f"allreduces={allreduces} alloc_gb={args.alloc_gb} "
-              f"duty={args.duty} "
+              f"duty={args.duty} fmode={args.filler_mode} "
               f"duration={el:.1f} train_steps=0 useful_tokens=0", flush=True)
 
     sync_teardown()

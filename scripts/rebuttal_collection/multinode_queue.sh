@@ -446,6 +446,20 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_nonml_sat;               mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.4 --duty 1.0 --duration "$DUR"
   c=s16_nonml_himem;             mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 1.0 --duration "$DUR"
   c=s16_nonml_lowpower;          mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.3 --duration "$DUR"
+
+  # ---- honest partial-utilisation variety, for a credible FALSE-POSITIVE rate ----
+  # nonml_lowpower (duty 0.3) scored p_train 0.323 -- ABOVE the F=0.05 disguise at
+  # 0.295 -- so an honest half-idle HPC job is flagged harder than disguised
+  # training. That kills tau=0.1 outright (100% FP). One workload at 6 runs is far
+  # too thin to calibrate a threshold against, so vary all three axes that move a
+  # non-ML job around this region: duty (utilisation/power), resident allocation,
+  # and kernel mix. All labelled `other` -- these are genuinely honest workloads.
+  c=s16_nonml_lp_d15;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.15 --filler-mode mixed --duration "$DUR"
+  c=s16_nonml_lp_d50;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.5 --filler-mode mixed --duration "$DUR"
+  c=s16_nonml_lp_d70;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.7 --filler-mode mixed --duration "$DUR"
+  c=s16_nonml_lp_d30m16;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 0.3 --filler-mode mixed --duration "$DUR"
+  c=s16_nonml_lp_d50fft;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode fft --duration "$DUR"
+  c=s16_nonml_lp_d50hash;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode hash --duration "$DUR"
   c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
@@ -522,6 +536,20 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_nonml_sat;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.8 --duty 1.0 --duration "$DUR"
   c=s8_nonml_himem;             s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 1.0 --duration "$DUR"
   c=s8_nonml_lowpower;          s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.3 --duration "$DUR"
+
+  # ---- honest partial-utilisation variety, for a credible FALSE-POSITIVE rate ----
+  # nonml_lowpower (duty 0.3) scored p_train 0.323 -- ABOVE the F=0.05 disguise at
+  # 0.295 -- so an honest half-idle HPC job is flagged harder than disguised
+  # training. That kills tau=0.1 outright (100% FP). One workload at 6 runs is far
+  # too thin to calibrate a threshold against, so vary all three axes that move a
+  # non-ML job around this region: duty (utilisation/power), resident allocation,
+  # and kernel mix. All labelled `other` -- these are genuinely honest workloads.
+  c=s8_nonml_lp_d15;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.15 --filler-mode mixed --duration "$DUR"
+  c=s8_nonml_lp_d50;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.5 --filler-mode mixed --duration "$DUR"
+  c=s8_nonml_lp_d70;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.7 --filler-mode mixed --duration "$DUR"
+  c=s8_nonml_lp_d30m16;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 0.3 --filler-mode mixed --duration "$DUR"
+  c=s8_nonml_lp_d50fft;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode fft --duration "$DUR"
+  c=s8_nonml_lp_d50hash;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode hash --duration "$DUR"
   c=s8_inferrep_qwen1_5b_bs1;        mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
@@ -594,6 +622,20 @@ for rep in $(seq 1 "$REPS"); do
   c=s1_nonml_sat;               s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 10.7 --duty 1.0 --duration "$DUR"
   c=s1_nonml_himem;             s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 1.0 --duration "$DUR"
   c=s1_nonml_lowpower;          s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.3 --duration "$DUR"
+
+  # ---- honest partial-utilisation variety, for a credible FALSE-POSITIVE rate ----
+  # nonml_lowpower (duty 0.3) scored p_train 0.323 -- ABOVE the F=0.05 disguise at
+  # 0.295 -- so an honest half-idle HPC job is flagged harder than disguised
+  # training. That kills tau=0.1 outright (100% FP). One workload at 6 runs is far
+  # too thin to calibrate a threshold against, so vary all three axes that move a
+  # non-ML job around this region: duty (utilisation/power), resident allocation,
+  # and kernel mix. All labelled `other` -- these are genuinely honest workloads.
+  c=s1_nonml_lp_d15;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.15 --filler-mode mixed --duration "$DUR"
+  c=s1_nonml_lp_d50;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.5 --filler-mode mixed --duration "$DUR"
+  c=s1_nonml_lp_d70;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.7 --filler-mode mixed --duration "$DUR"
+  c=s1_nonml_lp_d30m16;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 0.3 --filler-mode mixed --duration "$DUR"
+  c=s1_nonml_lp_d50fft;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode fft --duration "$DUR"
+  c=s1_nonml_lp_d50hash;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode hash --duration "$DUR"
   c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 done
 
