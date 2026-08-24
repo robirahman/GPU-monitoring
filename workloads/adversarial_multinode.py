@@ -96,13 +96,34 @@ class NonMLFiller:
     memory-slope signature, which is the opposite of the intent.
     """
 
-    def __init__(self, device, dag_mb=512, fft_batch=8, fft_size=512):
+    def __init__(self, device, dag_mb=512, hash_rows=1 << 20,
+                 fft_batch=32, fft_size=1024):
+        """Sized to SATURATE the GPU. The first version did not, and that
+        invalidated the MN-I result rather than merely weakening it.
+
+        Measured on H100: the old filler hashed a 256x8 tensor (2048 elements)
+        per round and reallocated its seeds every step, so it was kernel-launch
+        bound -- 55% utilisation at 160 W, against honest cufft_benchmark's 91.7%
+        at 509 W and mining_ethash_proxy's 49.7% at 122 W. A disguise that never
+        reaches the power/utilisation profile of the class it is imitating is not
+        a disguise, so "the detector caught MN-I at every F" measured nothing
+        about evasion. Two fixes: work per launch is ~4000x larger, and the mix
+        buffer is preallocated and updated in place instead of reallocated.
+        """
         self.device = device
         self.dag_elements = (dag_mb * 1024 * 1024) // 64
         self.dag = torch.randint(0, 2**31, (self.dag_elements, 16),
                                  dtype=torch.int32, device=device)
+        # Preallocated and mutated in place: the per-step torch.randint was pure
+        # launch overhead on a device this size.
+        self.hash_rows = int(hash_rows)
+        self.mix = torch.randint(0, 2**31, (self.hash_rows, 8),
+                                 dtype=torch.int32, device=device)
+        # fft2 over a batch, matching cufft_benchmark's shape rather than a 3D
+        # transform over a small tensor.
         self.fft_data = torch.randn(fft_batch, fft_size, fft_size,
                                     dtype=torch.complex64, device=device)
+        self.acc = torch.zeros((), dtype=torch.int64, device=device)
         self.iters = 0
 
     def run_for(self, seconds):
@@ -126,23 +147,24 @@ class NonMLFiller:
     def step(self):
         """One unit of non-ML work. Alternates the two profiles."""
         if self.iters % 2 == 0:
-            seeds = torch.randint(0, 2**31, (256, 8), dtype=torch.int32,
-                                  device=self.device)
-            mix = seeds.clone()
-            for _ in range(16):
-                indices = (mix[:, 0].abs() % self.dag_elements).long()
-                mix = mix ^ self.dag[indices][:, :8]
-            _ = mix.sum()
-            del seeds, mix
+            # Memory-bound random gather: hash_rows random reads x 8 rounds.
+            # `& 0x7FFFFFFF` rather than .abs() because abs(INT32_MIN) overflows
+            # and would index negatively.
+            mix = self.mix
+            for _ in range(8):
+                idx = ((mix[:, 0] & 0x7FFFFFFF) % self.dag_elements).long()
+                mix ^= self.dag[idx][:, :8]
+            # Keep a real data dependency so nothing is optimised away.
+            self.acc += mix[:, 0].to(torch.int64).sum()
         else:
-            y = torch.fft.fftn(self.fft_data)
-            z = torch.fft.ifftn(y)
-            _ = z.real.sum()
+            y = torch.fft.fft2(self.fft_data)
+            z = torch.fft.ifft2(y)
+            self.acc += z.real.sum().to(torch.int64)
             del y, z
         self.iters += 1
 
     def release(self):
-        del self.dag, self.fft_data
+        del self.dag, self.fft_data, self.mix
 
 
 # ── Collective disguise schedules ────────────────────────────────────────────

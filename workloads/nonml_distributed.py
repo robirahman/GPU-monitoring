@@ -69,6 +69,12 @@ def main():
                          "10.7 at S1).")
     ap.add_argument("--comm-mb", type=float, default=256.0,
                     help="comm: all_reduce buffer size per iteration")
+    ap.add_argument("--duty", type=float, default=1.0,
+                    help="hpc: fraction of each slot spent computing, the rest "
+                         "idle. duty<1 gives the partial-utilisation / low-power "
+                         "profile that the honest `other` class lacks -- real "
+                         "clusters run half-idle HPC jobs and the detector has "
+                         "never seen one.")
     args = ap.parse_args()
 
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
@@ -86,7 +92,7 @@ def main():
         print(f"  No model, no gradients, no optimizer anywhere")
         if args.mode == "hpc":
             print(f"  Dummy resident alloc: {args.alloc_gb} GB, "
-                  f"filler slot {args.slot_sec}s")
+                  f"filler slot {args.slot_sec}s, duty {args.duty:.0%}")
         else:
             print(f"  all_reduce buffer: {args.comm_mb} MB/iter")
         print(f"  Duration: {args.duration}s")
@@ -118,11 +124,20 @@ def main():
 
     while not deadline.expired():
         if args.mode == "hpc":
-            filler_iters += filler.run_for(args.slot_sec)
+            busy = args.slot_sec * max(0.0, min(1.0, args.duty))
+            filler_iters += filler.run_for(busy)
+            if busy < args.slot_sec:
+                time.sleep(args.slot_sec - busy)
         else:
-            # One collective per iteration, unconditional -> rank-uniform.
-            dist.all_reduce(comm_buf, op=dist.ReduceOp.SUM)
-            allreduces += 1
+            # All-reduce for a whole slot, then emit ONE step line. The first
+            # version emitted one line per all_reduce, and at world_size=1 the
+            # collective is a local no-op -- so s1_nonml_comm span the loop at
+            # interpreter speed and wrote a 1.44 GB log, measuring Python rather
+            # than communication. Slot-bounding fixes both.
+            t_end = time.time() + args.slot_sec
+            while time.time() < t_end:
+                dist.all_reduce(comm_buf, op=dist.ReduceOp.SUM)
+                allreduces += 1
             torch.cuda.synchronize(device)
         if rank == 0:
             emit_step("nonml", step, tokens=0, passes=1,
@@ -142,6 +157,7 @@ def main():
         print(f"  NONML_CONTROL_DATA: mode={args.mode} world_size={world_size} "
               f"iters={step} filler_iters={filler_iters} "
               f"allreduces={allreduces} alloc_gb={args.alloc_gb} "
+              f"duty={args.duty} "
               f"duration={el:.1f} train_steps=0 useful_tokens=0", flush=True)
 
     sync_teardown()

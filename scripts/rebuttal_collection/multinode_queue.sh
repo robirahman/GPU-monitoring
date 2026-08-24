@@ -424,6 +424,28 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_stalled_train_fsdp1b;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/stalled_training.py --size 1b --duration "$DUR"
   c=s16_nonml_hpc;              mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.4 --duration "$DUR"
   c=s16_nonml_comm;             mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration "$DUR"
+
+  # ---- MN-I RE-RUN with a saturating filler + the missing honest profiles ----
+  # The first MN-I ladder measured nothing about evasion: its filler ran at 55%
+  # utilisation / 160 W, while the honest non-ML class it was imitating sits at
+  # 91.7% / 509 W (cufft_benchmark) or 49.7% / 122 W (mining_ethash_proxy). The
+  # disguise never reached the region it aimed for, so being detected was
+  # uninformative. NonMLFiller now does ~2000x the work per launch.
+  # DELIBERATELY NEW LABELS (satint/satfiller/nonml_sat): the old cells are
+  # already in the corpus under advtrain_interleave_*/nonml_hpc, and reusing
+  # those names would silently pool two different filler implementations.
+  c=s16_advtrain_satfiller_only;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.0 --duration "$DUR"
+  c=s16_advtrain_satint_f05;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.05 --duration "$DUR"
+  c=s16_advtrain_satint_f20;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
+  c=s16_advtrain_satint_f50;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.5 --duration "$DUR"
+  # Honest non-ML, labelled `other`. nonml_sat is the like-for-like partner of
+  # satfiller_only (same kernels, same alloc, no model). himem probes the region
+  # above ~2 GB where the benign class has almost no support (its only
+  # high-memory member is nbody_short_dur120, 132 windows). lowpower probes the
+  # partial-utilisation region our earlier cells fell into by accident.
+  c=s16_nonml_sat;               mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.4 --duty 1.0 --duration "$DUR"
+  c=s16_nonml_himem;             mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 1.0 --duration "$DUR"
+  c=s16_nonml_lowpower;          mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.3 --duration "$DUR"
   c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
@@ -478,6 +500,28 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_stalled_train_fsdp1b;   s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/stalled_training.py --size 1b --duration "$DUR"
   c=s8_nonml_hpc;              s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.8 --duration "$DUR"
   c=s8_nonml_comm;             s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration "$DUR"
+
+  # ---- MN-I RE-RUN with a saturating filler + the missing honest profiles ----
+  # The first MN-I ladder measured nothing about evasion: its filler ran at 55%
+  # utilisation / 160 W, while the honest non-ML class it was imitating sits at
+  # 91.7% / 509 W (cufft_benchmark) or 49.7% / 122 W (mining_ethash_proxy). The
+  # disguise never reached the region it aimed for, so being detected was
+  # uninformative. NonMLFiller now does ~2000x the work per launch.
+  # DELIBERATELY NEW LABELS (satint/satfiller/nonml_sat): the old cells are
+  # already in the corpus under advtrain_interleave_*/nonml_hpc, and reusing
+  # those names would silently pool two different filler implementations.
+  c=s8_advtrain_satfiller_only;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.0 --duration "$DUR"
+  c=s8_advtrain_satint_f05;      s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.05 --duration "$DUR"
+  c=s8_advtrain_satint_f20;      s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
+  c=s8_advtrain_satint_f50;      s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.5 --duration "$DUR"
+  # Honest non-ML, labelled `other`. nonml_sat is the like-for-like partner of
+  # satfiller_only (same kernels, same alloc, no model). himem probes the region
+  # above ~2 GB where the benign class has almost no support (its only
+  # high-memory member is nbody_short_dur120, 132 windows). lowpower probes the
+  # partial-utilisation region our earlier cells fell into by accident.
+  c=s8_nonml_sat;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 1.8 --duty 1.0 --duration "$DUR"
+  c=s8_nonml_himem;             s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 1.0 --duration "$DUR"
+  c=s8_nonml_lowpower;          s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.3 --duration "$DUR"
   c=s8_inferrep_qwen1_5b_bs1;        mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
@@ -528,6 +572,28 @@ for rep in $(seq 1 "$REPS"); do
   c=s1_stalled_train_fsdp1b;   s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/stalled_training.py --size 1b --duration "$DUR"
   c=s1_nonml_hpc;              s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 10.7 --duration "$DUR"
   c=s1_nonml_comm;             s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration "$DUR"
+
+  # ---- MN-I RE-RUN with a saturating filler + the missing honest profiles ----
+  # The first MN-I ladder measured nothing about evasion: its filler ran at 55%
+  # utilisation / 160 W, while the honest non-ML class it was imitating sits at
+  # 91.7% / 509 W (cufft_benchmark) or 49.7% / 122 W (mining_ethash_proxy). The
+  # disguise never reached the region it aimed for, so being detected was
+  # uninformative. NonMLFiller now does ~2000x the work per launch.
+  # DELIBERATELY NEW LABELS (satint/satfiller/nonml_sat): the old cells are
+  # already in the corpus under advtrain_interleave_*/nonml_hpc, and reusing
+  # those names would silently pool two different filler implementations.
+  c=s1_advtrain_satfiller_only;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.0 --duration "$DUR"
+  c=s1_advtrain_satint_f05;      s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.05 --duration "$DUR"
+  c=s1_advtrain_satint_f20;      s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration "$DUR"
+  c=s1_advtrain_satint_f50;      s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.5 --duration "$DUR"
+  # Honest non-ML, labelled `other`. nonml_sat is the like-for-like partner of
+  # satfiller_only (same kernels, same alloc, no model). himem probes the region
+  # above ~2 GB where the benign class has almost no support (its only
+  # high-memory member is nbody_short_dur120, 132 windows). lowpower probes the
+  # partial-utilisation region our earlier cells fell into by accident.
+  c=s1_nonml_sat;               s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 10.7 --duty 1.0 --duration "$DUR"
+  c=s1_nonml_himem;             s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 16 --duty 1.0 --duration "$DUR"
+  c=s1_nonml_lowpower;          s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 2 --duty 0.3 --duration "$DUR"
   c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
 done
 
