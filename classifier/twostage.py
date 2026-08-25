@@ -154,6 +154,10 @@ class TwoStageClassifier:
         rescue_tau: float = 0.7,
         rescue_floor: float = 0.1,
         backend: str = "random_forest",
+        rf_n_estimators: int = 400,
+        rf_max_depth: int | None = None,
+        rf_min_samples_leaf: int = 2,
+        rf_max_features="sqrt",
     ):
         self.stage1_n_estimators = stage1_n_estimators
         self.stage1_max_depth = stage1_max_depth
@@ -167,6 +171,15 @@ class TwoStageClassifier:
         if backend not in ("xgboost", "random_forest"):
             raise ValueError(f"backend must be 'xgboost' or 'random_forest', got {backend!r}")
         self.backend = backend
+        # The RF path used to hardcode these, so max_depth/n_estimators passed to
+        # __init__ were silently ignored. Unlimited depth with min_samples_leaf=2
+        # is a memorisation machine, which is what a run-grouped CV could not see:
+        # 11.6 points of its accuracy came from workload recognition. Defaults
+        # below reproduce the old behaviour exactly.
+        self.rf_n_estimators = rf_n_estimators
+        self.rf_max_depth = rf_max_depth
+        self.rf_min_samples_leaf = rf_min_samples_leaf
+        self.rf_max_features = rf_max_features
 
         self._feature_cols: list[str] | None = None
         self._stage2_mask: np.ndarray | None = None
@@ -195,10 +208,10 @@ class TwoStageClassifier:
         # unlimited depth to match the Appendix G baseline.
         from sklearn.ensemble import RandomForestClassifier
         return RandomForestClassifier(
-            n_estimators=400,
-            max_depth=None,
-            min_samples_leaf=2,
-            max_features="sqrt",
+            n_estimators=self.rf_n_estimators,
+            max_depth=self.rf_max_depth,
+            min_samples_leaf=self.rf_min_samples_leaf,
+            max_features=self.rf_max_features,
             random_state=self.random_state,
             n_jobs=-1,
         )
