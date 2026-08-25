@@ -25,7 +25,7 @@ class Sst2Dataset(Dataset):
         texts, labels = [], []
         try:
             from datasets import load_dataset
-            ds = load_dataset("glue", "sst2", split="train")
+            ds = load_dataset("nyu-mll/glue", "sst2", split="train")
             for item in ds:
                 texts.append(item["sentence"])
                 labels.append(item["label"])

@@ -55,6 +55,11 @@ VLLM_MODELS = {
         "float16",
         1, 1,
     ),
+    "mistral_7b_q4": (
+        "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ",  # GPTQ 4-bit, vLLM Marlin kernels
+        "auto",
+        1, 1,
+    ),
     "qwen25_72b_fp8": (
         "Qwen/Qwen2.5-72B-Instruct-AWQ",   # AWQ 4-bit, fits ~45 GB; adjust to FP8 if available
         "auto",
