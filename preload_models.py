@@ -34,6 +34,10 @@ MODELS = [
     # Training models (extended-epoch queue)
     ("gpt2", "gpt2_wikitext2_ext / _amp_ext", False),
     ("bert-base-uncased", "bert_sst2_ext / _amp_ext", False),
+    # Round-5b LoRA training bases (lora_training.py)
+    ("Qwen/Qwen2.5-1.5B-Instruct", "qwen25_1p5b_lora / llm_infer_qwen25_1p5b", False),
+    ("HuggingFaceTB/SmolLM2-1.7B-Instruct", "smollm2_1p7b_lora / llm_infer_smollm2_1p7b", False),
+    ("mistralai/Mistral-7B-Instruct-v0.2", "mistral_7b_lora (GATED)", True),
 ]
 
 
@@ -59,10 +63,17 @@ def fetch(model_id: str, note: str, gated: bool) -> str:
 def main():
     print(f"HF_HOME={os.environ.get('HF_HOME', '<default>')}")
     print(f"HF_TOKEN={'set' if HF_TOKEN else 'NOT SET (gated models will fail)'}")
-    print(f"Downloading {len(MODELS)} model repos. Non-gated first, then gated.\n")
+
+    # PRELOAD_SKIP: comma-separated substrings of model ids to skip
+    skip = [s.strip() for s in os.environ.get("PRELOAD_SKIP", "").split(",") if s.strip()]
+    models = [m for m in MODELS if not any(s.lower() in m[0].lower() for s in skip)]
+    for m in MODELS:
+        if m not in models:
+            print(f"SKIP  {m[0]} (matched PRELOAD_SKIP)")
+    print(f"Downloading {len(models)} model repos. Non-gated first, then gated.\n")
     sys.stdout.flush()
 
-    ordered = [m for m in MODELS if not m[2]] + [m for m in MODELS if m[2]]
+    ordered = [m for m in models if not m[2]] + [m for m in models if m[2]]
     for m in ordered:
         line = fetch(*m)
         print(line, flush=True)

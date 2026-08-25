@@ -24,7 +24,7 @@ class WikiTextDataset(Dataset):
         print("Loading WikiText-2 dataset...")
         try:
             from datasets import load_dataset
-            ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+            ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="train")
             text = "\n".join(ds["text"])
         except Exception as e:
             print(f"  Dataset load failed ({e}), using synthetic text.")
