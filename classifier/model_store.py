@@ -121,7 +121,7 @@ def fit_honest_detector(window_sec: float = 30.0, stride_sec: float = 15.0,
     defence is evaluated with.
     """
     from classifier.threeway_improved import (
-        load_all_data, sliding_windows, get_feature_cols,
+        load_all_data, sliding_windows, get_feature_cols, workload_group,
     )
     from classifier.twostage import TwoStageClassifier
 
@@ -141,7 +141,11 @@ def fit_honest_detector(window_sec: float = 30.0, stride_sec: float = 15.0,
 
     X = honest[feats].fillna(0).values.astype(np.float32)
     y = honest["threeway_label"].values
-    groups = honest["run_id"].astype(str).values
+    # Group by WORKLOAD, not by run. These groups drive the class/group sample
+    # weighting, so run-grouping let a workload with many runs (mining_ethash_proxy
+    # carries 1372 windows) dominate the non-ML class while a workload with one run
+    # contributed almost nothing -- the opposite of what generalisation needs.
+    groups = workload_group(honest["workload_label"]).astype(str)
 
     clf = TwoStageClassifier()
     clf.fit(X, y, groups=groups, feature_cols=feats)
@@ -157,6 +161,8 @@ def fit_honest_detector(window_sec: float = 30.0, stride_sec: float = 15.0,
         "excluded_families": list(DISGUISED_FAMILIES),
         "excluded_markers": list(DISGUISED_MARKERS),
         "n_excluded_runs": int(n_excluded_runs),
+        "group_key": "workload",
+        "n_workload_groups": int(pd.Series(groups).nunique()),
     }
     out = save(clf, path, meta)
     print(f"saved -> {out}")

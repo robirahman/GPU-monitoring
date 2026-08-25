@@ -73,6 +73,7 @@ import numpy as np
 import pandas as pd
 
 from classifier.threeway_improved import (
+    workload_group,
     load_all_data,
     sliding_windows,
     get_feature_cols,
@@ -361,7 +362,14 @@ def train_and_evaluate_twostage(window_secs=(15, 30, 60), stride_ratio: float = 
         feature_cols = get_feature_cols(df_win)
         X = df_win[feature_cols].fillna(0).values.astype(np.float32)
         y = df_win["threeway_label"].values
-        groups = df_win["run_id"].values
+        # Report BOTH groupings. The GAP between them is the quantity of
+        # interest: it is how much of the score comes from recognising a
+        # workload already seen rather than generalising to a new one. Selection
+        # is on the workload-grouped number -- that is the deployment question.
+        grouping = {
+            "run": df_win["run_id"].values,
+            "workload": workload_group(df_win["workload_label"]),
+        }
 
         log.info(f"Windows: {len(df_win)} | Features: {len(feature_cols)}")
         log.info(f"Class distribution: {pd.Series(y).value_counts().to_dict()}")
@@ -371,34 +379,40 @@ def train_and_evaluate_twostage(window_secs=(15, 30, 60), stride_ratio: float = 
             log.warning(f"Only {len(unique_classes)} classes found, skipping")
             continue
 
-        run_class_counts = df_win.groupby("run_id")["threeway_label"].first().value_counts()
-        n_splits = min(5, int(run_class_counts.min()))
-        if n_splits < 2:
-            n_splits = 2
-        log.info(f"Using {n_splits}-fold cross-validation")
+        scored = {}
+        for gname, groups in grouping.items():
+            gser = pd.Series(groups)
+            per_class_groups = (df_win.assign(_g=gser.values)
+                                .groupby("threeway_label")["_g"].nunique())
+            n_splits = max(2, min(5, int(per_class_groups.min())))
+            log.info(f"Using {n_splits}-fold CV grouped by {gname} "
+                     f"({gser.nunique()} groups; smallest class has "
+                     f"{int(per_class_groups.min())})")
+            cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
+            accs, f1s, all_y_true, all_y_pred = [], [], [], []
+            for tr_idx, te_idx in cv.split(X, y, groups):
+                clf = TwoStageClassifier()
+                clf.fit(X[tr_idx], y[tr_idx], groups=groups[tr_idx],
+                        feature_cols=feature_cols)
+                y_pred = clf.predict(X[te_idx])
+                accs.append(accuracy_score(y[te_idx], y_pred))
+                f1s.append(f1_score(y[te_idx], y_pred, average="macro", zero_division=0))
+                all_y_true.extend(y[te_idx]); all_y_pred.extend(y_pred)
+            scored[gname] = (float(np.mean(accs)), float(np.std(accs)), float(np.mean(f1s)))
+            log.info(f"  [TwoStage {win_sec}s / {gname}-grouped] "
+                     f"acc={scored[gname][0]:.4f}±{scored[gname][1]:.4f} "
+                     f"f1_macro={scored[gname][2]:.4f}")
+            log.info("\n" + classification_report(all_y_true, all_y_pred, zero_division=0))
 
-        cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
-        accs, f1s = [], []
-        all_y_true, all_y_pred = [], []
-
-        for fold_idx, (tr_idx, te_idx) in enumerate(cv.split(X, y, groups)):
-            clf = TwoStageClassifier()
-            clf.fit(X[tr_idx], y[tr_idx], groups=groups[tr_idx], feature_cols=feature_cols)
-            y_pred = clf.predict(X[te_idx])
-            acc = accuracy_score(y[te_idx], y_pred)
-            f1 = f1_score(y[te_idx], y_pred, average="macro", zero_division=0)
-            accs.append(acc)
-            f1s.append(f1)
-            all_y_true.extend(y[te_idx])
-            all_y_pred.extend(y_pred)
-
-        mean_acc = float(np.mean(accs))
-        std_acc = float(np.std(accs))
-        mean_f1 = float(np.mean(f1s))
-        log.info(f"  [TwoStage {win_sec}s] acc={mean_acc:.4f}±{std_acc:.4f}  f1_macro={mean_f1:.4f}")
-        log.info("\n" + classification_report(all_y_true, all_y_pred, zero_division=0))
+        mean_acc, std_acc, mean_f1 = scored["workload"]
+        run_acc = scored["run"][0]
+        log.info(f"  IDENTITY GAP at {win_sec}s: run-grouped {run_acc:.4f} vs "
+                 f"workload-grouped {mean_acc:.4f} "
+                 f"(={run_acc - mean_acc:+.4f} from workload recognition)")
 
         rows.append({
+            "acc_run_grouped": run_acc,
+            "identity_gap": run_acc - mean_acc,
             "classifier": "TwoStage",
             "window_sec": win_sec,
             "acc_mean": mean_acc,

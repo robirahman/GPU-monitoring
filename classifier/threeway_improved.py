@@ -823,6 +823,25 @@ def sliding_windows(
 
 # ── Classification ───────────────────────────────────────────────────────────
 
+def workload_group(labels) -> np.ndarray:
+    """Group key for held-out-by-WORKLOAD validation.
+
+    Grouping CV by run_id leaks workload identity. There are ~2100 runs over
+    ~170 distinct workloads, so every held-out run has siblings of the SAME
+    workload in the training fold, and the score measures "recognise a workload
+    I have already seen" rather than "generalise to one I have not". Measured
+    consequence: run-grouped CV endorsed tau=0.10, which turns out to fire on
+    >50% of windows of honest non-ML workloads held out by workload.
+
+    The deployment question is whether an HPC job the detector has never seen
+    trips it, so validation must hold out whole workloads.
+    """
+    s = pd.Series(labels).astype(str)
+    s = s.str.replace(r"_node\d+_gpu\d+$", "", regex=True)
+    s = s.str.replace(r"_rep\d+$", "", regex=True)
+    return s.values
+
+
 def get_feature_cols(df: pd.DataFrame) -> list:
     """Return all numeric feature columns (exclude metadata)."""
     exclude = {"run_id", "threeway_label", "workload_label", "gpu_name",
