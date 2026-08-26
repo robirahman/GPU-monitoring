@@ -307,3 +307,41 @@ into the benign band, so plain NVML memory catches it. (Caveat: optimizer-state
 CPU-offload or 8-bit optimizers could lower the full-FT floor somewhat — a
 worthwhile follow-up — but they trade the memory tell for a PCIe-traffic or
 compute tell, and don't apply to the weight-resident LoRA floor.)
+
+## Co-execution cover under CUDA MPS (Workstream D)
+
+The remaining "flatten every NVML feature" attack: run a steady DRAM-bandwidth
+cover kernel concurrently with tiny-batch training so the aggregate NVML signature
+reads as HPC (`scripts/cover_kernel.py`, `covered_train_mps.sh`, CUDA MPS daemon).
+
+- **The signature does flatten.** With a saturating cover (MPS, intensity 0.6) the
+  combined GPU reads util 100% / mem_utilization 100% / mem_used 4.8 GB — visually
+  identical to cuFFT at an inference-sized footprint.
+- **But the training is starved to a standstill.** Under the same cover the
+  tiny-batch trainer made **0 optimizer steps in 90 s** (killed at timeout, never
+  past init). MPS shares SM slots concurrently but does **not** partition DRAM
+  bandwidth, so the cover — which must saturate DRAM to flatten `mem_utilization`
+  — leaves no bandwidth for the training's weight/activation traffic.
+- **This is the fundamental tension:** flattening the DRAM/util signal requires
+  saturating the very resource the training needs, so a cover strong enough to
+  hide the training's signature also prevents it from computing. A cover weak
+  enough to let training run only partially raises the signal — and by
+  Workstream A the current-ripple amplitude still separates the (now-running)
+  training from genuine HPC. So a co-execution cover is not a clean NVML evasion.
+  (Unresolved refinement, blocked this session by a degraded Tailscale link:
+  MPS `CUDA_MPS_ACTIVE_THREAD_PERCENTAGE` partitioning + a light cover, to map the
+  partial-flatten / training-throughput trade-off precisely. Scaffolding —
+  `covered_train_mps.sh` — is committed and runnable when the link recovers.)
+
+## Week-2 synthesis
+
+Across all four workstreams, no evasion both hides from NVML and survives:
+- **Timing shaping** — caught by NVML memory (footprint invariant to cadence).
+- **Memory minimization** — evades the *deployed* model, but (B) is repairable and
+  a genuinely new mode, and (C) is a **small-model artifact**: any training ≥1.5B
+  (LoRA or full-FT) can't bring its footprint into the benign band.
+- **Co-execution cover** — (D) can flatten the NVML signature but starves the
+  training; and (A) the current-ripple amplitude is a physical signal orthogonal
+  to NVML that flags training even at HPC-like utilization — the first concrete
+  case for the oscilloscope, to be nailed down against a running MPS evader when
+  the hardware/link allow.
