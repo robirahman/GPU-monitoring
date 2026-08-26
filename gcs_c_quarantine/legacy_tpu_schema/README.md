@@ -30,3 +30,25 @@ sanity reference for the v6e-16 collection. They must not re-enter `data/` — t
 loader rglobs `data/**/*.parquet` and would zero-fill them again. A collector
 conforming to the current contract (scripts/collect_tpu_telemetry.py) is the
 replacement.
+
+## The payloads have been deleted from the working tree
+
+Nothing was lost. Verified before deleting:
+
+**The three real payloads are recoverable from git.** They were LFS-tracked, and the
+objects are present in the local cache, byte sizes matching exactly:
+
+    .git/lfs/objects/fb/30/fb30b2c6...  tpu_idle.parquet            8105 B
+    .git/lfs/objects/../..              tpu_jax_training.parquet   17280 B
+    .git/lfs/objects/../..              tpu_jax_inference.parquet  17374 B
+
+To restore one (requires git-lfs, which is NOT installed in the Cloud Shell used for
+this work), the pointers live at `data/<name>.parquet` in commit 77b43ee (i.e.
+`cd935f7~1`), and `git show 77b43ee:data/tpu_idle.parquet` prints the oid directly.
+
+**The six copies under `data/gcp/20260820/` and `data/gcp/20260821adv/` held no data
+at all.** They were 129-130 byte LFS *pointer text* files, not parquet -- pyarrow
+rejects them with "Parquet magic bytes not found in footer". That is why their md5
+differed from the `data/` root copies, and why the contamination measured 43 windows
+from 3 runs rather than 9: `load_all_data`'s `except Exception: log.debug(...)`
+silently skipped the unreadable six.
