@@ -115,9 +115,39 @@ LEVEL_FEATURE_NAMES |= {f"{sig}_range" for sig in LEVEL_SIGNALS}
 LEVEL_FEATURE_NAMES |= {"pcie_total_mean"}
 
 
+# Level-stat suffixes, for signals not enumerated in LEVEL_SIGNALS. Mirrors
+# multinode_features._LEVEL_SUFFIXES.
+_LEVEL_SUFFIXES = ("_mean", "_min", "_max", "_p25", "_p50", "_p75", "_p95", "_range")
+# Structure/shape prefixes that must never be treated as levels even though some
+# carry a level-looking suffix (cross-rank correlation, lag, cadence).
+_STRUCTURE_PREFIXES = ("xr_corr", "xr_lag", "xr_fft", "xr_dip", "xr_active",
+                       "xr_n_ranks", "acf")
+# Ratios and differences are dimensionless: mem_util_per_gpu_util_p95 carries a
+# level suffix but is a RATIO, and it is one of the Round-6 DRAM features that
+# the disguised-training evidence rests on. The existing explicit set already
+# keeps power_per_util / power_per_mem_util for the same reason, so treating
+# _per_ / _minus_ as structure matches current behaviour rather than changing it.
+_STRUCTURE_INFIXES = ("_per_", "_minus_")
+
+
 def stage2_feature_mask(feature_cols: list[str]) -> np.ndarray:
-    """Boolean mask selecting the shape/periodicity-only feature subset."""
-    return np.array([c not in LEVEL_FEATURE_NAMES for c in feature_cols], dtype=bool)
+    """Boolean mask selecting the shape/periodicity-only feature subset.
+
+    LEVEL_FEATURE_NAMES is an explicit set built from the nine NVIDIA
+    RAW_SIGNALS, so a level statistic on any signal outside that list was being
+    handed to Stage 2 as if it were a shape feature -- which would reopen the
+    level-spoofing hole Stage 2 exists to close as soon as TPU-native columns
+    (hlo_exec_us_p90, hbm_bw_util_pct, tensorcore_util_pct, dcn_collective_lat_us_*)
+    enter the vocabulary. The suffix rule closes that generally.
+    """
+    keep = []
+    for c in feature_cols:
+        is_level = c in LEVEL_FEATURE_NAMES
+        if (not is_level and not c.startswith(_STRUCTURE_PREFIXES)
+                and not any(k in c for k in _STRUCTURE_INFIXES)):
+            is_level = c.endswith(_LEVEL_SUFFIXES)
+        keep.append(not is_level)
+    return np.array(keep, dtype=bool)
 
 
 class TwoStageClassifier:

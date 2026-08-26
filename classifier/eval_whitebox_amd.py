@@ -49,6 +49,8 @@ def _vendor_of(gpu_name: str) -> str:
     s = gpu_name.lower()
     if "nvidia" in s or "geforce" in s or "tesla" in s: return "nvidia"
     if "amd" in s or "radeon" in s: return "amd"
+    # Without this a "Google TPU v6e" row returns "unknown" and is silently dropped.
+    if "tpu" in s: return "tpu"
     return "unknown"
 
 

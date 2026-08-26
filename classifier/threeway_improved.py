@@ -336,6 +336,7 @@ def load_all_data() -> pd.DataFrame:
     frames = []
 
     # 1. Main data/ directory
+    _skipped: list[tuple[str, str]] = []
     for p in sorted((PROJECT_ROOT / "data").rglob("*.parquet")):
         # nic_*.parquet are host-NIC sidecar series, not per-GPU telemetry
         # streams. multinode_features.attach_nic_sidecar joins them on
@@ -356,6 +357,11 @@ def load_all_data() -> pd.DataFrame:
                 df["run_id"] = p.stem
             frames.append(df)
         except Exception as e:
+            # Counted and reported at WARNING below. Six of nine legacy *tpu*
+            # parquets were being dropped here without a single visible line,
+            # and a schema the loader does not expect will do the same to real
+            # TPU telemetry.
+            _skipped.append((p.name, str(e)[:120]))
             log.debug(f"skip {p.name}: {e}")
 
     # 2. Week 4 data
@@ -437,15 +443,34 @@ def load_all_data() -> pd.DataFrame:
             log.warning(f"dropping {n_bad} row(s) with no timestamp")
             combined = combined[combined["ts"].notna()].reset_index(drop=True)
 
-    # Deduplicate: some files may appear in multiple directories
+    # Deduplicate: some files may appear in multiple directories.
+    # gpu_uuid must be in the key. NVIDIA runs survive on (ts, run_id) only by
+    # luck: one collector process per GPU means each has its own datetime.now(),
+    # so the float epochs differ. The TPU collector samples every chip in ONE
+    # poll and stamps them with a single `now`
+    # (scripts/collect_tpu_telemetry.py:428-429), and the queue mandates a shared
+    # run_id across workers -- so a 16-chip slice would silently collapse to one
+    # chip. Adding the per-chip uuid keeps the original intent (identical rows
+    # from duplicated files still dedup, since a copy shares all three keys).
     if "ts" in combined.columns and "run_id" in combined.columns:
-        combined = combined.drop_duplicates(subset=["ts", "run_id"], keep="first")
+        _key = ["ts", "run_id"]
+        if "gpu_uuid" in combined.columns:
+            _key.append("gpu_uuid")
+        _before = len(combined)
+        combined = combined.drop_duplicates(subset=_key, keep="first")
+        log.info(f"dedup on {_key}: {_before:,} -> {len(combined):,} rows")
         combined = combined.sort_values(["run_id", "ts"]).reset_index(drop=True)
 
     # Add three-way labels
     combined["threeway_label"] = combined["workload_label"].apply(threeway_label)
 
     label_dist = combined.groupby("threeway_label")["run_id"].nunique()
+    if _skipped:
+        log.warning(f"skipped {len(_skipped)} unreadable/incompatible parquet(s) "
+                    f"under data/: " + ", ".join(n for n, _ in _skipped[:5])
+                    + (" ..." if len(_skipped) > 5 else ""))
+        for _n, _e in _skipped[:5]:
+            log.warning(f"  {_n}: {_e}")
     log.info(f"Total rows: {len(combined):,} | runs: {combined['run_id'].nunique()}")
     log.info(f"Three-way distribution (runs):\n{label_dist.to_string()}")
 
@@ -534,7 +559,18 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
 
     feats["power_per_util"] = power.mean() / (util.mean() + 1.0)
     feats["pcie_total_mean"] = (pcie_tx + pcie_rx).mean()
-    feats["util_per_sm_pct"] = util.mean() / (sm_clk.mean() + 1.0) * 1000.0
+    # Clamp the clock mean at >= 0 before the +1 guard. Non-NVIDIA collectors
+    # write -1 for channels the hardware never exposes (TPU: all of power,
+    # temperature and both clocks -- scripts/collect_tpu_telemetry.py:74-78), and
+    # -1 + 1 = 0 made this exactly +inf. Every hot path uses .fillna(0), which
+    # does NOT touch infinities, so model_store --fit, twostage --train,
+    # evasion_cost_eval and scope_ladder_eval all raised
+    # "Input X contains infinity"; worse, the cross-vendor evaluators call
+    # np.nan_to_num without posinf= and silently turned it into 3.4e38.
+    # Clamping makes a -1 sentinel behave exactly like an absent column, which
+    # _normalize_columns already zero-fills.
+    _sm_mean = max(float(sm_clk.mean()), 0.0)
+    feats["util_per_sm_pct"] = util.mean() / (_sm_mean + 1.0) * 1000.0
 
     # DRAM-activity cross-signal ratios (Round 6 monitor response). mem_util is
     # NVML's fraction of the sample period spent reading/writing device memory —
