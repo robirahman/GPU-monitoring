@@ -67,8 +67,16 @@ except Exception:  # pragma: no cover
 
 log = logging.getLogger("spar.tpu_telemetry")
 
-GPU_NAME = "Google TPU v6e"
-GPU_SHORT = "Google_TPU_v6e"
+# Hardware identity. Was hardcoded to v6e, which would have mislabelled every row
+# of a v5e run -- and gpu_name is the column the vendor/hardware split keys on
+# downstream (GPU_NAME_ALIASES, per-hardware grouping, the _vendor_of helpers), so
+# a wrong value here silently pools two different accelerators. Overridable
+# because which chip we get depends on quota: v6e-16 was refused in this project
+# ("User does not have permission to submit requests into this queue for
+# accelerator type v6e-16"), so the rung actually runs on v5litepod-16.
+_ACCEL = os.environ.get("SPAR_TPU_ACCEL", "v6e")
+GPU_NAME = os.environ.get("SPAR_TPU_GPU_NAME", f"Google TPU {_ACCEL}")
+GPU_SHORT = GPU_NAME.replace(" ", "_")
 
 # -1 constant columns: physical channels TPU never exposes at the host level.
 _NEG1_CONST = [
