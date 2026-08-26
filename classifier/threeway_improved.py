@@ -331,6 +331,11 @@ def load_all_data() -> pd.DataFrame:
 
     # 1. Main data/ directory
     for p in sorted((PROJECT_ROOT / "data").rglob("*.parquet")):
+        # Skip physical-sensor sidecar files (scope envelope / DCGM logger output).
+        # These are not NVML telemetry — they lack the raw signals and would load
+        # as garbage all-zero "runs" labelled by their sidecar filename.
+        if "_scope_" in p.name or "_dcgm_" in p.name:
+            continue
         try:
             df = pd.read_parquet(p)
             df = _normalize_columns(df)
