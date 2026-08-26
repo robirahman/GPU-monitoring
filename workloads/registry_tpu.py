@@ -122,6 +122,86 @@ _add("tpuT16_infershard_30b",
      1800)
 
 
+# ── Adversarial ladder + honest controls (the TPU rung's decisive cells) ─────
+# Mirrors the GPU ladder so the comparison is like-for-like. The GPU result being
+# tested: held out by workload, run-level k=3-of-5, tau=0.75 -> F=0.5 detected in
+# 100% of runs at 0.6% false-alarm rate, F<=0.2 at 0%. Phase 0 showed that
+# survives on TPU-available metrics at 3.0% FPR, so the open question is whether
+# the TPU-native comm channels (dcn_collective_lat_us_*, hlo_exec_us_*) recover
+# what power was providing.
+#
+# NAMING: the GPU honest controls were called `nonml_lowpower`, but TPU exposes NO
+# power at all (collect_tpu_telemetry.py:74-78 writes -1), so a "lowpower" label
+# here would name a channel we cannot measure. These are named by DUTY instead,
+# which is the thing actually being varied. GPU counterparts noted per cell.
+#
+# Routing (verified in the module self-check below):
+#   *_advtrain_*  -> ml_training AND disguised (model_store.DISGUISED_FAMILIES
+#                    contains "advtrain", matched as "_advtrain")
+#   *_nonml_*     -> other AND honest
+_ADV_MODEL = "1b"          # matches the GPU MN-I ladder
+_TO_ADV = 1500
+# Global (not per-chip) resident footprint for the matched honest partner. A 1b
+# model under AdamW in fp32 is ~12 GB of params+moments across the slice. CALIBRATE
+# ON THE SMOKE: tpu_adversarial_multinode.py prints its filler resident bytes and
+# param count, and nonml_sat must match the F=0 cell's footprint or the apparatus
+# comparison is not like-for-like -- that pairing is what refuted "the apparatus
+# is the detection channel" on GPU (135 MB / 0.2 pt / 3 W apart).
+_ALLOC_MATCHED = 12.0
+_ALLOC_HIMEM = 48.0
+
+
+def _mni_cmd(train_frac, dur=_DUR, kernel="mixed"):
+    return [_PY, os.path.join(_WORKLOADS_DIR, "tpu_adversarial_multinode.py"),
+            "--size", _ADV_MODEL, "--train-frac", str(train_frac),
+            "--duration", str(dur), "--filler-mode", kernel,
+            "--multihost", "auto"]
+
+
+def _nonml_cmd(dur=_DUR, *, alloc=0.0, duty=1.0, kernel="mixed", mode="hpc"):
+    return [_PY, os.path.join(_WORKLOADS_DIR, "tpu_nonml_distributed.py"),
+            "--mode", mode, "--duration", str(dur), "--alloc-gb", str(alloc),
+            "--duty", str(duty), "--filler-mode", kernel, "--multihost", "auto"]
+
+
+for _sc in _SCOPES:
+    # --- MN-I disguise ladder (ml_training, disguised) ---
+    _add(f"{_sc}_advtrain_satfiller_only", _mni_cmd(0.0),
+         f"MN-I F=0 on {_sc}: 1b model resident, ZERO training, saturating filler "
+         f"(the cell that evades on GPU)", _TO_ADV)
+    _add(f"{_sc}_advtrain_satint_f05", _mni_cmd(0.05),
+         f"MN-I F=0.05 on {_sc} (undetectable on GPU at any usable threshold)",
+         _TO_ADV)
+    _add(f"{_sc}_advtrain_satint_f20", _mni_cmd(0.2),
+         f"MN-I F=0.2 on {_sc} (undetectable on GPU at any usable threshold)",
+         _TO_ADV)
+    _add(f"{_sc}_advtrain_satint_f50", _mni_cmd(0.5),
+         f"MN-I F=0.5 on {_sc} (100% detected at 0.6% FPR on GPU -- the claim)",
+         _TO_ADV)
+    # --- Honest non-ML controls (other, honest) ---
+    _add(f"{_sc}_nonml_sat", _nonml_cmd(alloc=_ALLOC_MATCHED, duty=1.0),
+         f"Honest non-ML on {_sc}: matched footprint, NO model. Like-for-like "
+         f"partner of advtrain_satfiller_only -- the apparatus test", _TO_OTHER)
+    _add(f"{_sc}_nonml_duty30", _nonml_cmd(alloc=2.0, duty=0.3),
+         f"Honest non-ML on {_sc} at 30% duty (GPU: nonml_lowpower, the cell that "
+         f"false-alarmed harder than the F=0.05 disguise)", _TO_OTHER)
+    _add(f"{_sc}_nonml_duty50_hash", _nonml_cmd(alloc=8.0, duty=0.5,
+                                                kernel="hash"),
+         f"Honest non-ML on {_sc}, 50% duty, memory-bound kernel (GPU: the WORST "
+         f"held-out false positive at 0.837)", _TO_OTHER)
+    _add(f"{_sc}_nonml_comm", _nonml_cmd(mode="comm"),
+         f"Honest non-ML on {_sc}: slot-bounded cross-chip collectives only. "
+         f"Probes the DCN channel that has no NVIDIA counterpart", _TO_OTHER)
+
+# tpuT16 only: the scope that structurally matches the 2x8 H100 GPU setup.
+_add("tpuT16_nonml_duty50_fft", _nonml_cmd(alloc=8.0, duty=0.5, kernel="fft"),
+     "Honest non-ML on tpuT16, 50% duty, compute-bound kernel (GPU: 0.212 vs "
+     "0.837 for hash at identical duty -- the kernel axis)", _TO_OTHER)
+_add("tpuT16_nonml_himem", _nonml_cmd(alloc=_ALLOC_HIMEM, duty=1.0),
+     "Honest non-ML on tpuT16 at training-scale HBM footprint, no model "
+     "(GPU: refuted 'memory is the tell' at 18.6 GB -> p_train 0.069)", _TO_OTHER)
+
+
 def get_tpu_workload(label: str) -> dict:
     """Look up a TPU workload by label. Raises ValueError if not found."""
     if label not in WORKLOAD_REGISTRY_TPU:

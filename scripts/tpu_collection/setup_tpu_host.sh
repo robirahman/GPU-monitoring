@@ -27,9 +27,22 @@ echo "===== TPU host bootstrap ($(hostname)) ====="
 # metric source). tpu-info is the fallback source + CLI.
 echo "[1/5] installing python deps..."
 pip install -q -U pip
-pip install -q -U "jax[tpu]" \
+# PINNED via requirements_tpu.txt. The previous form was `-U "jax[tpu]"` with no
+# constraint, against a v2-alpha-tpuv6e runtime -- so jax/jaxlib/libtpu floated
+# independently of the runtime image. libtpu METRIC NAMES drift between releases
+# and collect_tpu_telemetry.py classifies them by substring for exactly that
+# reason, which means an unpinned upgrade could change which telemetry columns
+# exist between two cells of the same experiment.
+REQ="${REPO_DIR:-$HOME/GPU-monitoring}/requirements_tpu.txt"
+if [ ! -f "$REQ" ]; then
+  echo "FATAL: $REQ not found; refusing to install unpinned deps" >&2
+  exit 1
+fi
+pip install -q -r "$REQ" \
   -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
-pip install -q -U tpu-info pandas pyarrow psutil numpy scikit-learn
+# scikit-learn is only needed if a host also scores locally; not pinned with the
+# collection set because it does not affect what telemetry is produced.
+pip install -q scikit-learn
 
 # ── 2. Env: PJRT + GCS compilation cache ─────────────────────────────────────
 echo "[2/5] configuring PJRT + XLA cache env..."

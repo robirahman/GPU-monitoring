@@ -38,6 +38,10 @@ DUR=${DUR:-600}
 GAP=${GAP:-60}
 REPS=${REPS:-3}
 SMOKE=${SMOKE:-0}
+# ADVERSARIAL=1 runs the MN-I ladder + honest controls instead of the honest
+# CORE ladder. Kept behind a flag so the two stages stay separately schedulable
+# and a truncated adversarial run cannot eat the honest baseline's budget.
+ADVERSARIAL=${ADVERSARIAL:-0}
 STRETCH=${STRETCH:-0}          # 1 => also run the 1b + 30b cells
 
 SMOKE_FLAG=""
@@ -130,14 +134,46 @@ CORE=(
   "${SCOPE}_idle"
 )
 
+# Adversarial ladder + matched honest controls, DECISIVE-CELL-FIRST so a run cut
+# short still carries the comparison the rung exists for:
+#   1-3  the claim under test (F=0.5), the evading cell (F=0), and the
+#        like-for-like honest partner that isolates the apparatus
+#   4-5  the rest of the F ladder
+#   6-8  the false-positive probes -- duty and kernel axes, which on GPU produced
+#        an honest workload that false-alarmed HARDER than the F=0.05 disguise --
+#        plus the DCN comm probe that has no NVIDIA counterpart
+ADV=(
+  "${SCOPE}_advtrain_satint_f50"
+  "${SCOPE}_advtrain_satfiller_only"
+  "${SCOPE}_nonml_sat"
+  "${SCOPE}_advtrain_satint_f20"
+  "${SCOPE}_advtrain_satint_f05"
+  "${SCOPE}_nonml_duty30"
+  "${SCOPE}_nonml_duty50_hash"
+  "${SCOPE}_nonml_comm"
+)
+
 say "===== TPU queue start (scope=$SCOPE, workers=$NUM_WORKERS, session=$SESSION) ====="
 
 for REP in $(seq 1 "$REPS"); do
   export REP
   say "----- rep $REP / $REPS -----"
-  for cell in "${CORE[@]}"; do
-    run_cell "${cell}_rep${REP}"
-  done
+  if [ "$ADVERSARIAL" = "1" ]; then
+    for cell in "${ADV[@]}"; do
+      run_cell "${cell}_rep${REP}"
+    done
+    # tpuT16 only: the scope that structurally matches the 2x8 H100 setup, so the
+    # kernel-axis and high-HBM controls are collected where the comparison is
+    # tightest rather than at every scope.
+    if [ "$SCOPE" = "tpuT16" ]; then
+      run_cell "tpuT16_nonml_duty50_fft_rep${REP}"
+      run_cell "tpuT16_nonml_himem_rep${REP}"
+    fi
+  else
+    for cell in "${CORE[@]}"; do
+      run_cell "${cell}_rep${REP}"
+    done
+  fi
   if [ "$STRETCH" = "1" ]; then
     # 1b comparison point + 30b stretch (tpuT16 only), collected late so a
     # truncated run keeps the decisive 7b contrast intact.
