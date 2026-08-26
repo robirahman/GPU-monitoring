@@ -51,6 +51,11 @@ CONFIGS = [
     ("adversarial_mm_min_noshape", ["-b", "1", "-r", "2", "-Sw", "0"], "200"),
     ("adversarial_mm_min_shaped", ["-b", "1", "-r", "2", "-Sw", "1", "-Sg", "50000", "-Sj", "20000"], "20"),
     ("adversarial_mm_spoof_infer_shaped", ["-b", "1", "-r", "2", "-Sm", "1650", "-Sw", "1", "-Sg", "50000", "-Sj", "20000"], "20"),
+    # Co-execution evader: tiny-batch training runs concurrently with a steady
+    # DRAM-bandwidth cover kernel, so aggregate mem_utilization / dram_active /
+    # occupancy are pinned flat and high (HPC-like), burying the training's
+    # bursty compute-bound signature. "COVER:<gb>" prefix in extra triggers it.
+    ("adversarial_mm_covered", ["COVER:1", "-b", "1", "-r", "2"], "200"),
 ]
 
 
@@ -95,8 +100,14 @@ def run_rep(label, extra, steps, rep, attempt):
     # paths relative to the llm.c dir, but run_workload.py launches the workload
     # with cwd=<GPU-monitoring repo>. Run it from ~/llm.c via a shell wrapper.
     llmc_dir = os.path.dirname(LLMC)
-    inner = " ".join([LLMC] + COMMON + ["-x", steps] + extra)
-    train_cmd = ["bash", "-lc", f"cd {llmc_dir} && exec {inner}"]
+    if extra and extra[0].startswith("COVER:"):
+        # co-execution: cover kernel + training via covered_train.sh
+        cover_gb = extra[0].split(":", 1)[1]
+        script = os.path.join(_REPO_ROOT, "scripts", "covered_train.sh")
+        train_cmd = ["bash", script, cover_gb, "--"] + COMMON + ["-x", steps] + extra[1:]
+    else:
+        inner = " ".join([LLMC] + COMMON + ["-x", steps] + extra)
+        train_cmd = ["bash", "-lc", f"cd {llmc_dir} && exec {inner}"]
     cmd = [MAIN_PY, os.path.join(_REPO_ROOT, "scripts", "run_workload_with_scope.py"),
            "--workload", label, "--gpu-index", "0", "--output-dir", OUT_DIR,
            "--run-id", run_id, "--no-dcgm", "--dcgm", "--timeout", "900",
