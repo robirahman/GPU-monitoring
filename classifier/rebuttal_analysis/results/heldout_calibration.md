@@ -69,3 +69,13 @@ Before more hardware, the detector needs a general boundary: workload-held-out C
 as the model-selection criterion (it is currently fit without it), and features
 that do not encode workload identity. The defensible claim as it stands is narrow:
 half-duty disguised training is detectable at ~3-5% FPR, and nothing below F=0.5 is.
+
+---
+
+## AMENDMENT (corpus quarantine): conclusions unchanged
+
+43 windows of legacy TPU telemetry with all nine raw signals zero-filled were
+removed from the corpus (`gcs_c_quarantine/legacy_tpu_schema/README.md`). Re-measured
+on 54,028 clean windows, the run-level operating point is **identical**: tau=0.80
+gives 0.6% held-out FPR at 100% F=0.5 run-TPR, tau=0.85 collapses both to zero, and
+F=0.2/F=0.05 stay at 0% throughout. The ~2x evasion cost stands.

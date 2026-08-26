@@ -67,3 +67,51 @@ Caveat: `max_features=0.3` was chosen on the same CV it is scored on, so +0.0404
 mildly optimistic; a clean estimate needs nested CV. The metric-2 numbers use a
 separate held-out-by-workload split, so the divergence itself is not an artifact of
 that selection.
+
+---
+
+## AMENDMENT (corpus quarantine): most of the tuning gain was a contaminated baseline
+
+Nine legacy TPU parquets with a pre-rewrite schema were entering the corpus as
+ALL-ZERO feature vectors carrying real class labels (43 of 54,071 windows: 21
+`ml_training`, 21 `ml_inference`, 1 inside `idle`). See
+`gcs_c_quarantine/legacy_tpu_schema/README.md`. Re-measured on the clean corpus
+(54,028 windows):
+
+| | contaminated | clean |
+|---|---|---|
+| baseline acc | 0.8470 +- .060 | **0.8488 +- .045** |
+| baseline macro-F1 | 0.7592 | **0.7661** |
+| winner (shape-only mf0.3 leaf10) acc | 0.8516 +- .050 | **0.8396 +- .050** |
+| winner macro-F1 | 0.7996 | **0.7794** |
+| **winner gain** | **+0.0404** | **+0.0133** |
+
+**The tuning result largely evaporates.** Most of the apparent +0.0404 was the
+baseline being artificially depressed by 43 all-zero windows. Clean-to-clean the
+winner gains +0.0133 macro-F1 and *loses* 0.0092 accuracy. Combined with the
+already-established finding that this config gives up the high-precision detection
+point (F=0.5 run-TPR 0% at tau=0.80 vs 100% for the current config), there is now
+**no case for switching configs**. Keep `all-174 / sqrt / leaf2`.
+
+The mechanism claim still stands on its own evidence: `max_features` helping while
+every capacity reduction hurt, and the audit's 80% identity/decision feature overlap.
+The effect size is just much smaller than reported.
+
+Only the winning arm was re-measured. The other arms in the table above (maxfeat0.3
+on all-174, maxfeat0.5, shape-only baseline, xgboost) are still contaminated-baseline
+numbers and their deltas are inflated by roughly the same ~0.007 baseline shift.
+Their relative ordering is unverified on clean data.
+
+## What did NOT change
+
+The operating point -- the number the surviving claim rests on -- is **identical**:
+
+| tau | FPR_run | F=0 | F=0.05 | F=0.2 | F=0.5 |
+|---|---|---|---|---|---|
+| 0.70 | 1.8% | 0% | 0% | 0% | 100% |
+| **0.80** | **0.6%** | 0% | 0% | 0% | **100%** |
+| 0.85 | 0.0% | 0% | 0% | 0% | 0% |
+
+Worst held-out honest workloads shift only marginally (`s8_nonml_lp_d50hash`
+0.582 -> 0.574, `mining_ethash_proxy` 0.389 -> 0.407, `blender_bmw` 0.367 -> 0.290),
+so the memory-bound-duty-cycle false-positive finding is unaffected.
