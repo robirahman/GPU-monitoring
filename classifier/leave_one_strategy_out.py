@@ -78,6 +78,14 @@ STRATEGY_FAMILIES = {
         "adversarial_N_grad_accum_8",
         "adversarial_N_grad_accum_16",
     ],
+    # llm.c workload-shaping evasion (side-channel study): idle gaps between
+    # training micro-steps reshape the NVML cadence toward inference while the
+    # arithmetic is bit-identical. baseline_train is the unshaped control.
+    "llmc_shaped": [
+        "adversarial_llmc_shaped_g20", "adversarial_llmc_shaped_g35",
+        "adversarial_llmc_shaped_g50", "adversarial_llmc_shaped_g70",
+        "adversarial_llmc_shaped_g100",
+    ],
     # DDP adversarial families (datacenter multi-GPU evasion)
     "K_ddp": ["adversarial_K_ddp"],
     "K_ddp_accum": ["adversarial_K_ddp_accum_4", "adversarial_K_ddp_accum_8"],
