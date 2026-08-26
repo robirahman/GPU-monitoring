@@ -181,3 +181,129 @@ DCGM or an oscilloscope to the monitor. The case that would motivate them is a
 memory-minimized evader that NVML genuinely cannot separate from a benign
 workload; we did not find one here (the DRAM-activity and SM-occupancy shapes,
 still in NVML's reach via `mem_utilization_pct`, kept training separable).
+
+---
+
+# Harder case: flattening the DRAM / occupancy shape
+
+The remaining NVML tell separating tiny-batch training from HPC was the
+DRAM-activity shape: bare `mm_min` sits at `mem_utilization` ≈ 18% (compute-bound
+matmul), while cuFFT/n-body are 55–90% (bandwidth-bound). Two attacks on that
+tell:
+
+- **`mm_freq`** — gradient-accumulation 1 (`-d 1024`), so a full weight update
+  fires every micro-step, making the compulsory weight-write DRAM traffic
+  near-continuous. This raised `dcgm_dram_active` from 0.14 to **0.22** (and
+  `mem_utilization` ~18→29%) with no second process.
+- **`mm_covered`** — a concurrent steady DRAM-bandwidth cover kernel
+  (`scripts/cover_kernel.py`) to pin aggregate DRAM/occupancy flat and high.
+  *Engineering limitation:* on a single GPU the cover and the training serialize
+  on the default CUDA stream, so a steady cover starves the tiny-batch training
+  (runs did not complete). Making this work needs MPS or stream-priority
+  isolation; not pursued further here.
+
+**Result: flattening the DRAM shape does not produce a harder case.** `mm_freq`
+still evades the deployed classifier (evasion 1.000 — it still reads as HPC), and
+is still separable from HPC using **NVML alone** (recall 1.000); DCGM and scope
+remain redundant.
+
+| evader | util | mem_MB | dram | full-corpus evasion | NVML recall vs HPC |
+|---|---|---|---|---|---|
+| `mm_min_noshape` | 98% | 3718 | 0.14 | 1.000 (evades) | 1.000 (separable) |
+| `mm_freq` | 98% | 3710 | 0.22 | 1.000 (evades) | 1.000 (separable) |
+
+The reason flattening one feature does not help: **NVML exposes many correlated
+tells, and the evader must flatten all of them at once.** Raising DRAM activity
+leaves the resident footprint (3.7 GB vs HPC's 2.0 GB), the PCIe traffic, and the
+power/occupancy shape still separating training from HPC. Each is tied to the
+real computation, so driving one toward a benign target does not move the others.
+That is *why* NVML stays sufficient here, and why we still did not find a
+memory-minimized evader that only a physical sensor could catch.
+
+**Overall conclusion of the study.** Against this classifier: (1) timing shaping
+fails; (2) memory-footprint minimization is a real evasion of the *deployed*
+model but is NVML-repairable (label tiny-batch training); (3) attempts to flatten
+the residual DRAM/occupancy shape do not create a case requiring DCGM or the
+oscilloscope. On this evidence the physical sensors are not yet justified as
+additions to the monitor — the open door for them remains a hypothetical evader
+that simultaneously flattens *every* NVML feature (footprint, DRAM, PCIe,
+occupancy, power) while still training, which we were not able to construct
+without co-execution isolation (MPS) we did not have time to set up.
+
+---
+
+# Week 2 follow-ups (forward research, not the paper)
+
+## Raw oscilloscope waveform (Workstream A)
+
+New `classifier/scope_raw_spectrum.py` mines the 1 MS/s raw current snippets the
+envelope discards. Finding: the **current-ripple amplitude** (`raw_amps_rms`)
+separates high-utilization memory-minimized training (mm_min/mm_freq ≈ 8.7 A)
+from HPC (cuFFT/n-body ≈ 2.7–4.1 A) and inference (≈ 4.1 A) — a signal orthogonal
+to NVML memory/util/power (training draws *lower* mean power than cuFFT yet higher
+AC ripple). The specific optimizer-step spectral line is NOT a clean tell: GPU VRM
+/ clock harmonics give cuFFT and n-body strong periodic lines too. So amplitude,
+not periodicity, is the scope's discriminator — and it is the signal to test
+against a fully-NVML-flattened evader (Workstream D). (Also fixed a latent bug:
+`load_all_data` was ingesting `_scope_`/`_dcgm_` sidecar parquets as garbage runs.)
+
+## Defender iteration on the memory-min evaders (Workstream B)
+
+`classifier/adversary_defender_iteration.py` (added `--holdout-prefixes`), 60 s
+windows, grouped CV. Detection rate (= 1 − evasion):
+
+| evader | R1 clean | R2 hardened (family IN train) | R2 hardened (family HELD OUT) | R3 +physics, held out |
+|---|---|---|---|---|
+| mm_min_noshape (98% util) | 0% | 100% | **0%** | **42%** |
+| mm_freq (98% util) | 40% | 100% | 40% | 40% |
+| mm_min_shaped (9% util) | 33% | 100% | 100% | 100% |
+| mm_spoof_infer_shaped (9% util) | 0% | 100% | 100% | 100% |
+
+Reading: (1) the deployed (clean) monitor is evaded by memory minimization; (2) it
+is fully repairable **if the defender trains on tiny-batch training specifically**
+(R2 family-in-train → 100%); (3) but high-util memory minimization is a genuinely
+*new* mode — it does **not** generalize for free from the other adversarial
+families (R2 held-out mm_min_noshape still 0%), unlike the low-util variants which
+look like the existing composite/interleave evaders and are caught by
+generalization; (4) the physical-invariant features (energy integral, power-mem
+correlation, sustained-compute) partially close it (0→42%) without the family in
+training. So covering this evasion needs either the family in the training set or
+better physics features — it is not caught by the existing monitor as-is.
+
+## Scale bound: memory-min evasion is confined to sub-~1B models (Workstream C)
+
+Memory-minimized training across a model-size ladder, all triple-sensor, each x3
+reps (`scripts/run_scale_sweep.py`, `data/h200_nvl_scope/scale/`). Resident
+`mem_used` (already minimized where possible: full-FT uses grad-ckpt + batch 1;
+LoRA at batch 1–2):
+
+| workload | kind | mem_used | vs benign band? |
+|---|---|---|---|
+| idle | rest | 0.6 GB | — |
+| cuFFT | rest (HPC) | 2.0 GB | benign |
+| GPT-2 124M `mm_min` | **TRAINING** | **3.1 GB** | **IN band → evades** |
+| TinyLlama-1.1B inference | rest | 3.5 GB | benign |
+| resnet50 inference | rest | 4.8 GB | benign (band top) |
+| Qwen-1.5B LoRA | TRAINING | 6.8 GB | above → caught |
+| Qwen-3B LoRA | TRAINING | 8.8 GB | above → caught |
+| **TinyLlama-1.1B full-FT** | TRAINING | **12.2 GB** | above → caught |
+| Mistral-7B LoRA | TRAINING | 15.2 GB | above → caught |
+
+The benign (non-training) band tops out at ~4.8 GB. Only the 124M model's training
+footprint (3.1 GB) fits inside it — every training run ≥ 1.5B params, LoRA or
+full-FT, sits at 6.8–15.2 GB, well above, and is caught by NVML `mem_used` alone.
+
+**Decisive contrast — same model, TinyLlama-1.1B:** inference = 3.5 GB (benign,
+hides trivially) vs full fine-tune = 12.2 GB (3.5× the band). The ~8.7 GB
+difference is the optimizer state (fp32 master + Adam m + v + gradients), the
+irreducible resident tell that memory-minimization cannot remove for real
+fine-tuning.
+
+**So the memory-minimization evasion is a small-model artifact.** It works for
+toy models (GPT-2-124M) whose entire training state fits within an inference-sized
+footprint, and fails for anything at a scale worth governing: full fine-tuning of
+even a 1.1B model, or LoRA of a ≥1.5B model, cannot bring its resident footprint
+into the benign band, so plain NVML memory catches it. (Caveat: optimizer-state
+CPU-offload or 8-bit optimizers could lower the full-FT floor somewhat — a
+worthwhile follow-up — but they trade the memory tell for a PCIe-traffic or
+compute tell, and don't apply to the weight-resident LoRA floor.)
