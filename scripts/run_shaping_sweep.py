@@ -33,6 +33,10 @@ COMMON = ["-e", WEIGHTS, "-b", "16", "-t", "1024", "-d", "131072",
           "-v", "100000", "-s", "0"]
 
 # (label, extra train_gpt2cu shaping args, steps). jitter ~= 40% of base gap.
+# `-b 1` in extra overrides COMMON's -b 16 (last flag wins); with -d 131072 that
+# is 128 grad-accum micro-steps, i.e. the same effective batch / same training,
+# but ~1/16 the activation memory. -r 2 recomputes activations. -Sm pads the
+# resident footprint to a target level.
 CONFIGS = [
     ("adversarial_llmc_baseline_train", ["-Sw", "0"], "220"),
     ("adversarial_llmc_shaped_g20", ["-Sw", "1", "-Sg", "20000", "-Sj", "8000"], "160"),
@@ -40,6 +44,13 @@ CONFIGS = [
     ("adversarial_llmc_shaped_g50", ["-Sw", "1", "-Sg", "50000", "-Sj", "20000"], "110"),
     ("adversarial_llmc_shaped_g70", ["-Sw", "1", "-Sg", "70000", "-Sj", "28000"], "90"),
     ("adversarial_llmc_shaped_g100", ["-Sw", "1", "-Sg", "100000", "-Sj", "40000"], "70"),
+    # memory-evader families: minimize footprint (~3.1 GB, below inference) and
+    # mimic resnet50 inference's flat footprint (~4.8 GB via -Sm 1650), each with
+    # inference-like cadence shaping. b=1 shaping puts a gap on every one of the
+    # 128 micro-steps/step, so use few outer steps.
+    ("adversarial_mm_min_noshape", ["-b", "1", "-r", "2", "-Sw", "0"], "200"),
+    ("adversarial_mm_min_shaped", ["-b", "1", "-r", "2", "-Sw", "1", "-Sg", "50000", "-Sj", "20000"], "20"),
+    ("adversarial_mm_spoof_infer_shaped", ["-b", "1", "-r", "2", "-Sm", "1650", "-Sw", "1", "-Sg", "50000", "-Sj", "20000"], "20"),
 ]
 
 
@@ -113,8 +124,9 @@ def main():
 
     configs = CONFIGS
     if args.only:
-        keep = {x.strip() for x in args.only.split(",")}
-        configs = [c for c in CONFIGS if c[0] in keep or c[0].replace("adversarial_llmc_", "") in keep]
+        keep = [x.strip() for x in args.only.split(",")]
+        configs = [c for c in CONFIGS
+                   if c[0] in keep or any(k in c[0] for k in keep)]
 
     os.makedirs(os.path.join(_REPO_ROOT, OUT_DIR), exist_ok=True)
     if args.reset and os.path.exists(PROGRESS):

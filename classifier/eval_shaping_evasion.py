@@ -37,6 +37,12 @@ DATA = PROJECT_ROOT / "data"
 SHAPED_LABELS = ["adversarial_llmc_shaped_g20", "adversarial_llmc_shaped_g35",
                  "adversarial_llmc_shaped_g50", "adversarial_llmc_shaped_g70",
                  "adversarial_llmc_shaped_g100"]
+# memory-evader families: minimize the resident footprint (b=1 + grad-accum),
+# and pad it to mimic an inference server's flat footprint (-Sm). These attack
+# the mem_used_mb feature the shaping-only evader could not touch.
+MEM_LABELS = ["adversarial_mm_min_noshape", "adversarial_mm_min_shaped",
+              "adversarial_mm_spoof_infer_shaped"]
+EVADER_LABELS = SHAPED_LABELS + MEM_LABELS
 DCGM_COLS = ["dcgm_gr_engine_active", "dcgm_sm_active", "dcgm_sm_occupancy",
              "dcgm_tensor_active", "dcgm_dram_active", "dcgm_fp64_pipe_active",
              "dcgm_fp32_pipe_active", "dcgm_fp16_pipe_active"]

@@ -124,3 +124,60 @@ scope is not needed: NVML memory settles it.
   ready for it.
 - The node-local positive class is small (24 training windows); the full-corpus
   generalization test (thousands of training windows) corroborates the result.
+
+---
+
+# Follow-up: attacking the memory feature directly
+
+Shaping fails because it never touches memory. The natural next evader attacks
+memory itself, via a tiny micro-batch (`-b 1`) with gradient accumulation (`-d`,
+mathematically the same training) plus activation recompute (`-r 2`) — collapsing
+the resident footprint from 12.8 GB to ~3.1 GB — and a new `-Sm <MiB>` flag that
+holds a fixed padding allocation to *spoof* a chosen footprint. Three new
+families (×3 reps, all three sensors):
+
+| evader | mem | util | result (full corpus, NVML) |
+|---|---|---|---|
+| `mm_min_noshape` (b1, no gaps) | 3.1 GB | 97% | **evasion 1.000 — EVADES** |
+| `mm_min_shaped` (b1 + gaps) | 3.1 GB | 9% | evasion 0.000 — caught |
+| `mm_spoof_infer_shaped` (b1 + pad to 4.8 GB + gaps) | 4.8 GB | 9% | evasion 0.000 — caught |
+
+**Memory minimization is a real evasion.** `mm_min_noshape` — the *same* GPT-2
+training, just at micro-batch 1 — evades the deployed training-vs-rest
+classifier completely (evasion 1.000 on both the node-local and the full
+29k-window corpus). It defeats the "training ⇒ large memory footprint"
+heuristic: at 3.1 GB and 97% utilization it looks like a dense HPC kernel
+(cuFFT/n-body), and the classifier calls it "rest".
+
+**But it is a coverage gap, not a sensor limit — and NVML closes it, not
+DCGM/scope.** A classifier *trained* to separate `mm_min` from HPC catches it at
+**100% recall using NVML alone**; DCGM and the scope add nothing, because plain
+NVML already separates the two:
+
+| workload | util | mem_MB | dram | ripple_A | sm_act |
+|---|---|---|---|---|---|
+| `mm_min_noshape` (hidden training) | 98% | 3718 | 0.141 | 8.12 | 0.579 |
+| cuFFT (honest HPC) | 99% | 2005 | 0.699 | 4.79 | 0.941 |
+| n-body (honest HPC) | 99% | 2061 | 0.431 | 5.41 | 0.930 |
+
+Hidden training sits at *higher* memory, *lower* DRAM-active and *lower* SM-active
+than the HPC it mimics (a matmul-bound GPT-2 step is less DRAM- and
+occupancy-saturated than cuFFT). The scope ripple also separates them (8.1 vs
+4.8 A), but it is redundant. **So the fix is the paper's own adversary–defender
+iteration — add tiny-batch/grad-accumulation training to the classifier's
+training set — not new hardware.**
+
+Two secondary findings: (1) *shaping the memory-minimized evader down to 9%
+utilization backfires* — it becomes anomalous enough (low util + low mem + a
+weak periodic training structure) that the full corpus catches it. (2) *Padding
+the footprint up with `-Sm` to mimic an inference server also backfires* — the
+(4.8 GB, 9% util) point matches no honest workload and is caught. The evader's
+best move is the plain `mm_min_noshape`: look like HPC, don't over-engineer.
+
+**Bottom line.** Timing shaping does not evade; memory-footprint minimization
+does, against the *current* model — but it is repairable within NVML by
+covering tiny-batch training, so it does not, on this evidence, motivate adding
+DCGM or an oscilloscope to the monitor. The case that would motivate them is a
+memory-minimized evader that NVML genuinely cannot separate from a benign
+workload; we did not find one here (the DRAM-activity and SM-occupancy shapes,
+still in NVML's reach via `mem_utilization_pct`, kept training separable).
