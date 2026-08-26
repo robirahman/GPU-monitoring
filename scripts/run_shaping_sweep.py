@@ -55,7 +55,12 @@ CONFIGS = [
     # DRAM-bandwidth cover kernel, so aggregate mem_utilization / dram_active /
     # occupancy are pinned flat and high (HPC-like), burying the training's
     # bursty compute-bound signature. "COVER:<gb>" prefix in extra triggers it.
-    ("adversarial_mm_covered", ["COVER:1", "-b", "1", "-r", "2"], "200"),
+    ("adversarial_mm_covered", ["COVER:1", "-b", "1", "-r", "2"], "150"),
+    # Frequent-update variant: grad-accum 1 (-d 1024) updates all weights every
+    # micro-step, so the compulsory weight-write DRAM traffic is near-continuous,
+    # raising mem_utilization toward HPC levels WITHOUT a cover process (no
+    # stream contention). Still tiny batch (low footprint). Same training family.
+    ("adversarial_mm_freq", ["-b", "1", "-r", "2", "-d", "1024"], "400"),
 ]
 
 

@@ -11,9 +11,11 @@ COVER_GB="$1"; shift
 PICO_PY="$HOME/pico-venv/bin/python"
 LLMC_DIR="$HOME/llm.c"
 
-# start the cover (long duration; killed when training finishes)
+# start the cover (long duration; killed when training finishes). Intensity 0.35
+# so the cover fills DRAM bandwidth without starving the co-executing training on
+# the shared default stream.
 "$PICO_PY" "$HOME/GPU-monitoring/scripts/cover_kernel.py" \
-    --duration 9999 --gb "$COVER_GB" --gpu 0 &
+    --duration 9999 --gb "$COVER_GB" --gpu 0 --intensity 0.35 &
 COVER_PID=$!
 sleep 4  # let the cover reach steady state first
 
