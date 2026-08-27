@@ -123,6 +123,20 @@ def main():
         workload_cmd = list(wl["command"])
         timeout = args.timeout or wl.get("default_timeout")
 
+    # Enable the libtpu metrics gRPC server BEFORE the workload starts. Without
+    # this the server never binds, tpu_info's accessors get CONNECTION REFUSED on
+    # localhost:8431, and the collector records zeros for every accelerator
+    # metric -- which is exactly what happened to the first real TPU collection
+    # (245 rows/chip, all 0 or -1, tpu_metrics_live=0). tpu_info's own error
+    # message names this variable as the fix. One port per local chip.
+    if not os.environ.get("TPU_RUNTIME_METRICS_PORTS"):
+        _base = int(os.environ.get("SPAR_TPU_METRICS_BASE_PORT", "8431"))
+        _n = int(os.environ.get("SPAR_TPU_CHIPS_PER_HOST", "4"))
+        os.environ["TPU_RUNTIME_METRICS_PORTS"] = ",".join(
+            str(_base + i) for i in range(_n))
+        print(f"TPU_RUNTIME_METRICS_PORTS={os.environ['TPU_RUNTIME_METRICS_PORTS']}",
+              flush=True)
+
     run_id = args.run_id or uuid.uuid4().hex[:12]
     worker_id = args.worker_id
     label = args.workload
