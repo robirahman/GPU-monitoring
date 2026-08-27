@@ -25,6 +25,7 @@ Usage (custom command):
 import argparse
 import logging
 import os
+import shutil
 import subprocess
 import sys
 import threading
@@ -60,16 +61,46 @@ def _tee(proc, log_path, run_id):
 
 
 def _gcs_sync(gcs_prefix, run_id, worker_id, paths, log_path, done_path):
-    """Best-effort copy of this worker's outputs to per-run GCS prefix."""
+    """Copy this worker's outputs to the per-run GCS prefix, LOUDLY.
+
+    Was "best effort" via `gsutil -q cp` with check=False and only a debug-level
+    warning on exception -- so an upload that never happened looked identical to
+    one that succeeded. Consequences observed: one session uploaded only worker
+    0's parquets (4 of 16 chips) and the next uploaded nothing at all, while both
+    logged "Saved chip 0..3" and exited 0.
+
+    Two changes: prefer `gcloud storage cp` (gsutil is deprecated and is not
+    present on every TPU runtime image, which is the likely cause), and report a
+    per-worker tally on stdout so the caller can see it and grep for it.
+    """
     base = f"{gcs_prefix.rstrip('/')}/runs/{run_id}/w{worker_id}"
-    for local in list(paths) + [log_path, done_path]:
-        if not local or not os.path.exists(local):
-            continue
+    tool = None
+    for cand in (["gcloud", "storage", "cp"], ["gsutil", "-q", "cp"]):
+        if shutil.which(cand[0]):
+            tool = cand
+            break
+    if tool is None:
+        print(f"GCS_SYNC w{worker_id}: FAILED - neither gcloud nor gsutil on PATH",
+              flush=True)
+        return 0
+    wanted = [x for x in list(paths) + [log_path, done_path]
+              if x and os.path.exists(x)]
+    ok = 0
+    for local in wanted:
         try:
-            subprocess.run(["gsutil", "-q", "cp", str(local), f"{base}/"],
-                           check=False, timeout=300)
+            r = subprocess.run(tool + [str(local), f"{base}/"],
+                               capture_output=True, text=True, timeout=300)
+            if r.returncode == 0:
+                ok += 1
+            else:
+                print(f"GCS_SYNC w{worker_id}: {os.path.basename(local)} rc="
+                      f"{r.returncode} {(r.stderr or '').strip()[:200]}", flush=True)
         except Exception as e:
-            log.warning("gsutil cp %s failed: %s", local, e)
+            print(f"GCS_SYNC w{worker_id}: {os.path.basename(local)} "
+                  f"{type(e).__name__}: {e}", flush=True)
+    print(f"GCS_SYNC w{worker_id}: uploaded {ok}/{len(wanted)} -> {base} "
+          f"(tool={tool[0]})", flush=True)
+    return ok
 
 
 def main():

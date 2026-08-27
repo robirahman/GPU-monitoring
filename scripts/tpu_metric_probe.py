@@ -221,6 +221,8 @@ def main():
     print("\n-- tpu_info --", flush=True);      probe_tpu_info()
     print("\n-- jax memory_stats --", flush=True); probe_jax_memstats()
     print("\n-- runtime metrics endpoint --", flush=True); probe_grpc_endpoint()
+    print("\n-- ListSupportedMetrics (authoritative) --", flush=True)
+    probe_list_supported(os.environ.get("SPAR_TPU_METRICS_ADDR", "localhost:8431"))
 
     ok = sorted(k for k, v in RESULT["paths"].items() if v["ok"])
     print("\n" + "=" * 72)
@@ -236,3 +238,62 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def probe_list_supported(addr="localhost:8431"):
+    """Ask the server what it ACTUALLY serves, then read each one.
+
+    This is the decisive call. With TPU_RUNTIME_METRICS_PORTS set, the server
+    answers -- but tpu_info 0.14.2's MetricName list does not match libtpu
+    0.0.17's actual metric set, and the server says so explicitly:
+      NOT_FOUND "The requested metric: tpu.runtime.hbm.utilization.percent does
+      not exist.; Please call `ListSupportedMetrics` RPC to get all the supported
+      metics."
+    So stop guessing names from the client library and enumerate them.
+
+    Note megascale.* answered UNAVAILABLE "has no accumulated data yet" rather
+    than NOT_FOUND -- it exists but only accumulates on a MULTI-SLICE job, which
+    is why a single 16-chip slice cannot produce the DCN channel.
+    """
+    try:
+        import grpc
+        from tpu_info.proto import tpu_metric_service_pb2 as pb
+        from tpu_info.proto import tpu_metric_service_pb2_grpc as pb_grpc
+    except Exception as e:
+        rec("grpc stub import", False, f"{type(e).__name__}: {e}")
+        return
+    try:
+        ch = grpc.insecure_channel(addr)
+        stub = pb_grpc.RuntimeMetricServiceStub(ch)
+        resp = stub.ListSupportedMetrics(
+            pb.ListSupportedMetricsRequest(), timeout=20)
+        names = [m.metric_name for m in resp.supported_metric]
+        rec("ListSupportedMetrics", True, f"{len(names)} metrics served",
+            data=names)
+        print(f"\n  --- {len(names)} SUPPORTED METRICS ---", flush=True)
+        for n in names:
+            print(f"    {n}", flush=True)
+        print("\n  --- reading each ---", flush=True)
+        for n in names:
+            try:
+                r = stub.GetRuntimeMetric(
+                    pb.MetricRequest(metric_name=n), timeout=15)
+                got = r.metric
+                sample = ""
+                for m in list(got.metrics)[:1]:
+                    if m.HasField("gauge"):
+                        g = m.gauge
+                        sample = (f"gauge={g.as_double or g.as_int or g.as_string}")
+                    elif m.HasField("counter"):
+                        sample = f"counter={m.counter.as_double or m.counter.as_int}"
+                    elif m.HasField("distribution"):
+                        d = m.distribution
+                        sample = (f"dist count={d.count} mean={d.mean:.3f} "
+                                  f"min={d.min:.3f} max={d.max:.3f}")
+                rec(f"metric:{n}", True,
+                    f"n={len(got.metrics)} {sample}"[:300])
+            except Exception as e:
+                rec(f"metric:{n}", False,
+                    f"{type(e).__name__}: {str(e).splitlines()[0][:160]}")
+    except Exception as e:
+        rec("ListSupportedMetrics", False, f"{type(e).__name__}: {e}")
