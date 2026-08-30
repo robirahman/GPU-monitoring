@@ -236,9 +236,6 @@ def main():
         print(f"wrote {a.json}")
 
 
-if __name__ == "__main__":
-    main()
-
 
 def probe_list_supported(addr="localhost:8431"):
     """Ask the server what it ACTUALLY serves, then read each one.
@@ -297,3 +294,8 @@ def probe_list_supported(addr="localhost:8431"):
                     f"{type(e).__name__}: {str(e).splitlines()[0][:160]}")
     except Exception as e:
         rec("ListSupportedMetrics", False, f"{type(e).__name__}: {e}")
+
+
+if __name__ == "__main__":
+    main()
+
