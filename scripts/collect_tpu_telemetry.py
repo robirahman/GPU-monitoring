@@ -289,61 +289,98 @@ class TpuMetricSource:
             except Exception as e:
                 log.info("libtpu metric %-32s (data() failed: %s)", name, e)
 
-    # -- source 1b: the libtpu metrics gRPC server (the one that works) ------
+    # -- source 1b: libtpu metrics gRPC, with names the server ACTUALLY serves --
+    # MEASURED on v6e-1 / libtpu 0.0.17 via ListSupportedMetrics. The server
+    # serves 11 names; tpu_info 0.14.2's MetricName list does not match it, which
+    # is why the accessor-based approach returned NOT_FOUND for four of five
+    # calls. Talk to the stub directly instead.
+    #
+    # LIVE on a single chip (verified values in parentheses):
+    #   tpu.runtime.tensorcore.dutycycle.percent   -> duty      (55.707)
+    #   tpu.runtime.hbm.memory.usage.bytes         -> hbm_used  (67,924,608)
+    #   tpu.runtime.hbm.memory.total.bytes         -> hbm_total (33,550,237,184)
+    #   hlo.execution.timing.distribution.microseconds -> hlo_exec
+    #                                    (count 67797 mean 115.868 min 77 max 345)
+    #   hlo.queue.size.gauge                       -> hlo_queue (33813)
+    # SERVED BUT UNAVAILABLE on one slice (accumulate only across slices, so they
+    # stay -1 until a multislice run):
+    #   megascale.collective_end_to_end_latencies... -> dcn_lat
+    #   megascale.dcn_transfer_latencies...          -> buf_xfer
+    # NOT SERVED AT ALL by this libtpu, so dropped rather than left dark:
+    #   tpu.runtime.hbm.utilization.percent  (was mapped to hbm_bw)
+    #   tpu.runtime.tensorcore.idle_duration.seconds
+    _GRPC_METRICS = {
+        "tpu.runtime.tensorcore.dutycycle.percent": "duty",
+        "tpu.runtime.hbm.memory.usage.bytes": "hbm_used",
+        "tpu.runtime.hbm.memory.total.bytes": "hbm_total",
+        "hlo.execution.timing.distribution.microseconds": "hlo_exec",
+        "hlo.queue.size.gauge": "hlo_queue",
+        "megascale.collective_end_to_end_latencies.microsecond.cumulative.distribution": "dcn_lat",
+        "megascale.dcn_transfer_latencies.microsecond.cumulative.distribution": "buf_xfer",
+    }
+
     def _init_grpc_metrics(self):
-        """Bind the tpu_info.metrics accessors, which all read localhost:8431.
-
-        This is the source that actually carries TPU telemetry, and the reason
-        nothing worked before. Every function in tpu_info.metrics takes
-        `addr='localhost:8431'` -- the libtpu metrics gRPC server -- and that
-        server is OPT-IN on the workload: tpu_info's own error text says
-        "metrics unavailable. Did you start a MULTI_SLICE workload with
-        TPU_RUNTIME_METRICS_PORTS=8431,8432,8433,8434?". No run of ours had ever
-        set it, so the port was CONNECTION REFUSED even during a live 60 s JAX
-        workload. Setting it is the job of whatever launches the workload
-        (scripts/run_workload_tpu.py); this method only consumes the result.
-
-        Metric names come from tpu_info.metrics.MetricName, read off the
-        installed package rather than guessed:
-            tpu.runtime.hbm.memory.usage.bytes        -> mem_used_mb
-            tpu.runtime.hbm.memory.total.bytes        -> mem_total_mb
-            tpu.runtime.tensorcore.dutycycle.percent  -> gpu_utilization_pct
-            tpu.runtime.hbm.utilization.percent       -> hbm_bw_util_pct
-            hlo.execution.timing.distribution.microseconds
-            megascale.collective_end_to_end_latencies.microsecond...
-        """
-        self._grpc = None
-        self._grpc_chip_type = None
+        """Open the metrics channel and record which wanted names are served."""
+        self._stub = None
+        self._served = {}
         addr = os.environ.get("SPAR_TPU_METRICS_ADDR", "localhost:8431")
         try:
-            from tpu_info import device as _dev, metrics as _met
+            import grpc
+            from tpu_info.proto import tpu_metric_service_pb2 as pb
+            from tpu_info.proto import tpu_metric_service_pb2_grpc as pbg
         except Exception as e:
-            log.info("tpu_info unavailable for gRPC metrics (%s)", e)
+            log.info("grpc metric stub unavailable (%s)", e)
             return
         try:
-            chip_type, n = _dev.get_local_chips()
+            ch = grpc.insecure_channel(addr)
+            stub = pbg.RuntimeMetricServiceStub(ch)
+            resp = stub.ListSupportedMetrics(
+                pb.ListSupportedMetricsRequest(), timeout=20)
+            names = {m.metric_name for m in resp.supported_metric}
         except Exception as e:
-            log.info("get_local_chips failed (%s)", e)
-            return
-        if chip_type is None:
-            log.info("no local TPU chips reported")
-            return
-        # Liveness: one real call. If the server is not up this raises, and we
-        # want that recorded loudly rather than silently degrading to zeros.
-        try:
-            usage = _met.get_chip_usage(chip_type, addr=addr)
-            self._grpc = _met
-            self._grpc_chip_type = chip_type
-            self._grpc_addr = addr
-            if n:
-                self.n_chips = int(n)
-            self.availability["grpc_metrics"] = True
-            log.info("libtpu gRPC metrics LIVE at %s: chip=%s n=%s usage_rows=%d",
-                     addr, chip_type, n, len(usage or []))
-        except Exception as e:
-            log.warning("libtpu gRPC metrics at %s NOT available: %s: %s -- "
-                        "is TPU_RUNTIME_METRICS_PORTS set on the workload?",
+            log.warning("ListSupportedMetrics at %s failed: %s: %s -- is "
+                        "TPU_RUNTIME_METRICS_PORTS set on the workload?",
                         addr, type(e).__name__, e)
+            return
+        self._pb = pb
+        self._stub = stub
+        self._served = {n: k for n, k in self._GRPC_METRICS.items() if n in names}
+        self.availability["grpc_metrics"] = bool(self._served)
+        log.info("libtpu gRPC metrics LIVE at %s: server serves %d names, "
+                 "%d of ours mapped: %s", addr, len(names), len(self._served),
+                 sorted(self._served.values()))
+        missing = set(self._GRPC_METRICS) - names
+        if missing:
+            log.info("not served by this libtpu: %s", sorted(missing))
+
+    def _read_grpc(self):
+        """{key: value} for every served metric this instant. Guarded per metric."""
+        out = {}
+        if self._stub is None:
+            return out
+        for name, key in self._served.items():
+            try:
+                r = self._stub.GetRuntimeMetric(
+                    self._pb.MetricRequest(metric_name=name), timeout=5)
+            except Exception:
+                # megascale.* raise UNAVAILABLE until a multislice job accumulates
+                # data; that is expected, not an error worth logging every second.
+                continue
+            for m in r.metric.metrics:
+                if m.HasField("gauge"):
+                    g = m.gauge
+                    out[key] = (g.as_double if g.as_double else float(g.as_int))
+                elif m.HasField("counter"):
+                    c = m.counter
+                    out[key] = (c.as_double if c.as_double else float(c.as_int))
+                elif m.HasField("distribution"):
+                    d = m.distribution
+                    # libtpu exposes count/mean/min/max, NOT true percentiles.
+                    # Pass [min, mean, max] so _percentiles() records something
+                    # honest; do not invent p50/p90/p99 from summary stats.
+                    out[key] = [d.min, d.mean, d.max]
+                break
+        return out
 
     # -- source 2: tpu_info python modules ----------------------------------
     def _init_tpu_info(self):
@@ -401,63 +438,16 @@ class TpuMetricSource:
                 for c in range(self.n_chips):
                     chips[c][key] = _index_per_chip(data, self.n_chips, c)
 
-        # gRPC metrics server: the TPU-native comm channels. The pre-existing
-        # tpu_info block below already fetched duty/hbm via get_chip_usage, but
-        # nothing ever fetched HBM bandwidth, HLO timing or DCN collective
-        # latency -- and those are the channels Phase 0 identified as the only
-        # plausible substitute for the power signal TPU does not expose. All of
-        # these read localhost:8431, which is why TPU_RUNTIME_METRICS_PORTS must
-        # be set on the workload (run_workload_tpu.py does that now).
-        if getattr(self, "_grpc", None) is not None:
-            g, ct, addr = self._grpc, self._grpc_chip_type, self._grpc_addr
-            def _try(fn, *a, **kw):
-                try:
-                    return fn(*a, **kw)
-                except Exception as e:
-                    if not getattr(self, "_grpc_warned", False):
-                        log.warning("gRPC metric read failed (%s: %s); further "
-                                    "failures silent", type(e).__name__, e)
-                        self._grpc_warned = True
-                    return None
-            hbm = _try(g.get_runtime_hbm_utilization, addr=addr)
-            if hbm:
-                for dev_id, val in hbm:
-                    c = int(dev_id) % max(self.n_chips, 1)
-                    chips[c]["hbm_bw"] = val
-            timing = _try(g.get_hlo_exec_timing, ct, addr=addr)
-            if timing:
-                for t in timing:
-                    c = int(getattr(t, "device_id", 0)) % max(self.n_chips, 1)
-                    chips[c]["hlo_exec"] = [getattr(t, "p50", None),
-                                            getattr(t, "p90", None),
-                                            getattr(t, "p999", None)]
-            q = _try(g.get_hlo_queue_size, ct, addr=addr)
-            if q:
-                for x in q:
-                    c = int(getattr(x, "device_id", 0)) % max(self.n_chips, 1)
-                    chips[c]["hlo_queue"] = getattr(x, "queue_size", None)
-            # DCN collective latency -- the cross-host channel with no NVIDIA
-            # counterpart, and the reason the TPU rung was worth running.
-            for metric_arg, key in (
-                    ("collective_e2e_latency", "dcn_lat"),
-                    ("buffer_transfer_latency", "buf_xfer")):
-                dist = _try(g.get_transfer_latency, metric_arg, addr=addr)
-                if dist:
-                    vals = []
-                    for d in dist:
-                        for attr in ("p50", "p90", "p99", "p999", "mean"):
-                            v = getattr(d, attr, None)
-                            if v is not None:
-                                vals.append(v)
-                    if vals:
-                        for c in range(self.n_chips):
-                            chips[c].setdefault(key, vals)
-            tc = _try(g.get_tensorcore_idle_duration, addr=addr)
-            if tc:
-                for dev_id, idle in tc:
-                    c = int(dev_id) % max(self.n_chips, 1)
-                    # idle duration -> utilisation proxy, recorded as tc_util
-                    chips[c].setdefault("tc_util", idle)
+        # gRPC metrics, read once per sample and fanned out to every local chip.
+        # The server aggregates per-node, so a multi-chip host reports the same
+        # value for each of its chips; that is the server's granularity, not a
+        # bug here, and is why per-chip differentiation on TPU comes from the
+        # gpu_uuid dedup key rather than from distinct metric values.
+        g = self._read_grpc()
+        if g:
+            for c in range(self.n_chips):
+                for k, v in g.items():
+                    chips[c].setdefault(k, v)
 
         # tpu_info fills duty / hbm when libtpu didn't
         if self._tpu_info is not None and self._chip_type is not None:

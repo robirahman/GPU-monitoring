@@ -34,7 +34,12 @@ _PY = sys.executable
 # Ladder of communication scopes. tpuT1 (degenerate, no collectives) and tpuTMS
 # (2x v6e-8 multislice, guarantees DCN metrics) are available for the stretch
 # rungs; the core ladder the plan prioritises is T4 -> T8 -> T16.
-_SCOPES = ["tpuT4", "tpuT8", "tpuT16"]
+# tpuT1 added because single-chip slices provision in 60-110 SECONDS while
+# 16-chip requests have waited 7 hours and failed; iterating on one chip is the
+# only practical loop. It must be its own scope: make_mesh uses jax.devices(), so
+# a 1-chip run labelled tpuT16 would silently record single-chip telemetry under a
+# 16-chip name, and gpu_name/scope is what the analysis groups on.
+_SCOPES = ["tpuT1", "tpuT4", "tpuT8", "tpuT16"]
 
 # (default) per-cell durations and timeouts (seconds). XLA's first-step compile
 # can take minutes, so timeouts carry generous headroom over --duration.
