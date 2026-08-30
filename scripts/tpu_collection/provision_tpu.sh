@@ -30,18 +30,35 @@ QR_NAME=${QR_NAME:-${TPU_NAME}-qr}        # queued-resource id
 SA=${SA:-tpu-service-account@focus-surfer-494820-g0.iam.gserviceaccount.com}
 VALID_UNTIL=${VALID_UNTIL:-4h}            # queued resource self-expires after this
 SPOT=${SPOT:-1}                           # 1 = Spot (preemptible); 0 = on-demand
+# NODE_COUNT>1 requests a MULTISLICE group: N slices scheduled as one unit, named
+# ${NODE_PREFIX}-0 .. ${NODE_PREFIX}-(N-1). Needed because megascale.* metrics --
+# including megascale.collective_end_to_end_latencies, the DCN channel Phase 0
+# identified as the only plausible substitute for the power signal TPU does not
+# expose -- answer UNAVAILABLE "has no accumulated data yet" on a single slice.
+# They exist but only accumulate across slices. Cost warning: N slices bill
+# simultaneously, and all N must land together or none are useful.
+NODE_COUNT=${NODE_COUNT:-1}
+NODE_PREFIX=${NODE_PREFIX:-$TPU_NAME}
 
 ACTION=${1:-status}
 
 gc() { gcloud "$@" --project="$PROJECT" --zone="$ZONE"; }
 
 create() {
-  echo "Creating queued resource $QR_NAME -> $TPU_NAME ($ACCEL, $ZONE, spot=$SPOT)"
+  echo "Creating queued resource $QR_NAME -> $TPU_NAME ($ACCEL, $ZONE, spot=$SPOT, nodes=$NODE_COUNT)"
   local spot_flag=()
   [ "$SPOT" = "1" ] && spot_flag=(--spot)
+  # Single slice uses --node-id; multislice uses --node-count + --node-prefix,
+  # and the two forms are mutually exclusive.
+  local shape_flags=(--node-id="$TPU_NAME")
+  if [ "$NODE_COUNT" -gt 1 ]; then
+    shape_flags=(--node-count="$NODE_COUNT" --node-prefix="$NODE_PREFIX")
+    echo "  MULTISLICE: $NODE_COUNT x $ACCEL as ${NODE_PREFIX}-0..$((NODE_COUNT-1))"
+    echo "  NOTE: all $NODE_COUNT slices bill at once once ACTIVE."
+  fi
   gcloud compute tpus queued-resources create "$QR_NAME" \
     --project="$PROJECT" --zone="$ZONE" \
-    --node-id="$TPU_NAME" \
+    "${shape_flags[@]}" \
     --accelerator-type="$ACCEL" \
     --runtime-version="$RUNTIME" \
     --valid-until-duration="$VALID_UNTIL" \
@@ -51,6 +68,7 @@ create() {
 }
 
 status() {
+  [ "$NODE_COUNT" -gt 1 ] && echo "(multislice: expecting ${NODE_PREFIX}-0..$((NODE_COUNT-1)))"
   echo "== queued resource =="
   gc compute tpus queued-resources describe "$QR_NAME" \
     --format="value(state.state)" 2>/dev/null || echo "(none)"
@@ -70,7 +88,14 @@ ssh_workers() {
 }
 
 delete() {
-  echo "Deleting node + queued resource (idempotent)..."
+  echo "Deleting node(s) + queued resource (idempotent)..."
+  if [ "$NODE_COUNT" -gt 1 ]; then
+    # Multislice nodes are ${NODE_PREFIX}-0..N-1; deleting only $TPU_NAME would
+    # leave the rest billing.
+    for i in $(seq 0 $((NODE_COUNT-1))); do
+      gc compute tpus tpu-vm delete "${NODE_PREFIX}-${i}" --quiet 2>/dev/null || true
+    done
+  fi
   gc compute tpus tpu-vm delete "$TPU_NAME" --quiet 2>/dev/null || true
   # --force also reaps the underlying node if the QR still owns it.
   gc compute tpus queued-resources delete "$QR_NAME" --quiet --force 2>/dev/null || true
