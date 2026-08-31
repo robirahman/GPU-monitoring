@@ -110,9 +110,19 @@ def main():
     ap.add_argument("--run-id", type=str, default=None,
                     help="Shared run_id for the job (REQUIRED multi-host). "
                          "Pass the SAME value on every worker.")
-    ap.add_argument("--worker-id", type=int,
-                    default=int(os.environ.get("TPU_WORKER_ID", 0)),
-                    help="This host's worker index (0-based).")
+    # GLOBALLY unique worker id. TPU_WORKER_ID is per-SLICE, so on a
+    # --node-count multislice group slice-0-worker-0 and slice-1-worker-0 are both
+    # "0": they would write the same <cell>.w0.done marker and the queue's
+    # `got >= NUM_WORKERS` check would undercount, marking a healthy cell FAILED.
+    # Fold the slice index in. `slice*1000 + worker` keeps it readable (s0w0->0,
+    # s1w0->1000) and still matches the _w\d+c\d+ rank-token regex that
+    # multinode_features strips.
+    _slice = int(os.environ.get("MEGASCALE_SLICE_ID",
+                 os.environ.get("MEGASCALE_SLICE_INDEX", "0")) or 0)
+    _wid = int(os.environ.get("TPU_WORKER_ID", 0) or 0)
+    ap.add_argument("--worker-id", type=int, default=_slice * 1000 + _wid,
+                    help="Globally unique worker index (slice*1000 + "
+                         "TPU_WORKER_ID; override only if you know why).")
     ap.add_argument("--output-dir", type=str, default="data")
     ap.add_argument("--log-dir", type=str, default="logs")
     ap.add_argument("--interval", type=float, default=1.0)
@@ -255,6 +265,21 @@ def main():
     print(f"  Parquets: {len(paths)} (one per chip)")
     print(f"  Done marker: {done_path}")
     print("=" * 60)
+
+    # Sources are printed at STARTUP too, but at that moment the workload has not
+    # launched, so the libtpu metrics server is not listening and grpc_metrics is
+    # always absent. Print the set again HERE: this is the only place that shows
+    # whether the lazy reconnect actually landed during the run.
+    try:
+        av = getattr(collector.source, "availability", {})
+        print(f"SOURCES_FINAL: {sorted(k for k, v in av.items() if v)}", flush=True)
+        srv = getattr(collector.source, "_served", None)
+        if srv is not None:
+            print(f"GRPC_SERVED: {sorted(srv.values())}", flush=True)
+        print(f"GRPC_TRIES: {getattr(collector.source, '_grpc_tries', 'n/a')}",
+              flush=True)
+    except Exception as e:
+        print(f"SOURCES_FINAL: unavailable ({e})", flush=True)
 
     if args.gcs_prefix:
         _gcs_sync(args.gcs_prefix, run_id, worker_id, paths, log_path, done_path)
