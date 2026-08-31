@@ -517,7 +517,20 @@ class TpuMetricSource:
                 except Exception:
                     continue
                 for c in range(self.n_chips):
-                    chips[c][key] = _index_per_chip(data, self.n_chips, c)
+                    val = _index_per_chip(data, self.n_chips, c)
+                    # Do NOT claim the key with a useless value. This block used
+                    # to assign unconditionally while the gRPC block below used
+                    # setdefault, so a None from here PERMANENTLY blocked the
+                    # working gRPC value: hlo_exec/hlo_queue were dark for three
+                    # rentals with the gRPC read succeeding and logging correct
+                    # payloads the whole time (parsed=[75.0, 1034.03, 128929.0]).
+                    # duty/hbm escaped only because _classify_metric does not map
+                    # libtpu's names onto them.
+                    if val is None:
+                        continue
+                    if isinstance(val, (list, tuple)) and not len(val):
+                        continue
+                    chips[c][key] = val
 
         # gRPC metrics, read once per sample and fanned out to every local chip.
         # The server aggregates per-node, so a multi-chip host reports the same
@@ -528,7 +541,12 @@ class TpuMetricSource:
         if g:
             for c in range(self.n_chips):
                 for k, v in g.items():
-                    chips[c].setdefault(k, v)
+                    # ASSIGN, not setdefault. The gRPC metrics server is the
+                    # source verified end-to-end against ListSupportedMetrics, so
+                    # where it has a value it wins over the libtpu-SDK guess.
+                    if v is None:
+                        continue
+                    chips[c][k] = v
 
         # tpu_info fills duty / hbm when libtpu didn't
         if self._tpu_info is not None and self._chip_type is not None:
