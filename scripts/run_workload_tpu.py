@@ -117,9 +117,29 @@ def main():
     # Fold the slice index in. `slice*1000 + worker` keeps it readable (s0w0->0,
     # s1w0->1000) and still matches the _w\d+c\d+ rank-token regex that
     # multinode_features strips.
-    _slice = int(os.environ.get("MEGASCALE_SLICE_ID",
-                 os.environ.get("MEGASCALE_SLICE_INDEX", "0")) or 0)
+    # MEASURED on a live 2x v6e-1 group: MEGASCALE_SLICE_ID, MEGASCALE_NUM_SLICES
+    # and MEGASCALE_COORDINATOR_ADDRESS are ALL UNSET, yet jax.distributed still
+    # forms the cross-slice mesh (device_count 2, process 0/1 of 2). So slice
+    # identity cannot be read from the megascale env, and the previous default
+    # would have resolved BOTH slices to 0 -- reintroducing the very marker
+    # collision it was meant to prevent.
+    #
+    # jax.process_index() is the correct answer but is only available inside the
+    # workload after initialize(), not here in the launcher. So the ORCHESTRATION
+    # must say which slice this is: SPAR_TPU_SLICE_ID, set per-slice by whatever
+    # fans the command out. Falls back to the megascale vars if a future runtime
+    # does populate them, then to 0.
+    _slice = int(os.environ.get("SPAR_TPU_SLICE_ID",
+                 os.environ.get("MEGASCALE_SLICE_ID",
+                 os.environ.get("MEGASCALE_SLICE_INDEX", "0"))) or 0)
     _wid = int(os.environ.get("TPU_WORKER_ID", 0) or 0)
+    # Loudly report the resolved id: a silent collision is exactly the failure
+    # mode this guards against, and on a multislice run two identical ids means
+    # one slice's parquet and .done marker overwrite the other's.
+    print(f"WORKER_ID_RESOLVED: slice={_slice} tpu_worker={_wid} "
+          f"-> worker_id={_slice * 1000 + _wid} "
+          f"(SPAR_TPU_SLICE_ID={os.environ.get('SPAR_TPU_SLICE_ID', 'unset')})",
+          flush=True)
     ap.add_argument("--worker-id", type=int, default=_slice * 1000 + _wid,
                     help="Globally unique worker index (slice*1000 + "
                          "TPU_WORKER_ID; override only if you know why).")

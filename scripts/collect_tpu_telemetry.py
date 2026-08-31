@@ -386,13 +386,35 @@ class TpuMetricSource:
                              self._grpc_tries)
             if self._stub is None:
                 return out
+        # Per-metric outcome, logged ONCE per (metric, reason). A bare
+        # `except: continue` here is what hid the hlo_exec/hlo_queue failure
+        # through three rentals: both names were in GRPC_SERVED and the source
+        # reported connected, yet the columns stayed -1 and there was no way to
+        # tell whether the RPC raised or simply returned nothing. Distinguish the
+        # two, because they have different fixes.
+        if not hasattr(self, "_grpc_seen"):
+            self._grpc_seen = set()
+
+        def _note(metric, reason):
+            tag = (metric, reason)
+            if tag not in self._grpc_seen and len(self._grpc_seen) < 40:
+                self._grpc_seen.add(tag)
+                log.warning("grpc metric %s: %s", metric, reason)
+
         for name, key in self._served.items():
             try:
                 r = self._stub.GetRuntimeMetric(
-                    self._pb.MetricRequest(metric_name=name), timeout=5)
-            except Exception:
-                # megascale.* raise UNAVAILABLE until a multislice job accumulates
-                # data; that is expected, not an error worth logging every second.
+                    self._pb.MetricRequest(metric_name=name), timeout=15)
+            except Exception as e:
+                # megascale.* answer UNAVAILABLE until a multislice job
+                # accumulates data, which is expected; anything else is not.
+                _note(name, f"{type(e).__name__}: "
+                            f"{str(e).splitlines()[0][:140]}")
+                continue
+            if not r.metric.metrics:
+                # RPC succeeded but carried no samples -- a different failure from
+                # an exception, and one that would otherwise look identical.
+                _note(name, "RPC ok but metrics list EMPTY")
                 continue
             for m in r.metric.metrics:
                 if m.HasField("gauge"):
@@ -407,6 +429,9 @@ class TpuMetricSource:
                     # Pass [min, mean, max] so _percentiles() records something
                     # honest; do not invent p50/p90/p99 from summary stats.
                     out[key] = [d.min, d.mean, d.max]
+                else:
+                    _note(name, f"measure field not gauge/counter/distribution: "
+                                f"{m.WhichOneof('measure')}")
                 break
         return out
 
