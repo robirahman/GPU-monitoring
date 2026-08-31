@@ -416,23 +416,51 @@ class TpuMetricSource:
                 # an exception, and one that would otherwise look identical.
                 _note(name, "RPC ok but metrics list EMPTY")
                 continue
+            # Iterate EVERY entry rather than breaking after the first. The old
+            # code did `break` unconditionally at the end of the first iteration,
+            # so if entry 0 carried no usable measure the metric was silently
+            # skipped -- and skipped WITHOUT logging, because the else-branch only
+            # fires when the oneof is set to something unexpected, not when it is
+            # unset. hlo_exec/hlo_queue were dark for two rentals with no error
+            # line to explain it, which is exactly that shape of bug.
+            shapes = []
             for m in r.metric.metrics:
+                which = m.WhichOneof("measure")
+                shapes.append(which)
                 if m.HasField("gauge"):
                     g = m.gauge
-                    out[key] = (g.as_double if g.as_double else float(g.as_int))
+                    # `as_double if as_double else as_int` treats a legitimate 0.0
+                    # as missing; check which field is actually set.
+                    out[key] = (float(g.as_double)
+                                if g.WhichOneof("value") == "as_double"
+                                else float(g.as_int))
                 elif m.HasField("counter"):
                     c = m.counter
-                    out[key] = (c.as_double if c.as_double else float(c.as_int))
+                    out[key] = (float(c.as_double)
+                                if c.WhichOneof("value") == "as_double"
+                                else float(c.as_int))
                 elif m.HasField("distribution"):
                     d = m.distribution
                     # libtpu exposes count/mean/min/max, NOT true percentiles.
                     # Pass [min, mean, max] so _percentiles() records something
                     # honest; do not invent p50/p90/p99 from summary stats.
-                    out[key] = [d.min, d.mean, d.max]
-                else:
-                    _note(name, f"measure field not gauge/counter/distribution: "
-                                f"{m.WhichOneof('measure')}")
-                break
+                    # Skip an empty distribution: count==0 would otherwise record
+                    # zeros as if they were measurements.
+                    if d.count > 0:
+                        out[key] = [d.min, d.mean, d.max]
+                    else:
+                        _note(name, "distribution present but count==0")
+                if key in out:
+                    break          # got a usable value; stop at the first one
+            # One-shot shape report per metric: n_entries, the oneof of each, and
+            # the parsed value. This is the line that will actually explain a dark
+            # channel, instead of leaving it to inference.
+            if key not in out:
+                _note(name, f"no usable value from {len(r.metric.metrics)} "
+                            f"entr(ies); measures={shapes}")
+            else:
+                _note(f"{name}#shape", f"entries={len(r.metric.metrics)} "
+                                       f"measures={shapes} parsed={out[key]!r}")
         return out
 
     # -- source 2: tpu_info python modules ----------------------------------
