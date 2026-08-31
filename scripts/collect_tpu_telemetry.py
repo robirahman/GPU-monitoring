@@ -338,9 +338,13 @@ class TpuMetricSource:
                 pb.ListSupportedMetricsRequest(), timeout=20)
             names = {m.metric_name for m in resp.supported_metric}
         except Exception as e:
-            log.warning("ListSupportedMetrics at %s failed: %s: %s -- is "
-                        "TPU_RUNTIME_METRICS_PORTS set on the workload?",
-                        addr, type(e).__name__, e)
+            # Expected before the workload starts (server not bound yet); only
+            # shout once we have retried enough that it is probably not coming.
+            if getattr(self, "_grpc_tries", 0) in (0, 1) or \
+                    getattr(self, "_grpc_tries", 0) % 50 == 0:
+                log.warning("ListSupportedMetrics at %s failed: %s: %s -- is "
+                            "TPU_RUNTIME_METRICS_PORTS set on the workload?",
+                            addr, type(e).__name__, e)
             return
         self._pb = pb
         self._stub = stub
@@ -354,10 +358,34 @@ class TpuMetricSource:
             log.info("not served by this libtpu: %s", sorted(missing))
 
     def _read_grpc(self):
-        """{key: value} for every served metric this instant. Guarded per metric."""
+        """{key: value} for every served metric this instant. Guarded per metric.
+
+        LAZY (RE)CONNECT. _init_grpc_metrics runs at collector CONSTRUCTION, but
+        run_workload_tpu.py builds the collector BEFORE it launches the workload,
+        so at that moment no TPU process exists, the metrics server is not
+        listening, ListSupportedMetrics fails and _served stays empty for the
+        whole run. Measured consequence: the first successful collection reported
+        sources={libtpu, tpu_info, psutil} with grpc_metrics absent, duty/HBM
+        arriving via the older tpu_info.get_chip_usage path (whose three names are
+        served) while hlo_exec_us_* and hlo_queue_size -- the only channels TPU has
+        that NVIDIA does not -- stayed at -1 despite being live in the probe
+        (mean 115.868 us, queue 33813).
+
+        So retry until it connects, then stop retrying. Backoff is in samples, not
+        seconds, to keep this off the 1 Hz hot path.
+        """
         out = {}
         if self._stub is None:
-            return out
+            self._grpc_tries = getattr(self, "_grpc_tries", 0) + 1
+            # attempt on sample 1, then every 10th, giving XLA compile time to
+            # finish and the server to bind without hammering it
+            if self._grpc_tries == 1 or self._grpc_tries % 10 == 0:
+                self._init_grpc_metrics()
+                if self._stub is not None:
+                    log.info("gRPC metrics connected on attempt %d",
+                             self._grpc_tries)
+            if self._stub is None:
+                return out
         for name, key in self._served.items():
             try:
                 r = self._stub.GetRuntimeMetric(
