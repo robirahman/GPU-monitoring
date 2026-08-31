@@ -16,12 +16,25 @@
 # Spot window before preemption can strike):
 #   tpuT16_train_fsdp7b -> _infershard_7b -> _inferrep_7b -> _other_fft -> _idle
 #
-# The SCOPE is fixed by the provisioned slice (v6e-16 => tpuT16, 4 workers).
-# Provision a smaller slice and set SCOPE/NUM_WORKERS to run a lower rung.
+# The SCOPE is fixed by the provisioned slice (v6e-16 => tpuT16). NUM_WORKERS is
+# now DERIVED from the live slice by default -- do not hardcode it. (v6e is 8
+# chips/host, so v6e-16 = 2 hosts = 2 workers, NOT the 4 the old default assumed;
+# a wrong NUM_WORKERS makes the .done accounting mark every cell FAILED.)
 #
-#   SMOKE=1 bash scripts/tpu_collection/tpu_queue.sh      # shakedown first
-#   nohup   bash scripts/tpu_collection/tpu_queue.sh &    # real run
+# MULTISLICE (SCOPE=tpuTMS): set NODE_COUNT=2 (and NODE_PREFIX). The queue then
+# fans each cell to ALL workers of BOTH slice nodes concurrently, so
+# jax.distributed.initialize() forms one cross-slice mesh and megascale.* (the DCN
+# channel) accumulates. VALIDATE THIS ON A 2x v6e-1 SMOKE FIRST (assert
+# dcn_collective_lat_us_p50 != -1); if DCN stays dark, the runtime did not auto-set
+# the megascale coordinator env -- export MEGASCALE_COORDINATOR_ADDRESS on the workers.
+#
+#   ACCEL=v6e-1 bash scripts/tpu_collection/tpu_queue.sh --probe-only   # metric-name gate
+#   SMOKE=1 bash scripts/tpu_collection/tpu_queue.sh                    # shakedown first
+#   nohup   bash scripts/tpu_collection/tpu_queue.sh &                  # real run
 set -uo pipefail
+
+PROBE_ONLY=0
+[ "${1:-}" = "--probe-only" ] && { PROBE_ONLY=1; shift; }
 
 # ── Config (override via env) ────────────────────────────────────────────────
 PROJECT=${PROJECT:-focus-surfer-494820-g0}
@@ -29,7 +42,9 @@ ZONE=${ZONE:-us-east1-d}
 TPU_NAME=${TPU_NAME:-spar-tpu-16}
 REPO_DIR=${REPO_DIR:-\$HOME/SPAR-GPU-monitoring}   # path ON the worker
 SCOPE=${SCOPE:-tpuT16}
-NUM_WORKERS=${NUM_WORKERS:-4}                       # v6e-16 = 4 hosts
+NODE_COUNT=${NODE_COUNT:-1}                         # >1 => multislice (tpuTMS)
+NODE_PREFIX=${NODE_PREFIX:-$TPU_NAME}
+NUM_WORKERS=${NUM_WORKERS:-}                        # empty => derive from live slice
 BUCKET=${BUCKET:-gs://spar-tpu-telemetry}
 SESSION=${SESSION:-$(date -u +%Y%m%d_%H%M%S)}
 GCS=${BUCKET}/${SESSION}
@@ -56,10 +71,69 @@ MASTER=logs/tpu_queue_master.log
 stamp() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
 say()   { echo "[$(stamp)] $*" | tee -a "$MASTER"; }
 
-ssh_all() {  # ssh_all "<remote command>"
-  gcloud compute tpus tpu-vm ssh "$TPU_NAME" \
-    --project="$PROJECT" --zone="$ZONE" --worker=all --command="$1"
+# Slice node name(s): $TPU_NAME for single-slice, ${NODE_PREFIX}-0..N-1 multislice.
+slice_nodes() {
+  if [ "$NODE_COUNT" -gt 1 ]; then
+    for i in $(seq 0 $((NODE_COUNT - 1))); do echo "${NODE_PREFIX}-${i}"; done
+  else
+    echo "$TPU_NAME"
+  fi
 }
+
+ssh_all() {  # ssh_all "<cmd>" -- fan to ALL workers of ALL slice nodes
+  local cmd="$1" rc=0 n; local pids=()
+  if [ "$NODE_COUNT" -gt 1 ]; then
+    # Multislice: launch on every slice CONCURRENTLY so the workers form ONE
+    # cross-slice jax mesh (the --node-count runtime supplies the megascale
+    # coordinator env). Serial per-slice ssh would deadlock -- slice 0 blocks on a
+    # collective barrier that slice 1 has not reached. VALIDATE on a 2x v6e-1 smoke:
+    # if dcn_collective_lat_us_p50 stays -1, export MEGASCALE_COORDINATOR_ADDRESS.
+    for n in $(slice_nodes); do
+      gcloud compute tpus tpu-vm ssh "$n" --project="$PROJECT" --zone="$ZONE" \
+        --worker=all --command="$cmd" & pids+=($!)
+    done
+    for p in "${pids[@]}"; do wait "$p" || rc=1; done
+    return $rc
+  fi
+  gcloud compute tpus tpu-vm ssh "$TPU_NAME" \
+    --project="$PROJECT" --zone="$ZONE" --worker=all --command="$cmd"
+}
+
+ssh_worker0() {  # worker 0 of the first slice only
+  gcloud compute tpus tpu-vm ssh "$(slice_nodes | head -1)" \
+    --project="$PROJECT" --zone="$ZONE" --worker=0 --command="$1"
+}
+
+# ── NUM_WORKERS: derive from the live slice(s) unless the caller pinned it ─────
+derive_workers() {
+  local total=0 n c
+  for n in $(slice_nodes); do
+    c=$(gcloud compute tpus tpu-vm describe "$n" --project="$PROJECT" --zone="$ZONE" \
+        --format='value(networkEndpoints[].ipAddress)' 2>/dev/null \
+        | tr ';,' '\n' | grep -c '[0-9]')
+    total=$((total + c))
+  done
+  echo "$total"
+}
+if [ -z "$NUM_WORKERS" ]; then
+  NUM_WORKERS=$(derive_workers)
+  if ! [ "$NUM_WORKERS" -ge 1 ] 2>/dev/null; then
+    say "WARN: could not derive worker count (slice not up yet?); defaulting to 1"
+    NUM_WORKERS=1
+  fi
+  say "derived NUM_WORKERS=$NUM_WORKERS from $NODE_COUNT slice(s)"
+fi
+
+# ── --probe-only: metric-name drift gate for a new TPU generation, then exit ──
+if [ "$PROBE_ONLY" = "1" ]; then
+  say "PROBE: scripts/tpu_metric_probe.py on worker 0 (does this gen serve the same"
+  say "       libtpu metric names the collector classifies by?)"
+  ssh_worker0 "cd $REPO_DIR && PYTHONPATH=$REPO_DIR python3 scripts/tpu_metric_probe.py --hold 20" \
+    2>&1 | tee -a "$MASTER"
+  say "PROBE done -- compare served names vs collect_tpu_telemetry.py _GRPC_METRICS"
+  say "       (libtpu 0.0.17 baseline). A drift means re-pin requirements_tpu.txt."
+  exit 0
+fi
 
 # ── G1 gate: math must be right before any TPU time is spent ─────────────────
 say "G1: CPU gradient self-test on worker 0"

@@ -23,7 +23,7 @@ set -uo pipefail
 # ── Configuration (override via env) ─────────────────────────────────────────
 PROJECT=${PROJECT:-focus-surfer-494820-g0}
 ZONE=${ZONE:-us-east1-d}                 # v6e-16 verified live here (plan section on GCP)
-ACCEL=${ACCEL:-v6e-16}                    # v6e-16 = 4 hosts x 4 chips
+ACCEL=${ACCEL:-v6e-16}                    # v6e = 8 chips/host => v6e-16 = 2 hosts (NOT 4)
 RUNTIME=${RUNTIME:-v2-alpha-tpuv6e}
 TPU_NAME=${TPU_NAME:-spar-tpu-16}
 QR_NAME=${QR_NAME:-${TPU_NAME}-qr}        # queued-resource id

@@ -7,12 +7,19 @@ label grammar from the plan (section 2.2):
       scope in {tpuT1, tpuT4, tpuT8, tpuT16, tpuTMS}
       class in {train, infershard, inferrep, other, idle}
 
-The SCOPE encodes the slice size (tpuT4 = v6e-4 / 1 host, tpuT8 = v6e-8 / 2
-hosts, tpuT16 = v6e-16 / 4 hosts). The workload COMMAND is the same across
-scopes -- the cell reads jax.devices(), which reflects whatever slice it was
-provisioned on, and `--multihost auto` brings up the cross-host cluster only
-when the slice spans >1 host. So one command definition serves the whole ladder;
-the scope in the label (and the slice the queue targets) is what varies.
+The SCOPE encodes the slice size. v6e is 8 CHIPS/HOST (official docs: v6e-8 is a
+full single host -- the older "4 chips/host, v6e-16 = 4 hosts" note was an untested
+assumption; the earlier v6e-16 Spot slices were preempted before a cell ever ran):
+    tpuT4  = v6e-4  = 4 chips,  1 host
+    tpuT8  = v6e-8  = 8 chips,  1 host (FULL single host)
+    tpuT16 = v6e-16 = 16 chips, 2 hosts   (cross-host ICI; DCN still dark on 1 slice)
+    tpuTMS = 2x v6e-8 multislice = 16 chips, 2 slices (cross-slice DCN FIRES)
+The workload COMMAND is the same across scopes -- the cell reads jax.devices(),
+which reflects whatever slice it was provisioned on, and `--multihost auto` brings up
+the cross-host cluster when the slice spans >1 host (and the cross-SLICE mesh on the
+multislice group). So one command serves the whole ladder; the scope label (and the
+slice the queue targets) is what varies. single->multi-HOST boundary = T8->T16;
+single->multi-SLICE (DCN) boundary = T16->TMS.
 
 Routing check (threeway_improved.threeway_label, zero taxonomy edits):
     *_train_*      -> ml_training   ("train" keyword)
@@ -205,6 +212,38 @@ _add("tpuT16_nonml_duty50_fft", _nonml_cmd(alloc=8.0, duty=0.5, kernel="fft"),
 _add("tpuT16_nonml_himem", _nonml_cmd(alloc=_ALLOC_HIMEM, duty=1.0),
      "Honest non-ML on tpuT16 at training-scale HBM footprint, no model "
      "(GPU: refuted 'memory is the tell' at 18.6 GB -> p_train 0.069)", _TO_OTHER)
+
+
+# ── tpuTMS (2x v6e-8 multislice): the ONLY scope that populates the DCN channel ──
+# megascale.collective_end_to_end_latencies (-> dcn_collective_lat_us_*) accumulates
+# ONLY across separate slices, never within one (within a slice, collectives ride
+# ICI and megascale.* answers UNAVAILABLE). This is the headline "signal NVIDIA
+# lacks" rung. Commands are scope-agnostic; the queue provisions NODE_COUNT=2 x
+# v6e-8 and forms ONE 16-chip cross-slice mesh. Only the decisive Tier-1 subset is
+# registered here -- the multislice rental is the priciest, so no full 7b ladder.
+_add("tpuTMS_advtrain_satint_f50", _mni_cmd(0.5),
+     "MN-I F=0.5 on 2x v6e-8 multislice -- the claim, WITH the DCN channel live", _TO_ADV)
+_add("tpuTMS_advtrain_satint_f20", _mni_cmd(0.2),
+     "MN-I F=0.2 on multislice (0% on GPU; does DCN make it visible?)", _TO_ADV)
+_add("tpuTMS_advtrain_satint_f05", _mni_cmd(0.05),
+     "MN-I F=0.05 on multislice (0% on GPU; hardest disguise vs the DCN channel)", _TO_ADV)
+_add("tpuTMS_advtrain_satfiller_only", _mni_cmd(0.0),
+     "MN-I F=0 on multislice: zero training, saturating filler (evades on GPU)", _TO_ADV)
+_add("tpuTMS_nonml_sat", _nonml_cmd(alloc=_ALLOC_MATCHED, duty=1.0),
+     "Honest non-ML on multislice, footprint-matched -- the apparatus test", _TO_OTHER)
+_add("tpuTMS_nonml_comm", _nonml_cmd(mode="comm"),
+     "Honest non-ML on multislice: slot-bounded cross-SLICE collectives -- the DCN "
+     "probe with no NVIDIA counterpart (collectives DO cross DCN at this scope)", _TO_OTHER)
+_add("tpuTMS_nonml_duty30", _nonml_cmd(alloc=2.0, duty=0.3),
+     "Honest non-ML on multislice at 30% duty (GPU: false-alarmed harder than F=0.05)", _TO_OTHER)
+_add("tpuTMS_nonml_duty50_hash", _nonml_cmd(alloc=8.0, duty=0.5, kernel="hash"),
+     "Honest non-ML on multislice, 50% duty, memory-bound kernel (GPU: worst FP)", _TO_OTHER)
+_add("tpuTMS_train_fsdp1b", _train_cmd("1b"),
+     "1B training on 2x v6e-8 multislice (honest reference; cross-slice gradient collectives)", _TO_TRAIN)
+_add("tpuTMS_inferrep_1b", _infer_cmd("1b", "replicated"),
+     "1B replicated serving on multislice (no cross-slice sync -- clean negative)", _TO_INFER)
+_add("tpuTMS_infershard_1b", _infer_cmd("1b", "tp"),
+     "1B sharded serving across the multislice mesh (cross-slice activation psums)", _TO_INFER)
 
 
 def get_tpu_workload(label: str) -> dict:
