@@ -220,6 +220,8 @@ def main():
     # budget is then known up front and no collective is needed to agree on it.
     n_budget = None
     _ref_step = _ref_t = None
+    _b2_step = _b2_t = None      # steady-state reference, set when the budget is fixed
+    _rebudgeted = False
     if args.train_frac <= 0.0:
         n_budget = max(1, int(args.duration / max(args.slot_sec, 1e-3)))
         if pidx == 0:
@@ -260,9 +262,33 @@ def main():
                 n_budget = T.agreed_step_budget(
                     step - _ref_step, time.time() - _ref_t,
                     args.duration - (time.time() - t0), step)
+                _b2_step, _b2_t = step, time.time()
                 if pidx == 0:
                     print(f"  step budget agreed at step {step}: {n_budget} "
                           f"(F={args.train_frac})", flush=True)
+
+            # ONE steady-state correction. The first budget is fixed only a few
+            # train steps in, and at F>0 that early window still contains the
+            # FILLER's first compile as well as the train step's, so the measured
+            # rate is far too slow and the budget far too short: f50_rep2 agreed
+            # 101 steps at step 7 and finished in 268 s of a requested 600 s, at a
+            # true steady-state rate of ~2.2 s/step (600 s needs ~270 steps). The
+            # realised fraction suffers too -- 0.4455 against a requested 0.5,
+            # since it converges only with step count. Re-agreeing once at 40% of
+            # the duration, from the rate observed since the budget was fixed,
+            # costs one broadcast in a cell that already runs gradient collectives
+            # every train step. F=0 never reaches here: its budget is exact.
+            if (n_budget is not None and not _rebudgeted and _b2_t is not None
+                    and step > _b2_step + 20
+                    and time.time() - t0 >= 0.4 * args.duration):
+                n_budget = T.agreed_step_budget(
+                    step - _b2_step, time.time() - _b2_t,
+                    args.duration - (time.time() - t0), step)
+                _rebudgeted = True
+                if pidx == 0:
+                    print(f"  step budget re-agreed at step {step}: {n_budget} "
+                          f"({(time.time()-_b2_t)/max(step-_b2_step,1):.2f}s/step "
+                          f"steady state)", flush=True)
 
             if pidx == 0 and step % 20 == 0:
                 el = time.time() - t0
