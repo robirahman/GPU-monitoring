@@ -209,6 +209,28 @@ def main():
     # timing, memory or collective behaviour -- i.e. no telemetry feature -- while
     # per-process seeding would need make_array_from_process_local_data and a
     # batch-sharded spec, which is a different experiment.
+    def _chip_used_mb():
+        """MB in use on this host's first chip, from the runtime allocator.
+
+        Printed so the honest matched control can be targeted in the SAME units
+        it measures. The control closes its loop on
+        memory_stats()['bytes_in_use'], while the footprint target was taken from
+        the collector's mem_used_mb -- and the two differ by roughly 900 MB of
+        runtime overhead on a v6e. Matching across that gap by arithmetic is
+        guesswork: nonml_sat_rep3 filled to bytes_in_use=5120 and the collector
+        then reported 6464 against a 5196 target. So both cells now report the
+        allocator's own number, and the control is targeted on the disguise
+        cell's reading rather than on a converted one.
+        """
+        try:
+            ms = jax.local_devices()[0].memory_stats() or {}
+            return float(ms.get("bytes_in_use", 0)) / (1 << 20)
+        except Exception:
+            return float("nan")
+
+    if pidx == 0:
+        print(f"  MEM_BYTES_IN_USE_START={_chip_used_mb():.0f} MB/chip", flush=True)
+
     data_key = jax.random.PRNGKey(1000)
     t0 = time.time()
     step = train_steps = filler_steps = filler_iters = 0
@@ -226,6 +248,7 @@ def main():
         n_budget = max(1, int(args.duration / max(args.slot_sec, 1e-3)))
         if pidx == 0:
             print(f"  step budget (F=0, no collectives): {n_budget}", flush=True)
+    _reported_steady = False
     with mesh:
         while True:
             if n_budget is not None:
@@ -266,6 +289,10 @@ def main():
                 if pidx == 0:
                     print(f"  step budget agreed at step {step}: {n_budget} "
                           f"(F={args.train_frac})", flush=True)
+                    # Post-first-train-step, so this includes the training
+                    # workspace -- the figure the 16 GB control must match.
+                    print(f"  MEM_BYTES_IN_USE_STEADY={_chip_used_mb():.0f} MB/chip",
+                          flush=True)
 
             # ONE steady-state correction. The first budget is fixed only a few
             # train steps in, and at F>0 that early window still contains the
@@ -289,6 +316,13 @@ def main():
                     print(f"  step budget re-agreed at step {step}: {n_budget} "
                           f"({(time.time()-_b2_t)/max(step-_b2_step,1):.2f}s/step "
                           f"steady state)", flush=True)
+
+            # F=0 skips the budget block entirely, so report the steady-state
+            # footprint here as well -- it is the target for nonml_sat.
+            if pidx == 0 and not _reported_steady and step >= 30:
+                _reported_steady = True
+                print(f"  MEM_BYTES_IN_USE_STEADY={_chip_used_mb():.0f} MB/chip",
+                      flush=True)
 
             if pidx == 0 and step % 20 == 0:
                 el = time.time() - t0

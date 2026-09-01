@@ -178,47 +178,7 @@ def main():
             return float("nan")
 
     dummy = []
-    # ── Closed-loop footprint match ──────────────────────────────────────────
-    # An open-loop `--alloc-gb` CANNOT match a measured footprint, because the
-    # dummy is sharded across the mesh while mem_used_mb is per-chip, and the
-    # non-alloc baseline is not a constant either. Measured 2026-09-01 on 2x
-    # v6e-1: nonml_sat asked for 3.65 GB, realised 3.0 GB globally = 1.5 GB/chip,
-    # and reported mem_used_mb 2880 against the F=0 cell's 5196 -- 45% short, on a
-    # cell whose ONLY job is to hold the same footprint as that cell. Worse, the
-    # two available data points imply different baselines (1344 vs 2480 MB/chip),
-    # so no better constant would fix it.
-    #
-    # So close the loop on the measurement: add per-LOCAL-DEVICE chunks until the
-    # allocator reports the target. Allocated straight onto each device with a
-    # SingleDeviceSharding (never jnp.zeros-then-copy, which would double the
-    # peak), and no collective is involved, so hosts that need a different number
-    # of chunks cannot deadlock each other.
-    if args.match_mem_mb > 0:
-        devs = jax.local_devices()
-        n_el = max(1, int(args.match_chunk_mb * (1 << 20) / 4))
-        chunks = 0
-        start_mb = _chip_used_mb()
-        while chunks < 4096:
-            used = _chip_used_mb()
-            if not (used == used) or used >= args.match_mem_mb - args.match_tol_mb:
-                break
-            try:
-                for dv in devs:
-                    z = jax.jit(lambda: jnp.zeros((n_el,), jnp.float32),
-                                out_shardings=jax.sharding.SingleDeviceSharding(dv))()
-                    jax.block_until_ready(z)
-                    dummy.append(z)
-                chunks += 1
-            except Exception as e:
-                print(f"  match stopped at {used:.0f}MB/chip: {type(e).__name__}",
-                      flush=True)
-                break
-        if pidx == 0:
-            print(f"  MEM_MATCH target={args.match_mem_mb:.0f} "
-                  f"realised={_chip_used_mb():.0f} MB/chip "
-                  f"(baseline {start_mb:.0f}, {chunks} x {args.match_chunk_mb:.0f}MB)",
-                  flush=True)
-    elif args.alloc_gb > 0:
+    if args.alloc_gb > 0:
         chunk_gb = min(args.alloc_chunk_gb, args.alloc_gb)
         want = int(args.alloc_gb * (1 << 30))
         per = max(n_dev * 4, int(chunk_gb * (1 << 30)))
@@ -271,6 +231,54 @@ def main():
             s = jax.lax.with_sharding_constraint(x.sum(axis=0), NS(mesh, P()))
             return jax.lax.with_sharding_constraint(x + s * 0.0, row_shard)
         allreduce = _ar
+
+    # Ordered AFTER the filler and comm buffer are resident, which is the whole
+    # point: when this ran first, it filled to the target and the filler then
+    # added ~1.3 GB on top -- nonml_sat_rep3 logged
+    #   MEM_MATCH target=5196 realised=5120 MB/chip (baseline 0, 20 x 256MB)
+    # and the collector reported 6464 MB against a 5196 MB target, overshooting by
+    # 24% where the open-loop version had undershot by 45%. `baseline 0` was the
+    # tell. Topping up LAST makes the match hold whatever else the cell allocates.
+    # ── Closed-loop footprint match ──────────────────────────────────────────
+    # An open-loop `--alloc-gb` CANNOT match a measured footprint, because the
+    # dummy is sharded across the mesh while mem_used_mb is per-chip, and the
+    # non-alloc baseline is not a constant either. Measured 2026-09-01 on 2x
+    # v6e-1: nonml_sat asked for 3.65 GB, realised 3.0 GB globally = 1.5 GB/chip,
+    # and reported mem_used_mb 2880 against the F=0 cell's 5196 -- 45% short, on a
+    # cell whose ONLY job is to hold the same footprint as that cell. Worse, the
+    # two available data points imply different baselines (1344 vs 2480 MB/chip),
+    # so no better constant would fix it.
+    #
+    # So close the loop on the measurement: add per-LOCAL-DEVICE chunks until the
+    # allocator reports the target. Allocated straight onto each device with a
+    # SingleDeviceSharding (never jnp.zeros-then-copy, which would double the
+    # peak), and no collective is involved, so hosts that need a different number
+    # of chunks cannot deadlock each other.
+    if args.match_mem_mb > 0:
+        devs = jax.local_devices()
+        n_el = max(1, int(args.match_chunk_mb * (1 << 20) / 4))
+        chunks = 0
+        start_mb = _chip_used_mb()
+        while chunks < 4096:
+            used = _chip_used_mb()
+            if not (used == used) or used >= args.match_mem_mb - args.match_tol_mb:
+                break
+            try:
+                for dv in devs:
+                    z = jax.jit(lambda: jnp.zeros((n_el,), jnp.float32),
+                                out_shardings=jax.sharding.SingleDeviceSharding(dv))()
+                    jax.block_until_ready(z)
+                    dummy.append(z)
+                chunks += 1
+            except Exception as e:
+                print(f"  match stopped at {used:.0f}MB/chip: {type(e).__name__}",
+                      flush=True)
+                break
+        if pidx == 0:
+            print(f"  MEM_MATCH target={args.match_mem_mb:.0f} "
+                  f"realised={_chip_used_mb():.0f} MB/chip "
+                  f"(baseline {start_mb:.0f}, {chunks} x {args.match_chunk_mb:.0f}MB)",
+                  flush=True)
 
     t0 = time.time()
     slot = iters = collectives = 0
