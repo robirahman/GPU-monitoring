@@ -170,6 +170,36 @@ _TO_ADV = 1500
 # is why every nonml_sat cell died in ~55 s instead of controlling anything.
 # Re-derive this per scope from the F=0 parquet; do not carry it across shapes.
 _ALLOC_MATCHED = 3.65
+
+# ...and a SECOND matched control, because F=0 turns out not to be the F->0 limit.
+# Measured on the same 2x v6e-1 multislice, 2026-09-01, mem_used_mb over the run:
+#     F=0   (satfiller_only):  ramps to 5196 MB and stays there
+#     F=0.2 (both slices):     5.2 GB until t=124s, then JUMPS to 16495 MB
+#     F=0.5:                   same jump to 16495 MB at t=126s
+# The jump is the first train step compiling: activations, gradients and the
+# optimizer moments get materialised and stay resident for the rest of the run.
+# It is independent of F (0.2 and 0.5 both land on exactly 16495 MB), because it
+# is a one-off workspace allocation rather than anything per-step.
+#
+# Consequence for the experiment. A disguised-training run at ANY F>0 holds 16.5
+# GB; the filler-only cell holds 5.2 GB. So mem_used_mb alone separates the
+# disguise from filler-only by 3.2x -- and on TPU, where power/clocks/temperature
+# do not exist, mem_used_mb is one of the few live LEVEL channels. A control
+# matched to the F=0 footprint (3.65 GB of dummy) is therefore NOT a matched
+# control for the headline F=0.5 comparison: memory alone would separate them, and
+# any "detection" would be reading footprint rather than training dynamics --
+# exactly the confound a matched control exists to remove.
+#
+# So there are two honest partners, one per contrast:
+#   nonml_sat        3.65 GB  -> matches F=0  (total ~5196 MB)
+#   nonml_sat_16g    14.69 GB -> matches F>0  (total ~16495 MB)
+#
+# NAMING: this cell may NOT be called nonml_sat_train. threeway_label() routes on
+# the substring "train", so `tpuTMS_nonml_sat_train` labels an HONEST non-ML
+# control as ml_training -- verified, it returns exactly that. The label grammar
+# is keyword-based and silently wins over intent.
+# using the same ~1456 MB non-alloc baseline measured from duty30.
+_ALLOC_MATCHED_TRAIN = 14.69
 _ALLOC_HIMEM = 48.0
 
 
@@ -240,7 +270,12 @@ _add("tpuTMS_advtrain_satint_f05", _mni_cmd(0.05),
 _add("tpuTMS_advtrain_satfiller_only", _mni_cmd(0.0),
      "MN-I F=0 on multislice: zero training, saturating filler (evades on GPU)", _TO_ADV)
 _add("tpuTMS_nonml_sat", _nonml_cmd(alloc=_ALLOC_MATCHED, duty=1.0),
-     "Honest non-ML on multislice, footprint-matched -- the apparatus test", _TO_OTHER)
+     "Honest non-ML on multislice, footprint-matched to F=0 -- the apparatus test",
+     _TO_OTHER)
+_add("tpuTMS_nonml_sat_16g", _nonml_cmd(alloc=_ALLOC_MATCHED_TRAIN, duty=1.0),
+     "Honest non-ML on multislice, footprint-matched to a TRAINING run (16.5GB) -- "
+     "without this, mem_used_mb alone separates the F>0 disguise from its control",
+     _TO_OTHER)
 _add("tpuTMS_nonml_comm", _nonml_cmd(mode="comm"),
      "Honest non-ML on multislice: slot-bounded cross-SLICE collectives -- the DCN "
      "probe with no NVIDIA counterpart (collectives DO cross DCN at this scope)", _TO_OTHER)

@@ -69,6 +69,61 @@ Matching 5196 MB needs 5196 - 1456 = 3740 MB = **3.65 GB**. The old value was
 2.3x the real footprint *and* large enough to OOM a 32 GB chip, so every
 `nonml_sat` cell died in ~55 s and controlled nothing. Re-derive per scope.
 
+## 3b. F=0 is not the F->0 limit: the disguise carries a 3.2x memory tell
+
+Measured from `mem_used_mb` over whole runs on the 2x v6e-1 slice:
+
+| cell | footprint | when |
+|---|---|---|
+| F=0 (`satfiller_only`) | ramps to **5196 MB**, stays | from startup |
+| F=0.2 (both slices) | 5.2 GB until t=124s, then **16495 MB** | jump at first train step |
+| F=0.5 | same jump to **16495 MB** | t=126s |
+
+The jump is the first train step compiling: activations, gradients and the
+optimizer moments are materialised and stay resident. It is **independent of F** --
+0.2 and 0.5 both land on exactly 16495 MB -- because it is a one-off workspace
+allocation, not anything per-step.
+
+This matters more than it first looks. A disguised-training run at *any* F>0
+holds 16.5 GB while the filler-only cell holds 5.2 GB, and on TPU -- where power,
+clocks and temperature do not exist -- `mem_used_mb` is one of the few live
+**level** channels. Two consequences:
+
+1. **The F=0 cell is not the limit of the MN-I ladder.** It is a structurally
+   different workload: it never allocates the training workspace at all. The
+   footprint is discontinuous at F -> 0, so F=0 cannot be read as "MN-I with the
+   training turned down to zero".
+2. **One matched control is not enough.** `_ALLOC_MATCHED = 3.65 GB` matches F=0
+   (total ~5196 MB) and is the right partner for the apparatus test. It is the
+   WRONG partner for the headline F=0.5 comparison: memory alone would separate
+   disguise from control by 3.2x, and any detection would be reading footprint
+   rather than training dynamics -- precisely the confound a matched control
+   exists to remove. So a second control, `nonml_sat_16g` at 14.69 GB of dummy
+   (+~1456 MB baseline = ~16.5 GB), is now registered for every multislice rung.
+
+**Naming hazard, hit while adding it:** the cell may not be called
+`nonml_sat_train`. `threeway_label()` routes on the substring `train`, so
+`tpuTMS_nonml_sat_train` labels an HONEST non-ML control as `ml_training` --
+verified, it returns exactly that. The keyword grammar silently wins over intent,
+so any new honest cell must be checked through `threeway_label` before it runs.
+
+## 3c. What the failed cells still contain
+
+`FAIL` is a verdict on the cell's exit status, not on its telemetry:
+
+| cell | rows / span | usable? |
+|---|---|---|
+| F=0.2 rep1 w0 | 1284 / 1283s | **partly** -- real interleave at util 100% from t=124s to ~700s, then idle padding while it hung |
+| F=0.2 rep1 w1000 | 683 / 682s | **mostly** -- busy throughout |
+| F=0.5 rep1 w0 | 475 / 474s | **no** -- util ~0 the whole time: the crash hit at the first train step, so the run is compile then hang |
+| `nonml_comm` reps 1-3 | full 600s | **yes** -- all 1078 slots ran; only the exit hung |
+| `nonml_duty30` reps 1-3 | full 600s | **yes** |
+| `satfiller_only` reps 1-3 | full 600s | **yes** |
+
+The idle tail is a hang artifact and must be trimmed, not averaged in: it drags
+`gpu_utilization_pct` median from 100 to 0 on the w0 stream. Any salvage pass has
+to cut at the last STEP line in the worker log, not at the end of the parquet.
+
 ## 4. Eight defects, and why they were invisible until now
 
 The first four are plumbing; the last four would have corrupted results.
