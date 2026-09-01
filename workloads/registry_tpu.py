@@ -256,6 +256,36 @@ _add("tpuTMS_infershard_1b", _infer_cmd("1b", "tp"),
      "1B sharded serving across the multislice mesh (cross-slice activation psums)", _TO_INFER)
 
 
+# ── Multislice LADDER built from 1-CHIP slices ────────────────────────────────
+# Capacity, not preference, dictates this. Across a week of parking, GCP has
+# granted v6e-1 freely (13 times) and a 2x v6e-1 multislice three times, while
+# v6e-8, 2x v6e-8, v5litepod-8, v5litepod-16 and 2x v5litepod-1 have NEVER once
+# reached ACTIVE -- the t8 driver log reads "none provisioned". A scale ladder
+# assembled from host-sized slices is therefore not obtainable, but one assembled
+# from 1-chip slices is: N x v6e-1 gives N chips AND puts every collective on DCN,
+# which is the channel the whole TPU rung exists to test.
+#
+# So the rungs are slice COUNTS, not slice sizes: tpuTMS (2) -> tpuTMS4 (4) ->
+# tpuTMS8 (8). The commands are already scope-agnostic -- each cell reads
+# jax.devices() and `--multihost auto` forms the cross-slice mesh -- so the rungs
+# differ only in what the queue provisions.
+#
+# NOTE on the label: the header above describes tpuTMS as "2x v6e-8 = 16 chips".
+# That was the intent and has never been what ran; every tpuTMS cell to date
+# executed on 2x v6e-1 = 2 chips. Do NOT infer chip count from the scope name in
+# analysis -- read it from the telemetry (distinct gpu_uuid per chip) or from
+# mem_total_mb. The scope name is a slice-count grouping key, nothing more.
+_MS_LADDER = {"tpuTMS4": 4, "tpuTMS8": 8}
+for _nm, _ns in _MS_LADDER.items():
+    for _k in [k for k in list(WORKLOAD_REGISTRY_TPU) if k.startswith("tpuTMS_")]:
+        _e = WORKLOAD_REGISTRY_TPU[_k]
+        WORKLOAD_REGISTRY_TPU[_k.replace("tpuTMS_", _nm + "_", 1)] = {
+            "command": list(_e["command"]),
+            "description": f"{_e['description']} [{_ns} slices]",
+            "default_timeout": _e["default_timeout"],
+        }
+
+
 def get_tpu_workload(label: str) -> dict:
     """Look up a TPU workload by label. Raises ValueError if not found."""
     if label not in WORKLOAD_REGISTRY_TPU:

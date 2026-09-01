@@ -176,6 +176,22 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
                   + (run_start / bucket_sec).round().astype("int64").astype(str))
     df["job_id"] = np.where(streams_per_run > 1, df["run_id"].astype(str), legacy_job)
 
+    # A shared run_id does NOT always mean a shared JOB. multinode_queue.sh derives
+    # the run_id from (stamp, cell, rep) with no node component, so on a
+    # SINGLE-NODE cell (s1_/s8_) each node runs its own independent execution while
+    # both carry the same run_id. Grouping those as one job splices two unrelated
+    # executions together: an s8 "job" becomes 16 streams spanning two hosts, an s1
+    # "job" becomes 2 streams (which is why check_job_grouping reported zero
+    # single-GPU training jobs). The cross-rank features would then correlate
+    # genuinely-coupled ranks against unrelated ones, diluting the s8 signal and
+    # biasing DeltaAUC(s8-s1) down / DeltaAUC(s16-s8) up -- flattering the
+    # hypothesis. Scope tells us the truth: s1/s8 are per-node by construction,
+    # s16 (and the TPU tpuT* cells) genuinely span hosts.
+    _per_node_scope = df["workload_label"].map(lambda l: _scope_of(l) in ("s1", "s8"))
+    df["job_id"] = np.where(_per_node_scope,
+                            df["job_id"].astype(str) + "|" + df["node_id"].astype(str),
+                            df["job_id"].astype(str))
+
     # Ordinal rank within a job: a stable distinct integer per stream. Ranks of
     # a distributed job start simultaneously, so ordering by start time would
     # tie them all together -- order by stream_id instead.
@@ -372,7 +388,11 @@ def sliding_windows_multinode(
     return pd.DataFrame(rows) if rows else pd.DataFrame()
 
 
-_SCOPE_RE = re.compile(r"^(s1|s8|s16|tpuT\d+|tpuTMS)_", re.IGNORECASE)
+# tpuTMS\d* covers the multislice ladder rungs (tpuTMS = 2 slices, tpuTMS4,
+# tpuTMS8). Without the \d* the 4- and 8-slice cells match nothing here and are
+# dropped from the multinode features silently, which is the same failure mode
+# that once discarded "Google TPU v6e" rows without a count.
+_SCOPE_RE = re.compile(r"^(s1|s8|s16|tpuT\d+|tpuTMS\d*)_", re.IGNORECASE)
 
 
 def _scope_of(label: str) -> str:

@@ -43,20 +43,41 @@ MAX_HOURS=${MAX_HOURS:-24}
 PER_RUN_CAP_SEC=${PER_RUN_CAP_SEC:-21600}   # 6h hard cap on any one billed slice
 LOCKDIR=${LOCKDIR:-/tmp/spar_locks}; mkdir -p "$LOCKDIR"
 MYLOCK="$LOCKDIR/camp.$SESSION.$$"; echo "$$" > "$MYLOCK"
-ZONES=${ZONES:-"us-east5-a us-east5-b europe-west4-a us-central1-a"}
+# Widened after every host-sized request in four zones went ungranted for a
+# week. Parking is free until a request provisions, so the only cost of more
+# zones is the release loop having more to sweep. v5litepod is not offered in
+# several of these; those creates just fail and are counted as unparked.
+ZONES=${ZONES:-"us-east5-a us-east5-b us-east1-d us-south1-a europe-west4-a europe-west4-b us-central1-a asia-northeast1-b"}
 say(){ echo "[$(date -u +%H:%M:%SZ)] $*"; }
 cleanup(){ rm -f "$MYLOCK" 2>/dev/null||true; }
 trap cleanup EXIT
 
 # target: key|accel|node_count|runtime|scope
+#
+# ORDER MATTERS: find_active() claims the FIRST ACTIVE target it finds, so the
+# rare shapes must come first. Listed commonest-first (as it was), an easily
+# granted v6e-1 group is claimed every cycle and a v6e-16 that happened to be
+# ACTIVE at the same moment gets released unused.
+#
+# What capacity has actually granted, over a week of parking: v6e-1 freely (13x),
+# 2x v6e-1 multislice 3x, v6e-16 once (2026-08-26). NEVER ACTIVE: v6e-8, 2x
+# v6e-8, v5litepod-8, v5litepod-16, 2x v5litepod-1. Hence ms4/ms8x1 -- a scale
+# ladder built from the 1-chip slices that DO provision, which also puts every
+# collective on DCN. They are last because they are the fallback, not the prize.
+#
+# Note two targets can share a scope (ms1 and ms8 are both 2 slices, differing in
+# chips per slice). Their GCS prefixes differ by key, and chip count must be read
+# from the telemetry rather than the scope label -- see registry_tpu.py.
 TARGETS=(
-  "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
-  "t8|v6e-8|1|v2-alpha-tpuv6e|tpuT8"
   "t16|v6e-16|1|v2-alpha-tpuv6e|tpuT16"
   "ms8|v6e-8|2|v2-alpha-tpuv6e|tpuTMS"
-  "v5t8|v5litepod-8|1|v2-alpha-tpuv5-lite|tpuT8"
+  "t8|v6e-8|1|v2-alpha-tpuv6e|tpuT8"
   "v5t16|v5litepod-16|1|v2-alpha-tpuv5-lite|tpuT16"
+  "v5t8|v5litepod-8|1|v2-alpha-tpuv5-lite|tpuT8"
   "v5ms|v5litepod-1|2|v2-alpha-tpuv5-lite|tpuTMS"
+  "ms8x1|v6e-1|8|v2-alpha-tpuv6e|tpuTMS8"
+  "ms4|v6e-1|4|v2-alpha-tpuv6e|tpuTMS4"
+  "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
 )
 
 collected(){ gcloud storage ls "${DONEDIR}/$1.done" --project=$PROJECT >/dev/null 2>&1; }
