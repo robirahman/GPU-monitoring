@@ -42,6 +42,7 @@ CPU gate (no TPU, $0):
 import argparse
 import os
 import sys
+import threading
 import time
 
 try:
@@ -147,7 +148,8 @@ def main():
 
     import jax
 
-    if _detect_multihost(args.multihost):
+    _mh = _detect_multihost(args.multihost)
+    if _mh:
         try:
             jax.distributed.initialize()
         except Exception as e:
@@ -246,6 +248,19 @@ def main():
               f"realised_frac={train_steps/max(step,1):.4f} "
               f"useful_tokens={useful} wall_s={wall:.1f} "
               f"chips={n_dev} hosts={n_host} seed={seed}")
+
+    # Same bounded teardown as tpu_nonml_distributed: a multislice process that
+    # has run collectives can block at interpreter exit, and the cell then burns
+    # billed time until its timeout fires instead of returning OK. Flush first,
+    # give an orderly shutdown 20 s, then leave hard -- the collector is a
+    # separate process.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    if _mh:
+        _t = threading.Thread(target=jax.distributed.shutdown, daemon=True)
+        _t.start()
+        _t.join(20)
+    os._exit(0)
 
 
 if __name__ == "__main__":

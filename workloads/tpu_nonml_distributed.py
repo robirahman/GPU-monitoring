@@ -39,6 +39,7 @@ CPU gate (no TPU, $0):
 import argparse
 import os
 import sys
+import threading
 import time
 
 try:
@@ -132,7 +133,8 @@ def main():
     import jax
     import jax.numpy as jnp
 
-    if _detect_multihost(args.multihost):
+    _mh = _detect_multihost(args.multihost)
+    if _mh:
         try:
             jax.distributed.initialize()
         except Exception as e:
@@ -246,6 +248,22 @@ def main():
               f"kernel={args.filler_mode}")
     del dummy
 
+    # Multislice teardown can hang, and it costs a whole cell when it does:
+    # tpuTMS_nonml_comm ran its full 600 s (1078 psum slots, last STEP ~19:00Z),
+    # then sat idle until the 1000 s cell timeout killed it at 19:12:49Z -- rc=1
+    # for a cell whose science had completed, on all three reps. Once a collective
+    # has been in flight, jax.distributed's coordinator connection can block at
+    # interpreter exit, and with two slices whichever process leaves first strands
+    # the other. So: flush, ask for an orderly shutdown with a bounded wait, then
+    # leave hard. The telemetry collector is a separate process, so exiting this
+    # way loses nothing we own.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    if _mh:
+        _t = threading.Thread(target=jax.distributed.shutdown, daemon=True)
+        _t.start()
+        _t.join(20)
+    os._exit(0)
 
 if __name__ == "__main__":
     main()
