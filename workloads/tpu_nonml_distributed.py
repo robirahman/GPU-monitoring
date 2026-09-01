@@ -109,6 +109,13 @@ def main():
     ap.add_argument("--duration", type=int, default=600)
     ap.add_argument("--alloc-gb", type=float, default=0.0,
                     help="resident dummy allocation, the model-footprint analogue")
+    ap.add_argument("--match-mem-mb", type=float, default=0.0,
+                    help="CLOSED-LOOP footprint match: allocate until this chip "
+                         "reports this many MB in use. Overrides --alloc-gb. Use "
+                         "this for any cell whose purpose is to match another "
+                         "cell's measured footprint.")
+    ap.add_argument("--match-chunk-mb", type=float, default=256.0)
+    ap.add_argument("--match-tol-mb", type=float, default=128.0)
     ap.add_argument("--alloc-chunk-gb", type=float, default=1.0,
                     help="allocate the dummy in chunks this large; a single huge "
                          "buffer hits the TPU allocator's bottom-of-memory limit")
@@ -162,8 +169,56 @@ def main():
     # report what was actually realised -- a matched-footprint control that
     # silently allocated less than asked would quietly break the pairing that the
     # apparatus retraction depends on.
+    def _chip_used_mb():
+        """MB in use on this host's first chip, from the runtime allocator."""
+        try:
+            ms = jax.local_devices()[0].memory_stats() or {}
+            return float(ms.get("bytes_in_use", 0)) / (1 << 20)
+        except Exception:
+            return float("nan")
+
     dummy = []
-    if args.alloc_gb > 0:
+    # ── Closed-loop footprint match ──────────────────────────────────────────
+    # An open-loop `--alloc-gb` CANNOT match a measured footprint, because the
+    # dummy is sharded across the mesh while mem_used_mb is per-chip, and the
+    # non-alloc baseline is not a constant either. Measured 2026-09-01 on 2x
+    # v6e-1: nonml_sat asked for 3.65 GB, realised 3.0 GB globally = 1.5 GB/chip,
+    # and reported mem_used_mb 2880 against the F=0 cell's 5196 -- 45% short, on a
+    # cell whose ONLY job is to hold the same footprint as that cell. Worse, the
+    # two available data points imply different baselines (1344 vs 2480 MB/chip),
+    # so no better constant would fix it.
+    #
+    # So close the loop on the measurement: add per-LOCAL-DEVICE chunks until the
+    # allocator reports the target. Allocated straight onto each device with a
+    # SingleDeviceSharding (never jnp.zeros-then-copy, which would double the
+    # peak), and no collective is involved, so hosts that need a different number
+    # of chunks cannot deadlock each other.
+    if args.match_mem_mb > 0:
+        devs = jax.local_devices()
+        n_el = max(1, int(args.match_chunk_mb * (1 << 20) / 4))
+        chunks = 0
+        start_mb = _chip_used_mb()
+        while chunks < 4096:
+            used = _chip_used_mb()
+            if not (used == used) or used >= args.match_mem_mb - args.match_tol_mb:
+                break
+            try:
+                for dv in devs:
+                    z = jax.jit(lambda: jnp.zeros((n_el,), jnp.float32),
+                                out_shardings=jax.sharding.SingleDeviceSharding(dv))()
+                    jax.block_until_ready(z)
+                    dummy.append(z)
+                chunks += 1
+            except Exception as e:
+                print(f"  match stopped at {used:.0f}MB/chip: {type(e).__name__}",
+                      flush=True)
+                break
+        if pidx == 0:
+            print(f"  MEM_MATCH target={args.match_mem_mb:.0f} "
+                  f"realised={_chip_used_mb():.0f} MB/chip "
+                  f"(baseline {start_mb:.0f}, {chunks} x {args.match_chunk_mb:.0f}MB)",
+                  flush=True)
+    elif args.alloc_gb > 0:
         chunk_gb = min(args.alloc_chunk_gb, args.alloc_gb)
         want = int(args.alloc_gb * (1 << 30))
         per = max(n_dev * 4, int(chunk_gb * (1 << 30)))

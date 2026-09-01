@@ -200,6 +200,18 @@ _ALLOC_MATCHED = 3.65
 # is keyword-based and silently wins over intent.
 # using the same ~1456 MB non-alloc baseline measured from duty30.
 _ALLOC_MATCHED_TRAIN = 14.69
+
+# The two numbers that actually matter now: MEASURED per-chip footprints of the
+# cells the honest controls must match, fed to --match-mem-mb so the cell
+# allocates until the runtime allocator agrees rather than trusting arithmetic.
+# The open-loop constants above are kept only for the non-matched cells; they
+# could not do this job, because the dummy is sharded across the mesh while
+# mem_used_mb is per-chip, and the measured baseline is not constant either
+# (1344 vs 2480 MB/chip from two cells). The first attempt with --alloc-gb 3.65
+# realised 2880 MB/chip against a 5196 MB target -- 45% short, on the one cell
+# whose entire purpose is to hold the same footprint as its partner.
+_MEM_MATCH_F0 = 5196.0        # tpuTMS_advtrain_satfiller_only, 758 samples
+_MEM_MATCH_TRAIN = 16495.0    # tpuTMS_advtrain_satint_f{20,50}, both slices
 _ALLOC_HIMEM = 48.0
 
 
@@ -210,10 +222,18 @@ def _mni_cmd(train_frac, dur=_DUR, kernel="mixed"):
             "--multihost", "auto"]
 
 
-def _nonml_cmd(dur=_DUR, *, alloc=0.0, duty=1.0, kernel="mixed", mode="hpc"):
-    return [_PY, os.path.join(_WORKLOADS_DIR, "tpu_nonml_distributed.py"),
-            "--mode", mode, "--duration", str(dur), "--alloc-gb", str(alloc),
-            "--duty", str(duty), "--filler-mode", kernel, "--multihost", "auto"]
+def _nonml_cmd(dur=_DUR, *, alloc=0.0, duty=1.0, kernel="mixed", mode="hpc",
+               match_mb=0.0):
+    """match_mb closes the loop on a MEASURED per-chip footprint; alloc is the
+    open-loop knob and cannot match one (the dummy is sharded across the mesh
+    while mem_used_mb is per-chip). Any cell whose job is to match another cell
+    must use match_mb."""
+    cmd = [_PY, os.path.join(_WORKLOADS_DIR, "tpu_nonml_distributed.py"),
+           "--mode", mode, "--duration", str(dur), "--alloc-gb", str(alloc),
+           "--duty", str(duty), "--filler-mode", kernel, "--multihost", "auto"]
+    if match_mb:
+        cmd += ["--match-mem-mb", str(match_mb)]
+    return cmd
 
 
 for _sc in _SCOPES:
@@ -269,10 +289,10 @@ _add("tpuTMS_advtrain_satint_f05", _mni_cmd(0.05),
      "MN-I F=0.05 on multislice (0% on GPU; hardest disguise vs the DCN channel)", _TO_ADV)
 _add("tpuTMS_advtrain_satfiller_only", _mni_cmd(0.0),
      "MN-I F=0 on multislice: zero training, saturating filler (evades on GPU)", _TO_ADV)
-_add("tpuTMS_nonml_sat", _nonml_cmd(alloc=_ALLOC_MATCHED, duty=1.0),
+_add("tpuTMS_nonml_sat", _nonml_cmd(match_mb=_MEM_MATCH_F0, duty=1.0),
      "Honest non-ML on multislice, footprint-matched to F=0 -- the apparatus test",
      _TO_OTHER)
-_add("tpuTMS_nonml_sat_16g", _nonml_cmd(alloc=_ALLOC_MATCHED_TRAIN, duty=1.0),
+_add("tpuTMS_nonml_sat_16g", _nonml_cmd(match_mb=_MEM_MATCH_TRAIN, duty=1.0),
      "Honest non-ML on multislice, footprint-matched to a TRAINING run (16.5GB) -- "
      "without this, mem_used_mb alone separates the F>0 disguise from its control",
      _TO_OTHER)
