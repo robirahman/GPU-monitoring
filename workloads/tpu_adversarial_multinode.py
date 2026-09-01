@@ -215,12 +215,17 @@ def main():
         Printed so the honest matched control can be targeted in the SAME units
         it measures. The control closes its loop on
         memory_stats()['bytes_in_use'], while the footprint target was taken from
-        the collector's mem_used_mb -- and the two differ by roughly 900 MB of
-        runtime overhead on a v6e. Matching across that gap by arithmetic is
-        guesswork: nonml_sat_rep3 filled to bytes_in_use=5120 and the collector
-        then reported 6464 against a 5196 target. So both cells now report the
-        allocator's own number, and the control is targeted on the disguise
-        cell's reading rather than on a converted one.
+        the collector's mem_used_mb -- and these are NOT the same quantity offset
+        by a little overhead. Measured on this cell at F=0.05: bytes_in_use=4694
+        MB/chip against the collector's mem_used_mb=16495, a gap of 11.8 GB.
+        bytes_in_use counts LIVE TENSORS (params + optimizer + filler); the
+        collector reports the runtime's RESERVED ARENA, which grew to hold the
+        train step's transient workspace and never shrank. So a control matched on
+        bytes_in_use would leave the collector-visible footprint -- the feature the
+        detector actually sees -- unmatched. Both cells report the allocator figure
+        so the two spaces can be related from data, and tpu_nonml_distributed
+        additionally dumps every memory_stats key to identify which one tracks the
+        arena; the match must close on that one.
         """
         try:
             ms = jax.local_devices()[0].memory_stats() or {}

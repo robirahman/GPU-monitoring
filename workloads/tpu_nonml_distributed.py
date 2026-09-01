@@ -169,6 +169,27 @@ def main():
     # report what was actually realised -- a matched-footprint control that
     # silently allocated less than asked would quietly break the pairing that the
     # apparatus retraction depends on.
+    def _mem_stats():
+        try:
+            return jax.local_devices()[0].memory_stats() or {}
+        except Exception:
+            return {}
+
+    if pidx == 0:
+        # One-shot dump of EVERY key. Needed because bytes_in_use is not what the
+        # collector reports: on a v6e running MN-I at F=0.05 the cell logged
+        # bytes_in_use=4694 MB/chip while collect_tpu_telemetry recorded
+        # mem_used_mb=16495 -- a 11.8 GB gap, because bytes_in_use counts live
+        # tensors (params + optimizer + filler) whereas the collector reports the
+        # runtime's reserved arena, which grew to hold the train step's transient
+        # workspace and never shrank. A control matched on bytes_in_use would
+        # leave the collector-visible footprint -- the actual feature the detector
+        # sees -- unmatched, so the match must close on whichever key tracks the
+        # arena. This print identifies it.
+        print("  MEM_STATS_KEYS=" + ",".join(
+            f"{k}={v/(1<<20):.0f}MB" if isinstance(v, (int, float)) else f"{k}={v}"
+            for k, v in sorted(_mem_stats().items())), flush=True)
+
     def _chip_used_mb():
         """MB in use on this host's first chip, from the runtime allocator."""
         try:
