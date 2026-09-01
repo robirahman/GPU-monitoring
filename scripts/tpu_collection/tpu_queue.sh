@@ -239,26 +239,35 @@ ADV=(
 # rather than to F=0's 5.2 GB. Registered for tpuTMS* rungs only -- see
 # registry_tpu._ALLOC_MATCHED_TRAIN -- so emitting it for a single-slice scope
 # would ask for a label that does not exist.
+# The 16 GB matched control is multislice-only: its --match-mem-mb target was
+# measured per chip on 2x v6e-1, and the same 1b model sharded over 8 chips holds
+# a different per-chip footprint, so a single global target would be wrong at
+# other scopes. Each scope needs its own measured number before this cell is
+# meaningful there.
 case "$SCOPE" in
-  tpuTMS*)
-    ADV+=("${SCOPE}_nonml_sat_16g")
-    # CLASS REFERENCES, appended last so a truncated run still keeps the
-    # decisive adversarial comparison. The campaign runs with ADVERSARIAL=1 and
-    # STRETCH unset, which collected ONLY disguised training and honest non-ML --
-    # no ml_inference at all, and no honest (undisguised) training. Two
-    # consequences, both of which would have quietly weakened the TPU answer:
-    #   * Stage 2 discriminates train vs infer, so with no inference class it
-    #     cannot be trained on TPU data, and the headline operating point is
-    #     defined on the full pipeline's p_train. Without these cells the TPU
-    #     rung could only report a Stage-1 score, which answers a weaker
-    #     question than "does the claim survive on this hardware".
-    #   * every ml_training row would be a DISGUISED run, so a detector fitted
-    #     on it learns "disguised training", not "training".
-    # tpu_sharded_inference has never run on hardware, so these may need a pass
-    # of their own; they are last for that reason too.
-    ADV+=("${SCOPE}_train_fsdp1b" "${SCOPE}_inferrep_1b" "${SCOPE}_infershard_1b")
-    ;;
+  tpuTMS*) ADV+=("${SCOPE}_nonml_sat_16g") ;;
 esac
+
+# CLASS REFERENCES for EVERY scope, appended last so a truncated run still keeps
+# the decisive adversarial comparison. The campaign runs with ADVERSARIAL=1 and
+# STRETCH unset, which collected ONLY disguised training and honest non-ML -- no
+# ml_inference at all, and no honest (undisguised) training, on single-slice and
+# multislice alike. Two consequences, both of which would have quietly weakened
+# the TPU answer rather than breaking anything visibly:
+#   * Stage 2 discriminates train vs infer, so with no inference class it cannot
+#     be trained on TPU data, and the headline operating point is defined on the
+#     full pipeline's p_train. Without these cells the TPU rung could only report
+#     a Stage-1 score, which answers a weaker question than "does the claim
+#     survive on this hardware".
+#   * every ml_training row would be a DISGUISED run, so a detector fitted on it
+#     learns "disguised training", not "training".
+# Both classes are wanted at both slice topologies: single-slice keeps the
+# collectives on ICI (or absent entirely at tpuT1) while multislice puts them on
+# DCN, and that contrast is the point of the TPU rung.
+# tpu_sharded_inference had never run on hardware before today -- it carried the
+# same multi-host deadlock -- so these may need a pass of their own; being last
+# means a failure costs nothing else.
+ADV+=("${SCOPE}_train_fsdp1b" "${SCOPE}_inferrep_1b" "${SCOPE}_infershard_1b")
 
 # ONLY_CELLS: comma-separated substrings; empty runs everything. Exists so a
 # re-run can collect just the cells that are missing instead of re-billing a

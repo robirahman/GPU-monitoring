@@ -36,7 +36,9 @@ PROJECT=${PROJECT:-focus-surfer-494820-g0}
 SESSION=${SESSION:?set SESSION}
 BUCKET=${BUCKET:-gs://focus-surfer-494820-g0-telemetry/tpu}
 GCS=${BUCKET}/${SESSION}
-DONEDIR=${BUCKET}/collected          # per-scope completion markers, campaign-wide
+# Overridable so a relaunch can start from a clean slate without deleting
+# anything: point DONEDIR at a new prefix and every target is revisited.
+DONEDIR=${DONEDIR:-${BUCKET}/collected}   # per-scope completion markers
 REPS=${REPS:-3}
 DUR=${DUR:-600}
 MAX_HOURS=${MAX_HOURS:-24}
@@ -75,10 +77,19 @@ TARGETS=(
   "v5t16|v5litepod-16|1|v2-alpha-tpuv5-lite|tpuT16"
   "v5t8|v5litepod-8|1|v2-alpha-tpuv5-lite|tpuT8"
   "v5ms|v5litepod-1|2|v2-alpha-tpuv5-lite|tpuTMS"
+  "t4|v6e-4|1|v2-alpha-tpuv6e|tpuT4"
   "ms8x1|v6e-1|8|v2-alpha-tpuv6e|tpuTMS8"
   "ms4|v6e-1|4|v2-alpha-tpuv6e|tpuTMS4"
   "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
+  "t1|v6e-1|1|v2-alpha-tpuv6e|tpuT1"
 )
+# t1 and t4 exist so the corpus has SINGLE-SLICE coverage of every class, not
+# just multislice. A single slice keeps collectives on ICI (or has none at all at
+# tpuT1, one chip), while a multislice group puts the same collectives on DCN --
+# and that contrast is what the TPU rung is for. t8/t16 would have served, but
+# neither has ever provisioned; v6e-1 has been granted 13 times and v6e-4 is
+# worth trying as the smallest untested single-host shape. t1 is last in the
+# order because it is the most available, so it never starves a rarer shape.
 
 collected(){ gcloud storage ls "${DONEDIR}/$1.done" --project=$PROJECT >/dev/null 2>&1; }
 mark_collected(){ echo "$(date -u) $2" >/tmp/c.$1; gcloud storage cp /tmp/c.$1 "${DONEDIR}/$1.done" --project=$PROJECT >/dev/null 2>&1; }
