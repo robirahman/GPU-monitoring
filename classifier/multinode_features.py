@@ -64,6 +64,18 @@ EXTRA_SIGNALS = [
     # whether these channels can stand in for the power channel that does not
     # exist here. RAW_SIGNALS is deliberately untouched: it is shared with the
     # GPU corpus, where none of these columns exist.
+    # CAVEAT, verified from collect_tpu_telemetry.py: the _p50/_p90/_p99 suffixes
+    # are NOT percentiles. libtpu's distribution payload carries only
+    # count/mean/min/max, and the collector passes [min, mean, max] into
+    # np.percentile, so _p50 IS the interval mean, _p99 is ~the interval max, and
+    # _p90 is an interpolation 80% of the way between them with no statistical
+    # meaning. Treat _p90 as redundant with _p99, and check any LEVEL feature on
+    # hlo_exec_us_* against window index before trusting it: the series climbs two
+    # orders of magnitude across a run, so its level partly encodes how far into
+    # the run a window sits. dcn_collective_lat_us_* is additionally nonzero on
+    # cells that run no cross-slice collectives (nonml_duty30 medians ~86,000),
+    # because jax.distributed.initialize()'s own traffic lands in the first
+    # sampling interval. See results/tpu_multislice_findings.md section 2b.
     "hlo_exec_us_p50", "hlo_exec_us_p90", "hlo_exec_us_p99", "hlo_queue_size",
     "dcn_collective_lat_us_p50", "dcn_collective_lat_us_p90",
     "dcn_collective_lat_us_p99", "buffer_xfer_lat_us_p90",

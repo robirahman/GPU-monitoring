@@ -55,6 +55,50 @@ Only 2 of the 8 live channels were being featurised. Now 9 TPU-native features
 enter through `EXTRA_SIGNALS`, with the two comm channels and tensorcore util also
 in `XR_SIGNALS` (a straggler slice appears as cross-rank dispersion).
 
+## 2b. The `_p50/_p90/_p99` TPU columns are not percentiles
+
+Established from the collector source, not inferred. libtpu's distribution
+payload exposes only `count/mean/min/max`, and
+`collect_tpu_telemetry.py` deliberately passes `[min, mean, max]` into
+`_percentiles()` rather than inventing quantiles. `np.percentile` over three
+points therefore yields:
+
+| column | what it actually is |
+|---|---|
+| `*_p50` | **the interval mean** (median of 3 sorted points) |
+| `*_p90` | an interpolation 80% of the way from mean to max -- no statistical meaning |
+| `*_p99` | **~the interval max** (98% of the way to max) |
+
+Worked example with min=100, mean=5000, max=2e6: reported p50=5,000,
+p90=1,601,000, p99=1,960,100. So `hlo_exec_us_p90` is essentially a
+max-dominated quantity, which is why it reaches 13.6 **seconds** in places -- that
+is a compile-time HLO execution, not a steady-state one.
+
+**Are they cumulative?** Two of the metric names say so outright:
+`megascale.collective_end_to_end_latencies.microsecond.cumulative.distribution`
+and `megascale.dcn_transfer_latencies.microsecond.cumulative.distribution`. But
+the observed series **decrease** within a run -- `dcn_collective_lat_us_p90` on
+`nonml_duty30` falls from 16,100,725 to 83,884 -- and a cumulative maximum cannot
+decrease. So reads evidently reset the distribution, i.e. each sample is the
+interval since the previous read, and the enormous first value is the
+`jax.distributed.initialize()` collective landing in the first interval.
+
+Consequences for the analysis, none of them optional:
+
+- Prefer `_p50` (interval mean) and `_p99` (interval max) and treat `_p90` as
+  redundant with `_p99`; the three are not independent statistics.
+- `dcn_collective_lat_us_*` is **nonzero on cells that run no cross-slice
+  collectives at all** (`nonml_duty30`, an `hpc`-mode cell, medians ~86,000).
+  That is initialisation traffic, not workload traffic. Any claim that the DCN
+  channel substitutes for the missing power channel has to survive this: the
+  channel is live but its early samples are dominated by process startup.
+- The `hlo_exec_us_*` series rises by 2 orders of magnitude across a run in some
+  cells (500 -> 35,000 for `_p50`), so a window's absolute level partly encodes
+  how far into the run it sits. A level feature on it risks encoding window
+  position rather than workload -- the same shape of hazard as the label-parsing
+  bug in section 4.7, and it must be checked against window index before any of
+  these features is trusted.
+
 ## 3. Calibration of the matched control, from measurement
 
 The apparatus retraction depends on the F=0 disguise and the honest non-ML cell
