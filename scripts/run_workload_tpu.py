@@ -132,7 +132,36 @@ def main():
     _slice = int(os.environ.get("SPAR_TPU_SLICE_ID",
                  os.environ.get("MEGASCALE_SLICE_ID",
                  os.environ.get("MEGASCALE_SLICE_INDEX", "0"))) or 0)
-    _wid = int(os.environ.get("TPU_WORKER_ID", 0) or 0)
+    def _worker_index():
+        """This host's worker number within its slice.
+
+        MEASURED: TPU_WORKER_ID is NOT SET on a v6e worker (env has no TPU_*,
+        MEGASCALE_* or WORKER_* entries at all). tpu_queue.sh passed
+        `--worker-id $TPU_WORKER_ID`, which expanded to `--worker-id` with no
+        value, and argparse exited 2 -- that is the whole reason 78 cells across
+        three overnight slices failed in ~35s with 0/N workers.
+        Two sources that DO exist, in order of preference:
+          1. instance metadata attribute agent-worker-number (canonical, "0")
+          2. the hostname suffix, e.g. t1v-n-4b5f7ace-w-0 -> 0
+        """
+        try:
+            import urllib.request
+            req = urllib.request.Request(
+                "http://metadata.google.internal/computeMetadata/v1/instance/"
+                "attributes/agent-worker-number",
+                headers={"Metadata-Flavor": "Google"})
+            v = urllib.request.urlopen(req, timeout=3).read().decode().strip()
+            if v.isdigit():
+                return int(v)
+        except Exception:
+            pass
+        import re as _re2, socket
+        m = _re2.search(r"-w-(\d+)$", socket.gethostname())
+        if m:
+            return int(m.group(1))
+        return int(os.environ.get("TPU_WORKER_ID", 0) or 0)
+
+    _wid = _worker_index()
     # Loudly report the resolved id: a silent collision is exactly the failure
     # mode this guards against, and on a multislice run two identical ids means
     # one slice's parquet and .done marker overwrite the other's.

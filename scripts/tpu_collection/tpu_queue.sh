@@ -176,7 +176,7 @@ run_cell() {
 
   local remote="source \$HOME/.spar_tpu_env 2>/dev/null; cd $REPO_DIR && \
 PYTHONPATH=$REPO_DIR python3 scripts/run_workload_tpu.py \
---workload $cell --run-id $rid --worker-id \$TPU_WORKER_ID \
+--workload $cell --run-id $rid \
 --gcs-prefix $GCS $SMOKE_FLAG --multihost-required"
 
   say "START $cell (run_id=$rid) -> $GCS/runs/$rid/"
