@@ -351,7 +351,21 @@ def load_all_data() -> pd.DataFrame:
             if "workload_label" not in df.columns:
                 # Parse from filename
                 stem = p.stem
-                parts = stem.split("_NVIDIA_")[0] if "_NVIDIA_" in stem else stem.rsplit("_", 3)[0]
+                # TPU parquets end `..._w<W>c<C>_Google_TPU_<gen>_<run_id>`, and the
+                # generic rsplit("_", 3) fallback strips only the last three fields,
+                # leaving a label of `tpuTMS_nonml_duty30_rep2_w0c0_Google` -- a
+                # truncated device name glued to the chip token. That label then
+                # defeats workload_group(), whose `_rep\d+$` anchor no longer
+                # matches, so every rep and every chip of every TPU cell becomes its
+                # own "workload" and held-out-by-workload CV silently degenerates
+                # into run-grouped CV -- exactly the leak that criterion exists to
+                # remove. Split on the accelerator name as the NVIDIA path does.
+                if "_NVIDIA_" in stem:
+                    parts = stem.split("_NVIDIA_")[0]
+                elif "_Google_TPU_" in stem:
+                    parts = stem.split("_Google_TPU_")[0]
+                else:
+                    parts = stem.rsplit("_", 3)[0]
                 df["workload_label"] = parts
             if "run_id" not in df.columns:
                 df["run_id"] = p.stem
@@ -874,6 +888,11 @@ def workload_group(labels) -> np.ndarray:
     """
     s = pd.Series(labels).astype(str)
     s = s.str.replace(r"_node\d+_gpu\d+$", "", regex=True)
+    # TPU per-chip rank token, e.g. `..._rep2_w0c0` (worker 0 chip 0; the worker
+    # index is slice*1000 + host index on a multislice group). It sits AFTER the
+    # rep token, so it must be stripped first or the `_rep\d+$` anchor below never
+    # matches and each chip stream is treated as a separate workload.
+    s = s.str.replace(r"_w\d+c\d+$", "", regex=True)
     s = s.str.replace(r"_rep\d+$", "", regex=True)
     return s.values
 
