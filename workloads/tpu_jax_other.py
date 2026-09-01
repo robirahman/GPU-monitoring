@@ -80,14 +80,30 @@ def run_fft(args):
     wall_start = time.time()
     rnd = 0
     x = base
+    # Rank-uniform exit: sharded work across hosts carries collectives, so a
+    # wall-clock loop condition can strand a host inside one (see
+    # T.agreed_step_budget -- it cost a whole multislice run on 2026-09-01).
+    n_budget = None
+    _ref_step = _ref_t = None
     with mesh:
-        while time.time() - wall_start < args.duration:
+        while True:
+            if n_budget is not None and rnd >= n_budget:
+                break
+            if n_budget is None and time.time() - wall_start >= 3 * args.duration:
+                print('[fft] budget never agreed; stopping', flush=True)
+                break
             for _ in range(args.inner):
                 x = fft_fn(x)
             jax.block_until_ready(x)
             # Renormalise so magnitudes don't blow up over many passes.
             x = base
             rnd += 1
+            if _ref_t is None:
+                _ref_t, _ref_step = time.time(), rnd
+            elif n_budget is None and rnd - _ref_step >= 3:
+                n_budget = T.agreed_step_budget(
+                    rnd - _ref_step, time.time() - _ref_t,
+                    args.duration - (time.time() - wall_start), rnd)
             if pidx == 0 and rnd % 20 == 0:
                 elapsed = time.time() - wall_start
                 print(f"  fft round {rnd}: elapsed={elapsed:.0f}s/{args.duration}s",
@@ -126,12 +142,28 @@ def run_nbody(args):
 
     wall_start = time.time()
     it = 0
+    # Rank-uniform exit: sharded work across hosts carries collectives, so a
+    # wall-clock loop condition can strand a host inside one (see
+    # T.agreed_step_budget -- it cost a whole multislice run on 2026-09-01).
+    n_budget = None
+    _ref_step = _ref_t = None
     with mesh:
-        while time.time() - wall_start < args.duration:
+        while True:
+            if n_budget is not None and it >= n_budget:
+                break
+            if n_budget is None and time.time() - wall_start >= 3 * args.duration:
+                print('[nbody] budget never agreed; stopping', flush=True)
+                break
             for _ in range(args.inner):
                 pos, vel = step_fn(pos, vel)
             jax.block_until_ready(pos)
             it += args.inner
+            if _ref_t is None:
+                _ref_t, _ref_step = time.time(), it
+            elif n_budget is None and it - _ref_step >= 3:
+                n_budget = T.agreed_step_budget(
+                    it - _ref_step, time.time() - _ref_t,
+                    args.duration - (time.time() - wall_start), it)
             if pidx == 0 and it % (args.inner * 20) == 0:
                 elapsed = time.time() - wall_start
                 print(f"  nbody step {it}: elapsed={elapsed:.0f}s/{args.duration}s",
