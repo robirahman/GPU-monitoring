@@ -55,8 +55,25 @@ BUCKET = 20.0
 EXTRA_SIGNALS = [
     "nvlink_total_mbps", "dcgm_nvlink_tx_mbps", "dcgm_nvlink_rx_mbps",
     "nic_total_mbps", "nic_tx_mbps", "nic_rx_mbps",
-    # TPU comm channel (present only on TPU parquets); harmless when absent.
-    "hlo_exec_us_p90", "dcn_collective_lat_us_p90",
+    # ── TPU-native channels (present only on TPU parquets; absent = skipped) ──
+    # Measured live on a 2x v6e-1 multislice, 2026-09-01, over a 600 s cell with
+    # 708 samples at ~1.2 Hz: eight accelerator channels carry real values while
+    # power, temperature, clocks, PCIe and hbm_bw_util_pct are dead by contract.
+    # Only two of those eight used to be featurised, which left most of the
+    # TPU-native information unused -- and the whole premise of the TPU rung is
+    # whether these channels can stand in for the power channel that does not
+    # exist here. RAW_SIGNALS is deliberately untouched: it is shared with the
+    # GPU corpus, where none of these columns exist.
+    "hlo_exec_us_p50", "hlo_exec_us_p90", "hlo_exec_us_p99", "hlo_queue_size",
+    "dcn_collective_lat_us_p50", "dcn_collective_lat_us_p90",
+    "dcn_collective_lat_us_p99", "buffer_xfer_lat_us_p90",
+    "tensorcore_util_pct",
+    # NOT tpu_duty_cycle_pct: collect_tpu_telemetry writes the same `duty` value
+    # to both it and gpu_utilization_pct, differing only in the missing-value
+    # sentinel (0.0 vs -1.0), so including it would duplicate a RAW_SIGNAL and
+    # split its importance in two. Note the consequence for interpretation:
+    # gpu_utilization_pct on TPU IS TensorCore duty cycle, the same kind of
+    # silent redefinition as mem_utilization_pct meaning HBM bandwidth here.
 ]
 
 # Signals used for the cross-rank (stream x stream) features. Only those
@@ -65,7 +82,9 @@ EXTRA_SIGNALS = [
 XR_SIGNALS = [
     "gpu_utilization_pct", "power_draw_w", "mem_utilization_pct",
     "pcie_total_mbps", "nvlink_total_mbps", "nic_total_mbps",
-    "hlo_exec_us_p90",
+    # Cross-rank structure of the TPU comm channels: a straggler slice shows up
+    # as dispersion across ranks, which is exactly what the DCN channel is for.
+    "hlo_exec_us_p90", "dcn_collective_lat_us_p90", "tensorcore_util_pct",
 ]
 
 _RANK_TOKEN_RE = re.compile(r"_node\d+_gpu\d+|_gpu\d+|_w\d+c\d+")
