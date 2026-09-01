@@ -243,9 +243,25 @@ def main():
     elif pidx == 0:
         print(f"  slots={n_slots}", flush=True)
 
+    _rebudgeted = False
     with mesh:
         while slot < n_slots:
             slot += 1
+            # comm mode's a-priori slot count is derived from ONE synchronous
+            # all_reduce, but the loop issues its collectives asynchronously and
+            # blocks only once per slot, so the real throughput is higher and the
+            # cell finishes early: nonml_comm_rep1 returned OK after 406 s of a
+            # requested 600 s. Re-agree the budget from the achieved rate after a
+            # few slots. The extra broadcast is free of confound here -- this cell
+            # is nothing but collectives -- and it is the same rank-uniform
+            # agreement used everywhere else, so both hosts still leave together.
+            if args.mode == "comm" and slot == 4 and not _rebudgeted:
+                _el = time.time() - t0
+                n_slots = T.agreed_step_budget(slot, _el, args.duration - _el, slot)
+                _rebudgeted = True
+                if pidx == 0:
+                    print(f"  slot budget re-agreed at slot {slot}: {n_slots} "
+                          f"({_el/slot:.3f}s/slot achieved)", flush=True)
             if args.mode == "hpc":
                 busy = args.slot_sec * max(0.0, min(1.0, args.duty))
                 iters += filler.run_for(busy)
