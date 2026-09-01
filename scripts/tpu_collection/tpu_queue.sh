@@ -88,9 +88,17 @@ ssh_all() {  # ssh_all "<cmd>" -- fan to ALL workers of ALL slice nodes
     # coordinator env). Serial per-slice ssh would deadlock -- slice 0 blocks on a
     # collective barrier that slice 1 has not reached. VALIDATE on a 2x v6e-1 smoke:
     # if dcn_collective_lat_us_p50 stays -1, export MEGASCALE_COORDINATOR_ADDRESS.
+    # Export a PER-SLICE identity. MEASURED on a live 2x v6e-1: every slice's
+    # worker reports agent-worker-number=0 and there is no MEGASCALE_SLICE_ID in
+    # the env, so without this both slices resolve to worker_id 0 -- slice 1's
+    # parquet and .done marker OVERWRITE slice 0's under runs/<rid>/w0/, `got`
+    # counts 1, and the >= NUM_WORKERS check marks a healthy cell FAILED. That is
+    # exactly the "1/2 workers" failure seen on every tpuTMS cell.
+    local _si=0
     for n in $(slice_nodes); do
       gcloud compute tpus tpu-vm ssh "$n" --project="$PROJECT" --zone="$ZONE" \
-        --worker=all --command="$cmd" & pids+=($!)
+        --worker=all --command="export SPAR_TPU_SLICE_ID=${_si}; $cmd" & pids+=($!)
+      _si=$((_si + 1))
     done
     for p in "${pids[@]}"; do wait "$p" || rc=1; done
     return $rc
