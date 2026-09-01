@@ -110,6 +110,7 @@ run_scope(){  # zone prefix nodecount scope key
     local n="$pfx"; [ "$nc" -gt 1 ] && n="${pfx}-${i}"
     gcloud compute tpus tpu-vm scp /tmp/.pat "$n":/tmp/.pat --project=$PROJECT --zone="$z" --worker=all >/dev/null 2>&1 &
   done; wait
+  local setup_out=/tmp/setup.$key.log; : > "$setup_out"
   for i in $(seq 0 $((nc-1))); do
     local n="$pfx"; [ "$nc" -gt 1 ] && n="${pfx}-${i}"
     ( gcloud compute tpus tpu-vm ssh "$n" --project=$PROJECT --zone="$z" --worker=all --command="set -e
@@ -118,17 +119,44 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q python3-pip git >/dev/
 cd \$HOME && rm -rf repo
 git -c credential.helper='!f(){ echo username=x-access-token; echo \"password=\$(cat /tmp/.pat)\"; };f' clone -q --branch multinode-tpu-experiments https://github.com/robirahman/GPU-monitoring.git repo
 cd repo && pip install -q -r requirements_tpu.txt -f https://storage.googleapis.com/jax-releases/libtpu_releases.html 2>&1|tail -1
-rm -f /tmp/.pat; echo SETUP_OK_\$(hostname)" 2>&1 | grep -cE 'SETUP_OK' ) &
+rm -f /tmp/.pat
+python3 -c 'import jax; print(\"JAXOK\", jax.__version__, jax.device_count())'
+echo SETUP_OK_\$(hostname)" 2>&1 >> "$setup_out" ) &
   done; wait
-  say "  setup done; launching queue"
+  # ASSERT setup. Previously the SETUP_OK count went to a discarded subshell, so a
+  # failed clone or pip install passed silently -- and then every cell died in ~35s
+  # with 0/N workers, which is almost certainly what happened overnight.
+  local n_ok; n_ok=$(grep -c 'SETUP_OK' "$setup_out" 2>/dev/null || echo 0)
+  local n_jax; n_jax=$(grep -c 'JAXOK' "$setup_out" 2>/dev/null || echo 0)
+  say "  setup: SETUP_OK=$n_ok JAXOK=$n_jax (need >=1 of each)"
+  if [ "$n_ok" -lt 1 ] || [ "$n_jax" -lt 1 ]; then
+    say "  SETUP FAILED -- not running cells, not marking collected. Tail:"
+    tail -12 "$setup_out" | sed 's/^/      /'
+    return 1
+  fi
+  say "  setup verified; launching queue"
   PROJECT=$PROJECT ZONE="$z" TPU_NAME="$pfx" NODE_COUNT="$nc" NODE_PREFIX="$pfx" \
     SCOPE="$scope" REPO_DIR='$HOME/repo' BUCKET="$BUCKET" SESSION="${SESSION}_${key}" \
     ADVERSARIAL=1 REPS=$REPS DUR=$DUR GAP=30 \
-    timeout "$PER_RUN_CAP_SEC" bash /tmp/tpu_queue.sh 2>&1 \
-    | grep -iE 'derived NUM_WORKERS|START|OK  |FAIL|queue complete|done:|failed:' | tail -40
+    timeout "$PER_RUN_CAP_SEC" bash /tmp/tpu_queue.sh > /tmp/q.$key.log 2>&1
   local rc=$?
-  say "  queue finished (rc=$rc)"
-  mark_collected "$key" "scope=$scope zone=$z nodes=$nc rc=$rc"
+  grep -iE 'derived NUM_WORKERS|START|OK  |FAIL|queue complete|done:|failed:' /tmp/q.$key.log | tail -40
+  # `rc=$?` after a PIPELINE captures the LAST command's status (tail), not the
+  # queue's. That is why the campaign recorded rc=0 for three runs in which every
+  # cell failed -- and then marked them collected, so they would never be retried.
+  # Same defect class as the earlier driver bug; do not reintroduce a pipe here.
+  local n_done n_failed
+  n_done=$(grep -oE 'done: +[0-9]+' /tmp/q.$key.log | tail -1 | grep -oE '[0-9]+' || echo 0)
+  n_failed=$(grep -oE 'failed: +[0-9]+' /tmp/q.$key.log | tail -1 | grep -oE '[0-9]+' || echo 0)
+  say "  queue finished: rc=$rc done=${n_done:-0} failed=${n_failed:-0}"
+  gcloud storage cp /tmp/q.$key.log "${GCS}/control/queue_$key.log" --project=$PROJECT >/dev/null 2>&1 || true
+  # Collected means CELLS LANDED, not "the command returned".
+  if [ "${n_done:-0}" -ge 1 ]; then
+    mark_collected "$key" "scope=$scope zone=$z nodes=$nc rc=$rc done=$n_done failed=$n_failed"
+    say "  MARKED COLLECTED ($n_done cells)"
+  else
+    say "  NOT marking collected: 0 cells landed (failed=$n_failed) -- target stays in the pool"
+  fi
 }
 
 END=$(( $(date +%s) + MAX_HOURS*3600 ))
