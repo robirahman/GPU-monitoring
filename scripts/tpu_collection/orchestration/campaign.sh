@@ -71,13 +71,23 @@ kill_req(){ local z=$1 qr=$2 pfx=$3 nc=$4
   gcloud compute tpus queued-resources delete "$qr" --project=$PROJECT --zone="$z" --force --quiet >/dev/null 2>&1 || true
 }
 
+# The per-zone request name MUST be unique per zone. It used to be
+#   c${key}$(echo "$z" | tr -d '-' | cut -c3-7)
+# and us-east5-a / us-east5-b both truncate to "east5", so both zones got the
+# SAME name. Two consequences, both observed on 2026-09-01:
+#   1. after claiming us-east5-a, the release loop's
+#      `[ "${nm2}-qr" = "$qr" ] && continue` matched the OTHER zone's
+#      identically-named request, so it was never released -- its 2 v6e chips
+#      billed idle alongside the claimed pair;
+#   2. nothing would have reclaimed them until the final sweep, MAX_HOURS later.
+# Use the full zone slug: unique, and still a legal TPU node name.
 park_all(){   # park a request for every uncollected target in every zone
   local parked=0
   for t in "${TARGETS[@]}"; do
     IFS='|' read -r key accel nc rt scope <<<"$t"
     collected "$key" && continue
     for z in $ZONES; do
-      local nm="c${key}$(echo "$z" | tr -d '-' | cut -c3-7)"
+      local nm="c${key}$(echo "$z" | tr -d '-')"
       local shape=(--node-id="$nm")
       [ "$nc" -gt 1 ] && shape=(--node-count="$nc" --node-prefix="$nm")
       gcloud compute tpus queued-resources create "${nm}-qr" \
@@ -94,7 +104,7 @@ find_active(){  # echo "zone qr prefix nodecount scope key" for the first ACTIVE
     IFS='|' read -r key accel nc rt scope <<<"$t"
     collected "$key" && continue
     for z in $ZONES; do
-      local nm="c${key}$(echo "$z" | tr -d '-' | cut -c3-7)"
+      local nm="c${key}$(echo "$z" | tr -d '-')"
       [ "$(qr_state "$z" "${nm}-qr")" = "ACTIVE" ] && { echo "$z ${nm}-qr $nm $nc $scope $key"; return 0; }
     done
   done
@@ -173,7 +183,7 @@ while [ "$(date +%s)" -lt "$END" ]; do
     for t in "${TARGETS[@]}"; do
       IFS='|' read -r k2 a2 n2 r2 s2 <<<"$t"
       for z2 in $ZONES; do
-        nm2="c${k2}$(echo "$z2" | tr -d '-' | cut -c3-7)"
+        nm2="c${k2}$(echo "$z2" | tr -d '-')"
         [ "${nm2}-qr" = "$qr" ] && continue
         kill_req "$z2" "${nm2}-qr" "$nm2" "$n2" &
       done
@@ -192,6 +202,6 @@ for t in "${TARGETS[@]}"; do IFS='|' read -r key _ _ _ scope <<<"$t"
   collected "$key" && say "  COLLECTED $key ($scope)" || say "  missing   $key ($scope)"; done
 # final sweep: nothing may be left billing
 for t in "${TARGETS[@]}"; do IFS='|' read -r key a nc r s <<<"$t"
-  for z in $ZONES; do nm="c${key}$(echo "$z" | tr -d '-' | cut -c3-7)"; kill_req "$z" "${nm}-qr" "$nm" "$nc" & done; done
+  for z in $ZONES; do nm="c${key}$(echo "$z" | tr -d '-')"; kill_req "$z" "${nm}-qr" "$nm" "$nc" & done; done
 wait
 say "final teardown sweep complete"

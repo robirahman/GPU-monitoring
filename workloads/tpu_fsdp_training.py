@@ -136,7 +136,18 @@ def main():
     step_fn = jax.jit(train_step, donate_argnums=(0, 1))
 
     # ── Training loop (real compute + collectives, no sleeps) ────────────────
-    data_key = jax.random.PRNGKey(1000 + pidx)
+    # Multi-host: the batch is placed with a REPLICATED PartitionSpec(), and
+    # jax.device_put asserts that a replicated value is identical on every
+    # process. Seeding per-process (PRNGKey(base + pidx)) therefore aborted the
+    # coordinator on the first train step of every multi-host cell -- measured on
+    # a 2-slice v6e-1 multislice, 2026-09-01: "ArrayImpl passed to device_put is
+    # not the same on each process". It never fired on tpuT8 because a v6e-8 is a
+    # single process. Keep the data key process-uniform: the tokens are synthetic
+    # and carry no information, so identical batches across hosts change no
+    # timing, memory or collective behaviour -- i.e. no telemetry feature -- while
+    # per-process seeding would need make_array_from_process_local_data and a
+    # batch-sharded spec, which is a different experiment.
+    data_key = jax.random.PRNGKey(1000)
     wall_start = time.time()
     step = 0
     with mesh:
