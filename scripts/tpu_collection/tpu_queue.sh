@@ -240,7 +240,24 @@ ADV=(
 # registry_tpu._ALLOC_MATCHED_TRAIN -- so emitting it for a single-slice scope
 # would ask for a label that does not exist.
 case "$SCOPE" in
-  tpuTMS*) ADV+=("${SCOPE}_nonml_sat_16g") ;;
+  tpuTMS*)
+    ADV+=("${SCOPE}_nonml_sat_16g")
+    # CLASS REFERENCES, appended last so a truncated run still keeps the
+    # decisive adversarial comparison. The campaign runs with ADVERSARIAL=1 and
+    # STRETCH unset, which collected ONLY disguised training and honest non-ML --
+    # no ml_inference at all, and no honest (undisguised) training. Two
+    # consequences, both of which would have quietly weakened the TPU answer:
+    #   * Stage 2 discriminates train vs infer, so with no inference class it
+    #     cannot be trained on TPU data, and the headline operating point is
+    #     defined on the full pipeline's p_train. Without these cells the TPU
+    #     rung could only report a Stage-1 score, which answers a weaker
+    #     question than "does the claim survive on this hardware".
+    #   * every ml_training row would be a DISGUISED run, so a detector fitted
+    #     on it learns "disguised training", not "training".
+    # tpu_sharded_inference has never run on hardware, so these may need a pass
+    # of their own; they are last for that reason too.
+    ADV+=("${SCOPE}_train_fsdp1b" "${SCOPE}_inferrep_1b" "${SCOPE}_infershard_1b")
+    ;;
 esac
 
 # ONLY_CELLS: comma-separated substrings; empty runs everything. Exists so a
