@@ -219,8 +219,32 @@ def main():
 
     t0 = time.time()
     slot = iters = collectives = 0
+
+    # Both loop bounds must be rank-uniform, not wall-clock. Every slot of comm
+    # mode is a barrier, so if host A fits 100 all_reduces into its slot and host
+    # B fits 98, A's surplus two have no partner and the slice wedges; and when
+    # the outer deadline fires first on one host it leaves the other blocked in a
+    # collective. tpuTMS_nonml_comm died exactly this way on all three reps --
+    # 1078 slots of real DCN traffic, then a MegaScale abort-on-hang. So: a slot
+    # count both hosts derive identically from the same arguments, and a
+    # per-slot collective count measured once and broadcast from host 0.
+    n_slots = max(1, int(args.duration / max(args.slot_sec, 1e-3)))
+    per_slot = 0
+    if args.mode == "comm":
+        with mesh:                       # warm up (compiles), then time one
+            jax.block_until_ready(allreduce(comm_buf))
+            _t = time.time()
+            jax.block_until_ready(allreduce(comm_buf))
+            _one = time.time() - _t
+        per_slot = T.broadcast_int(max(1, int(args.slot_sec / max(_one, 1e-6))))
+        if pidx == 0:
+            print(f"  slots={n_slots} collectives/slot={per_slot} "
+                  f"(one all_reduce = {_one*1e3:.2f}ms)", flush=True)
+    elif pidx == 0:
+        print(f"  slots={n_slots}", flush=True)
+
     with mesh:
-        while time.time() - t0 < args.duration:
+        while slot < n_slots:
             slot += 1
             if args.mode == "hpc":
                 busy = args.slot_sec * max(0.0, min(1.0, args.duty))
@@ -229,9 +253,8 @@ def main():
                     time.sleep(args.slot_sec - busy)
             else:
                 # Slot-bounded: one STEP line per slot, never one per collective.
-                end = time.time() + args.slot_sec
                 r = None
-                while time.time() < end:
+                for _ in range(per_slot):
                     r = allreduce(comm_buf)
                     collectives += 1
                 if r is not None:

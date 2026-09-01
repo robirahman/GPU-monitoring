@@ -294,6 +294,50 @@ def loss_fn(params, input_ids, n_heads, remat=False):
     return -(logp * tgt).sum(-1).mean()
 
 
+def broadcast_int(value: int) -> int:
+    """Host 0's integer, on every host. Returns the local value off-cluster."""
+    if not _HAS_JAX or process_count() <= 1:
+        return int(value)
+    try:
+        import numpy as _np
+        from jax.experimental import multihost_utils
+        return int(multihost_utils.broadcast_one_to_all(
+            _np.array(int(value), dtype=_np.int64)))
+    except Exception:
+        return int(value)
+
+
+def agreed_step_budget(steps_since_ref, elapsed_since_ref, remaining_s,
+                       current_step, *, floor=1):
+    """A fixed, rank-uniform step count for a loop whose body runs collectives.
+
+    `while time.time() - t0 < duration` is NOT safe across hosts once the body
+    contains a collective. The hosts drift; eventually the faster one's deadline
+    fires and it leaves the loop while the slower one is still inside, blocked in
+    a collective that now has no partner. Measured on a 2x v6e-1 multislice,
+    2026-09-01: tpuTMS_advtrain_satint_f20 trained correctly (real train steps,
+    loss 10.5717 -> 10.5709, interleaved with filler) and then died 16 minutes
+    after its last step with
+
+        error_reporter.cc:141 Aborting the coordinator after collecting errors
+        from all workers as megascale_error_reporter_abort_on_hang is set to true
+
+    and tpuTMS_advtrain_satfiller_only was the ONLY cell of the run that passed
+    -- exactly the cell with no collectives at all, because F=0 never trains.
+    tpuTMS_nonml_comm died the same way after completing all 1078 of its slots.
+
+    Extrapolate the step rate from a reference point taken AFTER the first
+    collective step (so XLA compilation is excluded, or the estimate is wildly
+    low), then take host 0's total for everyone. All hosts run the same number of
+    steps and leave together. One collective, once, before the steady state --
+    which matters because this runs inside cells whose DCN traffic is the
+    measurement, and a per-step agreement would manufacture the signal.
+    """
+    rate = elapsed_since_ref / max(steps_since_ref, 1)
+    n_more = max(floor, int(max(0.0, remaining_s) / max(rate, 1e-6)))
+    return broadcast_int(int(current_step) + n_more)
+
+
 def synthetic_batch(key, batch, seq, vocab):
     """Random token ids -- no dataset needed (matches fsdp_training.py)."""
     return jax.random.randint(key, (batch, seq), 0, vocab, dtype=jnp.int32)

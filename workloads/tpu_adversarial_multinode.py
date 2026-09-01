@@ -212,8 +212,28 @@ def main():
     data_key = jax.random.PRNGKey(1000)
     t0 = time.time()
     step = train_steps = filler_steps = filler_iters = 0
+
+    # Rank-uniform exit. See T.agreed_step_budget: a wall-clock loop condition
+    # deadlocks the slice once the body runs collectives, and MegaScale then
+    # aborts the coordinator on hang. At F=0 there are no train steps, so there
+    # are no collectives and the per-step cost is exactly one filler slot -- the
+    # budget is then known up front and no collective is needed to agree on it.
+    n_budget = None
+    _ref_step = _ref_t = None
+    if args.train_frac <= 0.0:
+        n_budget = max(1, int(args.duration / max(args.slot_sec, 1e-3)))
+        if pidx == 0:
+            print(f"  step budget (F=0, no collectives): {n_budget}", flush=True)
     with mesh:
-        while time.time() - t0 < args.duration:
+        while True:
+            if n_budget is not None:
+                if step >= n_budget:
+                    break
+            elif time.time() - t0 >= 3 * args.duration:
+                # The budget is set a few train steps in. If we somehow never got
+                # there, stop rather than run until the cell timeout.
+                print("[mn-i] step budget never agreed; stopping", flush=True)
+                break
             step += 1
             if is_train_step(seed, step, args.train_frac):
                 data_key, sub = jax.random.split(data_key)
@@ -231,6 +251,18 @@ def main():
                 filler_iters += filler.run_for(args.slot_sec)
                 filler_steps += 1
                 T.emit_tpu_step("filler", step, tokens=0, passes=1)
+
+            # Reference point taken AFTER the first train step, so the budget
+            # is not extrapolated from XLA compile time.
+            if _ref_t is None and train_steps >= 1:
+                _ref_t, _ref_step = time.time(), step
+            elif n_budget is None and train_steps >= 4:
+                n_budget = T.agreed_step_budget(
+                    step - _ref_step, time.time() - _ref_t,
+                    args.duration - (time.time() - t0), step)
+                if pidx == 0:
+                    print(f"  step budget agreed at step {step}: {n_budget} "
+                          f"(F={args.train_frac})", flush=True)
 
             if pidx == 0 and step % 20 == 0:
                 el = time.time() - t0

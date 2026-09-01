@@ -150,8 +150,19 @@ def main():
     data_key = jax.random.PRNGKey(1000)
     wall_start = time.time()
     step = 0
+    # Rank-uniform exit: see T.agreed_step_budget. Every step here is a
+    # collective, so a wall-clock loop condition wedges the slice the moment one
+    # host's deadline fires while another is still inside. The budget is set from
+    # a reference taken after step 1 so XLA compile time is excluded.
+    n_budget = None
+    _ref_step = _ref_t = None
     with mesh:
-        while time.time() - wall_start < args.duration:
+        while True:
+            if n_budget is not None and step >= n_budget:
+                break
+            if n_budget is None and time.time() - wall_start >= 3 * args.duration:
+                print('[fsdp] budget never agreed; stopping', flush=True)
+                break
             data_key, sub = jax.random.split(data_key)
             input_ids = T.synthetic_batch(sub, batch, args.seq_len, vocab)
             input_ids = jax.device_put(
@@ -160,6 +171,15 @@ def main():
             params, opt_state, loss = step_fn(params, opt_state, input_ids)
             jax.block_until_ready(loss)
             step += 1
+
+            if _ref_t is None and step >= 1:
+                _ref_t, _ref_step = time.time(), step
+            elif n_budget is None and step >= 4:
+                n_budget = T.agreed_step_budget(
+                    step - _ref_step, time.time() - _ref_t,
+                    args.duration - (time.time() - wall_start), step)
+                if pidx == 0:
+                    print(f'  step budget agreed at step={step}: {n_budget}', flush=True)
 
             # Per-window ground truth from EVERY host (multi-host = all workers).
             T.emit_tpu_step("train", step,
