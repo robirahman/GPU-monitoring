@@ -235,6 +235,31 @@ ADV=(
   "${SCOPE}_nonml_comm"
 )
 
+# Multislice only: the honest control matched to the TRAINING footprint (~16.5 GB)
+# rather than to F=0's 5.2 GB. Registered for tpuTMS* rungs only -- see
+# registry_tpu._ALLOC_MATCHED_TRAIN -- so emitting it for a single-slice scope
+# would ask for a label that does not exist.
+case "$SCOPE" in
+  tpuTMS*) ADV+=("${SCOPE}_nonml_sat_16g") ;;
+esac
+
+# ONLY_CELLS: comma-separated substrings; empty runs everything. Exists so a
+# re-run can collect just the cells that are missing instead of re-billing a
+# slice for the ones already in hand -- the campaign's completion markers live in
+# ${BUCKET}/collected and are campaign-wide, so a relaunch that wants one new
+# cell would otherwise either skip the scope entirely or repeat all of it.
+ONLY_CELLS=${ONLY_CELLS:-}
+_wanted(){
+  [ -z "$ONLY_CELLS" ] && return 0
+  local c=$1 pat
+  local IFS=,
+  for pat in $ONLY_CELLS; do
+    [ -n "$pat" ] || continue
+    case "$c" in *"$pat"*) return 0 ;; esac
+  done
+  return 1
+}
+
 say "===== TPU queue start (scope=$SCOPE, workers=$NUM_WORKERS, session=$SESSION) ====="
 
 for REP in $(seq 1 "$REPS"); do
@@ -242,17 +267,19 @@ for REP in $(seq 1 "$REPS"); do
   say "----- rep $REP / $REPS -----"
   if [ "$ADVERSARIAL" = "1" ]; then
     for cell in "${ADV[@]}"; do
+      _wanted "$cell" || continue
       run_cell "${cell}_rep${REP}"
     done
     # tpuT16 only: the scope that structurally matches the 2x8 H100 setup, so the
     # kernel-axis and high-HBM controls are collected where the comparison is
     # tightest rather than at every scope.
     if [ "$SCOPE" = "tpuT16" ]; then
-      run_cell "tpuT16_nonml_duty50_fft_rep${REP}"
-      run_cell "tpuT16_nonml_himem_rep${REP}"
+      _wanted tpuT16_nonml_duty50_fft && run_cell "tpuT16_nonml_duty50_fft_rep${REP}"
+      _wanted tpuT16_nonml_himem && run_cell "tpuT16_nonml_himem_rep${REP}"
     fi
   else
     for cell in "${CORE[@]}"; do
+      _wanted "$cell" || continue
       run_cell "${cell}_rep${REP}"
     done
   fi
