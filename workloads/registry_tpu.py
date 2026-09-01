@@ -159,7 +159,17 @@ _TO_ADV = 1500
 # param count, and nonml_sat must match the F=0 cell's footprint or the apparatus
 # comparison is not like-for-like -- that pairing is what refuted "the apparatus
 # is the detection channel" on GPU (135 MB / 0.2 pt / 3 W apart).
-_ALLOC_MATCHED = 12.0
+# CALIBRATED 2026-09-01 against the F=0 cell's measured footprint, not guessed.
+# tpuTMS_advtrain_satfiller_only on a 2x v6e-1 multislice held mem_used_mb=5196
+# (median over 758 samples, p95 5196, max 5794) with mem_total_mb=31996. The
+# honest partner reaches the same total as alloc + its own baseline, and
+# tpuTMS_nonml_duty30 at --alloc-gb 2 measured 3504 MB total, so the non-alloc
+# baseline (filler table + runtime) is ~1456 MB. Matching 5196 MB therefore needs
+# 5196-1456 = 3740 MB = 3.65 GB. The previous value, 12.0, was an uncalibrated
+# guess: it was 2.3x the real footprint AND large enough to OOM the chip, which
+# is why every nonml_sat cell died in ~55 s instead of controlling anything.
+# Re-derive this per scope from the F=0 parquet; do not carry it across shapes.
+_ALLOC_MATCHED = 3.65
 _ALLOC_HIMEM = 48.0
 
 

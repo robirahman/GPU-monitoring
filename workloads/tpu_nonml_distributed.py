@@ -108,6 +108,9 @@ def main():
     ap.add_argument("--duration", type=int, default=600)
     ap.add_argument("--alloc-gb", type=float, default=0.0,
                     help="resident dummy allocation, the model-footprint analogue")
+    ap.add_argument("--alloc-chunk-gb", type=float, default=1.0,
+                    help="allocate the dummy in chunks this large; a single huge "
+                         "buffer hits the TPU allocator's bottom-of-memory limit")
     ap.add_argument("--duty", type=float, default=1.0,
                     help="hpc: fraction of each slot spent computing, rest idle")
     ap.add_argument("--filler-mode", choices=MODES, default="mixed")
@@ -144,12 +147,43 @@ def main():
     # Resident dummy allocation: occupies HBM exactly like a model would, while
     # containing nothing. This is the control that refuted "the apparatus is the
     # detection channel".
-    dummy = None
+    #
+    # It used to be one jnp.zeros() followed by a device_put into the sharding,
+    # which allocates the whole thing TWICE -- once host-shaped on device, once as
+    # the sharded copy -- and asks the allocator for a single buffer that large.
+    # On a v6e-1 (32 GB HBM, mem_total_mb=31996 measured) that failed at 8 GB:
+    #   RESOURCE_EXHAUSTED: Attempting to reserve 8.00G at the bottom of memory.
+    #   There are 7.25G free, 0B reserved, and 7.25G reservable.
+    # so tpuTMS_nonml_sat (12 GB) and tpuTMS_nonml_duty50_hash (8 GB) died in ~55s
+    # on 2026-09-01 while duty30 (2 GB) survived. Allocate in chunks, each built
+    # directly at its sharding by a jitted zeros so nothing is ever copied, and
+    # report what was actually realised -- a matched-footprint control that
+    # silently allocated less than asked would quietly break the pairing that the
+    # apparatus retraction depends on.
+    dummy = []
     if args.alloc_gb > 0:
-        n = max(n_dev, int(args.alloc_gb * (1 << 30) / 4))
-        n -= n % n_dev
-        dummy = jax.device_put(jnp.zeros((n // n_dev, n_dev), jnp.float32).reshape(-1, n_dev),
-                               row_shard)
+        chunk_gb = min(args.alloc_chunk_gb, args.alloc_gb)
+        want = int(args.alloc_gb * (1 << 30))
+        per = max(n_dev * 4, int(chunk_gb * (1 << 30)))
+        got = 0
+        while got < want:
+            this = min(per, want - got)
+            n = max(n_dev, this // 4)
+            n -= n % n_dev
+            try:
+                z = jax.jit(lambda: jnp.zeros((n // n_dev, n_dev), jnp.float32),
+                            out_shardings=row_shard)()
+                jax.block_until_ready(z)
+            except Exception as e:
+                if pidx == 0:
+                    print(f"  alloc stopped at {got/(1<<30):.2f}GB of "
+                          f"{args.alloc_gb}GB: {type(e).__name__}", flush=True)
+                break
+            dummy.append(z)
+            got += n * 4
+        if pidx == 0:
+            print(f"  ALLOC_REALISED_GB={got/(1<<30):.3f} requested={args.alloc_gb} "
+                  f"chunks={len(dummy)}", flush=True)
 
     if pidx == 0:
         print(f"TPU non-ML: mode={args.mode} on {n_dev} chips ({n_host} hosts)")
@@ -168,9 +202,10 @@ def main():
     else:
         elems = max(n_dev, int(args.comm_mb * (1 << 20) / 4))
         elems -= elems % n_dev
-        comm_buf = jax.device_put(
-            jnp.ones((elems // n_dev, n_dev), jnp.float32).reshape(-1, n_dev),
-            row_shard)
+        # Same single-shot rule as the dummy above: build at the sharding.
+        comm_buf = jax.jit(lambda: jnp.ones((elems // n_dev, n_dev), jnp.float32),
+                           out_shardings=row_shard)()
+        jax.block_until_ready(comm_buf)
 
         @jax.jit
         def _ar(x):
