@@ -98,12 +98,21 @@ def _fit_two_stage(w_tr, cols, seed=0):
 
 
 def _p_train(clf, w_te, cols, two_stage=True):
+    """(p_train, p_ml, p_train_given_ml).
+
+    The third is what answers a TYPE-confusion question. p_train alone cannot
+    distinguish "Stage 1 rejected it as non-ML" from "Stage 2 called it
+    inference", and MN-T attacks only the second. Reporting them separately is
+    the difference between measuring the attack and measuring its shadow.
+    """
     X = np.nan_to_num(w_te[cols].to_numpy(dtype=np.float32),
                       nan=0.0, posinf=0.0, neginf=0.0)
     pml = clf.predict_proba_ml(X)
     if not two_stage:
-        return np.full(len(X), np.nan), pml
-    return clf.predict_proba_training(X), pml
+        nan = np.full(len(X), np.nan)
+        return nan, pml, nan
+    return (clf.predict_proba_training(X), pml,
+            clf.predict_proba_train_vs_infer(X))
 
 
 def report(name, w_te, p, tau, ml=None):
@@ -161,7 +170,7 @@ def main():
                 continue
             ok, n_tr, n_if = _can_two_stage(w_tr)
             clf = _fit_two_stage(w_tr, cols)
-            p, pml = _p_train(clf, w_te, cols, two_stage=ok)
+            p, pml, p_t = _p_train(clf, w_te, cols, two_stage=ok)
             if ok:
                 report(f"TRAIN {tr_gen} ({len(w_tr):,} win) -> TEST {te_gen} "
                        f"({len(w_te):,} win)  [two-stage p_train]", w_te, p, a.tau)
@@ -183,6 +192,7 @@ def main():
             continue
         p = np.full(len(wg), np.nan)
         pml = np.full(len(wg), np.nan)
+        p_tg = np.full(len(wg), np.nan)
         g = wg.grp.values
         for tr, te in LeaveOneGroupOut().split(np.zeros(len(wg)), None, g):
             w_tr, w_te = wg.iloc[tr], wg.iloc[te].reset_index(drop=True)
@@ -190,12 +200,27 @@ def main():
             if not ok_f:
                 continue
             clf = _fit_two_stage(w_tr, cols)
-            pp, pm = _p_train(clf, w_te, cols, two_stage=True)
-            p[te], pml[te] = pp, pm
+            pp, pm, pt = _p_train(clf, w_te, cols, two_stage=True)
+            p[te], pml[te], p_tg[te] = pp, pm, pt
         keep = ~np.isnan(p)
         report(f"within {gen}, held out by WORKLOAD ({int(keep.sum()):,} of "
                f"{len(wg):,} win scored)  [two-stage p_train]",
                wg[keep].reset_index(drop=True), p[keep], a.tau)
+        report(f"within {gen}  [Stage 2 only: p(train | ML)] -- the TYPE decision "
+               f"MN-T attacks", wg[keep].reset_index(drop=True), p_tg[keep], a.tau)
+        # MN-T ladder: does p(train|ML) fall as the shaping strengthens, on cells
+        # that all train on EVERY step? That ordering is the attack working.
+        lad = wg[keep].reset_index(drop=True)
+        lad = lad.assign(_p=p[keep], _ptg=p_tg[keep], _pml=pml[keep])
+        tc = lad[lad.grp.str.contains("typeconf")]
+        if len(tc):
+            print("\n  MN-T ladder (all cells train on every step):")
+            print(f"    {'cell':38s} {'p_ml':>7s} {'p(t|ML)':>9s} {'p_train':>9s} "
+                  f"{'>tau':>6s}")
+            for grp, sub in tc.groupby("grp"):
+                print(f"    {grp:38s} {sub._pml.median():7.3f} "
+                      f"{sub._ptg.median():9.3f} {sub._p.median():9.3f} "
+                      f"{float((sub._p > a.tau).mean()):6.3f}")
 
 
 if __name__ == "__main__":

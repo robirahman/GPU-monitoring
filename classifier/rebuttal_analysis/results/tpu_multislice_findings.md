@@ -558,3 +558,42 @@ campaign session every 30 minutes and commits the trimmed corpus, so there is a
 versioned copy beside the code. git-lfs 3.5.1 was installed to make that possible:
 the repo is LFS-configured but the binary was missing, so every push all session
 had failed with a misleading "failed to push some refs".
+
+
+## 12. Stage 2 ranks honest training BELOW actual inference
+
+With all three v5e reps ingested (264 streams), held out by workload, memory
+features dropped, reporting Stage 2's own output p(train | ML) -- the type
+decision, separated from Stage 1's ML gate:
+
+| cell | ground truth | p(train\|ML) median | frac > 0.8 |
+|---|---|---|---|
+| `advtrain_satint_f05` | training | 1.000 | 1.000 |
+| `advtrain_satint_f20` | training | 1.000 | 1.000 |
+| `advtrain_satint_f50` | training | 0.995 | 1.000 |
+| `advtrain_satfiller_only` | training (trains never) | 0.985 | 1.000 |
+| `inferrep_1b` | **inference** | **0.733** | 0.158 |
+| `infershard_1b` | **inference** | **0.637** | 0.303 |
+| `train_fsdp1b` | **training (every step)** | **0.505** | 0.260 |
+| `nonml_duty50_hash` | other | 0.798 | 0.478 |
+
+Stage 2 puts honest training (0.505) BELOW both inference cells (0.733, 0.637).
+The discriminator is not ordering these classes at all: it has learned that the
+MN-I script family is training, and everything outside that family lands in a band
+between 0.5 and 0.75 regardless of what it actually is.
+
+This reframes the MN-T experiment. MN-T is designed to push p(train\|ML) down on a
+run that trains every step -- but the type decision is **already unreliable before
+any attack**, since it cannot rank a real training run above a real inference run.
+So a low p(train\|ML) on an MN-T cell will not by itself demonstrate a successful
+attack: the same score appears on honest training. The MN-T ladder must therefore
+be read as a CONTRAST -- `_off` vs `_a8` vs `_a32`, all training every step, all
+from one script -- and only a monotone fall across that ladder is evidence the
+shaping did something. Against the absolute p(train\|ML) scale, everything
+non-MN-I already looks like this.
+
+It also predicts what the multislice re-collect will show: once `train_fsdp1b`,
+`inferrep_1b` and `infershard_1b` exist on multislice too, Stage 2 there should
+become trainable and can be checked for the same pathology. If it reproduces, the
+honest conclusion is that this corpus cannot yet support a train-vs-infer claim on
+TPU at all -- independent of the adversarial question.
