@@ -5,7 +5,9 @@
 #
 # Conventions inherited from the Round 6 GPU queue (round6_symgemm_queue.sh):
 #   * cell name = registry label = parquet prefix = log = .done marker
-#   * resumable: a completed cell drops logs/.done/<cell>.done and is skipped
+#   * resumable WITHIN A SESSION: a completed cell drops
+#     logs/.done/<session>/<cell>.done and is skipped on a resume of that
+#     same session. The session component is load-bearing -- see DONE_DIR.
 #   * a failed cell is recorded (.failed) and the queue CONTINUES
 #   * rep-major ordering so a truncated run still leaves a balanced design
 #   * GAP idle settle between cells
@@ -66,7 +68,16 @@ if [ "$SMOKE" = "1" ]; then
   echo "SMOKE MODE: 60 s per cell, 1 rep, smoke_ prefix, output to logs/smoke_data/"
 fi
 
-mkdir -p logs logs/.done
+# Marker dir SCOPED BY SESSION. It used to be a flat logs/.done shared by every
+# campaign that ever ran on this VM, and run_cell skips any cell whose marker
+# exists -- so markers from one run suppressed cells in later runs, ACROSS
+# HARDWARE. Measured 2026-09-02: camp2 left 20 tpuTMS_* markers on v6e; the v5e
+# multislice claim then ran only the 25 unmarked cells; and the v6e multislice
+# claim after it found 44 of 45 already marked and ran EXACTLY ONE CELL before
+# reporting success. The v6e multislice re-collect never happened, and nothing
+# said so. In-session resumability is preserved; cross-session suppression is not.
+DONE_DIR="logs/.done/${SESSION:-nosession}"
+mkdir -p logs "$DONE_DIR"
 MASTER=logs/tpu_queue_master.log
 stamp() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
 say()   { echo "[$(stamp)] $*" | tee -a "$MASTER"; }
@@ -171,7 +182,7 @@ say "G1 PASS: analytic gradient matches finite difference on CPU"
 run_cell() {
   local cell="$1"
   local label="${PREFIX}${cell}"
-  local marker="logs/.done/${label}.done"
+  local marker="$DONE_DIR/${label}.done"
   if [ -f "$marker" ]; then
     say "SKIP  $cell (already: $(cat "$marker"))"
     return 0
@@ -201,7 +212,7 @@ PYTHONPATH=$REPO_DIR python3 scripts/run_workload_tpu.py \
     say "OK    $cell (${dur}s, $got/$NUM_WORKERS workers)"
   else
     echo "$(stamp) rc=$rc dur=${dur}s run_id=$rid workers=$got" \
-      > "logs/.done/${label}.failed"
+      > "$DONE_DIR/${label}.failed"
     say "FAIL  $cell rc=$rc ($got/$NUM_WORKERS workers) -- continuing"
   fi
   sleep "$GAP"
@@ -337,9 +348,9 @@ for REP in $(seq 1 "$REPS"); do
 done
 
 say "===== TPU queue complete ====="
-say "done:   $(ls logs/.done/${PREFIX}${SCOPE}_*.done 2>/dev/null | wc -l) cells"
-say "failed: $(ls logs/.done/${PREFIX}${SCOPE}_*.failed 2>/dev/null | wc -l) cells"
+say "done:   $(ls "$DONE_DIR"/${PREFIX}${SCOPE}_*.done 2>/dev/null | wc -l) cells"
+say "failed: $(ls "$DONE_DIR"/${PREFIX}${SCOPE}_*.failed 2>/dev/null | wc -l) cells"
 if [ "$SMOKE" = "1" ]; then
   say "SMOKE COMPLETE. If clean, clear markers and run the real queue:"
-  say "  rm -f logs/.done/smoke_* && nohup bash $0 &"
+  say "  rm -rf $DONE_DIR && nohup bash $0 &"
 fi
