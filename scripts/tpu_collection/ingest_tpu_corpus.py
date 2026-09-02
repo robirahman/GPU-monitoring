@@ -80,25 +80,47 @@ def main():
     logs = {o.rsplit("/", 1)[0] + "/" + o.rsplit("/", 1)[1]: o
             for o in objs if o.endswith(".log")}
     print(f"{len(parquets)} parquet(s), {len(logs)} log(s) under {a.prefix}")
+    # ONE bulk download instead of per-object calls. The first version issued a
+    # `storage cat` for the log of every parquet plus a `cp` for the parquet
+    # itself -- and on a v5litepod-8 each cell writes EIGHT per-chip parquets that
+    # all share one worker log, so an 11-cell rep meant ~176 sequential gcloud
+    # invocations and the run hit a 10-minute wall before finishing. gcloud
+    # parallelises a recursive copy internally, and the whole payload is a few MB.
     if not a.dry_run:
         os.makedirs(a.out, exist_ok=True)
 
     rows_out = []
     with tempfile.TemporaryDirectory() as td:
+        bulk = sh(["gcloud", "storage", "cp", "-r",
+                   a.prefix.rstrip("/") + "/runs", td], timeout=3000)
+        if bulk.returncode != 0:
+            print(f"ERROR bulk download: {bulk.stderr.strip()[:300]}", file=sys.stderr)
+            return
+        local_of = {}
+        for root, _dirs, files in os.walk(td):
+            for fn in files:
+                local_of.setdefault(fn, os.path.join(root, fn))
+        print(f"downloaded {len(local_of)} object(s)")
+
+        span_cache = {}
         for pq in sorted(parquets):
             wdir = pq.rsplit("/", 1)[0]
             stem = pq.rsplit("/", 1)[1][:-len(".parquet")]
-            # the worker log sits beside the parquet: <cell>_w<N>.log
-            cand = [o for o in logs.values() if o.startswith(wdir + "/") and o.endswith(".log")]
-            span = (None, None)
-            if cand:
-                lg = sh(["gcloud", "storage", "cat", cand[0]])
-                if lg.returncode == 0:
-                    span = step_span(lg.stdout)
-            local = os.path.join(td, stem + ".parquet")
-            cp = sh(["gcloud", "storage", "cp", pq, local])
-            if cp.returncode != 0:
-                print(f"  SKIP {stem}: download failed")
+            # One worker log serves every chip stream in its directory, so parse
+            # it once per directory rather than once per parquet.
+            if wdir not in span_cache:
+                span_cache[wdir] = (None, None)
+                cand = [o for o in logs.values()
+                        if o.startswith(wdir + "/") and o.endswith(".log")]
+                if cand:
+                    lp = local_of.get(cand[0].rsplit("/", 1)[1])
+                    if lp and os.path.exists(lp):
+                        with open(lp, "r", errors="replace") as fh:
+                            span_cache[wdir] = step_span(fh.read())
+            span = span_cache[wdir]
+            local = local_of.get(stem + ".parquet")
+            if not local or not os.path.exists(local):
+                print(f"  SKIP {stem}: not in the bulk download")
                 continue
             d = pd.read_parquet(local)
             n0 = len(d)

@@ -393,3 +393,91 @@ Cautions:
   = ~467 MB/chip against a target near 7013). Its F=0 partner had not run yet when
   rep 1 was queued. Excluded from the apparatus contrast; reps 2-3 can be matched
   once that scope's satfiller_only footprint is read.
+
+
+## 10. The within-generation numbers are keyed on the SCRIPT, not on training
+
+Corpus at this point: 148 streams, two generations -- 2,743 windows from 2x v6e-1
+multislice (`tpuTMS`, 8 workload groups, no inference class) and 6,488 from
+v5litepod-8 single-slice (`tpuT8`, 11 groups, all three classes). Harness:
+`classifier/rebuttal_analysis/tpu_rung_eval.py`.
+
+### The decisive number is an honest training run
+
+Within v5e, held out by workload, full two-stage `p_train`, memory features
+dropped, tau=0.8:
+
+| cell | class | p_med | frac > tau |
+|---|---|---|---|
+| `advtrain_satint_f05` | disguised training | 1.000 | **1.000** |
+| `advtrain_satint_f20` | disguised training | 1.000 | **1.000** |
+| `advtrain_satint_f50` | disguised training | 0.984 | **0.976** |
+| `advtrain_satfiller_only` (F=0) | disguised, trains NEVER | 0.912 | **0.968** |
+| `train_fsdp1b` | **honest, trains ALWAYS** | 0.504 | **0.254** |
+| `inferrep_1b` | inference | 0.703 | 0.119 |
+| `infershard_1b` | inference | 0.390 | 0.356 |
+| `nonml_comm` | other | 0.141 | 0.000 |
+| `nonml_duty30` | other | 0.227 | 0.000 |
+| `nonml_duty50_hash` | other | 0.721 | 0.048 |
+| `nonml_sat` | other | 0.528 | 0.000 |
+
+Read the last two training rows together. `train_fsdp1b` performs a gradient step
+on EVERY step of its 600 s; `advtrain_satfiller_only` performs NONE, by
+construction. If the model were detecting training, the honest run would score
+highest and F=0 lowest. The order is exactly inverted: **0.254 for real training,
+0.968 for a cell that never trains**. What the four `advtrain_*` cells share is
+not training -- it is the MN-I script, its model, and its filler.
+
+So the 0.98 "TPR" is a script detector. The GPU corpus has ~170 workloads to
+dilute this; a single generation here has 11 groups of which 4 are one script, and
+leave-one-workload-out cannot separate the two. This supersedes section 7: those
+numbers are not a weaker version of the claim, they are a different quantity.
+
+### Memory features flip which cell evades, which is the same tell
+
+With memory features IN, F=0 evades (0.079 above tau) and `duty50_hash`
+false-alarms at 0.710 (FPR 0.172). With them OUT, F=0 is "caught" at 0.968 and
+`duty50_hash` falls to 0.048 (FPR 0.012). Nothing about the workloads changed --
+only whether the model can see that F=0 holds 1089 MB/chip while F>0 holds 7013.
+Given memory, it separates F=0 from its siblings and scores it low; denied memory,
+it scores F=0 as just another member of the family. Both readings are artifacts.
+
+### Cross-generation transfer, which is the test that cannot be faked
+
+Train on one generation, test on the other. Different chip (31996 vs 16126 MB),
+different sharding of the same model (2 chips vs 8), different interconnect for
+the same collective (DCN vs ICI), and `dcn_collective_lat_us_*` live on one side
+and NaN on the other.
+
+| direction | features | disguised TPR@0.8 | honest FPR@0.8 |
+|---|---|---|---|
+| v6e -> v5e | all | 0.508 | **0.000** |
+| v6e -> v5e | no memory | 0.011 | 0.000 |
+| v5e -> v6e | all (Stage 1 only) | 0.559 | 0.451 |
+| v5e -> v6e | no memory (Stage 1) | -- | see script |
+
+Two things follow. **v6e -> v5e at 0.508 TPR with a 0.000 false-alarm rate is the
+only operating point here that is not obviously an artifact** -- it was fitted
+without ever seeing a v5e chip, so family recognition cannot explain the honest
+cells all scoring below tau. And it depends on the memory features: dropping them
+collapses TPR to 0.011, the reverse of the within-v6e ablation in section 7. The
+arena footprint is apparently the one channel that means the same thing on both
+generations, even though its absolute value differs.
+
+The reverse direction is poor (FPR 0.451), which is expected: a v5e-trained model
+has never seen DCN traffic, and every v6e cell has it.
+
+### What this changes
+
+* **Do not quote a within-generation TPR** until the corpus has several
+  independent training scripts per generation. The fix is more workload FAMILIES,
+  and `train_fsdp1b`, `inferrep_1b` and `infershard_1b` now exist at every scope
+  precisely so the ml_training class is not just MN-I.
+* **`train_fsdp1b` is the control that exposes this**, and it only entered the
+  corpus on 2026-09-02. Every earlier TPU analysis lacked the one cell that could
+  have detected the problem.
+* Stage 2 works at least partly: inference scores 0.119-0.356, below every
+  disguised cell.
+* Two-stage `p_train` is now computable on TPU data (v5e has all three classes),
+  so the paper's actual operating point is reproducible on this hardware -- on
+  v6e it still is not, since that corpus has no inference cells.
