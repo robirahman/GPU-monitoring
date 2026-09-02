@@ -229,13 +229,18 @@ _MEM_MATCH_TRAIN = 16495.0    # tpuTMS_advtrain_satint_f{20,50}, both slices
 _MEM_MATCH_F0_BY_SCOPE = {
     "tpuTMS@v6e": 5196.0,      # 2x v6e-1, satfiller_only, 758 samples
     "tpuT8@v5e": 1089.0,       # v5litepod-8, satfiller_only rep1, 665 samples
-    # "tpuTMS@v5e": pending -- 2x v5litepod-1 claimed 2026-09-02 08:00Z; read it
-    # from that run's first satfiller_only and enter it here.
+    "tpuTMS@v5e": 5184.0,      # 2x v5litepod-1, satfiller_only rep1, 642 samples
 }
 _MEM_MATCH_TRAIN_BY_SCOPE = {
     "tpuTMS@v6e": 16495.0,     # 2x v6e-1, f20 and f50, both slices
     "tpuT8@v5e": 7013.0,       # v5litepod-8, f50 rep1, 659 samples
-    # "tpuTMS@v5e": pending -- see above.
+    # 2x v5litepod-1, f50 rep1, 747 samples. NOTE: 15918 of a 16126 MB chip is
+    # 98.7% of HBM, so an honest control CANNOT match this footprint -- the 80%
+    # cap in tpu_nonml_distributed stops at ~12900 and logs that it did. The
+    # apparatus contrast on this scope is therefore bounded at ~81% of the target,
+    # which is a property of the hardware (a 1b model's training workspace nearly
+    # fills a v5litepod chip), not of the control.
+    "tpuTMS@v5e": 15918.0,
 }
 
 
