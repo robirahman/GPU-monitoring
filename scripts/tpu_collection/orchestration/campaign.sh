@@ -70,17 +70,30 @@ trap cleanup EXIT
 # Note two targets can share a scope (ms1 and ms8 are both 2 slices, differing in
 # chips per slice). Their GCS prefixes differ by key, and chip count must be read
 # from the telemetry rather than the scope label -- see registry_tpu.py.
+# ORDER: MULTISLICE FIRST, then single-slice, each rarest-first.
+#
+# Reordered 2026-09-02 because the coverage gap moved. Single-slice now has the
+# full class set -- the v5litepod-8 run collected 33 cells including honest
+# training and both inference workloads -- while MULTISLICE has only adversarial
+# and non-ML cells: the tpuTMS corpus predates the class references entirely, so
+# Stage 2 cannot be trained on it and the MN-T type-confusion attack has nothing
+# to attack. Multislice is also the only topology where the DCN channels carry
+# any value at all (verified: dcn_collective_lat_us_* is NaN on a single slice).
+# So the multislice shapes are claimed ahead of shapes we already have.
+#
+# What capacity has actually granted: v6e-1 freely (13x), 2x v6e-1 three times,
+# v6e-16 once, v5litepod-8 twice (2026-09-02, first time ever), v5litepod-16 once
+# (granted then reaped unused). Never ACTIVE: v6e-8, 2x v6e-8, 2x v5litepod-1.
 TARGETS=(
-  "t16|v6e-16|1|v2-alpha-tpuv6e|tpuT16"
   "ms8|v6e-8|2|v2-alpha-tpuv6e|tpuTMS"
-  "t8|v6e-8|1|v2-alpha-tpuv6e|tpuT8"
-  "v5t16|v5litepod-16|1|v2-alpha-tpuv5-lite|tpuT16"
-  "v5t8|v5litepod-8|1|v2-alpha-tpuv5-lite|tpuT8"
   "v5ms|v5litepod-1|2|v2-alpha-tpuv5-lite|tpuTMS"
-  "t4|v6e-4|1|v2-alpha-tpuv6e|tpuT4"
   "ms8x1|v6e-1|8|v2-alpha-tpuv6e|tpuTMS8"
   "ms4|v6e-1|4|v2-alpha-tpuv6e|tpuTMS4"
   "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
+  "t16|v6e-16|1|v2-alpha-tpuv6e|tpuT16"
+  "v5t16|v5litepod-16|1|v2-alpha-tpuv5-lite|tpuT16"
+  "t8|v6e-8|1|v2-alpha-tpuv6e|tpuT8"
+  "t4|v6e-4|1|v2-alpha-tpuv6e|tpuT4"
   "t1|v6e-1|1|v2-alpha-tpuv6e|tpuT1"
 )
 # t1 and t4 exist so the corpus has SINGLE-SLICE coverage of every class, not
