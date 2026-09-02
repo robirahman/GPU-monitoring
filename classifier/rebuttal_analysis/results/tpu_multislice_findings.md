@@ -688,3 +688,73 @@ Next step for this, independent of the adversarial question: pair `nonml_sat` an
 compare per-feature importances between them. If a non-memory channel tracks the
 footprint, it will show up as the top discriminator between two cells that differ
 in nothing else.
+
+
+## 14. CORRECTION: my memory ablation was incomplete, and the real result is better
+
+**Retraction first.** Sections 7, 13 and 13b all report numbers "with memory
+features removed". The filter was `c.startswith("mem_")`, which catches 52 of the
+**62** memory-derived features and misses ten:
+
+    acf1_mem_used, acf2_mem_used, acf5_mem_used, acf10_mem_used, acf20_mem_used,
+    first_30s_mem_delta_mb, first_30s_mem_delta_frac, first_30s_mem_ratio,
+    time_to_mem_plateau_samples, power_per_mem_util
+
+So every "memory removed" figure was computed with ten memory features still
+present, including all four run-level ones. **Section 13b's conclusion -- that the
+footprint confound survives the ablation and leaks through non-memory channels --
+is withdrawn.** It leaked through memory features I failed to exclude. Tested
+directly on the controlled pair (`nonml_sat` vs `nonml_sat_hi`, identical
+workloads differing only in resident footprint, held out by run):
+
+| features | accuracy telling the two apart |
+|---|---|
+| all 171 | 1.000 |
+| no `mem_*` (old filter) | 0.951 -- carried by `first_30s_mem_*` |
+| no memory at all (109) | **0.713**, against a 0.75 majority baseline |
+
+At or below chance once memory is genuinely gone. The confound is entirely in the
+memory features. (That test also initially leaked its own label: `get_feature_cols`
+picked up the `hi` column I had added to the frame, and it ranked 4th by
+importance. Fixed by keeping the label out of the frame.)
+
+### The real finding, on section 7's exact corpus
+
+Same 2,743 windows and 8 groups as section 7, so only the filter varies:
+
+| filter | features | TPR@0.8 | FPR@0.8 |
+|---|---|---|---|
+| ALL | 171 | 0.734 | 0.164 |
+| no `mem_*` (section 7's filter) | 119 | 0.710 | **0.009** |
+| **NO memory at all** | 109 | 0.670 | **0.415** |
+| memory only | 62 | 0.737 | 0.162 |
+
+The ten features I failed to drop are the most useful ones in the set. Keeping
+only the memory **startup trajectory** -- how fast the footprint ramps and when it
+plateaus -- while discarding the 52 per-window memory **levels** is what produced
+the clean 0.009. Drop the trajectory too and false alarms rise to 0.415, far worse
+than keeping everything.
+
+That has a clean physical reading, and it lines up with the level-vs-shape split
+Stage 2 already encodes: the *absolute* footprint is confoundable, because an
+honest job can allocate just as much (which is exactly what `nonml_sat_hi`
+demonstrates), while the *trajectory* of allocating a model plus optimizer states
+is a signature of the apparatus and much harder to imitate incidentally.
+
+So section 7's recommendation -- "drop the memory features" -- happened to land on
+a good feature subset for the wrong reason. The defensible version is: **drop
+memory LEVELS, keep memory SHAPE.**
+
+Caveats unchanged: 8 groups, and the family-identity leakage of section 10 still
+applies, so these are feature-utility observations inside one corpus, not
+deployment numbers.
+
+### Corrected multislice numbers (2x v5litepod-1, memory genuinely dropped)
+
+Run level, 3-of-5: **run TPR 0.533, run FPR 0.375** (previously reported as
+1.000/0.750 with the incomplete filter). The detector is weak rather than
+saturated, so the MN-T verdict of section 13 stands but for a cleaner reason: there
+is still no usable operating point to attack. The ladder's rate above tau does now
+decline monotonically -- 0.850, 0.732, 0.703 for `_off`, `_a8`, `_a32` -- but
+p(train|ML) stays flat at 0.92-0.96, so what little moves is Stage 1's ML gate,
+not the type decision MN-T targets.

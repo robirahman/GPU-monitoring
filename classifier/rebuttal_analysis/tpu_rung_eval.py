@@ -200,7 +200,14 @@ def main():
         print(f"scope filter {a.scope}: {len(w):,} of {n0:,} windows")
     cols = get_feature_cols(w)
     if a.drop_memory:
-        cols = [c for c in cols if not c.startswith("mem_")]
+        # "mem" ANYWHERE in the name, not startswith("mem_"). The prefix test
+        # missed 10 of the 62 memory-derived features -- acf{1,2,5,10,20}_mem_used,
+        # first_30s_mem_{delta_mb,delta_frac,ratio}, time_to_mem_plateau_samples
+        # and power_per_mem_util -- and the run-level ones among those are exactly
+        # where the footprint signal lives. Every earlier "memory removed" result
+        # in results/tpu_multislice_findings.md sections 7, 13 and 13b was computed
+        # with those still present, so they do not mean what they say.
+        cols = [c for c in cols if "mem" not in c.lower()]
     print(f"windows {len(w):,}  groups {w.grp.nunique()}  features {len(cols)}")
     print("by generation:", dict(w.gen.value_counts()))
     print("by scope:     ", dict(w.scope.value_counts()))
