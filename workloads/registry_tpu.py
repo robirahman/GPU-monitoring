@@ -228,7 +228,7 @@ _MEM_MATCH_TRAIN = 16495.0    # tpuTMS_advtrain_satint_f{20,50}, both slices
 # here. The disguise cells print MEM_BYTES_IN_USE_STEADY for cross-checking.
 _MEM_MATCH_F0_BY_SCOPE = {
     "tpuTMS": 5196.0,          # 2x v6e-1, satfiller_only, 758 samples
-    # "tpuT8": <F=0 footprint on v5litepod-8>,   pending its first satfiller_only
+    "tpuT8": 1089.0,           # v5litepod-8, satfiller_only rep1, 665 samples, 09-02
 }
 _MEM_MATCH_TRAIN_BY_SCOPE = {
     "tpuTMS": 16495.0,         # 2x v6e-1, f20 and f50, both slices
@@ -281,6 +281,19 @@ for _sc in _SCOPES:
          f"MN-I F=0.5 on {_sc} (100% detected at 0.6% FPR on GPU -- the claim)",
          _TO_ADV)
     # --- Honest non-ML controls (other, honest) ---
+    # Partner for the F>0 contrast, not the F=0 one: a disguised run at any F>0
+    # carries the training workspace and so sits far above the filler-only cell
+    # (v6e 16495 vs 5196 MB/chip; v5e 7013 vs 1089 -- a 6.4x gap there). Matching
+    # only F=0 would leave memory alone separating the headline comparison. Named
+    # _hi and NOT _16g, because 16 GB is a v6e number that exceeds a whole v5e
+    # chip, and NOT anything containing "train", which threeway_label() would
+    # route to ml_training.
+    _add(f"{_sc}_nonml_sat_hi",
+         _nonml_cmd(alloc=(0.0 if _match_train(_sc) else 8.0),
+                    match_mb=_match_train(_sc), duty=1.0),
+         f"Honest non-ML on {_sc} at the TRAINING footprint -- without it, "
+         f"mem_used_mb alone separates the F>0 disguise from its control",
+         _TO_OTHER)
     _add(f"{_sc}_nonml_sat",
          _nonml_cmd(alloc=(0.0 if _match_f0(_sc) else _ALLOC_MATCHED),
                     match_mb=_match_f0(_sc), duty=1.0),
@@ -324,8 +337,8 @@ _add("tpuTMS_advtrain_satfiller_only", _mni_cmd(0.0),
 _add("tpuTMS_nonml_sat", _nonml_cmd(match_mb=_match_f0("tpuTMS"), duty=1.0),
      "Honest non-ML on multislice, footprint-matched to F=0 -- the apparatus test",
      _TO_OTHER)
-_add("tpuTMS_nonml_sat_16g", _nonml_cmd(match_mb=_match_train("tpuTMS"), duty=1.0),
-     "Honest non-ML on multislice, footprint-matched to a TRAINING run (16.5GB) -- "
+_add("tpuTMS_nonml_sat_hi", _nonml_cmd(match_mb=_match_train("tpuTMS"), duty=1.0),
+     "Honest non-ML on multislice, footprint-matched to a TRAINING run -- "
      "without this, mem_used_mb alone separates the F>0 disguise from its control",
      _TO_OTHER)
 _add("tpuTMS_nonml_comm", _nonml_cmd(mode="comm"),
@@ -365,12 +378,29 @@ _add("tpuTMS_infershard_1b", _infer_cmd("1b", "tp"),
 _MS_LADDER = {"tpuTMS4": 4, "tpuTMS8": 8}
 for _nm, _ns in _MS_LADDER.items():
     for _k in [k for k in list(WORKLOAD_REGISTRY_TPU) if k.startswith("tpuTMS_")]:
+        # The footprint-matched cells must NOT be cloned verbatim: their
+        # --match-mem-mb is a 2-slice measurement, and a 4- or 8-slice group
+        # shards the same model differently, so copying the number would
+        # reintroduce exactly the cross-scope transfer error that
+        # _MEM_MATCH_*_BY_SCOPE exists to prevent. Re-register them from the
+        # per-scope helpers instead, which fall back to the open-loop knob (and
+        # therefore to "not a matched control") until that rung is measured.
+        if "nonml_sat" in _k:
+            continue
         _e = WORKLOAD_REGISTRY_TPU[_k]
         WORKLOAD_REGISTRY_TPU[_k.replace("tpuTMS_", _nm + "_", 1)] = {
             "command": list(_e["command"]),
             "description": f"{_e['description']} [{_ns} slices]",
             "default_timeout": _e["default_timeout"],
         }
+    _add(f"{_nm}_nonml_sat",
+         _nonml_cmd(alloc=(0.0 if _match_f0(_nm) else _ALLOC_MATCHED),
+                    match_mb=_match_f0(_nm), duty=1.0),
+         f"Honest non-ML at the F=0 footprint [{_ns} slices]", _TO_OTHER)
+    _add(f"{_nm}_nonml_sat_hi",
+         _nonml_cmd(alloc=(0.0 if _match_train(_nm) else 8.0),
+                    match_mb=_match_train(_nm), duty=1.0),
+         f"Honest non-ML at the TRAINING footprint [{_ns} slices]", _TO_OTHER)
 
 
 def get_tpu_workload(label: str) -> dict:

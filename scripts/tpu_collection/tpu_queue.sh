@@ -245,7 +245,7 @@ ADV=(
 # other scopes. Each scope needs its own measured number before this cell is
 # meaningful there.
 case "$SCOPE" in
-  tpuTMS*) ADV+=("${SCOPE}_nonml_sat_16g") ;;
+  tpuTMS*|tpuT*) ADV+=("${SCOPE}_nonml_sat_hi") ;;
 esac
 
 # CLASS REFERENCES for EVERY scope, appended last so a truncated run still keeps
