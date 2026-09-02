@@ -481,3 +481,80 @@ has never seen DCN traffic, and every v6e cell has it.
 * Two-stage `p_train` is now computable on TPU data (v5e has all three classes),
   so the paper's actual operating point is reproducible on this hardware -- on
   v6e it still is not, since that corpus has no inference cells.
+
+
+## 11. Overnight plan of 2026-09-02, and two gaps closed before it started
+
+Robi's brief: cover real inference, training and non-ML on BOTH topologies with all
+available telemetry, then attack the classifier's TYPE decision on a multi-slice
+training run. Budget up to $3000, commit data frequently.
+
+### Telemetry was incomplete: 7 of 11 channels
+
+`ListSupportedMetrics`, enumerated on a live v5litepod-8 (the metrics server lives
+inside the workload process, so this is only possible while a cell holds the chip),
+serves **eleven** names. Seven were mapped. The four discarded on every run so far:
+
+| metric | now |
+|---|---|
+| `megascale.host_to_device_transfer_latencies...` | mapped + featurised |
+| `megascale.device_to_host_transfer_latencies...` | mapped + featurised |
+| `slice.error.detected.gauge` | logged as a data-quality flag, not featurised |
+| `tpu.runtime.uptime.seconds.gauge` | logged, deliberately not featurised |
+
+The transfer-latency pair matters beyond completeness: **training streams batches
+host->device while inference streams generated tokens device->host**, so these are
+the channels most likely to separate the two classes -- which is Stage 2's job, and
+Stage 2 is exactly what this corpus could not train until inference cells existed.
+`tpu_uptime_s` is excluded from features because it rises monotonically and would
+encode window position, the hazard already flagged for `hlo_exec_us_*`.
+
+**Note for analysis:** these four channels exist only in data collected AFTER
+2026-09-02 07:40Z. The 44 v6e multislice streams and the 264 v5e streams predate
+them, so a model using h2d/d2h cannot be compared against those corpora directly.
+
+### MN-T: attacking the TYPE decision
+
+`workloads/tpu_adversarial_typeconf.py`. MN-I attacks Stage 1 (make training look
+non-ML); MN-T attacks Stage 2 (keep it plainly ML, make train read as INFER).
+Harder by construction: Stage 2 sees only shape features after the WB-O level drop,
+so no single level can be moved to win.
+
+Each knob targets a channel measured to separate the classes on v5e:
+
+| channel | training | inference | knob |
+|---|---|---|---|
+| `tensorcore_util_pct` | 17 | 88 | `--tc-fill` dense matmul bursts |
+| `mem_used_mb` | 7013 | 2668 | `--optimizer sgd` (no Adam moments) |
+| cross-slice collectives | every step | none | `--accum K` (local SGD) |
+| d2h transfer | idle | streaming | `--d2h-trickle` |
+
+Ladder: `_off` (SGD alone -- the control that says how much of any effect is just
+the optimizer), `_a8`, `_a32`. It remains REAL training: genuine forward/backward
+and parameter update on the same 1b model, useful tokens reported so the evasion
+tax is measurable.
+
+**Stated limitation.** Under `--accum K` the parameters are replicated per slice
+and averaged only every K steps, which is what cuts DCN events to 1/K. But the
+batch is process-uniform (device_put asserts a replicated value is identical
+across processes), so every host trains on the same data and the averaging is
+numerically redundant. The telemetry -- compute, footprint, collective cadence,
+transfer pattern -- matches true local SGD, and the telemetry is what the detector
+sees, so the evasion question is answered faithfully. Throughput-per-token from
+this cell is not meaningful and must not be quoted.
+
+**What to look for:** the attack succeeds if `p(infer | ml)` rises with attack
+strength while ground truth stays training, i.e. `_off` -> `_a8` -> `_a32` shows
+falling `p_train` on cells that all train every step. Because they DO train every
+step, this is a cleaner test than MN-I: there is no "it trained less" confound, so
+a drop in p_train is unambiguously the detector being fooled about TYPE.
+
+### Durability
+
+GCS is the durability layer -- each cell's parquets upload as that cell finishes,
+so a lost slice costs at most the cell in flight (verified: 256 objects present
+mid-run). `scripts/tpu_collection/corpus_autocommit.sh` additionally ingests every
+campaign session every 30 minutes and commits the trimmed corpus, so there is a
+versioned copy beside the code. git-lfs 3.5.1 was installed to make that possible:
+the repo is LFS-configured but the binary was missing, so every push all session
+had failed with a misleading "failed to push some refs".
