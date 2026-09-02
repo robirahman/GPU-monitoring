@@ -24,18 +24,33 @@
 # is free, and deleting it would defeat the whole point of parking broadly.
 set -uo pipefail
 PROJECT=${PROJECT:-focus-surfer-494820-g0}
-LOG=${LOG:-/tmp/campaign3.log}
+# NEWEST campaign log, not a hardcoded one. Pinning it to a single file created a
+# real hazard on 2026-09-02: after relaunching camp3 as camp4, the running reaper
+# was still reading campaign3.log, whose last CLAIMED line named a slice that no
+# longer existed -- so it would have treated camp4's legitimately claimed group as
+# a stray and reaped the very instance the campaign was collecting on. It could
+# not be killed (kills are refused in this environment), and the fix was to
+# truncate the stale log so the reaper parsed no claim and stood by. Auto-detecting
+# removes the trap.
+LOG=${LOG:-}
+_newest_log(){
+  ls -t /tmp/campaign*.log 2>/dev/null | grep -v '\.done$' | head -1
+}
 DRIVER=${DRIVER:-"bash /tmp/campaign.sh"}
 ZONES=${ZONES:-"us-east5-a us-east5-b us-east1-d us-south1-a europe-west4-a europe-west4-b us-central1-a asia-northeast1-b"}
 SKIP_RE=${SKIP_RE:-'^sigil'}
 INTERVAL=${INTERVAL:-120}
 say(){ echo "[$(date -u +%H:%M:%SZ)] $*"; }
 
-say "reaper armed: zones=[$ZONES] skip=/$SKIP_RE/ interval=${INTERVAL}s"
+say "reaper armed: zones=[$ZONES] skip=/$SKIP_RE/ interval=${INTERVAL}s log=${LOG:-auto}"
 while :; do
   pgrep -f "$DRIVER" >/dev/null 2>&1 || { say "driver gone; reaper exiting"; break; }
 
-  claim=$(grep -a "CLAIMED" "$LOG" 2>/dev/null | tail -1)
+  lg=${LOG:-$(_newest_log)}
+  if [ -z "$lg" ] || [ ! -s "$lg" ]; then
+    say "no campaign log with content yet -- standing by"; sleep "$INTERVAL"; continue
+  fi
+  claim=$(grep -a "CLAIMED" "$lg" 2>/dev/null | tail -1)
   if [ -z "$claim" ]; then say "no claim yet -- standing by"; sleep "$INTERVAL"; continue; fi
   # "[hh:mm:ssZ] CLAIMED <key> (<prefix> @ <zone>)"
   pfx=$(echo "$claim" | sed 's/.*(\([^ ]*\) @ .*/\1/')
