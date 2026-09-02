@@ -1,4 +1,66 @@
-# The TPU rung on real hardware: what provisions, what the chip reports, and
+# TPU rung: findings
+
+> **SUMMARY (2026-09-02 18:45Z).** Sections below are append-only and in
+> discovery order, including three claims of mine that were later withdrawn. Read
+> this box first.
+
+## Corpus in hand
+
+| corpus | shape | groups | classes | notes |
+|---|---|---|---|---|
+| `tpuTMS@v6e` | 2x v6e-1 multislice | 8 | train + other | no inference; predates the class references |
+| `tpuT8@v5e` | v5litepod-8 single slice | 11 | all three | 3 full reps, 264 streams |
+| `tpuTMS@v5e` | 2x v5litepod-1 multislice | 11 | all three | + the MN-T attack ladder |
+| `tpuT1@v6e` | v6e-1 single slice | 12 | all three | first with a footprint-matched honest control |
+
+Both topologies and both generations are covered. All 11 libtpu metrics are logged
+in data collected after 07:40Z; earlier data has 7.
+
+## Established
+
+* **DCN is multislice-only.** `dcn_collective_lat_us_*` and
+  `buffer_xfer_lat_us_p90` are NaN on any single slice and carry values on
+  multislice, on both generations. The premise the rung rests on, confirmed from
+  data (section 9).
+* **The memory channel carries real signal on TPU.** Removing all memory features
+  costs 0.3-0.4 in false-alarm rate on every corpus tried -- notable for a platform
+  with no power channel at all (section 18).
+* **The GPU headline claim is not subject to the footprint-coverage artifact.**
+  17 of 56 honest GPU groups sit above the median training footprint; the honest
+  class genuinely contests the training range (section 17).
+* **The within-TPU-generation detector keys on the SCRIPT, not on training.**
+  Honest training scores 0.254 while a cell that never trains scores 0.968. Four
+  of eight groups are one script and leave-one-workload-out cannot separate them
+  (section 10). GPU has 335 groups and does not share this.
+* **F=0 is not the F->0 limit.** Every F>0 cell carries a training workspace the
+  F=0 cell never allocates -- 16495 vs 5196 MB/chip on v6e, 7013 vs 1089 on v5e
+  (section 3b).
+* **Stage 2 cannot order the classes.** It puts honest training (0.505) below both
+  inference cells (0.733, 0.637) (section 12).
+
+## Withdrawn
+
+* "Memory features are the liability; drop them" (section 7) -- the filter caught
+  52 of 62 memory features (section 14).
+* "The footprint confound survives the ablation" (section 13b) -- it leaked
+  through the 10 features the filter missed (section 14).
+* "Drop memory levels, keep memory shape" (section 15) and its footprint-coverage
+  mechanism (section 16) -- three corpora give three different winners, and the
+  mechanism's own prediction fails on `tpuT1` (section 18).
+
+**No feature-subset rule is defensible from these corpora.** Each of the three
+above was fitted to the corpus in front of me. 8-12 groups with 1-3 reps is too
+small, with section 10's leakage unaddressed.
+
+## Open
+
+* **MN-T is untested, not refuted.** The attack moved `p(train|ML)` by nothing,
+  but on a subcorpus where run FPR is 0.375 and honest cells alert as often as
+  training ones. There was no working detector to fool (sections 13, 13b).
+* A multislice corpus with the full honest class set (5 non-ML cells) is the
+  missing piece for MN-T, for Stage 2, and for any feature claim.
+* `~/win_full.parquet` predates the legacy-TPU quarantine and should be rebuilt.
+
 # eight defects that only a genuinely multi-process slice could expose
 
 Status as of 2026-09-01 20:30Z. A 2x v6e-1 multislice is live in us-east5-a and
