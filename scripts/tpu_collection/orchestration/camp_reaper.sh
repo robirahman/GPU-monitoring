@@ -43,8 +43,26 @@ INTERVAL=${INTERVAL:-120}
 say(){ echo "[$(date -u +%H:%M:%SZ)] $*"; }
 
 say "reaper armed: zones=[$ZONES] skip=/$SKIP_RE/ interval=${INTERVAL}s log=${LOG:-auto}"
+# Exit only once a driver has been SEEN and then disappears. Exiting on a missing
+# driver at startup was wrong: launched in the gap between one campaign's exit and
+# the next one's start, the reaper died instantly ("driver gone; reaper exiting"
+# 0 seconds after arming) and left the new campaign unsupervised -- which is
+# precisely the window it exists to cover.
+seen_driver=0
+grace_left=${GRACE_CYCLES:-30}
 while :; do
-  pgrep -f "$DRIVER" >/dev/null 2>&1 || { say "driver gone; reaper exiting"; break; }
+  if pgrep -f "$DRIVER" >/dev/null 2>&1; then
+    seen_driver=1
+  elif [ "$seen_driver" = "1" ]; then
+    say "driver gone; reaper exiting"; break
+  else
+    grace_left=$((grace_left - 1))
+    if [ "$grace_left" -le 0 ]; then
+      say "no driver appeared within the grace window; reaper exiting"; break
+    fi
+    say "waiting for a driver to appear ($grace_left cycle(s) of grace left)"
+    sleep "$INTERVAL"; continue
+  fi
 
   lg=${LOG:-$(_newest_log)}
   if [ -z "$lg" ] || [ ! -s "$lg" ]; then
