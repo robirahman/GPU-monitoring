@@ -80,6 +80,18 @@ EXTRA_SIGNALS = [
     "dcn_collective_lat_us_p50", "dcn_collective_lat_us_p90",
     "dcn_collective_lat_us_p99", "buffer_xfer_lat_us_p90",
     "tensorcore_util_pct",
+    # Host<->device transfer latencies, added 2026-09-02 once the metrics server
+    # was enumerated properly (it serves 11 names; only 7 were being read). These
+    # are the two channels most likely to separate TRAINING from INFERENCE --
+    # training streams batches host->device, inference streams generated tokens
+    # device->host -- which is Stage 2's job and the part of the pipeline the TPU
+    # corpus could not train at all until inference cells existed.
+    "h2d_transfer_lat_us_p50", "h2d_transfer_lat_us_p90",
+    "d2h_transfer_lat_us_p50", "d2h_transfer_lat_us_p90",
+    # NOT tpu_uptime_s: it rises monotonically through a run, so as a feature it
+    # encodes how far into the run a window sits rather than anything about the
+    # workload. NOT slice_error_detected either: that is a data-quality flag for
+    # filtering windows, not a signal about the workload.
     # NOT tpu_duty_cycle_pct: collect_tpu_telemetry writes the same `duty` value
     # to both it and gpu_utilization_pct, differing only in the missing-value
     # sentinel (0.0 vs -1.0), so including it would duplicate a RAW_SIGNAL and

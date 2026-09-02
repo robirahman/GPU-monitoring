@@ -142,6 +142,9 @@ _TPU_NATIVE = [
     "dcn_collective_lat_us_p99",
     "buffer_xfer_lat_us_p90",
     "tpu_duty_cycle_pct", "tensorcore_util_pct", "hbm_bw_util_pct",
+    "h2d_transfer_lat_us_p50", "h2d_transfer_lat_us_p90", "h2d_transfer_lat_us_p99",
+    "d2h_transfer_lat_us_p50", "d2h_transfer_lat_us_p90", "d2h_transfer_lat_us_p99",
+    "slice_error_detected", "tpu_uptime_s",
 ]
 
 
@@ -366,6 +369,28 @@ class TpuMetricSource:
         "hlo.queue.size.gauge": "hlo_queue",
         "megascale.collective_end_to_end_latencies.microsecond.cumulative.distribution": "dcn_lat",
         "megascale.dcn_transfer_latencies.microsecond.cumulative.distribution": "buf_xfer",
+        # ── added 2026-09-02 after enumerating the server on a live v5litepod-8 ──
+        # ListSupportedMetrics serves ELEVEN names and only seven were mapped, so
+        # four channels were being discarded on every run. (The earlier count of
+        # "11 served" was right; the gap was never closed.) The response field is
+        # `metric_name`, not `metric.name` -- reading the wrong field is why an
+        # enumeration attempt returned "SERVED 0".
+        #
+        # The two transfer-latency channels are the interesting ones: training
+        # streams batches HOST->DEVICE while inference streams generated tokens
+        # DEVICE->HOST, so they plausibly separate the two classes -- which is
+        # Stage 2's whole job, and Stage 2 is what the TPU corpus could not train
+        # until inference cells existed.
+        "megascale.host_to_device_transfer_latencies.microsecond.cumulative.distribution": "h2d_lat",
+        "megascale.device_to_host_transfer_latencies.microsecond.cumulative.distribution": "d2h_lat",
+        # A data-quality flag, not a feature: a window in which the slice reported
+        # an error should be filterable rather than silently averaged in.
+        "slice.error.detected.gauge": "slice_error",
+        # Logged for diagnostics and deliberately NOT featurised: uptime rises
+        # monotonically through a run, so as a feature it encodes how far into the
+        # run a window sits rather than anything about the workload -- the same
+        # hazard already flagged for hlo_exec_us_*.
+        "tpu.runtime.uptime.seconds.gauge": "uptime",
     }
 
     def _init_grpc_metrics(self):
@@ -759,6 +784,14 @@ class TpuTelemetryCollector:
          row["dcn_collective_lat_us_p99"]) = d50, d90, d99
         _, b90, _ = _percentiles(m.get("buf_xfer"))
         row["buffer_xfer_lat_us_p90"] = b90
+        h50, h90, h99 = _percentiles(m.get("h2d_lat"))
+        (row["h2d_transfer_lat_us_p50"], row["h2d_transfer_lat_us_p90"],
+         row["h2d_transfer_lat_us_p99"]) = h50, h90, h99
+        q50, q90, q99 = _percentiles(m.get("d2h_lat"))
+        (row["d2h_transfer_lat_us_p50"], row["d2h_transfer_lat_us_p90"],
+         row["d2h_transfer_lat_us_p99"]) = q50, q90, q99
+        row["slice_error_detected"] = _scalar(m.get("slice_error"), default=-1.0)
+        row["tpu_uptime_s"] = _scalar(m.get("uptime"), default=-1.0)
         # native duty/tc/bw: -1 when dark (distinct sentinel from the mapped cols)
         row["tpu_duty_cycle_pct"] = float(duty) if duty is not None else -1.0
         row["tensorcore_util_pct"] = float(tc) if tc is not None else -1.0
