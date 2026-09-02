@@ -198,19 +198,26 @@ def main():
     # on MN-I at F=0.05 it read 4694 MB/chip while the collector reported 16495,
     # because the runtime's arena had grown to hold the train step's transient
     # workspace. Prefer a reserved/arena key and fall back only if it stays flat.
-    _MATCH_KEYS = ("bytes_reserved", "peak_bytes_reserved", "bytes_in_use")
+    # WHICH quantity to match on -- settled by measurement on 2026-09-02. The
+    # sat_hi cell on 2x v5litepod-1 logged bytes_in_use=13479 and
+    # bytes_reserved=896 while the collector reported mem_used_mb=14391, i.e.
+    #     collector mem_used ~= bytes_in_use + bytes_reserved
+    # That also explains the gap recorded in results section 14: on a TRAINING
+    # cell the workspace is reserved but not in use between steps, so
+    # bytes_in_use alone read 4694 against the collector's 16495. Matching on
+    # bytes_in_use only therefore under-allocates against any partner that holds
+    # a large reserve, which is exactly what a training cell does. Track the sum.
+    _MATCH_KEYS = ("in_use+reserved", "bytes_in_use")
 
     def _chip_mem(key=None):
-        """(key, MB) for the arena-tracking metric on this host's first chip."""
+        """(key, MB) for the quantity the COLLECTOR reports, on the first chip."""
         ms = _mem_stats()
-        if key:
-            v = ms.get(key)
-            return key, (float(v) / (1 << 20) if v is not None else float("nan"))
-        for k in _MATCH_KEYS:
-            v = ms.get(k)
-            if v:
-                return k, float(v) / (1 << 20)
-        return _MATCH_KEYS[-1], float(ms.get(_MATCH_KEYS[-1], 0)) / (1 << 20)
+        if key == "bytes_in_use":
+            return key, float(ms.get("bytes_in_use", 0)) / (1 << 20)
+        tot = float(ms.get("bytes_in_use", 0)) + float(ms.get("bytes_reserved", 0))
+        if tot > 0 or key == "in_use+reserved":
+            return "in_use+reserved", tot / (1 << 20)
+        return "bytes_in_use", float(ms.get("bytes_in_use", 0)) / (1 << 20)
 
     def _chip_used_mb():
         """Back-compat: MB on the arena-tracking metric."""
