@@ -249,6 +249,7 @@ def main():
     _ref_step = _ref_t = None
     _b2_step = _b2_t = None      # steady-state reference, set when the budget is fixed
     _rebudgeted = False
+    _topups = 0
     if args.train_frac <= 0.0:
         n_budget = max(1, int(args.duration / max(args.slot_sec, 1e-3)))
         if pidx == 0:
@@ -258,7 +259,28 @@ def main():
         while True:
             if n_budget is not None:
                 if step >= n_budget:
-                    break
+                    # TOP UP rather than exit early. The mid-run correction below
+                    # only fires at 40% of the duration, so a budget that came out
+                    # too LOW exhausts before the correction can ever run and the
+                    # cell just stops: on a single v6e-1, f50_rep2 ran 224 s and
+                    # f20_rep2 252 s of a requested 600 s, because one chip makes
+                    # each step slow enough that the 4-train-step estimate was far
+                    # short. Re-agree at exhaustion while there is still time left,
+                    # bounded so an estimate that is wrong every round cannot loop.
+                    _el = time.time() - t0
+                    if _el < 0.75 * args.duration and _topups < 4:
+                        _topups += 1
+                        _ref_n = _b2_step if _b2_step is not None else 1
+                        _ref_time = _b2_t if _b2_t is not None else t0
+                        n_budget = T.agreed_step_budget(
+                            max(step - _ref_n, 1), max(time.time() - _ref_time, 1e-3),
+                            args.duration - _el, step)
+                        if pidx == 0:
+                            print(f"  step budget topped up ({_topups}) at step "
+                                  f"{step}: {n_budget} ({_el:.0f}s of "
+                                  f"{args.duration}s elapsed)", flush=True)
+                    else:
+                        break
             elif time.time() - t0 >= 3 * args.duration:
                 # The budget is set a few train steps in. If we somehow never got
                 # there, stop rather than run until the cell timeout.
