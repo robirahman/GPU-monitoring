@@ -227,21 +227,70 @@ _MEM_MATCH_TRAIN = 16495.0    # tpuTMS_advtrain_satint_f{20,50}, both slices
 # parquet (the collector's number, which is what the detector sees), and enter it
 # here. The disguise cells print MEM_BYTES_IN_USE_STEADY for cross-checking.
 _MEM_MATCH_F0_BY_SCOPE = {
-    "tpuTMS": 5196.0,          # 2x v6e-1, satfiller_only, 758 samples
-    "tpuT8": 1089.0,           # v5litepod-8, satfiller_only rep1, 665 samples, 09-02
+    "tpuTMS@v6e": 5196.0,      # 2x v6e-1, satfiller_only, 758 samples
+    "tpuT8@v5e": 1089.0,       # v5litepod-8, satfiller_only rep1, 665 samples
+    # "tpuTMS@v5e": pending -- 2x v5litepod-1 claimed 2026-09-02 08:00Z; read it
+    # from that run's first satfiller_only and enter it here.
 }
 _MEM_MATCH_TRAIN_BY_SCOPE = {
-    "tpuTMS": 16495.0,         # 2x v6e-1, f20 and f50, both slices
-    "tpuT8": 7013.0,           # v5litepod-8, f50 rep1, 659 samples, 09-02
+    "tpuTMS@v6e": 16495.0,     # 2x v6e-1, f20 and f50, both slices
+    "tpuT8@v5e": 7013.0,       # v5litepod-8, f50 rep1, 659 samples
+    # "tpuTMS@v5e": pending -- see above.
 }
+
+
+_GEN_CACHE = [None]
+
+
+def _generation() -> str:
+    """TPU generation of the host this is running on ("v6e", "v5e", "unknown").
+
+    Needed because a SCOPE does not determine a footprint. The campaign maps both
+    2x v6e-1 and 2x v5litepod-1 to scope "tpuTMS", and those chips differ in
+    capacity (31996 vs 16126 MB) and in how the same model shards, so one target
+    under one scope name is wrong for one of them. Concretely: tpuTMS's measured
+    _MEM_MATCH_TRAIN of 16495 MB exceeds an ENTIRE v5litepod chip.
+
+    Same metadata attribute the collector derives gpu_name from, cached because
+    the registry is imported per cell launch and the call costs a round trip (and
+    fails fast off-GCP, where it correctly yields "unknown").
+    """
+    if _GEN_CACHE[0] is None:
+        raw = (os.environ.get("SPAR_TPU_ACCEL") or "").strip().lower()
+        if not raw:
+            try:
+                import urllib.request
+                req = urllib.request.Request(
+                    "http://metadata.google.internal/computeMetadata/v1/instance/"
+                    "attributes/accelerator-type",
+                    headers={"Metadata-Flavor": "Google"})
+                with urllib.request.urlopen(req, timeout=2) as r:
+                    raw = r.read().decode("utf-8", "replace").strip().lower()
+            except Exception:
+                raw = ""
+        gen = "unknown"
+        for pre, g in (("v6e", "v6e"), ("v5litepod", "v5e"), ("v5lite", "v5e"),
+                       ("v5e", "v5e"), ("v5p", "v5p"), ("v4", "v4")):
+            if raw.startswith(pre):
+                gen = g
+                break
+        _GEN_CACHE[0] = gen
+    return _GEN_CACHE[0]
 
 
 def _match_f0(scope):
-    return _MEM_MATCH_F0_BY_SCOPE.get(scope, 0.0)
+    """Measured F=0 footprint for this scope ON THIS GENERATION, else 0."""
+    g = _generation()
+    return _MEM_MATCH_F0_BY_SCOPE.get(f"{scope}@{g}",
+                                      _MEM_MATCH_F0_BY_SCOPE.get(scope, 0.0)
+                                      if g == "unknown" else 0.0)
 
 
 def _match_train(scope):
-    return _MEM_MATCH_TRAIN_BY_SCOPE.get(scope, 0.0)
+    g = _generation()
+    return _MEM_MATCH_TRAIN_BY_SCOPE.get(f"{scope}@{g}",
+                                         _MEM_MATCH_TRAIN_BY_SCOPE.get(scope, 0.0)
+                                         if g == "unknown" else 0.0)
 _ALLOC_HIMEM = 48.0
 
 
@@ -350,10 +399,19 @@ _add("tpuTMS_advtrain_satint_f05", _mni_cmd(0.05),
      "MN-I F=0.05 on multislice (0% on GPU; hardest disguise vs the DCN channel)", _TO_ADV)
 _add("tpuTMS_advtrain_satfiller_only", _mni_cmd(0.0),
      "MN-I F=0 on multislice: zero training, saturating filler (evades on GPU)", _TO_ADV)
-_add("tpuTMS_nonml_sat", _nonml_cmd(match_mb=_match_f0("tpuTMS"), duty=1.0),
+# Same fallback as the per-scope loop: with no measured target for this scope on
+# THIS generation, fall back to the open-loop knob rather than to nothing. Without
+# it the cell allocated neither a matched footprint nor any footprint at all --
+# caught locally, where the generation reads "unknown", before it could reach a
+# slice and silently turn the apparatus control into an empty saturating filler.
+_add("tpuTMS_nonml_sat",
+     _nonml_cmd(alloc=(0.0 if _match_f0("tpuTMS") else _ALLOC_MATCHED),
+                match_mb=_match_f0("tpuTMS"), duty=1.0),
      "Honest non-ML on multislice, footprint-matched to F=0 -- the apparatus test",
      _TO_OTHER)
-_add("tpuTMS_nonml_sat_hi", _nonml_cmd(match_mb=_match_train("tpuTMS"), duty=1.0),
+_add("tpuTMS_nonml_sat_hi",
+     _nonml_cmd(alloc=(0.0 if _match_train("tpuTMS") else 8.0),
+                match_mb=_match_train("tpuTMS"), duty=1.0),
      "Honest non-ML on multislice, footprint-matched to a TRAINING run -- "
      "without this, mem_used_mb alone separates the F>0 disguise from its control",
      _TO_OTHER)
