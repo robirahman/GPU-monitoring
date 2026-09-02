@@ -758,3 +758,47 @@ is still no usable operating point to attack. The ladder's rate above tau does n
 decline monotonically -- 0.850, 0.732, 0.703 for `_off`, `_a8`, `_a32` -- but
 p(train|ML) stays flat at 0.92-0.96, so what little moves is Stage 1's ML gate,
 not the type decision MN-T targets.
+
+
+## 15. The rule, validated: drop memory LEVELS, keep memory SHAPE
+
+Section 14 found the right feature subset by accident. Stated as a rule and
+tested, using the level/shape classification the codebase ALREADY has --
+`twostage.stage2_feature_mask`, the WB-O rule Stage 2 applies to defend against
+level-spoofing -- restricted to the 62 memory-derived features (24 levels,
+38 shapes). Section 7's corpus, 2,743 windows, 8 groups, leave-one-workload-out:
+
+| feature set | n | TPR@0.8 | FPR@0.8 |
+|---|---|---|---|
+| ALL | 171 | 0.734 | 0.164 |
+| **drop memory LEVELS, keep memory SHAPE** | 147 | 0.724 | **0.000** |
+| drop memory SHAPE, keep memory LEVELS | 133 | 0.723 | 0.571 |
+| drop ALL memory | 109 | 0.670 | 0.415 |
+
+Both halves matter, in opposite directions:
+
+* **Memory levels are the false-alarm source.** Keeping them and dropping the
+  shapes gives FPR 0.571. Dropping them costs 0.010 of TPR and takes FPR to zero.
+* **Memory shape is load-bearing.** Dropping it as well costs 0.054 of TPR and
+  raises FPR to 0.415 -- worse than keeping everything.
+
+The mechanism is demonstrated directly rather than inferred, by the controlled
+pair from section 14: `nonml_sat` and `nonml_sat_hi` are the same workload
+differing only in resident footprint, and with memory present they are perfectly
+separable while with memory absent they are at chance. An honest job can allocate
+exactly as much as a training job -- so the LEVEL is confoundable by construction,
+and `nonml_sat_hi` exists to prove it. What an honest job does not reproduce is
+the *trajectory*: the ramp and plateau of allocating parameters plus optimizer
+states, which `first_30s_mem_delta_*`, `first_30s_mem_ratio`,
+`time_to_mem_plateau_samples` and `acf*_mem_used` measure.
+
+That the same level/shape rule Stage 2 uses against a white-box adversary also
+turns out to be the right rule for the memory channel in Stage 1 is the most
+satisfying thing in this file: one principle, two places, and in the second it was
+found by measurement rather than assumed.
+
+**Standing caveats.** 8 workload groups, and the family-identity leakage of
+section 10 is unaddressed -- four of those groups are one script -- so this is a
+feature-utility result within one corpus, not a deployment number. The next
+multislice run, with the full honest class set, is what tests whether it holds
+when the class balance is real.
