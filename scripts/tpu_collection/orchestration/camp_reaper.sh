@@ -68,7 +68,22 @@ while :; do
   if [ -z "$lg" ] || [ ! -s "$lg" ]; then
     say "no campaign log with content yet -- standing by"; sleep "$INTERVAL"; continue
   fi
-  claim=$(grep -a "CLAIMED" "$lg" 2>/dev/null | tail -1)
+  # A claim only counts while it is STILL HELD. campaign.sh logs "torn down <key>"
+  # when it releases a scope, and between claims there is no claimed group at all
+  # -- so treating the last CLAIMED line as current makes every arriving grant
+  # look like a stray. Measured 2026-09-02 20:56Z: t1 had been collected and torn
+  # down, and the reaper deleted a v5litepod-16 that was CREATING for the NEXT
+  # claim. That shape has now been granted three times and reaped unused three
+  # times, twice by this script. Between claims the reaper must do nothing: the
+  # campaign's own release loop handles duplicates once it claims.
+  claim_ln=$(grep -an "CLAIMED" "$lg" 2>/dev/null | tail -1)
+  down_ln=$(grep -an "torn down" "$lg" 2>/dev/null | tail -1)
+  claim_no=${claim_ln%%:*}; down_no=${down_ln%%:*}
+  if [ -n "$down_no" ] && [ -n "$claim_no" ] && [ "$down_no" -gt "$claim_no" ]; then
+    say "last claim was torn down (line $down_no > $claim_no); nothing is held -- standing by"
+    sleep "$INTERVAL"; continue
+  fi
+  claim=${claim_ln#*:}
   if [ -z "$claim" ]; then say "no claim yet -- standing by"; sleep "$INTERVAL"; continue; fi
   # "[hh:mm:ssZ] CLAIMED <key> (<prefix> @ <zone>)"
   pfx=$(echo "$claim" | sed 's/.*(\([^ ]*\) @ .*/\1/')
