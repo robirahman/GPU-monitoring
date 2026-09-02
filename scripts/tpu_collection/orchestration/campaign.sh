@@ -114,7 +114,17 @@ kill_req(){ local z=$1 qr=$2 pfx=$3 nc=$4
 #   2. nothing would have reclaimed them until the final sweep, MAX_HOURS later.
 # Use the full zone slug: unique, and still a legal TPU node name.
 park_all(){   # park a request for every uncollected target in every zone
-  local parked=0
+  # PARALLEL, and that is not a micro-optimisation. Sequentially, each
+  # `queued-resources create` took ~50 s against this project, so 11 targets x 8
+  # zones was a ~70 MINUTE opening pass -- and the campaign cannot claim or
+  # release anything until it finishes. Measured on 2026-09-02: two v5litepod-8
+  # requests were granted 12 minutes into parking, in us-south1-a and
+  # europe-west4-b, and both sat READY and unsupervised because the driver was
+  # still on its 17th of 88 creates. One of them was a duplicate that the release
+  # loop would have dropped immediately had the loop been running. Fan out with
+  # bounded concurrency so the window is a minute, not an hour.
+  local parked=0 pids=() rcfile
+  rcfile=$(mktemp)
   for t in "${TARGETS[@]}"; do
     IFS='|' read -r key accel nc rt scope <<<"$t"
     collected "$key" && continue
@@ -122,12 +132,24 @@ park_all(){   # park a request for every uncollected target in every zone
       local nm="c${key}$(echo "$z" | tr -d '-')"
       local shape=(--node-id="$nm")
       [ "$nc" -gt 1 ] && shape=(--node-count="$nc" --node-prefix="$nm")
-      gcloud compute tpus queued-resources create "${nm}-qr" \
-        --project=$PROJECT --zone="$z" "${shape[@]}" \
-        --accelerator-type="$accel" --runtime-version="$rt" \
-        --valid-until-duration=8h >/dev/null 2>&1 && parked=$((parked+1))
+      (
+        gcloud compute tpus queued-resources create "${nm}-qr" \
+          --project=$PROJECT --zone="$z" "${shape[@]}" \
+          --accelerator-type="$accel" --runtime-version="$rt" \
+          --valid-until-duration=8h >/dev/null 2>&1 && echo x >> "$rcfile"
+      ) &
+      pids+=($!)
+      # Bound concurrency: a few dozen concurrent gcloud invocations is enough to
+      # collapse the window without thrashing the API or the VM.
+      if [ "${#pids[@]}" -ge 16 ]; then
+        for pp in "${pids[@]}"; do wait "$pp"; done
+        pids=()
+      fi
     done
   done
+  for pp in "${pids[@]}"; do wait "$pp"; done
+  parked=$(wc -l < "$rcfile" | tr -d ' ')
+  rm -f "$rcfile"
   say "parked $parked request(s)"
 }
 
