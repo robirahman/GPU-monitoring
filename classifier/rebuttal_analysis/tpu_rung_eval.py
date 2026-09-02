@@ -115,6 +115,46 @@ def _p_train(clf, w_te, cols, two_stage=True):
             clf.predict_proba_train_vs_infer(X))
 
 
+def report_run_level(name, w_te, p, tau, k=3, m=5, seed=0):
+    """Run-level k-of-m alerting, which is the operating point the claim uses.
+
+    A window-level rate is not the deployed quantity: the GPU result is quoted as
+    run-TPR at a matched run-FPR under a 3-of-5 rule, and window rates can look
+    very different from it -- a cell whose windows sit just under tau never
+    alerts, while one with a few confident windows always does. Sampling m
+    windows per RUN (not per cell) keeps the unit of decision the same as
+    deployment.
+    """
+    rng = np.random.default_rng(seed)
+    rows = []
+    for grp, sub in w_te.groupby("grp"):
+        alerts = tot = 0
+        for _run, rsub in sub.groupby("run_id"):
+            pv = p[w_te.index.get_indexer(rsub.index)]
+            pv = pv[np.isfinite(pv)]
+            if len(pv) == 0:
+                continue
+            draw = rng.choice(pv, size=min(m, len(pv)), replace=len(pv) < m)
+            alerts += int((draw > tau).sum() >= k)
+            tot += 1
+        if tot:
+            rows.append(dict(cell=grp, cls=sub.cls.iloc[0], runs=tot,
+                             alert_rate=alerts / tot))
+    if not rows:
+        return
+    t = pd.DataFrame(rows).sort_values(["cls", "cell"])
+    print(f"\n--- {name}  [RUN level, {k}-of-{m}] ---")
+    print(t.to_string(index=False, float_format=lambda x: f"{x:.3f}"))
+    tr = t[t.cls == "ml_training"]
+    ot = t[t.cls == "other"]
+    if len(tr):
+        print(f"  run TPR ({int(tr.runs.sum())} training runs) = "
+              f"{float((tr.alert_rate * tr.runs).sum() / tr.runs.sum()):.3f}")
+    if len(ot):
+        print(f"  run FPR ({int(ot.runs.sum())} honest runs)  = "
+              f"{float((ot.alert_rate * ot.runs).sum() / ot.runs.sum()):.3f}")
+
+
 def report(name, w_te, p, tau, ml=None):
     print(f"\n--- {name} ---")
     rows = []
@@ -147,6 +187,8 @@ def main():
                          "8-chip single slice and the 2-chip multislice -- and "
                          "comparing an attack cell against reference cells from a "
                          "different topology confounds the comparison.")
+    ap.add_argument("--k", type=int, default=3, help="k-of-m run rule")
+    ap.add_argument("--m", type=int, default=5)
     ap.add_argument("--drop-memory", action="store_true",
                     help="exclude mem_* features (they carry the arena artifact)")
     a = ap.parse_args()
@@ -218,6 +260,8 @@ def main():
                wg[keep].reset_index(drop=True), p[keep], a.tau)
         report(f"within {gen}  [Stage 2 only: p(train | ML)] -- the TYPE decision "
                f"MN-T attacks", wg[keep].reset_index(drop=True), p_tg[keep], a.tau)
+        report_run_level(f"within {gen}", wg[keep].reset_index(drop=True),
+                         p[keep], a.tau, k=a.k, m=a.m)
         # MN-T ladder: does p(train|ML) fall as the shaping strengthens, on cells
         # that all train on EVERY step? That ordering is the attack working.
         lad = wg[keep].reset_index(drop=True)

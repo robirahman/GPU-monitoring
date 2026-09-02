@@ -646,3 +646,45 @@ A multislice claim that runs all 15 cells, giving 4 honest non-ML groups
 The marker namespaces have now been archived, and `tpuTMS4`/`tpuTMS8` (4x and 8x
 v6e-1) have never had markers at all, so the next multislice claim will collect
 the full set without any further intervention.
+
+
+## 13b. Run level makes the degeneracy unmistakable -- and footprint leaks past the memory features
+
+Same subcorpus (2x v5litepod-1 multislice, tau=0.8, memory dropped), now under the
+3-of-5 run rule the claim is actually defined on:
+
+| cell | class | runs | alert rate |
+|---|---|---|---|
+| `advtrain_typeconf_off` / `_a8` / `_a32` | training | 6 each | 1.000 |
+| `train_fsdp1b` | training | 6 | 1.000 |
+| `advtrain_satint_f05` / `f20` / `f50` | training | 2 each | 1.000 |
+| `infershard_1b` | **inference** | 6 | **1.000** |
+| `inferrep_1b` | inference | 6 | 0.167 |
+| `nonml_sat_hi` | **other** | 6 | **1.000** |
+| `nonml_sat` | other | 2 | 0.000 |
+
+**run TPR 1.000, run FPR 0.750.** The detector alerts on everything except
+`nonml_sat`. There is no operating point here, which settles how to read section
+13: MN-T's null result says nothing about MN-T.
+
+**The sharp clue.** `nonml_sat` and `nonml_sat_hi` are the SAME workload -- same
+kernels, same duty, same script -- differing only in footprint: one matched to the
+F=0 cell, one to the training cell. One never alerts; the other always does. And
+this is the run with `mem_*` features DROPPED. So the footprint is reaching the
+decision through channels that are not the memory features, and **dropping `mem_*`
+does not remove the footprint confound.**
+
+Plausible routes, all testable and none yet tested: a larger resident working set
+changes HLO execution timing (`hlo_exec_us_*` is live and featurised), changes the
+allocator's behaviour visible in `hlo_queue_size`, or changes the filler's cache
+behaviour and hence its utilisation shape. This matters well beyond TPU: the
+section 7 ablation concluded "memory features are the liability" and dropped them
+as the remedy. That remedy is now shown to be incomplete -- the confound survives
+the ablation, so the earlier clean-looking FPR of 0.003 on the v6e corpus may have
+been masking the same effect rather than eliminating it.
+
+Next step for this, independent of the adversarial question: pair `nonml_sat` and
+`nonml_sat_hi` at equal reps on a topology with the full honest class set, and
+compare per-feature importances between them. If a non-memory channel tracks the
+footprint, it will show up as the top discriminator between two cells that differ
+in nothing else.
