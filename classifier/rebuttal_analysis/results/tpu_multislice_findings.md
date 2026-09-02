@@ -320,3 +320,37 @@ no training steps at all.
 The fix is more workload FAMILIES, not more reps: inference, honest undisguised
 training, `other_fft`, `idle`, and the same ladder at single-slice and v5e scopes.
 That is what the relaunched campaign collects.
+
+
+## 8. v5e pre-flight (2026-09-02), run on an idle grant before the campaign claimed it
+
+`v5litepod-8` provisioned for the first time ever, in TWO zones at once. While the
+campaign was still in its parking pass and unable to claim, the idle slice was
+used to pre-flight the pinned stack -- worth doing because a wrong libtpu pairing
+would have failed setup and cost the grant.
+
+    jax 0.6.2  jaxlib 0.6.2          libtpu 0.0.17 -- WORKS on v2-alpha-tpuv5-lite
+    devices 8  local 8               single slice, 8 chips, ONE host
+    kind "TPU v5 lite"
+    bytes_limit  16126 MB/chip       HALF the v6e's 31996
+    memory_stats keys: bytes_in_use, bytes_limit, bytes_reservable_limit,
+                       bytes_reserved, largest_alloc_size,
+                       largest_free_block_bytes, num_allocs,
+                       peak_bytes_in_use, peak_bytes_reserved
+
+Consequences:
+
+* The pin needs no change for v5e. That risk is retired.
+* **v5e has 16 GB/chip**, so `_MEM_MATCH_TRAIN = 16495` exceeds the whole chip and
+  is unsatisfiable there. The hard cap at 80% of `bytes_limit` stops the loop and
+  logs `match hit the cap`, so it degrades visibly rather than OOMing -- but the
+  cell is then NOT a matched control.
+* `_MEM_MATCH_F0 = 5196` is likewise a v6e-multislice number. The 1b model sharded
+  over 8 v5e chips holds a different per-chip footprint than over 2 v6e chips, so
+  neither target transfers.
+* Therefore: **treat nonml_sat and nonml_sat_16g as calibrated ONLY for tpuTMS on
+  v6e.** For every other scope, read that scope's own
+  `MEM_BYTES_IN_USE_STEADY` from its first F>0 cell and re-derive. The disguise
+  cells print it precisely so this needs no extra rental.
+* `bytes_reserved` exists on v5e as well, so the arena-tracking match key is
+  available on both generations.
