@@ -597,3 +597,52 @@ It also predicts what the multislice re-collect will show: once `train_fsdp1b`,
 become trainable and can be checked for the same pathology. If it reproduces, the
 honest conclusion is that this corpus cannot yet support a train-vs-infer claim on
 TPU at all -- independent of the adversarial question.
+
+
+## 13. MN-T first result: no type confusion, but the test was inconclusive
+
+Data: `v5ms` = 2x v5litepod-1 multislice, v5e, 3 reps of each MN-T rung plus
+honest training and both inference cells on the SAME topology. Held out by
+workload, memory features dropped, tau=0.8, scope restricted to tpuTMS so the
+comparison is within one topology.
+
+    MN-T ladder (every cell trains on EVERY step)
+    cell                     p_ml    p(train|ML)   p_train   frac>tau
+    typeconf_off            0.988         0.998     0.998      0.997
+    typeconf_a8             1.000         0.985     0.985      0.997
+    typeconf_a32            0.968         0.998     0.997      0.781
+
+**The attack did not work.** p(train|ML) is flat at 0.985-0.998 across the whole
+ladder: raising TensorCore utilisation toward the inference level, stripping the
+optimizer moments, cutting cross-slice collectives to 1/32, and adding a
+device->host trickle moved the type decision by nothing. Only the RATE above tau
+falls at _a32 (0.781 vs 0.997), and its median p_train is unchanged.
+
+**But this is not evidence the attack fails.** On this subcorpus the detector is
+degenerate: the honest false-alarm rate is **0.736**, with `nonml_sat_hi` at 0.981
+and the real inference cell `infershard_1b` at 0.983. A model that calls almost
+everything training cannot be tricked into calling something inference -- there is
+nothing left to fool. The MN-T ladder was measured against a broken instrument.
+
+**Why the instrument is broken here, and it is our own doing.** The done-marker bug
+(section 14) meant `v5ms` skipped `nonml_duty30`, `nonml_duty50_hash` and
+`nonml_comm` -- their markers already existed from camp2's v6e run -- so the
+"other" class on this topology is just `nonml_sat` (1 rep) and `nonml_sat_hi`,
+against seven training groups. With 11 groups and that imbalance, leave-one-
+workload-out cannot produce a usable operating point.
+
+One sub-result does look real and is worth keeping: **`nonml_sat_hi` -- honest
+non-ML held at the TRAINING footprint -- is called training at 0.981 even with
+memory features dropped.** That is the cell added specifically to test whether
+detection rides on footprint, and on this topology the detector cannot separate a
+saturating non-ML job at a training-sized footprint from training itself. Treat it
+as a hypothesis until the class balance is fixed, but it is the sharpest thing in
+this table.
+
+### What would make the MN-T test conclusive
+
+A multislice claim that runs all 15 cells, giving 4 honest non-ML groups
+(`sat`, `sat_hi`, `duty30`, `duty50_hash`, `comm`) against the training groups.
+The marker namespaces have now been archived, and `tpuTMS4`/`tpuTMS8` (4x and 8x
+v6e-1) have never had markers at all, so the next multislice claim will collect
+the full set without any further intervention.

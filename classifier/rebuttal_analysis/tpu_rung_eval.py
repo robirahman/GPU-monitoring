@@ -141,11 +141,21 @@ def main():
     ap.add_argument("--window-sec", type=float, default=30.0)
     ap.add_argument("--stride-sec", type=float, default=10.0)
     ap.add_argument("--tau", type=float, default=0.8)
+    ap.add_argument("--scope", default=None,
+                    help="restrict to one scope (e.g. tpuTMS). Needed because a "
+                         "GENERATION can span topologies -- v5e covers both the "
+                         "8-chip single slice and the 2-chip multislice -- and "
+                         "comparing an attack cell against reference cells from a "
+                         "different topology confounds the comparison.")
     ap.add_argument("--drop-memory", action="store_true",
                     help="exclude mem_* features (they carry the arena artifact)")
     a = ap.parse_args()
 
     w = load_windows(a.glob, a.window_sec, a.stride_sec)
+    if a.scope:
+        n0 = len(w)
+        w = w[w.scope == a.scope].reset_index(drop=True)
+        print(f"scope filter {a.scope}: {len(w):,} of {n0:,} windows")
     cols = get_feature_cols(w)
     if a.drop_memory:
         cols = [c for c in cols if not c.startswith("mem_")]
