@@ -258,3 +258,65 @@ The first four are plumbing; the last four would have corrupted results.
   but the cell no longer means what its name says at this scope.
 - The scale ladder above 2 slices (tpuTMS4, tpuTMS8) is registered and parked but
   has never provisioned.
+
+
+## 7. First workload-held-out result on TPU -- and why it is not yet believable
+
+Corpus: 44 streams / 28,521 rows / 28,487 cell-seconds from the 2x v6e-1
+multislice, ingested with hang tails trimmed. 2,743 windows (30 s, 10 s stride),
+8 workload groups, classes balanced 1371 ml_training / 1372 other.
+Leave-one-WORKLOAD-out, RandomForest, p = P(ml_training).
+
+| feature set | window TPR@0.8 | window FPR@0.8 |
+|---|---|---|
+| all 171 | 0.734 | 0.164 |
+| **memory features removed (114)** | **0.700** | **0.003** |
+| memory features only (57) | 0.754 | 0.499 |
+
+Per cell, with memory features removed:
+
+| cell | class | p_med | frac > 0.8 |
+|---|---|---|---|
+| `advtrain_satint_f05` | training | 0.996 | 0.901 |
+| `advtrain_satint_f20` | training | 0.997 | 0.967 |
+| `advtrain_satint_f50` | training | 0.996 | 0.975 |
+| `advtrain_satfiller_only` (F=0) | training | 0.349 | 0.095 |
+| `nonml_comm` | other | 0.594 | 0.000 |
+| `nonml_duty30` | other | 0.359 | 0.000 |
+| `nonml_duty50_hash` | other | 0.413 | 0.005 |
+| `nonml_sat` | other | 0.322 | 0.008 |
+
+Two things worth keeping:
+
+**The memory channel is a liability on TPU, not an asset.** With memory features
+in, the false-positive rate at tau=0.8 is 16.4%, driven by `nonml_duty50_hash` at
+58%; memory-only puts that cell at 94%. Drop them and its false-alarm rate falls
+to 0.5%. This is the same cell that false-alarmed hardest on GPU, and the reason
+is visible in section 3b: every F>0 cell sits at exactly 16495 MB because of a
+one-off arena allocation, so a tree learns a footprint threshold that has nothing
+to do with training and then misfires on any honest cell that happens to allocate.
+
+**F=0 evades here too** -- 0.095 of windows above tau -- which is consistent with
+the GPU finding, and is the expected result rather than a failure: the cell runs
+no training steps at all.
+
+### Why these numbers must not be quoted
+
+1. **Family identity is not held out.** All four adversarial cells are the SAME
+   SCRIPT with the same model and filler; the four honest cells come from two
+   scripts. Holding out `f05` leaves `f20`, `f50` and `satfiller_only` in the
+   training fold, so the classifier can score a held-out cell by recognising its
+   family rather than by detecting training. The GPU corpus has ~170 workloads to
+   dilute this; here there are 8. That is the most likely explanation for F=0.05
+   appearing 90% detectable when the GPU result found nothing below F=0.5
+   detectable at any usable threshold -- a discrepancy too convenient to accept.
+2. **No ml_inference class**, so this is ML-vs-other, not the two-stage p_train
+   the paper's operating point is defined on. Stage 2 cannot be trained at all.
+3. **`nonml_sat` is not footprint-matched** (2880 and 6464 MB against a 5196
+   target), so the apparatus contrast is not yet valid -- see section 3.
+4. **8 groups** means every fold trains on 7 cells; the variance is large and no
+   confidence interval here would be honest.
+
+The fix is more workload FAMILIES, not more reps: inference, honest undisguised
+training, `other_fft`, `idle`, and the same ladder at single-slice and v5e scopes.
+That is what the relaunched campaign collects.
