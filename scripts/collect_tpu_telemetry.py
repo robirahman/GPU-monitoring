@@ -74,7 +74,34 @@ log = logging.getLogger("spar.tpu_telemetry")
 # because which chip we get depends on quota: v6e-16 was refused in this project
 # ("User does not have permission to submit requests into this queue for
 # accelerator type v6e-16"), so the rung actually runs on v5litepod-16.
-_ACCEL = os.environ.get("SPAR_TPU_ACCEL", "v6e")
+def _accel_generation() -> str:
+    """TPU generation for gpu_name, derived from the runtime when not overridden.
+
+    The default used to be the literal "v6e", and NOTHING set SPAR_TPU_ACCEL --
+    not tpu_queue.sh, not run_workload_tpu.py. So the parameterisation added to
+    stop v5e rows being labelled v6e never actually took effect, and the first
+    v5litepod-8 run would have written `Google TPU v6e` into gpu_name and into
+    every parquet filename, silently pooling two generations in one corpus. That
+    is the same mislabelling this comment block was written about.
+
+    TPU_ACCELERATOR_TYPE is set by the TPU runtime (e.g. "v5litepod-8", "v6e-1"),
+    so normalise it to a GENERATION and keep the existing "v6e" spelling so
+    already-collected v6e data stays comparable.
+    """
+    raw = (os.environ.get("SPAR_TPU_ACCEL")
+           or os.environ.get("TPU_ACCELERATOR_TYPE")
+           or os.environ.get("TPU_TYPE") or "").strip().lower()
+    if not raw:
+        return "unknown"
+    for prefix, gen in (("v6e", "v6e"), ("v5litepod", "v5e"), ("v5lite", "v5e"),
+                        ("v5e", "v5e"), ("v5p", "v5p"), ("v4", "v4"),
+                        ("v3", "v3"), ("v2", "v2")):
+        if raw.startswith(prefix):
+            return gen
+    return raw
+
+
+_ACCEL = _accel_generation()
 GPU_NAME = os.environ.get("SPAR_TPU_GPU_NAME", f"Google TPU {_ACCEL}")
 GPU_SHORT = GPU_NAME.replace(" ", "_")
 
@@ -615,8 +642,10 @@ class TpuTelemetryCollector:
 
         self.hostname = socket.gethostname()
         self.tpu_name = os.environ.get("TPU_NAME", "local-tpu")
+        # No "v6e" default here either: an unset variable must not masquerade
+        # as a specific chip.
         self.tpu_type = os.environ.get(
-            "TPU_ACCELERATOR_TYPE", os.environ.get("TPU_TYPE", "v6e"))
+            "TPU_ACCELERATOR_TYPE", os.environ.get("TPU_TYPE", "unknown"))
 
         # Probe the host's metric sources once.
         self.source = TpuMetricSource()
