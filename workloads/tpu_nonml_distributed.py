@@ -190,13 +190,31 @@ def main():
             f"{k}={v/(1<<20):.0f}MB" if isinstance(v, (int, float)) else f"{k}={v}"
             for k, v in sorted(_mem_stats().items())), flush=True)
 
+    # WHICH key to match on. The collector's mem_used_mb is libtpu's
+    # tpu.runtime.hbm.memory.usage.bytes -- the RUNTIME's HBM usage -- and its
+    # mem_total_mb is tpu.runtime.hbm.memory.total.bytes, which equals
+    # memory_stats()['bytes_limit'] exactly (31996 MB on a v6e), so the two views
+    # share a source. bytes_in_use is the wrong view: it counts live tensors, and
+    # on MN-I at F=0.05 it read 4694 MB/chip while the collector reported 16495,
+    # because the runtime's arena had grown to hold the train step's transient
+    # workspace. Prefer a reserved/arena key and fall back only if it stays flat.
+    _MATCH_KEYS = ("bytes_reserved", "peak_bytes_reserved", "bytes_in_use")
+
+    def _chip_mem(key=None):
+        """(key, MB) for the arena-tracking metric on this host's first chip."""
+        ms = _mem_stats()
+        if key:
+            v = ms.get(key)
+            return key, (float(v) / (1 << 20) if v is not None else float("nan"))
+        for k in _MATCH_KEYS:
+            v = ms.get(k)
+            if v:
+                return k, float(v) / (1 << 20)
+        return _MATCH_KEYS[-1], float(ms.get(_MATCH_KEYS[-1], 0)) / (1 << 20)
+
     def _chip_used_mb():
-        """MB in use on this host's first chip, from the runtime allocator."""
-        try:
-            ms = jax.local_devices()[0].memory_stats() or {}
-            return float(ms.get("bytes_in_use", 0)) / (1 << 20)
-        except Exception:
-            return float("nan")
+        """Back-compat: MB on the arena-tracking metric."""
+        return _chip_mem()[1]
 
     dummy = []
     if args.alloc_gb > 0:
@@ -278,12 +296,29 @@ def main():
     if args.match_mem_mb > 0:
         devs = jax.local_devices()
         n_el = max(1, int(args.match_chunk_mb * (1 << 20) / 4))
+        _key, start_mb = _chip_mem()
+        limit_mb = float(_mem_stats().get("bytes_limit", 0)) / (1 << 20)
+        # Hard cap, independent of the metric: however the chosen key behaves, we
+        # never allocate more than this. Without it, a key that stays flat (some
+        # backends never populate bytes_reserved) would loop until the chip OOMs.
+        cap_mb = 0.80 * limit_mb if limit_mb else 4.0 * args.match_mem_mb
         chunks = 0
-        start_mb = _chip_used_mb()
+        placed_mb = 0.0
         while chunks < 4096:
-            used = _chip_used_mb()
+            _key, used = _chip_mem(_key)
             if not (used == used) or used >= args.match_mem_mb - args.match_tol_mb:
                 break
+            if placed_mb >= cap_mb:
+                print(f"  match hit the {cap_mb:.0f}MB cap at {used:.0f}MB "
+                      f"on '{_key}' -- not allocating further", flush=True)
+                break
+            # If the chosen key has not moved after a few chunks it is not
+            # tracking our allocations; fall back rather than loop blindly.
+            if chunks == 4 and _key != _MATCH_KEYS[-1] and used <= start_mb + 1.0:
+                print(f"  '{_key}' flat after {placed_mb:.0f}MB placed; "
+                      f"falling back to {_MATCH_KEYS[-1]}", flush=True)
+                _key = _MATCH_KEYS[-1]
+                continue
             try:
                 for dv in devs:
                     z = jax.jit(lambda: jnp.zeros((n_el,), jnp.float32),
@@ -291,15 +326,20 @@ def main():
                     jax.block_until_ready(z)
                     dummy.append(z)
                 chunks += 1
+                placed_mb += args.match_chunk_mb
             except Exception as e:
                 print(f"  match stopped at {used:.0f}MB/chip: {type(e).__name__}",
                       flush=True)
                 break
         if pidx == 0:
-            print(f"  MEM_MATCH target={args.match_mem_mb:.0f} "
-                  f"realised={_chip_used_mb():.0f} MB/chip "
-                  f"(baseline {start_mb:.0f}, {chunks} x {args.match_chunk_mb:.0f}MB)",
-                  flush=True)
+            ms = _mem_stats()
+            print(f"  MEM_MATCH key={_key} target={args.match_mem_mb:.0f} "
+                  f"realised={_chip_mem(_key)[1]:.0f} MB/chip "
+                  f"(baseline {start_mb:.0f}, {chunks} x {args.match_chunk_mb:.0f}MB, "
+                  f"cap {cap_mb:.0f})", flush=True)
+            print("  MEM_MATCH_ALL=" + ",".join(
+                f"{k}={v/(1<<20):.0f}" for k, v in sorted(ms.items())
+                if isinstance(v, (int, float))), flush=True)
 
     t0 = time.time()
     slot = iters = collectives = 0
