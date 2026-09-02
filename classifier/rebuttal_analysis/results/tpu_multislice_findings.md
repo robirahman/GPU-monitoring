@@ -910,3 +910,58 @@ Two smaller notes from the same query:
   on 2026-08-25, before the legacy-TPU contamination was quarantined. The corpus
   on disk is quarantined; the cache is stale and should be rebuilt before it is
   used for anything but this kind of range check.
+
+
+## 18. Three corpora, three answers: the memory ablation is not stable, and that IS the result
+
+Ran the identical level/shape ablation on a third corpus, `tpuT1` on v6e single
+slice -- which is the first TPU corpus to contain a footprint-matched honest
+control (`nonml_sat_hi`) and whose footprints genuinely interleave (honest
+`duty50_hash` 9663 MB and `sat_hi` 9695 MB sit above the F=0 training cell at
+9197 MB, just below honest training at 10018 MB).
+
+FPR@0.8 on the honest class, same features, same detector, three corpora:
+
+| feature set | tpuTMS@v6e (8 grp) | tpuT8@v5e (11 grp) | tpuT1@v6e (12 grp) |
+|---|---|---|---|
+| ALL (171) | 0.164 | 0.016 | **0.001** |
+| drop memory LEVELS | **0.000** | 0.244 | 0.175 |
+| drop memory SHAPE | 0.571 | **0.008** | 0.200 |
+| drop ALL memory | 0.415 | 0.308 | 0.374 |
+
+Every column has a different winner. **Section 16's prediction is falsified**: it
+argued that levels look good only where the honest class fails to reach the
+training footprint range, and predicted `tpuT1` would therefore behave like
+`tpuTMS@v6e`. `tpuT1` has the matched control, its ranges interleave, and
+all-features still reaches FPR 0.001 while dropping levels raises it to 0.175.
+Interleaving is necessary but not sufficient; with enough classes present the
+shape features disambiguate what the levels alone cannot.
+
+### What is actually robust
+
+Only two things survive all three corpora:
+
+1. **Removing all memory features always hurts, substantially** -- FPR 0.415,
+   0.308, 0.374 and the worst TPR in two of three. The memory channel carries real
+   signal on TPU, which is worth stating given that TPU has no power channel.
+2. **Which memory SUBSET helps is not determined by these corpora.** The ablation
+   outcome swings with corpus composition -- 8 vs 11 vs 12 groups, presence or
+   absence of an inference class, presence or absence of honest training -- by
+   more than it swings with the feature set.
+
+### Withdrawn, and why I am not replacing it with a third rule
+
+Section 15 proposed "drop memory levels, keep memory shape" from one corpus.
+Section 16 withdrew it and offered a mechanism. Section 18 falsifies the
+mechanism's prediction. The pattern in my own reasoning is the informative part:
+each rule was fitted to the corpus in front of me and failed on the next one, and
+these corpora are 8-12 workload groups with 1-3 reps -- far too small to support a
+feature-selection claim, especially with the family-identity leakage of section 10
+unaddressed.
+
+So no rule. The defensible statements are (1) and (2) above, plus: **any
+feature-subset recommendation for the TPU rung needs a corpus with several
+independent workload families per class, which none of these three has.** The GPU
+corpus has 335 groups and is the only one here that could support such a claim --
+and section 17 shows its honest class does contest the training footprint range,
+so its numbers are not subject to this instability.
