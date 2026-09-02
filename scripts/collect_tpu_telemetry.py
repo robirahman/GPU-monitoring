@@ -74,6 +74,27 @@ log = logging.getLogger("spar.tpu_telemetry")
 # because which chip we get depends on quota: v6e-16 was refused in this project
 # ("User does not have permission to submit requests into this queue for
 # accelerator type v6e-16"), so the rung actually runs on v5litepod-16.
+def _accel_from_metadata(timeout: float = 2.0) -> str:
+    """accelerator-type from instance metadata, e.g. "v5litepod-8".
+
+    Needed because TPU_ACCELERATOR_TYPE is NOT in the environment on a TPU VM --
+    verified on cv5t8ussouth1a, where `env | grep TPU_` is empty and a python
+    child sees None, while the metadata attribute returns v5litepod-8. Same source
+    run_workload_tpu.py already uses for agent-worker-number. Short timeout and
+    fully guarded: collection must never block on metadata.
+    """
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            "http://metadata.google.internal/computeMetadata/v1/instance/"
+            "attributes/accelerator-type",
+            headers={"Metadata-Flavor": "Google"})
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.read().decode("utf-8", "replace").strip()
+    except Exception:
+        return ""
+
+
 def _accel_generation() -> str:
     """TPU generation for gpu_name, derived from the runtime when not overridden.
 
@@ -90,7 +111,8 @@ def _accel_generation() -> str:
     """
     raw = (os.environ.get("SPAR_TPU_ACCEL")
            or os.environ.get("TPU_ACCELERATOR_TYPE")
-           or os.environ.get("TPU_TYPE") or "").strip().lower()
+           or os.environ.get("TPU_TYPE")
+           or _accel_from_metadata()).strip().lower()
     if not raw:
         return "unknown"
     for prefix, gen in (("v6e", "v6e"), ("v5litepod", "v5e"), ("v5lite", "v5e"),
