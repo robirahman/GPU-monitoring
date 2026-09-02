@@ -863,3 +863,50 @@ The honest statement for the paper is therefore not "use shape, not levels" but:
 **level features on the memory channel are only as trustworthy as the footprint
 coverage of the honest class used to validate them**, and a corpus without a
 footprint-matched honest control will overstate them.
+
+
+## 17. The GPU headline claim does NOT suffer the section 16 artifact
+
+Section 16 says a level-feature FPR is only as trustworthy as the honest class's
+footprint coverage. The obvious next question is whether the paper's GPU result
+-- 100% of F=0.5 runs caught at a 0.6% false-alarm rate -- rests on the same
+artifact. It does not.
+
+From the cached GPU window corpus (`~/win_full.parquet`, 335 workload groups):
+
+    training footprint range      0 .. 121,997 MB   (208 groups)
+    honest   footprint range    449 ..  20,634 MB   ( 56 groups)
+    ranges interleave                          yes
+    honest groups above the LOWEST  training group   56 of 56
+    honest groups above the MEDIAN  training group   17 of 56
+
+    highest-footprint honest workloads
+      s8_nonml_himem        20,634 MB
+      s8_nonml_lp_d30m16    20,634 MB
+      s16_nonml_himem       19,132 MB
+      s1_nonml_himem        18,254 MB
+      scientific_nbody      15,909 MB
+
+Seventeen of the 56 honest groups sit above the median training footprint, and
+every honest group sits above the lowest. So the GPU false-alarm rate is measured
+against honest workloads that genuinely contest the training footprint range,
+which is the condition section 16 identifies as necessary for a level-feature FPR
+to mean anything. The v5e single-slice corpus fails that condition (every honest
+cell below every training cell); the GPU corpus passes it comfortably.
+
+This also puts a number on why the `nonml_himem` and low-power/partial-utilisation
+cells were worth adding: they are what carries the honest class from ~15 GB
+(`scientific_nbody`, an incidental high-memory workload) up to 20.6 GB, i.e. into
+the range where the disguised training cells live. Without them the GPU honest
+class would top out near the incidental workloads and the reported FPR would be
+open to exactly the objection section 16 raises.
+
+Two smaller notes from the same query:
+
+* **335 workload groups on GPU against 8-11 per TPU corpus.** The family-identity
+  leakage of section 10 -- four of eight groups being one script -- is a
+  consequence of TPU corpus size, not a defect the GPU result shares.
+* `tpu_jax_training` appears at 0 MB, because this cached window file was built
+  on 2026-08-25, before the legacy-TPU contamination was quarantined. The corpus
+  on disk is quarantined; the cache is stale and should be rebuilt before it is
+  used for anything but this kind of range check.
