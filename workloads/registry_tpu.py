@@ -252,6 +252,22 @@ def _mni_cmd(train_frac, dur=_DUR, kernel="mixed"):
             "--multihost", "auto"]
 
 
+def _typeconf_cmd(dur=_DUR, *, accum=1, tc_fill=0.0, d2h=0, opt="sgd",
+                  size=_ADV_MODEL):
+    """MN-T: real training shaped to be misread as INFERENCE (Stage 2 attack).
+
+    Each knob targets a channel measured to separate the classes on hardware:
+    tensorcore util (training 17 vs inference 88 on v5e), HBM footprint (7013 vs
+    2668 MB, via optimizer state), cross-slice collective cadence (every step vs
+    none, via local SGD), and the device->host transfer channel inference uses to
+    stream tokens.
+    """
+    return [_PY, os.path.join(_WORKLOADS_DIR, "tpu_adversarial_typeconf.py"),
+            "--size", size, "--duration", str(dur), "--optimizer", opt,
+            "--accum", str(accum), "--tc-fill", str(tc_fill),
+            "--d2h-trickle", str(d2h), "--multihost", "auto"]
+
+
 def _nonml_cmd(dur=_DUR, *, alloc=0.0, duty=1.0, kernel="mixed", mode="hpc",
                match_mb=0.0):
     """match_mb closes the loop on a MEASURED per-chip footprint; alloc is the
@@ -375,6 +391,30 @@ _add("tpuTMS_infershard_1b", _infer_cmd("1b", "tp"),
 # executed on 2x v6e-1 = 2 chips. Do NOT infer chip count from the scope name in
 # analysis -- read it from the telemetry (distinct gpu_uuid per chip) or from
 # mem_total_mb. The scope name is a slice-count grouping key, nothing more.
+# ── MN-T: the type-confusion attack ladder ───────────────────────────────────
+# MN-I attacks Stage 1 (make training look non-ML). This attacks Stage 2: keep the
+# run plainly ML, but push the train-vs-infer discriminator toward INFER. Harder
+# by construction, because Stage 2 sees only shape features after the WB-O level
+# drop, so a level cannot simply be moved.
+#   _off  isolates the optimizer choice alone (sgd, no other shaping) -- the
+#         control that says how much of any effect is just "no Adam moments"
+#   _a8   moderate: sync every 8 steps, half tc fill, light d2h trickle
+#   _a32  strongest: sync every 32 steps, near-full tc fill, heavy d2h trickle
+# Names keep "train" so threeway_label routes them to ml_training: the GROUND
+# TRUTH is training, and the attack succeeds precisely when the detector disagrees.
+# Verified: 'advtrain_typeconf_a32' -> ml_training (the "train" rule is checked
+# before the "infer" rule, so 'mimicinfer'-style names would also have worked).
+for _sc in _SCOPES + ["tpuTMS", "tpuTMS4", "tpuTMS8"]:
+    _add(f"{_sc}_advtrain_typeconf_off", _typeconf_cmd(accum=1, tc_fill=0.0, d2h=0),
+         f"MN-T control on {_sc}: SGD training, no other shaping -- isolates the "
+         f"optimizer's own effect on the footprint channel", _TO_ADV)
+    _add(f"{_sc}_advtrain_typeconf_a8", _typeconf_cmd(accum=8, tc_fill=0.5, d2h=64),
+         f"MN-T moderate on {_sc}: sync every 8 steps, half tc fill, d2h trickle", _TO_ADV)
+    _add(f"{_sc}_advtrain_typeconf_a32", _typeconf_cmd(accum=32, tc_fill=0.9, d2h=256),
+         f"MN-T strongest on {_sc}: sync every 32 steps, near-full tc fill, "
+         f"heavy d2h trickle -- training shaped hardest toward the inference profile",
+         _TO_ADV)
+
 _MS_LADDER = {"tpuTMS4": 4, "tpuTMS8": 8}
 for _nm, _ns in _MS_LADDER.items():
     for _k in [k for k in list(WORKLOAD_REGISTRY_TPU) if k.startswith("tpuTMS_")]:

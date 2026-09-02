@@ -269,6 +269,21 @@ esac
 # means a failure costs nothing else.
 ADV+=("${SCOPE}_train_fsdp1b" "${SCOPE}_inferrep_1b" "${SCOPE}_infershard_1b")
 
+# MN-T, the type-confusion attack, MULTISLICE ONLY for now because that is the
+# topology Robi asked about: can a multi-slice TRAINING run be made to read as
+# inference? Last in the order, after the class references, because coverage of
+# the three real classes is the prerequisite -- Stage 2 cannot even be trained
+# without inference cells, and an attack on Stage 2 is meaningless until it can.
+# Registered for every scope in registry_tpu, so a single-slice comparison run
+# is one ONLY_CELLS away without touching this file.
+case "$SCOPE" in
+  tpuTMS*)
+    ADV+=("${SCOPE}_advtrain_typeconf_off"
+          "${SCOPE}_advtrain_typeconf_a8"
+          "${SCOPE}_advtrain_typeconf_a32")
+    ;;
+esac
+
 # ONLY_CELLS: comma-separated substrings; empty runs everything. Exists so a
 # re-run can collect just the cells that are missing instead of re-billing a
 # slice for the ones already in hand -- the campaign's completion markers live in
