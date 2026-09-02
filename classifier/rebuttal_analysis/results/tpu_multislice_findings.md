@@ -354,3 +354,42 @@ Consequences:
   cells print it precisely so this needs no extra rental.
 * `bytes_reserved` exists on v5e as well, so the arena-tracking match key is
   available on both generations.
+
+
+## 9. First v5e cell (tpuT8, v5litepod-8, single slice, 8 chips) -- 2026-09-02
+
+    tpuT8_advtrain_satint_f50_rep1  OK (695s, 1/1 workers)
+    1177 steps in 599.8s, realised_frac=0.5072, useful_tokens=4,890,624
+    chips=8 hosts=1     8 per-chip streams: w0c0 .. w0c7
+    gpu_name='Google TPU v5e'   mem_total_mb=16126   mem_used_mb=7013
+
+Confirmations:
+
+* **8 distinct per-chip streams from one host.** On the old `(ts, run_id)` dedup
+  key this would have collapsed to a single chip -- the Phase 1 fix (adding
+  `gpu_uuid`) was written for precisely this case and this is its first real test.
+* **The DCN channels are DARK on a single slice**: `dcn_collective_lat_us_p90` and
+  `buffer_xfer_lat_us_p90` are both NaN, while they carry values on the 2-slice
+  v6e runs. This is the first direct confirmation of the premise the whole rung
+  rests on -- megascale.* accumulates only ACROSS slices -- rather than an
+  inference from metric names.
+* The steady-state budget correction works here too: initial estimate 1847 steps,
+  re-agreed to 1177 at 0.43 s/step, landing 599.8 s against a 600 s target.
+
+Cautions:
+
+* **`hlo_queue_size` is topology-dependent**: median 1 on v5e single-slice against
+  ~519 on the v6e multislice adversarial cells. Within the v6e corpus, where every
+  cell shares one topology, its 519-vs-0 separation is still a workload signal --
+  but its SCALE does not transfer, so scopes must not be pooled on this feature
+  without normalising.
+* **Footprints do not transfer between scopes.** v5e F>0 sits at 7013 MB/chip
+  against v6e's 16495, because the same 1b model shards eight ways instead of two,
+  and the chip is half the size (16126 vs 31996 MB). `_MEM_MATCH_TRAIN = 16495`
+  therefore exceeds an entire v5e chip. Targets are now a per-scope map
+  (`_MEM_MATCH_{F0,TRAIN}_BY_SCOPE`); a scope with no measured entry falls back to
+  the open-loop `--alloc-gb` knob and is explicitly NOT a matched control.
+* Consequently `tpuT8_nonml_sat` in rep 1 is unmatched (open-loop 3.65 GB global
+  = ~467 MB/chip against a target near 7013). Its F=0 partner had not run yet when
+  rep 1 was queued. Excluded from the apparatus contrast; reps 2-3 can be matched
+  once that scope's satfiller_only footprint is read.

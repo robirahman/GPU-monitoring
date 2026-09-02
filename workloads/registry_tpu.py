@@ -212,6 +212,36 @@ _ALLOC_MATCHED_TRAIN = 14.69
 # whose entire purpose is to hold the same footprint as its partner.
 _MEM_MATCH_F0 = 5196.0        # tpuTMS_advtrain_satfiller_only, 758 samples
 _MEM_MATCH_TRAIN = 16495.0    # tpuTMS_advtrain_satint_f{20,50}, both slices
+
+# PER SCOPE, because a footprint does not transfer between scopes and a single
+# constant is guaranteed wrong somewhere. The same 1b model sharded over 8 v5e
+# chips holds far less per chip than over 2 v6e chips, and the chips differ too:
+#   v6e  mem_total_mb 31996   F>0 footprint 16495 MB/chip   (measured 09-01)
+#   v5e  mem_total_mb 16126   F>0 footprint  7013 MB/chip   (measured 09-02)
+# so _MEM_MATCH_TRAIN=16495 exceeds an ENTIRE v5e chip. A scope with no measured
+# entry falls back to the open-loop --alloc-gb knob, which allocates *something*
+# but is explicitly NOT a matched control; the cell logs target vs realised either
+# way, so the analysis can tell which cells are usable for the apparatus contrast.
+#
+# To add a scope: run one F=0 cell and one F>0 cell, read mem_used_mb from the
+# parquet (the collector's number, which is what the detector sees), and enter it
+# here. The disguise cells print MEM_BYTES_IN_USE_STEADY for cross-checking.
+_MEM_MATCH_F0_BY_SCOPE = {
+    "tpuTMS": 5196.0,          # 2x v6e-1, satfiller_only, 758 samples
+    # "tpuT8": <F=0 footprint on v5litepod-8>,   pending its first satfiller_only
+}
+_MEM_MATCH_TRAIN_BY_SCOPE = {
+    "tpuTMS": 16495.0,         # 2x v6e-1, f20 and f50, both slices
+    "tpuT8": 7013.0,           # v5litepod-8, f50 rep1, 659 samples, 09-02
+}
+
+
+def _match_f0(scope):
+    return _MEM_MATCH_F0_BY_SCOPE.get(scope, 0.0)
+
+
+def _match_train(scope):
+    return _MEM_MATCH_TRAIN_BY_SCOPE.get(scope, 0.0)
 _ALLOC_HIMEM = 48.0
 
 
@@ -251,7 +281,9 @@ for _sc in _SCOPES:
          f"MN-I F=0.5 on {_sc} (100% detected at 0.6% FPR on GPU -- the claim)",
          _TO_ADV)
     # --- Honest non-ML controls (other, honest) ---
-    _add(f"{_sc}_nonml_sat", _nonml_cmd(alloc=_ALLOC_MATCHED, duty=1.0),
+    _add(f"{_sc}_nonml_sat",
+         _nonml_cmd(alloc=(0.0 if _match_f0(_sc) else _ALLOC_MATCHED),
+                    match_mb=_match_f0(_sc), duty=1.0),
          f"Honest non-ML on {_sc}: matched footprint, NO model. Like-for-like "
          f"partner of advtrain_satfiller_only -- the apparatus test", _TO_OTHER)
     _add(f"{_sc}_nonml_duty30", _nonml_cmd(alloc=2.0, duty=0.3),
@@ -289,10 +321,10 @@ _add("tpuTMS_advtrain_satint_f05", _mni_cmd(0.05),
      "MN-I F=0.05 on multislice (0% on GPU; hardest disguise vs the DCN channel)", _TO_ADV)
 _add("tpuTMS_advtrain_satfiller_only", _mni_cmd(0.0),
      "MN-I F=0 on multislice: zero training, saturating filler (evades on GPU)", _TO_ADV)
-_add("tpuTMS_nonml_sat", _nonml_cmd(match_mb=_MEM_MATCH_F0, duty=1.0),
+_add("tpuTMS_nonml_sat", _nonml_cmd(match_mb=_match_f0("tpuTMS"), duty=1.0),
      "Honest non-ML on multislice, footprint-matched to F=0 -- the apparatus test",
      _TO_OTHER)
-_add("tpuTMS_nonml_sat_16g", _nonml_cmd(match_mb=_MEM_MATCH_TRAIN, duty=1.0),
+_add("tpuTMS_nonml_sat_16g", _nonml_cmd(match_mb=_match_train("tpuTMS"), duty=1.0),
      "Honest non-ML on multislice, footprint-matched to a TRAINING run (16.5GB) -- "
      "without this, mem_used_mb alone separates the F>0 disguise from its control",
      _TO_OTHER)
