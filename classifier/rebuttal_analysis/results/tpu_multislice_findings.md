@@ -802,3 +802,64 @@ section 10 is unaddressed -- four of those groups are one script -- so this is a
 feature-utility result within one corpus, not a deployment number. The next
 multislice run, with the full honest class set, is what tests whether it holds
 when the class balance is real.
+
+
+## 16. Section 15's rule does not generalise -- and the reason is the real finding
+
+Tested the same level/shape ablation on the v5e single-slice corpus (16,408
+windows, 11 groups, all three classes -- larger and better balanced than section
+15's). It **reverses**:
+
+| feature set | tpuTMS@v6e (sect 15) | tpuT8@v5e |
+|---|---|---|
+| ALL | TPR 0.734 / FPR 0.164 | TPR 0.672 / FPR 0.016 |
+| drop memory LEVELS, keep SHAPE | 0.724 / **0.000** | 0.665 / **0.244** |
+| drop memory SHAPE, keep LEVELS | 0.723 / 0.571 | 0.665 / **0.008** |
+| drop ALL memory | 0.670 / 0.415 | 0.469 / 0.308 |
+
+On one corpus dropping levels takes FPR to zero; on the other it multiplies FPR
+by 15. **Section 15's rule is withdrawn as a rule.** I generalised from a single
+corpus and the second one disagrees.
+
+### Why, and this part does generalise
+
+Measured footprints, sorted, with the class of each cell:
+
+    tpuTMS@v6e                              tpuT8@v5e
+    honest duty30            2352           honest comm               96
+    honest comm              4224           honest duty30            380
+    honest sat               4672           INFER  infershard_1b     428
+    TRAIN  satfiller_only    5196   <--      TRAIN  satfiller_only  1089
+    honest duty50_hash       5424   <--      honest sat             1152
+    TRAIN  typeconf_off     13177           honest duty50_hash      1152
+    TRAIN  satint_f05/20/50 16495           INFER  inferrep_1b      2668
+                                            TRAIN  train_fsdp1b     4978
+                                            TRAIN  satint_f05/20/50 7013
+
+On v6e multislice an honest cell (`duty50_hash`, 5424 MB) sits ABOVE a training
+cell (`satfiller_only`, 5196 MB): the ranges interleave, so no level threshold
+works and levels generate false alarms. On v5e single-slice every honest cell caps
+at 1152 MB while training reaches 7017 MB: a threshold near 2000 MB separates the
+classes almost perfectly, and levels look like an excellent feature.
+
+**So the measured utility of memory-level features is an artifact of how far the
+honest class's footprint range extends.** If the honest workloads in your corpus
+never allocate as much as your training workloads, levels appear highly
+discriminative with a near-zero false-alarm rate -- and that is a property of the
+corpus, not of the world. Any honest job that happens to allocate a training-sized
+footprint breaks it, and an adversary can trivially arrange to.
+
+Two consequences:
+
+1. **An FPR quoted for level features is meaningless without the honest class's
+   footprint range alongside it.** The v5e 0.008 and the v6e 0.571 are the same
+   feature set on the same detector; only the honest coverage differs.
+2. **This is precisely what `nonml_sat_hi` was added for.** The v5e single-slice
+   corpus has no honest cell at the training footprint -- that cell did not exist
+   when v5t8 ran -- which is exactly why levels look good there. The camp4
+   multislice runs do have it, and are the corpus that can settle this.
+
+The honest statement for the paper is therefore not "use shape, not levels" but:
+**level features on the memory channel are only as trustworthy as the footprint
+coverage of the honest class used to validate them**, and a corpus without a
+footprint-matched honest control will overstate them.
