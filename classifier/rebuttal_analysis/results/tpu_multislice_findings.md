@@ -1027,3 +1027,33 @@ independent workload families per class, which none of these three has.** The GP
 corpus has 335 groups and is the only one here that could support such a claim --
 and section 17 shows its honest class does contest the training footprint range,
 so its numbers are not subject to this instability.
+
+
+## 19. Standing cost of one-at-a-time claiming: v5litepod-16 declined four times
+
+`v5litepod-16` has now been granted four times (2026-09-02 at 13:50, 20:56, 21:18
+and once earlier) and used zero times. Three of those were released correctly --
+the campaign holds one scope at a time, and the reaper drops anything outside the
+claimed group -- and one was the reaper's stale-claim bug, since fixed.
+
+This is a design consequence, not a defect, but it has a real cost. `v5litepod-16`
+is a **16-chip single slice spanning two hosts**, and the corpus has no multi-host
+single-slice data at all: every single-slice corpus so far is one host (v6e-1,
+v5litepod-8). It is the only shape on offer that isolates cross-HOST ICI traffic
+without DCN, which sits exactly between the topologies already collected.
+
+The decision is Robi's, because it trades money for coverage:
+
+* **Keep one-at-a-time.** Simple, and the reaper's one-claimed-group model is what
+  makes unattended running safe. Cost: shapes granted while another scope runs are
+  always declined, and v5litepod-16 appears to be offered precisely when something
+  else is claimed.
+* **Allow two concurrent claims.** Roughly $19/hr for a v5litepod-16 on top of the
+  current claim. The obstacle is not the money -- ~$300 of the authorised $3000 is
+  spent -- but that the reaper would need to track a SET of claimed groups rather
+  than one, and a bug there bills unsupervised. I would not make that change
+  unattended.
+
+Recorded rather than acted on. If the answer is "take it", the change is small
+(claim list instead of claim scalar in both campaign.sh and camp_reaper.sh) and
+worth doing while someone is watching.
