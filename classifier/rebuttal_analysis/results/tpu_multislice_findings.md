@@ -1057,3 +1057,85 @@ The decision is Robi's, because it trades money for coverage:
 Recorded rather than acted on. If the answer is "take it", the change is small
 (claim list instead of claim scalar in both campaign.sh and camp_reaper.sh) and
 worth doing while someone is watching.
+
+
+## 20. MN-T result on a balanced corpus: the shaping does nothing; the OPTIMIZER evades
+
+camp5 collected the first balanced multislice corpus: 15 groups on 2x
+v5litepod-1, five honest non-ML controls, honest training, both inference cells,
+the MN-I ladder and the MN-T ladder. 4,932 windows.
+
+### The detector is no longer degenerate
+
+Leave-one-workload-out, full two-stage, tau=0.8, h2d/d2h excluded (they exist
+only in camp5 rows, so their presence would identify the campaign and hence
+partly the cell):
+
+    window TPR@0.8 = 0.940      window FPR@0.8 (honest) = 0.139
+    train_fsdp1b (honest training)   p=0.843  rate=0.902   (was 0.254)
+    nonml_comm / duty50_hash / sat   rate 0.000
+    nonml_duty30 0.426, nonml_sat_hi 0.201   <- the remaining false alarms
+
+Honest training is now detected at 0.90 where the imbalanced corpus put it at
+0.254, and three of five honest controls sit at zero. Section 13's verdict ("the
+detector was too degenerate to attack") no longer applies.
+
+### The MN-T ladder needed a family holdout, and it changes everything
+
+Under leave-one-WORKLOAD-out the ladder reads p(train|ML) = 0.991 / 0.994 /
+0.993 -- apparently untouched. But the three rungs are ONE SCRIPT, so holding out
+`a32` leaves `off` and `a8` in the training fold and the model can score it by
+family membership. Holding out **all three rungs together**, so the detector has
+never seen the typeconf script:
+
+| rung | p_train | p(train\|ML) | frac > tau |
+|---|---|---|---|
+| `typeconf_off` | 0.264 | 0.369 | **0.000** |
+| `typeconf_a8` | 0.262 | 0.360 | **0.000** |
+| `typeconf_a32` | 0.234 | 0.378 | **0.000** |
+
+For comparison, MN-I under the same family holdout is still partly caught:
+
+| cell | p_train | frac > tau |
+|---|---|---|
+| `advtrain_satint_f50` | 0.926 | 0.785 |
+| `advtrain_satint_f20` | 0.805 | 0.549 |
+| `advtrain_satint_f05` | 0.765 | 0.230 |
+| `advtrain_satfiller_only` | 0.699 | 0.033 |
+
+Two conclusions.
+
+**The 0.99 ladder was family recognition, not robustness.** A 4x drop when the
+siblings leave the training fold. My first MN-T reading was measuring family
+membership, which is the same trap as section 10 and I walked into it again --
+this time the fix was available (hold out the family, not the workload).
+
+**The shaping knobs do nothing.** 0.264 -> 0.262 -> 0.234 across off -> a8 ->
+a32 is flat. Raising TensorCore utilisation toward the inference level, cutting
+cross-slice collectives 32-fold, and adding a device-to-host trickle moved
+nothing. What evades is the BASELINE cell.
+
+### What actually evades: the optimizer
+
+`typeconf_off` is training with no adversarial shaping at all -- plain SGD, no
+filler, no interleave, real gradient steps every step -- and it scores 0.264 with
+**zero** windows above tau, while `train_fsdp1b` (AdamW, same model, same
+topology) scores 0.843. The detector was trained on AdamW training only: MN-I and
+`train_fsdp1b` both use it.
+
+The likely mechanism is the optimizer-state signature. AdamW carries two moment
+tensors per parameter, which dominates both the footprint and its allocation
+trajectory -- the very features section 15 found most discriminative. Plain SGD
+carries none. So switching optimizer is a one-line change, needs no adversarial
+intent, and appears to cost the detector more than any of the deliberate shaping
+in MN-T.
+
+**This is not yet isolated.** `typeconf_off` also differs from `train_fsdp1b` in
+script structure (replicated parameters with periodic averaging rather than
+sharded FSDP). The clean test is one cell: the same typeconf script with
+`--optimizer adamw`, which changes nothing but the optimizer. Registered as
+`{scope}_advtrain_typeconf_adamw` for the next run.
+
+Caveats: 15 groups, 1-2 reps per cell, and FPR 0.139 is not a usable operating
+point. Treat the magnitudes as indicative and the ORDERING -- SGD training evades
+where AdamW training does not -- as the finding worth testing properly.
