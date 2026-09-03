@@ -332,9 +332,20 @@ def main():
             # the duration, from the rate observed since the budget was fixed,
             # costs one broadcast in a cell that already runs gradient collectives
             # every train step. F=0 never reaches here: its budget is exact.
-            if (n_budget is not None and not _rebudgeted and _b2_t is not None
-                    and step > _b2_step + 20
-                    and time.time() - t0 >= 0.4 * args.duration):
+            # STEP-based trigger, not time-based. This condition gates a
+            # broadcast_one_to_all inside agreed_step_budget, and a collective
+            # must be reached at the same point in program order on every host.
+            # A wall-clock test is per-host: the two slices can cross
+            # 0.4*duration at different step indices, and then one host is in the
+            # broadcast while the other is still training. Measured 2026-09-03:
+            # typeconf_off_rep2 ran 550 steps to 587s of its 600s target and then
+            # died with megascale_error_reporter_abort_on_hang -- the same
+            # signature as the original wall-clock deadlock, reintroduced by the
+            # fix for it. n_budget is broadcast and _b2_step is set at a
+            # deterministic step, so this trigger is identical on both hosts.
+            if (n_budget is not None and not _rebudgeted
+                    and _b2_step is not None
+                    and step >= _b2_step + max(20, n_budget // 4)):
                 n_budget = T.agreed_step_budget(
                     step - _b2_step, time.time() - _b2_t,
                     args.duration - (time.time() - t0), step)
