@@ -84,16 +84,35 @@ trap cleanup EXIT
 # What capacity has actually granted: v6e-1 freely (13x), 2x v6e-1 three times,
 # v6e-16 once, v5litepod-8 twice (2026-09-02, first time ever), v5litepod-16 once
 # (granted then reaped unused). Never ACTIVE: v6e-8, 2x v6e-8, 2x v5litepod-1.
+# ORDER: GAP SHAPES FIRST. Reordered 2026-09-03 for the gap-filling campaign.
+#
+# What the corpus already has (571 streams): single slice on v5litepod-8 and
+# v6e-1, multislice on 2x v6e-1 and 2x v5litepod-1, all three classes on each.
+# What it does NOT have, in priority order:
+#
+#  1. MULTI-HOST SINGLE SLICE -- the only topology that isolates cross-HOST ICI
+#     without DCN. v5litepod-16 (16 chips, 2 hosts) has been GRANTED FOUR TIMES
+#     and used zero times, every time because a lower-priority target was already
+#     claimed. It is now first, so a grant at any claim boundary wins. v6e-16 is
+#     second, to get the same topology on the other generation.
+#  2. Single-host 8-chip v6e (t8) -- the v6e single-slice ladder stops at 1 chip.
+#  3. The multislice SCALE ladder (4x and 8x v6e-1), never granted.
+#  4. Re-collect v5litepod-8: its 264 streams carry only 7 of the 11 telemetry
+#     channels (they predate the 2026-09-02 07:40Z fix) and lack nonml_sat_hi and
+#     the MN-T ladder entirely.
+#
+# ms1 and t1 sit last because they are already well covered (45+9 and 36 cells);
+# they stay in the list only so a spare claim is not wasted.
 TARGETS=(
+  "v5t16|v5litepod-16|1|v2-alpha-tpuv5-lite|tpuT16"
+  "t16|v6e-16|1|v2-alpha-tpuv6e|tpuT16"
   "ms8|v6e-8|2|v2-alpha-tpuv6e|tpuTMS"
-  "v5ms|v5litepod-1|2|v2-alpha-tpuv5-lite|tpuTMS"
+  "t8|v6e-8|1|v2-alpha-tpuv6e|tpuT8"
   "ms8x1|v6e-1|8|v2-alpha-tpuv6e|tpuTMS8"
   "ms4|v6e-1|4|v2-alpha-tpuv6e|tpuTMS4"
-  "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
-  "t16|v6e-16|1|v2-alpha-tpuv6e|tpuT16"
-  "v5t16|v5litepod-16|1|v2-alpha-tpuv5-lite|tpuT16"
-  "t8|v6e-8|1|v2-alpha-tpuv6e|tpuT8"
+  "v5t8|v5litepod-8|1|v2-alpha-tpuv5-lite|tpuT8"
   "t4|v6e-4|1|v2-alpha-tpuv6e|tpuT4"
+  "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
   "t1|v6e-1|1|v2-alpha-tpuv6e|tpuT1"
 )
 # t1 and t4 exist so the corpus has SINGLE-SLICE coverage of every class, not
