@@ -48,9 +48,35 @@ in data collected after 07:40Z; earlier data has 7.
   mechanism (section 16) -- three corpora give three different winners, and the
   mechanism's own prediction fails on `tpuT1` (section 18).
 
-**No feature-subset rule is defensible from these corpora.** Each of the three
-above was fitted to the corpus in front of me. 8-12 groups with 1-3 reps is too
-small, with section 10's leakage unaddressed.
+* "Plain SGD training evades the detector completely" (section 20) -- it evades on
+  v5e (0.000 above tau) and is CAUGHT on v6e (0.494), same script, same holdout,
+  same code. That was a property of the v5e corpus, not of the optimizer
+  (section 21).
+
+**No feature-subset rule, and no evasion claim, is defensible from a single
+corpus.** Four claims in this file were proposed and withdrawn -- sections 7, 13b,
+15/16 and 20 -- and every one looked convincing on the corpus it was fitted to and
+failed on data it had not seen. 8-15 groups with 1-3 reps is too small, with
+section 10's family leakage only partly addressed.
+
+## The surviving adversarial results
+
+* **MN-T's shaping does nothing, on either generation.** Raising TensorCore
+  utilisation toward the inference profile, cutting cross-slice collectives
+  32-fold and adding a device-to-host trickle do not move the type decision. On
+  v6e the STRONGEST shaping is the most detected (`a32` 0.799 vs `off` 0.494), so
+  if anything it is counterproductive.
+* **The optimizer has a real but partial effect where the detector works.** On
+  v6e, same script and topology: SGD 0.494 vs AdamW 0.875 above tau, with
+  `mem_used` 12750 vs 17900 MB and the startup delta 2601 vs 7820 MB -- the
+  moment tensors are visible at allocation time, as predicted, but they do not
+  buy evasion.
+* **An unseen training script is far harder to detect on v5e than on v6e.** That
+  is the open question worth pursuing, and a more interesting one than the
+  optimizer: how detectable a novel workload is depends on the generation the
+  detector was fitted to. The v5litepod-8 re-collect now running gives a v5e
+  SINGLE-SLICE corpus with the same cell set as the v6e multislice one, which
+  separates generation from topology for the first time.
 
 ## Open
 
