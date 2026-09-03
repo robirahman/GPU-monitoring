@@ -22,16 +22,21 @@ say(){ echo "[$(date -u +%H:%M:%SZ)] $*"; }
 
 while :; do
   mapfile -t prefixes < <(gcloud storage ls "$BUCKET/" 2>/dev/null \
-      | grep -aE "/(camp[0-9]*|iso)_[0-9]{8}_[0-9]{6}[^/]*/$" || true)
+      | grep -aE "/[a-z][a-z0-9]*_[0-9]{8}_[0-9]{6}[^/]*/$" \
+      | grep -avE "/(tpuprobe|tpulist|tpuls|tpumetrics|tpuhlo|tpuvfy|tpucfm|tpucoll|fixchk|dcncheck)" || true)
   say "${#prefixes[@]} session prefix(es) found"
   for p in "${prefixes[@]}"; do
     # Only sessions that actually have runs/, and skip the probe/smoke ones.
-  # The prefix list is an ALLOWLIST (camp*, iso*) rather than a wildcard, because
-  # the bucket also holds a dozen one-off probe sessions whose bulk download would
-  # cost a round trip every cycle for nothing. That allowlist is also a trap: a
-  # targeted run launched as SESSION=iso_... on 2026-09-03 collected 9 cells that
-  # this loop would never have seen, because only camp* matched. Any new session
-  # prefix must be added here or its data is durable in GCS and invisible to git.
+  # DENYLIST, not an allowlist. It was an allowlist (camp*, then camp*|iso*) and
+  # that shape failed twice in one day: a targeted run launched as SESSION=iso_...
+  # collected 9 cells the loop would never have seen, and within the hour a
+  # gap-filling run launched as SESSION=gap_... would have done the same. Every
+  # new session prefix was a silent data-loss bug waiting to happen, and the
+  # failure is invisible -- the data sits durable in GCS and absent from git.
+  # So: take any <name>_<8digits>_<6digits> session and exclude the known one-off
+  # probe/smoke prefixes by name. New collection sessions are now included by
+  # default; only a NEW KIND OF PROBE needs an edit, and forgetting that costs a
+  # wasted download rather than lost data.
     gcloud storage ls "${p}runs/" >/dev/null 2>&1 || continue
     timeout 900 python3 scripts/tpu_collection/ingest_tpu_corpus.py \
       --prefix "${p%/}" --out "$OUT" \
