@@ -1139,3 +1139,40 @@ sharded FSDP). The clean test is one cell: the same typeconf script with
 Caveats: 15 groups, 1-2 reps per cell, and FPR 0.139 is not a usable operating
 point. Treat the magnitudes as indicative and the ORDERING -- SGD training evades
 where AdamW training does not -- as the finding worth testing properly.
+
+
+## 20b. Mechanism evidence: the SGD/AdamW split is carried by the memory startup trajectory
+
+Discriminating `typeconf_off` (SGD) from `train_fsdp1b` (AdamW) on existing data,
+948 windows:
+
+    typeconf_off (SGD)    mem_used_mb 12345-12430   first_30s_mem_delta_mb 2693-2902
+    train_fsdp1b (AdamW)  mem_used_mb 14196         first_30s_mem_delta_mb 3975
+
+    memory features carry 86.8% of total importance
+    top three: first_30s_mem_delta_frac, first_30s_mem_ratio, first_30s_mem_delta_mb
+
+The **startup delta differs by 48%** (3975 vs 2693 MB) while the total footprint
+differs by only 15% (14196 vs 12345). That asymmetry is what an optimizer-state
+signature should look like: AdamW's two moment tensors per parameter are allocated
+during startup, so they show up far more strongly in the allocation TRAJECTORY
+than in the steady-state level -- and the trajectory features are precisely the
+ones section 15 found most discriminative and the ones section 20 predicts the
+SGD cell lacks.
+
+Two caveats, both mine:
+
+* **The 1.000 accuracy is inflated.** I grouped by `run_id`, which is a per-CHIP
+  stream, so holding out some streams leaves same-cell streams in the training
+  fold. The importances are informative about what differs; the accuracy is not a
+  generalisation estimate.
+* **The confound is unresolved.** `typeconf` REPLICATES parameters (a full copy
+  per chip) while `train_fsdp1b` SHARDS them, so structure contributes to the
+  footprint difference as well as the optimizer. A 1b model is ~5.2 GB in fp32:
+  replicated that is 5.2 GB/chip, sharded over two chips 2.6 GB/chip, and AdamW
+  moments would add ~5.2 GB total. The observed 1.85 GB/chip gap is the same order
+  as either effect, which is exactly why it cannot be attributed from these two
+  cells.
+
+`{scope}_advtrain_typeconf_adamw` -- identical to `typeconf_off` but AdamW -- is
+registered and queued adjacent to its comparator. One cell settles it.
