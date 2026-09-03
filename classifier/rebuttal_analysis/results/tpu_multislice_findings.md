@@ -1176,3 +1176,76 @@ Two caveats, both mine:
 
 `{scope}_advtrain_typeconf_adamw` -- identical to `typeconf_off` but AdamW -- is
 registered and queued adjacent to its comparator. One cell settles it.
+
+
+## 21. CORRECTION to section 20: the evasion was generation-specific, not the optimizer
+
+The isolating cell ran (9/9 cells, 3 reps, 2x v6e-1) and it does not confirm
+section 20. `typeconf_adamw` is identical to `typeconf_off` except
+`--optimizer adamw`.
+
+**The optimizer's effect on the telemetry is real and large.** Same script, same
+model, same topology:
+
+| cell | optimizer | mem_used_mb | first_30s_mem_delta_mb |
+|---|---|---|---|
+| `typeconf_off` | SGD | 12750 | 2601 |
+| `typeconf_adamw` | AdamW | 17900 | **7820** |
+| `train_fsdp1b` | AdamW + sharded FSDP | 14134 | 3977 |
+
+Switching SGD to AdamW **triples the startup memory delta** (2601 -> 7820 MB) and
+adds 5.1 GB of footprint, exactly as the moment-tensor hypothesis predicts.
+
+**But it does not produce evasion.** Holding out all three cells and training on
+the other 13 groups of the v6e multislice corpus (7,708 windows):
+
+| cell | optimizer | p_ml | p(train\|ML) | p_train | frac > tau |
+|---|---|---|---|---|---|
+| `typeconf_off` | SGD | 0.977 | 0.978 | 0.977 | 0.765 |
+| `typeconf_adamw` | AdamW | 0.629 | 0.983 | 0.972 | 0.950 |
+| `train_fsdp1b` | AdamW | 0.959 | 0.913 | 0.904 | 0.933 |
+
+SGD training is caught at 0.765, not the 0.000 section 20 reported.
+
+### What section 20 actually measured: a generation difference
+
+Running section 20's exact holdout (MN-T family out) on both generations, same
+features and code:
+
+| corpus | `typeconf_off` | `_a8` | `_a32` | `_adamw` |
+|---|---|---|---|---|
+| **v5e** (12 grp, 5,510 win) | 0.259 / **0.000** | 0.264 / **0.000** | 0.235 / **0.000** | -- |
+| **v6e** (12 grp, 7,692 win) | 0.799 / 0.494 | 0.798 / 0.495 | 0.853 / 0.799 | 0.875 / 0.875 |
+
+(p_train median / frac above tau.)
+
+The same script, the same holdout, the same feature set: **complete evasion on
+v5e, detection on v6e.** So section 20's finding was a property of the v5e
+multislice corpus, not of the optimizer. Training-set size differs (5,510 vs
+7,692 windows) and is a partial confound, but a 40% data difference does not
+plausibly explain 0.000 versus 0.5-0.875.
+
+### What survives
+
+* **The MN-T shaping still does nothing**, on either generation. v5e: 0.259 /
+  0.264 / 0.235 across off/a8/a32. v6e: 0.494 / 0.495 / 0.799 above tau -- if
+  anything the strongest shaping is the MOST detected. Raising TensorCore
+  utilisation, cutting cross-slice collectives 32-fold and adding a d2h trickle
+  do not move the type decision.
+* **The optimizer has a real but partial effect**, visible where the detector
+  works at all: on v6e, SGD 0.494 against AdamW 0.875 above tau, in the direction
+  the footprint evidence predicts.
+* **An unseen training script is much harder to detect on v5e than on v6e.** That
+  is now the open question, and it is a more interesting one than the optimizer:
+  it says detectability of a novel workload depends on the hardware generation the
+  detector was fitted to.
+
+### The methodological lesson, stated plainly
+
+Section 20 was built on one corpus, one generation, and a holdout I had to fix
+once already. It produced a striking claim -- "an evader needs only a different
+optimizer" -- that survived exactly as long as it took to run the isolating cell
+and the cross-generation check. That is four claims in this file now proposed and
+withdrawn (sections 7, 13b, 15/16, 20). Every one failed on data it had not been
+fitted to, and every one looked convincing beforehand. Nothing in this file should
+be quoted from a single corpus.
