@@ -22,10 +22,16 @@ say(){ echo "[$(date -u +%H:%M:%SZ)] $*"; }
 
 while :; do
   mapfile -t prefixes < <(gcloud storage ls "$BUCKET/" 2>/dev/null \
-      | grep -aE "/camp[0-9]*_[0-9]{8}_[0-9]{6}[^/]*/$" || true)
+      | grep -aE "/(camp[0-9]*|iso)_[0-9]{8}_[0-9]{6}[^/]*/$" || true)
   say "${#prefixes[@]} session prefix(es) found"
   for p in "${prefixes[@]}"; do
     # Only sessions that actually have runs/, and skip the probe/smoke ones.
+  # The prefix list is an ALLOWLIST (camp*, iso*) rather than a wildcard, because
+  # the bucket also holds a dozen one-off probe sessions whose bulk download would
+  # cost a round trip every cycle for nothing. That allowlist is also a trap: a
+  # targeted run launched as SESSION=iso_... on 2026-09-03 collected 9 cells that
+  # this loop would never have seen, because only camp* matched. Any new session
+  # prefix must be added here or its data is durable in GCS and invisible to git.
     gcloud storage ls "${p}runs/" >/dev/null 2>&1 || continue
     timeout 900 python3 scripts/tpu_collection/ingest_tpu_corpus.py \
       --prefix "${p%/}" --out "$OUT" \
