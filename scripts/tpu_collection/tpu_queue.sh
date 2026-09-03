@@ -290,6 +290,7 @@ ADV+=("${SCOPE}_train_fsdp1b" "${SCOPE}_inferrep_1b" "${SCOPE}_infershard_1b")
 case "$SCOPE" in
   tpuTMS*)
     ADV+=("${SCOPE}_advtrain_typeconf_off"
+          "${SCOPE}_advtrain_typeconf_adamw"
           "${SCOPE}_advtrain_typeconf_a8"
           "${SCOPE}_advtrain_typeconf_a32")
     ;;

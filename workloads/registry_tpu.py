@@ -473,6 +473,18 @@ for _sc in _SCOPES + ["tpuTMS", "tpuTMS4", "tpuTMS8"]:
          f"optimizer's own effect on the footprint channel", _TO_ADV)
     _add(f"{_sc}_advtrain_typeconf_a8", _typeconf_cmd(accum=8, tc_fill=0.5, d2h=64),
          f"MN-T moderate on {_sc}: sync every 8 steps, half tc fill, d2h trickle", _TO_ADV)
+    # THE ISOLATING CELL. typeconf_off (plain SGD, no other shaping) evades the
+    # detector completely -- p_train 0.264, zero windows above tau, with its
+    # family held out -- while train_fsdp1b (AdamW, same model, same topology)
+    # scores 0.843. But those two differ in TWO ways: optimizer AND script
+    # structure (replicated params with periodic averaging vs sharded FSDP). This
+    # cell is byte-identical to typeconf_off except --optimizer adamw, so
+    # off-vs-adamw isolates the optimizer and adamw-vs-train_fsdp1b isolates the
+    # structure. Without it the section 20 finding stays confounded.
+    _add(f"{_sc}_advtrain_typeconf_adamw",
+         _typeconf_cmd(accum=1, tc_fill=0.0, d2h=0, opt="adamw"),
+         f"MN-T control on {_sc}: identical to typeconf_off but AdamW -- isolates "
+         f"the optimizer-state signature from the script structure", _TO_ADV)
     _add(f"{_sc}_advtrain_typeconf_a32", _typeconf_cmd(accum=32, tc_fill=0.9, d2h=256),
          f"MN-T strongest on {_sc}: sync every 32 steps, near-full tc fill, "
          f"heavy d2h trickle -- training shaped hardest toward the inference profile",
