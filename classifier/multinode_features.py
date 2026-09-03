@@ -81,8 +81,12 @@ EXTRA_SIGNALS = [
     "dcn_collective_lat_us_p99", "buffer_xfer_lat_us_p90",
     "tensorcore_util_pct",
     # Host<->device transfer latencies, added 2026-09-02 once the metrics server
-    # was enumerated properly (it serves 11 names; only 7 were being read). These
-    # are the two channels most likely to separate TRAINING from INFERENCE --
+    # was enumerated properly (it serves 11 names; only 7 were being read).
+    # CAVEAT measured 2026-09-03: these are megascale.* metrics and are live ONLY
+    # ON MULTISLICE (666/683 samples on a 2-slice group, 0/661 on a single slice),
+    # exactly like dcn_collective_lat_us_*. They cannot contribute anything on a
+    # single-slice corpus. Where they DO exist they are plausibly the two channels
+    # best placed to separate TRAINING from INFERENCE --
     # training streams batches host->device, inference streams generated tokens
     # device->host -- which is Stage 2's job and the part of the pipeline the TPU
     # corpus could not train at all until inference cells existed.

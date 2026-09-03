@@ -1275,3 +1275,47 @@ and the cross-generation check. That is four claims in this file now proposed an
 withdrawn (sections 7, 13b, 15/16, 20). Every one failed on data it had not been
 fitted to, and every one looked convincing beforehand. Nothing in this file should
 be quoted from a single corpus.
+
+
+## 22. Precise telemetry accounting: 11 mapped, but only 5 live everywhere
+
+Section 11 said the four channels added on 2026-09-02 completed the telemetry, and
+singled out the host<->device transfer latencies as "the channels most likely to
+separate training from inference". Measured on both topologies, that needs
+qualifying: **they are megascale metrics and exist only on multislice.**
+
+    h2d/d2h_transfer_lat_us_*   multislice: live 666/683   single slice: live 0/661
+
+Same family as `dcn_collective_lat_us_*` and `buffer_xfer_lat_us_p90`, and dark on
+a single slice for the same reason -- megascale.* accumulates only ACROSS slices.
+
+The honest inventory of the 11 mapped metrics:
+
+| channel | availability |
+|---|---|
+| `duty` -> `gpu_utilization_pct`, `tpu_duty_cycle_pct` | **always live** |
+| `hbm_used` -> `mem_used_mb` | **always live** |
+| `hbm_total` -> `mem_total_mb` | **always live** |
+| `hlo_exec` -> `hlo_exec_us_p50/p90/p99` | **always live** |
+| `hlo_queue` -> `hlo_queue_size` | **always live** |
+| `dcn_lat` -> `dcn_collective_lat_us_p50/p90/p99` | multislice only |
+| `buf_xfer` -> `buffer_xfer_lat_us_p90` | multislice only |
+| `h2d_lat` -> `h2d_transfer_lat_us_p50/p90/p99` | multislice only |
+| `d2h_lat` -> `d2h_transfer_lat_us_p50/p90/p99` | multislice only |
+| `slice_error` -> `slice_error_detected` | **never carries a value** (0/683 even on multislice) |
+| `uptime` -> `tpu_uptime_s` | live, deliberately excluded from features |
+
+So a single-slice corpus has **five** usable accelerator channels, not eleven, and
+`tensorcore_util_pct` / `mem_utilization_pct` on top where served. A multislice
+corpus has nine. That is the number to quote for "all available TPU telemetry",
+and it is a strong statement in its own right: on a platform with no power,
+temperature, clock, PCIe or fan channel, a single slice offers five.
+
+**Consequence for the v5litepod-8 re-collect now running.** Its stated
+justification -- upgrading 264 streams from 7 channels to 11 -- is wrong: on a
+single slice the four added channels contribute nothing (two are megascale, one
+never carries a value, one is excluded by design). The claim is still worth its
+~6 h, but for a different reason: it adds `nonml_sat_hi`, the MN-T ladder and
+`typeconf_adamw` on single-slice v5e, which is exactly what section 21's open
+question needs -- a v5e corpus with the same cell set as the v6e multislice one,
+so generation can be separated from topology.
