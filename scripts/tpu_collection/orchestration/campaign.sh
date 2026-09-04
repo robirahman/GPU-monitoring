@@ -115,6 +115,26 @@ TARGETS=(
   "ms1|v6e-1|2|v2-alpha-tpuv6e|tpuTMS"
   "t1|v6e-1|1|v2-alpha-tpuv6e|tpuT1"
 )
+
+# ONLY_TARGETS: bash-regex whitelist of target KEYS, for a gap-filling run that
+# must not disturb what is already in flight. Without it a relaunch re-parks
+# every uncollected key: it would request a SECOND ms4 group while the first is
+# still collecting (a duplicate multislice group is what the us-east5-a/b zone
+# collision billed us for), and it would spend the driver on t1, which lands in
+# ~60 s every time, instead of waiting out the host-sized shapes that are the
+# entire reason for the run.
+if [ -n "${ONLY_TARGETS:-}" ]; then
+  _kept=()
+  for t in "${TARGETS[@]}"; do
+    IFS='|' read -r _k _rest <<<"$t"
+    [[ "$_k" =~ $ONLY_TARGETS ]] && _kept+=("$t")
+  done
+  if [ "${#_kept[@]}" -eq 0 ]; then
+    echo "ONLY_TARGETS='$ONLY_TARGETS' matched no target key -- refusing to run with an empty pool" >&2
+    exit 2
+  fi
+  TARGETS=("${_kept[@]}")
+fi
 # t1 and t4 exist so the corpus has SINGLE-SLICE coverage of every class, not
 # just multislice. A single slice keeps collectives on ICI (or has none at all at
 # tpuT1, one chip), while a multislice group puts the same collectives on DCN --
