@@ -137,11 +137,23 @@ def main():
             # collective is a local no-op -- so s1_nonml_comm span the loop at
             # interpreter speed and wrote a 1.44 GB log, measuring Python rather
             # than communication. Slot-bounding fixes both.
+            # Synchronise EVERY iteration, not once at the end of the slot.
+            # dist.all_reduce only ENQUEUES, so a slot that loops on wall-clock
+            # alone bounds the enqueue rate rather than the work: measured on
+            # the 2x A100 pair (13.6 Gbit/s inter-node), 0.5 s of enqueueing
+            # queued 1026 collectives = 263 GB, which then took 155 s to drain.
+            # One "0.5 s slot" therefore ran 155 s, the 60 s cell ran 461.6 s,
+            # and the amount of communication per slot scaled with how SLOW the
+            # fabric was -- so the cell was not the same workload on two
+            # machines. On H100 (~100 GB/s) the same backlog drains in a couple
+            # of seconds, which is why this went unnoticed. The per-iteration
+            # sync costs tens of microseconds against a transfer of 150 ms here
+            # and ~2.5 ms on H100, so it is free in both regimes.
             t_end = time.time() + args.slot_sec
             while time.time() < t_end:
                 dist.all_reduce(comm_buf, op=dist.ReduceOp.SUM)
+                torch.cuda.synchronize(device)
                 allreduces += 1
-            torch.cuda.synchronize(device)
         if rank == 0:
             emit_step("nonml", step, tokens=0, passes=1,
                       node=node_rank, rank=rank)
