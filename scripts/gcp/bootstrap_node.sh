@@ -100,6 +100,14 @@ reboot_or_exit42() {
 
 gpu_count() { nvidia-smi -L 2>/dev/null | grep -c '^GPU ' || true; }
 
+# NVSwitch presence decides whether fabric-manager is REQUIRED or a no-op.
+# a3-highgpu-8g (H100 SXM) has NVSwitches -> fabric-manager is mandatory.
+# a2-highgpu-8g / a2-ultragpu-8g (A100) have NO NVSwitch: the GPUs are wired
+# point-to-point (NV12), nvidia-fabricmanager.service exits 1 by design, and
+# demanding it would (and did) send a perfectly good DLVM node down the
+# driver-install path and break its working driver. See docs/gcp_a100.md.
+nvswitch_count() { lspci -d 10de: 2>/dev/null | grep -ci nvswitch || true; }
+
 ########################################################################
 # Phase (a): wait for cloud-init, then apt update with the lock timeout
 ########################################################################
@@ -117,8 +125,10 @@ fi
 # Phase (b): NVIDIA driver + fabric-manager (SKIP if 8 GPUs already up)
 ########################################################################
 if ! have_phase driver; then
-  if [[ "$(gpu_count)" == "8" ]] && systemctl is-active --quiet nvidia-fabricmanager; then
-    log "(b) 8 GPUs already visible and fabric-manager active (DLVM image?) -- skipping driver install"
+  _nvsw="$(nvswitch_count)"
+  if [[ "$(gpu_count)" == "8" ]] && nvidia-smi >/dev/null 2>&1 \
+     && { [[ "$_nvsw" == "0" ]] || systemctl is-active --quiet nvidia-fabricmanager; }; then
+    log "(b) 8 GPUs already live on driver $(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null | head -1) (nvswitch=$_nvsw) -- skipping driver install"
     mark_phase driver
   else
     log "(b) installing NVIDIA datacenter driver + fabric-manager"
@@ -135,7 +145,11 @@ if ! have_phase driver; then
     apt_get install cuda-drivers nvidia-fabricmanager || true
 
     # fabric-manager version MUST match the driver; enable+start it.
-    systemctl enable --now nvidia-fabricmanager || log "WARN: nvidia-fabricmanager did not start (will re-check after reboot)"
+    if [[ "$(nvswitch_count)" == "0" ]]; then
+      log "(b) no NVSwitch on this machine type -- skipping fabric-manager (expected on a2/A100)"
+    else
+      systemctl enable --now nvidia-fabricmanager || log "WARN: nvidia-fabricmanager did not start (will re-check after reboot)"
+    fi
 
     if [[ "$(gpu_count)" == "8" ]] && nvidia-smi >/dev/null 2>&1; then
       log "(b) driver OK: 8 GPUs enumerated"
@@ -371,6 +385,7 @@ cat > "$REPORT" <<EOF
   "gpu_count": ${NGPU:-0},
   "torch_device_count": ${TORCH_NGPU:-0},
   "fabric_manager_active": $(systemctl is-active --quiet nvidia-fabricmanager && echo true || echo false),
+  "nvswitch_count": $(nvswitch_count),
   "nvlink_topo_ok": ${NVLINK_OK},
   "dcgm_nvlink_ok": ${DCGM_OK},
   "gcs_write_ok": ${GCS_OK},

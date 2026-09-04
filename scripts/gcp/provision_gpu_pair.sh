@@ -120,8 +120,8 @@ Next:
        for n in $NODE0 $NODE1; do
          gcloud compute scp --zone=$ZONE "${SCRIPT_DIR}"/*.sh "\$n:/tmp/" ;
        done
-       gcloud compute ssh $NODE0 --zone=$ZONE --command="sudo NODE_INDEX=0 SPAR_AUTO_REBOOT=1 bash /tmp/bootstrap_node.sh"
-       gcloud compute ssh $NODE1 --zone=$ZONE --command="sudo NODE_INDEX=1 SPAR_AUTO_REBOOT=1 bash /tmp/bootstrap_node.sh"
+       gcloud compute ssh $NODE0 --zone=$ZONE --command="sudo NODE_INDEX=0 NODE0=$NODE0 NODE1=$NODE1 SPAR_AUTO_REBOOT=1 bash /tmp/bootstrap_node.sh"
+       gcloud compute ssh $NODE1 --zone=$ZONE --command="sudo NODE_INDEX=1 NODE0=$NODE0 NODE1=$NODE1 SPAR_AUTO_REBOOT=1 bash /tmp/bootstrap_node.sh"
      (SPAR_AUTO_REBOOT=1 lets the node reboot+resume itself on a kernel-module mismatch.)
   2) From node0:  bash /opt/spar/gcp/verify_pair.sh
   3) TEAR DOWN when done -- an idle pair burns ~\$78/h:  bash scripts/gcp/teardown.sh
