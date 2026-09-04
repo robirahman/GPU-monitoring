@@ -123,8 +123,30 @@ TARGETS=(
 # worth trying as the smallest untested single-host shape. t1 is last in the
 # order because it is the most available, so it never starves a rarer shape.
 
-collected(){ gcloud storage ls "${DONEDIR}/$1.done" --project=$PROJECT >/dev/null 2>&1; }
-mark_collected(){ echo "$(date -u) $2" >/tmp/c.$1; gcloud storage cp /tmp/c.$1 "${DONEDIR}/$1.done" --project=$PROJECT >/dev/null 2>&1; }
+# A marker's EXISTENCE is not evidence that anything was collected. A relaunch on
+# 2026-09-02 stamped every in-flight target with "stopped by relaunch", and t8, t16
+# and ms8 were consequently skipped as already-collected for two days while having
+# no data at all. So a marker now has to carry a stream count, and one without a
+# streams= field is treated as stale rather than believed.
+collected(){
+  local body n
+  body="$(gcloud storage cat "${DONEDIR}/$1.done" --project=$PROJECT 2>/dev/null || true)"
+  [ -n "$body" ] || return 1
+  n="$(printf '%s' "$body" | sed -nE 's/.*streams=([0-9]+).*/\1/p' | head -1)"
+  if [ -z "$n" ]; then
+    say "  IGNORING ${1}.done: no streams= evidence -- target stays in the pool"
+    return 1
+  fi
+  [ "$n" -ge 1 ]
+}
+mark_collected(){
+  local key="$1" detail="$2" n
+  # Count what actually landed in GCS for this run, so the marker is checkable.
+  n="$(gcloud storage ls "${BUCKET}/${SESSION}_${key}/**" --project=$PROJECT 2>/dev/null \
+        | grep -c '\.parquet$' || true)"
+  echo "$(date -u) streams=${n:-0} $detail" >/tmp/c.$key
+  gcloud storage cp /tmp/c.$key "${DONEDIR}/$key.done" --project=$PROJECT >/dev/null 2>&1
+}
 
 qr_state(){ gcloud compute tpus queued-resources describe "$2" --project=$PROJECT --zone="$1" --format='value(state.state)' 2>/dev/null; }
 kill_req(){ local z=$1 qr=$2 pfx=$3 nc=$4
