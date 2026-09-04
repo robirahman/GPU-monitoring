@@ -38,6 +38,17 @@ export MASTER_PORT="${MASTER_PORT:-29500}"
 
 # --- Machine / image ----------------------------------------------------------
 export MACHINE_TYPE="${MACHINE_TYPE:-a3-highgpu-8g}"   # 8x H100 80GB SXM baked into the machine type (no --accelerator flag)
+# SPOT or STANDARD. Was hardcoded SPOT because "the only H100 quota that exists
+# here is Spot (=64)" -- that is STALE: as of 2026-09-04 this project has NO H100
+# quota of any kind in any region, and the A100 quotas differ by provisioning
+# model in a way that decides the machine type:
+#     NVIDIA_A100_80GB_GPUS             16   (a2-ultragpu-8g, on-demand only)
+#     PREEMPTIBLE_NVIDIA_A100_80GB_GPUS  0   <-- so Spot 80GB is impossible
+#     NVIDIA_A100_GPUS                  16   (a2-highgpu-8g 40GB, on-demand)
+#     PREEMPTIBLE_NVIDIA_A100_GPUS      64   (40GB Spot is ample)
+# Picking 80GB to match the existing H100 corpus therefore FORCES on-demand,
+# which is why this is a knob rather than a constant.
+export PROVISIONING_MODEL="${PROVISIONING_MODEL:-SPOT}"
 export BOOT_DISK_SIZE="${BOOT_DISK_SIZE:-500GB}"
 export BOOT_DISK_TYPE="${BOOT_DISK_TYPE:-pd-balanced}"
 # IMAGE_MODE=ubuntu  -> pristine Ubuntu 22.04, drivers installed by bootstrap_node.sh

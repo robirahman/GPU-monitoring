@@ -78,7 +78,7 @@ create_node() {
     spar_say "instance $name already exists -- skipping create (use teardown.sh to remove)"
     return 0
   fi
-  spar_say "creating $name (index $idx, $MACHINE_TYPE, SPOT) in $ZONE"
+  spar_say "creating $name (index $idx, $MACHINE_TYPE, $PROVISIONING_MODEL) in $ZONE"
   # Metadata carries only NON-SECRET identity so a self-heal reboot (bootstrap's
   # spar-bootstrap.service) can re-derive who this node is. The git PAT is NEVER here.
   gcloud compute instances create "$name" \
@@ -89,8 +89,8 @@ create_node() {
     --boot-disk-size="$BOOT_DISK_SIZE" \
     --boot-disk-type="$BOOT_DISK_TYPE" \
     --network="$NETWORK" \
-    --provisioning-model=SPOT \
-    --instance-termination-action=STOP \
+    --provisioning-model="$PROVISIONING_MODEL" \
+    ${PROVISIONING_MODEL:+$([ "$PROVISIONING_MODEL" = SPOT ] && echo --instance-termination-action=STOP)} \
     --maintenance-policy=TERMINATE \
     --scopes=cloud-platform \
     --metadata="spar-node-index=${idx},spar-node-name=${name},spar-session=${SESSION},spar-master-addr=${MASTER_ADDR},spar-master-port=${MASTER_PORT},spar-bucket=${BUCKET}" \
