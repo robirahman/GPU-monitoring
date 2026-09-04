@@ -108,6 +108,25 @@ gpu_count() { nvidia-smi -L 2>/dev/null | grep -c '^GPU ' || true; }
 # driver-install path and break its working driver. See docs/gcp_a100.md.
 nvswitch_count() { lspci -d 10de: 2>/dev/null | grep -ci nvswitch || true; }
 
+# NVIDIA's apt repo (cuda-keyring). Phase (b) used to add this as a side effect,
+# so on a DLVM image -- where (b) is skipped because the driver is already good --
+# phase (c) found NO candidate for any DCGM package and "install failed". Both
+# phases now call this explicitly.
+ensure_cuda_repo() {
+  dpkg -l cuda-keyring >/dev/null 2>&1 && return 0
+  local rel tmp
+  . /etc/os-release
+  rel="${ID}${VERSION_ID//./}"            # ubuntu22.04 -> ubuntu2204
+  tmp="$(mktemp -d)"
+  if curl -fsSL -o "$tmp/cuda-keyring.deb" \
+      "https://developer.download.nvidia.com/compute/cuda/repos/${rel}/$(uname -m)/cuda-keyring_1.1-1_all.deb"; then
+    dpkg -i "$tmp/cuda-keyring.deb" && apt_get update
+  else
+    log "WARN: could not fetch cuda-keyring for ${rel}/$(uname -m)"
+  fi
+  rm -rf "$tmp"
+}
+
 ########################################################################
 # Phase (a): wait for cloud-init, then apt update with the lock timeout
 ########################################################################
@@ -132,13 +151,7 @@ if ! have_phase driver; then
     mark_phase driver
   else
     log "(b) installing NVIDIA datacenter driver + fabric-manager"
-    if ! dpkg -l cuda-keyring >/dev/null 2>&1; then
-      tmp="$(mktemp -d)"
-      curl -fsSL -o "$tmp/cuda-keyring.deb" \
-        https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
-      dpkg -i "$tmp/cuda-keyring.deb"; rm -rf "$tmp"
-      apt_get update
-    fi
+    ensure_cuda_repo
     # cuda-drivers = the datacenter driver metapackage.
     # nvidia-fabricmanager is MANDATORY on a3 (SXM/NVSwitch) -- without it the NVSwitch
     # fabric never initialises and CUDA sees the GPUs but NVLink collectives fail.
@@ -179,12 +192,29 @@ fi
 ########################################################################
 if ! have_phase dcgm; then
   log "(c) installing + starting DCGM (NVLink TX/RX counters must populate)"
-  apt_get install datacenter-gpu-manager || log "WARN: datacenter-gpu-manager install failed"
+  ensure_cuda_repo
+  # NVIDIA retired the DCGM 3.x "datacenter-gpu-manager" name; DCGM 4 ships
+  # -4-cuda12 (full) and -4-core. Try newest-first and stop at the first hit.
+  _dcgm_ok=0
+  for _p in datacenter-gpu-manager-4-cuda12 datacenter-gpu-manager-4-core datacenter-gpu-manager; do
+    if [[ -n "$(apt-cache policy "$_p" 2>/dev/null | awk '/Candidate:/{print $2}' | grep -v '(none)')" ]]; then
+      if apt_get install "$_p"; then log "(c) installed $_p"; _dcgm_ok=1; break; fi
+    fi
+  done
+  [[ "$_dcgm_ok" == "1" ]] || log "WARN: no installable DCGM package found (NVLink counters will be blank)"
   # Prefer the packaged service; fall back to a raw host engine daemon like setup.sh does.
   systemctl enable --now nvidia-dcgm 2>/dev/null \
     || { pgrep -x nv-hostengine >/dev/null 2>&1 || nv-hostengine -d || true; }
-  sleep 3
-  if ! dcgmi discovery -l 2>/dev/null | grep -qE '8 GPUs|GPU 7'; then
+  # nv-hostengine needs a moment after install; retry instead of a single sleep 3.
+  _disc=""
+  for _i in $(seq 1 10); do
+    _disc="$(dcgmi discovery -l 2>/dev/null || true)"
+    printf '%s' "$_disc" | grep -qE '8 GPUs|GPU 7' && break
+    sleep 2
+  done
+  if printf '%s' "$_disc" | grep -qE '8 GPUs|GPU 7'; then
+    log "(c) DCGM sees 8 GPUs"
+  else
     log "WARN: dcgmi discovery did not clearly report 8 GPUs -- check DCGM"
   fi
   # 1011 = NVLink TX bytes, 1012 = NVLink RX bytes. If this errors, the round's
@@ -220,7 +250,11 @@ if ! have_phase repo; then
     # inject token only into the transient clone URL; the stored remote is rewritten to tokenless below
     CLONE_URL="$(printf '%s' "$REPO_URL" | sed -E "s#https://#https://x-access-token:${PAT}@#")"
   fi
-  if [[ ! -d "${REPO_DIR}/.git" ]]; then
+  if [[ -f "${REPO_DIR}/requirements_v2.txt" && ! -d "${REPO_DIR}/.git" ]]; then
+    # Pre-staged by `git archive | gcloud compute scp` -- no credential needed, and
+    # nothing to fetch. scripts/gcp/stage_repo.sh writes REPO_DIR/.spar_staged_commit.
+    log "(d) using pre-staged repo tree at ${REPO_DIR} (commit $(cat "${REPO_DIR}/.spar_staged_commit" 2>/dev/null || echo unknown)) -- skipping clone"
+  elif [[ ! -d "${REPO_DIR}/.git" ]]; then
     install -d "$(dirname "$REPO_DIR")"
     if ! git clone --branch "$REPO_BRANCH" "$CLONE_URL" "$REPO_DIR"; then
       log "FATAL: git clone failed. If the repo is private, re-run interactively so I can read a PAT,"
@@ -366,7 +400,9 @@ fi
 log "(g) verifying node"
 NGPU="$(gpu_count)"
 TORCH_NGPU="$("${VENV_MAIN}/bin/python" -c 'import torch;print(torch.cuda.device_count())' 2>/dev/null || echo 0)"
-NVLINK_OK=false; nvidia-smi topo -m 2>/dev/null | grep -q 'NV[0-9]' && NVLINK_OK=true
+_topo="$(nvidia-smi topo -m 2>/dev/null || true)"
+NVLINK_PAIRS="$(printf '%s' "$_topo" | grep -oE '\bNV[0-9]+\b' | wc -l | tr -d ' ')"
+NVLINK_OK=false; [[ "${NVLINK_PAIRS:-0}" -gt 0 ]] && NVLINK_OK=true
 # GCS write probe -- proves the SA/scope can egress telemetry before we collect any.
 GCS_OK=false
 if printf 'ok %s\n' "$(spar_ts)" | gcloud storage cp - "${GCS_NODE}/meta/bootstrap_probe.txt" >/dev/null 2>&1; then
@@ -387,6 +423,7 @@ cat > "$REPORT" <<EOF
   "fabric_manager_active": $(systemctl is-active --quiet nvidia-fabricmanager && echo true || echo false),
   "nvswitch_count": $(nvswitch_count),
   "nvlink_topo_ok": ${NVLINK_OK},
+  "nvlink_pair_entries": ${NVLINK_PAIRS:-0},
   "dcgm_nvlink_ok": ${DCGM_OK},
   "gcs_write_ok": ${GCS_OK},
   "chrony_offset_s": "$(awk -F= '/^CHRONY_OFFSET_S=/{print $2}' /etc/spar/node_env 2>/dev/null || echo unknown)",
