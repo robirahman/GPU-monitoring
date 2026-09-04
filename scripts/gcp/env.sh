@@ -58,7 +58,14 @@ export BOOT_DISK_TYPE="${BOOT_DISK_TYPE:-pd-balanced}"
 #                       whole kernel-module/reboot failure class -- but STILL needs
 #                       fabric-manager enabled for a3 (bootstrap does that regardless).
 export IMAGE_MODE="${IMAGE_MODE:-ubuntu}"
-export DLVM_FAMILY="${DLVM_FAMILY:-common-cu123-ubuntu-2204-py310}"  # VERIFY: gcloud compute images list --project deeplearning-platform-release --filter="family~cu12"
+# VERIFIED 2026-09-04 against `gcloud compute images list --project
+# deeplearning-platform-release`. The previous value, common-cu123-ubuntu-2204-py310,
+# NO LONGER EXISTS, so IMAGE_MODE=dlvm would have failed at create -- and dlvm is
+# precisely the escape hatch the comment below recommends for driver-build
+# failures, so the escape hatch was broken. Live families are
+# common-cu129-ubuntu-2204-nvidia-580 and pytorch-2-9-cu129-ubuntu-2204-nvidia-580;
+# taking the plain one because bootstrap builds its own venvs.
+export DLVM_FAMILY="${DLVM_FAMILY:-common-cu129-ubuntu-2204-nvidia-580}"
 # shellcheck disable=SC2034  # IMAGE_FLAGS is consumed by provision_gpu_pair.sh, which sources this file.
 case "$IMAGE_MODE" in
   ubuntu) IMAGE_FLAGS=(--image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud) ;;
