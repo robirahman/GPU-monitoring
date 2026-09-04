@@ -325,6 +325,20 @@ if ! have_phase clock; then
 NODE_INDEX=${NODE_INDEX}
 NODE_RANK=${NODE_RANK}
 NODE_NAME=${NODE_NAME}
+# The PEER names must be recorded too, or every peer-facing script (verify_pair.sh
+# above all) silently falls back to env.sh's spar-gpu-{0,1} defaults. On a renamed
+# pair that is not merely wrong, it is dangerously wrong: the old spar-gpu-1 still
+# existed (stopped), so `instances describe` succeeded, HAVE_NODE1=1, and
+# verify_pair reported dns/port/nccl/clock FAIL against a host that was not
+# part of this experiment at all.
+NODE0=${NODE0}
+NODE1=${NODE1}
+# ZONE/PROJECT likewise: without them a node falls back to env.sh's default zone
+# and every `gcloud compute ... describe` about its own peer looks in the wrong
+# place and reports "not found" -- which verify_pair.sh renders as the far more
+# innocent-sounding "node1 not provisioned (single-node mode)".
+ZONE=${ZONE}
+PROJECT=${PROJECT}
 SESSION=${SESSION}
 BUCKET=${BUCKET}
 MASTER_ADDR=${MASTER_ADDR}
