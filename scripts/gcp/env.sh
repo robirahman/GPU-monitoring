@@ -48,6 +48,13 @@ export MACHINE_TYPE="${MACHINE_TYPE:-a3-highgpu-8g}"   # 8x H100 80GB SXM baked 
 #     PREEMPTIBLE_NVIDIA_A100_GPUS      64   (40GB Spot is ample)
 # Picking 80GB to match the existing H100 corpus therefore FORCES on-demand,
 # which is why this is a knob rather than a constant.
+# FABRIC MANAGER IS a3-ONLY. bootstrap_node.sh enables nvidia-fabricmanager
+# "regardless" because a3-highgpu-8g (H100) has NVSwitch. a2-highgpu-8g does NOT:
+# verified 2026-09-04, `lspci | grep -ci nvswitch` = 0 and `GPU Fabric GUID: N/A`,
+# so nv-fabricmanager exits 1 with "Detected Pre-NVL5 system" and the unit fails.
+# That failure is a NO-OP, not a fault: driver and FM versions matched exactly
+# (both 580.173.02) and `nvidia-smi topo -m` shows NV12 between every GPU pair --
+# full all-to-all NVLink, so NCCL is unaffected. Do not chase this error on a2.
 export PROVISIONING_MODEL="${PROVISIONING_MODEL:-SPOT}"
 export BOOT_DISK_SIZE="${BOOT_DISK_SIZE:-500GB}"
 export BOOT_DISK_TYPE="${BOOT_DISK_TYPE:-pd-balanced}"
