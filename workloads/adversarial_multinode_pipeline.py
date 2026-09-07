@@ -1,0 +1,315 @@
+#!/usr/bin/env python3
+"""MN-P: hide a too-big-for-one-node training job by choosing its parallelism.
+
+WHY THIS ATTACK, AND WHY IT IS NOT A SHAPING KNOB
+-------------------------------------------------
+Findings section 22 measured the host NIC on the 2x H100 pair and found the
+inter-node channel separates big training from big sharded inference by 1123x:
+
+    s16_train_fsdp30b                34,650 Mbps median    2.8% idle
+    s16_nonml_comm                    1,650 Mbps          53.0% idle
+    s16_infershard_qwen72b_tp8pp2        30.9 Mbps         10.3% idle
+    s16_inferrep_qwen1_5b                 0.1 Mbps          100% idle
+
+The larger model is the QUIET one, so the discriminator is not scale -- it is
+which collectives cross the node boundary. FSDP shards parameters and optimizer
+state over all 16 ranks, so every step all-gathers parameters and
+reduce-scatters gradients over the NIC. Tensor-parallel inference keeps its
+collectives inside the node on NVLink and sends only pipeline activations
+between stages. No amount of reshaping an FSDP job closes three orders of
+magnitude.
+
+So MN-P changes the parallelism instead of the signal:
+
+    FSDP (or TP) WITHIN a node   -> parameter traffic rides intra-node NVLink
+    PIPELINE across nodes        -> the NIC carries only activations and
+                                    activation gradients
+
+That is the same KIND of traffic as the PP inference it imitates, at roughly 2x
+the volume (inference sends activations forward only; training also sends the
+gradient back). Predicted inter-node bytes per optimizer step:
+
+    2 (fwd + bwd) * microbatches * local_ranks * batch * seq * hidden * 2 bytes
+
+For 30B (hidden 6656) at batch 1, seq 512, 8 local ranks, 1 microbatch that is
+109 MB/step against FSDP's multi-GB, i.e. a ~60x reduction -- enough to test
+whether the detector's interconnect advantage survives, and to price it.
+
+WHAT IT COSTS: the pipeline bubble. With `microbatches` = 1 a stage sits idle
+while the other computes, so utilisation halves; GPipe with K microbatches cuts
+the bubble to roughly 1/(1+K). Evasion cost here is a THROUGHPUT penalty from
+the parallelism choice, a fundamentally different quantity from MN-I's 1/F, and
+it is what EVASION_TAX_DATA reports so evasion_cost_eval.py can price it.
+
+    torchrun --nnodes=2 --nproc-per-node=8 ... \
+        workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 4
+
+STAGE 0 holds the embeddings and the first half of the blocks; the last stage
+holds the rest plus the norm and the LM head. Stage index = node rank, so a
+stage never straddles the NIC, and every rank's pipeline peer is the rank with
+the same local id one node over.
+"""
+
+import argparse
+import os
+import time
+
+import torch
+import torch.distributed as dist
+import torch.nn as nn
+import torch.nn.functional as F
+
+try:
+    from workloads._step import emit_step
+    from workloads.dist_deadline import CollectiveDeadline, sync_teardown
+    from workloads.fsdp_training import (
+        MODEL_CONFIGS, BATCH_DEFAULTS, RandomTransformerLM, build_fsdp_model,
+    )
+except ImportError:  # launched as `torchrun workloads/adversarial_multinode_pipeline.py`
+    from _step import emit_step
+    from dist_deadline import CollectiveDeadline, sync_teardown
+    from fsdp_training import (
+        MODEL_CONFIGS, BATCH_DEFAULTS, RandomTransformerLM, build_fsdp_model,
+    )
+
+
+# ── the cross-node hop ───────────────────────────────────────────────────────
+# Two autograd Functions rather than one: a rank is either the sender or the
+# receiver of a given edge, never both, and folding that into one Function
+# would mean branching on stage inside forward/backward -- exactly the kind of
+# rank-dependent collective that has deadlocked this project's multislice runs
+# before. Here the send/recv ORDER is a function of the microbatch index only,
+# which is identical on every rank.
+
+class _SendActivation(torch.autograd.Function):
+    """Forward: ship activations to the next stage. Backward: receive their grad."""
+
+    @staticmethod
+    def forward(ctx, h, peer):
+        ctx.peer = peer
+        ctx.shape = tuple(h.shape)
+        ctx.dtype = h.dtype
+        ctx.dev = h.device
+        dist.send(h.detach().contiguous(), dst=peer)
+        # A scalar stand-in keeps this stage's graph alive so .backward() on it
+        # triggers the grad recv below.
+        return torch.zeros((), device=h.device, dtype=h.dtype)
+
+    @staticmethod
+    def backward(ctx, _grad_out):
+        g = torch.empty(ctx.shape, device=ctx.dev, dtype=ctx.dtype)
+        dist.recv(g, src=ctx.peer)
+        return g, None
+
+
+class _RecvActivation(torch.autograd.Function):
+    """Forward: receive activations. Backward: ship their grad back upstream."""
+
+    @staticmethod
+    def forward(ctx, template, peer):
+        ctx.peer = peer
+        h = torch.empty_like(template)
+        dist.recv(h, src=peer)
+        return h
+
+    @staticmethod
+    def backward(ctx, grad_h):
+        dist.send(grad_h.detach().contiguous(), dst=ctx.peer)
+        return None, None
+
+
+# ── stage models ─────────────────────────────────────────────────────────────
+
+class PipelineStage(nn.Module):
+    """One contiguous slice of RandomTransformerLM.
+
+    Built by taking the whole model on `meta` and dropping the layers this
+    stage does not own, so the split matches fsdp_training's model exactly and
+    the baseline and the disguise are the same architecture.
+    """
+
+    def __init__(self, config_name, first, last, n_stages, stage):
+        super().__init__()
+        full = RandomTransformerLM(config_name)
+        self.vocab_size = full.vocab_size
+        self.is_first = stage == 0
+        self.is_last = stage == n_stages - 1
+        self.blocks = nn.ModuleList(list(full.blocks)[first:last])
+        if self.is_first:
+            self.tok_emb = full.tok_emb
+            self.pos_emb = full.pos_emb
+        if self.is_last:
+            self.norm = full.norm
+            self.lm_head = full.lm_head
+
+    def forward(self, x):
+        if self.is_first:
+            B, T = x.shape
+            pos = torch.arange(T, device=x.device).unsqueeze(0)
+            x = self.tok_emb(x) + self.pos_emb(pos)
+        for blk in self.blocks:
+            x = blk(x)
+        if self.is_last:
+            x = self.norm(x)
+            x = self.lm_head(x)
+        return x
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--size", default="30b", choices=list(MODEL_CONFIGS.keys()))
+    ap.add_argument("--duration", type=int, default=600)
+    ap.add_argument("--batch-size", type=int, default=None)
+    ap.add_argument("--seq-len", type=int, default=512)
+    ap.add_argument("--microbatches", type=int, default=1,
+                    help="GPipe depth. 1 is the worst bubble (a stage idles "
+                         "while the other computes) and the quietest NIC; "
+                         "larger K trades inter-node bytes for utilisation.")
+    ap.add_argument("--pp-split", type=int, default=None,
+                    help="layers on stage 0 (default: even split)")
+    ap.add_argument("--activation-ckpt", type=int, default=1)
+    args = ap.parse_args()
+
+    rank = int(os.environ["RANK"])
+    world_size = int(os.environ["WORLD_SIZE"])
+    local_rank = int(os.environ["LOCAL_RANK"])
+    local_ws = int(os.environ.get("LOCAL_WORLD_SIZE", torch.cuda.device_count()))
+    node_rank = rank // local_ws
+    n_stages = world_size // local_ws
+    if n_stages < 2:
+        raise SystemExit("MN-P needs at least 2 nodes -- the disguise IS the "
+                         "node boundary")
+
+    dist.init_process_group(backend="nccl")
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f"cuda:{local_rank}")
+
+    hidden, n_layers, n_heads, ffn, vocab = MODEL_CONFIGS[args.size]
+    batch_size = args.batch_size or BATCH_DEFAULTS[args.size]
+
+    # Intra-node group: FSDP shards the stage over the 8 GPUs of THIS node, so
+    # every parameter all-gather stays on NVLink. Created by all ranks (it is a
+    # collective) even though each rank only uses its own.
+    node_groups = [
+        dist.new_group(ranks=list(range(s * local_ws, (s + 1) * local_ws)))
+        for s in range(n_stages)
+    ]
+    my_group = node_groups[node_rank]
+
+    split = args.pp_split or (n_layers // n_stages)
+    bounds = [(s * split, min((s + 1) * split, n_layers)) for s in range(n_stages)]
+    bounds[-1] = (bounds[-1][0], n_layers)      # last stage absorbs the remainder
+    first, last = bounds[node_rank]
+
+    peer_next = rank + local_ws if node_rank < n_stages - 1 else None
+    peer_prev = rank - local_ws if node_rank > 0 else None
+
+    if rank == 0:
+        print(f"MN-P pipeline disguise: {args.size} over {n_stages} stages "
+              f"x {local_ws} FSDP ranks", flush=True)
+        print(f"  stage layer bounds: {bounds}  (n_layers={n_layers})")
+        print(f"  microbatches={args.microbatches} batch={batch_size} "
+              f"seq={args.seq_len} hidden={hidden}")
+        act_mb = batch_size * args.seq_len * hidden * 2 / 1e6
+        print(f"  activation tensor: {act_mb:.1f} MB per rank per hop")
+        print(f"  predicted inter-node bytes/step: "
+              f"{2 * args.microbatches * local_ws * act_mb:.0f} MB "
+              f"(fwd activations + bwd grads, {local_ws} ranks)")
+        print(f"  Duration: {args.duration}s", flush=True)
+
+    with torch.device("meta"):
+        stage_mod = PipelineStage(args.size, first, last, n_stages, node_rank)
+    model = build_fsdp_model(stage_mod, device,
+                             activation_ckpt=bool(args.activation_ckpt),
+                             cpu_offload=False, process_group=my_group)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
+
+    if rank == 0:
+        print(f"  Post-init GPU memory: "
+              f"{torch.cuda.max_memory_allocated(device) / 1e9:.1f} GB", flush=True)
+
+    # Template for the recv shape: activations are [B, T, hidden] in bf16 under
+    # the mixed-precision policy.
+    template = torch.empty(batch_size, args.seq_len, hidden,
+                           device=device, dtype=torch.bfloat16)
+
+    deadline = CollectiveDeadline(args.duration, device)
+    wall_start = time.time()
+    step = 0
+    tokens_per_step = batch_size * local_ws * args.seq_len * args.microbatches
+    useful_tokens = 0
+    inter_node_bytes = 0
+    loss_val = float("nan")
+    last_print = wall_start
+
+    while not deadline.expired():
+        optimizer.zero_grad(set_to_none=True)
+        handles = []
+
+        # ---- GPipe: every forward, then every backward. The order is the
+        # microbatch index on both stages, so sends and recvs stay matched.
+        for _mb in range(args.microbatches):
+            if peer_prev is None:
+                ids = torch.randint(0, vocab, (batch_size, args.seq_len),
+                                    device=device)
+                h = model(ids)
+                handles.append(_SendActivation.apply(h, peer_next))
+                inter_node_bytes += h.numel() * h.element_size()
+            else:
+                h_in = _RecvActivation.apply(template, peer_prev)
+                inter_node_bytes += h_in.numel() * h_in.element_size()
+                out = model(h_in)
+                if peer_next is None:
+                    tgt = torch.randint(0, vocab, (batch_size, args.seq_len),
+                                        device=device)
+                    loss = F.cross_entropy(
+                        out.reshape(-1, out.size(-1)).float(), tgt.reshape(-1))
+                    handles.append(loss / args.microbatches)
+                    loss_val = float(loss.detach())
+                else:
+                    handles.append(_SendActivation.apply(out, peer_next))
+                    inter_node_bytes += out.numel() * out.element_size()
+
+        for h_ in handles:
+            (h_.sum() if h_.dim() else h_).backward()
+
+        optimizer.step()
+        useful_tokens += tokens_per_step
+        step += 1
+
+        if rank == 0:
+            emit_step("train", step, tokens=tokens_per_step, passes=1,
+                      node=node_rank, rank=rank, loss=f"{loss_val:.4f}")
+            now = time.time()
+            if now - last_print >= 30:
+                el = now - wall_start
+                print(f"  {el:.0f}s: steps={step} "
+                      f"useful={useful_tokens / el:.0f} tok/s "
+                      f"internode={inter_node_bytes / el / 1e6:.1f} MB/s "
+                      f"loss={loss_val:.4f}", flush=True)
+                last_print = now
+
+    elapsed = time.time() - wall_start
+    if rank == 0:
+        print(f"\nMN-P complete: {step} steps in {elapsed:.1f}s")
+        print(f"  Useful tokens: {useful_tokens:,} "
+              f"({useful_tokens / elapsed:.0f} tok/s)")
+        print(f"  Inter-node bytes (this rank): {inter_node_bytes / 1e9:.2f} GB "
+              f"= {inter_node_bytes / elapsed / 1e6:.1f} MB/s "
+              f"= {inter_node_bytes * 8 / elapsed / 1e6:.0f} Mbps")
+        # Same schema evasion_cost_eval.py already parses. There is no diluted
+        # work here: every step is a real optimizer step, so attributed ==
+        # useful and the whole cost shows up as a lower tok/s.
+        print(f"  EVASION_TAX_DATA: strategy=MN-P world_size={world_size} "
+              f"train_frac=1.0 dilution= steps={step} train_steps={step} "
+              f"useful_tokens={useful_tokens} attributed_tokens={useful_tokens} "
+              f"duration={elapsed:.1f} microbatches={args.microbatches} "
+              f"size={args.size} internode_mbps="
+              f"{inter_node_bytes * 8 / elapsed / 1e6:.1f}", flush=True)
+
+    sync_teardown(device)
+    dist.destroy_process_group()
+
+
+if __name__ == "__main__":
+    main()

@@ -110,8 +110,15 @@ def param_init_fn(module: nn.Module, device: torch.device):
         b.zero_()
 
 
-def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False):
-    """Wrap model in FSDP with FULL_SHARD + bf16 mixed precision."""
+def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False,
+                     process_group=None):
+    """Wrap model in FSDP with FULL_SHARD + bf16 mixed precision.
+
+    process_group restricts sharding to a subset of the world. MN-P needs this:
+    its pipeline stages are sharded WITHIN a node so that the parameter
+    all-gathers ride intra-node NVLink and never cross the NIC, which is the
+    whole point of the disguise (see findings section 22).
+    """
     mp_policy = MixedPrecision(
         param_dtype=torch.bfloat16,
         reduce_dtype=torch.bfloat16,
@@ -137,6 +144,7 @@ def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False):
         device_id=device if not cpu_offload else None,
         param_init_fn=functools.partial(param_init_fn, device=init_device),
         limit_all_gathers=True,
+        process_group=process_group,
     )
 
     if activation_ckpt:

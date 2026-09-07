@@ -461,6 +461,39 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_nonml_lp_d50fft;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode fft --duration "$DUR"
   c=s16_nonml_lp_d50hash;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode hash --duration "$DUR"
   c=s16_inferrep_qwen1_5b_bs1;       mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
+  # ---- Genuinely-multi-node cells (findings section 22) --------------------
+  # s16_train_fsdp30b does NOT need two nodes: 30b is 32.5B params, so FSDP +
+  # AdamW is ~390 GB against 640 GB on one 8x H100-80GB node. It spans two
+  # nodes only because we launched it that way, which makes it the wrong
+  # baseline for "a training job too large for one machine".
+  #
+  #   70b = 78.4B params -> 157 GB bf16 params + 157 GB grads + 627 GB fp32
+  #   AdamW moments = ~940 GB, which does NOT fit on one node and does fit
+  #   across two. H100 ONLY -- it does not fit on the A100-40GB pair's 640 GB.
+  #
+  # MN-P is the matching disguise: FSDP within each node (parameter traffic on
+  # NVLink), pipeline across nodes (NIC carries only activations + their
+  # grads). The microbatch ladder is the evasion-cost curve -- mb1 is the
+  # quietest NIC and the worst bubble, mb16 the reverse. 30b on the A100 pair
+  # is the forced-multi-node case there (390 GB > 320 GB/node).
+  c=s16_train_fsdp70b;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 70b --batch-size 1 --seq-len 512 --duration "$DUR"
+  c=s16_advtrain_pipe30b_mb1;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 1  --batch-size 1 --seq-len 512 --duration "$DUR"
+  c=s16_advtrain_pipe30b_mb4;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 4  --batch-size 1 --seq-len 512 --duration "$DUR"
+  c=s16_advtrain_pipe30b_mb16; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 16 --batch-size 1 --seq-len 512 --duration "$DUR"
+
+  # ---- Training-vs-HPC disguise (per-GPU channel, not the NIC) -------------
+  # Section 21 found AdamW's startup memory delta the sharpest single tell
+  # (first_30s_mem_delta_mb 2601 SGD -> 7820 AdamW). MN-F reserves the measured
+  # peak into the caching allocator BEFORE model init so the job begins at its
+  # plateau; MN-B fills the collective wait with the same hash/fft kernels the
+  # honest `other` class uses. Both train EVERY step, so unlike MN-I the cost is
+  # contention only. Arena targets measured from this corpus: H100 9216 MB,
+  # A100-40GB 7680 MB (mem_used_mb max over honest s16_train_fsdp1b streams).
+  ARENA_MB=${ARENA_MB:-9216}
+  c=s16_advtrain_flatarena;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-F  --size 1b --arena-mb "$ARENA_MB" --duration "$DUR"
+  c=s16_advtrain_bubble;     mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-B  --size 1b --bubble-frac 1.0 --duration "$DUR"
+  c=s16_advtrain_flatbubble; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/adversarial_multinode.py --strategy MN-FB --size 1b --arena-mb "$ARENA_MB" --bubble-frac 1.0 --duration "$DUR"
+
   if [ "$rep" -le 2 ]; then
     c=s16_train_fsdp30b;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 30b --batch-size 1 --seq-len 512 --duration "$DUR"
     c=s16_train_ddpstagger_k;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/adversarial_ddp.py --strategy L-stagger --dilution 5 --duration "$DUR"
