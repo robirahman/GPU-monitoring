@@ -85,12 +85,13 @@ class _SendActivation(torch.autograd.Function):
     """Forward: ship activations to the next stage. Backward: receive their grad."""
 
     @staticmethod
-    def forward(ctx, h, peer):
+    def forward(ctx, h, peer, group):
         ctx.peer = peer
+        ctx.group = group
         ctx.shape = tuple(h.shape)
         ctx.dtype = h.dtype
         ctx.dev = h.device
-        dist.send(h.detach().contiguous(), dst=peer)
+        dist.send(h.detach().contiguous(), dst=peer, group=group)
         # A scalar stand-in keeps this stage's graph alive so .backward() on it
         # triggers the grad recv below.
         return torch.zeros((), device=h.device, dtype=h.dtype)
@@ -98,24 +99,25 @@ class _SendActivation(torch.autograd.Function):
     @staticmethod
     def backward(ctx, _grad_out):
         g = torch.empty(ctx.shape, device=ctx.dev, dtype=ctx.dtype)
-        dist.recv(g, src=ctx.peer)
-        return g, None
+        dist.recv(g, src=ctx.peer, group=ctx.group)
+        return g, None, None
 
 
 class _RecvActivation(torch.autograd.Function):
     """Forward: receive activations. Backward: ship their grad back upstream."""
 
     @staticmethod
-    def forward(ctx, template, peer):
+    def forward(ctx, template, peer, group):
         ctx.peer = peer
+        ctx.group = group
         h = torch.empty_like(template)
-        dist.recv(h, src=peer)
+        dist.recv(h, src=peer, group=group)
         return h
 
     @staticmethod
     def backward(ctx, grad_h):
-        dist.send(grad_h.detach().contiguous(), dst=ctx.peer)
-        return None, None
+        dist.send(grad_h.detach().contiguous(), dst=ctx.peer, group=ctx.group)
+        return None, None, None
 
 
 # ── stage models ─────────────────────────────────────────────────────────────
@@ -204,6 +206,26 @@ def main():
     peer_next = rank + local_ws if node_rank < n_stages - 1 else None
     peer_prev = rank - local_ws if node_rank > 0 else None
 
+    # A DEDICATED 2-rank group per pipeline edge, rather than P2P on the world
+    # group. Doing send/recv as the world group's first operation failed at the
+    # very first collective:
+    #   ncclRemoteError: A call failed possibly due to a network error or a
+    #   remote process exiting prematurely   (rank 15, "last enqueued NCCL
+    #   work: 0")
+    # because the world communicator's init is a rendezvous every member has to
+    # reach, and the stage-0 ranks were still inside their intra-node FSDP
+    # collective while the stage-1 ranks sat in recv. A 2-rank group has
+    # unambiguous membership and both its members arrive together.
+    # new_group is itself collective, so EVERY rank builds EVERY edge.
+    edge_group = {}
+    for _lr in range(local_ws):
+        for _s in range(n_stages - 1):
+            _a = _s * local_ws + _lr
+            _b = (_s + 1) * local_ws + _lr
+            edge_group[(_a, _b)] = dist.new_group(ranks=[_a, _b])
+    g_next = edge_group.get((rank, peer_next)) if peer_next is not None else None
+    g_prev = edge_group.get((peer_prev, rank)) if peer_prev is not None else None
+
     if rank == 0:
         print(f"MN-P pipeline disguise: {args.size} over {n_stages} stages "
               f"x {local_ws} FSDP ranks", flush=True)
@@ -255,6 +277,18 @@ def main():
     template = torch.empty(batch_size, args.seq_len, hidden,
                            device=device, dtype=torch.bfloat16)
 
+    # Warm the edge communicators before the clock starts: NCCL builds a
+    # communicator on first use, and paying for it inside the measured window
+    # would show up as a stall in the telemetry we are trying to characterise.
+    _warm = torch.zeros(1, device=device, dtype=torch.bfloat16)
+    if peer_next is not None:
+        dist.send(_warm, dst=peer_next, group=g_next)
+    if peer_prev is not None:
+        dist.recv(_warm, src=peer_prev, group=g_prev)
+    dist.barrier()
+    if rank == 0:
+        print("  edge communicators warm", flush=True)
+
     deadline = CollectiveDeadline(args.duration, device)
     wall_start = time.time()
     step = 0
@@ -290,9 +324,9 @@ def main():
                 inter_node_bytes += h.numel() * h.element_size()
                 # backward() on the placeholder is what receives the activation
                 # gradient back from the next stage.
-                _SendActivation.apply(h, peer_next).backward()
+                _SendActivation.apply(h, peer_next, g_next).backward()
             else:
-                h_in = _RecvActivation.apply(template, peer_prev)
+                h_in = _RecvActivation.apply(template, peer_prev, g_prev)
                 inter_node_bytes += h_in.numel() * h_in.element_size()
                 out = model(h_in)
                 if peer_next is None:
@@ -305,7 +339,7 @@ def main():
                     # back to the previous stage, via _RecvActivation.
                     (loss / args.microbatches).backward()
                 else:
-                    _SendActivation.apply(out, peer_next).backward()
+                    _SendActivation.apply(out, peer_next, g_next).backward()
                     inter_node_bytes += out.numel() * out.element_size()
 
         optimizer.step()
