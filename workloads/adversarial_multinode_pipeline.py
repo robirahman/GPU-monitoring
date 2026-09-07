@@ -244,8 +244,21 @@ def main():
             stage_mod = PipelineStage(args.size, first, last, n_stages, node_rank)
         stage_mod.to_empty(device="cpu")
         with torch.no_grad():
-            for prm in stage_mod.parameters():
-                prm.normal_(mean=0.0, std=0.02)
+            # Per-module init, not a blanket normal_(0, 0.02) over every
+            # parameter: the first version initialised LayerNorm WEIGHTS to
+            # ~0.02 instead of 1.0, which drove the loss to nan on the first
+            # step. The compute and the inter-node traffic are identical either
+            # way, so the telemetry was unaffected -- but a training cell that
+            # reports a nan loss is not worth defending in a paper.
+            for mod in stage_mod.modules():
+                if isinstance(mod, torch.nn.LayerNorm):
+                    mod.weight.fill_(1.0)
+                    if mod.bias is not None:
+                        mod.bias.zero_()
+                elif isinstance(mod, (torch.nn.Linear, torch.nn.Embedding)):
+                    mod.weight.normal_(mean=0.0, std=0.02)
+                    if getattr(mod, "bias", None) is not None:
+                        mod.bias.zero_()
             for buf in stage_mod.buffers():
                 buf.zero_()
     finally:
