@@ -217,11 +217,33 @@ def main():
               f"(fwd activations + bwd grads, {local_ws} ranks)")
         print(f"  Duration: {args.duration}s", flush=True)
 
-    with torch.device("meta"):
-        stage_mod = PipelineStage(args.size, first, last, n_stages, node_rank)
+    # Build on meta, then materialise ON THE HOST before FSDP shards it.
+    #
+    # FSDP's own meta-init (param_init_fn) does not reach the ROOT parameters of
+    # a sliced stage: stage 1's lm_head stayed on meta and flattening it failed
+    # with "setStorage: sizes [32000, 2048] ... storage of size 0". Doing it
+    # ourselves is also the only way this scales -- a 30b stage is 16.25B
+    # parameters, which is 65 GB in fp32 and will not fit on one 40 GB A100
+    # before sharding. bf16 on the host is 32.5 GB per rank, and the pair has
+    # 680 GB of RAM per node, so 8 ranks fit with room to spare.
+    _prev_dtype = torch.get_default_dtype()
+    torch.set_default_dtype(torch.bfloat16)
+    try:
+        with torch.device("meta"):
+            stage_mod = PipelineStage(args.size, first, last, n_stages, node_rank)
+        stage_mod.to_empty(device="cpu")
+        with torch.no_grad():
+            for prm in stage_mod.parameters():
+                prm.normal_(mean=0.0, std=0.02)
+            for buf in stage_mod.buffers():
+                buf.zero_()
+    finally:
+        torch.set_default_dtype(_prev_dtype)
+
     model = build_fsdp_model(stage_mod, device,
                              activation_ckpt=bool(args.activation_ckpt),
-                             cpu_offload=False, process_group=my_group)
+                             cpu_offload=False, process_group=my_group,
+                             materialized=True)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 
     if rank == 0:

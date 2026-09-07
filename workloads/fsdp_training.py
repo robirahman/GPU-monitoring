@@ -111,7 +111,7 @@ def param_init_fn(module: nn.Module, device: torch.device):
 
 
 def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False,
-                     process_group=None):
+                     process_group=None, materialized=False):
     """Wrap model in FSDP with FULL_SHARD + bf16 mixed precision.
 
     process_group restricts sharding to a subset of the world. MN-P needs this:
@@ -142,7 +142,14 @@ def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False,
         auto_wrap_policy=wrap_policy,
         cpu_offload=offload,
         device_id=device if not cpu_offload else None,
-        param_init_fn=functools.partial(param_init_fn, device=init_device),
+        # materialized=True means the caller already gave every parameter real
+        # storage, so param_init_fn must NOT run: to_empty() would throw the
+        # initialised weights away. MN-P needs this because FSDP's meta-init
+        # path does not materialise the ROOT parameters of a sliced pipeline
+        # stage -- stage 1's lm_head stayed on meta and flattening it died with
+        #   setStorage: sizes [32000, 2048] ... storage of size 0
+        param_init_fn=(None if materialized else
+                       functools.partial(param_init_fn, device=init_device)),
         limit_all_gathers=True,
         process_group=process_group,
     )
