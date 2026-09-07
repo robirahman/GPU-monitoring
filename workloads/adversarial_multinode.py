@@ -176,6 +176,107 @@ class NonMLFiller:
 
 # ── Collective disguise schedules ────────────────────────────────────────────
 
+class FlatArena:
+    """Reserve the training job's PEAK footprint before it starts (MN-F).
+
+    Why this is the attack worth trying next. Section 15 found the memory
+    features the most discriminative in the whole set, and section 21 measured
+    the sharpest single tell there is: switching SGD to AdamW triples the
+    startup memory delta (first_30s_mem_delta_mb 2601 -> 7820) because the two
+    moment tensors per parameter appear at the first optimizer step. Every
+    footprint feature the detector leans on is about the SHAPE OF THE RAMP --
+    first_30s_mem_delta_mb, time_to_mem_plateau_samples, the mem_used slope
+    family -- not about the plateau's height, which sections 14-18 showed does
+    not transfer across hardware anyway.
+
+    So: take the ramp away. Allocate a block the size of the eventual peak
+    BEFORE the model is built, then free it back to PyTorch's caching allocator,
+    which retains the segment rather than returning it to the driver. NVML --
+    and therefore mem_used_mb -- reports the reserved footprint, so the job sits
+    at its plateau from the first sample and every training allocation after
+    that is served from inside the pool without growing it.
+
+    The arena size has to be passed in, measured by a prior calibration run,
+    for the same reason registry_tpu.py bakes in _MEM_MATCH_*_BY_SCOPE targets
+    per scope@generation: the peak cannot be known before the job runs, and
+    reserving it after a warmup step would put the ramp back inside the first
+    telemetry window, which is precisely the feature being attacked.
+
+    NOTE: never call torch.cuda.empty_cache() afterwards -- that hands the
+    segment back and re-exposes the ramp.
+    """
+
+    def __init__(self, device, arena_mb, rank):
+        self.device = device
+        self.arena_mb = int(arena_mb)
+        self.reserved_mb = 0.0
+        if self.arena_mb <= 0:
+            return
+        want = self.arena_mb * (1 << 20)
+        # One contiguous block would fail on a fragmented device for no reason;
+        # 256 MB chunks reserve the same total and are individually satisfiable.
+        chunk = 256 * (1 << 20)
+        blocks = []
+        got = 0
+        while got < want:
+            n = min(chunk, want - got)
+            try:
+                blocks.append(torch.empty(n, dtype=torch.uint8, device=device))
+            except torch.cuda.OutOfMemoryError:
+                break
+            got += n
+        del blocks           # -> caching allocator keeps the segments
+        self.reserved_mb = torch.cuda.memory_reserved(device) / (1 << 20)
+        if rank == 0:
+            print(f"  MN-F arena: requested {self.arena_mb} MB, "
+                  f"reserved {self.reserved_mb:.0f} MB before model init")
+
+
+class BubbleFiller:
+    """Run non-ML work on a SIDE STREAM, concurrently with the training step.
+
+    MN-I buys its disguise with throughput: training on a fraction F of the
+    steps means (1/F)x the wall clock for the same tokens, and the paper's
+    surviving claim is exactly that F=0.5 is caught while the cheap rungs are
+    not. This asks a different question -- whether the disguise can be had for
+    free -- and the answer depends on the interconnect.
+
+    A multi-node training step spends much of itself waiting on collectives, and
+    the GPU is idle for that wait. The A100 pair measured 13.6 Gbit/s between
+    nodes against roughly 100 GB/s on the H100 pair, and FSDP-1b steps of 3.1 s
+    against 0.52 s. That gap is idle SM time an attacker can fill for nothing.
+    Filling it with the same hash/fft kernels the honest `other` class uses
+    raises utilisation to the saturated non-ML profile and flattens the
+    idle/burst/autocorrelation features Stage 2 keeps, while EVERY step still
+    trains -- so useful tokens per second should barely move.
+
+    The prediction that makes this worth measuring: evasion cost is a function
+    of fabric speed, so the slower the interconnect, the cheaper the disguise.
+
+    Kernels go on a non-default stream so they co-reside with the training
+    kernels instead of serialising behind them. No collective is ever issued
+    from this stream, and the amount of work is a function of `step` only, so
+    every rank stays in lockstep.
+    """
+
+    def __init__(self, device, filler, frac, rank):
+        self.device = device
+        self.filler = filler
+        self.frac = float(frac)
+        self.rank = rank
+        self.stream = torch.cuda.Stream(device=device)
+        self.launched = 0
+
+    def fill(self, budget_sec):
+        """Queue ~budget_sec*frac of filler on the side stream, non-blocking."""
+        if self.frac <= 0 or budget_sec <= 0:
+            return 0
+        with torch.cuda.stream(self.stream):
+            n = self.filler.run_for(budget_sec * self.frac)
+        self.launched += n
+        return n
+
+
 def broadcast_seed(device, rank):
     """Agree one integer seed across all ranks.
 
@@ -346,7 +447,13 @@ def train_step(model, optimizer, batch_size, seq_len, vocab, device):
 
 def main():
     ap = argparse.ArgumentParser(description="Multi-node evasive training")
-    ap.add_argument("--strategy", required=True, choices=["MN-I", "MN-O"])
+    ap.add_argument("--strategy", required=True,
+                    choices=["MN-I", "MN-O", "MN-F", "MN-B", "MN-FB"],
+                    help="MN-I interleave (appear non-ML by not training); "
+                         "MN-O oracle veto; MN-F flat footprint (train EVERY "
+                         "step, hide the allocation ramp); MN-B bubble filler "
+                         "(train every step, fill the collective wait with "
+                         "non-ML kernels); MN-FB both.")
     ap.add_argument("--size", default="1b", choices=list(MODEL_CONFIGS.keys()),
                     help="Model preset; 1b matches the honest s*_train_fsdp1b rungs")
     ap.add_argument("--duration", type=int, default=600)
@@ -368,6 +475,14 @@ def main():
                     help="MN-O: every Nth step is a training CANDIDATE")
     ap.add_argument("--oracle-threshold", type=float, default=0.3,
                     help="MN-O: train only while P(training) < this")
+    ap.add_argument("--arena-mb", type=int, default=0,
+                    help="MN-F/MN-FB: reserve this many MB before model init. "
+                         "Measure it from an honest run's peak "
+                         "torch.cuda.memory_reserved; 0 disables (and makes "
+                         "MN-F a no-op, which is a useful control).")
+    ap.add_argument("--bubble-frac", type=float, default=1.0,
+                    help="MN-B/MN-FB: fraction of the per-step time to queue as "
+                         "side-stream filler. 1.0 targets the whole step.")
     ap.add_argument("--oracle-model", default=None,
                     help="MN-O: path to the persisted honest-only detector")
     args = ap.parse_args()
@@ -388,7 +503,10 @@ def main():
     if rank == 0:
         print(f"Adversarial multinode: {args.strategy}, {args.size} on {world_size} GPUs")
         print(f"  Per-GPU batch: {batch_size}, Seq len: {args.seq_len}")
-        if args.strategy == "MN-I":
+        if args.strategy in ("MN-F", "MN-B", "MN-FB"):
+            print(f"  Trains EVERY step. arena_mb={args.arena_mb} "
+                  f"bubble_frac={args.bubble_frac if bubble is not None else 0}")
+        elif args.strategy == "MN-I":
             print(f"  Train fraction: {args.train_frac:.0%} over a "
                   f"1/{args.schedule_resolution} threshold resolution")
         else:
@@ -396,13 +514,21 @@ def main():
                   f"{args.oracle_threshold}")
         print(f"  Duration: {args.duration}s")
 
+    # MN-F: reserve the plateau before ANY model allocation, so the first
+    # telemetry window already sees the steady-state footprint.
+    arena = (FlatArena(device, args.arena_mb, rank)
+             if args.strategy in ("MN-F", "MN-FB") else None)
+
     with torch.device("meta"):
         model = RandomTransformerLM(args.size)
     fsdp_model = build_fsdp_model(model, device, activation_ckpt=True,
                                  cpu_offload=False)
     optimizer = torch.optim.AdamW(fsdp_model.parameters(), lr=1e-4)
 
-    filler = NonMLFiller(device) if args.strategy == "MN-I" else None
+    _needs_filler = args.strategy in ("MN-I", "MN-B", "MN-FB")
+    filler = NonMLFiller(device) if _needs_filler else None
+    bubble = (BubbleFiller(device, filler, args.bubble_frac, rank)
+              if args.strategy in ("MN-B", "MN-FB") else None)
     gate = (CollectiveOracleGate(device, rank, args.oracle_threshold,
                                  args.oracle_model)
             if args.strategy == "MN-O" else None)
@@ -428,7 +554,12 @@ def main():
     loss_val = float("nan")
 
     while not deadline.expired():
-        if args.strategy == "MN-I":
+        if args.strategy in ("MN-F", "MN-B", "MN-FB"):
+            # The disguise is in the footprint and the idle time, NOT in
+            # skipping work: every step is a real gradient step, so useful
+            # tokens/s is the honest rate minus only contention.
+            do_train = True
+        elif args.strategy == "MN-I":
             do_train = _schedule_says_train(seed, step, args.train_frac,
                                             args.schedule_resolution)
         else:
@@ -439,6 +570,10 @@ def main():
             do_train = gate.allows() if candidate else False
 
         if do_train:
+            if bubble is not None:
+                # Queued BEFORE the step so the kernels are already resident
+                # when the step's first collective blocks the compute stream.
+                bubble.fill(train_step_sec)
             _t0 = time.time()
             loss_val = train_step(fsdp_model, optimizer, batch_size,
                                   args.seq_len, vocab, device)
@@ -485,6 +620,10 @@ def main():
                     f"useful={useful_tokens / el:.0f} tok/s")
             if filler is not None:
                 line += f" filler={filler_steps}"
+            if bubble is not None:
+                line += f" bubble_iters={bubble.launched}"
+            if arena is not None:
+                line += f" reserved_mb={torch.cuda.memory_reserved(device)/(1<<20):.0f}"
             if gate is not None:
                 line += f" oracle={gate.allowed}/{gate.queries}"
                 line += f" warm_allow={gate.warmup_allowed}"

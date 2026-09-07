@@ -1319,3 +1319,75 @@ never carries a value, one is excluded by design). The claim is still worth its
 `typeconf_adamw` on single-slice v5e, which is exactly what section 21's open
 question needs -- a v5e corpus with the same cell set as the v6e multislice one,
 so generation can be separated from topology.
+
+## 22. The interconnect channel: multi-node training is ~1,000x louder than multi-node inference
+
+Robi's hypothesis for the multi-node adversarial program was that a training job
+big enough to *require* more than one node is fundamentally detectable through
+its use of the inter-node fabric, and that the only available disguise is to
+resemble multi-node **inference**. The existing corpus already answers the first
+half, because the 2026-08-20 H100 session collected `nic_*` host-NIC sidecars
+alongside the per-GPU telemetry.
+
+Host NIC counters (tx+rx summed, one interface `enp0s12`, same 2x H100 pair and
+same session for every row, `s16_` only so every cell genuinely spans two nodes):
+
+| cell | median Mbps | p95 | idle % | acf1 |
+|---|---|---|---|---|
+| `s16_train_fsdp30b` | **34,650** | 36,336 | 2.8 | 0.91 |
+| `s16_train_fsdp1b` | 16,491 | 17,330 | 2.8 | 0.95 |
+| `s16_nonml_comm` | 1,650 | 1,684 | 53.0 | 0.97 |
+| `s16_infershard_qwen72b_tp8pp2` | **30.9** | 36.2 | 10.3 | 0.87 |
+| `s16_infershard_qwen1_5b_tp4pp4` | 8.5 | 10.7 | 9.2 | 0.95 |
+| `s16_inferrep_qwen1_5b` | 0.1 | 0.1 | 100.0 | 0.36 |
+
+**30B FSDP training against 72B TP8/PP2 inference is a 1,123x separation** on a
+single scalar. Nothing in the 174-feature per-GPU set comes close; this channel
+alone separates the two classes with no model at all.
+
+The mechanism is the parallelism strategy, not the model size -- note that the
+*larger* model (72B) is the quiet one:
+
+* FSDP shards parameters and optimizer state across all 16 ranks, so every step
+  all-gathers parameters and reduce-scatters gradients ACROSS the node boundary.
+  Traffic scales with model size and runs continuously (2.8% idle, acf1 0.91).
+* TP8/PP2 inference puts the tensor-parallel group INSIDE a node, where it rides
+  NVLink and never touches the NIC, and sends only pipeline activations between
+  stages -- small tensors, paced by token generation.
+* Replicated inference shares nothing at all: 0.1 Mbps, idle in every sample.
+
+### What this means for the disguise
+
+The hypothesis is right that a multi-node FSDP job cannot hide on this channel:
+to pass as sharded inference it must cut inter-node bytes by three orders of
+magnitude, which no shaping of the existing job achieves.
+
+But the table also says the reference class matters more than the disguise does,
+and cuts against inference as the target:
+
+* **Against an inference reference the disguise is architectural.** Train the
+  too-big model with tensor/FSDP parallelism WITHIN each node and pipeline
+  parallelism ACROSS nodes. Then the inter-node channel carries activations and
+  activation gradients -- the same kind of traffic, at roughly 2x the volume,
+  as the PP inference it is imitating. This is not an exotic attack; it is a
+  legitimate parallelism choice. Its cost is the pipeline bubble, and QUANTIFYING
+  THAT COST IS THE EXPERIMENT: evasion cost becomes the throughput penalty of PP
+  against FSDP, which is a very different quantity from MN-I's 1/F.
+* **Against a non-ML reference the disguise is nearly free.** `nonml_comm` sits
+  only 21x below 30B training and 53x above sharded inference. An attacker whose
+  cover story is a bandwidth-heavy HPC job barely has to change anything on this
+  channel -- so "is this ML training" is much weaker here than "is this training
+  rather than inference".
+
+### Caveats before this goes in the paper
+
+* 30B on 8x H100-80GB (640 GB/node) does NOT strictly require two nodes; AdamW
+  on 30B is roughly 360 GB. The cell is multi-node because it was RUN that way.
+  The genuinely-forced case needs either a larger model or the A100-40GB pair
+  (320 GB/node), where 30B AdamW does not fit on one node. That pair exists and
+  is stopped, not deleted, so it can be restarted onto the same disks.
+* `s16_nonml_comm` was collected under the over-enqueue loop fixed in 50109cb,
+  so its absolute level is not a clean measurement of a 256 MB all-reduce cell.
+* These NIC counters are host-wide, so they include the telemetry sync uploads
+  (~220 Mbps while syncing). That is immaterial at 34 Gbps and visible only in
+  the p95 of the quiet inference rows.
