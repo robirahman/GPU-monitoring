@@ -81,44 +81,30 @@ except ImportError:  # launched as `torchrun workloads/adversarial_multinode_pip
 # before. Here the send/recv ORDER is a function of the microbatch index only,
 # which is identical on every rank.
 
-class _SendActivation(torch.autograd.Function):
-    """Forward: ship activations to the next stage. Backward: receive their grad."""
-
-    @staticmethod
-    def forward(ctx, h, peer, group):
-        ctx.peer = peer
-        ctx.group = group
-        ctx.shape = tuple(h.shape)
-        ctx.dtype = h.dtype
-        ctx.dev = h.device
-        dist.send(h.detach().contiguous(), dst=peer, group=group)
-        # A scalar stand-in keeps this stage's graph alive so .backward() on it
-        # triggers the grad recv below.
-        return torch.zeros((), device=h.device, dtype=h.dtype)
-
-    @staticmethod
-    def backward(ctx, _grad_out):
-        g = torch.empty(ctx.shape, device=ctx.dev, dtype=ctx.dtype)
-        dist.recv(g, src=ctx.peer, group=ctx.group)
-        return g, None, None
-
-
-class _RecvActivation(torch.autograd.Function):
-    """Forward: receive activations. Backward: ship their grad back upstream."""
-
-    @staticmethod
-    def forward(ctx, template, peer, group):
-        ctx.peer = peer
-        ctx.group = group
-        h = torch.empty_like(template)
-        dist.recv(h, src=peer, group=group)
-        return h
-
-    @staticmethod
-    def backward(ctx, grad_h):
-        dist.send(grad_h.detach().contiguous(), dst=ctx.peer, group=ctx.group)
-        return None, None, None
-
+# NOTE ON WHY THERE ARE NO autograd.Function WRAPPERS HERE
+#
+# The first version put dist.send/dist.recv inside two autograd Functions, which
+# is the tidy way to express a pipeline edge. It deadlocked, and the trace shows
+# exactly how: stage 1 finished step 0 and moved on to step 1's recv while
+# stage 0 was still blocked inside step 0's backward waiting for the gradient
+# stage 1 had already sent.
+#
+#   node0: [trace r0 step0.0] fwd done -> activation sent -> (blocked forever)
+#   node1: [trace r8 step0.0] recv done -> fwd done -> bwd done, grad sent
+#          [trace r8 step1.0] recv begin
+#
+# P2P issued from inside a backward runs on the autograd engine's thread and
+# stream, so the two peers' operations stop being a matched pair in a single
+# well-defined order, and NCCL eventually gives up with
+# "ncclRemoteError: ... a remote process exiting prematurely".
+#
+# Doing the transfers on the MAIN thread and calling backward() explicitly with
+# the received gradient keeps one strict order per edge:
+#
+#   stage 0:  send(activation) -> recv(grad) -> h.backward(grad)
+#   stage 1:  recv(activation) -> forward/backward -> send(h_in.grad)
+#
+# which is what every hand-rolled pipeline implementation ends up doing.
 
 # ── stage models ─────────────────────────────────────────────────────────────
 
@@ -275,11 +261,6 @@ def main():
         print(f"  Post-init GPU memory: "
               f"{torch.cuda.max_memory_allocated(device) / 1e9:.1f} GB", flush=True)
 
-    # Template for the recv shape: activations are [B, T, hidden] in bf16 under
-    # the mixed-precision policy.
-    template = torch.empty(batch_size, args.seq_len, hidden,
-                           device=device, dtype=torch.bfloat16)
-
     # Warm the edge communicators before the clock starts: NCCL builds a
     # communicator on first use, and paying for it inside the measured window
     # would show up as a stall in the telemetry we are trying to characterise.
@@ -323,39 +304,54 @@ def main():
             def _tr(msg, _s=step, _m=_mb):
                 if args.trace and local_rank == 0:
                     print(f"  [trace r{rank} step{_s}.{_m}] {msg}", flush=True)
+
             if peer_prev is None:
+                # FIRST stage: compute, ship activations on, wait for their
+                # gradient, then run our own backward with it.
                 ids = torch.randint(0, vocab, (batch_size, args.seq_len),
                                     device=device)
-                _tr("fwd begin")
                 h = model(ids)
                 _tr("fwd done")
+                dist.send(h.detach().contiguous(), dst=peer_next, group=g_next)
                 inter_node_bytes += h.numel() * h.element_size()
-                # backward() on the placeholder is what receives the activation
-                # gradient back from the next stage.
-                _sent = _SendActivation.apply(h, peer_next, g_next)
-                _tr("activation sent")
-                _sent.backward()
+                grad = torch.empty_like(h)
+                dist.recv(grad, src=peer_next, group=g_next)
+                inter_node_bytes += grad.numel() * grad.element_size()
+                _tr("grad received")
+                h.backward(grad)
                 _tr("bwd done")
             else:
-                _tr("recv begin")
-                h_in = _RecvActivation.apply(template, peer_prev, g_prev)
-                _tr("recv done")
+                h_in = torch.empty(batch_size, args.seq_len, hidden,
+                                   device=device, dtype=torch.bfloat16)
+                dist.recv(h_in, src=peer_prev, group=g_prev)
                 inter_node_bytes += h_in.numel() * h_in.element_size()
+                h_in.requires_grad_(True)
+                _tr("activation received")
                 out = model(h_in)
-                _tr("fwd done")
                 if peer_next is None:
+                    # LAST stage: the loss lives here.
                     tgt = torch.randint(0, vocab, (batch_size, args.seq_len),
                                         device=device)
                     loss = F.cross_entropy(
                         out.reshape(-1, out.size(-1)).float(), tgt.reshape(-1))
                     loss_val = float(loss.detach())
-                    # backward() here is what sends the activation gradient
-                    # back to the previous stage, via _RecvActivation.
                     (loss / args.microbatches).backward()
-                    _tr("bwd done, grad sent")
                 else:
-                    _SendActivation.apply(out, peer_next, g_next).backward()
+                    # MIDDLE stage: pass activations on, get their grad back,
+                    # then backward into our own slice. Order matches both
+                    # neighbours: recv(act) -> send(act) -> recv(grad) -> send(grad).
+                    dist.send(out.detach().contiguous(), dst=peer_next,
+                              group=g_next)
                     inter_node_bytes += out.numel() * out.element_size()
+                    g_out = torch.empty_like(out)
+                    dist.recv(g_out, src=peer_next, group=g_next)
+                    inter_node_bytes += g_out.numel() * g_out.element_size()
+                    out.backward(g_out)
+                _tr("bwd done")
+                dist.send(h_in.grad.detach().contiguous(), dst=peer_prev,
+                          group=g_prev)
+                inter_node_bytes += h_in.grad.numel() * h_in.grad.element_size()
+                _tr("grad sent")
 
         optimizer.step()
         useful_tokens += tokens_per_step
