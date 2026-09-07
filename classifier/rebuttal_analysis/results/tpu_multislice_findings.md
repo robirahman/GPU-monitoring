@@ -1391,3 +1391,48 @@ and cuts against inference as the target:
 * These NIC counters are host-wide, so they include the telemetry sync uploads
   (~220 Mbps while syncing). That is immaterial at 34 Gbps and visible only in
   the p95 of the quiet inference rows.
+
+## 23. Multi-node baseline, held out by workload: the corpus is underpowered
+
+`multinode_baseline.py` fits the honest-only two-stage detector per PLATFORM
+(pooling H100, A100 and TPU would let the model score a window by recognising
+its hardware -- sections 14-18), holds out by workload, and scores at tau=0.80
+with the 3-of-5 run rule.
+
+| platform | distinct honest TRAINING workloads | win TPR | win FPR | run TPR | run FPR |
+|---|---|---|---|---|---|
+| H100 s16 (2 nodes x 8) | 6 | 0.324 | 0.050 | 0.453 | 0.116 |
+| H100 s8 (1 node x 8) | 3 | 0.158 | 0.000 | 0.150 | 0.000 |
+| A100-40GB s16 (2 nodes) | 2 | 0.000 | 0.016 | 0.000 | 0.000 |
+| TPU v6e multislice | 1 | -- | 0.031 | -- | 0.031 |
+| TPU v5e multislice | 1 | -- | 0.016 | -- | 0.194 |
+| TPU v5e 16chip/4host | 1 | -- | 0.002 | -- | 0.000 |
+
+The TPR column tracks the training-workload count and nothing else, and the
+mechanism is not subtle: leave-one-workload-out removes an entire training
+workload from the fitting fold, so
+
+* with **1** training workload (every TPU topology -- only `train_fsdp1b`), the
+  fold has NO training windows at all, Stage 2 is single-class, the fold is
+  skipped, and TPR is undefined. It is not that the detector fails on TPU; the
+  measurement cannot be taken.
+* with **2** (A100: `train_fsdp1b`, `train_ddp_resnet50`), one held-out
+  workload leaves exactly one behind and the detector generalises to the
+  held-out one not at all: TPR 0.000.
+* with **6** (H100 s16) it reaches 0.453 at the run level -- still far below
+  the single-GPU headline, at a 0.116 run-level false-alarm rate.
+
+So the honest multi-node baseline is **0.45 run-TPR at 0.12 run-FPR on H100**,
+and unmeasurable elsewhere. This is a statement about the CORPUS, not about
+detectability: three of six multi-node topologies cannot support a
+held-out-by-workload claim at all.
+
+What it costs to fix is small and specific -- more DISTINCT honest multi-node
+training workloads per topology, not more repetitions of the ones we have. The
+H100 run in progress adds `train_fsdp70b` (a 7th), and the TPU topologies need
+at least a second training cell each before any TPR from them means anything.
+
+Note also that `s16_train_fsdp30b`, which supplied the loud row in section 22,
+is one of the six H100 training workloads -- and it did not need two nodes
+(32.5B params, ~390 GB against 640 GB per node). `s16_train_fsdp70b` (78.4B,
+~940 GB) is the first cell in this corpus that genuinely cannot run on one node.
