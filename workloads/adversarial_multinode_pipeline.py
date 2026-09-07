@@ -170,6 +170,9 @@ def main():
     ap.add_argument("--pp-split", type=int, default=None,
                     help="layers on stage 0 (default: even split)")
     ap.add_argument("--activation-ckpt", type=int, default=1)
+    ap.add_argument("--trace", type=int, default=0,
+                    help="per-phase progress from one rank per stage; for "
+                         "diagnosing a pipeline stall, not for collection")
     args = ap.parse_args()
 
     rank = int(os.environ["RANK"])
@@ -317,18 +320,29 @@ def main():
         # only the overlap we were never going to get from a 2-stage pipeline
         # anyway -- the bubble is the honest price of this disguise.
         for _mb in range(args.microbatches):
+            def _tr(msg, _s=step, _m=_mb):
+                if args.trace and local_rank == 0:
+                    print(f"  [trace r{rank} step{_s}.{_m}] {msg}", flush=True)
             if peer_prev is None:
                 ids = torch.randint(0, vocab, (batch_size, args.seq_len),
                                     device=device)
+                _tr("fwd begin")
                 h = model(ids)
+                _tr("fwd done")
                 inter_node_bytes += h.numel() * h.element_size()
                 # backward() on the placeholder is what receives the activation
                 # gradient back from the next stage.
-                _SendActivation.apply(h, peer_next, g_next).backward()
+                _sent = _SendActivation.apply(h, peer_next, g_next)
+                _tr("activation sent")
+                _sent.backward()
+                _tr("bwd done")
             else:
+                _tr("recv begin")
                 h_in = _RecvActivation.apply(template, peer_prev, g_prev)
+                _tr("recv done")
                 inter_node_bytes += h_in.numel() * h_in.element_size()
                 out = model(h_in)
+                _tr("fwd done")
                 if peer_next is None:
                     tgt = torch.randint(0, vocab, (batch_size, args.seq_len),
                                         device=device)
@@ -338,6 +352,7 @@ def main():
                     # backward() here is what sends the activation gradient
                     # back to the previous stage, via _RecvActivation.
                     (loss / args.microbatches).backward()
+                    _tr("bwd done, grad sent")
                 else:
                     _SendActivation.apply(out, peer_next, g_next).backward()
                     inter_node_bytes += out.numel() * out.element_size()
