@@ -474,12 +474,21 @@ for rep in $(seq 1 "$REPS"); do
   # MN-P is the matching disguise: FSDP within each node (parameter traffic on
   # NVLink), pipeline across nodes (NIC carries only activations + their
   # grads). The microbatch ladder is the evasion-cost curve -- mb1 is the
-  # quietest NIC and the worst bubble, mb16 the reverse. 30b on the A100 pair
-  # is the forced-multi-node case there (390 GB > 320 GB/node).
+  # quietest NIC and the worst bubble, mb16 the reverse.
+  #
+  # Run at 1b, matching s16_train_fsdp1b's --batch-size/--seq-len exactly, so
+  # the ONLY difference between the honest cell and the disguise is which
+  # collectives cross the node boundary. A 30b MN-P cell would also be
+  # forced-multi-node on the A100 pair, but its stage is 16.25B parameters =
+  # 32.5 GB of host bf16 init per rank (260 GB across the 8 ranks of a node),
+  # which is slow enough to distort a 600 s cell; the forced-multi-node
+  # property is established by s16_train_fsdp70b on H100 instead.
+  # Measured at 1b on the A100 pair: 373 Mbps inter-node against
+  # s16_train_fsdp1b's 16,491 Mbps, a 44x reduction.
   c=s16_train_fsdp70b;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 70b --batch-size 1 --seq-len 512 --duration "$DUR"
-  c=s16_advtrain_pipe30b_mb1;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 1  --batch-size 1 --seq-len 512 --duration "$DUR"
-  c=s16_advtrain_pipe30b_mb4;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 4  --batch-size 1 --seq-len 512 --duration "$DUR"
-  c=s16_advtrain_pipe30b_mb16; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 16 --batch-size 1 --seq-len 512 --duration "$DUR"
+  c=s16_advtrain_pipe1b_mb1;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 1 --batch-size 8 --seq-len 1024 --duration "$DUR"
+  c=s16_advtrain_pipe1b_mb4;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 4 --batch-size 8 --seq-len 1024 --duration "$DUR"
+  c=s16_advtrain_pipe1b_mb16;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 16 --batch-size 8 --seq-len 1024 --duration "$DUR"
 
   # ---- Training-vs-HPC disguise (per-GPU channel, not the NIC) -------------
   # Section 21 found AdamW's startup memory delta the sharpest single tell
