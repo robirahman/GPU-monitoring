@@ -266,17 +266,31 @@ def main():
 
     while not deadline.expired():
         optimizer.zero_grad(set_to_none=True)
-        handles = []
 
-        # ---- GPipe: every forward, then every backward. The order is the
-        # microbatch index on both stages, so sends and recvs stay matched.
+        # ---- 1F1B, not GPipe: each microbatch is a COMPLETE forward+backward
+        # before the next one starts, and gradients accumulate until the
+        # optimizer step.
+        #
+        # GPipe (all forwards, then all backwards) is what a throughput-focused
+        # implementation would do, and it is what the first version did -- but
+        # FSDP FULL_SHARD frees the unsharded flat parameter after each forward
+        # and re-gathers it inside ITS OWN backward hooks, so a second backward
+        # over a separately retained graph finds freed storage:
+        #   RuntimeError: setStorage: sizes [32000, 2048] ... storage of size 0
+        # (the lm_head, on every stage-1 rank). Retaining K forward graphs
+        # across an FSDP reshard is simply not supported. 1F1B keeps exactly
+        # one live graph, which is the shape FSDP is built for, and it costs
+        # only the overlap we were never going to get from a 2-stage pipeline
+        # anyway -- the bubble is the honest price of this disguise.
         for _mb in range(args.microbatches):
             if peer_prev is None:
                 ids = torch.randint(0, vocab, (batch_size, args.seq_len),
                                     device=device)
                 h = model(ids)
-                handles.append(_SendActivation.apply(h, peer_next))
                 inter_node_bytes += h.numel() * h.element_size()
+                # backward() on the placeholder is what receives the activation
+                # gradient back from the next stage.
+                _SendActivation.apply(h, peer_next).backward()
             else:
                 h_in = _RecvActivation.apply(template, peer_prev)
                 inter_node_bytes += h_in.numel() * h_in.element_size()
@@ -286,14 +300,13 @@ def main():
                                         device=device)
                     loss = F.cross_entropy(
                         out.reshape(-1, out.size(-1)).float(), tgt.reshape(-1))
-                    handles.append(loss / args.microbatches)
                     loss_val = float(loss.detach())
+                    # backward() here is what sends the activation gradient
+                    # back to the previous stage, via _RecvActivation.
+                    (loss / args.microbatches).backward()
                 else:
-                    handles.append(_SendActivation.apply(out, peer_next))
+                    _SendActivation.apply(out, peer_next).backward()
                     inter_node_bytes += out.numel() * out.element_size()
-
-        for h_ in handles:
-            (h_.sum() if h_.dim() else h_).backward()
 
         optimizer.step()
         useful_tokens += tokens_per_step
