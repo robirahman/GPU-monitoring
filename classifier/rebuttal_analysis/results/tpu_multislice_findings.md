@@ -1464,3 +1464,59 @@ the full 145 GB sits on 8 GPUs = 18.1 GiB/GPU, so KV per GPU falls to about
 So this cell cannot be served by one node, by a factor of ~1.5. Note how
 narrow that is: dropping --batch-size to 40 would have made the cell fit on one
 machine and quietly stopped being an obligatory-inference sample.
+
+## 24. Scoring the obligatory cells: MN-P does not evade, but obligatory INFERENCE false-alarms at 100%
+
+The four multi-node-obligatory cells were scored against the PERSISTED honest
+detector (`classifier/models/honest_detector.json`, 40,175 honest windows, 174
+features, `advtrain`/`adversarial`/`whitebox`/`symgemm` families excluded from
+fitting). All four cells were collected on 2026-09-08, AFTER that detector was
+fitted on 2026-09-07, so every row below is out-of-sample.
+
+| cell | n_win | p_ml | p(train\|ML) | p_train | frac>0.80 | run 3-of-5 |
+|---|---|---|---|---|---|---|
+| `train_fsdp70b` (honest training) | 4152 | 0.958 | 0.866 | 0.853 | 0.742 | **92/96 = 0.958** |
+| `infershard_qwen72b_kv32k` (honest inference) | 2288 | 0.990 | 0.867 | 0.864 | 0.639 | **48/48 = 1.000** |
+| `nonml_himem_obl` (honest non-ML) | 2096 | 0.739 | 0.011 | 0.008 | 0.000 | 0/48 = 0.000 |
+| `advtrain_pipe1b_rank0` (MN-P) | 1968 | 0.980 | 0.821 | 0.811 | 0.579 | 48/48 = 1.000 |
+| `advtrain_pipe70b_mb1` (MN-P, obligatory) | 3648 | 0.965 | 0.736 | 0.695 | 0.378 | 42/48 = 0.875 |
+
+Two results, and the second one matters more than the first.
+
+### MN-P defeats the interconnect channel and not the per-GPU one
+
+Section 22 measured MN-P cutting inter-node traffic 44x (373 Mbps against
+`train_fsdp1b`'s 16,491). It does not follow that the job is hidden: on per-GPU
+telemetry the obligatory-scale disguise still scores p_train 0.695 and is caught
+by the run rule 42 times in 48. `pipe1b_rank0` is caught 48 of 48.
+
+So MN-P is **not** a successful evasion as it stands. Choosing pipeline
+parallelism moves the job from very loud to nearly quiet on the NIC while
+leaving the GPUs doing recognisably training-shaped work. An attacker would have
+to compose it with a per-GPU disguise (MN-F/MN-B, or MN-I's duty interleave) --
+and MN-I's cost curve then applies on top of the pipeline bubble.
+
+### The detector cannot tell obligatory-scale inference from training
+
+`infershard_qwen72b_kv32k` is HONEST inference -- Qwen2.5-72B, TP8/PP2, serving
+64 concurrent ~31k-token requests -- and the detector alerts on **48 of 48 runs**
+with median p_train 0.864, indistinguishable from honest training's 0.853.
+
+This is a false-alarm rate of 1.000 on the exact workload class the deployed
+claim has to separate, against the 0.6% FPR the single-GPU headline reports. The
+mechanism is straightforward once stated: at 31k tokens per request the cell is
+**prefill-dominated**, and prefill is a large dense forward pass -- compute-bound,
+high utilisation, big activation footprint -- which is what training's forward
+pass looks like. The short-prompt inference cells the detector was fitted on are
+decode-dominated and memory-bound, a completely different profile.
+
+Consequences:
+
+* Every earlier train-vs-infer number in this project used decode-dominated
+  inference negatives. They do not characterise long-context serving, which is
+  now the dominant production inference regime.
+* This is a stronger objection to the detector than any adversarial result so
+  far: it needs no attacker. A lab running ordinary long-context inference trips
+  the monitor continuously.
+* The fix is a corpus fix, not a threshold fix -- prefill-heavy inference has to
+  be in the honest negatives before any FPR claim generalises.
