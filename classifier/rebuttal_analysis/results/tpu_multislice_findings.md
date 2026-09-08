@@ -1520,3 +1520,49 @@ Consequences:
   the monitor continuously.
 * The fix is a corpus fix, not a threshold fix -- prefill-heavy inference has to
   be in the honest negatives before any FPR claim generalises.
+
+### 24a. CORRECTION to section 24's mechanism: it is a LEVEL overlap, not prefill
+
+Section 24's measurement stands -- obligatory long-context inference alerts on
+48/48 runs at p_train 0.864 against the persisted detector. Its stated
+*mechanism* does not. Section 24 argued that at ~31k tokens per request the
+cell is prefill-dominated, and that prefill is "a large dense compute-bound
+forward pass, which is what training looks like", while the fitted inference
+negatives are decode-dominated and memory-bound.
+
+Median per-GPU telemetry (H100 node0/gpu0) says otherwise:
+
+| cell | util | mem_util | power W | mem_used MB |
+|---|---|---|---|---|
+| `train_fsdp1b` (in fit) | 100 | 25 | **436** | 8,574 |
+| `train_fsdp7b` (in fit) | 100 | 15 | 317 | 14,004 |
+| `train_fsdp30b` (in fit) | 100 | 4 | 188 | 30,516 |
+| `train_fsdp70b` (obligatory) | 100 | 3 | 190 | 49,086 |
+| `infershard_qwen72b_kv32k` (obligatory infer) | 99 | **41** | **421** | 78,552 |
+| `infershard_qwen72b_tp8pp2` (decode infer) | 100 | 57 | 381 | 74,038 |
+| `inferrep_qwen1_5b` (in fit) | 100 | 47 | 309 | 74,616 |
+
+On DRAM activity the prefill-heavy cell (41%) sits nearer decode inference
+(57%) than training (3-25%), which is the opposite of the claimed mechanism.
+
+What the table does show is a **level overlap**. In the fitted training class,
+power and mem_util fall monotonically as the model grows -- 436 W / 25% at 1b,
+317 / 15% at 7b, 188 / 4% at 30b -- because at batch 1 a larger model spends
+proportionally more of each step in inter-node collectives with the GPU idle.
+`kv32k` at 421 W / 41% lands almost exactly on `train_fsdp1b` (436 W / 25%),
+the high-power end of the fitted training distribution, while the fitted
+inference cells sit lower (309 W). The detector calls it training because its
+LEVELS look like the training it was shown, not because prefill resembles a
+backward pass.
+
+### The scale effect is the more alarming half
+
+`train_fsdp70b` -- the only genuinely obligatory training cell -- draws **190 W
+at 3% DRAM activity**, statistically alongside `train_fsdp30b` and far below
+`train_fsdp1b`'s 436 W. Obligatory-scale training is communication-bound, so
+per-GPU it looks *quieter* than small-model training.
+
+That inverts the deployment story: the larger and more consequential the
+training run, the less it resembles the training the detector was fitted on,
+while a long-context serving job moves INTO that region. Both errors push the
+same way, and neither is an attack.
