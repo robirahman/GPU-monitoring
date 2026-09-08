@@ -504,8 +504,12 @@ def main():
         print(f"Adversarial multinode: {args.strategy}, {args.size} on {world_size} GPUs")
         print(f"  Per-GPU batch: {batch_size}, Seq len: {args.seq_len}")
         if args.strategy in ("MN-F", "MN-B", "MN-FB"):
+            # Read args, NOT the `bubble` object: this print runs before the
+            # object exists, and referencing it here killed all three cells
+            # with UnboundLocalError 16 s into the run.
+            _bf = args.bubble_frac if args.strategy in ("MN-B", "MN-FB") else 0
             print(f"  Trains EVERY step. arena_mb={args.arena_mb} "
-                  f"bubble_frac={args.bubble_frac if bubble is not None else 0}")
+                  f"bubble_frac={_bf}")
         elif args.strategy == "MN-I":
             print(f"  Train fraction: {args.train_frac:.0%} over a "
                   f"1/{args.schedule_resolution} threshold resolution")

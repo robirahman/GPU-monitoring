@@ -123,6 +123,7 @@ def main():
     step = 0
     filler_iters = 0
     allreduces = 0
+    iters_per_slot = None       # agreed on the first comm slot, then fixed
     last_print = wall_start
 
     while not deadline.expired():
@@ -132,25 +133,53 @@ def main():
             if busy < args.slot_sec:
                 time.sleep(args.slot_sec - busy)
         else:
-            # All-reduce for a whole slot, then emit ONE step line. The first
+            # All-reduce for a whole slot, then emit ONE step line. An earlier
             # version emitted one line per all_reduce, and at world_size=1 the
-            # collective is a local no-op -- so s1_nonml_comm span the loop at
-            # interpreter speed and wrote a 1.44 GB log, measuring Python rather
-            # than communication. Slot-bounding fixes both.
-            # Synchronise EVERY iteration, not once at the end of the slot.
-            # dist.all_reduce only ENQUEUES, so a slot that loops on wall-clock
-            # alone bounds the enqueue rate rather than the work: measured on
-            # the 2x A100 pair (13.6 Gbit/s inter-node), 0.5 s of enqueueing
-            # queued 1026 collectives = 263 GB, which then took 155 s to drain.
-            # One "0.5 s slot" therefore ran 155 s, the 60 s cell ran 461.6 s,
-            # and the amount of communication per slot scaled with how SLOW the
-            # fabric was -- so the cell was not the same workload on two
-            # machines. On H100 (~100 GB/s) the same backlog drains in a couple
-            # of seconds, which is why this went unnoticed. The per-iteration
-            # sync costs tens of microseconds against a transfer of 150 ms here
-            # and ~2.5 ms on H100, so it is free in both regimes.
-            t_end = time.time() + args.slot_sec
-            while time.time() < t_end:
+            # collective is a local no-op -- so s1_nonml_comm spun the loop at
+            # interpreter speed and wrote a 1.44 GB log, measuring Python
+            # rather than communication.
+            #
+            # The slot length is now an AGREED ITERATION COUNT, not a wall-clock
+            # bound, for two independent reasons:
+            #
+            # 1. Rank uniformity. `while time.time() < t_end` lets every rank
+            #    decide for itself how many collectives to run, and once two
+            #    ranks disagree the job dies:
+            #      Collective WorkNCCL(SeqNum=705, OpType=ALLREDUCE,
+            #      NumelIn=64000000) ... NCCL error: invalid usage
+            #    (H100 pair, 2026-09-07). This is the same class of bug as the
+            #    TPU multislice wall-clock deadlines: a loop bound that is not
+            #    a function of rank-uniform state is not a loop bound.
+            #
+            # 2. Honest duty. dist.all_reduce only ENQUEUES, so bounding the
+            #    loop by wall clock bounded the ENQUEUE RATE, not the work:
+            #    measured on the A100 pair (13.6 Gbit/s inter-node), 0.5 s of
+            #    enqueueing queued 1026 collectives = 263 GB, which then took
+            #    155 s to drain, so one "0.5 s slot" ran 155 s and the 60 s cell
+            #    ran 461.6 s. Worse, the communication per slot scaled with how
+            #    SLOW the fabric was, so the cell was not the same workload on
+            #    two machines. On H100 (~100 GB/s) the backlog drains in a
+            #    couple of seconds, which is why it survived that campaign.
+            #
+            # Calibrating once and broadcasting gets both: the count is
+            # identical on every rank, and it still tracks the fabric so a slot
+            # is ~slot_sec of REAL communication on any hardware.
+            if iters_per_slot is None:
+                _t0 = time.time()
+                dist.all_reduce(comm_buf, op=dist.ReduceOp.SUM)
+                torch.cuda.synchronize(device)
+                _dt = time.time() - _t0
+                allreduces += 1
+                _n = torch.tensor([max(1, int(args.slot_sec / max(_dt, 1e-9)))],
+                                  dtype=torch.int64, device=device)
+                dist.broadcast(_n, src=0)          # rank 0's count wins
+                iters_per_slot = int(_n.item())
+                if rank == 0:
+                    print(f"  comm calibration: one {args.comm_mb:.0f} MB "
+                          f"all_reduce = {_dt * 1000:.1f} ms -> "
+                          f"{iters_per_slot} per {args.slot_sec}s slot",
+                          flush=True)
+            for _ in range(iters_per_slot):
                 dist.all_reduce(comm_buf, op=dist.ReduceOp.SUM)
                 torch.cuda.synchronize(device)
                 allreduces += 1
