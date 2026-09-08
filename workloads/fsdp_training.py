@@ -110,8 +110,21 @@ def param_init_fn(module: nn.Module, device: torch.device):
         b.zero_()
 
 
+def _to_empty_only(device):
+    """param_init_fn that ALLOCATES but does not initialise.
+
+    Paired with sync_module_states=True: the values arrive by broadcast from
+    the group's rank 0, so initialising here would be wasted work on a tensor
+    that is about to be overwritten.
+    """
+    def _fn(module):
+        module.to_empty(device=device, recurse=False)
+    return _fn
+
+
 def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False,
-                     process_group=None, materialized=False):
+                     process_group=None, materialized=False,
+                     sync_module_states=False):
     """Wrap model in FSDP with FULL_SHARD + bf16 mixed precision.
 
     process_group restricts sharding to a subset of the world. MN-P needs this:
@@ -148,8 +161,24 @@ def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False,
         # path does not materialise the ROOT parameters of a sliced pipeline
         # stage -- stage 1's lm_head stayed on meta and flattening it died with
         #   setStorage: sizes [32000, 2048] ... storage of size 0
-        param_init_fn=(None if materialized else
+        # Three init regimes:
+        #  * default            -- everything on meta, param_init_fn gives it
+        #                          storage AND random values.
+        #  * materialized       -- the caller already gave every parameter real
+        #                          storage and values; param_init_fn must not
+        #                          run or to_empty() would discard them.
+        #  * sync_module_states -- only the group's rank 0 holds real values
+        #                          (the rest are on meta), so meta parameters
+        #                          need STORAGE but not values: FSDP broadcasts
+        #                          rank 0's over them. This is what lets a 70b
+        #                          pipeline stage be built at all -- 39.2B
+        #                          parameters is 78 GB of host bf16, and doing
+        #                          that on all 8 ranks of a node would want
+        #                          627 GB of its 680 GB of RAM.
+        param_init_fn=(_to_empty_only(init_device) if sync_module_states else
+                       None if materialized else
                        functools.partial(param_init_fn, device=init_device)),
+        sync_module_states=sync_module_states,
         limit_all_gathers=True,
         process_group=process_group,
     )

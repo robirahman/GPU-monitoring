@@ -156,6 +156,11 @@ def main():
     ap.add_argument("--pp-split", type=int, default=None,
                     help="layers on stage 0 (default: even split)")
     ap.add_argument("--activation-ckpt", type=int, default=1)
+    ap.add_argument("--rank0-init", type=int, default=0,
+                    help="materialise the stage only on local_rank 0 and "
+                         "broadcast it (sync_module_states). Required at 70b: "
+                         "a stage is 39.2B params = 78 GB of host bf16, so all "
+                         "8 ranks of a node would need 627 GB of its 680 GB.")
     ap.add_argument("--trace", type=int, default=0,
                     help="per-phase progress from one rank per stage; for "
                          "diagnosing a pipeline stall, not for collection")
@@ -237,37 +242,46 @@ def main():
     # parameters, which is 65 GB in fp32 and will not fit on one 40 GB A100
     # before sharding. bf16 on the host is 32.5 GB per rank, and the pair has
     # 680 GB of RAM per node, so 8 ranks fit with room to spare.
+    # --rank0-init: only the FSDP group's rank 0 (local_rank 0 of this node)
+    # materialises the stage; the other seven stay on meta and receive the
+    # weights by broadcast (sync_module_states). Without it a 70b stage is
+    # 39.2B parameters = 78 GB of host bf16 PER RANK, so a node's 8 ranks would
+    # want 627 GB of its 680 GB of RAM. With it, one rank pays 78 GB.
+    _materialise = (local_rank == 0) if args.rank0_init else True
     _prev_dtype = torch.get_default_dtype()
     torch.set_default_dtype(torch.bfloat16)
     try:
         with torch.device("meta"):
             stage_mod = PipelineStage(args.size, first, last, n_stages, node_rank)
-        stage_mod.to_empty(device="cpu")
-        with torch.no_grad():
-            # Per-module init, not a blanket normal_(0, 0.02) over every
-            # parameter: the first version initialised LayerNorm WEIGHTS to
-            # ~0.02 instead of 1.0, which drove the loss to nan on the first
-            # step. The compute and the inter-node traffic are identical either
-            # way, so the telemetry was unaffected -- but a training cell that
-            # reports a nan loss is not worth defending in a paper.
-            for mod in stage_mod.modules():
-                if isinstance(mod, torch.nn.LayerNorm):
-                    mod.weight.fill_(1.0)
-                    if mod.bias is not None:
-                        mod.bias.zero_()
-                elif isinstance(mod, (torch.nn.Linear, torch.nn.Embedding)):
-                    mod.weight.normal_(mean=0.0, std=0.02)
-                    if getattr(mod, "bias", None) is not None:
-                        mod.bias.zero_()
-            for buf in stage_mod.buffers():
-                buf.zero_()
+        if _materialise:
+            stage_mod.to_empty(device="cpu")
+            with torch.no_grad():
+                # Per-module init, not a blanket normal_(0, 0.02) over every
+                # parameter: the first version initialised LayerNorm WEIGHTS to
+                # ~0.02 instead of 1.0, which drove the loss to nan on the
+                # first step. The compute and the inter-node traffic are
+                # identical either way, so the telemetry was unaffected -- but
+                # a training cell that reports a nan loss is not worth
+                # defending in a paper.
+                for mod in stage_mod.modules():
+                    if isinstance(mod, torch.nn.LayerNorm):
+                        mod.weight.fill_(1.0)
+                        if mod.bias is not None:
+                            mod.bias.zero_()
+                    elif isinstance(mod, (torch.nn.Linear, torch.nn.Embedding)):
+                        mod.weight.normal_(mean=0.0, std=0.02)
+                        if getattr(mod, "bias", None) is not None:
+                            mod.bias.zero_()
+                for buf in stage_mod.buffers():
+                    buf.zero_()
     finally:
         torch.set_default_dtype(_prev_dtype)
 
     model = build_fsdp_model(stage_mod, device,
                              activation_ckpt=bool(args.activation_ckpt),
                              cpu_offload=False, process_group=my_group,
-                             materialized=True)
+                             materialized=True,
+                             sync_module_states=bool(args.rank0_init))
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 
     if rank == 0:

@@ -270,8 +270,9 @@ ensure_ray_cluster() {  # ensure_ray_cluster <logfile>
   wait_ray_gpus "$want" "$RAY_JOIN_TIMEOUT"
 }
 
-mn_ray_shard() {  # mn_ray_shard <stage> <run_id> <model> <tp> <pp>
+mn_ray_shard() {  # mn_ray_shard <stage> <run_id> <model> <tp> <pp> [extra vllm args...]
   local stage="$1" rid="$2" model="${3:-$SHARD_MODEL}" tp="${4:-8}" pp="${5:-2}"
+  local extra=("${@:6}")   # e.g. --max-model-len/--prompt-tokens for the KV cell
   cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
   local raylog="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.ray.log"
   local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
@@ -301,7 +302,7 @@ mn_ray_shard() {  # mn_ray_shard <stage> <run_id> <model> <tp> <pp>
         --timeout "$TIMEOUT_BIG" -- \
         $PY_VLLM workloads/llm_inference_vllm.py --model "$model" \
           --tensor-parallel-size "$tp" --pipeline-parallel-size "$pp" \
-          --distributed-executor-backend ray --duration "$DUR"
+          --distributed-executor-backend ray --duration "$DUR" "${extra[@]}"
   else
     # node1 records telemetry for the shared run_id while node0 drives vLLM.
     run_stage "$stage" "$rid" -- \
@@ -486,6 +487,34 @@ for rep in $(seq 1 "$REPS"); do
   # Measured at 1b on the A100 pair: 373 Mbps inter-node against
   # s16_train_fsdp1b's 16,491 Mbps, a 44x reduction.
   c=s16_train_fsdp70b;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 70b --batch-size 1 --seq-len 512 --duration "$DUR"
+
+  # ---- MULTI-NODE-OBLIGATORY cells ----------------------------------------
+  # A cell belongs here only if the JOB CANNOT RUN on one node. On H100 a node
+  # is 8 x 80 GB = 640 GB; the pair is 1280 GB.
+  #
+  #   train_fsdp70b (above)     78.4B params, FSDP+AdamW ~940 GB      > 640
+  #   infershard_qwen72b_kv32k  weights 145 GB + 64 x ~32k tokens of KV at
+  #                             0.328 MB/token = 675 GB -> ~820 GB    > 640
+  #   nonml_himem_obl           44 GB x 16 GPUs = 704 GB, needs >8 GPUs
+  #   advtrain_pipe70b_mb1      the SAME 940 GB job as train_fsdp70b, run as
+  #                             pipeline-across-nodes instead of FSDP
+  #
+  # Everything else in this queue spans two nodes because it was LAUNCHED that
+  # way. These four cannot be run any other way, which is the regime a frontier
+  # training run actually lives in.
+  #
+  # Qwen2.5-72B's weights alone are only 145 GB and fit on one node, so the
+  # obligation is carried by KV cache and therefore by --prompt-tokens: raising
+  # --max-model-len alone caps sequence length without lengthening sequences,
+  # and the stock ~40-token prompts leave the cache nearly empty.
+  c=s16_infershard_qwen72b_kv32k; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 32768 --prompt-tokens 32000 --max-tokens 128 \
+      --batch-size 64 --gpu-memory-utilization 0.92
+  c=s16_nonml_himem_obl;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration "$DUR"
+  # 1b first, as a cheap proof of the rank0-init/broadcast path before the 70b
+  # cell spends ~78 GB of host init and 45 min on it.
+  c=s16_advtrain_pipe1b_rank0; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --rank0-init 1 --microbatches 1 --batch-size 8 --seq-len 1024 --duration "$DUR"
+  c=s16_advtrain_pipe70b_mb1;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" 2700 -- workloads/adversarial_multinode_pipeline.py --size 70b --rank0-init 1 --microbatches 1 --batch-size 1 --seq-len 512 --duration "$DUR"
   c=s16_advtrain_pipe1b_mb1;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 1 --batch-size 8 --seq-len 1024 --duration "$DUR"
   c=s16_advtrain_pipe1b_mb4;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 4 --batch-size 8 --seq-len 1024 --duration "$DUR"
   c=s16_advtrain_pipe1b_mb16;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 16 --batch-size 8 --seq-len 1024 --duration "$DUR"

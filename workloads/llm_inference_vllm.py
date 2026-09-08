@@ -100,6 +100,27 @@ PROMPTS = [
 ]
 
 
+_PAD_CACHE = {}
+
+
+def _pad_prompt(llm, base, n_tokens):
+    """Grow `base` to exactly n_tokens using the model's own tokenizer.
+
+    Encoding, slicing and decoding back (rather than passing token ids) keeps
+    this working across vLLM versions, whose TokensPrompt API has moved around.
+    Cached because the padding is identical every iteration and tokenising 32k
+    tokens per request per step would show up as CPU time in the telemetry.
+    """
+    key = (base[:32], n_tokens)
+    if key in _PAD_CACHE:
+        return _PAD_CACHE[key]
+    tok = llm.get_tokenizer()
+    filler = (" " + base) * (n_tokens // max(len(tok.encode(base)), 1) + 2)
+    ids = tok.encode(base + filler)[:n_tokens]
+    _PAD_CACHE[key] = tok.decode(ids)
+    return _PAD_CACHE[key]
+
+
 def run_vllm(args) -> None:
     from vllm import LLM, SamplingParams
 
@@ -145,6 +166,9 @@ def run_vllm(args) -> None:
         # continuous scheduler actually has something to schedule.
         batch_prompts = [PROMPTS[(iterations * args.batch_size + b) % len(PROMPTS)]
                          for b in range(args.batch_size)]
+        if args.prompt_tokens > 0:
+            batch_prompts = [_pad_prompt(llm, p, args.prompt_tokens)
+                             for p in batch_prompts]
         outputs = llm.generate(batch_prompts, sampling_params)
         for out in outputs:
             for comp in out.outputs:
@@ -168,6 +192,19 @@ def main():
                     help="Concurrent requests submitted per iteration.")
     ap.add_argument("--max-tokens", type=int, default=256)
     ap.add_argument("--max-model-len", type=int, default=4096)
+    ap.add_argument("--prompt-tokens", type=int, default=0,
+                    help="Pad every prompt to this many tokens. 0 keeps the "
+                         "short PROMPTS as-is.\n"
+                         "This exists to make a job MULTI-NODE OBLIGATORY. "
+                         "Qwen2.5-72B's weights are only 145 GB and fit on one "
+                         "8x80GB node, so raising --max-model-len alone proves "
+                         "nothing: it caps sequence length without lengthening "
+                         "the actual sequences, and the ~40-token PROMPTS leave "
+                         "the KV cache nearly empty. Obligation has to come "
+                         "from KV: at 0.328 MB/token, serving --batch-size B "
+                         "sequences of N tokens needs B*N*0.328 MB, and "
+                         "64 x 32768 = 2.1M tokens = 688 GB, which with the "
+                         "weights exceeds one node and fits across two.")
     ap.add_argument("--tensor-parallel-size", type=int, default=0,
                     help="0 = use model's default TP size")
     ap.add_argument("--pipeline-parallel-size", type=int, default=1,
