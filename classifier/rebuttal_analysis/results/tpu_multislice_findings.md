@@ -1436,3 +1436,31 @@ Note also that `s16_train_fsdp30b`, which supplied the loud row in section 22,
 is one of the six H100 training workloads -- and it did not need two nodes
 (32.5B params, ~390 GB against 640 GB per node). `s16_train_fsdp70b` (78.4B,
 ~940 GB) is the first cell in this corpus that genuinely cannot run on one node.
+
+### 22a. Verifying that the obligatory-inference cell really is obligatory
+
+`s16_infershard_qwen72b_kv32k` was designed so that KV cache, not weights,
+forces the second node. vLLM's own startup accounting on the 2x H100 pair
+confirms it, and the numbers are worth keeping because the design margin is
+only ~1.5x:
+
+    Available KV cache memory: 62.59 GiB   (per GPU, TP8/PP2)
+    GPU KV cache size: 3,214,400 tokens    (16 GPUs)
+    Maximum concurrency for 32,768 tokens per request: 98.10x
+    -> 1001 GiB / 3.21M tokens = 0.327 MB/token   (predicted 0.328)
+
+Capacity is not usage, so the prompts had to be checked too. vLLM reported
+`est. speed input: 870,765 tok/s` over ~2.3 s per batch of 64, i.e. ~2.0M input
+tokens per iteration = **~31,300 tokens per prompt**: `--prompt-tokens 32000`
+did what it claims, and peak concurrent KV is ~2.0M tokens.
+
+Could one node hold it? Under PP2 each node carries half the weights (~9-10
+GiB/GPU, per vLLM's "consumed memory (weights + non-torch)"). On a single node
+the full 145 GB sits on 8 GPUs = 18.1 GiB/GPU, so KV per GPU falls to about
+62.59 - 9.06 = 53.5 GiB, or 428 GiB across the node = **~1.34M tokens**.
+
+    needed 2.0M tokens  vs  ~1.34M available on one node  ->  OBLIGATORY
+
+So this cell cannot be served by one node, by a factor of ~1.5. Note how
+narrow that is: dropping --batch-size to 40 would have made the cell fit on one
+machine and quietly stopped being an obligatory-inference sample.
