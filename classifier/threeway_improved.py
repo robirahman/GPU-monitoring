@@ -345,6 +345,16 @@ def load_all_data() -> pd.DataFrame:
         # follows crashes assign_stream_and_job_ids with IntCastingNaNError.
         if p.name.startswith("nic_"):
             continue
+        # Quarantined streams are NOT corpus. ingest_session.sh moves idle
+        # streams (median utilisation <= 1%) into a _quarantine_idle/ directory
+        # so a multi-node cell whose peer died cannot enter as labelled
+        # workload data -- but that directory sits under data/, and this loader
+        # rglobs data/**, so the quarantine was cosmetic: all 78 streams it
+        # caught on 2026-09-08 were being loaded anyway, including into a
+        # retrain. Excluding by PATH here is the invariant that actually holds,
+        # wherever a future quarantine directory ends up.
+        if any("_quarantine" in part for part in p.parts):
+            continue
         try:
             df = pd.read_parquet(p)
             df = _normalize_columns(df)
