@@ -25,14 +25,47 @@ mkdir -p "$DEST_DATA" "$DEST_LOGS"
 PY="${VENV_MAIN}/bin/python"; [[ -x "$PY" ]] || PY="$(command -v python3)"
 
 # --- 1. completed parquets ---------------------------------------------------
-spar_say "copying completed parquets -> ${DEST_DATA}/"
-NC=0
-while IFS= read -r f; do
-  [[ -z "$f" ]] && continue
-  cp -f "$f" "${DEST_DATA}/$(basename "$f")"
-  NC=$((NC+1))
-done < <(find "$SRC" -type f -name '*.parquet' ! -name '*.partial' 2>/dev/null)
-echo "  copied $NC completed parquet(s)"
+# QUARANTINE IDLE STREAMS. The telemetry collector starts before the workload
+# and records for the full duration whether or not the workload ever runs, so a
+# multi-node cell whose PEER died still produces full-length, correctly-named
+# parquets full of zeros. Measured on 2026-09-08: spar-a100-1 was preempted 13
+# minutes into a run and spar-a100-0 went on to write 64 parquets labelled
+# s16_advtrain_pipe1b_mb{1,4,16} with util_med=0.0 and mem_med=519 MB -- a bare
+# CUDA context. Copying those in would have put idle windows into the corpus
+# under an ADVERSARIAL training label, which is precisely the contamination the
+# TPU ingest already screens for with --min-util-med.
+#
+# MIN_UTIL_MED=0 disables the screen; `idle`-labelled cells are exempt because
+# being idle is the point of them.
+spar_say "copying completed parquets -> ${DEST_DATA}/ (idle screen: median util > ${MIN_UTIL_MED:-1}%)"
+"$PY" - "$SRC" "$DEST_DATA" "${MIN_UTIL_MED:-1}" <<'PYEOF'
+import os, shutil, sys, glob
+import pandas as pd
+
+src, dest, thresh = sys.argv[1], sys.argv[2], float(sys.argv[3])
+quar = os.path.join(dest, "_quarantine_idle")
+kept = dropped = 0
+for f in sorted(glob.glob(os.path.join(src, "**", "*.parquet"), recursive=True)):
+    base = os.path.basename(f)
+    if base.endswith(".partial"):
+        continue
+    if thresh > 0 and not base.startswith(("idle", "nic_")):
+        try:
+            u = pd.read_parquet(f, columns=["gpu_utilization_pct"])
+            med = float(u["gpu_utilization_pct"].median())
+        except Exception:
+            med = None
+        if med is not None and med <= thresh:
+            os.makedirs(quar, exist_ok=True)
+            shutil.copyfile(f, os.path.join(quar, base))
+            print(f"  QUARANTINE {base[:70]} (median util {med:.1f}% <= {thresh}%)")
+            dropped += 1
+            continue
+    shutil.copyfile(f, os.path.join(dest, base))
+    kept += 1
+print(f"  copied {kept} completed parquet(s); "
+      f"quarantined {dropped} idle stream(s) -> {quar if dropped else '(none)'}")
+PYEOF
 
 # --- 2. STEP logs ------------------------------------------------------------
 spar_say "copying STEP logs -> ${DEST_LOGS}/"
