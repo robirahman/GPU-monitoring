@@ -510,6 +510,46 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infershard_qwen72b_kv32k; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
       --max-model-len 32768 --prompt-tokens 32000 --max-tokens 128 \
       --batch-size 64 --gpu-memory-utilization 0.92
+  # ---- PREFILL LADDER: the negatives the detector was missing ------------
+  # Section 24: honest long-context inference (72B, 64 x ~31k-token requests)
+  # alerted on 48 of 48 runs at p_train 0.864, indistinguishable from honest
+  # training's 0.853. At 31k tokens per request the cell is PREFILL-dominated,
+  # and prefill is a large dense compute-bound forward pass -- which is what
+  # training looks like. Every inference negative the detector was fitted on is
+  # decode-dominated and memory-bound, so it had never seen this regime.
+  #
+  # This ladder varies ONLY prompt length at fixed model and topology, so the
+  # prefill fraction is the single moving part and the detector can learn the
+  # boundary instead of memorising two disjoint regimes:
+  #
+  #   kv1k    1,024 tok  ->  decode-dominated (the regime already in the corpus)
+  #   kv8k    8,000 tok  ->  mixed
+  #   kv32k  32,000 tok  ->  prefill-dominated (already collected)
+  #
+  # kv32k_out2k is the control that separates "long context" from
+  # "prefill-dominated": same 32k prompt, but 2048 output tokens instead of 128,
+  # so most of the wall clock is decode again. If the detector keys on context
+  # LENGTH it will treat this like kv32k; if it keys on the prefill/decode
+  # BALANCE it will not.
+  #
+  # train_fsdp7b_seq2k is the matching move from the training side -- a longer
+  # forward pass per step, so training and inference overlap on activation
+  # footprint and utilisation and the discriminator has to find the backward
+  # pass and the optimizer state instead. 2048 is the ceiling: pos_emb is
+  # nn.Embedding(2048, hidden), and raising it would change the parameter count
+  # of every existing training cell, so that is a deliberate change, not a
+  # side effect of this ladder.
+  c=s16_infershard_qwen72b_kv1k;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 32768 --prompt-tokens 1024 --max-tokens 128 \
+      --batch-size 64 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen72b_kv8k;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 32768 --prompt-tokens 8000 --max-tokens 128 \
+      --batch-size 64 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen72b_kv32k_out2k; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 34816 --prompt-tokens 32000 --max-tokens 2048 \
+      --batch-size 32 --gpu-memory-utilization 0.92
+  c=s16_train_fsdp7b_seq2k;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 7b --batch-size 2 --seq-len 2048 --duration "$DUR"
+
   c=s16_nonml_himem_obl;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration "$DUR"
   # 1b first, as a cheap proof of the rank0-init/broadcast path before the 70b
   # cell spends ~78 GB of host init and 45 min on it.
