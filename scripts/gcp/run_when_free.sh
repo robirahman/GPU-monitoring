@@ -59,7 +59,14 @@ i=0
 for n in "$NODE0" "$NODE1"; do
   say "launching queue on $n (node_rank $i)"
   gcloud compute ssh "$n" --zone="$ZONE" --project="$PROJECT" --command="
-    pgrep -f 'sync_data.sh --loop' >/dev/null || sudo nohup bash /opt/spar/gcp/sync_data.sh --loop 120 >/tmp/sync_loop.log 2>&1 &
+    # '[s]ync' so the pattern cannot match THIS shell's own command line.
+    # Without the bracket, pgrep -f found the enclosing ssh/bash invocation --
+    # which contains the literal string -- concluded the loop was already
+    # running, and never started it. Every run from a100mnp2 onward therefore
+    # uploaded only via the shutdown flush, and a ~30 s Spot preemption window
+    # truncated that: spar-gpu-0 lost its kv32k and himem_obl streams to local
+    # disk while spar-gpu-1, preempted 3 minutes later, got its own up.
+    pgrep -f '[s]ync_data\.sh --loop' >/dev/null || sudo nohup bash /opt/spar/gcp/sync_data.sh --loop 120 >/tmp/sync_loop.log 2>&1 &
     sleep 1
     sudo RUN_STAMP='$RUN_STAMP' NNODES=2 ARENA_MB='${ARENA_MB:-9216}' STOP_WHEN_DONE=1 \
       ONLY_CELLS='$ONLY_CELLS' bash /opt/spar/gcp/launch_queue.sh" 2>&1 | grep -a launched
