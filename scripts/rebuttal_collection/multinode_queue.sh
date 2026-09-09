@@ -598,6 +598,33 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infershard_qwen72b_kv32k_out2k; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
       --max-model-len 32768 --prompt-tokens 30000 --max-tokens 2048 \
       --batch-size 64 --gpu-memory-utilization 0.92
+
+  # ---- CONCURRENCY ladder (section 24b) -----------------------------------
+  # 24b refuted both mechanisms offered for the obligatory-inference false
+  # alarm. Prefill was refuted by kv32k_out2k (decode-dominated, and the
+  # HIGHEST power of any cell at 488 W); the level story was refuted by the
+  # same cell going UP rather than down. The surviving candidate is that every
+  # high-power inference cell serves 64 sequences at once, so these vary ONLY
+  # --batch-size at fixed 32k context and 128 output tokens. kv32k (batch 64,
+  # 421 W) is the top of this ladder and is already collected.
+  #
+  # Prediction if concurrency is the driver: power falls monotonically with
+  # batch. If power is flat, concurrency is refuted too and the confusion is
+  # something else again.
+  #
+  # NOTE: these are NOT multi-node-obligatory. At 32k tokens per request the KV
+  # is 257k/514k/1.03M tokens for batch 8/16/32, all below the ~1.34M one node
+  # holds, so they are mechanism probes and must not be counted as obligatory
+  # coverage.
+  c=s16_infershard_qwen72b_kv32k_b8;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 32768 --prompt-tokens 32000 --max-tokens 128 \
+      --batch-size 8 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen72b_kv32k_b16; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 32768 --prompt-tokens 32000 --max-tokens 128 \
+      --batch-size 16 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen72b_kv32k_b32; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --max-model-len 32768 --prompt-tokens 32000 --max-tokens 128 \
+      --batch-size 32 --gpu-memory-utilization 0.92
   c=s16_train_fsdp7b_seq2k;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 7b --batch-size 2 --seq-len 2048 --duration "$DUR"
 
   c=s16_nonml_himem_obl;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration "$DUR"
