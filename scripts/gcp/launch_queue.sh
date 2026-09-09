@@ -55,15 +55,28 @@ ONLY_CELLS="${ONLY_CELLS:-}" \
       # 1.9 h failing every remaining 2-node cell against a host that no longer
       # resolved ("Temporary failure in name resolution") while still billing.
       # A queue-done marker each side can see turns that into a rendezvous.
-      : "${BUCKET:?}" "${SESSION:?}" "${NODE_NAME:?}"
-      CTRL="${BUCKET}/runs/${SESSION}/control"
-      echo "$(date -u +%FT%TZ) rc=$rc" > "/tmp/${NODE_NAME}.queue_done"
-      gcloud storage cp "/tmp/${NODE_NAME}.queue_done" \
-        "${CTRL}/${NODE_NAME}.queue_done" >/dev/null 2>&1 || true
+      # node_env is sourced by THIS script but its variables are not exported,
+      # so the bash -c child above cannot see them. Source it here. The previous
+      # version asserted them with ${VAR:?}, which killed the wrapper outright:
+      #   bash: line 15: BUCKET: parameter null or not set
+      # STOP_WHEN_DONE then never ran and the pair idled ~35 min on 2026-09-09.
+      # A missing variable must cost us the peer rendezvous, never the shutdown.
+      . /etc/spar/node_env 2>/dev/null || true
+      CTRL=""
+      if [ -n "${BUCKET:-}" ] && [ -n "${SESSION:-}" ] && [ -n "${NODE_NAME:-}" ]; then
+        CTRL="${BUCKET}/runs/${SESSION}/control"
+      else
+        echo "[launch_queue] BUCKET/SESSION/NODE_NAME missing -- skipping the peer rendezvous, still powering off"
+      fi
+      if [ -n "$CTRL" ]; then
+        echo "$(date -u +%FT%TZ) rc=$rc" > "/tmp/${NODE_NAME}.queue_done"
+        gcloud storage cp "/tmp/${NODE_NAME}.queue_done" \
+          "${CTRL}/${NODE_NAME}.queue_done" >/dev/null 2>&1 || true
+      fi
       PEER=""
       [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ] && \
         { [ "$NODE_NAME" = "$NODE0" ] && PEER="$NODE1" || PEER="$NODE0"; }
-      if [ -n "$PEER" ]; then
+      if [ -n "$PEER" ] && [ -n "$CTRL" ]; then
         echo "[launch_queue] waiting up to ${PEER_WAIT:-2400}s for $PEER to finish too"
         _t0=$SECONDS
         while [ $((SECONDS - _t0)) -lt "${PEER_WAIT:-2400}" ]; do
