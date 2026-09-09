@@ -40,6 +40,7 @@ PY="$REPO/venv-main/bin/python" \
 PY_VLLM="$REPO/venv-vllm/bin/python" \
 SMOKE="${SMOKE:-0}" \
 STOP_WHEN_DONE="${STOP_WHEN_DONE:-0}" \
+PEER_WAIT="${PEER_WAIT:-2400}" \
 ONLY_CELLS="${ONLY_CELLS:-}" \
   nohup bash -c '
     bash scripts/rebuttal_collection/multinode_queue.sh
