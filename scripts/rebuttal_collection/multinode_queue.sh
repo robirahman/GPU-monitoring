@@ -61,7 +61,13 @@ TIMEOUT=${TIMEOUT:-900}
 TIMEOUT_BIG=${TIMEOUT_BIG:-1500}        # 30B / model loads
 GAP=${GAP:-60}
 REPS=${REPS:-3}
-RENDEZVOUS_TIMEOUT=${RENDEZVOUS_TIMEOUT:-120}
+# 120 s was too short. The sharded-inference cells are asymmetric -- node0
+# drives vLLM/Ray for the whole duration while node1 only records telemetry --
+# so node1 reaches the NEXT torchrun cell first and its join_timeout expires
+# before node0 arrives. That is what failed s16_train_fsdp7b_seq2k twice on
+# 2026-09-08 (throwTimeoutError at 147 s and 71 s), with nothing wrong in the
+# workload itself.
+RENDEZVOUS_TIMEOUT=${RENDEZVOUS_TIMEOUT:-600}
 RAY_JOIN_TIMEOUT=${RAY_JOIN_TIMEOUT:-300}   # both nodes must register their 8 GPUs
 INFER_MODEL=${INFER_MODEL:-llm_infer_qwen25_1_5b_fp16} # matched to the fsdp1b train arm
 # Second inference negative, same model at batch 1 (latency-bound) rather than
@@ -545,9 +551,19 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infershard_qwen72b_kv8k;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
       --max-model-len 32768 --prompt-tokens 8000 --max-tokens 128 \
       --batch-size 64 --gpu-memory-utilization 0.92
+  # prompt + output must fit INSIDE max_model_len, and max_model_len cannot
+  # exceed the model's own max_position_embeddings. The first version asked for
+  # 34816 (=32000+2048+headroom) and vLLM refused at engine init on every rep:
+  #   User-specified max_model_len (34816) is greater than the derived
+  #   max_model_len (max_position_embeddings=32768.0 ...)
+  # The cell then recorded 600 s of IDLE GPUs -- and because node1's role in a
+  # ray cell is telemetry-only, the queue logged it as OK. 30000+2048=32048
+  # fits. batch stays 64 to match kv32k, and 64*32048 = 2.05M tokens of KV is
+  # inside the 3.21M the pair has and above the ~1.34M one node has, so this
+  # cell is still multi-node-obligatory.
   c=s16_infershard_qwen72b_kv32k_out2k; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
-      --max-model-len 34816 --prompt-tokens 32000 --max-tokens 2048 \
-      --batch-size 32 --gpu-memory-utilization 0.92
+      --max-model-len 32768 --prompt-tokens 30000 --max-tokens 2048 \
+      --batch-size 64 --gpu-memory-utilization 0.92
   c=s16_train_fsdp7b_seq2k;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 7b --batch-size 2 --seq-len 2048 --duration "$DUR"
 
   c=s16_nonml_himem_obl;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration "$DUR"

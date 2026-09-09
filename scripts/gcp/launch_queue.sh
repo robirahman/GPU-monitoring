@@ -47,8 +47,34 @@ ONLY_CELLS="${ONLY_CELLS:-}" \
     echo "[launch_queue] queue exited rc=$rc"
     bash /opt/spar/gcp/sync_data.sh --once || true
     if [ "${STOP_WHEN_DONE:-0}" = "1" ]; then
-      echo "[launch_queue] STOP_WHEN_DONE=1 -- syncing and powering off in 2 min"
+      echo "[launch_queue] STOP_WHEN_DONE=1 -- syncing"
       bash /opt/spar/gcp/sync_data.sh --once || true
+      # WAIT FOR THE PEER before powering off. Whichever node drains first used
+      # to shut down immediately, which strands the other: on 2026-09-08
+      # spar-gpu-0 finished and powered off at 23:32Z, and spar-gpu-1 then spent
+      # 1.9 h failing every remaining 2-node cell against a host that no longer
+      # resolved ("Temporary failure in name resolution") while still billing.
+      # A queue-done marker each side can see turns that into a rendezvous.
+      : "${BUCKET:?}" "${SESSION:?}" "${NODE_NAME:?}"
+      CTRL="${BUCKET}/runs/${SESSION}/control"
+      echo "$(date -u +%FT%TZ) rc=$rc" > "/tmp/${NODE_NAME}.queue_done"
+      gcloud storage cp "/tmp/${NODE_NAME}.queue_done" \
+        "${CTRL}/${NODE_NAME}.queue_done" >/dev/null 2>&1 || true
+      PEER=""
+      [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ] && \
+        { [ "$NODE_NAME" = "$NODE0" ] && PEER="$NODE1" || PEER="$NODE0"; }
+      if [ -n "$PEER" ]; then
+        echo "[launch_queue] waiting up to ${PEER_WAIT:-2400}s for $PEER to finish too"
+        _t0=$SECONDS
+        while [ $((SECONDS - _t0)) -lt "${PEER_WAIT:-2400}" ]; do
+          gcloud storage ls "${CTRL}/${PEER}.queue_done" >/dev/null 2>&1 && \
+            { echo "[launch_queue] $PEER is done too"; break; }
+          sleep 30
+        done
+      else
+        echo "[launch_queue] NODE0/NODE1 not in node_env -- cannot identify peer, not waiting"
+      fi
+      echo "[launch_queue] powering off in 2 min"
       shutdown -h +2 "spar: collection finished, stopping to stop the bill"
     fi' >"$LOG" 2>&1 </dev/null &
 pid=$!
