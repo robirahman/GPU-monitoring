@@ -155,6 +155,11 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
   local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
   if [ -f "$marker" ]; then say "SKIP  $stage ($(cat "$marker"))"; return 0; fi
 
+  # Realign with the peer before a cell that has to rendezvous. Placed after
+  # the filter and marker checks so a skipped cell costs no GCS round-trip and
+  # a node that already holds this cell's marker never blocks on its peer.
+  cell_barrier "$stage" "$rid"
+
   # Reap strays before starting. Nothing else should be holding a GPU between
   # cells, and a leftover process is not benign: a timed-out vLLM cell used to
   # orphan 8 processes pinning 73 GB each, after which every later cell on the
@@ -201,6 +206,35 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
 # ── S16 cells (both nodes participate) ───────────────────────────────────────
 
 # 2-node torchrun cell: the c10d rendezvous is the cross-node barrier.
+# Cross-node barrier before a rendezvous cell. Raising join_timeout does not
+# fix this and 600 s did not: the RAY cells are asymmetric, node0 drives vLLM for
+# 678-962 s while node1 only records telemetry and returns in 600-601 s, so each
+# one puts node1 minutes ahead. After a few cells the two nodes are on DIFFERENT
+# cells at the same time and a torchrun cell can never rendezvous however long
+# it waits -- s16_train_fsdp7b_seq2k failed that way at both 120 s and 600 s.
+# A marker each side publishes and waits for realigns them per cell.
+cell_barrier() {  # cell_barrier <stage> <rid>
+  [ "${NNODES:-1}" -gt 1 ] || return 0
+  local stage="$1" rid="$2" me="${NODE_NAME:-}" peer="" ctrl
+  [ -n "$me" ] || return 0
+  if [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ]; then
+    if [ "$me" = "$NODE0" ]; then peer="$NODE1"; else peer="$NODE0"; fi
+  fi
+  [ -n "$peer" ] || { say "  barrier $stage: no peer in node_env, not waiting"; return 0; }
+  ctrl="${BUCKET}/runs/${SESSION}/control/barrier"
+  echo "$(stamp)" > "/tmp/barrier.${rid}"
+  gcloud storage cp "/tmp/barrier.${rid}" \
+    "${ctrl}/${stage}_${rid}_${me}.ready" >/dev/null 2>&1 || true
+  local t0=$SECONDS
+  while [ $((SECONDS - t0)) -lt "${BARRIER_WAIT:-900}" ]; do
+    if gcloud storage ls "${ctrl}/${stage}_${rid}_${peer}.ready" >/dev/null 2>&1; then
+      say "  barrier $stage: $peer aligned after $((SECONDS - t0))s"; return 0
+    fi
+    sleep 10
+  done
+  say "  barrier $stage: TIMED OUT after ${BARRIER_WAIT:-900}s waiting for $peer -- proceeding"
+}
+
 mn_torchrun() {  # mn_torchrun <stage> <run_id> <timeout> -- <workload.py args...>
   local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
   run_stage "$stage" "$rid" -- \
