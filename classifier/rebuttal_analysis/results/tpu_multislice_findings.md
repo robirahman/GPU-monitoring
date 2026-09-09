@@ -1566,3 +1566,49 @@ That inverts the deployment story: the larger and more consequential the
 training run, the less it resembles the training the detector was fitted on,
 while a long-context serving job moves INTO that region. Both errors push the
 same way, and neither is an attack.
+
+### 24b. The prefill ladder refutes BOTH proposed mechanisms
+
+The ladder varies prompt length at fixed model (72B) and topology (TP8/PP2),
+with `kv32k_out2k` as the control that keeps the 30-32k context but returns the
+wall clock to decode by asking for 2048 output tokens instead of 128. Median
+per-GPU telemetry, H100 node0, non-idle streams only:
+
+| cell | prompt/output | util | mem_util | power W |
+|---|---|---|---|---|
+| `kv1k` | 1k / 128 | 100 | 46 | 368 |
+| `kv8k` | 8k / 128 | 98 | 32 | 359 |
+| `kv32k` | 32k / 128 (prefill-dominated) | 99 | 41 | 421 |
+| `kv32k_out2k` | 30k / 2048 (decode-dominated) | 100 | 41 | **488** |
+| `train_fsdp7b_seq2k` | seq 2048 | 100 | 16 | 328 |
+| `train_fsdp1b` (in fit) | | 100 | 25 | 436 |
+| `train_fsdp70b` (obligatory) | | 100 | 3 | 190 |
+
+**Section 24's prefill hypothesis fails.** If the false alarm came from prefill
+resembling a dense training forward pass, the decode-dominated control should
+look markedly less training-like. It does not; it is the most extreme cell here.
+
+**Section 24a's level-overlap hypothesis also fails, and it was mine.** I
+predicted that returning the wall clock to decode would LOWER power and move
+the cell off `train_fsdp1b`'s 436 W perch. `kv32k_out2k` draws 488 W -- the
+highest of any cell, training or inference. Power does not track prefill
+fraction at all: 368 -> 359 -> 421 -> 488 is not monotonic in it.
+
+What the table does establish is stronger than either mechanism and worse for
+the detector: **on power the inference cells (359-488 W) now bracket AND exceed
+every training cell (190-436 W).** Power is not a discriminator in this regime,
+in either direction. Nor is DRAM activity: inference spans 32-46% and training
+3-25%, which separates them here but in the direction that makes the largest,
+most consequential training runs look LEAST like training (section 24a).
+
+The surviving candidate is CONCURRENCY rather than prefill: every high-power
+inference cell serves 64 sequences at once, and `kv32k_out2k` sustains 64
+simultaneous decodes of a 30k-token context, which is a continuous stream of
+large batched GEMMs. That is a hypothesis, not a result. It is testable by
+varying only `--batch-size` at fixed context and output length, which is a
+cheaper cell than anything in this ladder.
+
+Recorded as a caution: two mechanisms were proposed for this false alarm and
+both were refuted by the first control that could distinguish them. The
+MEASUREMENT (obligatory inference alerting 48/48) has held up across every
+check; the story about why has not.
