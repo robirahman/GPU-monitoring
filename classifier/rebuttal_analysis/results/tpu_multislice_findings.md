@@ -1612,3 +1612,53 @@ Recorded as a caution: two mechanisms were proposed for this false alarm and
 both were refuted by the first control that could distinguish them. The
 MEASUREMENT (obligatory inference alerting 48/48) has held up across every
 check; the story about why has not.
+
+### 24c. The concurrency ladder: a real but insufficient effect, and the signal we are not using
+
+Varying ONLY `--batch-size` at 32k context and 128 output tokens (3 reps x 8
+GPUs per rung, node0, no idle streams):
+
+| batch | util | mem_util | power W |
+|---|---|---|---|
+| 8 | 100 | **60** | 378 |
+| 16 | 100 | 54 | 400 |
+| 32 | 100 | 50 | 416 |
+| 64 (`kv32k`) | 99 | **41** | 421 |
+
+**Concurrency is partially vindicated and still insufficient.** Power does rise
+monotonically with batch, which is what 24b predicted. But the whole 8x range
+spans 43 W, and every rung -- including batch 8 -- sits inside the training band
+(`train_fsdp70b` 190 W to `train_fsdp1b` 436 W). Concurrency cannot explain why
+`kv32k` is mistaken for training, because de-concentrating it 8-fold does not
+move it out of the region.
+
+**What the ladder does show is the channel we should be using.** DRAM activity
+moves further and in the opposite direction, 60% down to 41%, and across every
+inference cell measured so far it stays in 32-60%:
+
+    inference   kv32k_b8 60, b16 54, b32 50, b64 41, kv1k 46, kv8k 32,
+                out2k 41, tp8pp2 57, inferrep 47      -> 32-60%
+    training    fsdp1b 25, fsdp7b 15, fsdp7b_seq2k 16,
+                fsdp30b 4, fsdp70b 3                  -> 3-25%
+
+That is a clean separation with no overlap, on a single feature, holding across
+model size, context length, output length and concurrency. Power, by contrast,
+overlaps badly in both directions (inference 359-488, training 190-436).
+
+So the discriminating signal EXISTS in the telemetry and the fitted detector is
+not using it decisively -- `kv32k` alerts on 48/48 runs at p_train 0.864 anyway.
+This is no longer a question about which mechanism makes inference look like
+training; it is a question about what the detector weights. mem_util is one of
+the 174 features and Stage 2 keeps it (it is shape, not level), yet the model
+still calls this cell training.
+
+The next step needs no collection: score `kv32k` against the refitted detector
+(42,259 honest windows) and read the feature attributions, then ablate. If
+mem_util is present and ignored, the fix is corpus composition -- every training
+cell in the fit is DRAM-quiet because it is either small-model or
+communication-bound, so the model has no reason to learn that boundary.
+
+Three mechanisms have now been proposed for this false alarm (prefill, level
+overlap, concurrency) and all three have failed to explain it, while the
+measurement has survived every check. That pattern is itself the finding: the
+error is in what was fitted, not in what the hardware does.
