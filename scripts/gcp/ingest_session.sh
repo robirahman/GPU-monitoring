@@ -16,7 +16,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/env.sh"
 
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-SRC="${REPO_ROOT}/gcs_runs/${SESSION}"
+# SRC is overridable so a large pull can be staged somewhere with room. On this
+# workstation /home is a 4.8 GB disk that has hit 100% once already, while the
+# scratchpad lives on a 119 GB volume -- staging there and ingesting from it
+# halves the peak footprint, since only the ingested copy lands on /home.
+SRC="${SRC:-${REPO_ROOT}/gcs_runs/${SESSION}}"
 DEST_DATA="${REPO_ROOT}/data/gcp/${SESSION}"
 DEST_LOGS="${REPO_ROOT}/logs"
 [[ -d "$SRC" ]] || { echo "no pulled session at $SRC -- run pull_results.sh first"; exit 1; }
