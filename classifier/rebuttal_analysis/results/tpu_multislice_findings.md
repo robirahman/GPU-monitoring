@@ -1662,3 +1662,68 @@ Three mechanisms have now been proposed for this false alarm (prefill, level
 overlap, concurrency) and all three have failed to explain it, while the
 measurement has survived every check. That pattern is itself the finding: the
 error is in what was fitted, not in what the hardware does.
+
+## 25. Fixing the false alarm: more data helps, but not the way it first appears
+
+Scored against the REFITTED detector (42,259 honest windows, 2026-09-09) at
+tau=0.80 with the 3-of-5 run rule:
+
+| cell | in the fit? | p_train med | frac>tau | run 3-of-5 |
+|---|---|---|---|---|
+| `kv32k` (batch 64) | **yes** | 0.751 | 0.102 | 13/40 = **0.325** |
+| `kv32k_b8` | no | 0.700 | 0.087 | 17/48 = 0.354 |
+| `kv32k_b16` | no | 0.782 | 0.442 | 44/48 = **0.917** |
+| `kv32k_b32` | no | 0.785 | 0.434 | 45/48 = **0.938** |
+| `kv32k_out2k` | no | 0.640 | 0.021 | 0/24 = 0.000 |
+| `infershard_qwen72b_tp8pp2` | yes | 0.525 | 0.000 | 0/89 = 0.000 |
+| `train_fsdp70b` (honest training) | yes | 0.872 | 0.779 | 93/96 = 0.969 |
+| `train_fsdp1b` (honest training) | yes | 0.938 | 0.934 | 96/96 = 1.000 |
+
+Against the older detector `kv32k` alerted 48/48 (section 24). It is now 13/40.
+That looks like a fix and mostly is not one: **`kv32k` is now IN the fitted
+corpus**, while its own siblings -- same model, same topology, same context
+length, differing only in batch size, collected 2026-09-09 and ingested after
+the refit -- still alert at **0.917 and 0.938**.
+
+So what improved was recognition of that particular workload, not
+generalisation to long-context inference as a class. This is the same
+workload-recognition effect `workload_grouped_tuning.md` measured
+(run-grouped 0.9628 against workload-grouped 0.8470), and measuring the fix on a
+cell that has since entered the corpus reproduces the trap rather than escaping
+it.
+
+### Does a larger forest help?
+
+No evidence for it, and reason to expect harm. The signal is not missing and
+capacity is not the constraint:
+
+* A single Stage-2-RETAINED feature, `mem_util_minus_gpu_util`, separates
+  training from inference at **AUC 0.894** on multi-node cells -- better than any
+  dropped level feature (best: `mem_utilization_pct_mean`, 0.845). An earlier
+  draft of this section argued the Stage-2 level drop had removed the
+  discriminating channel; that was tested and is wrong.
+* Permutation attribution on `kv32k` shows the model already leaning on shape
+  features -- `pcie_rx_mbps_iqr` (-0.056), `util_per_sm_pct` (-0.050),
+  `mem_util_minus_gpu_util` (-0.044).
+
+The failure is that the fitted corpus does not force the model to use them.
+Capacity added on an unrepresentative corpus buys memorisation, which is the
+failure already quantified at ~12 points of accuracy.
+
+### What the evidence actually argues for
+
+1. **Diverse long-context inference, not more reps of one cell.** Vary model,
+   context length, batch size and serving stack. The b16/b32 result shows reps
+   of a single cell generalise to its siblings poorly.
+2. **DRAM-busy TRAINING cells** -- large batch, high memory traffic. Every
+   training cell in the corpus is DRAM-quiet (3-25%) because it is small-model
+   or communication-bound, so "DRAM-quiet implies training" is available as a
+   shortcut. This half protects against the DANGEROUS error, missing real
+   training, and nothing in the corpus currently tests it.
+3. **Evaluate with FAMILY-level holdout** -- hold every long-context inference
+   cell out together, so an in-fit sibling cannot flatter the number. Section 21
+   learned this for MN-T and it applies here unchanged.
+
+Note also that the run-level false alarm is NOT monotonic in concurrency:
+0.354 at batch 8, 0.917 at 16, 0.938 at 32, 0.325 at 64 (the last in-fit). The
+peak sits at mid-concurrency, which no mechanism proposed so far predicts.
