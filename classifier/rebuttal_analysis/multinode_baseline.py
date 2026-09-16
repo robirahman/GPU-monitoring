@@ -135,6 +135,11 @@ def main():
     ap.add_argument("--k", type=int, default=3)
     ap.add_argument("--m", type=int, default=5)
     ap.add_argument("--platforms", nargs="*", default=None)
+    ap.add_argument("--out", default="classifier/rebuttal_analysis/results/multinode_baseline.json",
+                    help="persist the per-platform table. Without this the only "
+                         "output was stdout, so two runs were lost to scratchpad "
+                         "wipes and there was no way to tell afterwards whether "
+                         "the baseline had ever been computed.")
     a = ap.parse_args()
 
     import pathlib
@@ -190,6 +195,15 @@ def main():
     if rows:
         print("\n" + "=" * 78)
         print(pd.DataFrame(rows).to_string(index=False, float_format="%.3f"))
+        if a.out:
+            import datetime, json, os
+            os.makedirs(os.path.dirname(a.out), exist_ok=True)
+            with open(a.out, "w") as fh:
+                json.dump({"generated_utc": datetime.datetime.utcnow().isoformat() + "Z",
+                           "tau": a.tau, "k": a.k, "m": a.m,
+                           "window_sec": a.window, "stride_sec": a.stride,
+                           "platforms": rows}, fh, indent=2)
+            print(f"\nwrote {a.out}")
 
 
 if __name__ == "__main__":
