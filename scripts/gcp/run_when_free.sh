@@ -35,8 +35,23 @@ while :; do
   sleep "$POLL"
 done
 
-say "starting the pair"
-gcloud compute instances start "$NODE0" "$NODE1" --zone="$ZONE" --project="$PROJECT" >/dev/null 2>&1
+# RETRY the start. A stopped Spot pair cannot always restart on demand: on
+# 2026-09-16 both H100 nodes returned STOCKOUT in us-central1-a, and the old
+# code issued one start, ignored the failure, and went on to stage and launch
+# against instances that were still TERMINATED. Capacity comes back, so poll.
+say "starting the pair (retrying while capacity is short)"
+_t0=$SECONDS
+while :; do
+  gcloud compute instances start "$NODE0" "$NODE1" --zone="$ZONE" --project="$PROJECT" >/dev/null 2>&1
+  s0="$(st "$NODE0")"; s1="$(st "$NODE1")"
+  [ "$s0" = "RUNNING" ] && [ "$s1" = "RUNNING" ] && { say "both RUNNING"; break; }
+  if [ $((SECONDS - _t0)) -ge "${START_WAIT:-10800}" ]; then
+    say "GIVING UP: could not start both after ${START_WAIT:-10800}s ($s0/$s1)"
+    exit 1
+  fi
+  say "  not up yet ($s0/$s1) -- retrying in ${START_RETRY:-300}s"
+  sleep "${START_RETRY:-300}"
+done
 
 for n in "$NODE0" "$NODE1"; do
   for _ in $(seq 1 30); do
