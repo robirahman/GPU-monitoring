@@ -599,6 +599,44 @@ for rep in $(seq 1 "$REPS"); do
       --max-model-len 32768 --prompt-tokens 30000 --max-tokens 2048 \
       --batch-size 64 --gpu-memory-utilization 0.92
 
+  # ---- Section 25 corpus gaps ---------------------------------------------
+  # (1) DIVERSE long-context inference. Section 25 showed that adding kv32k to
+  # the corpus fixed kv32k (13/40) while its own siblings, differing only in
+  # batch size, still alerted 44/48 and 45/48 -- reps of one cell do not
+  # generalise even to that cell's family. So vary MODEL and CONTEXT, not just
+  # concurrency. All three models are already cached on the H100 pair and all
+  # have max_position_embeddings=32768, so prompt+output stays inside it.
+  # NOTE: no --max-model-len. vLLM defaults it to the model's own
+  # max_position_embeddings, and specifying it by hand is what killed
+  # kv32k_out2k on every rep (34816 > 32768, refused at engine init while the
+  # collector recorded 600 s of idle GPUs that the queue logged as OK). Letting
+  # vLLM derive it removes that failure mode; prompt+output here is far inside
+  # any Qwen2.5 limit.
+  c=s16_infershard_qwen7b_kv16k_b32;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16 8 2 \
+      --prompt-tokens 16000 --max-tokens 128 \
+      --batch-size 32 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen1_5b_kv16k_b48; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_1_5b_fp16 8 2 \
+      --prompt-tokens 16000 --max-tokens 128 \
+      --batch-size 48 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen72b_kv16k_b24;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 16000 --max-tokens 128 \
+      --batch-size 24 --gpu-memory-utilization 0.92
+  c=s16_infershard_qwen72b_kv4k_b48;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 \
+      --batch-size 48 --gpu-memory-utilization 0.92
+
+  # (2) DRAM-BUSY TRAINING. Every training cell in the corpus sits at 3-25%
+  # mem_utilization_pct because it is small-model or communication-bound, so
+  # "DRAM-quiet implies training" is a free shortcut and nothing tests the
+  # dangerous error direction (missing real training). --no-activation-ckpt
+  # keeps activations resident and read back instead of recomputed, which is
+  # the cheapest way to buy memory traffic without changing the model; large
+  # batch and longer sequence add more.
+  c=s16_train_fsdp1b_b32_nockpt;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size 32 --seq-len 1024 --no-activation-ckpt --duration "$DUR"
+  c=s16_train_fsdp1b_seq2k_nockpt; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size 16 --seq-len 2048 --no-activation-ckpt --duration "$DUR"
+  c=s16_train_fsdp7b_nockpt;       mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --batch-size 8 --seq-len 1024 --no-activation-ckpt --duration "$DUR"
+  c=s16_train_ddp_resnet50_b512;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/pytorch_training_ddp.py --model resnet50 --batch-size 512 --amp --duration "$DUR"
+
   # ---- CONCURRENCY ladder (section 24b) -----------------------------------
   # 24b refuted both mechanisms offered for the obligatory-inference false
   # alarm. Prefill was refuted by kv32k_out2k (decode-dominated, and the
