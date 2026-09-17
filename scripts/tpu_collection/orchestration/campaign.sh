@@ -298,7 +298,7 @@ echo SETUP_OK_\$(hostname)" 2>&1 >> "$setup_out" ) &
 }
 
 END=$(( $(date +%s) + MAX_HOURS*3600 ))
-say "campaign start: ${#TARGETS[@]} targets, zones=[$ZONES], reps=$REPS dur=${DUR}s, until $(date -u -d @$END +%H:%MZ)"
+say "campaign start: ${#TARGETS[@]} targets, zones=[$ZONES], reps=$REPS dur=${DUR}s, until $(date -u -d @$END +%Y-%m-%dT%H:%MZ)"
 park_all
 while [ "$(date +%s)" -lt "$END" ]; do
   remaining=0
