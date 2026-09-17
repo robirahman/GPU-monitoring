@@ -1885,3 +1885,60 @@ batch: the model has learned "single-node training is DRAM-busy" and
 "multi-node training is quiet", and a quiet single-node cell is a combination it
 has never been shown. If that is missed, the dangerous error exists after all,
 in a case that needs no attacker and no multi-node hardware to produce.
+
+## 29. The probe found the dangerous error -- and not for the predicted reason
+
+Section 28's probe: real training, no adversarial intent, scored OUT OF SAMPLE
+against the persisted detector (cells collected 2026-09-17, detector fitted
+2026-09-09).
+
+| cell | streams | mem_util | power W | p_train | run 3-of-5 |
+|---|---|---|---|---|---|
+| `s1_train_fsdp1b_b1` | 1 | 57 | 141 | 0.184 | **0/1 = 0.000** |
+| `s8_train_fsdp1b_b1` | 8 | 29 | 179 | 0.710 | **3/8 = 0.375** |
+| `s8_train_fsdp7b_b1` | 8 | 71 | 288 | 0.685 | **5/8 = 0.625** |
+| `s16_train_fsdp1b_b32_nockpt` | 80 | 9 | 137 | 0.910 | 32/80 = 0.400 |
+| `s16_train_fsdp1b_seq2k_nockpt` | 43 | 10 | 155 | 0.909 | 11/43 = 0.256 |
+
+For comparison, the SAME topologies scored in-sample in section 28: s8 training
+0.929, s16 training 0.929.
+
+**Real training is missed between 37% and 100% of runs.** No attacker, no
+disguise, no multi-node hardware required for the s1/s8 cases -- just a small
+batch. This is the false negative the project has been looking for in
+adversarial cells and had not found.
+
+### The predicted mechanism is wrong again
+
+The probe was designed on the theory that these cells would be DRAM-QUIET and
+that quietness would cause the miss. They are not quiet: `s8_train_fsdp7b_b1`
+sits at 71% mem_util, HIGHER than any fitted training cell (56-61%), and is
+still missed 37% of the time. `s1_train_fsdp1b_b1` at 57% is missed entirely.
+mem_util does not explain this, which makes it the sixth mechanism proposed for
+this corpus and the sixth to fail.
+
+What the missed cells share is not a channel value but a STATUS: every one is an
+unseen CONFIGURATION of training -- batch 1, or activation checkpointing off.
+The detector generalises poorly to training configurations it was not fitted on,
+exactly as it generalises poorly to inference regimes it was not fitted on
+(section 25: unseen `kv32k_b16`/`b32` false-alarm at 0.917-0.938 while in-fit
+`kv32k` scores 0.325).
+
+### This is what section 23 already predicted
+
+Held out by workload, section 23 measured 0.453 run-TPR on H100 s16. These
+probes, which are genuinely held out, land at 0.256-0.625 -- the same
+neighbourhood. The in-sample 0.929 figures were always the outlier. Section 23
+was the honest number and should be the one quoted.
+
+### Consequence for the adversarial programme
+
+An evasion result measured against this detector is close to meaningless right
+now: the detector already misses 37-100% of HONEST training runs that differ
+only in batch size. MN-P being "caught 42/48" (section 24) was measured on a
+configuration the corpus contains; against these probes the same detector is at
+0.375. Any claimed evasion cost is therefore an artefact of which configurations
+happen to be in the fit.
+
+Caveat on strength: `s1_train_fsdp1b_b1` contributed a single stream, so 0/1 is
+weak on its own; the s8 cells at 8 streams each carry the result.
