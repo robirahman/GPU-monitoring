@@ -1779,3 +1779,61 @@ unrepresentative of the training the model actually learned.
   collection.
 * Any claim that a feature "separates the classes" must state the topology it
   was measured on. Section 24c did not, and was wrong for that reason.
+
+## 27. The training class is BIMODAL and inference sits between its two modes
+
+Splitting by topology AND platform (median of per-stream medians, non-idle):
+
+| scope | kind | platform | mem_util | power W |
+|---|---|---|---|---|
+| s1 | train | H100 | **61** | 509 |
+| s8 | train | H100 | **56** | 527 |
+| s16 | train | H100 | **4** | 188 |
+| s16 | train | A100-40GB | 7 | 160 |
+| s1 | infer | H100 | 47 | 308 |
+| s8 | infer | H100 | 47 | 318 |
+| s16 | infer | H100 | 47 | 367 |
+| s16 | infer | A100-40GB | 60 | 233 |
+
+Section 26 attributed the quiet multi-node training band to the A100 pair's
+13.6 Gbit/s fabric and predicted H100 (~100 GB/s) would be far higher. **It is
+not: H100 s16 training sits at 4%, lower than the A100's 7%.** Crossing the node
+boundary collapses mem_util from 56 to 4 and power from 527 to 188 W on the SAME
+hardware, at the same model sizes. Multi-node FSDP here is comm-dominated
+because per-GPU batch is 1-8; the fabric is not the binding constraint.
+
+Inference, by contrast, is stable at 47% across s1, s8 and s16.
+
+### Why no threshold on this channel can work
+
+    multi-node training   4 - 7%
+    inference            47 - 60%   <-- between the two training modes
+    single-node training 56 - 61%
+
+The training class is bimodal and inference lies BETWEEN its modes. Any rule
+that puts inference on one side puts one training mode on the wrong side. This
+is the structural reason the false alarm has survived five proposed mechanisms:
+the corpus has made "comm-bound" a proxy the model cannot avoid learning, and
+comm-boundness is correlated with topology, not with class.
+
+### What to collect: DECORRELATE class from comm-boundness
+
+The corpus does not need more of either class. It needs each class to SPAN the
+comm-bound axis, so it stops being a usable proxy:
+
+1. **Compute-bound MULTI-NODE training** (the big hole). Raise arithmetic
+   intensity per collective so the step is not dominated by the all-reduce:
+   large per-GPU batch (32-64 on H100-80GB), and/or gradient accumulation of K
+   micro-steps per all-reduce, which cuts comm per unit compute K-fold with no
+   extra memory. Note the failed 2026-09-17 attempt varied the WRONG knob:
+   --no-activation-ckpt changes recompute, not comm.
+2. **Comm-bound INFERENCE** (the mirror hole). Pipeline-parallel serving at tiny
+   batch spends its step waiting on activations, which should put inference down
+   near the multi-node-training mode. MN-P already demonstrates the mechanism.
+3. **Single-node training at LOW arithmetic intensity** -- tiny batch, so a
+   single-node cell lands in the quiet region without any inter-node comm. This
+   separates "quiet because comm-bound" from "quiet because small".
+
+Only (1) and (2) require new collection; all three are cheap. The point is not
+class balance, it is breaking the correlation between class and topology that
+the current corpus encodes.
