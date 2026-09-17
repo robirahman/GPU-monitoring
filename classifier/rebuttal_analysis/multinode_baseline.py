@@ -54,8 +54,10 @@ def cell_of(stem):
     return None, None
 
 
-def load(paths, window, stride):
+def load(paths, window, stride, stream_to_job=None):
     frames = []
+    if stream_to_job is None:
+        stream_to_job = {}
     for p in paths:
         stem = p.stem
         cell, hw = cell_of(stem)
@@ -63,6 +65,17 @@ def load(paths, window, stride):
             continue
         d = _normalize_columns(pd.read_parquet(p))
         lab = re.sub(r"_(node\d+|gpu\d+)", "", cell)
+        # JOB identity vs STREAM identity. The parquet already carries the
+        # job-level run_id the queue assigned -- one value shared by all 16
+        # ranks of a cell -- and sliding_windows() groups by `run_id` to
+        # segment, so it must receive the STREAM id or windows would be built
+        # across mixed ranks. Overwriting run_id with the stem (as this did)
+        # kept windowing correct but destroyed job identity, so the run rule
+        # counted a 16-rank job as 16 runs and reported stream-level numbers as
+        # job-level ones. Keep both: stem for windowing, parquet run_id for
+        # aggregation.
+        job = d["run_id"].iloc[0] if "run_id" in d.columns and len(d) else stem
+        stream_to_job[stem] = job
         d["workload_label"] = lab
         d["run_id"] = stem
         d["threeway_label"] = threeway_label(lab)
@@ -75,6 +88,7 @@ def load(paths, window, stride):
     w["grp"] = workload_group(w.workload_label.values)
     w["cls"] = [threeway_label(l) for l in w.workload_label]
     w["is_adv"] = [bool(ADV.search(l)) for l in w.workload_label]
+    w["job_id"] = w.run_id.map(stream_to_job).fillna(w.run_id)
     return w
 
 
@@ -111,19 +125,31 @@ def evaluate(w, cols, tau, k, m, seed=0):
         if (h.cls == "other").any() else float("nan"),
     )
     # Run-level k-of-m on consecutive windows of a run.
-    def run_rule(sub, pr):
+    def _kofm(v):
+        if len(v) < m:
+            return (v > tau).sum() >= k
+        return any((v[i:i + m] > tau).sum() >= k for i in range(len(v) - m + 1))
+
+    def run_rule(sub, pr, by="run_id"):
+        """k-of-m alerting, grouped by stream (run_id) or by JOB (job_id).
+
+        Grouping by run_id answers "would this STREAM alert" and inflates the
+        denominator 16x on a 2-node job. Grouping by job_id answers the
+        operational question -- would the monitor watching this JOB alert --
+        and is the number that belongs in a paper.
+        """
         alerts, n = 0, 0
-        for rid, idx in sub.groupby("run_id").indices.items():
-            v = pr[idx]
+        for _key, idx in sub.groupby(by).indices.items():
             n += 1
-            if len(v) < m:
-                alerts += int((v > tau).sum() >= k)
-                continue
-            hit = any((v[i:i + m] > tau).sum() >= k for i in range(len(v) - m + 1))
-            alerts += int(hit)
+            alerts += int(_kofm(pr[idx]))
         return alerts / n if n else float("nan")
-    out["run_tpr"] = run_rule(h[pos.values], ph[pos.values]) if pos.any() else float("nan")
-    out["run_fpr"] = run_rule(h[~pos.values], ph[~pos.values]) if (~pos).any() else float("nan")
+    for by, suffix in (("run_id", "_stream"), ("job_id", "")):
+        out["run_tpr" + suffix] = (run_rule(h[pos.values], ph[pos.values], by)
+                                   if pos.any() else float("nan"))
+        out["run_fpr" + suffix] = (run_rule(h[~pos.values], ph[~pos.values], by)
+                                   if (~pos).any() else float("nan"))
+    out["n_jobs"] = int(h.job_id.nunique())
+    out["n_streams"] = int(h.run_id.nunique())
     return out, h, ph
 
 
@@ -156,7 +182,8 @@ def main():
         if not paths:
             print(f"\n=== {name}: no parquets matched ===")
             continue
-        w = load(paths, a.window, a.stride)
+        stream_to_job = {}
+        w = load(paths, a.window, a.stride, stream_to_job)
         if w is None:
             print(f"\n=== {name}: nothing loaded ===")
             continue
@@ -171,8 +198,11 @@ def main():
         out, h, ph = res
         print(f"  window  TPR@{a.tau}={out['tpr']:.3f}  FPR={out['fpr']:.3f} "
               f"(infer {out['fpr_infer']:.3f} / nonml {out['fpr_nonml']:.3f})")
-        print(f"  run {a.k}-of-{a.m}  TPR={out['run_tpr']:.3f}  FPR={out['run_fpr']:.3f}"
-              f"   [{out['n_groups']} workload groups]")
+        print(f"  run {a.k}-of-{a.m} by JOB    TPR={out['run_tpr']:.3f}  "
+              f"FPR={out['run_fpr']:.3f}   [{out['n_jobs']} jobs]")
+        print(f"  run {a.k}-of-{a.m} by STREAM TPR={out['run_tpr_stream']:.3f}  "
+              f"FPR={out['run_fpr_stream']:.3f}   [{out['n_streams']} streams] "
+              f"<- inflated denominator, not a job-level result")
         rows.append(dict(platform=name, **out))
         # adversarial cells, scored by the same held-out-fit models is not
         # possible group-wise here; report them under a fit on ALL honest data.

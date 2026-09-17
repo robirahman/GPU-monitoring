@@ -1984,3 +1984,62 @@ property is that the configuration is absent from the fit, not any channel value
 screen exists precisely because failed cells leave full-length, correctly-named
 telemetry, and any analysis that bypasses it inherits that contamination. Two
 sections in this file have now been corrected for exactly this class of error.
+
+## 30. Run-level TPR depends entirely on an aggregation rule nobody stated
+
+Codex's review of PR #1 (P1, `multinode_baseline.py`) was right: the parquets
+carry a job-level `run_id` shared by all 16 ranks of a cell, and the loader
+overwrote it with the per-stream filename. `sliding_windows()` groups by
+`run_id` to segment, so the stem was needed THERE -- but the run rule then
+grouped by stream too, and every "run k-of-m" number in this file counted a
+16-rank job as 16 runs. They were stream-level results labelled job-level.
+
+Recomputing the section 29a cells three ways, same windows, same detector,
+tau=0.80, 3-of-5:
+
+| cell | jobs | by stream | job: pooled | job: median-of-ranks |
+|---|---|---|---|---|
+| `s16_train_ddp_resnet50_b512` | 3 | 0.042 | 0.333 | **0.000** |
+| `s16_train_fsdp7b_nockpt` | 3 | 0.125 | **1.000** | **0.000** |
+| `s16_train_fsdp1b_b32_nockpt` | 3 | 1.000 | 1.000 | 1.000 |
+| `s16_train_fsdp1b_seq2k_nockpt` | 3 | 1.000 | 1.000 | 1.000 |
+| `s8_train_fsdp1b_b1` | 3 | 0.525 | **1.000** | **0.000** |
+| `s8_train_fsdp7b_b1` | 3 | 0.600 | **1.000** | 0.333 |
+| `s1_train_fsdp1b_b1` | 3 | 0.000 | 0.000 | 0.000 |
+
+* **by stream** -- k-of-m on each rank's own window series. Denominator 16x too
+  large for a 2-node job; what this file reported until now.
+* **job: pooled** -- every rank's windows concatenated, then k-of-m. Permissive:
+  any rank can supply the 3 alerting windows, and rank order is arbitrary.
+* **job: median-of-ranks** -- median p_train ACROSS ranks per 15 s bucket, then
+  k-of-m on that series. Strict: the job as a whole must look like training.
+
+`s16_train_fsdp7b_nockpt` is missed 87.5% of the time, caught every time, or
+missed every time, depending purely on which rule is used. So:
+
+**No run-level TPR or FPR in this project is interpretable without naming the
+aggregation rule, and none of them have named it.** That includes the headline
+"100% of F=0.5 runs at 0.6% false alarms", section 23's 0.453/0.116, section
+24's 48/48, and section 28's 0.929.
+
+### What this does to section 29
+
+Section 29 claimed honest training is missed 37-100% of the time. Rule-dependent:
+
+* under **pooled** job aggregation the claim mostly dissolves -- 5 of 7 cells are
+  caught in every job, leaving only `resnet50_b512` (1/3) and
+  `s1_train_fsdp1b_b1` (0/3);
+* under **median-of-ranks** it strengthens sharply -- 5 of 7 honest training
+  cells are missed in EVERY job.
+
+Either way the sample is 3 jobs per cell, so single-cell fractions carry very
+little weight; the stream-level denominators (40-48) made the evidence look far
+stronger than it is.
+
+### Recommendation
+
+Pick median-of-ranks as the primary rule -- it answers "would a monitor watching
+this JOB conclude it is training", which is the deployment question, and it
+cannot be satisfied by one anomalous rank. Report pooled as a sensitivity. Never
+report stream-level as a run-level result. And state the rule, tau, k and m
+beside every number.

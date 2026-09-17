@@ -264,9 +264,17 @@ echo SETUP_OK_\$(hostname)" 2>&1 >> "$setup_out" ) &
   # ASSERT setup. Previously the SETUP_OK count went to a discarded subshell, so a
   # failed clone or pip install passed silently -- and then every cell died in ~35s
   # with 0/N workers, which is almost certainly what happened overnight.
-  local n_ok; n_ok=$(grep -c 'SETUP_OK' "$setup_out" 2>/dev/null || echo 0)
-  local n_jax; n_jax=$(grep -c 'JAXOK' "$setup_out" 2>/dev/null || echo 0)
-  say "  setup: SETUP_OK=$n_ok JAXOK=$n_jax (need >=1 of each)"
+  # `grep -c` prints 0 AND exits 1 when there is no match, so `|| echo 0`
+  # appended a SECOND zero and n_ok became "0\n0". Every later comparison then
+  # died with "integer expression expected", evaluated false, and the guard
+  # fell through -- launching the whole queue precisely in the no-worker case
+  # it was written to catch. Strip to digits and default, so the zero case is a
+  # real zero.
+  local n_ok n_jax
+  n_ok=$(grep -c 'SETUP_OK' "$setup_out" 2>/dev/null); n_ok=${n_ok//[^0-9]/}; n_ok=${n_ok:-0}
+  n_jax=$(grep -c 'JAXOK' "$setup_out" 2>/dev/null); n_jax=${n_jax//[^0-9]/}; n_jax=${n_jax:-0}
+  say "  setup: SETUP_OK=$n_ok JAXOK=$n_jax of $nc worker(s) (need >=1 of each)"
+  [ "$n_ok" -lt "$nc" ] && say "  WARNING: only $n_ok/$nc workers completed setup"
   if [ "$n_ok" -lt 1 ] || [ "$n_jax" -lt 1 ]; then
     say "  SETUP FAILED -- not running cells, not marking collected. Tail:"
     tail -12 "$setup_out" | sed 's/^/      /'
