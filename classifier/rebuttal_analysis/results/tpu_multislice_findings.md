@@ -1942,3 +1942,45 @@ happen to be in the fit.
 
 Caveat on strength: `s1_train_fsdp1b_b1` contributed a single stream, so 0/1 is
 weak on its own; the s8 cells at 8 streams each carry the result.
+
+### 29a. CORRECTION: section 29's numbers were contaminated by idle streams
+
+Section 29 scored the probe cells by pulling raw streams from GCS. The ingest
+applies an idle screen; that ad-hoc pull did not, so failed reps that recorded
+telemetry while the workload was crashing were mixed into the scored windows and
+dragged p_train down. Re-scored on the INGESTED (screened) data, all streams:
+
+| cell | streams | mem_util | power W | p_train | run 3-of-5 | s29 said |
+|---|---|---|---|---|---|---|
+| `s16_train_fsdp1b_b32_nockpt` | 48 | 9 | 144 | 0.911 | **48/48 = 1.000** | 0.400 |
+| `s16_train_fsdp1b_seq2k_nockpt` | 48 | 10 | 163 | 0.913 | **48/48 = 1.000** | 0.256 |
+| `s16_train_ddp_resnet50_b512` | 48 | 27 | 110 | 0.673 | **2/48 = 0.042** | not scored |
+| `s16_train_fsdp7b_nockpt` | 48 | 5 | 113 | 0.719 | **6/48 = 0.125** | not scored |
+| `s1_train_fsdp1b_b1` | 5 | 58 | 142 | 0.189 | **0/5 = 0.000** | 0/1 |
+| `s8_train_fsdp1b_b1` | 40 | 29 | 179 | 0.712 | **21/40 = 0.525** | 0.375 |
+| `s8_train_fsdp7b_b1` | 40 | 71 | 290 | 0.680 | **24/40 = 0.600** | 0.625 |
+
+**What changes.** The two `_nockpt` multislice cells are caught on EVERY run, not
+missed 60-74% of the time. Section 29 was wrong about them.
+
+**What survives, and is worse than reported.** Two cells section 29 never scored
+are the most badly missed in the corpus:
+
+* `s16_train_ddp_resnet50_b512` -- honest ResNet-50 training on 16 GPUs, missed
+  on **46 of 48 runs (95.8%)**
+* `s16_train_fsdp7b_nockpt` -- honest 7B FSDP training, missed on 42 of 48
+  (87.5%)
+
+and the small-batch probes hold: `s1_train_fsdp1b_b1` missed on all 5 runs,
+`s8_train_fsdp1b_b1` on 47.5%, `s8_train_fsdp7b_b1` on 40%.
+
+So the false-negative finding stands and strengthens: honest training is missed
+on up to 96% of runs, with no attacker involved. Only the attribution to
+"small batch" narrows -- `resnet50_b512` uses a LARGE batch (512) and is the
+worst case, so batch size is not the variable either. Once again the common
+property is that the configuration is absent from the fit, not any channel value.
+
+**Process lesson.** Score on ingested data, never on a raw bucket pull. The idle
+screen exists precisely because failed cells leave full-length, correctly-named
+telemetry, and any analysis that bypasses it inherits that contamination. Two
+sections in this file have now been corrected for exactly this class of error.
