@@ -632,10 +632,19 @@ for rep in $(seq 1 "$REPS"); do
   # keeps activations resident and read back instead of recomputed, which is
   # the cheapest way to buy memory traffic without changing the model; large
   # batch and longer sequence add more.
-  c=s16_train_fsdp1b_b32_nockpt;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size 32 --seq-len 1024 --no-activation-ckpt --duration "$DUR"
-  c=s16_train_fsdp1b_seq2k_nockpt; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size 16 --seq-len 2048 --no-activation-ckpt --duration "$DUR"
-  c=s16_train_fsdp7b_nockpt;       mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --batch-size 8 --seq-len 1024 --no-activation-ckpt --duration "$DUR"
-  c=s16_train_ddp_resnet50_b512;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/pytorch_training_ddp.py --model resnet50 --batch-size 512 --amp --duration "$DUR"
+  # Batch sizes are PER-GPU-MEMORY, not universal. Turning off activation
+  # checkpointing is what buys the DRAM traffic, and it is also what makes the
+  # footprint explode: --size 1b --batch-size 32 --seq-len 1024 peaked at
+  # 40.6 GB and OOM'd at step 0 on an A100-40GB, having been sized for the
+  # H100's 80 GB. Defaults below are H100; export the knobs for a 40 GB card.
+  NOCKPT_1B_B=${NOCKPT_1B_B:-32}
+  NOCKPT_1B_SEQ2K_B=${NOCKPT_1B_SEQ2K_B:-16}
+  NOCKPT_7B_B=${NOCKPT_7B_B:-8}
+  RESNET_B=${RESNET_B:-512}
+  c=s16_train_fsdp1b_b32_nockpt;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size "$NOCKPT_1B_B" --seq-len 1024 --no-activation-ckpt --duration "$DUR"
+  c=s16_train_fsdp1b_seq2k_nockpt; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size "$NOCKPT_1B_SEQ2K_B" --seq-len 2048 --no-activation-ckpt --duration "$DUR"
+  c=s16_train_fsdp7b_nockpt;       mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --batch-size "$NOCKPT_7B_B" --seq-len 1024 --no-activation-ckpt --duration "$DUR"
+  c=s16_train_ddp_resnet50_b512;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/pytorch_training_ddp.py --model resnet50 --batch-size "$RESNET_B" --amp --duration "$DUR"
 
   # ---- CONCURRENCY ladder (section 24b) -----------------------------------
   # 24b refuted both mechanisms offered for the obligatory-inference false
