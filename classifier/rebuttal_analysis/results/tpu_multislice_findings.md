@@ -1727,3 +1727,55 @@ failure already quantified at ~12 points of accuracy.
 Note also that the run-level false alarm is NOT monotonic in concurrency:
 0.354 at batch 8, 0.917 at 16, 0.938 at 32, 0.325 at 64 (the last in-fit). The
 peak sits at mid-concurrency, which no mechanism proposed so far predicts.
+
+## 26. CORRECTION to 24c/25: training is not DRAM-quiet -- MULTI-NODE training is
+
+Section 24c claimed DRAM activity separates the classes cleanly, inference
+32-60% against training 3-25%, and section 25 recommended collecting DRAM-busy
+training cells to break that shortcut. Both were measured on MULTI-NODE cells
+only. Across the whole corpus (median of per-stream medians, non-idle streams):
+
+| group | n | mem_util median | range |
+|---|---|---|---|
+| single-GPU training (s1) | 11 | **61** | 61 - 62 |
+| single-node 8-GPU training (s8) | 25 | **56** | 54 - 68 |
+| multi-node inference (s16) | 25 | 47 | 2 - 62 |
+| single-GPU training (legacy mixed) | 25 | 23 | 0 - 67 |
+| **multi-node training (s16)** | 25 | **5** | 0 - 71 |
+
+Training spans 5% to 61%. The "training is DRAM-quiet" band was an artifact of
+restricting to s16, where training is communication-bound: on the A100 pair the
+inter-node fabric is 13.6 Gbit/s (section 22), so an s16 training step spends
+most of its time waiting and the memory controller is idle. That is a TOPOLOGY
+effect, not a training-vs-inference effect.
+
+### This explains the false alarm better than anything proposed so far
+
+The fitted corpus is dominated by single-GPU and single-node training, which
+sits at 56-61% mem_util. Multi-node long-context inference sits at 47%.
+Multi-node training sits at 5%. So on this channel a long-context serving job is
+much NEARER the fitted training class than real multi-node training is, and
+calling it training is the reasonable inference from what the model was shown.
+
+Four mechanisms were proposed and refuted before this one (prefill, level
+overlap, concurrency, the Stage-2 level drop). What they have in common is that
+each was measured within the multi-node slice, where the training class is
+unrepresentative of the training the model actually learned.
+
+### What this changes
+
+* **Section 25's recommendation (2) was wrong and cost a collection run.**
+  DRAM-busy training cells already exist in the corpus -- every single-node
+  training cell is one. The `--no-activation-ckpt` cells collected on 2026-09-17
+  to fill that supposed gap came back at mem_util 5 (`train_fsdp7b_nockpt`) and
+  27 (`train_ddp_resnet50_b512`), i.e. they did not raise DRAM traffic at all.
+  Disabling activation checkpointing REMOVES the recompute traffic that
+  checkpointing adds; the reasoning behind those cells was backwards.
+* **The real gap is multi-node training that is not communication-bound** --
+  i.e. a fabric fast enough that the GPUs are not idle. On the H100 pair
+  (~100 GB/s) s16 training should sit far above 5%; the 5% figure is A100-pair
+  dominated. This is measurable from data already collected, by splitting the
+  s16 training cells by platform, and should be checked before any more
+  collection.
+* Any claim that a feature "separates the classes" must state the topology it
+  was measured on. Section 24c did not, and was wrong for that reason.
