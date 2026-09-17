@@ -1837,3 +1837,51 @@ comm-bound axis, so it stops being a usable proxy:
 Only (1) and (2) require new collection; all three are cheap. The point is not
 class balance, it is breaking the correlation between class and topology that
 the current corpus encodes.
+
+## 28. The bimodality does NOT break the detector -- on cells it has seen
+
+Section 27 predicted the bimodal training class would be a structural problem.
+Scoring every topology x class group with the persisted detector:
+
+| scope | kind | platform | p_train | frac>tau | run 3-of-5 |
+|---|---|---|---|---|---|
+| s1 | train | H100 | 0.975 | 0.992 | 6/9 = 0.667 |
+| s8 | train | H100 | 0.944 | 0.917 | 13/14 = 0.929 |
+| s16 | train | H100 | 0.867 | 0.777 | **13/14 = 0.929** |
+| s16 | train | A100-40 | 0.856 | 0.607 | **13/14 = 0.929** |
+| s1 | infer | H100 | 0.001 | 0.000 | 0/14 = 0.000 |
+| s8 | infer | H100 | 0.052 | 0.000 | 0/14 = 0.000 |
+| s16 | infer | H100 | 0.615 | 0.070 | 1/14 = 0.071 |
+| s16 | infer | A100-40 | 0.452 | 0.000 | 0/14 = 0.000 |
+| s1/s8/s16 | nonml | both | 0.006-0.077 | 0.000-0.069 | 0.000-0.071 |
+
+**Multi-node training is caught 13/14 on both platforms**, despite sitting at
+4-7% mem_util where section 27 predicted trouble. The model evidently
+distinguishes "quiet because comm-bound training" from "quiet non-ML" using
+something other than the DRAM channel. The dangerous error -- missing real
+training -- does not appear here.
+
+### The caveat that decides how to read this
+
+These cells are IN the fitted corpus. 0.929 TPR and 0.071 FPR measure fit, not
+generalisation, and must not be quoted as detector performance. Section 23's
+held-out-by-workload figures on the same s16 H100 slice were 0.453 run-TPR at
+0.116 run-FPR -- roughly half the TPR and twice the false-alarm rate.
+
+Put beside section 25, the picture is consistent and narrow:
+
+* in-sample, every topology and class is handled well, bimodality included;
+* out-of-sample, unseen long-context inference false-alarms at 0.917-0.938
+  (`kv32k_b16`, `kv32k_b32`), while its in-fit sibling `kv32k` scores 0.325.
+
+So this is a COVERAGE problem about unseen inference regimes, not a structural
+problem with the bimodal training class. Section 27's decorrelation cells may
+still help, but the evidence does not require them: what the detector cannot do
+is generalise to inference it has never seen, and section 25's recommendation
+(1) -- diverse long-context inference -- remains the load-bearing one.
+
+The one probe section 27 still motivates is a SINGLE-NODE training cell at tiny
+batch: the model has learned "single-node training is DRAM-busy" and
+"multi-node training is quiet", and a quiet single-node cell is a combination it
+has never been shown. If that is missed, the dangerous error exists after all,
+in a case that needs no attacker and no multi-node hardware to produce.
