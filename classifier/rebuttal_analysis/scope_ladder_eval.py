@@ -126,11 +126,22 @@ def oof_probs(X, y, groups, n_splits):
     return p, k
 
 
-def eval_cell(win, feats, scope, neg_type, n_splits=5):
+def eval_cell(win, feats, scope, neg_type, n_splits=5, train_match=None):
     """Binary train-vs-(neg_type) within one scope. Returns metrics + an OOF
-    per-window frame (for run-level detection)."""
+    per-window frame (for run-level detection).
+
+    train_match restricts the POSITIVE class to workload labels containing one of
+    the given substrings. Without it the positive class is every training job at
+    that scope -- and the scopes do not hold the same training workloads (s1 has
+    only the fsdp rung, s8 adds DDP, s16 adds the 30B and the adversarial cells),
+    so DeltaAUC would conflate the scope effect with which workloads happen to
+    exist at that scope. Pass --train-workloads fsdp1b for the matched ladder.
+    """
     sub = win[win["scope"] == scope].copy()
     is_train = sub["threeway_label"] == "ml_training"
+    if train_match:
+        is_train &= sub["workload_label"].str.contains(
+            "|".join(train_match), case=False, na=False, regex=True)
     is_neg = (sub["threeway_label"] == "ml_inference") & \
              sub["workload_label"].str.contains(neg_type, case=False, na=False)
     sub = sub[is_train | is_neg]
@@ -285,6 +296,12 @@ def main():
     ap.add_argument("--target-fp-per-gpu-hour", type=float, default=0.1)
     ap.add_argument("--arms", nargs="+", default=list(ARMS), choices=ARMS)
     ap.add_argument("--negatives", nargs="+", default=["inferrep", "infershard"])
+    ap.add_argument("--train-workloads", nargs="*", default=None,
+                    help="Restrict the POSITIVE class to workload labels containing "
+                         "these substrings (e.g. fsdp1b). Needed for a matched "
+                         "ladder: without it each scope contributes whatever "
+                         "training workloads it happens to have, confounding the "
+                         "scope effect with workload composition.")
     ap.add_argument("--ablations", nargs="+", default=list(ABLATIONS.keys()))
     ap.add_argument("--bootstrap", type=int, default=2000)
     ap.add_argument("--synthetic", action="store_true",
@@ -318,7 +335,8 @@ def main():
                     continue
                 oof_by_scope = {}
                 for scope in scopes_present:
-                    res = eval_cell(win, feats, scope, neg)
+                    res = eval_cell(win, feats, scope, neg,
+                                    train_match=args.train_workloads)
                     if res is None:
                         continue
                     m = res["metrics"]
@@ -326,6 +344,7 @@ def main():
                     oof_by_scope[scope] = res["oof"]
                     summary_rows.append({
                         "arm": arm, "negative": neg, "ablation": ab, "scope": scope,
+                        "train_filter": ",".join(args.train_workloads) if args.train_workloads else "all",
                         **m, **{f"rl_{k}": v for k, v in rlm.items()}})
                     tag = f"{arm:11s} {neg:11s} {ab:14s} {scope:5s}"
                     print(f"  {tag}  AUC={m['auc']:.3f} TPR@1%={m['tpr_at_1pct_fpr']:.3f} "
@@ -336,6 +355,7 @@ def main():
                     d = bootstrap_delta(oof_by_scope, hi, lo, B=args.bootstrap)
                     if d:
                         mono_rows.append({"arm": arm, "negative": neg, "ablation": ab,
+                                          "train_filter": ",".join(args.train_workloads) if args.train_workloads else "all",
                                           "delta": f"{hi}-{lo}", **d})
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
