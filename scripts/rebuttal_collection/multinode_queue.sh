@@ -704,6 +704,16 @@ for rep in $(seq 1 "$REPS"); do
 
   # -- Phase B: S8 (each node runs its own single-node job) --
   c=s8_train_fsdp1b;               s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 1b --duration "$DUR"
+  # QUIET SINGLE-NODE TRAINING (section 28's probe). The detector has learned
+  # "single-node training is DRAM-busy" (56-61% mem_util) and "multi-node
+  # training is quiet" (4-7%). A quiet cell with NO inter-node communication is
+  # a combination it has never been shown: batch 1 gives low arithmetic
+  # intensity, so the step is launch- and latency-bound rather than
+  # bandwidth-bound, without any fabric involved. If these are missed, the
+  # dangerous error (failing to flag real training) exists in a case that needs
+  # no attacker and no multi-node hardware.
+  c=s8_train_fsdp1b_b1;            s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 1b --batch-size 1 --seq-len 256 --duration "$DUR"
+  c=s8_train_fsdp7b_b1;            s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 256 --duration "$DUR"
   c=s8_train_ddp_resnet50;         s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s8_infershard_qwen72b_tp8;     s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL" 8 1
   c=s8_infershard_qwen1_5b_tp4pp2; s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 2
@@ -789,6 +799,7 @@ for rep in $(seq 1 "$REPS"); do
 
   # -- Phase C: S1 (single GPU, no collectives -- the degenerate baseline) --
   c=s1_train_fsdp1b;               s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 1b --duration "$DUR"
+  c=s1_train_fsdp1b_b1;            s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/fsdp_training.py --size 1b --batch-size 1 --seq-len 256 --duration "$DUR"
   c=s1_train_ddp_resnet50;         s1_train "$c" "$(rid_for "$c" "$rep")"                   -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
   c=s1_inferrep_qwen1_5b;            s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
   # S1 note: with one GPU there is no collective, so MN-O here reduces to the
