@@ -39,17 +39,38 @@ done
 # 2026-09-16 both H100 nodes returned STOCKOUT in us-central1-a, and the old
 # code issued one start, ignored the failure, and went on to stage and launch
 # against instances that were still TERMINATED. Capacity comes back, so poll.
-say "starting the pair (retrying while capacity is short)"
+# Start, then require the pair to STAY up. Winning the start is not the same as
+# holding the instance: on 2026-09-16 the retry loop started spar-gpu-1 three
+# times and Spot reclaimed it after 40, 39 and 38 seconds, far short of the
+# ~10 min of bootstrap and staging before the first cell. The old loop saw
+# RUNNING once and went on to stage against a node that was already gone.
+#
+# STABILITY_SEC is therefore a floor, not a nicety: if the pair cannot survive
+# it, the run cannot start, and saying so beats staging into a corpse.
+say "starting the pair (retry while short; must then hold ${STABILITY_SEC:-180}s)"
 _t0=$SECONDS
 while :; do
   gcloud compute instances start "$NODE0" "$NODE1" --zone="$ZONE" --project="$PROJECT" >/dev/null 2>&1
   s0="$(st "$NODE0")"; s1="$(st "$NODE1")"
-  [ "$s0" = "RUNNING" ] && [ "$s1" = "RUNNING" ] && { say "both RUNNING"; break; }
+  if [ "$s0" = "RUNNING" ] && [ "$s1" = "RUNNING" ]; then
+    say "  both RUNNING -- confirming they hold for ${STABILITY_SEC:-180}s"
+    _held=1; _h0=$SECONDS
+    while [ $((SECONDS - _h0)) -lt "${STABILITY_SEC:-180}" ]; do
+      sleep 30
+      s0="$(st "$NODE0")"; s1="$(st "$NODE1")"
+      if [ "$s0" != "RUNNING" ] || [ "$s1" != "RUNNING" ]; then
+        say "  LOST during the hold ($s0/$s1) after $((SECONDS - _h0))s -- not staging"
+        _held=0; break
+      fi
+    done
+    [ "$_held" = "1" ] && { say "pair held ${STABILITY_SEC:-180}s -- proceeding"; break; }
+  fi
   if [ $((SECONDS - _t0)) -ge "${START_WAIT:-10800}" ]; then
-    say "GIVING UP: could not start both after ${START_WAIT:-10800}s ($s0/$s1)"
+    say "GIVING UP after ${START_WAIT:-10800}s: the pair will not stay up ($s0/$s1)."
+    say "  Spot capacity is reclaiming these instances faster than a run can start."
     exit 1
   fi
-  say "  not up yet ($s0/$s1) -- retrying in ${START_RETRY:-300}s"
+  say "  retrying in ${START_RETRY:-300}s"
   sleep "${START_RETRY:-300}"
 done
 
