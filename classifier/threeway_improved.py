@@ -559,27 +559,47 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
     feats = {}
 
     # ── 1. Base statistics (9 signals × 13 stats = 117 features) ─────────
-    for sig in RAW_SIGNALS:
-        vals = chunk[sig].fillna(0).values.astype(float) if sig in chunk.columns else np.zeros(max(len(chunk), 1))
-        n = len(vals)
-        mu = vals.mean()
-        sd = vals.std()
-        vmin, vmax = vals.min(), vals.max()
-        p25, p50, p75, p95 = np.percentile(vals, [25, 50, 75, 95]) if n > 1 else (mu,) * 4
+    # BATCHED ACROSS SIGNALS, not because it is tidier but because the per-call
+    # overhead dominated. Profiled on 2026-09-18: windowing the corpus cost
+    # 23.4 ms/window, of which scipy.stats' axis_nan_policy wrapper was 56% --
+    # 18 calls per window (9 signals x skew+kurtosis), and most of that time was
+    # the wrapper re-deriving each function's signature with inspect and
+    # re-broadcasting its arguments, not computing moments. scipy guarantees
+    # f(M, axis=0)[i] == f(M[:, i]), verified here including NaN placement on
+    # constant columns, so batching is numerically identical and turns 18 calls
+    # into 2 (and 9 np.percentile calls into 1).
+    cols = [chunk[s].fillna(0).values.astype(float) if s in chunk.columns
+            else np.zeros(max(len(chunk), 1)) for s in RAW_SIGNALS]
+    M = np.column_stack(cols)
+    n = M.shape[0]
+    mus = M.mean(axis=0)
+    sds = M.std(axis=0)
+    vmins = M.min(axis=0)
+    vmaxs = M.max(axis=0)
+    P = (np.percentile(M, [25, 50, 75, 95], axis=0) if n > 1
+         else np.tile(mus, (4, 1)))
+    # Constant columns (an idle GPU, or a TPU's hard-wired -1 sentinel) make
+    # scipy return NaN here -- that is the EXISTING behaviour, preserved: the
+    # hot paths nan_to_num it to 0 downstream.
+    skews = (sp_stats.skew(M, axis=0) if n > 2 else np.zeros(len(RAW_SIGNALS)))
+    kurts = (sp_stats.kurtosis(M, axis=0) if n > 3 else np.zeros(len(RAW_SIGNALS)))
 
+    for i, sig in enumerate(RAW_SIGNALS):
+        mu, sd = mus[i], sds[i]
+        p25, p50, p75, p95 = P[0, i], P[1, i], P[2, i], P[3, i]
         feats[f"{sig}_mean"] = mu
         feats[f"{sig}_std"] = sd
-        feats[f"{sig}_min"] = vmin
-        feats[f"{sig}_max"] = vmax
+        feats[f"{sig}_min"] = vmins[i]
+        feats[f"{sig}_max"] = vmaxs[i]
         feats[f"{sig}_p25"] = p25
         feats[f"{sig}_p50"] = p50
         feats[f"{sig}_p75"] = p75
         feats[f"{sig}_p95"] = p95
         feats[f"{sig}_iqr"] = p75 - p25
-        feats[f"{sig}_range"] = vmax - vmin
+        feats[f"{sig}_range"] = vmaxs[i] - vmins[i]
         feats[f"{sig}_cv"] = sd / (abs(mu) + 1e-9)
-        feats[f"{sig}_skew"] = float(sp_stats.skew(vals)) if n > 2 else 0.0
-        feats[f"{sig}_kurt"] = float(sp_stats.kurtosis(vals)) if n > 3 else 0.0
+        feats[f"{sig}_skew"] = float(skews[i])
+        feats[f"{sig}_kurt"] = float(kurts[i])
 
     # ── 2. Cross-signal derived features (5) ─────────────────────────────
     util = chunk["gpu_utilization_pct"].fillna(0).values.astype(float)
