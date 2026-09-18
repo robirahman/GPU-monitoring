@@ -2043,3 +2043,99 @@ this JOB conclude it is training", which is the deployment question, and it
 cannot be satisfied by one anomalous rank. Report pooled as a sensitivity. Never
 report stream-level as a run-level result. And state the rule, tau, k and m
 beside every number.
+
+---
+
+## 31. Binary train-vs-rest baseline, recomputed on per-stream windows (2026-09-18)
+
+The 09-16 run of `binary_train_vs_rest.py` is superseded. It windowed on `run_id`,
+and both the TPU queue and the multi-node GPU queue deliberately mandate ONE
+shared `run_id` across every worker of a cell -- all 16 chips of
+`tpuT16_advtrain_satfiller_only_rep1` carry `run_id=c106c001eec0` with 16 distinct
+`gpu_uuid`s. 559 of 2,693 `run_id`s span more than one stream, so for those cells a
+30 s window held ~480 samples from 16 devices instead of 30 from one and every
+acf / fft / transition feature was a chip-ordering artifact. Windows are now built
+per stream. Corpus: 229,717 windows, 154,781 of them honest, 246 workload groups.
+
+**Headline, held out by workload, tau=0.80, 3-of-5:**
+
+| level | TPR | FPR | n positive | n negative |
+|---|---|---|---|---|
+| window | 0.6488 | 0.0069 | 51,135 | 103,646 |
+| stream (k-of-m per device) | 0.5953 | 0.0102 | 1,668 | 3,027 |
+| **job (k-of-m per execution)** | **0.3053** | **0.0177** | **452** | **902** |
+
+Window-level ROC-AUC is 0.9700, accuracy 0.8794, precision 0.9790.
+
+### 31a. The stream/job gap is real, and stream-level is the inflated one
+
+Verified from the per-window prediction dump rather than asserted: 993 of 1,668
+training streams alert, but those 993 live in only **132 distinct jobs** of 452.
+The job rule is a strict superset of "any of its streams alerts" (138 >= 132), so
+this is not a bug -- wide jobs alert as a block and the stream denominator counts
+them 8 or 16 times. Section 30's rule stands: never report stream-level as a
+run-level result.
+
+### 31b. Detection is mostly a function of how many devices the job uses
+
+| training job width | n | TPR |
+|---|---|---|
+| 1 device | 294 | 0.1020 |
+| 2-5 devices | 41 | 0.2439 |
+| 8 devices | 74 | 0.8514 |
+| 16 devices | 43 | 0.8140 |
+
+An 8-GPU training job is **8.3x** more likely to be caught than a single-GPU one
+at the same threshold. The aggregate 0.3053 is therefore not a property of the
+detector so much as of the corpus's mix of job widths -- 294 of 452 training jobs
+are single-device. Any headline run-level number must state the width mix behind
+it. Note the false-alarm direction too: 16-stream non-training jobs are the worst
+at FPR 0.0513, while 8-stream ones are at 0.0000.
+
+### 31c. A GPU-calibrated tau does not transfer to TPU or AMD at all
+
+Window level at tau=0.80:
+
+| platform | n windows | TPR | FPR | ROC-AUC |
+|---|---|---|---|---|
+| NVIDIA H100 | 71,630 | 0.8083 | 0.0007 | 0.9826 |
+| NVIDIA B200 | 3,665 | 0.6796 | 0.0000 | 0.9883 |
+| NVIDIA A100 | 28,030 | 0.6187 | 0.0506 | 0.9221 |
+| NVIDIA 5080 | 2,264 | 0.3506 | 0.0111 | 0.9498 |
+| NVIDIA 5090 | 1,484 | 0.1525 | 0.0311 | 0.9486 |
+| AMD RX 9070 XT | 2,127 | 0.0217 | 0.0012 | 0.9221 |
+| TPU v6e | 9,463 | 0.0178 | 0.0000 | 0.9620 |
+| TPU v5e | 29,013 | **0.0000** | 0.0001 | 0.9684 |
+
+This is the sharpest result in the run. **The ranking is fine everywhere --
+AUC 0.92 to 0.99 on every platform -- but the absolute threshold only works on
+the hardware the level features were calibrated on.** TPU v5e has AUC 0.9684 and
+catches nothing at all at tau=0.80; AMD has AUC 0.9221 and catches 2%. Sections
+14-18 said absolute footprint levels do not transfer across hardware; this is
+what that costs operationally. A deployed detector needs a per-platform
+threshold, and any cross-hardware claim quoted at a single tau is measuring the
+calibration, not the signal.
+
+### 31d. Two fixes the full-corpus run forced
+
+* `load_all_data` dropped rows with a NULL `ts` but not a non-finite one --
+  `.isna()` is False for `inf`, and the downstream `int64` cast then failed for
+  the entire corpus.
+* `assign_stream_and_job_ids` string-concatenates identity columns into
+  `stream_id`. Under the pandas `str` dtype a NULL propagates through `+` rather
+  than becoming `"nan"`, so groupby dropped that key and `transform("min")`
+  returned NaN. `gpu_uuid` is null on 16,812 rows and `gpu_name` on 14,185,
+  because `load_all_data` concatenates sections (week4/5/7, ddp, dscale) whose
+  frames never had those columns.
+
+### 31e. Ten streams excluded: ambiguous identity
+
+The AMD sampling-rate ablation cells (`rate0p5hz_rep1`, `rate10p0hz_rep1`, ...)
+ran **four different workloads** -- idle, `llm_infer_phi3_mini`,
+`adversarial_K_online_learning`, `pytorch_resnet_cifar10_amp` -- sequentially on
+the SAME card under ONE `run_id`. `stream_id` is `(run_id, gpu_uuid)`, so all four
+collapse into one "stream", `sliding_windows` concatenates them into a single
+series and takes the label from `.iloc[0]`, which labels every window of those
+streams with whichever workload happened to be first. 911 windows (0.40%) from 10
+streams, dropped rather than scored. If those cells are ever needed, the stream
+key has to include the workload label.

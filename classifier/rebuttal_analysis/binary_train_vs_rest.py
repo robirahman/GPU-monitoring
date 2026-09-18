@@ -96,6 +96,9 @@ def main():
     ap.add_argument("--windows", default=None,
                     help="cached per-stream window parquet (built by this "
                          "script's build_windows if absent)")
+    ap.add_argument("--dump", default=None,
+                    help="write per-window (stream, job, y, p) so the run-level "
+                         "rules can be re-derived without refitting")
     ap.add_argument("--out",
                     default="classifier/rebuttal_analysis/results/binary_train_vs_rest.json")
     a = ap.parse_args()
@@ -217,6 +220,14 @@ def main():
         byplat[name] = row
         print(f"  {name:16s} n {row['windows']:6d}  TPR {row['tpr']:.4f}  "
               f"FPR {row['fpr']:.4f}  AUC {row['auc']:.4f}")
+
+    if a.dump:
+        pd.DataFrame({"run_id": wk.run_id.values, "job_id": wk.job_id.values,
+                      "workload_label": wk.workload_label.values,
+                      "gpu_name": wk.get("gpu_name", pd.Series([""] * len(wk))).values,
+                      "threeway_label": wk.threeway_label.values,
+                      "y": yk, "p": pk}).to_parquet(a.dump, index=False)
+        print(f"dumped per-window predictions -> {a.dump}")
 
     if a.out:
         os.makedirs(os.path.dirname(a.out), exist_ok=True)
