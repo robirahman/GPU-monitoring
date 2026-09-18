@@ -2139,3 +2139,111 @@ series and takes the label from `.iloc[0]`, which labels every window of those
 streams with whichever workload happened to be first. 911 windows (0.40%) from 10
 streams, dropped rather than scored. If those cells are ever needed, the stream
 key has to include the workload label.
+
+---
+
+## 32. Multi-node three-way detection, held out by workload FAMILY (2026-09-18)
+
+`classifier/rebuttal_analysis/multinode_family_holdout.py`. Multi-node windows
+only, where "multi-node" means the job spanned more than one HOST, measured from
+`hostname` / the `_w<W>c<C>` token rather than inferred from the chip count in
+the scope name. 126,328 windows, 370 jobs, 3,228 streams, 102 workloads,
+**21 families**, 174 features. Class mix: training 51.5%, other 26.1%,
+inference 22.4%.
+
+Families exist because holding out a *workload* still leaks: `interleave_f02 /
+f05 / f10 / f20 / f50` is one experiment swept over a dilution fraction, and
+`qwen72b_kv1k / kv8k / kv32k / kv32k_b8 / b16 / b32 / out2k` is one vLLM cell
+swept over context and batch. Families also strip the scope prefix, so a concept
+never straddles the split by appearing on two platforms. The assignment is
+printed in full by the script and should be re-read before trusting any number.
+
+Protocol: families split 60/20/20, stratified by dominant class; seven model
+configurations tuned on val; test reported for the val-argmax; repeated over 12
+random splits.
+
+### 32a. The headline, with its floor
+
+| statistic | mean | sd | min | median | max |
+|---|---|---|---|---|---|
+| test accuracy (window) | 0.5688 | 0.1965 | 0.2813 | 0.5647 | 0.8621 |
+| test accuracy (job, majority vote) | 0.5966 | 0.2048 | 0.1750 | 0.6325 | 0.8431 |
+| test macro-F1 | 0.4794 | 0.1843 | 0.1836 | — | 0.7914 |
+| majority-class baseline | 0.4763 | 0.1945 | 0.0686 | — | 0.7650 |
+
+**Paired skill over the majority-class baseline: +0.0924 (sd 0.1786), 95% CI
+[-0.021, +0.206], t=1.79 p=0.101, Wilcoxon p=0.092. It beats the baseline in
+9 of 12 splits and loses in 3, one of them by 0.20.** At family-level holdout on
+the multi-node corpus this model is not statistically distinguishable from
+"always predict the training-set majority class". Macro-F1 is above chance
+(0.479 against 0.333, CI [0.362, 0.596]), so it is not learning *nothing* -- but
+accuracy is carried by the class prior, not by generalisation.
+
+### 32b. It generalises to unseen TRAINING families and not to unseen INFERENCE ones
+
+Per-family test accuracy, pooled over the splits that held each family out:
+
+| class | family | held out | accuracy |
+|---|---|---|---|
+| inference | infershard_qwen | 3x | **0.0185** |
+| training | advtrain_satfiller | 5x | **0.0562** |
+| inference | inferrep | 4x | 0.1835 |
+| inference | infershard | 3x | 0.3145 |
+| other | nonml_lowpower | 4x | 0.4081 |
+| other | nonml_himem | 5x | 0.6163 |
+| other | nonml_duty | 2x | 0.7722 |
+| training | train_fsdp | 3x | 0.8324 |
+| other | nonml_sat | 1x | 0.8438 |
+| inference | inferrep_qwen | 2x | 0.8458 |
+| training | advtrain_satint | 3x | 0.8776 |
+| training | advtrain_typeconf | 2x | 0.9213 |
+| training | advtrain_pipe | 2x | 0.9436 |
+| training | train_ddp | 1x | 0.9468 |
+| training | stalled_train | 2x | 0.9656 |
+| training | advtrain_interleave | 2x | 0.9949 |
+| training | advtrain_bubble | 1x | 1.0000 |
+| training | advtrain_oracle | 3x | 1.0000 |
+
+Every training family except one scores above 0.83; three of four inference
+families score below 0.32. The model has learned a training-shaped prior that
+happens to fit unseen training families and misfires on unseen inference ones.
+
+Two entries deserve separate attention. **`advtrain_satfiller` at 0.056 is the
+saturating-filler disguise working**: held out as a family, disguised training is
+called something else 94% of the time. And **`infershard_qwen` at 0.019 is the
+long-context inference false-alarm problem** that the four queued cells were
+meant to address, now measured under family holdout rather than assumed.
+
+### 32c. With 21 families, validation accuracy cannot select a model
+
+Across all 84 (seed, model) runs the correlation between validation and test
+accuracy is **zero**: Spearman +0.012 (p=0.917), Pearson -0.053 (p=0.635).
+Within a seed it is weakly positive (mean Spearman +0.429), which is the only
+reason selection is not actively random.
+
+The cost is measurable. Selecting on val gave mean test accuracy 0.5688; simply
+**always** using the plainest configuration, `rf200`, would have given **0.6039**
+-- val-based selection lost 0.035 on average and beat fixed-`rf200` in only 3 of
+12 splits. Mean val-to-test drop was +0.112, but the per-split relationship is
+noise: seed 3 had val 0.963 / test 0.760 while seed 11 had val 0.387 / test 0.823.
+
+With 4-6 validation families the val set is too small to rank models. Any future
+tuning on this corpus should use repeated family splits with a fixed
+configuration, or leave-one-family-out, and should not report a val-selected
+number as if the selection were meaningful.
+
+### 32d. Caveats that bound all of the above
+
+* **21 families, so ~4 per test split.** The split, not the model, is the
+  dominant source of variance (test accuracy ranges 0.28 to 0.86). Every number
+  here is a mean over 12 splits and should be quoted with its spread.
+* **Only four hardware types** are represented (H100 s16, A100-40GB s16, TPU v5e
+  tpuT16/tpuTMS, TPU v6e tpuTMS/tpuTMS4), and section 31c showed a single
+  threshold does not transfer across hardware. Some of the family-level failure
+  is hardware transfer, not workload transfer, and this design cannot separate
+  them.
+* **Windows overlap 50%** (30 s at 15 s stride), so the effective sample size is
+  well below the window count; the family-level spread is the honest error bar.
+* **Adversarial cells are included** and labelled by ground truth, which is why
+  `test_acc_adversarial` (mean 0.678, sd 0.373) swings from 0.013 to 1.000
+  depending on which disguise family landed in test.
