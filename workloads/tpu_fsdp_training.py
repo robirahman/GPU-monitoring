@@ -32,26 +32,6 @@ except ImportError:  # launched as `python workloads/tpu_fsdp_training.py`
     import tpu_transformer_common as T
 
 
-def _detect_multihost(mode: str) -> bool:
-    """Decide whether to bring up the cross-host JAX cluster.
-
-    'on'/'off' force it; 'auto' initialises when the TPU env advertises more
-    than one worker (megascale / multi-slice or a >1-host slice).
-    """
-    if mode == "on":
-        return True
-    if mode == "off":
-        return False
-    # auto: infer from the standard TPU worker env vars.
-    for var in ("MEGASCALE_NUM_SLICES", "TPU_WORKER_HOSTNAMES"):
-        val = os.environ.get(var)
-        if val and ("," in val or val.strip() not in ("", "1")):
-            return True
-    # TPU_WORKER_HOSTNAMES is a comma-separated host list on multi-host slices.
-    hosts = os.environ.get("TPU_WORKER_HOSTNAMES", "")
-    if hosts.count(",") >= 1:
-        return True
-    return False
 
 
 def main():
@@ -70,7 +50,7 @@ def main():
     ap.add_argument("--remat", action="store_true",
                     help="Activation checkpointing (recompute to save HBM)")
     ap.add_argument("--multihost", type=str, default="auto",
-                    choices=["auto", "on", "off"],
+                    choices=list(T.MULTIHOST_MODES),
                     help="Bring up the cross-host JAX cluster (default: auto)")
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--self-test", action="store_true",
@@ -94,11 +74,8 @@ def main():
     import jax.numpy as jnp
 
     # ── Cross-host cluster ───────────────────────────────────────────────────
-    if _detect_multihost(args.multihost):
-        try:
-            jax.distributed.initialize()
-        except Exception as e:  # already initialised, or single-host after all
-            print(f"[tpu_fsdp] distributed.initialize skipped: {e}", flush=True)
+    T.init_distributed(args.multihost, tag="tpu_fsdp",
+                       expect_processes=int(os.environ.get("SPAR_EXPECT_PROCESSES", 0) or 0))
 
     n_dev = jax.device_count()
     pidx = T.process_index()

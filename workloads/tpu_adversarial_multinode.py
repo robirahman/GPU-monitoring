@@ -72,17 +72,6 @@ def is_train_step(seed: int, step: int, train_frac: float) -> bool:
     return ((h >> 17) % 1_000_000) < int(train_frac * 1_000_000)
 
 
-def _detect_multihost(mode: str) -> bool:
-    """Mirrors tpu_fsdp_training._detect_multihost so both cells agree."""
-    if mode == "on":
-        return True
-    if mode == "off":
-        return False
-    for var in ("MEGASCALE_NUM_SLICES", "TPU_WORKER_HOSTNAMES"):
-        val = os.environ.get(var)
-        if val and ("," in val or val.strip() not in ("", "1")):
-            return True
-    return os.environ.get("TPU_WORKER_HOSTNAMES", "").count(",") >= 1
 
 
 def self_test() -> bool:
@@ -127,7 +116,7 @@ def main():
     ap.add_argument("--seed", type=int, default=0,
                     help="0 => derive from the clock on host 0 and broadcast")
     ap.add_argument("--multihost", type=str, default="auto",
-                    choices=["auto", "on", "off"])
+                    choices=list(T.MULTIHOST_MODES))
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
 
@@ -148,12 +137,9 @@ def main():
 
     import jax
 
-    _mh = _detect_multihost(args.multihost)
-    if _mh:
-        try:
-            jax.distributed.initialize()
-        except Exception as e:
-            print(f"[mn-i] distributed.initialize skipped: {e}", flush=True)
+    _mh = T.detect_multihost(args.multihost)
+    T.init_distributed(args.multihost, tag="tpu_mn",
+                       expect_processes=int(os.environ.get("SPAR_EXPECT_PROCESSES", 0) or 0))
 
     pidx, n_host = T.process_index(), T.process_count()
     n_dev = jax.device_count()

@@ -24,6 +24,7 @@ at run time on the TPU host. Nothing at import/definition time evaluates jax.
 """
 
 import math
+import os
 
 # numpy is always available (scientific stack); jax is TPU-only.
 try:
@@ -403,6 +404,87 @@ def auto_optimizer(size, override=None):
 
 
 # ── CPU gradient self-test (G1 gate) ─────────────────────────────────────────
+
+MULTIHOST_MODES = ("auto", "on", "off", "required")
+
+
+def detect_multihost(mode: str) -> bool:
+    """Decide whether to bring up the cross-host JAX cluster.
+
+    'on'/'required' force it, 'off' forbids it, 'auto' infers from the TPU
+    worker env. Four byte-identical copies of this predicate had drifted into
+    tpu_fsdp_training, tpu_adversarial_multinode, tpu_adversarial_typeconf and
+    tpu_nonml_distributed; this is the single copy.
+    """
+    if mode in ("on", "required"):
+        return True
+    if mode == "off":
+        return False
+    for var in ("MEGASCALE_NUM_SLICES", "TPU_WORKER_HOSTNAMES"):
+        val = os.environ.get(var)
+        if val and ("," in val or val.strip() not in ("", "1")):
+            return True
+    return os.environ.get("TPU_WORKER_HOSTNAMES", "").count(",") >= 1
+
+
+def init_distributed(mode: str, tag: str = "tpu", expect_processes: int = 0):
+    """Initialise the cross-host cluster and REPORT what actually happened.
+
+    The failure this guards against is silent: if the predicate says no on a
+    genuinely multislice cell, jax.devices() stays local, no cross-slice
+    collective is ever issued, and the cell still runs to completion and writes
+    a full-length, correctly-named telemetry stream. Nothing downstream can
+    tell that apart from a real multislice run -- it just quietly measures the
+    wrong thing.
+
+    So every cell now prints MULTIHOST_STATUS, which lands in the cell log and
+    makes the question auditable after the fact, and:
+
+      * mode='required' aborts if the cluster did not come up multi-process;
+      * expect_processes>0 aborts on any mismatch, letting the orchestrator
+        state the topology it believes it provisioned.
+
+    (Codex flagged the predicate as a live bug on PR #1. It was not -- multislice
+    cells show dcn_collective_lat_us_p50 ~8946us against -1 on single slice, so
+    the cluster did come up. It is still worth making non-silent.)
+    """
+    import jax
+    # SPAR_MULTIHOST lets the ORCHESTRATOR raise the bar without touching the
+    # command. registry_tpu deliberately emits one scope-agnostic command for
+    # the whole ladder (the cell reads jax.devices() and the provisioned shape
+    # decides the mesh), so 'required' cannot be baked into the registry -- it
+    # would break every single-slice rung. tpu_queue.sh exports it only when it
+    # believes it provisioned a multislice group.
+    mode = os.environ.get("SPAR_MULTIHOST", "").strip() or mode
+    if mode not in MULTIHOST_MODES:
+        raise SystemExit(f"[{tag}] bad multihost mode {mode!r}; expected one of {MULTIHOST_MODES}")
+    started = False
+    if detect_multihost(mode):
+        try:
+            jax.distributed.initialize()
+            started = True
+        except Exception as e:  # already initialised, or single-host after all
+            print(f"[{tag}] distributed.initialize skipped: {e}", flush=True)
+    try:
+        nproc, pidx = jax.process_count(), jax.process_index()
+    except Exception:
+        nproc, pidx = 1, 0
+    if pidx == 0:
+        print(f"MULTIHOST_STATUS: mode={mode} initialize_called={started} "
+              f"processes={nproc} devices={jax.device_count()} "
+              f"local_devices={jax.local_device_count()}", flush=True)
+    if mode == "required" and nproc <= 1:
+        raise SystemExit(
+            f"[{tag}] --multihost=required but process_count={nproc}: the "
+            f"cross-host cluster did not come up, so this cell would measure a "
+            f"single-process job while being labelled multislice. Refusing to "
+            f"run. Check MEGASCALE_* / TPU_WORKER_HOSTNAMES on the workers.")
+    if expect_processes and nproc != expect_processes:
+        raise SystemExit(
+            f"[{tag}] expected {expect_processes} processes, found {nproc}. "
+            f"The provisioned topology does not match what was requested.")
+    return nproc, pidx
+
 
 def self_test(verbose=True):
     """CPU-only correctness gate: analytic gradient vs. finite difference on a

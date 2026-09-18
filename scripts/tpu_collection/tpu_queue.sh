@@ -13,6 +13,9 @@
 #   * GAP idle settle between cells
 #   * SMOKE=1 -> 60 s per cell, smoke_ prefix, output to logs/smoke_data/
 #   * G1 gate: the CPU gradient self-test must pass before any TPU time is spent
+#   * multihost gate: whenever the queue believes it provisioned >1 host it
+#     exports SPAR_MULTIHOST=required (+ SPAR_EXPECT_PROCESSES), so a cell whose
+#     cross-host bring-up fails ABORTS instead of quietly measuring one process
 #
 # DECISIVE-CELL-FIRST within each rep (banks the key contrast inside one short
 # Spot window before preemption can strike):
@@ -108,14 +111,14 @@ ssh_all() {  # ssh_all "<cmd>" -- fan to ALL workers of ALL slice nodes
     local _si=0
     for n in $(slice_nodes); do
       gcloud compute tpus tpu-vm ssh "$n" --project="$PROJECT" --zone="$ZONE" \
-        --worker=all --command="export SPAR_TPU_SLICE_ID=${_si}; $cmd" & pids+=($!)
+        --worker=all --command="export SPAR_TPU_SLICE_ID=${_si}; ${MH_EXPORT:-} $cmd" & pids+=($!)
       _si=$((_si + 1))
     done
     for p in "${pids[@]}"; do wait "$p" || rc=1; done
     return $rc
   fi
   gcloud compute tpus tpu-vm ssh "$TPU_NAME" \
-    --project="$PROJECT" --zone="$ZONE" --worker=all --command="$cmd"
+    --project="$PROJECT" --zone="$ZONE" --worker=all --command="${MH_EXPORT:-} $cmd"
 }
 
 ssh_worker0() {  # worker 0 of the first slice only
@@ -134,13 +137,30 @@ derive_workers() {
   done
   echo "$total"
 }
+WORKERS_DERIVED=""
 if [ -z "$NUM_WORKERS" ]; then
   NUM_WORKERS=$(derive_workers)
+  WORKERS_DERIVED=1
   if ! [ "$NUM_WORKERS" -ge 1 ] 2>/dev/null; then
     say "WARN: could not derive worker count (slice not up yet?); defaulting to 1"
     NUM_WORKERS=1
   fi
   say "derived NUM_WORKERS=$NUM_WORKERS from $NODE_COUNT slice(s)"
+fi
+
+# ── Multihost hardening ───────────────────────────────────────────────────────
+# A cell whose jax.distributed bring-up silently fails degrades to process_count=1
+# and then measures a single-host job while every log line still says OK. That is
+# indistinguishable from a clean run in the parquets, so make the workloads abort
+# instead: SPAR_MULTIHOST=required is checked by T.init_distributed().
+# SPAR_EXPECT_PROCESSES is only asserted when WE derived the host count -- a
+# caller-pinned NUM_WORKERS is a .done accounting knob and may legitimately differ
+# from jax.process_count().
+MH_EXPORT=""
+if [ "$NODE_COUNT" -gt 1 ] || [ "${NUM_WORKERS:-1}" -gt 1 ]; then
+  MH_EXPORT="export SPAR_MULTIHOST=required;"
+  [ -n "$WORKERS_DERIVED" ] && MH_EXPORT="$MH_EXPORT export SPAR_EXPECT_PROCESSES=$NUM_WORKERS;"
+  say "multihost gate: $MH_EXPORT"
 fi
 
 # ── --probe-only: metric-name drift gate for a new TPU generation, then exit ──
