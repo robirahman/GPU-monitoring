@@ -206,22 +206,41 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     one 8-GPU run collapse together.
     """
     df = df.copy()
-    uuid_col = df["gpu_uuid"].astype(str) if "gpu_uuid" in df.columns else pd.Series("", index=df.index)
-    df["stream_id"] = df["run_id"].astype(str) + "|" + uuid_col
 
-    if "hostname" in df.columns:
-        df["node_id"] = df["hostname"].astype(str)
-    else:
-        df["node_id"] = "node0"  # legacy single-node corpus
+    def _idcol(name, default=""):
+        """NA-free string column for identity concatenation.
+
+        Every identity column here is string-concatenated into stream_id/job_id,
+        and a NULL anywhere poisons the whole corpus: the concatenation goes
+        NULL, groupby(stream_id) DROPS that key, transform("min") returns NaN for
+        those rows, and `(run_start / bucket_sec).astype("int64")` then raises
+        IntCastingNaNError -- for every run, not just the affected one.
+        `.astype(str)` does not save you: under the pandas `str` dtype NA
+        propagates through `+` rather than becoming "nan". This is not
+        hypothetical: on the full 3.6 M-row corpus gpu_uuid is null on 16,812
+        rows and gpu_name on 14,185, because load_all_data concatenates sections
+        (week4/5/7, ddp, dscale) whose frames never had those columns.
+        """
+        if name not in df.columns:
+            return pd.Series(default, index=df.index, dtype=object)
+        s = df[name].astype(object)
+        return s.where(df[name].notna(), default).astype(str)
+
+    uuid_col = _idcol("gpu_uuid")
+    df["stream_id"] = _idcol("run_id") + "|" + uuid_col
+    df["node_id"] = _idcol("hostname", "node0") if "hostname" in df.columns else "node0"
 
     # Which run_ids span more than one stream? Those are shared-run_id jobs.
     streams_per_run = df.groupby("run_id")["stream_id"].transform("nunique")
     run_start = df.groupby("stream_id")["ts"].transform("min")
+    # A stream whose ts are all NULL still yields NaN here; it cannot be windowed
+    # anyway, so bucket it at 0 rather than failing the cast for the whole frame.
+    run_start = run_start.astype("float64").fillna(0.0)
     base = df["workload_label"].map(_base_label)
-    gpu = df["gpu_name"].astype(str) if "gpu_name" in df.columns else ""
+    gpu = _idcol("gpu_name")
     legacy_job = (base + "|" + gpu + "|"
                   + (run_start / bucket_sec).round().astype("int64").astype(str))
-    df["job_id"] = np.where(streams_per_run > 1, df["run_id"].astype(str), legacy_job)
+    df["job_id"] = np.where(streams_per_run > 1, _idcol("run_id"), legacy_job)
 
     # A shared run_id does NOT always mean a shared JOB. multinode_queue.sh derives
     # the run_id from (stamp, cell, rep) with no node component, so on a

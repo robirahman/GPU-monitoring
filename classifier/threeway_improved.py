@@ -461,11 +461,19 @@ def load_all_data() -> pd.DataFrame:
     # *.parquet.partial checkpoint flushed with a header and no sample. Such a
     # row cannot be windowed, and it propagates a NaN run_start into
     # assign_stream_and_job_ids, which then dies with IntCastingNaNError.
+    # NON-FINITE counts as "no timestamp" too. `.isna()` is False for +/-inf, and
+    # assign_stream_and_job_ids casts (run_start / BUCKET) to int64 -- so a single
+    # infinite ts anywhere in the corpus raises the same IntCastingNaNError this
+    # guard exists to prevent, taking every other run down with it. Observed on
+    # the full 3.6 M-row corpus, where it aborted the binary train-vs-rest CV.
     if "ts" in combined.columns:
-        n_bad = int(combined["ts"].isna().sum())
+        _ts = pd.to_numeric(combined["ts"], errors="coerce")
+        bad = ~np.isfinite(_ts.to_numpy(dtype="float64", na_value=np.nan))
+        n_bad = int(bad.sum())
         if n_bad:
-            log.warning(f"dropping {n_bad} row(s) with no timestamp")
-            combined = combined[combined["ts"].notna()].reset_index(drop=True)
+            log.warning(f"dropping {n_bad} row(s) with a missing or non-finite "
+                        f"timestamp")
+            combined = combined[~bad].reset_index(drop=True)
 
     # Deduplicate: some files may appear in multiple directories.
     # gpu_uuid must be in the key. NVIDIA runs survive on (ts, run_id) only by
