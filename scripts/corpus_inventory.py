@@ -34,7 +34,14 @@ from classifier.threeway_improved import threeway_label  # noqa: E402
 
 RANK = re.compile(r"_node\d+_gpu\d+|_gpu\d+|_w\d+c\d+")
 ACCEL = ("_Google_TPU_", "_NVIDIA_", "_AMD_")
-SCOPE = re.compile(r"^(s1|s8|s16|tpuT4|tpuT8|tpuT16|tpuTMS)_")
+# tpuTMS4 (a 4-slice multislice group) must precede tpuTMS, and the optional
+# smoke_ prefix must be tolerated -- without both, 32 genuinely multi-host runs
+# fell into the "legacy" bucket. Verified against the worker tokens in the
+# filenames: a tpuT16 run is w0..w3 x c0..c3 (4 hosts), while a tpuT8 run is
+# w0c0..w0c7 (ONE host, 8 chips) -- the two ran on differently-shaped v5e slices,
+# which is exactly why host count is measured here rather than inferred from the
+# chip count in the label.
+SCOPE = re.compile(r"^(?:smoke_)?(s16|s8|s1|tpuT4|tpuT8|tpuT16|tpuTMS4|tpuTMS)_")
 ADV = re.compile(r"(advtrain|adversarial|whitebox|symgemm|typeconf|stalled|diluted)", re.I)
 
 
@@ -105,15 +112,44 @@ def scan(files):
         lab = str(d["workload_label"].iloc[0]) if "workload_label" in d.columns else p.stem
         rid = str(d["run_id"].iloc[0]) if "run_id" in d.columns else p.stem
         uid = str(d["gpu_uuid"].iloc[0]) if "gpu_uuid" in d.columns else p.stem
+        host = str(d["hostname"].iloc[0]) if "hostname" in d.columns else ""
+        if not host or host in ("nan", "None"):
+            # TPU parquets name the worker in the stem (_w<W>c<C>); NVIDIA
+            # multi-node ones carry a real hostname. Either identifies the
+            # MACHINE, which is what the multi-node question turns on.
+            m = re.search(r"_w(\d+)c\d+", p.stem)
+            host = f"w{m.group(1)}" if m else ""
         span = float(t.max() - t.min())
         rows.append(dict(file=p.stem, gpu=gpu, hw=family(gpu), label=lab,
-                         base=RANK.sub("", lab), run_id=rid,
+                         base=RANK.sub("", lab), run_id=rid, host=host,
                          stream=f"{rid}|{uid}", rows=len(t), span_s=span,
                          hz=(len(t) - 1) / span if span > 0 else np.nan,
                          t0=float(t.min()), t1=float(t.max())))
         if (i + 1) % 2000 == 0:
             print(f"  {i + 1:,}/{len(files):,}", flush=True)
     return pd.DataFrame(rows), bad
+
+
+def topology(dd):
+    """Which runs genuinely spanned more than one MACHINE -- measured, not assumed.
+
+    Host count alone is not enough. multinode_queue.sh derives the run_id from
+    (stamp, cell, rep) with no node component, so on a SINGLE-NODE cell (s1_/s8_)
+    both machines run their own independent execution under the same run_id and
+    a naive host count calls them multi-node. classifier/multinode_features.py
+    resolves that the same way: scope tells you the truth, s1/s8 are per-node by
+    construction and s16 / the multi-host TPU scopes genuinely span hosts. For
+    TPU the host count IS measured, because chips-per-host differs by generation
+    (v5e is 4, v6e is 8), so the same tpuT8 label is one machine on v6e and two
+    on v5e.
+    """
+    hosts = dd.groupby("run_id")["host"].nunique()
+    dd = dd.copy()
+    dd["hosts"] = dd.run_id.map(hosts).fillna(1).astype(int)
+    per_node = dd.scope.isin(["s1", "s8"])
+    dd["multinode"] = np.where(per_node, False,
+                               (dd.hosts > 1) | (dd.scope == "s16"))
+    return dd
 
 
 def report(d):
@@ -155,6 +191,36 @@ def report(d):
     p["total"] = p.sum(axis=1)
     print("\n== deduplicated stream-minutes, hardware x class ==")
     print(p.sort_values("total", ascending=False).round(0).to_string())
+
+    dd = topology(dd)
+    print("\n== measured machines per run, by scope ==")
+    h = dd.groupby("scope").agg(runs=("run_id", "nunique"),
+                                median_hosts=("hosts", "median"),
+                                max_hosts=("hosts", "max"),
+                                multinode=("multinode", "any"))
+    for k, r in h.iterrows():
+        print(f"  {str(k):22s} runs {int(r.runs):5d}  hosts/run median "
+              f"{r.median_hosts:4.0f} max {int(r.max_hosts):3d}  "
+              f"counted as multi-machine: {bool(r.multinode)}")
+
+    mn = dd[dd.multinode]
+    block("MULTI-MACHINE ONLY (multi-node GPU / multi-host TPU)", mn)
+    p2 = mn.pivot_table(index="hw", columns="cls", values="min", aggfunc="sum").fillna(0)
+    p2["total"] = p2.sum(axis=1)
+    print("\n== multi-machine stream-minutes, hardware x class ==")
+    print(p2.sort_values("total", ascending=False).round(0).to_string())
+    print("\n== multi-machine, by scope ==")
+    g4 = mn.groupby("scope").agg(wkl=("base", "nunique"), runs=("run_id", "nunique"),
+                                 streams=("file", "size"), minutes=("min", "sum"))
+    for k, r in g4.sort_values("minutes", ascending=False).iterrows():
+        print(f"  {str(k):22s} {int(r.wkl):4d} workloads {int(r.runs):5d} runs "
+              f"{int(r.streams):6d} streams {r.minutes:9,.0f} stream-min")
+    print("\n== multi-machine, honest vs adversarial ==")
+    for k, r in mn.groupby("kind").agg(wkl=("base", "nunique"), runs=("run_id", "nunique"),
+                                       streams=("file", "size"),
+                                       minutes=("min", "sum")).iterrows():
+        print(f"  {str(k):22s} {int(r.wkl):4d} workloads {int(r.runs):5d} runs "
+              f"{int(r.streams):6d} streams {r.minutes:9,.0f} stream-min")
 
     w = dd.groupby("run_id").agg(t0=("t0", "min"), t1=("t1", "max"))
     print(f"\nwall-clock across distinct runs: {((w.t1 - w.t0) / 3600).sum():,.0f} h "
