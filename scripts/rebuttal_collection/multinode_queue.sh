@@ -356,6 +356,51 @@ mn_ray_shard() {  # mn_ray_shard <stage> <run_id> <model> <tp> <pp> [extra vllm 
   # It is torn down once at the end of the queue.
 }
 
+# Sharded SERVING under a real arrival process. Same Ray cluster and the same
+# TP8/PP2 shape as mn_ray_shard, but the driver is workloads/llm_serving_async.py:
+# a vLLM OpenAI server plus an HTTP load generator, instead of a blocking
+# llm.generate() loop over a fixed, uniformly-padded batch.
+#
+# WHY A SEPARATE LAUNCHER. Every LLM inference cell in the corpus is that
+# blocking loop, so every one of them is PERIODIC: prefill burst, decode ramp,
+# drain to idle, repeat, at a fixed period with one prompt length and one output
+# length. That is a training loop with the backward pass deleted, which is why
+# held-out long-context inference is not recognised as inference (section 32b:
+# the infershard_qwen family scores 0.0185 when its family is held out). These
+# cells have no period to lock onto: Poisson or saturating arrivals, lognormal
+# prompt and output lengths, continuous batching with requests always in flight.
+mn_ray_serve() {  # mn_ray_serve <stage> <run_id> <model> <mode> <tp> <pp> [extra...]
+  local stage="$1" rid="$2" model="$3" mode="$4" tp="${5:-8}" pp="${6:-2}"
+  local extra=("${@:7}")
+  cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
+  local raylog="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.ray.log"
+  local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
+  [ -f "$marker" ] && { say "SKIP  $stage ($(cat "$marker"))"; return 0; }
+
+  ensure_ray_cluster "$raylog" || {
+    say "FAIL  $stage: ray-cluster-incomplete -- skipping cell (see $raylog)"
+    echo "$(stamp) ray-cluster-incomplete" > "${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.failed"
+    return 0
+  }
+
+  if [ "$NODE_RANK" -eq 0 ]; then
+    run_stage "$stage" "$rid" -- \
+      env RAY_ADDRESS="${MASTER_ADDR}:6379" \
+      $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
+        --num-gpus 8 --run-id "$rid" --node-rank 0 --output-dir "$OUTDIR" \
+        --timeout "$TIMEOUT_BIG" -- \
+        $PY_VLLM workloads/llm_serving_async.py --model "$model" --mode "$mode" \
+          --tensor-parallel-size "$tp" --pipeline-parallel-size "$pp" \
+          --distributed-executor-backend ray --duration "$DUR" "${extra[@]}"
+  else
+    run_stage "$stage" "$rid" -- \
+      $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
+        --num-gpus 8 --run-id "$rid" --node-rank 1 --telemetry-only \
+        --duration "$DUR" --output-dir "$OUTDIR"
+    wait_gpus_idle "$TIMEOUT_BIG" || true
+  fi
+}
+
 # Replicated inference: 8 independent single-GPU replicas per node, no
 # rendezvous, per-replica run_ids. Both nodes run this independently.
 mn_replicated() {  # mn_replicated <stage> <run_id> <infer-label>
@@ -624,6 +669,91 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infershard_qwen72b_kv4k_b48;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
       --prompt-tokens 4000 --max-tokens 128 \
       --batch-size 48 --gpu-memory-utilization 0.92
+
+  # ---- Section 33: APERIODIC serving, and training without a periodic step ----
+  # Section 32b measured the gap these fill. Held out by FAMILY, three of four
+  # inference families score below 0.32 (infershard_qwen 0.0185) while ten of
+  # eleven training families score above 0.83 -- the detector has learned a
+  # training-shaped prior and every inference cell we own is shaped like it,
+  # because every one is a blocking generate() over a uniformly padded batch.
+  #
+  # Each --mode below becomes its OWN family under the section-32 family rule
+  # (inferserve_poisson, inferserve_saturate, ...), which is the point: the four
+  # cells queued on 2026-09-18 all collapse into the single existing
+  # infershard_qwen family and so cannot move a family-held-out number.
+  #
+  # poisson  : exponential arrivals, lognormal prompt AND output lengths.
+  # saturate : queue never drains -- busy like training, but with no period.
+  # bursty   : heavy/light phases far longer than any training step.
+  # prefill  : long prompts, max_tokens=1. The most training-like thing
+  #            inference does, isolated so the detector must learn it explicitly.
+  # decode   : short prompts, long generations. Bandwidth-bound, the other pole.
+  c=s16_inferserve_poisson_7b;   mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  poisson  8 2 \
+      --qps 6 --concurrency 64
+  c=s16_inferserve_saturate_7b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  saturate 8 2 \
+      --concurrency 96
+  c=s16_inferserve_bursty_7b;    mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  bursty   8 2 \
+      --qps 4 --burst-sec 25 --concurrency 64
+  c=s16_inferserve_prefill_72b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 prefill  8 2 \
+      --qps 1.5 --concurrency 24 --prompt-lo 4000 --prompt-hi 24000
+  c=s16_inferserve_decode_72b;   mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 decode   8 2 \
+      --qps 2 --concurrency 32 --out-lo 512 --out-hi 2048
+  c=s16_inferserve_poisson_72b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 poisson  8 2 \
+      --qps 2 --concurrency 48
+  c=s16_inferserve_chunked_72b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 poisson  8 2 \
+      --qps 2 --concurrency 48 --enable-chunked-prefill
+
+  # ---- MATCHED MEMORY FOOTPRINT: the confound the corpus actually has --------
+  # MEASURED 2026-09-19 on the NVIDIA multi-node subset. Memory is the feature the
+  # model leans on hardest (6 of its top 8 are mem_used_mb_*), and in this corpus
+  # it separates the classes almost perfectly -- in the WRONG direction:
+  #
+  #   training   median 14,164 MB   (487 .. 53,878)
+  #   inference  median 77,026 MB   (1,786 .. 78,832)
+  #
+  # Every vLLM cell sits at 74-79 GB because every one passes
+  # --gpu-memory-utilization 0.9-0.92, so vLLM preallocates ~the whole card for
+  # KV cache whether it needs it or not. s16_inferrep_qwen1_5b is a 1.5B model
+  # holding 74.6 GB. The detector can therefore read "nearly full card => not
+  # training" -- which is a fact about vLLM's allocator flag, not about the
+  # workload, and it breaks the moment anyone serves at 0.5.
+  #
+  # The one inference cell whose footprint lands INSIDE the training range,
+  # s16_infershard_qwen1_5b_tp4pp4 at 39 GB, is also the one the detector
+  # misreads worst: 63.4% of its windows are called training, against 1.7-22.7%
+  # for the 72B long-context cells at 74-79 GB. That is the false positive we
+  # actually have, and it is a memory-overlap effect, not a context-length one.
+  #
+  # So: sweep the allocator flag at fixed model and context, which decouples
+  # "is inference" from "fills the card" for free, and add training that DOES
+  # fill the card so the overlap is populated from both sides.
+  c=s16_infermem_qwen72b_u30;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 --batch-size 8  --gpu-memory-utilization 0.30
+  c=s16_infermem_qwen72b_u45;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 --batch-size 16 --gpu-memory-utilization 0.45
+  c=s16_infermem_qwen72b_u60;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 --batch-size 24 --gpu-memory-utilization 0.60
+  c=s16_infermem_qwen7b_u20;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  8 2 \
+      --prompt-tokens 2000 --max-tokens 128 --batch-size 16 --gpu-memory-utilization 0.20
+  c=s16_infermem_qwen7b_u40;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  8 2 \
+      --prompt-tokens 2000 --max-tokens 128 --batch-size 32 --gpu-memory-utilization 0.40
+
+  # ...and training pushed up into the range vLLM occupies. fsdp70b tops out at
+  # 50.7 GB today; without activation checkpointing and at a longer sequence it
+  # lands where every inference cell currently lives, so "nearly full card"
+  # stops being evidence either way.
+  c=s16_trainmem_fsdp70b_nockpt; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 70b --no-activation-ckpt --seq-len 2048 --duration "$DUR"
+  c=s16_trainmem_fsdp30b_b16;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 30b --no-activation-ckpt --batch-size 16 --duration "$DUR"
+
+  # TRAINING WITHOUT A PER-STEP SIGNATURE, the same boundary from the other side.
+  # --grad-accum 64 makes the optimizer step (and, via FSDP no_sync, the
+  # inter-node reduce-scatter) happen on 1 microbatch in 64. If the detector is
+  # keying on step periodicity and on the collective, this is training that
+  # should look like inference -- and if it still gets caught, the claim that
+  # multi-node training is fundamentally detectable gets much stronger.
+  # The sync variant isolates WHICH of the two the detector was using.
+  c=s16_train_accum64_fsdp7b;     mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --grad-accum 64 --duration "$DUR"
+  c=s16_train_accumsync_fsdp7b;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --grad-accum 64 --accum-sync-every-microbatch --duration "$DUR"
 
   # (2) DRAM-BUSY TRAINING. Every training cell in the corpus sits at 3-25%
   # mem_utilization_pct because it is small-model or communication-bound, so

@@ -2247,3 +2247,77 @@ number as if the selection were meaningful.
 * **Adversarial cells are included** and labelled by ground truth, which is why
   `test_acc_adversarial` (mean 0.678, sd 0.373) swings from 0.013 to 1.000
   depending on which disguise family landed in test.
+
+---
+
+## 33. Why long-context inference is misread, measured (2026-09-19)
+
+Section 32b reported the `infershard_qwen` family at 0.0185 accuracy when held
+out. This section asks what it is being called instead and which features do it,
+because the answer decides what to collect next. NVIDIA multi-node subset only --
+the first pass compared against a group that was mostly TPU, which measures the
+platform rather than the workload.
+
+### 33a. It is not mostly called training, and the 0.0185 is not stable
+
+Trained on ALL 20 other families with `infershard_qwen` held out, its windows are
+predicted **ml_inference 77.6%, ml_training 19.7%, other 2.7%** (mean
+p(training) 0.426). Section 32's 0.0185 came from a model fitted on the ~13
+families of one 60% train split. The same family held out against the full
+remainder scores 0.776. **The family-held-out number is dominated by how much
+other data is in the fold, not by the held-out family** -- which is section 32c's
+point again, and a reason not to quote a single family-holdout figure as a
+property of the workload.
+
+### 33b. The false positive is a MEMORY-OVERLAP effect, not a context-length one
+
+Per-workload, share of windows called training when the family is held out:
+
+| workload | mem_used (median) | -> training |
+|---|---|---|
+| s16_infershard_qwen1_5b_tp4pp4 | 39,036 MB | **0.634** |
+| s16_infershard_qwen72b_kv32k | 78,724 MB | 0.227 |
+| s16_infershard_qwen72b_kv1k | 75,946 MB | 0.151 |
+| s16_infershard_qwen72b_kv32k_b8 | 78,832 MB | 0.146 |
+| s16_infershard_qwen72b_tp8pp2 | 74,038 MB | 0.052 |
+| s16_infershard_qwen72b_kv32k_b16 | 78,832 MB | 0.020 |
+| s16_infershard_qwen72b_kv8k | 78,466 MB | 0.017 |
+
+The long-context 72B cells are mostly fine. The one that is badly misread is the
+**small** model at high parallelism -- and it is the only inference cell whose
+memory footprint lands inside the training range.
+
+### 33c. The corpus has a memory confound, running the opposite way to intuition
+
+NVIDIA multi-node, `mem_used_mb_mean`:
+
+| class | p10 | p50 | p90 |
+|---|---|---|---|
+| training | 4,474 | 14,164 | 50,496 |
+| inference (infershard_qwen) | 10,942 | 77,026 | 80,414 |
+| inference (other NVIDIA) | 22,966 | 74,346 | 74,616 |
+| non-ML | 2,390 | 5,200 | 45,698 |
+
+Six of the model's top eight features are `mem_used_mb_*`. Every vLLM cell sits
+at 74-79 GB because every one passes `--gpu-memory-utilization 0.9-0.92`, so vLLM
+preallocates ~the whole card for KV cache whether it needs it or not:
+`s16_inferrep_qwen1_5b` is a **1.5B model holding 74.6 GB**. Training tops out at
+53.9 GB. So in this corpus "nearly full card" means "not training" -- a fact
+about an allocator flag, not about the workload, and one that inverts the moment
+anyone serves at `--gpu-memory-utilization 0.5`.
+
+Memory alone, family-grouped, classifies train-vs-inference at 0.6004 against a
+0.6908 majority baseline -- worse than the baseline, because family-grouped folds
+break the confound. Within a fold that preserves it, 0.768.
+
+### 33d. Periodicity is NOT what the model is using
+
+I expected the opposite and was wrong, so it is worth stating: no periodicity
+feature (`gpu_util_fft_period`, `acf*_gpu_util`, `util_transitions_per_sec`,
+`duty_cycle_80`, `idle_frac`, `util_burstiness`) appears in the top 20 by
+importance. They do lean the wrong way where they matter at all -- median
+`gpu_util_fft_period` is 2.3 for training, 10.0 for other inference, 3.0 for
+long-context inference -- but the model is reading absolute memory and PCIe
+levels, not shape. This matters for the fix: aperiodic serving cells are worth
+collecting for coverage, but they are not the cure for this particular false
+positive. Matched memory footprints are.

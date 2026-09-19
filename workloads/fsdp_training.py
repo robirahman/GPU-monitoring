@@ -219,6 +219,18 @@ def main():
                         help="Override optimizer (default: auto based on model size)")
     parser.add_argument("--cpu-offload", action="store_true",
                         help="Offload optimizer states to CPU")
+    parser.add_argument("--grad-accum", type=int, default=1,
+                        help="microbatches per optimizer step. >1 makes the "
+                             "optimizer step (and, with FSDP no_sync, the "
+                             "gradient reduce-scatter) RARE, so the telemetry "
+                             "loses the per-step training signature -- the "
+                             "'training that looks like inference' direction the "
+                             "corpus has no cell for.")
+    parser.add_argument("--accum-sync-every-microbatch", action="store_true",
+                        help="reduce-scatter on every microbatch instead of only "
+                             "on the accumulation boundary. Isolates which of the "
+                             "two effects (rare optimizer step vs rare "
+                             "inter-node collective) the detector was using.")
     parser.add_argument("--no-activation-ckpt", action="store_true",
                         help="Disable activation checkpointing")
     args = parser.parse_args()
@@ -295,6 +307,7 @@ def main():
     # rank that exits early strands its peers inside a ReduceScatter.
     deadline = CollectiveDeadline(args.duration, device)
 
+    micro = 0
     while not deadline.expired():
         # Random token ids -- no real dataset needed
         input_ids = torch.randint(0, vocab, (batch_size, args.seq_len), device=device)
@@ -311,19 +324,36 @@ def main():
                 shift_labels.view(-1),
             )
 
-            # Backward: ReduceScatter grads for each FSDP unit
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad(set_to_none=True)
-            step += 1
+            # Backward: ReduceScatter grads for each FSDP unit.
+            # With --grad-accum N the loss is scaled so the accumulated gradient
+            # matches a single N-times-larger batch, and (unless the caller asks
+            # otherwise) FSDP's no_sync suppresses the reduce-scatter on every
+            # microbatch but the last -- which is what real accumulation does and
+            # what removes the inter-node collective from N-1 of every N steps.
+            accum = max(1, args.grad_accum)
+            boundary = (micro + 1) % accum == 0
+            if accum > 1:
+                loss = loss / accum
+            if boundary or args.accum_sync_every_microbatch or accum == 1:
+                loss.backward()
+            else:
+                with fsdp_model.no_sync():
+                    loss.backward()
+            micro += 1
+            if boundary:
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+                step += 1
 
             # Per-window ground truth. Rank 0 only: every rank runs the same
             # synchronous step, so one emitter per node-0 fully labels the job.
-            if rank == 0:
+            # Emitted on the OPTIMIZER step, not the microbatch, so `passes`
+            # reports how many forward/backward passes that step consumed.
+            if rank == 0 and boundary:
                 emit_step("train", step,
-                          tokens=batch_size * world_size * args.seq_len,
-                          passes=1, node=node_rank, rank=rank,
-                          loss=f"{loss.item():.4f}")
+                          tokens=batch_size * world_size * args.seq_len * accum,
+                          passes=accum, node=node_rank, rank=rank,
+                          loss=f"{loss.item() * accum:.4f}")
 
         except torch.cuda.OutOfMemoryError:
             if rank == 0:
