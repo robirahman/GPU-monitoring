@@ -40,7 +40,14 @@ cd "$(git rev-parse --show-toplevel)"
 source scripts/gcp/env.sh
 
 RUN_STAMP="${RUN_STAMP:-$(date -u +%Y%m%d%H%M)}"
-ZONE="${ZONE:-us-central1-a}"
+# ONE request per zone, all racing for capacity. Whichever pair boots first
+# claims a GCS lock and cancels every other request; a pair that boots into a
+# zone that already lost deletes itself immediately. The lock write uses
+# ifGenerationMatch=0, so exactly one zone can win even if two grant at the same
+# instant, and it is keyed on the ZONE (not the node) so both nodes of the
+# winning pair survive.
+ZONES="${ZONES:-us-central1-a us-east4-a us-east5-a us-west1-a europe-west4-b asia-southeast1-b}"
+ZONE="${ZONE:-${ZONES%% *}}"
 MACHINE_TYPE="${MACHINE_TYPE:-a3-highgpu-8g}"
 # NOT ${NODE0:-...}: env.sh exports NODE0/NODE1 as spar-gpu-0/1, which are the
 # EXISTING stopped Spot pair. Inheriting them made the first resize request fail
@@ -67,12 +74,16 @@ DRY_OUT="${DRY_OUT:-/tmp/spar_flexmig_startup.sh}"
 say() { echo "[$(date -u '+%H:%M:%SZ')] $*"; }
 
 if [ "${1:-}" = "--teardown" ]; then
-  say "tearing down ${RREQ} / ${MIG} / ${TPL} in ${ZONE}"
-  gcloud compute instance-groups managed resize-requests cancel "$MIG" \
-    --resize-request="$RREQ" --project="$PROJECT" --zone="$ZONE" --quiet 2>&1 | tail -1
-  gcloud compute instance-groups managed delete "$MIG" \
-    --project="$PROJECT" --zone="$ZONE" --quiet 2>&1 | tail -1
-  gcloud compute instance-templates delete "$TPL" --project="$PROJECT" --quiet 2>&1 | tail -1
+  for z in $ZONES; do
+    say "[$z] tearing down spar-flex-{req,mig,tpl}-${RUN_STAMP}-${z}"
+    gcloud compute instance-groups managed resize-requests cancel "spar-flex-mig-${RUN_STAMP}-${z}" \
+      --resize-request="spar-flex-req-${RUN_STAMP}-${z}" --project="$PROJECT" --zone="$z" --quiet >/dev/null 2>&1
+    gcloud compute instance-groups managed delete "spar-flex-mig-${RUN_STAMP}-${z}" \
+      --project="$PROJECT" --zone="$z" --quiet >/dev/null 2>&1
+    gcloud compute instance-templates delete "spar-flex-tpl-${RUN_STAMP}-${z}" \
+      --project="$PROJECT" --quiet >/dev/null 2>&1
+  done
+  say "done"
   exit 0
 fi
 
@@ -110,8 +121,9 @@ STAMP="$RUN_STAMP"
 ONLY='$ONLY_CELLS'
 REPS=$REPS
 PROJECT="$PROJECT"
-ZONE="$ZONE"
-MIG="$MIG"
+ZONE="__ZONE__"
+MIG="__MIG__"
+RREQ="__RREQ__"
 NODE0="$NODE0"
 NODE1="$NODE1"
 NODE="\$(hostname -s)"
@@ -141,11 +153,52 @@ gcs_put() {
     --data-binary "@\$1" \
     "https://storage.googleapis.com/upload/storage/v1/b/\$bkt/o?uploadType=media&name=\$(enc "\$obj")" >/dev/null
 }
+# Upload the startup log BEFORE the node disappears. The 20260919b pair failed
+# bootstrap rc=1 within 3.5 minutes and self-deleted correctly -- and took the
+# only copy of /var/log/spar-startup.log with it, so the cause was unknowable.
+# Every exit path now ships the log first.
+ship_log() {
+  local tag="\${1:-exit}"
+  { echo "=== journal ==="; journalctl -u google-startup-scripts --no-pager | tail -200; } \
+    >> /var/log/spar-startup.log 2>&1 || true
+  gcs_put /var/log/spar-startup.log "\$CTRL/\$NODE/startup_\${tag}_\$STAMP.log" || true
+}
 mig_self_delete() {
   local t; t="\$(tok)" || return 1
   curl -sf -X POST -H "Authorization: Bearer \$t" -H 'Content-Type: application/json' \
     -d "{\"instances\":[\"zones/\$ZONE/instances/\$NODE\"]}" \
     "https://compute.googleapis.com/compute/v1/projects/\$PROJECT/zones/\$ZONE/instanceGroupManagers/\$MIG/deleteInstances" >/dev/null
+}
+
+# Atomic create-if-absent: ifGenerationMatch=0 fails with 412 if the object
+# already exists, so exactly one zone can take the claim even if two are granted
+# in the same instant.
+gcs_put_ifabsent() {
+  local u="\${2#gs://}" bkt obj t
+  bkt="\${u%%/*}"; obj="\${u#*/}"; t="\$(tok)" || return 1
+  curl -sf -X POST -H "Authorization: Bearer \$t" -H 'Content-Type: text/plain' \
+    --data-binary "@\$1" \
+    "https://storage.googleapis.com/upload/storage/v1/b/\$bkt/o?uploadType=media&ifGenerationMatch=0&name=\$(enc "\$obj")" >/dev/null
+}
+cancel_request() {   # cancel_request <zone> <mig> <req>
+  local t; t="\$(tok)" || return 1
+  curl -sf -X POST -H "Authorization: Bearer \$t" -H 'Content-Length: 0' \
+    "https://compute.googleapis.com/compute/v1/projects/\$PROJECT/zones/\$1/instanceGroupManagers/\$2/resizeRequests/\$3/cancel" >/dev/null
+}
+
+# Claim the race for THIS ZONE (not this node -- both nodes of the winning pair
+# must survive, and the peer may claim first).
+claim() {
+  printf '%s' "\$ZONE" > /tmp/claim
+  if gcs_put_ifabsent /tmp/claim "\$CTRL/claim_\$STAMP.txt"; then
+    echo "claimed the run for zone \$ZONE"; return 0
+  fi
+  gcs_get "\$CTRL/claim_\$STAMP.txt" /tmp/claim_read || return 1
+  local won; won="\$(cat /tmp/claim_read)"
+  if [ "\$won" = "\$ZONE" ]; then
+    echo "zone \$ZONE already claimed by my peer -- continuing"; return 0
+  fi
+  echo "zone \$won won the race; \$ZONE stands down"; return 1
 }
 
 cloud-init status --wait >/dev/null 2>&1 || true
@@ -161,6 +214,25 @@ if [ ! -f "\$REPO/.spar_staged_commit" ]; then
   echo "staged \$(ls "\$REPO" | wc -l) entries at \$(cat "\$REPO/.spar_staged_commit" 2>/dev/null)"
 fi
 
+# Decide the race BEFORE the ~50 min bootstrap, so a losing zone costs minutes.
+if ! claim; then
+  gcs_put /tmp/claim_read "\$CTRL/\$NODE/stood_down_\$STAMP.txt" || true
+  cancel_request "\$ZONE" "\$MIG" "\$RREQ" || true
+  ship_log stooddown
+  mig_self_delete || shutdown -h +1
+  exit 0
+fi
+
+# Winner: cancel every other zone's request so nothing else can be granted.
+if gcs_get "\$CTRL/manifest_\$STAMP.txt" /tmp/manifest; then
+  while read -r z m r; do
+    [ -z "\$z" ] && continue
+    [ "\$z" = "\$ZONE" ] && continue
+    echo "cancelling \$r in \$z"
+    cancel_request "\$z" "\$m" "\$r" || echo "  cancel failed (may already be done)"
+  done < /tmp/manifest
+fi
+
 if [ ! -f /var/lib/spar/bootstrap.done ]; then
   echo "running bootstrap (node index \$IDX)"
   NODE_INDEX="\$IDX" SPAR_AUTO_REBOOT=1 bash "\$REPO/scripts/gcp/bootstrap_node.sh"
@@ -170,6 +242,7 @@ if [ ! -f /var/lib/spar/bootstrap.done ]; then
     echo "bootstrap FAILED rc=\$rc -- removing this node rather than idling 8 H100s"
     printf 'bootstrap-failed rc=%s %s\n' "\$rc" "\$(date -u +%FT%TZ)" > /tmp/m
     gcs_put /tmp/m "\$CTRL/\$NODE/startup_failed_\$STAMP.txt" || true
+    ship_log bootstrapfail
     mig_self_delete || shutdown -h +1
     exit 1
   fi
@@ -181,7 +254,8 @@ for _ in \$(seq 1 120); do
   sleep 30
 done
 if [ ! -f /var/lib/spar/bootstrap.done ]; then
-  echo "bootstrap never completed"; mig_self_delete || shutdown -h +1; exit 1
+  echo "bootstrap never completed"; ship_log nobootstrap
+  mig_self_delete || shutdown -h +1; exit 1
 fi
 
 printf 'ready %s\n' "\$(date -u +%FT%TZ)" > /tmp/ready
@@ -197,7 +271,7 @@ for _ in \$(seq 1 240); do            # <= 2 h, a cold a3 bootstrap is ~50 min
 done
 if [ "\$got" -ne 1 ]; then
   echo "peer \$PEER never became ready -- removing this node"
-  mig_self_delete || shutdown -h +1; exit 0
+  ship_log nopeer; mig_self_delete || shutdown -h +1; exit 0
 fi
 echo "peer ready; arming the stage"
 
@@ -231,36 +305,63 @@ if [ "$DRY_RUN" = 1 ]; then
   exit $?
 fi
 
-# ── 3. Template -> MIG -> resize request ─────────────────────────────────────
-say "creating template $TPL"
-gcloud compute instance-templates create "$TPL" --project="$PROJECT" \
-  --machine-type="$MACHINE_TYPE" \
-  --image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud \
-  --boot-disk-size="$BOOT_DISK_SIZE" --boot-disk-type="$BOOT_DISK_TYPE" \
-  --network="$NETWORK" \
-  --provisioning-model=FLEX_START \
-  --instance-termination-action=DELETE \
-  --max-run-duration="$RUN_DURATION" \
-  --maintenance-policy=TERMINATE \
-  --scopes=cloud-platform \
-  --metadata-from-file=startup-script="$TMP/startup.sh" \
-  --metadata="spar-session=${SESSION},spar-master-addr=${NODE0},spar-master-port=${MASTER_PORT:-29500},spar-bucket=${BUCKET}" \
-  --labels="spar-role=gpu,spar-session=${SESSION},spar-provisioning=flexmig" 2>&1 | tail -2 || exit 1
+# ── 3. One template + MIG + resize request PER ZONE ──────────────────────────
+# The manifest is published BEFORE any request, so the first pair to boot can
+# read it and cancel the others even if this shell is long gone.
+MANIFEST="$TMP/manifest.txt"
+: > "$MANIFEST"
+for z in $ZONES; do
+  printf '%s %s %s\n' "$z" "spar-flex-mig-${RUN_STAMP}-${z}" "spar-flex-req-${RUN_STAMP}-${z}" >> "$MANIFEST"
+done
+gcloud storage cp "$MANIFEST" "${CTRL}/manifest_${RUN_STAMP}.txt" --project="$PROJECT" >/dev/null
+say "manifest ($(wc -l < "$MANIFEST") zones) -> ${CTRL}/manifest_${RUN_STAMP}.txt"
+# A stale claim from an earlier attempt would make every zone stand down.
+gcloud storage rm "${CTRL}/claim_${RUN_STAMP}.txt" --project="$PROJECT" 2>/dev/null || true
 
-say "creating MIG $MIG (size 0, repair disabled)"
-gcloud compute instance-groups managed create "$MIG" --project="$PROJECT" --zone="$ZONE" \
-  --template="$TPL" --size=0 --default-action-on-vm-failure=do-nothing 2>&1 | tail -2 || exit 1
+queued=0
+for z in $ZONES; do
+  ztpl="spar-flex-tpl-${RUN_STAMP}-${z}"
+  zmig="spar-flex-mig-${RUN_STAMP}-${z}"
+  zreq="spar-flex-req-${RUN_STAMP}-${z}"
+  sed -e "s|__ZONE__|${z}|g" -e "s|__MIG__|${zmig}|g" -e "s|__RREQ__|${zreq}|g" \
+      "$TMP/startup.sh" > "$TMP/startup.${z}.sh"
 
-say "creating resize request $RREQ for $NODE0 + $NODE1 (run duration $RUN_DURATION)"
-gcloud compute instance-groups managed resize-requests create "$MIG" --project="$PROJECT" \
-  --zone="$ZONE" --resize-request="$RREQ" --instances="${NODE0},${NODE1}" \
-  --requested-run-duration="$RUN_DURATION" 2>&1 | tail -3 || exit 1
+  say "[$z] template $ztpl"
+  gcloud compute instance-templates create "$ztpl" --project="$PROJECT" \
+    --machine-type="$MACHINE_TYPE" \
+    --image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud \
+    --boot-disk-size="$BOOT_DISK_SIZE" --boot-disk-type="$BOOT_DISK_TYPE" \
+    --network="$NETWORK" \
+    --provisioning-model=FLEX_START \
+    --instance-termination-action=DELETE \
+    --max-run-duration="$RUN_DURATION" \
+    --maintenance-policy=TERMINATE \
+    --scopes=cloud-platform \
+    --metadata-from-file=startup-script="$TMP/startup.${z}.sh" \
+    --metadata="spar-session=${SESSION},spar-master-addr=${NODE0},spar-master-port=${MASTER_PORT:-29500},spar-bucket=${BUCKET}" \
+    --labels="spar-role=gpu,spar-session=${SESSION},spar-provisioning=flexmig" >/dev/null 2>&1 \
+    || { say "[$z] template create FAILED -- skipping zone"; continue; }
 
-say "QUEUED. DWS will provision BOTH nodes together when capacity appears."
-say "  state:  gcloud compute instance-groups managed resize-requests describe $MIG \\"
-say "            --resize-request=$RREQ --project=$PROJECT --zone=$ZONE"
+  gcloud compute instance-groups managed create "$zmig" --project="$PROJECT" --zone="$z" \
+    --template="$ztpl" --size=0 --default-action-on-vm-failure=do-nothing >/dev/null 2>&1 \
+    || { say "[$z] MIG create FAILED -- skipping zone"; continue; }
+
+  if gcloud compute instance-groups managed resize-requests create "$zmig" --project="$PROJECT" \
+       --zone="$z" --resize-request="$zreq" --instances="${NODE0},${NODE1}" \
+       --requested-run-duration="$RUN_DURATION" >/dev/null 2>&1; then
+    say "[$z] QUEUED $zreq"
+    queued=$((queued + 1))
+  else
+    say "[$z] resize request FAILED -- skipping zone"
+  fi
+done
+
+say "queued in $queued zone(s). The first pair to boot claims ${CTRL}/claim_${RUN_STAMP}.txt"
+say "  and cancels the rest; a pair in a losing zone deletes itself before bootstrap."
+say "  state:  for z in $ZONES; do gcloud compute instance-groups managed resize-requests describe \\"
+say "            spar-flex-mig-${RUN_STAMP}-\$z --resize-request=spar-flex-req-${RUN_STAMP}-\$z \\"
+say "            --project=$PROJECT --zone=\$z --format='value(state)'; done"
 say "  nodes:  gcloud compute instances list --project=$PROJECT --filter='name~^spar-gpuf'"
-say "  log:    gcloud compute ssh $NODE0 --zone=$ZONE --command='sudo tail -f /var/log/spar-startup.log'"
+say "  logs:   gcloud storage ls ${CTRL}/"
 say "  cells:  $ONLY_CELLS  (REPS=$REPS)"
-say "  data:   $BUCKET/runs/$SESSION/"
-say "  cancel: RUN_STAMP=$RUN_STAMP bash scripts/gcp/provision_flexstart_mig.sh --teardown"
+say "  cancel: RUN_STAMP=$RUN_STAMP ZONES='$ZONES' bash scripts/gcp/provision_flexstart_mig.sh --teardown"
