@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+# SUPERSEDED by provision_flexstart_mig.sh -- DO NOT USE. This script does not
+# queue, despite what the comments below claim. MEASURED 2026-09-18: both
+# `instances create --provisioning-model=FLEX_START` calls came back as
+# PROVISIONING and then FAILED 2.5 minutes later with
+#     code: ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS
+#     reason: stockout   zonesAvailable: ''
+# A plain FLEX_START instance create makes ONE immediate attempt. The durable DWS
+# queue is a MIG resize request, which stays ACCEPTED with
+# "Waiting for resources" and retries until capacity appears -- and is
+# all-or-nothing for the count, so the half-a-pair bounding below is unnecessary
+# there. Kept only for the startup-script pattern it established.
+#
 # Queue an H100 PAIR on Flex Start (DWS) and let it run the stage UNATTENDED.
 #
 # WHY FLEX START. Measured 2026-09-18 (docs/h100_capacity_2026-09-18.md): we now
