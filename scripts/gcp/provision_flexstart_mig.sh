@@ -64,6 +64,20 @@ RREQ="${RREQ:-spar-flex-req-${RUN_STAMP}}"
 # not the expected runtime.
 RUN_DURATION="${RUN_DURATION:-12h}"
 REPS="${REPS:-2}"
+# IMAGE: the Deep Learning VM, NOT pristine Ubuntu. MEASURED 2026-09-19 from the
+# startup log the 20260919c pair shipped before deleting itself: on
+# ubuntu-2204-lts the bootstrap's driver phase pulls cuda-drivers ->
+# nvidia-driver-open 615.71.09, whose DKMS module does not build against this
+# image's kernel --
+#     Building module(s)...(bad exit status: 2)
+#     Error! Bad return status for module build on kernel: 6.8.0-1067-gcp
+#     Errors were encountered while processing: nvidia-dkms-open
+#       nvidia-driver-open nvidia-open cuda-drivers
+# -- so apt exits 1 and bootstrap dies ~70 minutes in. The DLVM image ships a
+# matched driver (580) already built, and bootstrap_node.sh:148 skips phase (b)
+# outright when 8 GPUs are already live, so the DKMS build never happens.
+IMAGE_FAMILY="${IMAGE_FAMILY:-common-cu129-ubuntu-2204-nvidia-580}"
+IMAGE_PROJECT="${IMAGE_PROJECT:-deeplearning-platform-release}"
 # Everything new from section 33, plus the four long-context cells that have been
 # queued and unrun since 2026-09-17.
 ONLY_CELLS="${ONLY_CELLS:-^s16_(infershard_(qwen7b_kv16k_b32|qwen1_5b_kv16k_b48|qwen72b_kv16k_b24|qwen72b_kv4k_b48)|inferserve_|infermem_|trainmem_|train_accum)}"
@@ -159,8 +173,13 @@ gcs_put() {
 # Every exit path now ships the log first.
 ship_log() {
   local tag="\${1:-exit}"
-  { echo "=== journal ==="; journalctl -u google-startup-scripts --no-pager | tail -200; } \
-    >> /var/log/spar-startup.log 2>&1 || true
+  {
+    echo "=== nvidia-smi ==="; nvidia-smi 2>&1 | head -15
+    for m in /var/lib/dkms/nvidia/*/build/make.log; do
+      [ -f "\$m" ] && { echo "=== \$m ==="; tail -80 "\$m"; }
+    done
+    echo "=== journal ==="; journalctl -u google-startup-scripts --no-pager | tail -200
+  } >> /var/log/spar-startup.log 2>&1 || true
   gcs_put /var/log/spar-startup.log "\$CTRL/\$NODE/startup_\${tag}_\$STAMP.log" || true
 }
 mig_self_delete() {
@@ -329,7 +348,7 @@ for z in $ZONES; do
   say "[$z] template $ztpl"
   gcloud compute instance-templates create "$ztpl" --project="$PROJECT" \
     --machine-type="$MACHINE_TYPE" \
-    --image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud \
+    --image-family="$IMAGE_FAMILY" --image-project="$IMAGE_PROJECT" \
     --boot-disk-size="$BOOT_DISK_SIZE" --boot-disk-type="$BOOT_DISK_TYPE" \
     --network="$NETWORK" \
     --provisioning-model=FLEX_START \
