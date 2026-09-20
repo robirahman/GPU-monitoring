@@ -205,9 +205,36 @@ cancel_request() {   # cancel_request <zone> <mig> <req>
     "https://compute.googleapis.com/compute/v1/projects/\$PROJECT/zones/\$1/instanceGroupManagers/\$2/resizeRequests/\$3/cancel" >/dev/null
 }
 
+# Is my peer actually here? A resize request is all-or-nothing, but DWS still
+# creates VMs opportunistically and ROLLS BACK a partial grant: observed
+# 2026-09-20 in us-east4-a, where spar-gpuf-1 existed alone for ~30 s before
+# being torn down while the request stayed ACCEPTED and retried. A solo VM that
+# lived long enough to claim the lock would cancel the other five zones and then
+# vanish -- collecting nothing and costing us the round. So the claim is gated on
+# the peer existing first.
+peer_up() {
+  local t st; t="\$(tok)" || return 1
+  st="\$(curl -sf -H "Authorization: Bearer \$t" \
+    "https://compute.googleapis.com/compute/v1/projects/\$PROJECT/zones/\$ZONE/instances/\$PEER" \
+    | python3 -c 'import sys,json
+try: print(json.load(sys.stdin).get("status",""))
+except Exception: print("")' 2>/dev/null)" || return 1
+  [ "\$st" = "RUNNING" ] || [ "\$st" = "PROVISIONING" ] || [ "\$st" = "STAGING" ]
+}
+
 # Claim the race for THIS ZONE (not this node -- both nodes of the winning pair
 # must survive, and the peer may claim first).
 claim() {
+  local i
+  for i in \$(seq 1 20); do            # <= 10 min
+    peer_up && break
+    echo "peer \$PEER not up yet (attempt \$i)"; sleep 30
+  done
+  if ! peer_up; then
+    echo "peer \$PEER never appeared -- NOT claiming (a partial grant must not"
+    echo "  cancel the other zones); standing down"
+    return 1
+  fi
   printf '%s' "\$ZONE" > /tmp/claim
   if gcs_put_ifabsent /tmp/claim "\$CTRL/claim_\$STAMP.txt"; then
     echo "claimed the run for zone \$ZONE"; return 0
