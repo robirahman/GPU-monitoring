@@ -147,7 +147,11 @@ def run_vllm(args) -> None:
         distributed_executor_backend=args.distributed_executor_backend,
         gpu_memory_utilization=args.gpu_memory_utilization,
         trust_remote_code=True,
-        max_model_len=args.max_model_len,
+        # 0 => omit, so vLLM derives it from the model. Passing a value ABOVE
+        # max_position_embeddings is what killed kv32k_out2k on every rep
+        # (34816 > 32768); passing one BELOW the prompt length is what killed the
+        # kv16k cells. Deriving it avoids both.
+        **({"max_model_len": args.max_model_len} if args.max_model_len else {}),
         # enforce eager for smaller batches — compiled graphs are marginal here
         enforce_eager=args.enforce_eager,
     )
@@ -191,7 +195,15 @@ def main():
     ap.add_argument("--batch-size", type=int, default=8,
                     help="Concurrent requests submitted per iteration.")
     ap.add_argument("--max-tokens", type=int, default=256)
-    ap.add_argument("--max-model-len", type=int, default=4096)
+    ap.add_argument("--max-model-len", type=int, default=0,
+                    help="0 (default) = let vLLM take the model's own "
+                         "max_position_embeddings. The old default of 4096 was "
+                         "ALWAYS passed, so a cell that deliberately omitted the "
+                         "flag still got 4096 -- and every --prompt-tokens above "
+                         "that died during prompt rendering. Measured 2026-09-21: "
+                         "s16_infershard_qwen72b_kv16k_b24 (prompt 16000) and "
+                         "_kv4k_b48 (4000 + 128 out > 4096) both failed this way "
+                         "after a clean 60 s engine init.")
     ap.add_argument("--prompt-tokens", type=int, default=0,
                     help="Pad every prompt to this many tokens. 0 keeps the "
                          "short PROMPTS as-is.\n"

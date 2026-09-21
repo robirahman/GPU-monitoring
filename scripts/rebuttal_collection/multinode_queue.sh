@@ -59,6 +59,11 @@ _GAP_SET=${GAP+x}; _REPS_SET=${REPS+x}
 DUR=${DUR:-600}                         # 600 s -> 39 windows at 30 s / 15 s
 TIMEOUT=${TIMEOUT:-900}
 TIMEOUT_BIG=${TIMEOUT_BIG:-1500}        # 30B / model loads
+# Serving cells start a vLLM SERVER and then drive it, so the outer timeout has
+# to cover weight load + engine init + --duration, not just a generate loop.
+# Measured 2026-09-21: every inferserve cell was killed at rc=124 after 1564 s
+# against TIMEOUT_BIG=1500 while its own --startup-timeout was 2400.
+TIMEOUT_SERVE=${TIMEOUT_SERVE:-3600}
 GAP=${GAP:-60}
 REPS=${REPS:-3}
 # 120 s was too short. The sharded-inference cells are asymmetric -- node0
@@ -388,7 +393,7 @@ mn_ray_serve() {  # mn_ray_serve <stage> <run_id> <model> <mode> <tp> <pp> [extr
       env RAY_ADDRESS="${MASTER_ADDR}:6379" \
       $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
         --num-gpus 8 --run-id "$rid" --node-rank 0 --output-dir "$OUTDIR" \
-        --timeout "$TIMEOUT_BIG" -- \
+        --timeout "$TIMEOUT_SERVE" -- \
         $PY_VLLM workloads/llm_serving_async.py --model "$model" --mode "$mode" \
           --tensor-parallel-size "$tp" --pipeline-parallel-size "$pp" \
           --distributed-executor-backend ray --duration "$DUR" "${extra[@]}"

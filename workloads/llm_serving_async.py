@@ -162,7 +162,7 @@ def main():
     ap.add_argument("--enable-chunked-prefill", action="store_true")
     ap.add_argument("--enable-prefix-caching", action="store_true")
     ap.add_argument("--port", type=int, default=8077)
-    ap.add_argument("--startup-timeout", type=int, default=2400)
+    ap.add_argument("--startup-timeout", type=int, default=1800)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 
