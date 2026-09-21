@@ -44,7 +44,19 @@ NODE_INDEX="${NODE_INDEX:-0}"
 NODE_NAME="${NODE_NAME:-$(meta spar-node-name)}"
 NODE_NAME="${NODE_NAME:-$(hostname -s)}"
 SESSION="${SESSION:-$(meta spar-session)}"; SESSION="${SESSION:-$(date -u +%Y%m%d)}"
-MASTER_ADDR="${MASTER_ADDR:-$(meta spar-master-addr)}"; MASTER_ADDR="${MASTER_ADDR:-$NODE0}"
+# INSTANCE METADATA MUST WIN over env.sh's default here. env.sh is sourced above
+# and unconditionally exports MASTER_ADDR="${MASTER_ADDR:-$NODE0}" with NODE0
+# defaulting to spar-gpu-0, so `${MASTER_ADDR:-$(meta ...)}` never reached the
+# metadata -- it was always already set. Measured 2026-09-21 on the A100-80GB
+# pair: the nodes were spar-gpua-0/1, the template metadata said
+# spar-master-addr=spar-gpua-0, and /etc/spar/node_env still got
+# MASTER_ADDR=spar-gpu-0. Ray then could not form a cluster against a host that
+# does not exist in that project region, and every 2-node cell failed
+# ray-cluster-incomplete. The node's own metadata is the authority for who the
+# master is; env.sh's value is only a fallback for hand-driven runs.
+_meta_master="$(meta spar-master-addr)"
+[[ -n "$_meta_master" ]] && MASTER_ADDR="$_meta_master"
+MASTER_ADDR="${MASTER_ADDR:-$NODE0}"
 MASTER_PORT="${MASTER_PORT:-$(meta spar-master-port)}"; MASTER_PORT="${MASTER_PORT:-29500}"
 BUCKET="${BUCKET:-$(meta spar-bucket)}"; BUCKET="${BUCKET:-gs://${PROJECT}-telemetry}"
 NODE_RANK="$NODE_INDEX"
