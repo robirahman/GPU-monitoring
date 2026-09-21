@@ -335,7 +335,12 @@ if [ "\$got" -ne 1 ]; then
 fi
 echo "peer ready; arming the stage"
 
-STAMP="\$STAMP" PEER="\$PEER" ONLY="\$ONLY" REPS="\$REPS" \
+# HOME is NOT set in the GCE startup-script environment. multinode_queue.sh runs
+# under `set -u` and referenced \$HOME, so on the unattended path it died with
+# "HOME: unbound variable" before running a single cell -- which is exactly how
+# the A100-80 pair sat idle for 3.6 h on 2026-09-21. The ssh path had HOME and
+# never showed it.
+HOME="\${HOME:-/root}" STAMP="\$STAMP" PEER="\$PEER" ONLY="\$ONLY" REPS="\$REPS" \
   bash "\$REPO/scripts/gcp/run_stage_and_stop.sh"
 
 # run_stage_and_stop self-detaches, runs the queue, syncs to GCS, rendezvouses

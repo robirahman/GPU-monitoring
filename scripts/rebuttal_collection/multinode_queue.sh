@@ -31,7 +31,7 @@ set -uo pipefail
 REPO=${REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}
 cd "$REPO" || { echo "cannot cd $REPO"; exit 1; }
 export PYTHONPATH=$REPO
-export HF_HOME=${HF_HOME:-$HOME/.cache/huggingface}
+export HF_HOME=${HF_HOME:-${HOME:-/root}/.cache/huggingface}
 
 PY=${PY:-python3}                       # venv-main python (telemetry + training)
 PY_VLLM=${PY_VLLM:-$PY}                 # venv-vllm python (serving cells only)
