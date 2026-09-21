@@ -220,8 +220,14 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
 # A marker each side publishes and waits for realigns them per cell.
 cell_barrier() {  # cell_barrier <stage> <rid>
   [ "${NNODES:-1}" -gt 1 ] || return 0
-  local stage="$1" rid="$2" me="${NODE_NAME:-}" peer="" ctrl
-  [ -n "$me" ] || return 0
+  # NODE_NAME is NOT in the queue's environment on either launch path -- verified
+  # by reading /proc/<queue pid>/environ on the live A100-80 node, which has
+  # NNODES and PEER but no NODE_NAME. So this guard was returning 0 SILENTLY on
+  # every cell and the barrier has never once run; that is why no barrier line
+  # has ever appeared in any queue log. Fall back to the hostname, which is what
+  # node_env's NODE_NAME is derived from anyway.
+  local stage="$1" rid="$2" me="${NODE_NAME:-$(hostname -s)}" peer="" ctrl
+  [ -n "$me" ] || { say "  barrier $stage: WARNING cannot determine this node's name -- NOT waiting"; return 0; }
   # PEER FIRST. Deriving the peer from NODE0/NODE1 in node_env is wrong whenever
   # the pair is not named spar-gpu-0/1: env.sh exports NODE0/NODE1 with those
   # defaults and bootstrap writes them into node_env verbatim, so on the

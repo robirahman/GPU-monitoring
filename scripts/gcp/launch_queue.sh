@@ -42,6 +42,7 @@ SMOKE="${SMOKE:-0}" \
 STOP_WHEN_DONE="${STOP_WHEN_DONE:-0}" \
 PEER_WAIT="${PEER_WAIT:-2400}" \
 PEER="${PEER:-}" \
+NODE_NAME="${NODE_NAME:-$(hostname -s)}" \
 ONLY_CELLS="${ONLY_CELLS:-}" \
   nohup bash -c '
     bash scripts/rebuttal_collection/multinode_queue.sh
