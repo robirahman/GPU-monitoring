@@ -222,10 +222,25 @@ cell_barrier() {  # cell_barrier <stage> <rid>
   [ "${NNODES:-1}" -gt 1 ] || return 0
   local stage="$1" rid="$2" me="${NODE_NAME:-}" peer="" ctrl
   [ -n "$me" ] || return 0
-  if [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ]; then
+  # PEER FIRST. Deriving the peer from NODE0/NODE1 in node_env is wrong whenever
+  # the pair is not named spar-gpu-0/1: env.sh exports NODE0/NODE1 with those
+  # defaults and bootstrap writes them into node_env verbatim, so on the
+  # A100-80GB pair (spar-gpua-0/1) node_env said NODE0=spar-gpu-0 and every node
+  # resolved its peer to a host that does not exist in that region. The barrier
+  # then never aligned, the two nodes drifted a whole cell apart, and once the
+  # faster node finished its pass the slower one lost its rendezvous partner --
+  # which is what failed every training cell on 2026-09-21 with
+  # RendezvousTimeoutError and then ray-cluster-incomplete.
+  # run_stage_and_stop.sh already knows the real peer; take it from there.
+  if [ -n "${PEER:-}" ] && [ "${PEER}" != "$me" ]; then
+    peer="$PEER"
+  elif [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ] \
+       && { [ "$me" = "$NODE0" ] || [ "$me" = "$NODE1" ]; }; then
     if [ "$me" = "$NODE0" ]; then peer="$NODE1"; else peer="$NODE0"; fi
   fi
-  [ -n "$peer" ] || { say "  barrier $stage: no peer in node_env, not waiting"; return 0; }
+  # Loud, because a silently-unresolved peer is exactly how the nodes drifted.
+  [ -n "$peer" ] || { say "  barrier $stage: WARNING no peer resolved (PEER unset and "\
+"NODE_NAME=$me matches neither NODE0=${NODE0:-} nor NODE1=${NODE1:-}) -- NOT waiting"; return 0; }
   ctrl="${BUCKET}/runs/${SESSION}/control/barrier"
   echo "$(stamp)" > "/tmp/barrier.${rid}"
   gcloud storage cp "/tmp/barrier.${rid}" \

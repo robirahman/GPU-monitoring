@@ -33,7 +33,9 @@ if [ "${_DETACHED:-0}" != 1 ]; then
 fi
 
 echo "$(date -u +%FT%TZ) launching stage stamp=$STAMP only='$ONLY'"
-RUN_STAMP="$STAMP" REPS="$REPS" ONLY_CELLS="$ONLY" LOG="$RELLOG" \
+# PEER is what the per-cell barrier needs; node_env's NODE0/NODE1 cannot be
+# trusted for it on a pair that is not named spar-gpu-0/1.
+RUN_STAMP="$STAMP" REPS="$REPS" ONLY_CELLS="$ONLY" LOG="$RELLOG" PEER="$PEER" \
   bash "$REPO/scripts/gcp/launch_queue.sh"
 
 sleep 90
