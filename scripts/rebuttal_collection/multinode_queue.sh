@@ -738,6 +738,25 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_infermem_qwen7b_u40;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  8 2 \
       --prompt-tokens 2000 --max-tokens 128 --batch-size 32 --gpu-memory-utilization 0.40
 
+  # A100-40GB VARIANTS of the same memory sweep. The H100 numbers above are sized
+  # for an 80 GB card and do not transfer: 72B fp16 is ~145 GB of weights, ~9 GB
+  # per card across 16, so --gpu-memory-utilization 0.30 of a 40 GB card leaves
+  # ~3 GB for KV and will not start. More importantly section 33's confound is
+  # about the FRACTION of the card an engine holds, not the absolute gigabytes,
+  # so running the sweep on a second card size is the direct test of whether
+  # "nearly full card => not training" is about vLLM's allocator or about the
+  # hardware. Training at 40 GB is also already known to OOM at H100 batch sizes
+  # (--size 1b --batch-size 32 --seq-len 1024 peaked at 40.6 GB on A100-40GB),
+  # hence the smaller batches here.
+  c=s16_infermem_qwen72b_u45;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 --batch-size 8  --gpu-memory-utilization 0.45
+  c=s16_infermem_qwen72b_u65;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 --batch-size 16 --gpu-memory-utilization 0.65
+  c=s16_infermem_qwen72b_u85;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
+      --prompt-tokens 4000 --max-tokens 128 --batch-size 24 --gpu-memory-utilization 0.85
+  c=s16_trainmem_fsdp7b_nockpt;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --no-activation-ckpt --batch-size 2 --seq-len 1024 --duration "$DUR"
+  c=s16_trainmem_fsdp13b_b2;     mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 13b --no-activation-ckpt --batch-size 2 --seq-len 512 --duration "$DUR"
+
   # ...and training pushed up into the range vLLM occupies. fsdp70b tops out at
   # 50.7 GB today; without activation checkpointing and at a longer sequence it
   # lands where every inference cell currently lives, so "nearly full card"

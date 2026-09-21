@@ -182,6 +182,20 @@ ship_log() {
   } >> /var/log/spar-startup.log 2>&1 || true
   gcs_put /var/log/spar-startup.log "\$CTRL/\$NODE/startup_\${tag}_\$STAMP.log" || true
 }
+# Release the claim if this zone is giving up. Without this the round deadlocks:
+# on 2026-09-20 a partial grant in us-east4-a claimed at 21:47:49Z, cancelled the
+# other five zones, was rolled back seconds later, and left the lock held by a
+# zone that could not provision. peer_up() stops a partial grant claiming at all;
+# this makes the lock self-healing when a claimed zone fails for any other reason.
+release_claim() {
+  local t cur; t="\$(tok)" || return 1
+  gcs_get "\$CTRL/claim_\$STAMP.txt" /tmp/claim_now || return 0
+  cur="\$(cat /tmp/claim_now 2>/dev/null)"
+  [ "\$cur" = "\$ZONE" ] || return 0        # not mine to release
+  curl -sf -X DELETE -H "Authorization: Bearer \$t" \
+    "https://storage.googleapis.com/storage/v1/b/\$(printf '%s' "\${CTRL#gs://}" | cut -d/ -f1)/o/\$(enc "\$(printf '%s' "\${CTRL#gs://}" | cut -d/ -f2-)/claim_\$STAMP.txt")" >/dev/null \
+    && echo "released the claim for \$ZONE"
+}
 mig_self_delete() {
   local t; t="\$(tok)" || return 1
   curl -sf -X POST -H "Authorization: Bearer \$t" -H 'Content-Type: application/json' \
@@ -288,7 +302,7 @@ if [ ! -f /var/lib/spar/bootstrap.done ]; then
     echo "bootstrap FAILED rc=\$rc -- removing this node rather than idling 8 H100s"
     printf 'bootstrap-failed rc=%s %s\n' "\$rc" "\$(date -u +%FT%TZ)" > /tmp/m
     gcs_put /tmp/m "\$CTRL/\$NODE/startup_failed_\$STAMP.txt" || true
-    ship_log bootstrapfail
+    ship_log bootstrapfail; release_claim
     mig_self_delete || shutdown -h +1
     exit 1
   fi
@@ -300,7 +314,7 @@ for _ in \$(seq 1 120); do
   sleep 30
 done
 if [ ! -f /var/lib/spar/bootstrap.done ]; then
-  echo "bootstrap never completed"; ship_log nobootstrap
+  echo "bootstrap never completed"; ship_log nobootstrap; release_claim
   mig_self_delete || shutdown -h +1; exit 1
 fi
 
@@ -317,7 +331,7 @@ for _ in \$(seq 1 240); do            # <= 2 h, a cold a3 bootstrap is ~50 min
 done
 if [ "\$got" -ne 1 ]; then
   echo "peer \$PEER never became ready -- removing this node"
-  ship_log nopeer; mig_self_delete || shutdown -h +1; exit 0
+  ship_log nopeer; release_claim; mig_self_delete || shutdown -h +1; exit 0
 fi
 echo "peer ready; arming the stage"
 
