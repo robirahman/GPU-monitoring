@@ -38,6 +38,33 @@ apt_get() { apt-get -o DPkg::Lock::Timeout=600 -y "$@"; }
 meta() { curl -sf -H "Metadata-Flavor: Google" \
   "http://metadata.google.internal/computeMetadata/v1/instance/attributes/$1" 2>/dev/null || true; }
 
+# --- resolve THIS node's identity -------------------------------------------
+# ORDER MATTERS AND USED TO BE WRONG. env.sh is sourced above and exports
+# BUCKET, MASTER_ADDR, MASTER_PORT, NODE0, NODE1, PROJECT, SESSION and ZONE with
+# hand-run defaults, so the idiom `X="${X:-$(meta spar-x)}"` can never reach the
+# metadata: X is already set. Four separate failures in two days came from this
+# one shape (see docs/node_env_audit.md), so the metadata is now FORCED for
+# everything the instance actually knows about itself.
+#
+# zone and project come from the metadata server's own endpoints rather than a
+# spar-* key, because those are always right and need no provisioner cooperation.
+_force() {  # _force <VAR> <spar-metadata-key>
+  local v; v="$(meta "$2")"
+  [[ -n "$v" ]] && printf -v "$1" '%s' "$v"
+  return 0
+}
+_inst_meta() {  # bare instance metadata, not an attribute
+  curl -sf -H "Metadata-Flavor: Google" \
+    "http://metadata.google.internal/computeMetadata/v1/$1" 2>/dev/null || true
+}
+_z="$(_inst_meta instance/zone)"; _z="${_z##*/}"          # projects/N/zones/ZONE
+[[ -n "$_z" ]] && ZONE="$_z"
+_p="$(_inst_meta project/project-id)"
+[[ -n "$_p" ]] && PROJECT="$_p"
+_force SESSION     spar-session
+_force MASTER_PORT spar-master-port
+_force BUCKET      spar-bucket
+
 # --- resolve THIS node's identity (env > metadata > sensible default) --------
 NODE_INDEX="${NODE_INDEX:-$(meta spar-node-index)}"
 NODE_INDEX="${NODE_INDEX:-0}"
@@ -60,6 +87,25 @@ MASTER_ADDR="${MASTER_ADDR:-$NODE0}"
 MASTER_PORT="${MASTER_PORT:-$(meta spar-master-port)}"; MASTER_PORT="${MASTER_PORT:-29500}"
 BUCKET="${BUCKET:-$(meta spar-bucket)}"; BUCKET="${BUCKET:-gs://${PROJECT}-telemetry}"
 NODE_RANK="$NODE_INDEX"
+# NODE0/NODE1 likewise: env.sh's spar-gpu-{0,1} defaults were being written into
+# node_env verbatim, and every peer-facing consumer then pointed at a host that
+# is not part of this experiment -- cell_barrier's peer, launch_queue's
+# STOP_WHEN_DONE rendezvous, and verify_pair's describe/ssh. Derive them from
+# this node's own name and its peer's, ordered by index.
+# A MIG template is shared by both nodes, so a per-node spar-peer-name cannot
+# exist on that path; the pair's two names are shipped as spar-node0-name /
+# spar-node1-name instead, and NODE_INDEX says which one is me. spar-peer-name
+# remains supported for the per-instance provisioners.
+_n0="$(meta spar-node0-name)"; _n1="$(meta spar-node1-name)"
+if [[ -n "$_n0" && -n "$_n1" ]]; then
+  NODE0="$_n0"; NODE1="$_n1"
+else
+  _peer_name="$(meta spar-peer-name)"
+  if [[ -n "$_peer_name" ]]; then
+    if [[ "$NODE_INDEX" == "0" ]]; then NODE0="$NODE_NAME"; NODE1="$_peer_name"
+    else                                NODE0="$_peer_name"; NODE1="$NODE_NAME"; fi
+  fi
+fi
 GCS_NODE="${BUCKET}/runs/${SESSION}/${NODE_NAME}"
 log "identity: node_index=$NODE_INDEX name=$NODE_NAME session=$SESSION master=$MASTER_ADDR:$MASTER_PORT"
 

@@ -76,9 +76,22 @@ ONLY_CELLS="${ONLY_CELLS:-}" \
         gcloud storage cp "/tmp/${NODE_NAME}.queue_done" \
           "${CTRL}/${NODE_NAME}.queue_done" >/dev/null 2>&1 || true
       fi
-      PEER=""
-      [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ] && \
-        { [ "$NODE_NAME" = "$NODE0" ] && PEER="$NODE1" || PEER="$NODE0"; }
+      # Same peer-derivation trap as cell_barrier had: if NODE_NAME matches
+      # NEITHER NODE0 nor NODE1 (a pair not named spar-gpu-0/1), the && || chain
+      # silently yields PEER=$NODE0 -- a host that does not exist -- and both
+      # nodes then idle until PEER_WAIT expires instead of powering off. Prefer
+      # the PEER the caller passed; only derive when this node is actually one of
+      # the two, and leave it empty rather than guessing.
+      if [ -n "${PEER:-}" ] && [ "${PEER}" != "${NODE_NAME:-}" ]; then
+        : # caller-supplied, trust it
+      elif [ -n "${NODE0:-}" ] && [ -n "${NODE1:-}" ] \
+           && { [ "$NODE_NAME" = "$NODE0" ] || [ "$NODE_NAME" = "$NODE1" ]; }; then
+        [ "$NODE_NAME" = "$NODE0" ] && PEER="$NODE1" || PEER="$NODE0"
+      else
+        PEER=""
+        echo "[launch_queue] WARNING: cannot resolve peer (NODE_NAME=${NODE_NAME:-} "\
+"NODE0=${NODE0:-} NODE1=${NODE1:-}) -- skipping the rendezvous, still powering off"
+      fi
       if [ -n "$PEER" ] && [ -n "$CTRL" ]; then
         echo "[launch_queue] waiting up to ${PEER_WAIT:-2400}s for $PEER to finish too"
         _t0=$SECONDS

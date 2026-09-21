@@ -403,7 +403,7 @@ for z in $ZONES; do
     --maintenance-policy=TERMINATE \
     --scopes=cloud-platform \
     --metadata-from-file=startup-script="$TMP/startup.${z}.sh" \
-    --metadata="spar-session=${SESSION},spar-master-addr=${NODE0},spar-master-port=${MASTER_PORT:-29500},spar-bucket=${BUCKET}" \
+    --metadata="spar-session=${SESSION},spar-master-addr=${NODE0},spar-master-port=${MASTER_PORT:-29500},spar-bucket=${BUCKET},spar-node0-name=${NODE0},spar-node1-name=${NODE1}" \
     --labels="spar-role=gpu,spar-session=${SESSION},spar-provisioning=flexmig" >/dev/null 2>&1 \
     || { say "[$z] template create FAILED -- skipping zone"; continue; }
 
