@@ -644,6 +644,16 @@ for rep in $(seq 1 "$REPS"); do
       --max-model-len 32768 --prompt-tokens 30000 --max-tokens 2048 \
       --batch-size 64 --gpu-memory-utilization 0.92
 
+  # TENSOR-PARALLEL SIZE IS MODEL-SPECIFIC. vLLM requires
+  # num_attention_heads % tensor_parallel_size == 0. Qwen2.5-7B has 28 heads and
+  # 1.5B has 12, so TP8 is INVALID for both -- measured on the A100 pair
+  # 2026-09-21, where every 7B/1.5B cell died in ~20 s with
+  #   Total number of attention heads (28) must be divisible by
+  #   tensor parallel size (8)
+  # The 72B has 64 heads and is fine at TP8/PP2. Everything smaller uses TP4/PP4,
+  # which divides both 28 and 12 and still spans all 16 GPUs -- the same shape
+  # s16_infershard_qwen1_5b_tp4pp4 has always used. NOTE: this means the two 7B
+  # and 1.5B cells queued on 09-17 could never have run, on any hardware.
   # ---- Section 25 corpus gaps ---------------------------------------------
   # (1) DIVERSE long-context inference. Section 25 showed that adding kv32k to
   # the corpus fixed kv32k (13/40) while its own siblings, differing only in
@@ -657,10 +667,10 @@ for rep in $(seq 1 "$REPS"); do
   # collector recorded 600 s of idle GPUs that the queue logged as OK). Letting
   # vLLM derive it removes that failure mode; prompt+output here is far inside
   # any Qwen2.5 limit.
-  c=s16_infershard_qwen7b_kv16k_b32;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16 8 2 \
+  c=s16_infershard_qwen7b_kv16k_b32;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16 4 4 \
       --prompt-tokens 16000 --max-tokens 128 \
       --batch-size 32 --gpu-memory-utilization 0.92
-  c=s16_infershard_qwen1_5b_kv16k_b48; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_1_5b_fp16 8 2 \
+  c=s16_infershard_qwen1_5b_kv16k_b48; mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_1_5b_fp16 4 4 \
       --prompt-tokens 16000 --max-tokens 128 \
       --batch-size 48 --gpu-memory-utilization 0.92
   c=s16_infershard_qwen72b_kv16k_b24;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
@@ -688,11 +698,11 @@ for rep in $(seq 1 "$REPS"); do
   # prefill  : long prompts, max_tokens=1. The most training-like thing
   #            inference does, isolated so the detector must learn it explicitly.
   # decode   : short prompts, long generations. Bandwidth-bound, the other pole.
-  c=s16_inferserve_poisson_7b;   mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  poisson  8 2 \
+  c=s16_inferserve_poisson_7b;   mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  poisson  4 4 \
       --qps 6 --concurrency 64
-  c=s16_inferserve_saturate_7b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  saturate 8 2 \
+  c=s16_inferserve_saturate_7b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  saturate 4 4 \
       --concurrency 96
-  c=s16_inferserve_bursty_7b;    mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  bursty   8 2 \
+  c=s16_inferserve_bursty_7b;    mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  bursty   4 4 \
       --qps 4 --burst-sec 25 --concurrency 64
   c=s16_inferserve_prefill_72b;  mn_ray_serve "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 prefill  8 2 \
       --qps 1.5 --concurrency 24 --prompt-lo 4000 --prompt-hi 24000
@@ -733,9 +743,9 @@ for rep in $(seq 1 "$REPS"); do
       --prompt-tokens 4000 --max-tokens 128 --batch-size 16 --gpu-memory-utilization 0.45
   c=s16_infermem_qwen72b_u60;  mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_72b_fp16 8 2 \
       --prompt-tokens 4000 --max-tokens 128 --batch-size 24 --gpu-memory-utilization 0.60
-  c=s16_infermem_qwen7b_u20;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  8 2 \
+  c=s16_infermem_qwen7b_u20;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  4 4 \
       --prompt-tokens 2000 --max-tokens 128 --batch-size 16 --gpu-memory-utilization 0.20
-  c=s16_infermem_qwen7b_u40;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  8 2 \
+  c=s16_infermem_qwen7b_u40;   mn_ray_shard "$c" "$(rid_for "$c" "$rep")" qwen25_7b_fp16  4 4 \
       --prompt-tokens 2000 --max-tokens 128 --batch-size 32 --gpu-memory-utilization 0.40
 
   # A100-40GB VARIANTS of the same memory sweep. The H100 numbers above are sized
