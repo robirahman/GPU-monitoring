@@ -247,6 +247,23 @@ cell_barrier() {  # cell_barrier <stage> <rid>
   # Loud, because a silently-unresolved peer is exactly how the nodes drifted.
   [ -n "$peer" ] || { say "  barrier $stage: WARNING no peer resolved (PEER unset and "\
 "NODE_NAME=$me matches neither NODE0=${NODE0:-} nor NODE1=${NODE1:-}) -- NOT waiting"; return 0; }
+  # BUCKET and SESSION live in /etc/spar/node_env, which launch_queue.sh SOURCES
+  # but does not export -- so this child queue inherits neither. Under `set -u`
+  # that made the FIRST barrier call that ever got as far as this line abort the
+  # entire queue:
+  #   multinode_queue.sh: line 250: BUCKET: unbound variable   2026-09-21T14:41:40Z
+  # and because the queue died, launch_queue's STOP_WHEN_DONE never ran, so the
+  # A100-80GB pair idled from 14:42Z until its MIG max-run-duration deleted it at
+  # 20:46Z -- six hours of 16 idle A100-80GBs. Re-read node_env here rather than
+  # relying on the caller's environment, and degrade to "do not wait" instead of
+  # killing the run if it is still unresolved.
+  if [ -z "${BUCKET:-}" ] || [ -z "${SESSION:-}" ]; then
+    # shellcheck disable=SC1091
+    [ -r /etc/spar/node_env ] && . /etc/spar/node_env
+  fi
+  if [ -z "${BUCKET:-}" ] || [ -z "${SESSION:-}" ]; then
+    say "  barrier $stage: WARNING BUCKET/SESSION unresolved -- NOT waiting"; return 0
+  fi
   ctrl="${BUCKET}/runs/${SESSION}/control/barrier"
   echo "$(stamp)" > "/tmp/barrier.${rid}"
   gcloud storage cp "/tmp/barrier.${rid}" \

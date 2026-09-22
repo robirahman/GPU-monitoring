@@ -16,6 +16,12 @@
 #   sudo RUN_STAMP=20260820b SMOKE=1 ONLY_CELLS='^s16_' bash .../launch_queue.sh # smoke
 set -uo pipefail
 . /etc/spar/node_env
+# EXPORT them. Sourcing alone leaves these as shell variables of THIS script, so
+# every child -- multinode_queue.sh above all -- runs without them. That is what
+# killed the 2026-09-21 A100-80GB queue on its first barrier (BUCKET: unbound
+# variable) and what the STOP_WHEN_DONE rendezvous below already had to work
+# around by re-sourcing node_env in its own subshell.
+export BUCKET SESSION PROJECT ZONE NODE0 NODE1 MASTER_ADDR MASTER_PORT 2>/dev/null || true
 REPO="${REPO_DIR:-/opt/spar/repo}"
 cd "$REPO" || { echo "cannot cd $REPO" >&2; exit 1; }
 : "${RUN_STAMP:?export RUN_STAMP (identical on both nodes)}"
