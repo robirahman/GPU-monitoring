@@ -60,6 +60,19 @@ from workloads.llm_inference_vllm import VLLM_MODELS, PROMPTS  # noqa: E402
 MODES = ("poisson", "saturate", "bursty", "prefill", "decode")
 
 
+def _server_accepts(flag, _cache={}):
+    """Is `flag` in this vLLM's api_server --help? Probed once, cached."""
+    if not _cache:
+        try:
+            h = subprocess.run(
+                [sys.executable, "-m", "vllm.entrypoints.openai.api_server", "--help"],
+                capture_output=True, text=True, timeout=180)
+            _cache["text"] = (h.stdout or "") + (h.stderr or "")
+        except Exception:
+            _cache["text"] = ""          # probe failed: pass no optional flags
+    return flag in _cache["text"]
+
+
 def wait_for_server(base, timeout):
     """Poll /health until the engine has finished loading weights."""
     t0 = time.time()
@@ -174,8 +187,22 @@ def main():
            "--model", hf_id, "--dtype", dtype, "--port", str(args.port),
            "--tensor-parallel-size", str(tp),
            "--pipeline-parallel-size", str(args.pipeline_parallel_size),
-           "--gpu-memory-utilization", str(args.gpu_memory_utilization),
-           "--disable-log-requests"]
+           "--gpu-memory-utilization", str(args.gpu_memory_utilization)]
+    # vLLM dropped --disable-log-requests (request logging is now off unless you
+    # pass --enable-log-requests), and argparse rejects unknown flags outright:
+    #
+    #   api_server.py: error: unrecognized arguments: --disable-log-requests
+    #   ERROR: vLLM server never became healthy
+    #
+    # That one flag failed ALL SEVEN inferserve cells on the 2026-09-21 A100-40GB
+    # pair -- the entire async-serving family, which exists specifically to stop
+    # long-context inference reading as training. Each cell still burned its full
+    # 1800 s startup budget before giving up. Ask the installed server which
+    # spelling it has instead of guessing, and accept neither if it has neither.
+    if _server_accepts("--disable-log-requests"):
+        cmd += ["--disable-log-requests"]
+    elif not _server_accepts("--enable-log-requests"):
+        print("note: this vLLM exposes no request-logging switch", flush=True)
     if args.max_model_len:
         cmd += ["--max-model-len", str(args.max_model_len)]
     if args.distributed_executor_backend:
