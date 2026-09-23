@@ -113,7 +113,7 @@ def fft_slab_step(a, work, world, nloc, n, fields):
         # dim0 was the source rank; folding it into dim1 restores the full x axis.
         ypencil = torch.fft.fft(work[f].reshape(world * nloc, nyloc, n), dim=0)
         # Redistribute back: y-slabs -> x-slabs. Chunk p is rank p's x-range.
-        back = torch.empty_like(work[f])
+        back = torch.empty_like(work[f])          # (world, nloc, nyloc, n)
         dist.all_to_all_single(back, ypencil.reshape(world, nloc, nyloc, n).contiguous())
         moved += back.element_size() * back.nelement()
         # dim0 now indexes the y-block each peer returned; fold it into y.
@@ -130,7 +130,14 @@ def run_fftshard(args, device, rank, world, node_rank, deadline):
     # exchange buffer, so resident bytes = 2 * fields * nloc * n * n * 8.
     a = [torch.randn(nloc, n, n, dtype=torch.complex64, device=device)
          for _ in range(args.fields)]
-    work = [torch.empty_like(a[0]) for _ in range(args.fields)]
+    # The exchange buffers hold the TRANSPOSE layout (world, nloc, nyloc, n), not
+    # the field layout (nloc, n, n). Same element count, different rank -- and
+    # allocating them with empty_like(a[0]) gave a 3-D buffer that then failed on
+    # `back.permute(1, 0, 2, 3)`. The numpy proof could not catch this: it builds
+    # its arrays by explicit reshape, so it never exercised the allocation.
+    nyloc = n // world
+    work = [torch.empty(world, nloc, nyloc, n, dtype=torch.complex64, device=device)
+            for _ in range(args.fields)]
     if rank == 0:
         gb = 2 * args.fields * nloc * n * n * 8 / 1e9
         print(f"  grid {n}^3 over {world} ranks -> local slab {nloc}x{n}x{n}, "
@@ -187,13 +194,27 @@ def run_stencil(args, device, rank, world, node_rank, deadline):
     while not deadline.expired():
         for _ in range(args.sweeps_per_step):
             # Post the halo exchange first so it overlaps the interior update.
-            reqs = [
-                dist.isend(u[nloc].contiguous(), up),
-                dist.isend(u[1].contiguous(), dn),
-            ]
+            #
+            # batch_isend_irecv, not bare isend/irecv: NCCL point-to-point ops are
+            # enqueued on the device stream and a ring of ranks each posting
+            # send-up/send-down/recv-down/recv-up in program order deadlocks --
+            # which is exactly what the first version did (rc=124, killed at the
+            # 240 s timeout). Batching lets NCCL group them into one coalesced
+            # exchange that cannot self-deadlock.
+            #
+            # The .contiguous() copies are bound to names as well. As bare
+            # temporaries inside the op list they had no owning reference and
+            # could be freed before wait() returned, which is a use-after-free
+            # that shows up only under memory pressure.
+            send_up = u[nloc].contiguous()
+            send_dn = u[1].contiguous()
             top = torch.empty(n, n, device=device)
             bot = torch.empty(n, n, device=device)
-            reqs += [dist.irecv(bot, dn), dist.irecv(top, up)]
+            ops = [dist.P2POp(dist.isend, send_up, up),
+                   dist.P2POp(dist.isend, send_dn, dn),
+                   dist.P2POp(dist.irecv, bot, dn),
+                   dist.P2POp(dist.irecv, top, up)]
+            reqs = dist.batch_isend_irecv(ops)
             # Interior: needs no ghost data, so it runs while the halos fly.
             v[2:nloc] = (u[1:nloc - 1] + u[3:nloc + 1]
                          + torch.roll(u[2:nloc], 1, dims=1)
