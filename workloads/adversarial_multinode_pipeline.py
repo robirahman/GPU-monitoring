@@ -44,6 +44,26 @@ it is what EVASION_TAX_DATA reports so evasion_cost_eval.py can price it.
     torchrun --nnodes=2 --nproc-per-node=8 ... \
         workloads/adversarial_multinode_pipeline.py --size 30b --microbatches 4
 
+THIS SCRIPT ALSO SERVES THE HONEST `s16_train_pipe*` CELLS
+----------------------------------------------------------
+Nothing in here shapes a signal. It is textbook GPipe: pipeline stages across
+nodes, data parallel within them, activations and their gradients on the wire.
+That is a completely ordinary way to train a large model -- it is what Megatron
+and DeepSpeed do -- and what makes the MN-P *cells* an attack is the motive for
+choosing it, not the mechanism.
+
+The honest multi-node corpus has no pipeline-parallel training at all: its two
+training families are FSDP and DDP, both data-parallel, and the MN-P cells are
+excluded from it by honest_mask(). So a detector trained on that corpus has never
+seen the most common way real frontier training is actually laid out.
+
+The honest cells therefore run this same file with `--rank0-init 0` (the default;
+the flag is the only disguise-specific behaviour here) and a realistic
+`--microbatches 8` rather than the mb1 extreme the evasion ladder sweeps to
+minimise NIC traffic. A second file implementing GPipe would not be a second
+program -- it would be duplicated code producing one family under two names,
+which is exactly the inflation this collection round exists to avoid.
+
 STAGE 0 holds the embeddings and the first half of the blocks; the last stage
 holds the rest plus the norm and the LM head. Stage index = node rank, so a
 stage never straddles the NIC, and every rank's pipeline peer is the rank with
