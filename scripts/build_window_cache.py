@@ -26,6 +26,7 @@ import gc
 import multiprocessing as mp
 import os
 import resource
+import subprocess
 import sys
 import time
 
@@ -38,6 +39,40 @@ sys.path.insert(0, PROJECT_ROOT)
 
 WORK = os.environ.get("SPAR_WORK", "/var/tmp/spar_analysis")
 RAW = os.path.join(WORK, "raw_downcast.parquet")
+
+# /var/tmp is wiped on every VM restart -- three times so far, twice destroying a
+# 25-minute build and once taking the only copy of an analysis script with it.
+# /home is a 4.8 GB disk with ~700 MB free, so it cannot hold the 111 MB cache
+# plus its spill. GCS is the only durable option, and a 111 MB download beats a
+# 25-minute rebuild by two orders of magnitude.
+CACHE_GCS = os.environ.get(
+    "SPAR_CACHE_GCS",
+    "gs://focus-surfer-494820-g0-telemetry/analysis_cache")
+
+
+def gcs_pull(out):
+    """Restore a previously built cache. Returns True if `out` now exists."""
+    if os.path.exists(out) or not CACHE_GCS:
+        return os.path.exists(out)
+    url = f"{CACHE_GCS}/{os.path.basename(out)}"
+    rc = subprocess.call(["gsutil", "-q", "cp", url, out],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if rc == 0 and os.path.exists(out):
+        print(f"restored {out} from {url}", flush=True)
+        return True
+    return False
+
+
+def gcs_push(*paths):
+    """Best-effort upload. A failed upload must never fail the build."""
+    if not CACHE_GCS:
+        return
+    for p in paths:
+        if not os.path.exists(p):
+            continue
+        rc = subprocess.call(["gsutil", "-q", "cp", p, f"{CACHE_GCS}/"],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(f"{'uploaded' if rc == 0 else 'UPLOAD FAILED for'} {p}", flush=True)
 
 
 def rss():
@@ -56,6 +91,10 @@ def window_chunk(args):
 
 def main():
     out = sys.argv[1]
+    if os.environ.get("SPAR_NO_CACHE_PULL") != "1" and gcs_pull(out):
+        print("cache already built; delete it or set SPAR_NO_CACHE_PULL=1 to rebuild",
+              flush=True)
+        return
     win = float(sys.argv[2]) if len(sys.argv) > 2 else 30.0
     stride = float(sys.argv[3]) if len(sys.argv) > 3 else 15.0
     nproc = int(sys.argv[4]) if len(sys.argv) > 4 else 3
@@ -125,6 +164,7 @@ def main():
     print(f"  streams {w.run_id.nunique():,}  jobs {w.job_id.nunique():,}  "
           f"groups {w.grp.nunique():,}  peakRSS {rss():.2f} GB", flush=True)
     print(w.threeway_label.value_counts().to_string(), flush=True)
+    gcs_push(out, os.path.join(WORK, "stream_to_job.parquet"))
 
 
 if __name__ == "__main__":
