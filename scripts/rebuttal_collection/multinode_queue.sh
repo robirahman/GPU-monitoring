@@ -98,6 +98,23 @@ SMOKE=${SMOKE:-0}
 # preemption without walking the whole queue.
 ONLY_CELLS=${ONLY_CELLS:-}
 
+# Per-GPU memory, measured. Some cells simply do not fit on a 40 GB card and
+# there is no point discovering that by OOM on a rented pair: s16_train_lora7b
+# allocates 36.9 GB of fp32 weights per rank (DDP replicates the whole model, and
+# LoRA freezes parameters -- it does not shrink them) and died on all 8 ranks of
+# an A100-40GB, 2026-09-23. A skipped cell costs nothing; an OOMed cell costs its
+# whole timeout and writes a .failed marker that looks like a real result.
+GPU_MEM_GB="${GPU_MEM_GB:-$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null \
+  | head -1 | awk '{printf "%d", $1/1024}')}"
+need_gb() {  # need_gb <gb-per-gpu> <stage> -- true if this card is big enough
+  local need="$1" stage="$2"
+  if [ -n "${GPU_MEM_GB:-}" ] && [ "${GPU_MEM_GB:-0}" -ge "$need" ] 2>/dev/null; then
+    return 0
+  fi
+  say "SKIP  $stage (needs ${need} GB/GPU, this card reports ${GPU_MEM_GB:-unknown} GB)"
+  return 1
+}
+
 PREFIX=""
 OUTDIR="data"
 if [ "$SMOKE" = "1" ]; then
@@ -1145,7 +1162,7 @@ for rep in $(seq 1 "$REPS"); do
   # different on the wire. --max-memory-gb is the footprint sweep.
   c=s16_inferhf_shard72b;      s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8
   c=s16_inferhf_shard72b_m40;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 40
-  c=s16_inferhf_shard72b_m60;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 60
+  c=s16_inferhf_shard72b_m60;  need_gb 60 "$c" && s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 60
 
   # -- Recommender: huge tables, sparse gathers, all-to-all sized by the batch.
   # Huge memory at low utilisation is what evasive training would imitate, and
@@ -1168,8 +1185,12 @@ for rep in $(seq 1 "$REPS"); do
   # LoRA: real training whose gradient all-reduce is 2-3 orders of magnitude
   # smaller than a full fine-tune. If a detector leaning on NIC volume misses
   # it, that is a finding about the detector.
-  c=s16_train_lora7b;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 7b --rank 16 --batch-size 4 --seq-len 1024 --duration "$DUR"
-  c=s16_train_lora7b_b8;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 7b --rank 16 --batch-size 8 --seq-len 1024 --duration "$DUR"
+  # 1b runs on any card; 7b needs 80 GB (DDP replicates all 6.7B fp32 params per
+  # rank -- freezing them for LoRA does not make them smaller). Both collapse to
+  # family `train_lora`, so the 40 GB track still contributes the fold.
+  c=s16_train_lora1b;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 1b --rank 16 --batch-size 4 --seq-len 1024 --duration "$DUR"
+  c=s16_train_lora1b_b16;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 1b --rank 16 --batch-size 16 --seq-len 1024 --duration "$DUR"
+  c=s16_train_lora7b;      need_gb 60 "$c" && mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 7b --rank 16 --batch-size 4 --seq-len 1024 --duration "$DUR"
   # Contrastive: a large all-gather in the FORWARD pass whose size scales with
   # world size rather than model size. No other cell has that shape.
   c=s16_train_contrastive; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_contrastive.py --batch-size 64 --embed-dim 1024 --duration "$DUR"

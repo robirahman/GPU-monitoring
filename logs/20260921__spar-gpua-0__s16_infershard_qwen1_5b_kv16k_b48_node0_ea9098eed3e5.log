@@ -1,0 +1,251 @@
+2026-09-21 13:02:28,187 [spar.multi_gpu] INFO: Multi-GPU run: s16_infershard_qwen1_5b_kv16k_b48, 8 GPUs, node=0, run_id=ea9098eed3e5
+Run ID: ea9098eed3e5
+2026-09-21 13:02:28,217 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,217 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,217 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,227 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,228 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,228 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,237 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,237 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,237 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,246 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,247 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,247 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,257 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,258 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,258 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,272 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,273 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,273 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,282 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,282 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,282 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:28,293 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-21 13:02:28,293 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen1_5b_kv16k_b48, run=ea9098eed3e5)
+2026-09-21 13:02:28,293 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-21 13:02:30,295 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-vllm/bin/python workloads/llm_inference_vllm.py --model qwen25_1_5b_fp16 --tensor-parallel-size 4 --pipeline-parallel-size 4 --distributed-executor-backend ray --duration 600 --prompt-tokens 16000 --max-tokens 128 --batch-size 48 --gpu-memory-utilization 0.92
+Loading qwen25_1_5b_fp16 via vLLM
+  model_id=Qwen/Qwen2.5-1.5B-Instruct dtype=float16 tensor_parallel_size=4 pipeline_parallel_size=4 backend=ray
+INFO 09-21 13:02:39 [api_utils.py:286] non-default args: {'trust_remote_code': True, 'dtype': 'float16', 'distributed_executor_backend': 'ray', 'pipeline_parallel_size': 4, 'tensor_parallel_size': 4, 'disable_log_stats': True, 'model': 'Qwen/Qwen2.5-1.5B-Instruct'}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+INFO 09-21 13:02:50 [model.py:684] Resolved architecture: Qwen2ForCausalLM
+WARNING 09-21 13:02:50 [model.py:2355] Casting torch.bfloat16 to torch.float16.
+INFO 09-21 13:02:50 [model.py:2021] Using max model len 32768
+INFO 09-21 13:02:50 [scheduler.py:277] Chunked prefill is enabled with max_num_batched_tokens=8192.
+INFO 09-21 13:02:51 [kernel.py:369] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+(EngineCore pid=49047) INFO 09-21 13:03:07 [core.py:123] Initializing a V1 LLM engine (v0.29.0) with config: model='Qwen/Qwen2.5-1.5B-Instruct', speculative_config=None, tokenizer='Qwen/Qwen2.5-1.5B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=True, dtype=torch.float16, max_seq_len=32768, download_dir=None, load_format=auto, tensor_parallel_size=4, pipeline_parallel_size=4, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=Qwen/Qwen2.5-1.5B-Instruct, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_compute_ple_ngram_ids', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native']), enable_flashinfer_autotune=True, enable_cutedsl_warmup=True, enable_jit_warmup=True, enable_bf16x3_router_gemm=False, moe_backend='auto', linear_backend='auto')
+(EngineCore pid=49047) WARNING 09-21 13:03:07 [ray_utils.py:551] Tensor parallel size (16) exceeds available GPUs (8). This may result in Ray placement group allocation failures. Consider reducing tensor_parallel_size to 8 or less, or ensure your Ray cluster has 16 GPUs available.
+(EngineCore pid=49047) 2026-09-21 13:03:07,105	INFO worker.py:1683 -- Using address spar-gpu-0:6379 set in the environment variable RAY_ADDRESS
+(EngineCore pid=49047) 2026-09-21 13:03:07,111	INFO worker.py:1833 -- Connecting to existing Ray cluster at address: spar-gpu-0:6379...
+[2026-09-21 13:03:12,120 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:03:17,123 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:03:47,125 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:03:53,132 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:03:58,134 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:04:28,135 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:04:34,141 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:04:39,144 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:05:09,146 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:05:15,152 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:05:20,154 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:05:50,156 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:05:56,162 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:06:01,164 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:06:31,166 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:06:37,172 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:06:42,174 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:07:12,175 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:07:18,182 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:07:23,184 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:07:53,186 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:07:59,193 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:08:04,195 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:08:34,197 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:08:40,202 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:08:45,205 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:09:15,207 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:09:21,214 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:09:26,217 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:09:56,219 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:10:02,226 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:10:07,228 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:10:37,230 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:10:43,236 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:10:48,238 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:11:18,240 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:11:24,247 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:11:29,249 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:11:59,251 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:12:05,259 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:12:10,262 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:12:40,264 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:12:46,270 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:12:51,272 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:13:21,273 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:13:27,280 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:13:32,282 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:14:02,285 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:14:08,292 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:14:13,294 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:14:43,296 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:14:49,301 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:14:54,304 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:15:24,307 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:15:30,313 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:15:35,316 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:16:05,317 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+[2026-09-21 13:16:11,324 W 49047 49047] rpc_client.h:153: Failed to connect to GCS at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:16:16,327 W 49047 49047] rpc_client.h:638: Failed to connect to the observability pubsub at address spar-gpu-0:6379 within 5 seconds.
+[2026-09-21 13:16:46,329 W 49047 49047] gcs_client.cc:210: Failed to get cluster ID from GCS server: TimedOut: Timed out while waiting for GCS to become available.
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] EngineCore failed to start.
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] Traceback (most recent call last):
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/worker.py", line 1978, in init
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     _global_node = ray._private.node.Node(
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/node.py", line 192, in __init__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     self._init_gcs_client()
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/node.py", line 1033, in _init_gcs_client
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     raise RuntimeError(
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] RuntimeError: Failed to connect to GCS. Last connection error: Traceback (most recent call last):
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/node.py", line 996, in _init_gcs_client
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     client = GcsClient(
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "python/ray/_raylet.pyx", line 3200, in ray._raylet.GcsClient.__cinit__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "python/ray/includes/gcs_client.pxi", line 73, in ray._raylet.InnerGcsClient.standalone
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "python/ray/includes/common.pxi", line 142, in ray._raylet.check_status_timeout_as_rpc_error
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] ray.exceptions.RpcError: Timed out while waiting for GCS to become available.
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] 
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] 
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] The above exception was the direct cause of the following exception:
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] 
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] Traceback (most recent call last):
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1336, in run_engine_core
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     return func(*args, **kwargs)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1093, in __init__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     super().__init__(
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 134, in __init__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/ray_executor_v2.py", line 251, in __init__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     super().__init__(vllm_config)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/multiproc_executor.py", line 116, in __init__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     super().__init__(vllm_config)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     return func(*args, **kwargs)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 110, in __init__
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     self._init_executor()
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/ray_executor_v2.py", line 293, in _init_executor
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     initialize_ray_cluster(self.parallel_config, require_gpu_on_driver=False)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/ray_utils.py", line 579, in initialize_ray_cluster
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     ray.init(address=ray_address, runtime_env=parallel_config.ray_runtime_env)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/client_mode_hook.py", line 134, in wrapper
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     return func(*args, **kwargs)
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/worker.py", line 1994, in init
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374]     raise ConnectionError(
+(EngineCore pid=49047) ERROR 09-21 13:16:47 [core.py:1374] ConnectionError: Failed to connect to Ray cluster at spar-gpu-0:6379
+(EngineCore pid=49047) Process EngineCore:
+(EngineCore pid=49047) Traceback (most recent call last):
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/worker.py", line 1978, in init
+(EngineCore pid=49047)     _global_node = ray._private.node.Node(
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/node.py", line 192, in __init__
+(EngineCore pid=49047)     self._init_gcs_client()
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/node.py", line 1033, in _init_gcs_client
+(EngineCore pid=49047)     raise RuntimeError(
+(EngineCore pid=49047) RuntimeError: Failed to connect to GCS. Last connection error: Traceback (most recent call last):
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/node.py", line 996, in _init_gcs_client
+(EngineCore pid=49047)     client = GcsClient(
+(EngineCore pid=49047)   File "python/ray/_raylet.pyx", line 3200, in ray._raylet.GcsClient.__cinit__
+(EngineCore pid=49047)   File "python/ray/includes/gcs_client.pxi", line 73, in ray._raylet.InnerGcsClient.standalone
+(EngineCore pid=49047)   File "python/ray/includes/common.pxi", line 142, in ray._raylet.check_status_timeout_as_rpc_error
+(EngineCore pid=49047) ray.exceptions.RpcError: Timed out while waiting for GCS to become available.
+(EngineCore pid=49047) 
+(EngineCore pid=49047) 
+(EngineCore pid=49047) The above exception was the direct cause of the following exception:
+(EngineCore pid=49047) 
+(EngineCore pid=49047) Traceback (most recent call last):
+(EngineCore pid=49047)   File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+(EngineCore pid=49047)     self.run()
+(EngineCore pid=49047)   File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+(EngineCore pid=49047)     self._target(*self._args, **self._kwargs)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1378, in run_engine_core
+(EngineCore pid=49047)     raise e
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1336, in run_engine_core
+(EngineCore pid=49047)     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=49047)     return func(*args, **kwargs)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 1093, in __init__
+(EngineCore pid=49047)     super().__init__(
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core.py", line 134, in __init__
+(EngineCore pid=49047)     self.model_executor = executor_class(vllm_config)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/ray_executor_v2.py", line 251, in __init__
+(EngineCore pid=49047)     super().__init__(vllm_config)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/multiproc_executor.py", line 116, in __init__
+(EngineCore pid=49047)     super().__init__(vllm_config)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(EngineCore pid=49047)     return func(*args, **kwargs)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/abstract.py", line 110, in __init__
+(EngineCore pid=49047)     self._init_executor()
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/ray_executor_v2.py", line 293, in _init_executor
+(EngineCore pid=49047)     initialize_ray_cluster(self.parallel_config, require_gpu_on_driver=False)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/executor/ray_utils.py", line 579, in initialize_ray_cluster
+(EngineCore pid=49047)     ray.init(address=ray_address, runtime_env=parallel_config.ray_runtime_env)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/client_mode_hook.py", line 134, in wrapper
+(EngineCore pid=49047)     return func(*args, **kwargs)
+(EngineCore pid=49047)   File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/ray/_private/worker.py", line 1994, in init
+(EngineCore pid=49047)     raise ConnectionError(
+(EngineCore pid=49047) ConnectionError: Failed to connect to Ray cluster at spar-gpu-0:6379
+INFO 09-21 13:16:48 [utils.py:620] [shutdown] Process manager: send sigterm to process EngineCore
+Traceback (most recent call last):
+  File "/opt/spar/repo/workloads/llm_inference_vllm.py", line 243, in <module>
+    main()
+  File "/opt/spar/repo/workloads/llm_inference_vllm.py", line 239, in main
+    run_vllm(args)
+  File "/opt/spar/repo/workloads/llm_inference_vllm.py", line 142, in run_vllm
+    llm = LLM(
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/llm.py", line 343, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/llm_engine.py", line 179, in from_engine_args
+    return cls(
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/llm_engine.py", line 105, in __init__
+    self.engine_core = EngineCoreClient.make_client(
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core_client.py", line 110, in make_client
+    return SyncMPClient(vllm_config, executor_class, log_stats)
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+    return func(*args, **kwargs)
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core_client.py", line 813, in __init__
+    super().__init__(
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+    with launch_core_engines(
+  File "/usr/lib/python3.10/contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/utils.py", line 1240, in launch_core_engines
+    wait_for_engine_startup(
+  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/v1/engine/utils.py", line 1320, in wait_for_engine_startup
+    raise RuntimeError(
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+2026-09-21 13:16:51,070 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-21 13:16:53,073 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,117 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu0_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,122 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu0_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,122 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,132 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu1_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,136 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu1_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,137 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,146 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu2_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,151 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu2_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,151 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,159 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu3_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,164 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu3_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,164 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,173 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu4_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,178 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu4_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,178 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,187 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu5_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,192 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu5_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,192 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,200 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu6_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,205 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu6_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,205 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+2026-09-21 13:16:53,214 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu7_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+2026-09-21 13:16:53,219 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu7_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+2026-09-21 13:16:53,220 [spar.multi_gpu] INFO: Multi-GPU run complete: ea9098eed3e5 (rc=1)

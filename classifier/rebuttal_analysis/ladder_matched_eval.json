@@ -1,0 +1,35 @@
+{
+  "summary_csv": "/home/robi/GPU-monitoring/classifier/results/ladder_matched_summary.csv",
+  "monotonicity_csv": "/home/robi/GPU-monitoring/classifier/results/ladder_matched_monotonicity.csv",
+  "scopes": [
+    "s1",
+    "s16",
+    "s8"
+  ],
+  "arms": [
+    "pergpu"
+  ],
+  "config": {
+    "window": 30.0,
+    "stride": 15.0,
+    "k": 3,
+    "m": 5,
+    "target_fp_per_gpu_hour": 0.1,
+    "arms": [
+      "pergpu"
+    ],
+    "negatives": [
+      "inferrep",
+      "infershard"
+    ],
+    "train_workloads": [
+      "fsdp1b"
+    ],
+    "ablations": [
+      "none"
+    ],
+    "bootstrap": 500,
+    "synthetic": false,
+    "out_prefix": "ladder_matched"
+  }
+}

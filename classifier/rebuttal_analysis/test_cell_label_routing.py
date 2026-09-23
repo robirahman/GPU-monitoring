@@ -75,8 +75,9 @@ CELLS = [
     ("s16_nonml_hpl", "other"),
     ("s16_nonml_gromacs", "other"),
     # --- E. new training programs ---
+    ("s16_train_lora1b", "ml_training"),
+    ("s16_train_lora1b_b16", "ml_training"),
     ("s16_train_lora7b", "ml_training"),
-    ("s16_train_lora7b_b8", "ml_training"),
     ("s16_train_pipe7b", "ml_training"),
     ("s16_train_contrastive", "ml_training"),
     ("s16_train_diffusion", "ml_training"),

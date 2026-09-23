@@ -57,8 +57,22 @@ def main():
     ap.add_argument("--windows", default="/var/tmp/spar_analysis/win_full.parquet")
     ap.add_argument("--inventory", default="/var/tmp/spar_analysis/inv_mn.parquet")
     ap.add_argument("--trees", type=int, default=300)
+    ap.add_argument("--max-reps", type=int, default=0,
+                    help="keep only the first N reps of each workload in the "
+                         "TRAINING half of every fold (0 = all). The held-out "
+                         "family is always evaluated in full, so the comparison "
+                         "isolates what extra reps buy the model rather than "
+                         "also shrinking the test set. Reps are ordered by first "
+                         "window, which is the collection order.")
     ap.add_argument("--out", default="/var/tmp/spar_analysis/mn_binary_lofo.csv")
+    ap.add_argument("--taus", default="0.8,0.5,0.3,0.2,0.1,0.05",
+                    help="decision thresholds to report per fold. A single "
+                         "accuracy at 0.5 hides the whole trade-off: held-out "
+                         "train_fsdp recall is 0.005 at 0.5 and 0.44 at 0.05, "
+                         "and the question is what the false-alarm rate does "
+                         "over the same range.")
     a = ap.parse_args()
+    taus = [float(t) for t in a.taus.split(",")]
 
     w = pd.read_parquet(a.windows)
     inv = pd.read_parquet(a.inventory, columns=["stream", "host"]).drop_duplicates("stream")
@@ -86,6 +100,14 @@ def main():
     cols = [c for c in get_feature_cols(mn) if c not in ("y", "hosts", "host")]
     mn["y"] = (mn.threeway_label == "ml_training").astype(int)
 
+    # Rep index within a workload, by collection order. A rep is one execution
+    # of one cell: multinode_queue.sh derives its run_id from (stamp, cell, rep),
+    # so distinct jobs of the same grp ARE the reps.
+    first = mn.groupby(["grp", "job_id"]).window_start.min().reset_index()
+    first["rep"] = first.groupby("grp").window_start.rank(method="dense").astype(int)
+    mn = mn.merge(first[["grp", "job_id", "rep"]], on=["grp", "job_id"], how="left")
+    mn["rep"] = mn["rep"].fillna(1).astype(int)
+
     keep = stage2_mask_multinode(cols)
     X = np.nan_to_num(mn[cols].to_numpy(np.float32), nan=0.0, posinf=0.0, neginf=0.0)
     y = mn.y.values
@@ -93,6 +115,10 @@ def main():
     fams = sorted(set(fam))
     frac_train = mn.groupby("family").y.mean().to_dict()
 
+    if a.max_reps:
+        kept = int((mn["rep"] <= a.max_reps).sum())
+        print(f"REP ABLATION: training half capped at {a.max_reps} rep(s) per "
+              f"workload -> {kept:,} of {len(mn):,} windows available to fit")
     print(f"honest multi-node windows {len(mn):,}  jobs {mn.job_id.nunique()}  "
           f"workloads {mn.grp.nunique()}  families {len(fams)}  "
           f"features {len(cols)} (shape-only {int(keep.sum())})")
@@ -111,6 +137,8 @@ def main():
     for f in fams:
         te = fam == f
         tr = ~te
+        if a.max_reps:
+            tr = tr & (mn["rep"].values <= a.max_reps)
         if len(set(y[tr])) < 2:
             print(f"  {f:26s} skipped: holding it out leaves one class")
             continue
@@ -126,11 +154,28 @@ def main():
             row[f"win_{tag}"] = accuracy_score(y[te], p)
             if tag == "all":
                 row["job_all"], row["n_jobs"] = job_vote(mn[te], p)
+                # Fraction of held-out windows called "training" at each tau.
+                # Every fold is single-class, so on a TRAIN family this is
+                # recall and on a not-train family it is the false-alarm rate --
+                # read down a tau column to see whether any threshold serves
+                # both at once.
+                pr = clf.predict_proba(X[te][:, m])[:, list(clf.classes_).index(1)]
+                row["p_train_median"] = float(np.median(pr))
+                for t in taus:
+                    row[f"flag@{t}"] = float((pr > t).mean())
         res.append(row)
         print(f"  {f:26s} {row['side']:10s} {row['win_all']:12.4f} "
               f"{row['win_shape']:14.4f} {row['job_all']:12.4f} {n_tr_fam:16d}")
 
     r = pd.DataFrame(res)
+    print("\n=== fraction of held-out windows flagged as training, by tau ===")
+    print("(TRAIN rows are recall -- want high; not-train rows are the "
+          "false-alarm rate -- want low)")
+    hdr = "".join(f"{('tau=' + str(t)):>10s}" for t in taus)
+    print(f"{'held-out family':26s} {'side':10s} {'p_med':>7s}{hdr}")
+    for _, x in r.sort_values(["side", "family"]).iterrows():
+        cells = "".join(f"{x[f'flag@{t}']:10.4f}" for t in taus)
+        print(f"  {x.family:24s} {x.side:10s} {x.p_train_median:7.3f}{cells}")
     print("\n--- summary ---")
     for side in ("TRAIN", "not-train"):
         s = r[r.side == side]

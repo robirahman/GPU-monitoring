@@ -1,0 +1,100 @@
+2026-09-04 19:55:34,603 [spar.multi_gpu] INFO: Multi-GPU run: smoke_s16_nonml_comm, 8 GPUs, node=0, run_id=6cc2a2b7fa2e
+Run ID: 6cc2a2b7fa2e
+2026-09-04 19:55:34,633 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,633 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,633 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,649 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,649 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,649 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,666 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,666 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,666 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,680 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,681 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,681 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,694 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,694 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,694 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,708 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,709 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,709 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,725 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,726 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,726 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:34,740 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 19:55:34,741 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=smoke_s16_nonml_comm, run=6cc2a2b7fa2e)
+2026-09-04 19:55:34,741 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 19:55:36,743 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration 60
+W0904 19:55:38.393000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0904 19:55:38.393000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0904 19:55:38.393000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0904 19:55:38.393000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+Non-ML distributed (HONEST control): mode=comm, 16 GPUs
+  No model, no gradients, no optimizer anywhere
+  all_reduce buffer: 256.0 MB/iter
+  Duration: 60s
+  Post-init GPU memory: 0.3 GB
+STEP ts=1788551754.776 kind=nonml batch_idx=0 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788551909.734 kind=nonml batch_idx=1 tokens=0 passes=1 node=0 rank=0
+  156s: iters=2 allreduces=1026
+STEP ts=1788552062.980 kind=nonml batch_idx=2 tokens=0 passes=1 node=0 rank=0
+  309s: iters=3 allreduces=2052
+STEP ts=1788552215.169 kind=nonml batch_idx=3 tokens=0 passes=1 node=0 rank=0
+  462s: iters=4 allreduces=3078
+  Done: 4 iterations in 461.6s
+  NONML_CONTROL_DATA: mode=comm world_size=16 iters=4 filler_iters=0 allreduces=3078 alloc_gb=0.0 duty=1.0 fmode=mixed duration=461.6 train_steps=0 useful_tokens=0
+2026-09-04 20:03:36,744 [spar.multi_gpu] WARNING:   Workload timed out after 480s -- killing process group
+W0904 20:03:36.744000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGTERM death signal, shutting down workers
+W0904 20:03:36.746000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 24651 closing signal SIGTERM
+W0904 20:03:36.746000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 24652 closing signal SIGTERM
+W0904 20:03:36.746000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 24655 closing signal SIGTERM
+W0904 20:03:36.746000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 24658 closing signal SIGTERM
+W0904 20:03:36.746000 24568 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 24659 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 24568 got signal: 15
+2026-09-04 20:03:37,609 [spar.multi_gpu] INFO:   Workload finished: TIMEOUT
+2026-09-04 20:03:39,611 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,635 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu0_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,639 [spar.multi_gpu] INFO:   GPU 0: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu0_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,639 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,646 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu1_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,649 [spar.multi_gpu] INFO:   GPU 1: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu1_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,649 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,656 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu2_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,659 [spar.multi_gpu] INFO:   GPU 2: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu2_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,659 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,666 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu3_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,669 [spar.multi_gpu] INFO:   GPU 3: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu3_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,669 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,675 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu4_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,679 [spar.multi_gpu] INFO:   GPU 4: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu4_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,679 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,685 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu5_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,688 [spar.multi_gpu] INFO:   GPU 5: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu5_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,689 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,695 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu6_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,698 [spar.multi_gpu] INFO:   GPU 6: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu6_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,698 [spar.telemetry] INFO: Telemetry stopped. 485 samples collected.
+2026-09-04 20:03:39,705 [spar.telemetry] INFO: Saved 485 rows to logs/smoke_data/smoke_s16_nonml_comm_node0_gpu7_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet
+2026-09-04 20:03:39,708 [spar.multi_gpu] INFO:   GPU 7: saved logs/smoke_data/smoke_s16_nonml_comm_node0_gpu7_NVIDIA_A100_SXM4_40GB_6cc2a2b7fa2e.parquet (485 rows)
+2026-09-04 20:03:39,709 [spar.multi_gpu] INFO: Multi-GPU run complete: 6cc2a2b7fa2e (rc=124)

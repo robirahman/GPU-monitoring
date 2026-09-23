@@ -1,0 +1,333 @@
+2026-09-05 01:34:02,210 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_satint_f20, 8 GPUs, node=0, run_id=c0ad0e9ccf58
+Run ID: c0ad0e9ccf58
+2026-09-05 01:34:02,239 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,240 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,240 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,254 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,254 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,255 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,272 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,272 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,272 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,286 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,287 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,287 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,309 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,309 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,309 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,327 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,328 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,328 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,342 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,342 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,342 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:02,357 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 01:34:02,357 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_satint_f20, run=c0ad0e9ccf58)
+2026-09-05 01:34:02,357 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 01:34:04,359 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/adversarial_multinode.py --strategy MN-I --size 1b --train-frac 0.2 --duration 600
+W0905 01:34:06.007000 198059 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0905 01:34:06.007000 198059 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0905 01:34:06.007000 198059 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0905 01:34:06.007000 198059 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+Adversarial multinode: MN-I, 1b on 16 GPUs
+  Per-GPU batch: 8, Seq len: 1024
+  Train fraction: 20% over a 1/10000 threshold resolution
+  Duration: 600s
+  Post-init GPU memory: 1.4 GB
+  Schedule seed: 1865660195
+STEP ts=1788572056.680 kind=infer batch_idx=0 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572057.182 kind=infer batch_idx=1 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572057.684 kind=infer batch_idx=2 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572060.533 kind=train batch_idx=3 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572061.511 kind=infer batch_idx=4 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572062.484 kind=infer batch_idx=5 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572063.456 kind=infer batch_idx=6 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572064.429 kind=infer batch_idx=7 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572065.401 kind=infer batch_idx=8 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572067.803 kind=train batch_idx=9 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572069.045 kind=infer batch_idx=10 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572070.287 kind=infer batch_idx=11 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572071.529 kind=infer batch_idx=12 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572072.772 kind=infer batch_idx=13 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572074.102 kind=infer batch_idx=14 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572075.345 kind=infer batch_idx=15 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572076.587 kind=infer batch_idx=16 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572077.830 kind=infer batch_idx=17 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572079.072 kind=infer batch_idx=18 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572080.403 kind=infer batch_idx=19 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572081.645 kind=infer batch_idx=20 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572082.887 kind=infer batch_idx=21 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572084.130 kind=infer batch_idx=22 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572085.372 kind=infer batch_idx=23 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572086.703 kind=infer batch_idx=24 tokens=0 passes=1 node=0 rank=0
+  31s: steps=25 train=2 useful=8588 tok/s filler=10901 loss=10.3750
+STEP ts=1788572087.945 kind=infer batch_idx=25 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572089.187 kind=infer batch_idx=26 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572090.430 kind=infer batch_idx=27 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572092.866 kind=train batch_idx=28 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572094.346 kind=infer batch_idx=29 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572096.769 kind=train batch_idx=30 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572098.439 kind=infer batch_idx=31 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572100.109 kind=infer batch_idx=32 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572102.542 kind=train batch_idx=33 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572104.366 kind=infer batch_idx=34 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572106.190 kind=infer batch_idx=35 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572108.014 kind=infer batch_idx=36 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572109.837 kind=infer batch_idx=37 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572111.661 kind=infer batch_idx=38 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572113.577 kind=infer batch_idx=39 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572115.401 kind=infer batch_idx=40 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572117.225 kind=infer batch_idx=41 tokens=0 passes=1 node=0 rank=0
+  61s: steps=42 train=5 useful=10735 tok/s filler=20999 loss=10.3750
+STEP ts=1788572119.048 kind=infer batch_idx=42 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572120.872 kind=infer batch_idx=43 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572122.788 kind=infer batch_idx=44 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572125.190 kind=train batch_idx=45 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572127.130 kind=infer batch_idx=46 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572129.069 kind=infer batch_idx=47 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572131.009 kind=infer batch_idx=48 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572133.040 kind=infer batch_idx=49 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572135.401 kind=train batch_idx=50 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572137.425 kind=infer batch_idx=51 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572140.030 kind=train batch_idx=52 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572142.170 kind=infer batch_idx=53 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572144.402 kind=infer batch_idx=54 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572146.542 kind=infer batch_idx=55 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572149.334 kind=train batch_idx=56 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  93s: steps=57 train=9 useful=12663 tok/s filler=30545 loss=10.3750
+STEP ts=1788572151.604 kind=infer batch_idx=57 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572154.061 kind=train batch_idx=58 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572156.369 kind=infer batch_idx=59 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572158.676 kind=infer batch_idx=60 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572160.983 kind=infer batch_idx=61 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572163.290 kind=infer batch_idx=62 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572165.597 kind=infer batch_idx=63 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572168.005 kind=infer batch_idx=64 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572170.312 kind=infer batch_idx=65 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572172.620 kind=infer batch_idx=66 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572175.091 kind=train batch_idx=67 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572177.431 kind=infer batch_idx=68 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572179.866 kind=infer batch_idx=69 tokens=0 passes=1 node=0 rank=0
+  124s: steps=70 train=11 useful=11657 tok/s filler=41663 loss=10.3750
+STEP ts=1788572182.206 kind=infer batch_idx=70 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572184.546 kind=infer batch_idx=71 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572186.915 kind=train batch_idx=72 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572189.187 kind=train batch_idx=73 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572191.523 kind=infer batch_idx=74 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572193.986 kind=train batch_idx=75 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572196.344 kind=infer batch_idx=76 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572198.702 kind=infer batch_idx=77 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572201.061 kind=infer batch_idx=78 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572203.514 kind=infer batch_idx=79 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572205.958 kind=train batch_idx=80 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572208.335 kind=infer batch_idx=81 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572210.712 kind=infer batch_idx=82 tokens=0 passes=1 node=0 rank=0
+  155s: steps=83 train=15 useful=12723 tok/s filler=50931 loss=10.3750
+STEP ts=1788572213.089 kind=infer batch_idx=83 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572215.561 kind=infer batch_idx=84 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572217.938 kind=infer batch_idx=85 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572220.315 kind=infer batch_idx=86 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572222.692 kind=infer batch_idx=87 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572225.117 kind=train batch_idx=88 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572227.503 kind=infer batch_idx=89 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572229.951 kind=train batch_idx=90 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572232.351 kind=infer batch_idx=91 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572234.751 kind=infer batch_idx=92 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572237.152 kind=infer batch_idx=93 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572239.652 kind=train batch_idx=94 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572242.052 kind=infer batch_idx=95 tokens=0 passes=1 node=0 rank=0
+  186s: steps=96 train=18 useful=12693 tok/s filler=61347 loss=10.3750
+STEP ts=1788572244.586 kind=train batch_idx=96 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572247.014 kind=infer batch_idx=97 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572249.442 kind=infer batch_idx=98 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572252.076 kind=train batch_idx=99 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572254.527 kind=infer batch_idx=100 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572257.273 kind=train batch_idx=101 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572259.784 kind=infer batch_idx=102 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572262.662 kind=train batch_idx=103 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572265.248 kind=infer batch_idx=104 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572267.834 kind=infer batch_idx=105 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572270.420 kind=infer batch_idx=106 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572273.007 kind=infer batch_idx=107 tokens=0 passes=1 node=0 rank=0
+  217s: steps=108 train=22 useful=13299 tok/s filler=70169 loss=10.3750
+STEP ts=1788572275.593 kind=infer batch_idx=108 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572278.492 kind=train batch_idx=109 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572281.120 kind=infer batch_idx=110 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572283.748 kind=infer batch_idx=111 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572286.376 kind=infer batch_idx=112 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572289.004 kind=infer batch_idx=113 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572291.967 kind=train batch_idx=114 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572294.644 kind=infer batch_idx=115 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572297.438 kind=train batch_idx=116 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572299.799 kind=train batch_idx=117 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572302.431 kind=infer batch_idx=118 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572305.156 kind=infer batch_idx=119 tokens=0 passes=1 node=0 rank=0
+  249s: steps=120 train=26 useful=13687 tok/s filler=79369 loss=10.3750
+STEP ts=1788572307.789 kind=infer batch_idx=120 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572310.806 kind=train batch_idx=121 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572313.517 kind=infer batch_idx=122 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572316.229 kind=infer batch_idx=123 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572319.030 kind=infer batch_idx=124 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572322.053 kind=train batch_idx=125 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572324.825 kind=infer batch_idx=126 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572327.863 kind=train batch_idx=127 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572330.691 kind=infer batch_idx=128 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572333.609 kind=infer batch_idx=129 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572336.516 kind=train batch_idx=130 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  280s: steps=131 train=30 useful=14026 tok/s filler=87813 loss=10.3750
+STEP ts=1788572339.358 kind=infer batch_idx=131 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572342.200 kind=infer batch_idx=132 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572345.183 kind=train batch_idx=133 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572348.053 kind=infer batch_idx=134 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572350.923 kind=infer batch_idx=135 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572353.793 kind=infer batch_idx=136 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572356.663 kind=infer batch_idx=137 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572359.533 kind=infer batch_idx=138 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572362.286 kind=train batch_idx=139 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572365.112 kind=infer batch_idx=140 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572368.132 kind=train batch_idx=141 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  312s: steps=142 train=33 useful=13865 tok/s filler=97758 loss=10.3750
+STEP ts=1788572370.999 kind=infer batch_idx=142 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572373.864 kind=infer batch_idx=143 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572376.823 kind=infer batch_idx=144 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572379.687 kind=infer batch_idx=145 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572382.678 kind=train batch_idx=146 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572385.571 kind=infer batch_idx=147 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572388.464 kind=infer batch_idx=148 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572391.446 kind=infer batch_idx=149 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572394.524 kind=train batch_idx=150 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572397.453 kind=infer batch_idx=151 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572400.384 kind=infer batch_idx=152 tokens=0 passes=1 node=0 rank=0
+  344s: steps=153 train=35 useful=13328 tok/s filler=109129 loss=10.3750
+STEP ts=1788572403.314 kind=infer batch_idx=153 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572406.336 kind=infer batch_idx=154 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572409.266 kind=infer batch_idx=155 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572412.197 kind=infer batch_idx=156 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572415.127 kind=infer batch_idx=157 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572418.057 kind=infer batch_idx=158 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572420.787 kind=train batch_idx=159 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572423.657 kind=infer batch_idx=160 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572426.526 kind=infer batch_idx=161 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572429.396 kind=infer batch_idx=162 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572432.266 kind=infer batch_idx=163 tokens=0 passes=1 node=0 rank=0
+  376s: steps=164 train=36 useful=12546 tok/s filler=121701 loss=10.3750
+STEP ts=1788572435.325 kind=train batch_idx=164 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572437.770 kind=train batch_idx=165 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572440.569 kind=infer batch_idx=166 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572443.369 kind=infer batch_idx=167 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572446.169 kind=infer batch_idx=168 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572449.064 kind=infer batch_idx=169 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572451.864 kind=infer batch_idx=170 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572454.664 kind=infer batch_idx=171 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572457.464 kind=infer batch_idx=172 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572460.536 kind=train batch_idx=173 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572463.392 kind=infer batch_idx=174 tokens=0 passes=1 node=0 rank=0
+  407s: steps=175 train=39 useful=12553 tok/s filler=131471 loss=10.3750
+STEP ts=1788572466.248 kind=infer batch_idx=175 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572469.104 kind=infer batch_idx=176 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572472.117 kind=train batch_idx=177 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572475.005 kind=infer batch_idx=178 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572477.983 kind=infer batch_idx=179 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572480.871 kind=infer batch_idx=180 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572483.760 kind=infer batch_idx=181 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572486.648 kind=infer batch_idx=182 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572489.537 kind=infer batch_idx=183 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572492.521 kind=infer batch_idx=184 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572495.409 kind=infer batch_idx=185 tokens=0 passes=1 node=0 rank=0
+  439s: steps=186 train=40 useful=11936 tok/s filler=143977 loss=10.3750
+STEP ts=1788572498.297 kind=infer batch_idx=186 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572501.186 kind=infer batch_idx=187 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572504.208 kind=train batch_idx=188 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572507.089 kind=train batch_idx=189 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572509.995 kind=infer batch_idx=190 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572512.970 kind=train batch_idx=191 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572515.890 kind=infer batch_idx=192 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572518.812 kind=infer batch_idx=193 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572521.827 kind=infer batch_idx=194 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572524.748 kind=infer batch_idx=195 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572527.699 kind=train batch_idx=196 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  472s: steps=197 train=44 useful=12231 tok/s filler=152849 loss=10.3750
+STEP ts=1788572530.629 kind=infer batch_idx=197 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572533.555 kind=infer batch_idx=198 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572536.576 kind=infer batch_idx=199 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572539.502 kind=infer batch_idx=200 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572542.431 kind=infer batch_idx=201 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572545.358 kind=infer batch_idx=202 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572548.288 kind=infer batch_idx=203 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572551.318 kind=infer batch_idx=204 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572554.244 kind=infer batch_idx=205 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572556.972 kind=train batch_idx=206 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572559.858 kind=infer batch_idx=207 tokens=0 passes=1 node=0 rank=0
+  504s: steps=208 train=45 useful=11710 tok/s filler=165576 loss=10.3750
+STEP ts=1788572562.843 kind=train batch_idx=208 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572565.753 kind=infer batch_idx=209 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572568.660 kind=infer batch_idx=210 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572571.567 kind=infer batch_idx=211 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572574.474 kind=infer batch_idx=212 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572577.381 kind=infer batch_idx=213 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572580.386 kind=infer batch_idx=214 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572583.293 kind=infer batch_idx=215 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572586.200 kind=infer batch_idx=216 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572589.107 kind=infer batch_idx=217 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572591.946 kind=train batch_idx=218 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  536s: steps=219 train=47 useful=11498 tok/s filler=176903 loss=10.3750
+STEP ts=1788572594.839 kind=infer batch_idx=219 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572597.732 kind=infer batch_idx=220 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572600.625 kind=infer batch_idx=221 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572603.186 kind=train batch_idx=222 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572605.916 kind=train batch_idx=223 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572608.726 kind=infer batch_idx=224 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572611.535 kind=infer batch_idx=225 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572614.345 kind=infer batch_idx=226 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572617.154 kind=train batch_idx=227 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572619.963 kind=infer batch_idx=228 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572622.866 kind=train batch_idx=229 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  567s: steps=230 train=51 useful=11796 tok/s filler=185581 loss=10.3750
+STEP ts=1788572625.675 kind=infer batch_idx=230 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572628.485 kind=infer batch_idx=231 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572631.294 kind=infer batch_idx=232 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572634.103 kind=infer batch_idx=233 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572637.009 kind=infer batch_idx=234 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572639.818 kind=infer batch_idx=235 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572642.740 kind=train batch_idx=236 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1788572645.572 kind=infer batch_idx=237 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572648.404 kind=infer batch_idx=238 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572651.329 kind=infer batch_idx=239 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572654.161 kind=infer batch_idx=240 tokens=0 passes=1 node=0 rank=0
+  598s: steps=241 train=52 useful=11398 tok/s filler=197853 loss=10.3750
+STEP ts=1788572656.994 kind=infer batch_idx=241 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572659.827 kind=infer batch_idx=242 tokens=0 passes=1 node=0 rank=0
+STEP ts=1788572662.659 kind=infer batch_idx=243 tokens=0 passes=1 node=0 rank=0
+
+MN-I complete: 244 steps, 52 training
+  Useful tokens: 6,815,744 (11236 tok/s)
+  Measured train-step time: 2831 ms (filler slot length)
+  Realised TIME fraction training: 24.3%
+  Attributed tokens: 6,815,744 (11236 tok/s)
+  EVASION_TAX_DATA: strategy=MN-I world_size=16 train_frac=0.2 dilution= steps=244 train_steps=52 useful_tokens=6815744 attributed_tokens=6815744 duration=606.6 train_step_sec=2.8309 oracle_queries=0 oracle_allowed=0 oracle_warmup_allowed=0
+2026-09-05 01:44:25,280 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-05 01:44:27,281 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,311 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu0_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,315 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_satint_f20_node0_gpu0_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,315 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,323 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu1_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,327 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_satint_f20_node0_gpu1_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,327 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,334 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu2_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,338 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_satint_f20_node0_gpu2_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,338 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,346 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu3_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,349 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_satint_f20_node0_gpu3_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,350 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,357 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu4_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,360 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_satint_f20_node0_gpu4_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,361 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,368 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu5_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,372 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_satint_f20_node0_gpu5_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,372 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,379 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu6_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,383 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_satint_f20_node0_gpu6_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,383 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-09-05 01:44:27,390 [spar.telemetry] INFO: Saved 625 rows to data/s16_advtrain_satint_f20_node0_gpu7_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet
+2026-09-05 01:44:27,394 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_satint_f20_node0_gpu7_NVIDIA_A100_SXM4_40GB_c0ad0e9ccf58.parquet (625 rows)
+2026-09-05 01:44:27,395 [spar.multi_gpu] INFO: Multi-GPU run complete: c0ad0e9ccf58 (rc=0)

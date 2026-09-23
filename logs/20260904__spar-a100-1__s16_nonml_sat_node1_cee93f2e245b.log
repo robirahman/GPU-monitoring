@@ -1,0 +1,57 @@
+2026-09-04 22:08:48,538 [spar.multi_gpu] INFO: Multi-GPU run: s16_nonml_sat, 8 GPUs, node=1, run_id=cee93f2e245b
+Run ID: cee93f2e245b
+2026-09-04 22:08:48,567 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,568 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,568 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,580 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,581 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,581 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,595 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,595 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,595 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,609 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,610 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,610 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,624 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,624 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,624 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,642 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,642 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,642 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,657 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,657 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,657 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:48,677 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 22:08:48,677 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_sat, run=cee93f2e245b)
+2026-09-04 22:08:48,677 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 22:08:50,679 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/nonml_distributed.py --mode hpc --alloc-gb 1.4 --duty 1.0 --duration 600
+W0904 22:08:52.348000 80380 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0904 22:08:52.348000 80380 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0904 22:08:52.348000 80380 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0904 22:08:52.348000 80380 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+2026-09-04 22:19:04,577 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-04 22:19:06,579 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,609 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu0_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,613 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_nonml_sat_node1_gpu0_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,613 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,620 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu1_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,624 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_nonml_sat_node1_gpu1_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,624 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,632 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu2_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,635 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_nonml_sat_node1_gpu2_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,636 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,643 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu3_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,647 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_nonml_sat_node1_gpu3_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,647 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,654 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu4_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,658 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_nonml_sat_node1_gpu4_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,658 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,665 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu5_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,669 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_nonml_sat_node1_gpu5_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,669 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,676 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu6_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,680 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_nonml_sat_node1_gpu6_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,680 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-04 22:19:06,688 [spar.telemetry] INFO: Saved 618 rows to data/s16_nonml_sat_node1_gpu7_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet
+2026-09-04 22:19:06,691 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_nonml_sat_node1_gpu7_NVIDIA_A100_SXM4_40GB_cee93f2e245b.parquet (618 rows)
+2026-09-04 22:19:06,693 [spar.multi_gpu] INFO: Multi-GPU run complete: cee93f2e245b (rc=0)
