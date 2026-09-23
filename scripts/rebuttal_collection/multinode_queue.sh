@@ -459,6 +459,21 @@ mn_replicated() {  # mn_replicated <stage> <run_id> <infer-label>
       --num-gpus 8 --node-rank "$NODE_RANK" --output-dir "$OUTDIR" --timeout "$TIMEOUT"
 }
 
+mn_replicated_main() {  # mn_replicated_main <stage> <run_id> <registry-label>
+  local stage="$1" rid="$2" label="$3"
+  # As mn_replicated, but WITHOUT --workload-python "$PY_VLLM". These cells are
+  # torch/transformers/diffusers workloads that must run under venv-main; handing
+  # them venv-vllm's interpreter would fail on the first `import torchvision` or
+  # `import diffusers`, since that venv is `pip install vllm ray` and nothing
+  # else. run_workload_multi_gpu.py is itself launched with $PY, so the registry
+  # command's baked-in sys.executable is already venv-main -- which is exactly
+  # what these need and exactly what the vLLM cells had to override.
+  run_stage "$stage" "$rid" -- \
+    $PY scripts/run_workload_multi_gpu.py --parallel --workload "$label" \
+      --label "${PREFIX}${stage}" \
+      --num-gpus 8 --node-rank "$NODE_RANK" --output-dir "$OUTDIR" --timeout "$TIMEOUT"
+}
+
 # ── S8 cells (each node runs its own single-node job concurrently) ───────────
 s8_torchrun() {  # s8_torchrun <stage> <run_id> <timeout> -- <workload.py args...>
   local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
@@ -1085,6 +1100,88 @@ for rep in $(seq 1 "$REPS"); do
   c=s1_nonml_lp_d50fft;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode fft --duration "$DUR"
   c=s1_nonml_lp_d50hash;  s1_train "$c" "$(rid_for "$c" "$rep")" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 8 --duty 0.5 --filler-mode hash --duration "$DUR"
   c=s1_inferrep_qwen1_5b_bs1;        s1_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL_BS1"
+
+  # ==========================================================================
+  # WORKLOAD-DIVERSITY ROUND (2026-09-23)
+  # ==========================================================================
+  # Leave-one-family-out on the honest multi-node corpus: held-out train_fsdp
+  # recall 0.005, train_ddp 0.042, and held-out infershard_qwen falsely flagged
+  # on 71% of its windows. Cause is program diversity, not data volume -- the
+  # training side is TWO programs and the not-training side is nominally ten
+  # families but really three (nonml_distributed.py, vLLM, TPU-JAX).
+  # heldout_calibration.md already showed 14 -> 32 workloads of the same script
+  # moves held-out FPR by nothing.
+  #
+  # Every cell below is a different program or a different parallelism
+  # mechanism, never a new flag on an old one. Names are verified through
+  # threeway_label()/family()/honest_mask() by
+  # classifier/rebuttal_analysis/test_cell_label_routing.py -- do not rename one
+  # without re-running it, because the taxonomy is substring-based and checks
+  # the training keywords BEFORE `infer` (s16_inferbert_embed would be training).
+  #
+  #   ONLY_CELLS='^s16_(infervis|inferembed|inferdiff|inferasr|infercnn|inferrec|inferhf|inferserve|nonml_(fftshard|stencil|nccl))|^s16_train_(lora|pipe|contrastive|diffusion)'
+
+  # -- Non-LLM inference, 8 independent replicas per node (venv-main) ---------
+  # Six different inference programs. The corpus's entire inference class is
+  # decoder-only LLMs, so it has never seen encoder-only, encoder-decoder,
+  # convolutional or iterative-denoising inference.
+  c=s16_infervis_vitl;     mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_vit_l_d600
+  c=s16_inferembed_bge;    mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_bge_embed_d600
+  c=s16_inferembed_clip;   mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_clip_embed_d600
+  c=s16_inferdiff_sdxl;    mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_sdxl_d600
+  c=s16_inferasr_whisper;  mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_whisper_d600
+  c=s16_infercnn_rn50;     mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_rn50_d600
+
+  # -- A SECOND LLM engine. Every LLM stream in the corpus is vLLM, and
+  # infershard_qwen (14 workloads, a quarter of all honest multi-node windows)
+  # is the worst false-alarm source we have. HF generate has no paged KV, no
+  # continuous batching, no preallocation -- section 33c found every vLLM cell
+  # pinned at 74-79 GB by --gpu-memory-utilization, and 33d that the detector
+  # reads memory LEVEL, so an inference cell that does not preallocate is the
+  # direct test of that confound.
+  c=s16_inferhf_qwen7b;    mn_replicated_main "$c" "$(rid_for "$c" "$rep")" mn_infer_hf_qwen7b_d600
+  # Sharded by layer across all 8 GPUs of a node: pipeline-style, versus vLLM's
+  # tensor-parallel all-reduce per layer. Same job to an operator, completely
+  # different on the wire. --max-memory-gb is the footprint sweep.
+  c=s16_inferhf_shard72b;      s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8
+  c=s16_inferhf_shard72b_m40;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 40
+  c=s16_inferhf_shard72b_m60;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 60
+
+  # -- Recommender: huge tables, sparse gathers, all-to-all sized by the batch.
+  # Huge memory at low utilisation is what evasive training would imitate, and
+  # there is no honest example of it in the corpus to calibrate against.
+  c=s16_inferrec_dlrm;     mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/inference_recsys.py --table-gb 2 --batch-size 4096 --duration "$DUR"
+  c=s16_inferrec_dlrm_t8;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/inference_recsys.py --table-gb 8 --batch-size 4096 --duration "$DUR"
+
+  # -- HPC with REAL cross-node dependency. nonml_distributed --mode hpc is
+  # embarrassingly parallel (its only inter-node traffic is a 4-byte deadline
+  # vote every 2.5 s); --mode comm is one fixed 256 MB all_reduce with no
+  # compute. Nothing in the corpus both computes hard AND talks hard without
+  # being training, which is the case that would fool the detector.
+  c=s16_nonml_fftshard;        mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/hpc_distributed.py --mode fftshard --grid 512 --duration "$DUR"
+  c=s16_nonml_fftshard_g1024;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/hpc_distributed.py --mode fftshard --grid 1024 --duration "$DUR"
+  c=s16_nonml_stencil;         mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/hpc_distributed.py --mode stencil --grid 768 --duration "$DUR"
+  c=s16_nonml_nccl_bw;         mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/hpc_distributed.py --mode nccl --max-mb 256 --duration "$DUR"
+
+  # -- NEW TRAINING PROGRAMS. The training side is the worse failure: 0.5%
+  # held-out recall. Two families become six.
+  # LoRA: real training whose gradient all-reduce is 2-3 orders of magnitude
+  # smaller than a full fine-tune. If a detector leaning on NIC volume misses
+  # it, that is a finding about the detector.
+  c=s16_train_lora7b;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 7b --rank 16 --batch-size 4 --seq-len 1024 --duration "$DUR"
+  c=s16_train_lora7b_b8;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 7b --rank 16 --batch-size 8 --seq-len 1024 --duration "$DUR"
+  # Contrastive: a large all-gather in the FORWARD pass whose size scales with
+  # world size rather than model size. No other cell has that shape.
+  c=s16_train_contrastive; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_contrastive.py --batch-size 64 --embed-dim 1024 --duration "$DUR"
+  # Diffusion: activation memory rises and falls WITHIN a step. The corpus has
+  # no training program whose memory moves.
+  c=s16_train_diffusion;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diffusion.py --resolution 256 --batch-size 16 --duration "$DUR"
+  # Pipeline-parallel, HONEST. Same GPipe mechanism the MN-P cells use, but
+  # named for what it is and run at a realistic microbatch count rather than the
+  # mb1 extreme the evasion ladder sweeps to. honest_mask() excludes every
+  # advtrain_* cell, so the honest corpus currently has NO pipeline-parallel
+  # training at all -- the layout most real frontier training actually uses.
+  c=s16_train_pipe7b;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 7b --microbatches 8 --rank0-init 0 --batch-size 4 --seq-len 512 --duration "$DUR"
 done
 
 "$RAY" stop --force >/dev/null 2>&1 || true

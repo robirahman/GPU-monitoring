@@ -59,6 +59,9 @@ CELLS = [
     ("s16_inferdiff_sdxl", "ml_inference"),
     ("s16_inferasr_whisper", "ml_inference"),
     ("s16_infercnn_rn50", "ml_inference"),
+    # --- B2. recommender: the one workload class the corpus has none of ---
+    ("s16_inferrec_dlrm", "ml_inference"),
+    ("s16_inferrec_dlrm_t8", "ml_inference"),
     # --- C. second inference engine (not vLLM) ---
     ("s16_inferhf_qwen7b", "ml_inference"),
     ("s16_inferhf_shard72b", "ml_inference"),
@@ -66,7 +69,6 @@ CELLS = [
     ("s16_inferhf_shard72b_m60", "ml_inference"),
     # --- D. genuinely-distributed HPC ---
     ("s16_nonml_fftshard", "other"),
-    ("s16_nonml_fftshard_g512", "other"),
     ("s16_nonml_fftshard_g1024", "other"),
     ("s16_nonml_stencil", "other"),
     ("s16_nonml_nccl_bw", "other"),
