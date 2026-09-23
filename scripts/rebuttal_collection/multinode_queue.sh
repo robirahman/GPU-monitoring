@@ -170,6 +170,18 @@ stop_sidecar() { [ -n "$SIDE_PID" ] && kill "$SIDE_PID" 2>/dev/null; wait "$SIDE
 run_stage() {  # run_stage <stage> <run_id> -- <command...>
   local stage="$1" rid="$2"; shift 2; [ "$1" = "--" ] && shift
   cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
+  # Graceful stop. preempt_watch.sh touches logs/.preempted on the ~30 s ACPI
+  # notice, with the comment "mark so the collection queue stops launching new
+  # cells" -- but NOTHING EVER READ THAT MARK. The queue kept starting cells into
+  # a node about to be destroyed, and each died mid-collective and wrote a
+  # .failed marker indistinguishable from a real workload fault. The same file
+  # also gives an operator a way to retarget a running queue without a remote
+  # kill (which this project cannot do): touch logs/.stop, let the current cell
+  # finish, then re-arm with a different ONLY_CELLS.
+  if [ -f "logs/.preempted" ] || [ -f "logs/.stop" ]; then
+    say "STOP  $stage (logs/.preempted or logs/.stop present -- launching no new cells)"
+    return 0
+  fi
   # rid = sha1(RUN_STAMP_cell_rep), so keying the marker on it makes it unique
   # per REP. Keyed on cell alone, rep 2 and rep 3 saw rep 1's marker and skipped
   # every cell -- REPS=3 silently collected a single rep.
