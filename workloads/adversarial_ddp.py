@@ -18,6 +18,16 @@ Launch via torchrun:
     torchrun --nproc_per_node=8 workloads/adversarial_ddp.py --strategy L --dilution 5 --duration 300
     torchrun --nproc_per_node=8 workloads/adversarial_ddp.py --strategy L-stagger --dilution 5 --duration 300
     torchrun --nproc_per_node=8 workloads/adversarial_ddp.py --strategy K-accum --accum 4 --duration 300
+
+Interconnect ground truth (W15): add ``--comm-log data/x.jsonl`` to log every gradient
+AllReduce (one JSONL line per DDP bucket: ``t, op, bytes_est, step, microstep,
+is_sync_step``) and ``<stem>.steps.jsonl`` with one record per batch (``t, t_end, step,
+microstep, is_sync_step, phase``; phase = train_sync | train_accum | train_local_nosync |
+infer_forward). Without the flag nothing changes. Registry aliases:
+``train_ddp_rare_sync_accum{4,8}``, ``train_ddp_dilute_1of{5,10}``.
+
+CPU smoke (no CIFAR needed): ``--synthetic-data --backend gloo`` swaps the CIFAR loader
+for random tensors and a small MLP so the comm log can be checked without GPUs.
 """
 
 import argparse
@@ -33,6 +43,8 @@ import torchvision.transforms as transforms
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
+
+from interconnect_common import CommTrace, DistEnv, StopSignal, env_from_initialized
 
 
 def get_cifar10_loader(batch_size, rank, world_size, train=False):
@@ -51,6 +63,71 @@ def get_cifar10_loader(batch_size, rank, world_size, train=False):
                       num_workers=2, pin_memory=True), sampler
 
 
+class _SyntheticLoader:
+    """Random (image, label) batches; CPU-smoke replacement for the CIFAR loader."""
+
+    def __init__(self, batch_size, n_batches=64):
+        self.batch_size, self.n = batch_size, n_batches
+
+    def __iter__(self):
+        for _ in range(self.n):
+            yield torch.randn(self.batch_size, 3, 32, 32), torch.randint(0, 10, (self.batch_size,))
+
+
+class _Deadline:
+    """Run-time budget for the training loops.
+
+    Default (no --comm-log): the original per-rank ``time.time()`` checks, unchanged.
+    With --comm-log: rank 0's clock decides and all ranks stop on the same batch
+    (StopSignal). A per-rank check can straddle the deadline -- one rank exits while
+    its peer waits in an AllReduce -- and that hang shows up on fast loops; interconnect
+    runs are the ones we can't afford to lose.
+    """
+
+    def __init__(self, args):
+        self.duration = args.duration
+        self.t0 = time.time()
+        self.sig = StopSignal(args.env, args.duration) if args.comm_log else None
+        self.done = False
+
+    def running(self):
+        if self.sig is not None:
+            return not self.done
+        return time.time() - self.t0 < self.duration
+
+    def hit(self, idx):
+        if self.sig is not None:
+            self.done = self.done or self.sig.should_stop(idx)
+            return self.done
+        return time.time() - self.t0 >= self.duration
+
+
+class _NoSampler:
+    def set_epoch(self, epoch):
+        pass
+
+
+def get_loader(args, batch_size, rank, world_size):
+    if args.synthetic_data:
+        return _SyntheticLoader(batch_size), _NoSampler()
+    return get_cifar10_loader(batch_size, rank, world_size, train=False)
+
+
+def build_model(args, device):
+    """DDP-wrapped model + optional interconnect trace (see CommTrace)."""
+    if args.synthetic_data:
+        net = nn.Sequential(nn.Flatten(), nn.Linear(3072, 256), nn.ReLU(), nn.Linear(256, 10))
+    else:
+        net = torchvision.models.resnet50(weights=None, num_classes=10)
+    net = net.to(device)
+    if device.type == "cuda":
+        model = DDP(net, device_ids=[device.index])
+    else:
+        model = DDP(net)
+    trace = CommTrace(args.comm_log, args.env, model, step_path=args.step_log)
+    return model, trace
+
+
 # ── Strategy K-DDP: Online Learning, Distributed ────────────────────────────
 
 def strategy_k_ddp(args, device, rank, world_size):
@@ -66,31 +143,34 @@ def strategy_k_ddp(args, device, rank, world_size):
         print(f"Strategy K-DDP: Online Learning, {world_size} GPUs")
         print(f"  Per-GPU batch: {batch_size}, Duration: {args.duration}s")
 
-    loader, sampler = get_cifar10_loader(batch_size, rank, world_size, train=False)
+    loader, sampler = get_loader(args, batch_size, rank, world_size)
 
-    model = torchvision.models.resnet50(weights=None, num_classes=10).to(device)
-    model = DDP(model, device_ids=[device.index])
+    model, trace = build_model(args, device)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.0)
     criterion = nn.CrossEntropyLoss()
 
     wall_start = time.time()
     last_print = wall_start
     total_samples = 0
+    batch_idx = 0
     epoch = 0
 
-    while time.time() - wall_start < args.duration:
+    deadline = _Deadline(args)
+    while deadline.running():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.hit(batch_idx):
                 break
             data, target = data.to(device), target.to(device)
 
-            output = model(data)
-            loss = criterion(output, target)
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad(set_to_none=True)
+            with trace.window(step=batch_idx, microstep=0, is_sync_step=True, phase="train_sync"):
+                output = model(data)
+                loss = criterion(output, target)
+                loss.backward()
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
             total_samples += data.size(0) * world_size
+            batch_idx += 1
 
         epoch += 1
         now = time.time()
@@ -103,6 +183,7 @@ def strategy_k_ddp(args, device, rank, world_size):
     if rank == 0:
         wall_time = time.time() - wall_start
         print(f"K-DDP complete. {total_samples} samples, {wall_time:.1f}s")
+    trace.close()
 
 
 # ── Strategy L-DDP: Diluted Training, Synchronized ──────────────────────────
@@ -119,10 +200,9 @@ def strategy_l_ddp(args, device, rank, world_size):
         print(f"Strategy L-DDP: Diluted Training (1/{dilution}), {world_size} GPUs")
         print(f"  Per-GPU batch: {batch_size}, Duration: {args.duration}s")
 
-    loader, sampler = get_cifar10_loader(batch_size, rank, world_size, train=False)
+    loader, sampler = get_loader(args, batch_size, rank, world_size)
 
-    model = torchvision.models.resnet50(weights=None, num_classes=10).to(device)
-    model = DDP(model, device_ids=[device.index])
+    model, trace = build_model(args, device)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.0)
     criterion = nn.CrossEntropyLoss()
 
@@ -134,28 +214,32 @@ def strategy_l_ddp(args, device, rank, world_size):
     batch_idx = 0
     epoch = 0
 
-    while time.time() - wall_start < args.duration:
+    deadline = _Deadline(args)
+    while deadline.running():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.hit(batch_idx):
                 break
             data, target = data.to(device), target.to(device)
 
-            if batch_idx % dilution == 0:
-                # Training batch: all ranks train together
-                model.train()
-                output = model(data)
-                loss = criterion(output, target)
-                loss.backward()  # triggers allreduce via DDP
-                optimizer.step()
-                optimizer.zero_grad(set_to_none=True)
-                train_batches += 1
-            else:
-                # Inference batch: no gradients, no communication
-                model.eval()
-                with torch.no_grad():
-                    _ = model(data)
-                infer_batches += 1
+            is_train = batch_idx % dilution == 0
+            with trace.window(step=batch_idx, microstep=0, is_sync_step=is_train,
+                              phase="train_sync" if is_train else "infer_forward"):
+                if is_train:
+                    # Training batch: all ranks train together
+                    model.train()
+                    output = model(data)
+                    loss = criterion(output, target)
+                    loss.backward()  # triggers allreduce via DDP
+                    optimizer.step()
+                    optimizer.zero_grad(set_to_none=True)
+                    train_batches += 1
+                else:
+                    # Inference batch: no gradients, no communication
+                    model.eval()
+                    with torch.no_grad():
+                        _ = model(data)
+                    infer_batches += 1
 
             total_samples += data.size(0) * world_size
             batch_idx += 1
@@ -174,6 +258,7 @@ def strategy_l_ddp(args, device, rank, world_size):
         total_b = train_batches + infer_batches
         frac = train_batches / max(total_b, 1)
         print(f"L-DDP complete. train_frac={frac:.1%}, {wall_time:.1f}s")
+    trace.close()
 
 
 # ── Strategy L-stagger: Staggered Diluted Training ──────────────────────────
@@ -196,10 +281,9 @@ def strategy_l_stagger(args, device, rank, world_size):
         print(f"Strategy L-stagger: Staggered Dilution (1/{dilution}), {world_size} GPUs")
         print(f"  Each rank trains on different batch offsets")
 
-    loader, sampler = get_cifar10_loader(batch_size, rank, world_size, train=False)
+    loader, sampler = get_loader(args, batch_size, rank, world_size)
 
-    model = torchvision.models.resnet50(weights=None, num_classes=10).to(device)
-    model = DDP(model, device_ids=[device.index])
+    model, trace = build_model(args, device)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.0)
     criterion = nn.CrossEntropyLoss()
 
@@ -214,32 +298,37 @@ def strategy_l_stagger(args, device, rank, world_size):
     # Each rank's training offset: rank 0 trains batch 0, rank 1 trains batch 1, etc.
     my_train_offset = rank
 
-    while time.time() - wall_start < args.duration:
+    deadline = _Deadline(args)
+    while deadline.running():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.hit(batch_idx):
                 break
             data, target = data.to(device), target.to(device)
 
             # This rank trains if batch_idx matches its offset
             is_my_train_batch = (batch_idx % (dilution * world_size)) == my_train_offset
 
-            if is_my_train_batch:
-                # Training batch — but only this rank is training.
-                # Use no_sync to avoid allreduce, apply gradients locally.
-                model.train()
-                with model.no_sync():
-                    output = model(data)
-                    loss = criterion(output, target)
-                    loss.backward()
-                optimizer.step()
-                optimizer.zero_grad(set_to_none=True)
-                train_batches += 1
-            else:
-                model.eval()
-                with torch.no_grad():
-                    _ = model(data)
-                infer_batches += 1
+            # is_sync_step is always False here: no_sync() means this strategy never
+            # AllReduces, so its comm log is empty by construction.
+            with trace.window(step=batch_idx, microstep=0, is_sync_step=False,
+                              phase="train_local_nosync" if is_my_train_batch else "infer_forward"):
+                if is_my_train_batch:
+                    # Training batch — but only this rank is training.
+                    # Use no_sync to avoid allreduce, apply gradients locally.
+                    model.train()
+                    with model.no_sync():
+                        output = model(data)
+                        loss = criterion(output, target)
+                        loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad(set_to_none=True)
+                    train_batches += 1
+                else:
+                    model.eval()
+                    with torch.no_grad():
+                        _ = model(data)
+                    infer_batches += 1
 
             total_samples += data.size(0) * world_size
             batch_idx += 1
@@ -258,6 +347,7 @@ def strategy_l_stagger(args, device, rank, world_size):
         total_b = train_batches + infer_batches
         frac = train_batches / max(total_b, 1)
         print(f"L-stagger complete. per-rank train_frac={frac:.1%}, {wall_time:.1f}s")
+    trace.close()
 
 
 # ── Strategy K-accum: Online Learning with Gradient Accumulation ─────────────
@@ -281,10 +371,9 @@ def strategy_k_accum(args, device, rank, world_size):
         print(f"  Per-GPU batch: {batch_size}, Effective batch: "
               f"{batch_size * world_size * accum_steps}")
 
-    loader, sampler = get_cifar10_loader(batch_size, rank, world_size, train=False)
+    loader, sampler = get_loader(args, batch_size, rank, world_size)
 
-    model = torchvision.models.resnet50(weights=None, num_classes=10).to(device)
-    model = DDP(model, device_ids=[device.index])
+    model, trace = build_model(args, device)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.0)
     criterion = nn.CrossEntropyLoss()
 
@@ -295,29 +384,33 @@ def strategy_k_accum(args, device, rank, world_size):
     allreduce_count = 0
     epoch = 0
 
-    while time.time() - wall_start < args.duration:
+    deadline = _Deadline(args)
+    while deadline.running():
         sampler.set_epoch(epoch)
         for data, target in loader:
-            if time.time() - wall_start >= args.duration:
+            if deadline.hit(micro_step):
                 break
             data, target = data.to(device), target.to(device)
 
             is_sync_step = ((micro_step + 1) % accum_steps == 0)
 
-            if is_sync_step:
-                # Normal forward+backward with DDP allreduce
-                output = model(data)
-                loss = criterion(output, target) / accum_steps
-                loss.backward()
-                optimizer.step()
-                optimizer.zero_grad(set_to_none=True)
-                allreduce_count += 1
-            else:
-                # Accumulate without allreduce
-                with model.no_sync():
+            with trace.window(step=micro_step, microstep=micro_step % accum_steps,
+                              is_sync_step=is_sync_step,
+                              phase="train_sync" if is_sync_step else "train_accum"):
+                if is_sync_step:
+                    # Normal forward+backward with DDP allreduce
                     output = model(data)
                     loss = criterion(output, target) / accum_steps
                     loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad(set_to_none=True)
+                    allreduce_count += 1
+                else:
+                    # Accumulate without allreduce
+                    with model.no_sync():
+                        output = model(data)
+                        loss = criterion(output, target) / accum_steps
+                        loss.backward()
 
             total_samples += data.size(0) * world_size
             micro_step += 1
@@ -335,6 +428,7 @@ def strategy_k_accum(args, device, rank, world_size):
         wall_time = time.time() - wall_start
         print(f"K-accum complete. {allreduce_count} allreduces in {micro_step} steps "
               f"({allreduce_count/max(micro_step,1):.1%} sync rate), {wall_time:.1f}s")
+    trace.close()
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
@@ -358,15 +452,31 @@ def main():
                         help="L/L-stagger: train on 1/N batches")
     parser.add_argument("--accum", type=int, default=4,
                         help="K-accum: accumulate over M microbatches")
+    parser.add_argument("--comm-log", type=str, default="",
+                        help="Rank0 JSONL: one line per gradient AllReduce bucket "
+                             "(+ <stem>.steps.jsonl per-batch window truth)")
+    parser.add_argument("--step-log", type=str, default="",
+                        help="Override path for the per-batch step records")
+    parser.add_argument("--backend", choices=["nccl", "gloo"], default="nccl",
+                        help="gloo + --synthetic-data = CPU smoke test")
+    parser.add_argument("--synthetic-data", action="store_true",
+                        help="Random tensors + small MLP instead of CIFAR-10/ResNet-50")
     args = parser.parse_args()
 
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     world_size = int(os.environ.get("WORLD_SIZE", 1))
     rank = int(os.environ.get("RANK", 0))
 
-    dist.init_process_group(backend="nccl")
-    torch.cuda.set_device(local_rank)
-    device = torch.device(f"cuda:{local_rank}")
+    dist.init_process_group(backend=args.backend)
+    if args.backend == "nccl":
+        torch.cuda.set_device(local_rank)
+        device = torch.device(f"cuda:{local_rank}")
+    else:
+        device = torch.device("cpu")
+    if args.comm_log:
+        args.env = env_from_initialized(args.backend, device, local_rank)   # + gloo control group
+    else:
+        args.env = DistEnv(rank, world_size, local_rank, device, args.backend)
 
     STRATEGIES[args.strategy](args, device, rank, world_size)
 

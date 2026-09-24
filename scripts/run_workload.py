@@ -25,6 +25,7 @@ import argparse
 import logging
 import os
 import signal
+import shlex
 import subprocess
 import sys
 import uuid
@@ -39,6 +40,20 @@ from scripts.collect_telemetry import TelemetryCollector
 from workloads.registry import get_workload, list_workloads, WORKLOAD_REGISTRY
 
 log = logging.getLogger("spar.launcher")
+
+
+def _build_topology(args):
+    """Topology stamp for interconnect-aware rows (multi-node safe)."""
+    try:
+        from scripts.interconnect_collect import infer_topology
+    except ImportError:
+        return None
+    return infer_topology(
+        nnodes=getattr(args, "nnodes", None),
+        node_rank=getattr(args, "node_rank", None),
+        nproc_per_node=getattr(args, "nproc_per_node", None),
+        world_size=getattr(args, "world_size", None),
+    )
 
 
 def generate_filename(
@@ -109,6 +124,15 @@ def main():
     parser.add_argument("--interval", type=float, default=1.0, help="Telemetry polling interval (seconds)")
     parser.add_argument("--no-dcgm", action="store_true", help="Disable DCGM Tier 2")
     parser.add_argument(
+        "--no-fabric",
+        action="store_true",
+        help="Disable interconnect fusion (NVLink + IB/eth)",
+    )
+    parser.add_argument("--nnodes", type=int, default=None, help="Topology: number of nodes")
+    parser.add_argument("--node-rank", type=int, default=None, help="Topology: this node rank")
+    parser.add_argument("--nproc-per-node", type=int, default=None, help="Topology: procs/GPUs per node")
+    parser.add_argument("--world-size", type=int, default=None, help="Topology: global world size")
+    parser.add_argument(
         "--checkpoint-sec",
         type=float,
         default=300.0,
@@ -158,6 +182,10 @@ def main():
             print(f"ERROR: {e}", file=sys.stderr)
             print(f"Use --list to see available workloads.", file=sys.stderr)
             sys.exit(1)
+        if wl.get("telemetry_owner"):
+            print(f"ERROR: '{args.workload}' owns its telemetry ({wl['telemetry_owner']}) so its rows carry "
+                  f"per-role tags. Run it directly:  python {shlex.join(wl['command'][1:])}", file=sys.stderr)
+            sys.exit(2)
         workload_command = wl["command"]
         workload_label = args.workload
         timeout = args.timeout or wl.get("default_timeout")
@@ -173,6 +201,8 @@ def main():
             workload_label=workload_label,
             run_id=run_id,
             enable_dcgm=not args.no_dcgm,
+            enable_fabric=not args.no_fabric,
+            topology=_build_topology(args) if not args.no_fabric else None,
             checkpoint_sec=args.checkpoint_sec,
         )
     except Exception as e:
@@ -202,6 +232,7 @@ def main():
     print(f"  Output:      {output_path}")
     print(f"  Interval:    {args.interval}s")
     print(f"  DCGM:        {'disabled' if args.no_dcgm else 'enabled (if available)'}")
+    print(f"  Fabric:      {'disabled' if args.no_fabric else 'enabled (NVLink+IB/eth if available)'}")
     print(f"  Checkpoint:  {f'every {args.checkpoint_sec:.0f}s -> {output_path}.partial' if args.checkpoint_sec > 0 else 'disabled'}")
     print(f"  Timeout:     {timeout or 'none'}s")
     print(f"  NCU (Tier3): {'yes (second pass)' if args.ncu else 'no'}")
@@ -222,6 +253,7 @@ def main():
         print("-" * 40)
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = str(args.gpu_index)
+        env["SPAR_TELEMETRY_OWNER"] = "run_workload"
 
         workload_start = time.time()
         process = subprocess.Popen(

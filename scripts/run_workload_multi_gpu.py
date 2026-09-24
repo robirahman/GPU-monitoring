@@ -16,6 +16,7 @@ Single-GPU parallel mode (run 8 independent single-GPU workloads simultaneously)
 import argparse
 import logging
 import os
+import shlex
 import subprocess
 import sys
 import time
@@ -33,6 +34,24 @@ log = logging.getLogger("spar.multi_gpu")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
 
 
+def _shared_fabric(args, num_gpus: int):
+    """One SharedFabricCache + topology for all GPU collectors on this node."""
+    if getattr(args, "no_fabric", False):
+        return None, None
+    try:
+        from scripts.interconnect_collect import SharedFabricCache, infer_topology
+    except ImportError:
+        return None, None
+    topo = infer_topology(
+        nnodes=getattr(args, "nnodes", None),
+        node_rank=getattr(args, "node_rank", None),
+        nproc_per_node=getattr(args, "nproc_per_node", None) or num_gpus,
+        world_size=getattr(args, "world_size", None),
+    )
+    cache = SharedFabricCache(interval_sec=args.interval)
+    return cache, topo
+
+
 def generate_filename(label, gpu_name, gpu_index, run_id, ext="parquet"):
     gpu_short = gpu_name.replace(" ", "_").replace("-", "_")
     date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -48,14 +67,20 @@ def run_multi_gpu(args, workload_cmd):
 
     log.info(f"Multi-GPU run: {args.workload}, {num_gpus} GPUs, run_id={run_id[:12]}")
 
-    # Start telemetry on all GPUs
+    fabric_cache, topology = _shared_fabric(args, num_gpus)
+
+    # Start telemetry on all GPUs (shared fabric cache → no double-counting IB)
     collectors = []
     for i in range(num_gpus):
         c = TelemetryCollector(
             gpu_index=i,
             interval_sec=args.interval,
             workload_label=args.workload,
+            run_id=run_id,
             enable_dcgm=not args.no_dcgm,
+            enable_fabric=not args.no_fabric,
+            fabric_cache=fabric_cache,
+            topology=topology,
         )
         c.start()
         collectors.append(c)
@@ -68,6 +93,14 @@ def run_multi_gpu(args, workload_cmd):
     log.info(f"  Launching: {' '.join(workload_cmd)}")
     env = os.environ.copy()
     env["CUDA_VISIBLE_DEVICES"] = ",".join(str(i) for i in range(num_gpus))
+    env["SPAR_TELEMETRY_OWNER"] = "run_workload_multi_gpu"   # orchestrators that tag roles refuse to nest
+    # Propagate topology so nested scripts / NCCL see the same stamp.
+    if topology:
+        env.setdefault("SPAR_NNODES", str(topology.get("nnodes", 1)))
+        env.setdefault("SPAR_NODE_RANK", str(topology.get("node_rank", 0)))
+        env.setdefault("SPAR_NPROC_PER_NODE", str(num_gpus))
+        if topology.get("world_size", -1) > 0:
+            env.setdefault("SPAR_WORLD_SIZE", str(topology["world_size"]))
 
     workload_rc = 0
     try:
@@ -99,6 +132,16 @@ def run_multi_gpu(args, workload_cmd):
         rows = len(c.to_dataframe()) if hasattr(c, 'to_dataframe') else '?'
         log.info(f"  GPU {i}: saved {fpath} ({rows} rows)")
 
+    if fabric_cache is not None:
+        summary = fabric_cache.summary()
+        log.info(
+            "  Fabric totals: ib=%sB eth_tx+rx=%sB (samples=%s)",
+            summary.get("ib_total_bytes"),
+            (summary.get("eth_total_tx_bytes", 0) or 0)
+            + (summary.get("eth_total_rx_bytes", 0) or 0),
+            summary.get("samples"),
+        )
+
     return run_id, workload_rc
 
 
@@ -120,6 +163,9 @@ def run_parallel_single_gpu(args, workload_labels):
             workload_labels.append(workload_labels[len(workload_labels) % len(workload_labels)])
 
     results = [None] * num_gpus
+    # Parallel independent jobs: each collector owns its fabric cache
+    # (sharing would double-count IB across unrelated workloads).
+    _, topology = _shared_fabric(args, 1)
 
     def run_on_gpu(gpu_idx, label):
         gpu_run_id = uuid.uuid4().hex
@@ -129,7 +175,11 @@ def run_parallel_single_gpu(args, workload_labels):
             gpu_index=gpu_idx,
             interval_sec=args.interval,
             workload_label=label,
+            run_id=gpu_run_id,
             enable_dcgm=not args.no_dcgm,
+            enable_fabric=not args.no_fabric,
+            fabric_cache=None,
+            topology=topology,
         )
         c.start()
         time.sleep(1)
@@ -142,9 +192,15 @@ def run_parallel_single_gpu(args, workload_labels):
             c.stop()
             return
 
+        if wl.get("telemetry_owner"):
+            log.error(f"  GPU {gpu_idx}: '{label}' owns its telemetry ({wl['telemetry_owner']}); "
+                      "run that script directly")
+            c.stop()
+            return
         cmd = list(wl["command"])
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = str(gpu_idx)
+        env["SPAR_TELEMETRY_OWNER"] = "run_workload_multi_gpu"
 
         try:
             timeout = args.timeout + 30 if args.timeout else None
@@ -185,6 +241,14 @@ def main():
     parser.add_argument("--output-dir", type=str, default="data/")
     parser.add_argument("--interval", type=float, default=1.0)
     parser.add_argument("--no-dcgm", action="store_true")
+    parser.add_argument("--no-fabric", action="store_true",
+                        help="Disable interconnect fusion (NVLink + IB/eth)")
+    parser.add_argument("--nnodes", type=int, default=None,
+                        help="Topology: cluster node count (multi-node)")
+    parser.add_argument("--node-rank", type=int, default=None,
+                        help="Topology: this node's rank")
+    parser.add_argument("--nproc-per-node", type=int, default=None)
+    parser.add_argument("--world-size", type=int, default=None)
     parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--parallel", action="store_true",
                         help="Run independent single-GPU workloads in parallel")
@@ -207,6 +271,12 @@ def main():
             except ValueError as e:
                 log.error(str(e))
                 sys.exit(1)
+            if wl.get("telemetry_owner"):
+                # e.g. W25 colocate_*: two roles on disjoint GPUs need per-role telemetry tags; an outer
+                # untagged collector on the same GPUs would silently mix them.
+                log.error(f"'{args.workload}' owns its telemetry ({wl['telemetry_owner']}) so its rows carry "
+                          f"per-role tags. Run it directly:  python {shlex.join(wl['command'][1:])}")
+                sys.exit(2)
             workload_cmd = list(wl["command"])
             if args.timeout is None:
                 args.timeout = wl.get("default_timeout")

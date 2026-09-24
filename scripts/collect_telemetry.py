@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""SPAR GPU Telemetry Collector — Tier 1 (pynvml) + Tier 2 (DCGM).
+"""SPAR GPU Telemetry Collector — Tier 1 (pynvml) + Tier 2 (DCGM) + fabric.
 
 Polls GPU metrics at a configurable interval (default 1 Hz) in a background
 thread and writes labeled data to Parquet or CSV.
+
+Also fuses interconnect counters when available (default on):
+  * NVLink TX/RX via NVML field values (per-GPU)
+  * InfiniBand / RoCE sysfs counters (node-level, shared across GPUs)
+  * Ethernet NIC byte rates (node-level fallback)
+  * Topology stamp (hostname / nnodes / node_rank / world_size)
 
 Standalone usage:
     python collect_telemetry.py --duration 60 --output data/test.parquet
@@ -274,8 +280,13 @@ class DcgmCollector:
 # ---------------------------------------------------------------------------
 
 class TelemetryCollector:
-    """Polls GPU metrics at a fixed interval via pynvml (Tier 1) and
-    optionally DCGM (Tier 2). Runs in a background daemon thread."""
+    """Polls GPU metrics at a fixed interval via pynvml (Tier 1),
+    optionally DCGM (Tier 2), and optionally fabric counters (NVLink/IB/eth).
+
+    Runs in a background daemon thread. For multi-GPU on one node, pass the
+    same SharedFabricCache instance to every collector so IB/eth deltas are
+    not double-consumed.
+    """
 
     def __init__(
         self,
@@ -286,15 +297,28 @@ class TelemetryCollector:
         enable_dcgm: bool = True,
         checkpoint_sec: float = 300.0,
         checkpoint_path: str | None = None,
+        enable_fabric: bool = True,
+        fabric_cache: "SharedFabricCache | None" = None,
+        topology: dict | None = None,
+        ib_root: str = "/sys/class/infiniband",
+        net_root: str = "/sys/class/net",
+        workload_role: str | None = None,
+        role_label: str | None = None,
     ):
         self.metadata = GpuMetadata(gpu_index)
         self._handle = self.metadata.handle
         self._interval = interval_sec
         self._workload_label = workload_label
+        # W25 colocation: several concurrent workloads share one node/run. ``workload_role``
+        # (serve|train) and ``role_label`` (that role's own workload label) are stamped on every
+        # row when set, so per-GPU rows stay attributable; None (default) leaves rows untouched.
+        self._workload_role = workload_role
+        self._role_label = role_label
         self._run_id = run_id or uuid.uuid4().hex[:12]
         self._records: list[dict] = []
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
+        self._gpu_index = gpu_index
 
         # Periodic crash-safety checkpoint. Samples otherwise live only in
         # self._records until save() runs after the workload exits, so a crash
@@ -319,16 +343,54 @@ class TelemetryCollector:
             except Exception as e:
                 log.info("DCGM initialization failed (%s); Tier 2 metrics will be omitted.", e)
 
+        # Fabric / interconnect (Tier interconnect): NVLink per-GPU + IB/eth node-level
+        self._fabric_cache = None
+        self._nvlink = None
+        self._topology: dict = {}
+        self._last_sample_mono = 0.0
+        if enable_fabric:
+            try:
+                from scripts.interconnect_collect import (
+                    SharedFabricCache,
+                    GpuNvlinkSampler,
+                    infer_topology,
+                )
+            except ImportError:
+                # Allow running as ``python scripts/collect_telemetry.py`` without package path
+                from interconnect_collect import (  # type: ignore
+                    SharedFabricCache,
+                    GpuNvlinkSampler,
+                    infer_topology,
+                )
+            self._fabric_cache = fabric_cache or SharedFabricCache(
+                interval_sec=interval_sec, ib_root=ib_root, net_root=net_root
+            )
+            self._nvlink = GpuNvlinkSampler(gpu_index)
+            self._topology = dict(topology or infer_topology())
+            ib_ok = bool(self._fabric_cache._ib and self._fabric_cache._ib.available)
+            eth_ok = bool(self._fabric_cache._eth and self._fabric_cache._eth.available)
+            log.info(
+                "Fabric enabled (gpu=%d, nvlink=%s, ib=%s, eth=%s, host=%s, nnodes=%s)",
+                gpu_index,
+                "yes" if self._nvlink.available else "no",
+                "yes" if ib_ok else "no",
+                "yes" if eth_ok else "no",
+                self._topology.get("hostname"),
+                self._topology.get("nnodes"),
+            )
+
     def start(self):
         """Start the background polling thread."""
         self._stop_event.clear()
+        self._last_sample_mono = time.monotonic()
         self._thread = threading.Thread(target=self._poll_loop, daemon=True)
         self._thread.start()
         log.info(
-            "Telemetry started (gpu=%s, interval=%.1fs, dcgm=%s, label=%s, run=%s)",
+            "Telemetry started (gpu=%s, interval=%.1fs, dcgm=%s, fabric=%s, label=%s, run=%s)",
             self.metadata.gpu_name,
             self._interval,
             "enabled" if self._dcgm else "disabled",
+            "enabled" if self._fabric_cache else "disabled",
             self._workload_label,
             self._run_id,
         )
@@ -357,7 +419,27 @@ class TelemetryCollector:
                 dcgm_data = self._dcgm.sample()
                 row.update(dcgm_data)
 
+            # Interconnect / fabric fusion (NVLink per-GPU + shared IB/eth)
+            dt = max(t0 - self._last_sample_mono, 1e-6)
+            self._last_sample_mono = t0
+            if self._nvlink is not None:
+                try:
+                    row.update(self._nvlink.sample(dt))
+                except Exception as e:
+                    log.warning("NVLink sample error: %s", e)
+            if self._fabric_cache is not None:
+                try:
+                    row.update(self._fabric_cache.snapshot())
+                except Exception as e:
+                    log.warning("Fabric sample error: %s", e)
+            if self._topology:
+                row.update(self._topology)
+
+            row["gpu_index"] = self._gpu_index
             row["workload_label"] = self._workload_label
+            if self._workload_role is not None:
+                row["workload_role"] = self._workload_role
+                row["role_label"] = self._role_label
             row["run_id"] = self._run_id
             self._records.append(row)
 
@@ -503,7 +585,11 @@ class TelemetryCollector:
             log.warning("Checkpoint write failed (continuing): %s", e)
 
     def save(self, output_path: str, fmt: str = "parquet"):
-        """Save collected data to Parquet or CSV."""
+        """Save collected data to Parquet or CSV.
+
+        Also writes a sibling ``*_fabric_summary.json`` with node-level IB/eth
+        totals when a fabric cache is attached.
+        """
         df = self.to_dataframe()
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -514,6 +600,23 @@ class TelemetryCollector:
             df.to_csv(str(path), index=False)
 
         log.info("Saved %d rows to %s", len(df), path)
+
+        if self._fabric_cache is not None:
+            summary_path = path.with_name(path.stem + "_fabric_summary.json")
+            try:
+                summary = {
+                    "topology": self._topology,
+                    "gpu_index": self._gpu_index,
+                    "workload_label": self._workload_label,
+                    "workload_role": self._workload_role,
+                    "role_label": self._role_label,
+                    "run_id": self._run_id,
+                    **self._fabric_cache.summary(),
+                }
+                summary_path.write_text(json.dumps(summary, indent=2))
+                log.info("Fabric summary -> %s", summary_path)
+            except Exception as e:
+                log.warning("Fabric summary write failed: %s", e)
 
         # The run finished and the real output is on disk, so the crash-safety
         # snapshot is now redundant.
@@ -587,6 +690,19 @@ def main():
         help="Disable DCGM Tier 2 collection",
     )
     parser.add_argument(
+        "--no-fabric",
+        action="store_true",
+        help="Disable interconnect fusion (NVLink NVML + IB/eth sysfs)",
+    )
+    parser.add_argument("--nnodes", type=int, default=None, help="Topology: number of nodes")
+    parser.add_argument("--node-rank", type=int, default=None, help="Topology: this node rank")
+    parser.add_argument(
+        "--nproc-per-node",
+        type=int,
+        default=None,
+        help="Topology: GPUs/processes per node",
+    )
+    parser.add_argument(
         "--checkpoint-sec",
         type=float,
         default=300.0,
@@ -599,11 +715,25 @@ def main():
         format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
     )
 
+    topology = None
+    if not args.no_fabric:
+        try:
+            from scripts.interconnect_collect import infer_topology
+        except ImportError:
+            from interconnect_collect import infer_topology  # type: ignore
+        topology = infer_topology(
+            nnodes=args.nnodes,
+            node_rank=args.node_rank,
+            nproc_per_node=args.nproc_per_node,
+        )
+
     collector = TelemetryCollector(
         gpu_index=args.gpu_index,
         interval_sec=args.interval,
         workload_label=args.label,
         enable_dcgm=not args.no_dcgm,
+        enable_fabric=not args.no_fabric,
+        topology=topology,
         checkpoint_sec=args.checkpoint_sec,
         checkpoint_path=f"{args.output}.partial" if args.checkpoint_sec > 0 else None,
     )
