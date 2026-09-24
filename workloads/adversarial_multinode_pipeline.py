@@ -434,7 +434,7 @@ def main():
               f"size={args.size} internode_mbps="
               f"{inter_node_bytes * 8 / elapsed / 1e6:.1f}", flush=True)
 
-    sync_teardown(device)
+    sync_teardown()
     dist.destroy_process_group()
 
 
