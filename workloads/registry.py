@@ -1647,7 +1647,7 @@ WORKLOAD_REGISTRY = {
         "description": "W14: Streaming DiLoCo 1.3B, 8 replicas, H=512, 8 fragments, overlapped fp16 outer sync (FN)",
         "default_timeout": 1800,
     },
-    # ══ REAL-framework primary corpus (docs/REAL_WORKLOAD_BAR.md) ══════════════════════════════
+    # ══ REAL-framework primary corpus (docs/interconnect_W_id_file_map.md) ══════════════════════
     # Real vLLM / torchtitan processes only. No collective JSONL is invented: serve/traffic logs +
     # NVML/DCGM/IB counters (telemetry launcher) + optional NCCL_DEBUG COLL parsing.
     # Status for all of these: code (real) -- NOT yet run on GPUs from this repo.

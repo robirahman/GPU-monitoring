@@ -16,7 +16,6 @@ Shared launchers:
 | NCCL debug → JSONL | [`scripts/parse_nccl_coll_log.py`](../scripts/parse_nccl_coll_log.py) | truthful per-collective record of any real framework (NCCL's own COLL log) |
 | IB-quiet harness | [`scripts/run_nvl_only_ibquiet.py`](../scripts/run_nvl_only_ibquiet.py) | W23 (wraps DDP/FSDP; registry `train_*_nvl_only_ibquiet`) |
 | Shared helpers | [`workloads/interconnect_common.py`](../workloads/interconnect_common.py) | dist setup (nccl/gloo), JSONL comm log, KV geometry, sized LM — used by W03–W05, W10, W15–W19 |
-| Planning note | [`docs/SPAR_Rahman_critique_and_interconnect_redteam.md`](SPAR_Rahman_critique_and_interconnect_redteam.md) | Family definitions |
 
 Status legend: **smoke** · **code** · **partial** · **missing**
 
@@ -24,9 +23,8 @@ Status legend: **smoke** · **code** · **partial** · **missing**
 > use real frameworks only* — vLLM (serving, disaggregation), torchtitan (TP/PP/MoE-EP training), PyTorch
 > DDP/FSDP, HF+PEFT. Hand-rolled collective gyms (`disagg_kv_synth`, `moe_ep_*_synthetic`, toy TP/PP) are kept,
 > registered with a `[MICROBENCH ONLY — not SPAR primary corpus]` (or `[PARALLELISM UNIT / ABLATION]` /
-> `[SCHEDULE MICROBENCH]`) description and `microbench_*` aliases. The per-ID list is
-> [`REAL_WORKLOAD_BAR.md`](REAL_WORKLOAD_BAR.md). Real-stack workloads emit **no invented collective JSONL**:
-> serve/traffic logs + NVML/DCGM/IB counters, plus (opt-in) NCCL's own debug log via
+> `[SCHEDULE MICROBENCH]`) description and `microbench_*` aliases. Real-stack workloads emit **no invented
+> collective JSONL**: serve/traffic logs + NVML/DCGM/IB counters, plus (opt-in) NCCL's own debug log via
 > [`scripts/parse_nccl_coll_log.py`](../scripts/parse_nccl_coll_log.py). All primaries are **code (real), not yet
 > run on GPUs from this repo** — flags/protocols were checked against vLLM / torchtitan / NCCL source, and our
 > orchestration against mock engines; nothing was launched on real hardware.
@@ -383,7 +381,7 @@ steps look like decode cover and only rare steps sync grads, how does the classi
 | **Impl** | [`workloads/hybrid_wire.py`](../workloads/hybrid_wire.py) at large H (composes W19). Cover = [`interconnect_common.CoverTraffic`](../workloads/interconnect_common.py) (W08-scale). LoRA variant: [`workloads/lora_ddp.py`](../workloads/lora_ddp.py) `--sync-every H --cover` |
 | **Registry** | `train_serve_cover_H20`, `train_serve_cover_H100`, `train_serve_cover_lora_H20` — `run_workload_multi_gpu.py --workload train_serve_cover_H20 --num-gpus 8` |
 | **Window truth** | `<stem>.steps.jsonl`: `phase = decode_shape \| train_sync` per step; meta has step/byte fractions |
-| **What to measure** | P(train) on cover windows vs sync windows; run-level CUSUM; whether volume-only fires (usually **only** `_lora_H20` lands mean bytes in the serve band — see REAL_WORKLOAD_BAR §5) |
+| **What to measure** | P(train) on cover windows vs sync windows; run-level CUSUM; whether volume-only fires (usually **only** `_lora_H20` lands mean bytes in the serve band — full-|θ| H=20/100 still train-dominated on wire) |
 | **Not** | A third ground-truth class; a substitute for W11/W13/W19 in the main table |
 
 ---
@@ -496,6 +494,5 @@ Suggested click-through order for interconnect-relevant code:
 24. [`workloads/fake_ar_cotenant.py`](../workloads/fake_ar_cotenant.py) — W20 primary  
 25. [`scripts/titan_jobs.py`](../scripts/titan_jobs.py) + [`scripts/run_titan_job.py`](../scripts/run_titan_job.py) — W03–W05 primaries  
 26. [`scripts/run_colocate_serve_train.py`](../scripts/run_colocate_serve_train.py) — **W26 probe**  
-27. [`docs/REAL_WORKLOAD_BAR.md`](REAL_WORKLOAD_BAR.md) — primary-corpus bar  
 
 **Primary corpus:** W01–W24 (train / infer / non-ML with clean labels). **Behavior probes (run last):** **W25** (temporal mix), **W26** (spatial colocate) — not train\|infer ground truth. **Not built:** W26 2-node variant; real-vLLM time-multiplexed cover for W25. **Not yet GPU-smoked:** most new primaries/probes. **Microbench only:** synth / hand-rolled twins. **Prior (Robi):** section above.

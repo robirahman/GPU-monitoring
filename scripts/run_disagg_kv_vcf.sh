@@ -12,7 +12,7 @@
 #   data/profiles/kv_handoff_<label>.json
 #
 # Requirements: pip install vllm nixl   (vLLM's NixlConnector is documented as experimental).
-# See docs/REAL_WORKLOAD_BAR.md. Not yet run on the cluster from this repo.
+# See docs/interconnect_W_id_file_map.md (W10). Not yet run on the cluster from this repo.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"

@@ -13,7 +13,7 @@
 #   python scripts/parse_nccl_coll_log.py data/titan/<job>/nccl.*.log --cuda-dev 0 --out data/<job>_nccl.jsonl
 #
 # Requirements: Python >= 3.11, a recent PyTorch, `pip install torchtitan` (0.3.0 CLI). c4 is streamed
-# from the HF hub. See docs/REAL_WORKLOAD_BAR.md. Not yet run on the cluster from this repo.
+# from the HF hub. See docs/interconnect_W_id_file_map.md (W05). Not yet run on the cluster from this repo.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
