@@ -264,6 +264,14 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     uniq = (df[["job_id", "stream_id"]].drop_duplicates()
             .sort_values(["job_id", "stream_id"]))
     uniq["rank"] = uniq.groupby("job_id").cumcount()
+    # `rank` arrives by MERGE, unlike every other column here, which are direct
+    # assignments and so are naturally idempotent. On a frame that already has a
+    # `rank` -- any frame this function has already seen -- the merge suffixes to
+    # rank_x/rank_y and `rank` ceases to exist, so the next cross_rank_features
+    # call dies on KeyError: 'rank'. That is reachable whenever a caller assigns
+    # ids to chunk work and then hands the chunks to sliding_windows_multinode,
+    # which assigns them again. Drop first so re-entry is a no-op.
+    df = df.drop(columns=["rank"], errors="ignore")
     df = df.merge(uniq, on=["job_id", "stream_id"], how="left")
     return df
 
