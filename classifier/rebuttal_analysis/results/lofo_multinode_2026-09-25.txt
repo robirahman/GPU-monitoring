@@ -1,0 +1,84 @@
+
+===== ALL: 8,442 windows, 28 families (6 training), 315 feats (199 shape, 18 nic)
+  --- TRAIN (6 families) ---
+    train_fsdp                 n= 1110  p_med 0.109  acc 0.1847
+    train_lora                 n=  250  p_med 0.333  acc 0.3240
+    train_ddp                  n=  546  p_med 0.436  acc 0.4194
+    train_pipe                 n=  180  p_med 0.974  acc 0.9722
+    train_contrastive          n=  158  p_med 0.775  acc 0.9937
+    train_diffusion            n=  159  p_med 0.995  acc 1.0000
+    MEAN acc 0.6490
+  --- not-train (22 families) ---
+    nonml_comm                 n=  171  p_med 0.233  acc 0.9532
+    nonml_stencil              n=  158  p_med 0.135  acc 0.9873
+    nonml_fftshard             n=  313  p_med 0.261  acc 0.9936
+    infershard_qwen            n= 1844  p_med 0.255  acc 0.9951
+    nonml_hpc                  n=  288  p_med 0.002  acc 0.9965
+    inferrec_dlrm              n=  315  p_med 0.088  acc 0.9968
+    inferembed_clip            n=  199  p_med 0.031  acc 1.0000
+    inferasr_whisper           n=  199  p_med 0.095  acc 1.0000
+    inferserve_bursty          n=  160  p_med 0.024  acc 1.0000
+    inferrep_qwen              n=  262  p_med 0.005  acc 1.0000
+    inferhf_qwen               n=  120  p_med 0.030  acc 1.0000
+    inferserve_chunked         n=  161  p_med 0.003  acc 1.0000
+    inferserve_prefill         n=   80  p_med 0.286  acc 1.0000
+    inferserve_poisson         n=  321  p_med 0.009  acc 1.0000
+    inferembed_bge             n=  158  p_med 0.002  acc 1.0000
+    inferdiff_sdxl             n=  208  p_med 0.063  acc 1.0000
+    inferserve_saturate        n=  160  p_med 0.024  acc 1.0000
+    inferserve_decode          n=  160  p_med 0.005  acc 1.0000
+    nonml_lowpower             n=  274  p_med 0.222  acc 1.0000
+    nonml_himem                n=  175  p_med 0.002  acc 1.0000
+    nonml_nccl                 n=  157  p_med 0.207  acc 1.0000
+    nonml_sat                  n=  156  p_med 0.002  acc 1.0000
+    MEAN acc 0.9965
+
+===== NICCOV: 5,226 windows, 20 families (6 training), 315 feats (199 shape, 18 nic)
+  --- TRAIN (6 families) ---
+    train_fsdp                 n=  399  p_med 0.448  acc 0.4135
+    train_lora                 n=  244  p_med 0.652  acc 0.6967
+    train_ddp                  n=  425  p_med 0.763  acc 0.9718
+    train_contrastive          n=  158  p_med 0.940  acc 1.0000
+    train_diffusion            n=  159  p_med 1.000  acc 1.0000
+    train_pipe                 n=  177  p_med 0.973  acc 1.0000
+    MEAN acc 0.8470
+  --- not-train (14 families) ---
+    infershard_qwen            n= 1401  p_med 0.536  acc 0.3904
+    nonml_comm                 n=   43  p_med 0.140  acc 0.9767
+    nonml_fftshard             n=  313  p_med 0.066  acc 0.9776
+    inferrec_dlrm              n=  315  p_med 0.176  acc 0.9873
+    inferserve_decode          n=  160  p_med 0.010  acc 1.0000
+    inferserve_poisson         n=  321  p_med 0.000  acc 1.0000
+    inferserve_chunked         n=  161  p_med 0.000  acc 1.0000
+    inferserve_bursty          n=  160  p_med 0.003  acc 1.0000
+    inferserve_saturate        n=  160  p_med 0.001  acc 1.0000
+    inferserve_prefill         n=   80  p_med 0.163  acc 1.0000
+    nonml_hpc                  n=  118  p_med 0.008  acc 1.0000
+    nonml_nccl                 n=  157  p_med 0.086  acc 1.0000
+    nonml_sat                  n=  117  p_med 0.000  acc 1.0000
+    nonml_stencil              n=  158  p_med 0.141  acc 1.0000
+    MEAN acc 0.9523
+
+===== ALL vs NIC-covered, per family =====
+  --- TRAIN --- mean delta +0.1980
+    train_diffusion            all 1.0000 -> niccov 1.0000  +0.0000
+    train_contrastive          all 0.9937 -> niccov 1.0000  +0.0063
+    train_pipe                 all 0.9722 -> niccov 1.0000  +0.0278
+    train_fsdp                 all 0.1847 -> niccov 0.4135  +0.2288
+    train_lora                 all 0.3240 -> niccov 0.6967  +0.3727
+    train_ddp                  all 0.4194 -> niccov 0.9718  +0.5524
+  --- not-train --- mean delta -0.0422
+    infershard_qwen            all 0.9951 -> niccov 0.3904  -0.6047
+    nonml_fftshard             all 0.9936 -> niccov 0.9776  -0.0160
+    inferrec_dlrm              all 0.9968 -> niccov 0.9873  -0.0095
+    inferserve_chunked         all 1.0000 -> niccov 1.0000  +0.0000
+    inferserve_decode          all 1.0000 -> niccov 1.0000  +0.0000
+    inferserve_poisson         all 1.0000 -> niccov 1.0000  +0.0000
+    inferserve_prefill         all 1.0000 -> niccov 1.0000  +0.0000
+    inferserve_bursty          all 1.0000 -> niccov 1.0000  +0.0000
+    inferserve_saturate        all 1.0000 -> niccov 1.0000  +0.0000
+    nonml_nccl                 all 1.0000 -> niccov 1.0000  +0.0000
+    nonml_sat                  all 1.0000 -> niccov 1.0000  +0.0000
+    nonml_hpc                  all 0.9965 -> niccov 1.0000  +0.0035
+    nonml_stencil              all 0.9873 -> niccov 1.0000  +0.0127
+    nonml_comm                 all 0.9532 -> niccov 0.9767  +0.0235
