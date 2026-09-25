@@ -456,6 +456,16 @@ def sliding_windows_multinode(
             feats["meta_n_ranks"] = str(n_ranks)
             feats["meta_rank_coverage"] = f"{ranks_here / max(n_ranks, 1):.3f}"
             feats["meta_degraded"] = str(ranks_here < min_rank_coverage * n_ranks)
+            # Whether the host-NIC sidecar actually covered this window, as
+            # opposed to being absent. The xragg_/xr_ NIC features fall back to
+            # 0.0 when the channel has no non-null sample, which makes "no
+            # sidecar was collected" identical to "measured, and quiet" -- and 25
+            # of the 76 s16 cells in the corpus predate the sidecar entirely.
+            # Left implicit, a model learns WHEN a cell was collected: FSDP shows
+            # 65% zeros while its own sidecars measure 16,077 Mbps. meta_ prefix
+            # keeps this out of get_feature_cols; it is for filtering, not fitting.
+            feats["meta_nic_present"] = str(bool(
+                "nic_total_mbps" in win.columns and win["nic_total_mbps"].notna().any()))
             rows.append(feats)
             wstart += stride_sec
 
