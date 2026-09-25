@@ -27,7 +27,7 @@ Headline results:
 | `classifier/` | Two-stage RandomForest training (`twostage.py`), leave-one-strategy-out evaluation (`leave_one_strategy_out.py`), dilution sweep (`eval_dilution_sweep.py`), adversary-defender iteration loop (`adversary_defender_iteration.py`), and physics-based feature extraction. |
 | `analysis/` | Exploratory analysis scripts and one-off plots. |
 | `data/` | Telemetry traces (parquet) and processed feature CSVs. |
-| `report/` | Paper source (`midterm_report.tex`, anonymized PDF), final figures, and figure-regen scripts (`regen_*.py`, `plot_*.py`). |
+| `report/` | Paper PDF, bibliography (`references.bib`), final figures, and figure-regen scripts (`regen_*.py`, `plot_*.py`). |
 | `scripts/` | CLI entry points (telemetry collection, batch run dispatch). |
 | `notebooks/` | Jupyter notebooks for interactive analysis. |
 | `docs/` | Round-by-round notes (`Round_5_notes.md`, `class_balancing.md`, `wall_power_results.md`, etc.). |
