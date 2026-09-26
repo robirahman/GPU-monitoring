@@ -902,8 +902,16 @@ for rep in $(seq 1 "$REPS"); do
   NOCKPT_1B_SEQ2K_B=${NOCKPT_1B_SEQ2K_B:-16}
   NOCKPT_7B_B=${NOCKPT_7B_B:-8}
   RESNET_B=${RESNET_B:-512}
-  c=s16_train_fsdp1b_b32_nockpt;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size "$NOCKPT_1B_B" --seq-len 1024 --no-activation-ckpt --duration "$DUR"
-  c=s16_train_fsdp1b_seq2k_nockpt; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size "$NOCKPT_1B_SEQ2K_B" --seq-len 2048 --no-activation-ckpt --duration "$DUR"
+  # batch 32 / seq 1024 with activation checkpointing OFF peaks at 40.6 GB -- measured,
+  # "OOM at step 0! Peak memory: 40.6 GB" against the 39.49 GB a 40 GB card
+  # actually exposes. Turning checkpointing off is the whole point of the
+  # cell, so the memory is the experiment, not a bug to tune away.
+  c=s16_train_fsdp1b_b32_nockpt;   need_gb 60 "$c" && mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size "$NOCKPT_1B_B" --seq-len 1024 --no-activation-ckpt --duration "$DUR"
+  # batch 16 / seq 2048 with activation checkpointing OFF peaks at 40.6 GB -- measured,
+  # "OOM at step 0! Peak memory: 40.6 GB" against the 39.49 GB a 40 GB card
+  # actually exposes. Turning checkpointing off is the whole point of the
+  # cell, so the memory is the experiment, not a bug to tune away.
+  c=s16_train_fsdp1b_seq2k_nockpt; need_gb 60 "$c" && mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 1b --batch-size "$NOCKPT_1B_SEQ2K_B" --seq-len 2048 --no-activation-ckpt --duration "$DUR"
   c=s16_train_fsdp7b_nockpt;       mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/fsdp_training.py --size 7b --batch-size "$NOCKPT_7B_B" --seq-len 1024 --no-activation-ckpt --duration "$DUR"
   c=s16_train_ddp_resnet50_b512;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/pytorch_training_ddp.py --model resnet50 --batch-size "$RESNET_B" --amp --duration "$DUR"
 

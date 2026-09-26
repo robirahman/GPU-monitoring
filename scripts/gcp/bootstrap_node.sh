@@ -505,6 +505,37 @@ EOF
 gcloud storage cp "$REPORT" "${GCS_NODE}/meta/$(basename "$REPORT")" >/dev/null 2>&1 || true
 cat "$REPORT"
 
+# --- stage CIFAR-10 from GCS ------------------------------------------------
+# Every freshly provisioned node used to fetch this from cave.cs.toronto.edu at
+# cell time, and that source is slow enough to blow a 900 s cell timeout on its
+# own: s16_infercnn_rn50 died at 933 s on 2026-09-23 and again on 2026-09-26
+# with a single in-flight download, after an flock had already removed the
+# sixteen-way race. s16_train_ddp_resnet50_b512 then failed outright, because
+# pytorch_training_ddp.py opens the dataset with download=False and got
+# "Dataset not found or corrupted".
+#
+# scripts/gcp/preload_vllm_models.sh does stage it, but it is a documented manual
+# step that nothing in the boot path calls, so it never ran on a flex node. Pull
+# it from our own bucket instead: same region, ~170 MB, seconds rather than
+# minutes, and no dependency on a university mirror being reachable or fast.
+CIFAR_DIR="${REPO_DIR}/data/cifar10"
+CIFAR_SRC="${BUCKET}/staging/cifar10/cifar-10-python.tar.gz"
+if [[ -d "${CIFAR_DIR}/cifar-10-batches-py" ]]; then
+  log "cifar10 already extracted at ${CIFAR_DIR}"
+else
+  mkdir -p "$CIFAR_DIR"
+  if gcloud storage cp "$CIFAR_SRC" "${CIFAR_DIR}/cifar-10-python.tar.gz" >/dev/null 2>&1; then
+    tar xzf "${CIFAR_DIR}/cifar-10-python.tar.gz" -C "$CIFAR_DIR" \
+      && log "cifar10 staged from ${CIFAR_SRC}" \
+      || log "WARN: cifar10 archive fetched but did not extract"
+  else
+    # Not fatal: the workloads can still fall back to downloading it themselves,
+    # just slowly. Worth a loud line because that fallback is what times out.
+    log "WARN: could not fetch ${CIFAR_SRC} -- CIFAR cells will fall back to the"
+    log "      upstream mirror and may exceed their cell timeout"
+  fi
+fi
+
 # Hard asserts on the load-bearing invariants.
 FAIL=0
 [[ "${NGPU:-0}" == "8" ]]        || { log "ASSERT FAIL: gpu_count=$NGPU (want 8)"; FAIL=1; }
