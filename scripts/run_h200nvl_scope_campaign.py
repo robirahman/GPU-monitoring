@@ -88,11 +88,14 @@ def epoch_col(df):
     return (pd.to_datetime(df["timestamp_utc"]) - pd.Timestamp(0, tz="UTC")).dt.total_seconds()
 
 
-def validate(label, run_id):
-    """Both files exist, scope covers the telemetry span. Returns (ok, message)."""
+def validate(label, run_id, all_sensors=False):
+    """Required sensor files exist and cover the telemetry span. Returns (ok, msg)."""
     import pandas as pd
+    def others(f):
+        b = os.path.basename(f)
+        return all(k not in b for k in ("_scope", "_dcgm", "_bmc"))
     tel = [f for f in glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_*_{run_id[:8]}_*.parquet"))
-           if "_scope" not in os.path.basename(f)]
+           if others(f)]
     sco = glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_scope_{run_id}_*.parquet"))
     if not tel:
         return False, "telemetry parquet missing"
@@ -107,12 +110,25 @@ def validate(label, run_id):
     cover = (s.epoch_s.min() <= te.iloc[2]) and (s.epoch_s.max() >= te.iloc[-3])
     if not cover:
         return False, "scope capture does not cover telemetry span"
-    # informational ripple-vs-power check against the calibration curve
     ripple_a = float((s.v_rms_ac ** 2).mean() ** 0.5 / 0.1)
-    est_w = 111.9 * ripple_a + 80.0
     nvml_w = float(t.power_draw_w.mean())
-    return True, (f"{len(t)} tel rows, {len(s)} scope bins, ripple {ripple_a:.2f} A "
-                  f"(est {est_w:.0f} W vs nvml {nvml_w:.0f} W)")
+    extra = ""
+    if all_sensors:
+        dcg = glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_dcgm_{run_id}_*.parquet"))
+        bmc = glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_bmc_{run_id}_*.parquet"))
+        if not dcg:
+            return False, "dcgm parquet missing"
+        if not bmc:
+            return False, "bmc parquet missing"
+        g = pd.read_parquet(dcg[0]); b = pd.read_parquet(bmc[0])
+        if len(g) < 5 or g["dcgm_dram_active"].notna().mean() < 0.5:
+            return False, f"dcgm empty/invalid ({len(g)} rows) — is nv-hostengine up?"
+        if len(b) < 5 or b["bmc_power_w"].notna().mean() < 0.5:
+            return False, f"bmc empty/invalid ({len(b)} rows)"
+        dram = float(g["dcgm_dram_active"].fillna(0).mean())
+        bmc_w = float(b["bmc_power_w"].mean())
+        extra = f", {len(g)} dcgm (dram {dram:.2f}), {len(b)} bmc (node {bmc_w:.0f} W)"
+    return True, (f"{len(t)} tel, {len(s)} scope, ripple {ripple_a:.2f} A, nvml {nvml_w:.0f} W" + extra)
 
 
 def run_rep(label, py, rep, attempt, args):
@@ -121,6 +137,13 @@ def run_rep(label, py, rep, attempt, args):
     cmd = [py, os.path.join(_REPO_ROOT, "scripts", "run_workload_with_scope.py"),
            "--workload", label, "--gpu-index", "0", "--output-dir", OUT_DIR,
            "--run-id", run_id, "--no-dcgm"]
+    if getattr(args, "all_sensors", False):
+        # Ensure the DCGM host engine is up (it can die during host downtime);
+        # otherwise the dcgm logger records 0 samples and the rep fails validation.
+        if subprocess.call("pgrep -f nv-hostengine >/dev/null", shell=True) != 0:
+            subprocess.call("sudo nv-hostengine >/dev/null 2>&1", shell=True)
+            time.sleep(3)
+        cmd += ["--dcgm", "--bmc", "--raw-seconds", "25"]
     if label == "llm_infer_mistral_7b_q4":
         # Aug 2026: transformers-5/gptqmodel-7 runs GPTQ CPU-bound (~4.6 tok/s,
         # GPU idle). Collect via vLLM's Marlin kernels instead — same model,
@@ -139,7 +162,7 @@ def run_rep(label, py, rep, attempt, args):
     if rc != 0:
         tail = subprocess.run(["tail", "-3", log_path], capture_output=True, text=True).stdout
         return False, f"exit code {rc}; log tail: {tail.strip()[-300:]}"
-    return validate(label, run_id)
+    return validate(label, run_id, all_sensors=getattr(args, "all_sensors", False))
 
 
 def main():
@@ -150,7 +173,15 @@ def main():
     ap.add_argument("--reset", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--only", type=str, default="", help="comma-separated label filter")
+    ap.add_argument("--all-sensors", action="store_true",
+                    help="record all four tiers: NVML + scope + DCGM + BMC (25 s raw)")
+    ap.add_argument("--out-dir", type=str, default="",
+                    help="override output dir (default data/h200_nvl_scope)")
     args = ap.parse_args()
+    if args.out_dir:
+        global OUT_DIR, PROGRESS
+        OUT_DIR = args.out_dir
+        PROGRESS = os.path.join(_REPO_ROOT, OUT_DIR, "campaign_progress.json")
 
     plan = {"A": PHASE_A, "B": PHASE_B, "all": PHASE_A + PHASE_B}[args.phase]
     if args.only:

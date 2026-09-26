@@ -49,6 +49,10 @@ def main():
                     help="Also run scripts/dcgm_logger.py (needs nv-hostengine as root)")
     ap.add_argument("--dcgm-python", type=str,
                     default=os.path.expanduser("~/pico-venv/bin/python"))
+    ap.add_argument("--bmc", action="store_true",
+                    help="Also run scripts/bmc_power_logger.py (in-band ipmitool, needs sudo)")
+    ap.add_argument("--bmc-python", type=str,
+                    default=os.path.expanduser("~/pico-venv/bin/python"))
     args, extra = ap.parse_known_args()
 
     timeout = args.timeout or get_workload(args.workload).get("default_timeout") or 600
@@ -87,6 +91,16 @@ def main():
         ]
         dcgm_proc = subprocess.Popen(dcgm_cmd, stdout=sys.stdout, stderr=sys.stderr)
 
+    bmc_proc = None
+    bmc_parquet = None
+    if args.bmc:
+        bmc_parquet = os.path.join(out_dir, f"{args.workload}_bmc_{run_id}_{stamp}.parquet")
+        bmc_cmd = [
+            args.bmc_python, os.path.join(_REPO_ROOT, "scripts", "bmc_power_logger.py"),
+            "--seconds", str(timeout + 60), "--run-id", run_id, "--out", bmc_parquet,
+        ]
+        bmc_proc = subprocess.Popen(bmc_cmd, stdout=sys.stdout, stderr=sys.stderr)
+
     time.sleep(3)  # let the loggers reach steady state before the workload starts
     if scope_proc.poll() is not None:
         print("[scope-wrapper] ERROR: scope logger died at startup", flush=True)
@@ -112,10 +126,10 @@ def main():
         exit_code = subprocess.call(rw_cmd, cwd=_REPO_ROOT)
     finally:
         time.sleep(2)  # capture a couple seconds of post-workload cooldown
-        for proc in (scope_proc, dcgm_proc):
+        for proc in (scope_proc, dcgm_proc, bmc_proc):
             if proc is not None and proc.poll() is None:
                 proc.send_signal(signal.SIGTERM)
-        for proc in (scope_proc, dcgm_proc):
+        for proc in (scope_proc, dcgm_proc, bmc_proc):
             if proc is None:
                 continue
             try:
@@ -126,8 +140,10 @@ def main():
     ok = os.path.exists(scope_parquet) and os.path.getsize(scope_parquet) > 10000
     dcgm_ok = (not args.dcgm) or (dcgm_parquet and os.path.exists(dcgm_parquet)
                                   and os.path.getsize(dcgm_parquet) > 1000)
-    print(f"[scope-wrapper] workload exit={exit_code}  scope ok={ok}  dcgm ok={dcgm_ok}", flush=True)
-    if exit_code == 0 and not (ok and dcgm_ok):
+    bmc_ok = (not args.bmc) or (bmc_parquet and os.path.exists(bmc_parquet)
+                                and os.path.getsize(bmc_parquet) > 500)
+    print(f"[scope-wrapper] workload exit={exit_code}  scope ok={ok}  dcgm ok={dcgm_ok}  bmc ok={bmc_ok}", flush=True)
+    if exit_code == 0 and not (ok and dcgm_ok and bmc_ok):
         exit_code = 98  # workload fine but a sensor capture missing -> rep must be retried
     sys.exit(exit_code)
 
