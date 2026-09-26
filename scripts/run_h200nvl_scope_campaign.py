@@ -69,6 +69,61 @@ PHASE_B = [
     ("adversarial_L_diluted_10", MAIN_PY),
     ("adversarial_L_diluted_20", MAIN_PY),
 ]
+# Phase C: single-GPU classes that ran on other cards (RTX/A100/B200/H100) but
+# never on the H200 — collected here with all four sensors to make the corpus
+# cross-GPU-complete on this card.
+PHASE_C = [
+    # evasion / adversarial families
+    ("adversarial_A_util_modulation", MAIN_PY),
+    ("adversarial_B_low_util", MAIN_PY),
+    ("adversarial_D_temporal_disruption", MAIN_PY),
+    ("adversarial_composite_00", MAIN_PY),
+    ("adversarial_composite_30", MAIN_PY),
+    ("adversarial_composite_50", MAIN_PY),
+    ("adversarial_composite_70", MAIN_PY),
+    ("adversarial_composite_90", MAIN_PY),
+    ("adversarial_composite_95", MAIN_PY),
+    ("adversarial_M_composite_memmin_10", MAIN_PY),
+    ("adversarial_M_composite_memmin_20", MAIN_PY),
+    ("adversarial_M_composite_memmin_30", MAIN_PY),
+    ("adversarial_M_composite_memmin_40", MAIN_PY),
+    ("adversarial_N_grad_accum_4", MAIN_PY),
+    ("adversarial_N_grad_accum_8", MAIN_PY),
+    ("adversarial_N_grad_accum_16", MAIN_PY),
+    ("dilution_sweep_N1", MAIN_PY),
+    ("dilution_sweep_N2", MAIN_PY),
+    ("dilution_sweep_N3", MAIN_PY),
+    ("dilution_sweep_N5", MAIN_PY),
+    ("dilution_sweep_N10", MAIN_PY),
+    ("dilution_sweep_N20", MAIN_PY),
+    ("dilution_sweep_inference", MAIN_PY),
+    ("whitebox_diluted_N10", MAIN_PY),
+    ("whitebox_diluted_N20", MAIN_PY),
+    ("whitebox_diluted_N50", MAIN_PY),
+    ("whitebox_diluted_N5_ckpt", MAIN_PY),
+    ("whitebox_diluted_N10_ckpt", MAIN_PY),
+    ("whitebox_diluted_N20_ckpt", MAIN_PY),
+    ("whitebox_lora_N5", MAIN_PY),
+    ("whitebox_lora_N10", MAIN_PY),
+    ("whitebox_lora_N20", MAIN_PY),
+    ("whitebox_oracle", MAIN_PY),
+    # PPO/RLHF (undisguised P0 via adversarial_symgemm.py; special-cased in run_rep)
+    ("ppo_rlhf_r8", MAIN_PY),
+    ("ppo_rlhf_r32", MAIN_PY),
+    # consumer-scale inference
+    ("llm_infer_qwen25_1p5b", MAIN_PY),
+    ("llm_infer_qwen25_1p5b_seq4096", MAIN_PY),
+    ("llm_infer_qwen25_1p5b_streaming", MAIN_PY),
+    ("llm_infer_smollm2_1p7b", MAIN_PY),
+    ("llm_infer_tinyllama_seq1024", MAIN_PY),
+    ("llm_infer_tinyllama_seq2048", MAIN_PY),
+    ("llm_infer_phi3_mini_seq2048", MAIN_PY),
+    ("llm_infer_bge_embed_bs128", MAIN_PY),
+    ("llm_infer_clip_embed_bs256", MAIN_PY),
+    ("llm_infer_clip_embed_batched", MAIN_PY),
+    ("qwen25_inference", MAIN_PY),
+    ("whisper_inference", MAIN_PY),
+]
 
 
 def load_progress():
@@ -152,6 +207,17 @@ def run_rep(label, py, rep, attempt, args):
                 VLLM_PY, "workloads/llm_inference_vllm.py",
                 "--model", "mistral_7b_q4", "--duration", "300",
                 "--batch-size", "1", "--max-tokens", "256"]
+    elif label.startswith("ppo_rlhf"):
+        # No registry entry: PPO/RLHF is undisguised generate+train (mode P0) via
+        # adversarial_symgemm.py — rollout N samples per step (r8 / r32 from the
+        # label). Passthrough command; torch backend, TinyLlama-1.1B, bf16.
+        rollout = label.rsplit("_r", 1)[-1] if "_r" in label else "8"
+        cmd += ["--timeout", "420", "--",
+                MAIN_PY, "workloads/adversarial_symgemm.py",
+                "--mode", "P0", "--model", "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+                "--batch-size", "4", "--prompt-len", "128", "--gen-tokens", "64",
+                "--dtype", "bfloat16", "--lr", "1e-5", "--duration", "300",
+                "--rollout", rollout, "--backend", "torch"]
     log_dir = os.path.join(_REPO_ROOT, OUT_DIR, "run_logs")
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, f"{label}_rep{rep}_a{attempt}_{run_id[:8]}.log")
@@ -167,7 +233,7 @@ def run_rep(label, py, rep, attempt, args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--phase", choices=["A", "B", "all"], default="A")
+    ap.add_argument("--phase", choices=["A", "B", "C", "all"], default="A")
     ap.add_argument("--reps", type=int, default=3)
     ap.add_argument("--retries", type=int, default=2)
     ap.add_argument("--reset", action="store_true")
@@ -183,7 +249,8 @@ def main():
         OUT_DIR = args.out_dir
         PROGRESS = os.path.join(_REPO_ROOT, OUT_DIR, "campaign_progress.json")
 
-    plan = {"A": PHASE_A, "B": PHASE_B, "all": PHASE_A + PHASE_B}[args.phase]
+    plan = {"A": PHASE_A, "B": PHASE_B, "C": PHASE_C,
+            "all": PHASE_A + PHASE_B + PHASE_C}[args.phase]
     if args.only:
         keep = {x.strip() for x in args.only.split(",")}
         plan = [p for p in plan if p[0] in keep]

@@ -78,12 +78,15 @@ def validate(label, run_id):
            if "_scope" not in os.path.basename(f) and "_dcgm" not in os.path.basename(f)]
     sco = glob.glob(os.path.join(d, f"{label}_scope_{run_id}_*.parquet"))
     dcg = glob.glob(os.path.join(d, f"{label}_dcgm_{run_id}_*.parquet"))
+    bmc = glob.glob(os.path.join(d, f"{label}_bmc_{run_id}_*.parquet"))
     if not tel:
         return False, "NVML telemetry missing"
     if not sco:
         return False, "scope parquet missing"
     if not dcg:
         return False, "dcgm parquet missing"
+    if not bmc:
+        return False, "bmc parquet missing"
     t = pd.read_parquet(tel[0]); s = pd.read_parquet(sco[0]); g = pd.read_parquet(dcg[0])
     if len(t) < 20:
         return False, f"telemetry too short ({len(t)} rows)"
@@ -113,9 +116,13 @@ def run_rep(label, extra, steps, rep, attempt):
     else:
         inner = " ".join([LLMC] + COMMON + ["-x", steps] + extra)
         train_cmd = ["bash", "-lc", f"cd {llmc_dir} && exec {inner}"]
+    # ensure DCGM host engine is up (needed for the dcgm tier)
+    if subprocess.call("pgrep -f nv-hostengine >/dev/null", shell=True) != 0:
+        subprocess.call("sudo nv-hostengine >/dev/null 2>&1", shell=True); time.sleep(3)
     cmd = [MAIN_PY, os.path.join(_REPO_ROOT, "scripts", "run_workload_with_scope.py"),
            "--workload", label, "--gpu-index", "0", "--output-dir", OUT_DIR,
-           "--run-id", run_id, "--no-dcgm", "--dcgm", "--timeout", "900",
+           "--run-id", run_id, "--no-dcgm", "--dcgm", "--bmc", "--raw-seconds", "25",
+           "--timeout", "900",
            "--"] + train_cmd
     log_dir = os.path.join(_REPO_ROOT, OUT_DIR, "run_logs")
     os.makedirs(log_dir, exist_ok=True)
@@ -136,7 +143,12 @@ def main():
     ap.add_argument("--only", type=str, default="")
     ap.add_argument("--reset", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--out-dir", type=str, default="")
     args = ap.parse_args()
+    if args.out_dir:
+        global OUT_DIR, PROGRESS
+        OUT_DIR = args.out_dir
+        PROGRESS = os.path.join(_REPO_ROOT, OUT_DIR, "shaping_progress.json")
 
     configs = CONFIGS
     if args.only:
