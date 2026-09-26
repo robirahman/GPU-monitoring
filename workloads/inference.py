@@ -10,6 +10,8 @@ Usage:
 """
 
 import argparse
+import os
+import fcntl
 import time
 
 import torch
@@ -45,9 +47,25 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)),
     ])
-    dataset = torchvision.datasets.CIFAR10(
-        root=args.data_dir, train=False, download=True, transform=transform
-    )
+    # One downloader at a time. s16_infercnn_rn50 runs this REPLICATED -- eight
+    # processes per node, sixteen across the pair -- and every one of them called
+    # CIFAR10(download=True) on the same path at the same moment. They raced on
+    # one cifar-10-python.tar.gz, corrupted each other's partial file, and hung:
+    # the 2026-09-23 round lost the cell on both GPU pairs, 8/8 replicas TIMEOUT
+    # at 0% GPU utilisation, with nothing in the log after "Downloading ...".
+    #
+    # An exclusive flock serialises it. The winner downloads; the rest block, then
+    # find the archive present and verified and skip straight through. Fixing it
+    # here rather than by preloading means the workload is correct wherever it
+    # runs -- scripts/gcp/preload_vllm_models.sh does stage this dataset, but it
+    # is a documented manual step that nothing in the bootstrap path invokes, so
+    # every freshly provisioned node hits this.
+    os.makedirs(args.data_dir, exist_ok=True)
+    with open(os.path.join(args.data_dir, ".cifar10.lock"), "w") as _lk:
+        fcntl.flock(_lk, fcntl.LOCK_EX)
+        dataset = torchvision.datasets.CIFAR10(
+            root=args.data_dir, train=False, download=True, transform=transform
+        )
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False,
                         num_workers=2, pin_memory=(args.device == "cuda"))
 

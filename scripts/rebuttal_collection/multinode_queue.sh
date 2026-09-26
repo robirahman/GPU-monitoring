@@ -504,6 +504,21 @@ mn_replicated_main() {  # mn_replicated_main <stage> <run_id> <registry-label>
 }
 
 # ── S8 cells (each node runs its own single-node job concurrently) ───────────
+s8_single() {  # s8_single <stage> <run_id> <timeout> -- <workload.py args...>
+  # ONE process per node that sees all 8 GPUs, for workloads that shard
+  # themselves. llm_inference_hf_sharded.py hands placement to accelerate's
+  # device_map and never calls init_process_group; under s8_torchrun's
+  # --nproc-per-node=8 all eight replicas each tried to map a 72B model across
+  # all eight cards, so GPU 0 held two 15.8 GiB copies plus six stubs and OOMed
+  # at 39.49 GiB. Same telemetry: run_workload_multi_gpu still samples 8 GPUs.
+  local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
+  run_stage "$stage" "$rid" -- \
+    $PY scripts/run_workload_multi_gpu.py --workload "${PREFIX}${stage}" \
+      --num-gpus 8 --run-id "$rid" --node-rank "$NODE_RANK" \
+      --output-dir "$OUTDIR" --timeout "$to" -- \
+      $PY "$@"
+}
+
 s8_torchrun() {  # s8_torchrun <stage> <run_id> <timeout> -- <workload.py args...>
   local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
   run_stage "$stage" "$rid" -- \
@@ -1172,9 +1187,9 @@ for rep in $(seq 1 "$REPS"); do
   # Sharded by layer across all 8 GPUs of a node: pipeline-style, versus vLLM's
   # tensor-parallel all-reduce per layer. Same job to an operator, completely
   # different on the wire. --max-memory-gb is the footprint sweep.
-  c=s16_inferhf_shard72b;      s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8
-  c=s16_inferhf_shard72b_m40;  s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 40
-  c=s16_inferhf_shard72b_m60;  need_gb 60 "$c" && s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 60
+  c=s16_inferhf_shard72b;      s8_single "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8
+  c=s16_inferhf_shard72b_m40;  s8_single "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 40
+  c=s16_inferhf_shard72b_m60;  need_gb 60 "$c" && s8_single "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/llm_inference_hf_sharded.py --model qwen25_72b_fp16 --duration "$DUR" --batch-size 8 --max-memory-gb 60
 
   # -- Recommender: huge tables, sparse gathers, all-to-all sized by the batch.
   # Huge memory at low utilisation is what evasive training would imitate, and
@@ -1201,7 +1216,10 @@ for rep in $(seq 1 "$REPS"); do
   # rank -- freezing them for LoRA does not make them smaller). Both collapse to
   # family `train_lora`, so the 40 GB track still contributes the fold.
   c=s16_train_lora1b;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 1b --rank 16 --batch-size 4 --seq-len 1024 --duration "$DUR"
-  c=s16_train_lora1b_b16;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 1b --rank 16 --batch-size 16 --seq-len 1024 --duration "$DUR"
+  # 38.25 GiB resident at batch 16 / seq 1024 on a 40 GB card -> OOM on every
+  # rank. It completed on the 80 GB track, so this is a real memory requirement,
+  # not a bug: gate it the way the other big cells are gated.
+  c=s16_train_lora1b_b16;  need_gb 60 "$c" && mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 1b --rank 16 --batch-size 16 --seq-len 1024 --duration "$DUR"
   c=s16_train_lora7b;      need_gb 60 "$c" && mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_lora.py --size 7b --rank 16 --batch-size 4 --seq-len 1024 --duration "$DUR"
   # Contrastive: a large all-gather in the FORWARD pass whose size scales with
   # world size rather than model size. No other cell has that shape.
