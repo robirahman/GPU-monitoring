@@ -60,7 +60,7 @@ CONFIGS = [
     # micro-step, so the compulsory weight-write DRAM traffic is near-continuous,
     # raising mem_utilization toward HPC levels WITHOUT a cover process (no
     # stream contention). Still tiny batch (low footprint). Same training family.
-    ("adversarial_mm_freq", ["-b", "1", "-r", "2", "-d", "1024"], "400"),
+    ("adversarial_mm_freq", ["-b", "1", "-r", "2", "-d", "1024"], "16000"),
 ]
 
 
