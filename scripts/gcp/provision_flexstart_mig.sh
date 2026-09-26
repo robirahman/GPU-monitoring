@@ -47,6 +47,24 @@ RUN_STAMP="${RUN_STAMP:-$(date -u +%Y%m%d%H%M)}"
 # instant, and it is keyed on the ZONE (not the node) so both nodes of the
 # winning pair survive.
 ZONES="${ZONES:-us-central1-a us-east4-a us-east5-a us-west1-a europe-west4-b asia-southeast1-b}"
+# One zone per REGION. GPU quota is regional, not zonal: NVIDIA_A100_80GB_GPUS is
+# 16 in us-central1 as a whole, and a pair is 2 x 8 = 16. So queuing
+# us-central1-a AND us-central1-c asks that one pool for 32 and both requests
+# fail with QUOTA_EXCEEDED -- a wider fan-out becomes LESS likely to land, which
+# is the opposite of the point. That is what killed 20260926{u,v,w}: every list
+# I passed had two or three us-central1 zones in it, and I spent hours blaming
+# zones, then billing, before `gcloud compute instance-groups managed
+# list-errors` named it outright.
+_seen_regions=""
+_deduped=""
+for _z in $ZONES; do
+  _r="${_z%-*}"                                  # us-central1-c -> us-central1
+  case " $_seen_regions " in
+    *" $_r "*) echo "[zones] dropping $_z: already racing $_r (GPU quota is regional)" >&2 ;;
+    *) _seen_regions="$_seen_regions $_r"; _deduped="$_deduped $_z" ;;
+  esac
+done
+ZONES="${_deduped# }"
 ZONE="${ZONE:-${ZONES%% *}}"
 MACHINE_TYPE="${MACHINE_TYPE:-a3-highgpu-8g}"
 # NOT ${NODE0:-...}: env.sh exports NODE0/NODE1 as spar-gpu-0/1, which are the
