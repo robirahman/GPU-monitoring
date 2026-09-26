@@ -19,6 +19,16 @@ POLL="${1:-600}"
 PAT="${PAT:-^spar-gpu}"
 ZONES="${ZONES:-us-central1-a us-central1-b us-central1-c us-east4-a us-east4-c us-west1-b asia-southeast1-b asia-southeast1-c europe-west4-a}"
 
+# A run that was never observed cannot be observed to finish. The first version
+# of this mistook a broken query for completion; the second mistook a pattern
+# that matched nothing. PAT defaults to ^spar-gpu, the run after it was named
+# spar-nic-*, and the waiter announced ALL TRACKS COMPLETE four minutes into a
+# twelve-hour round -- with a listing that was valid, non-empty and simply did
+# not contain the thing it was watching for.
+#
+# So completion now requires having SEEN the run first. Until a node matching PAT
+# appears at least once, an empty match means "not started yet", never "done".
+seen_any=0
 clean=0
 while :; do
   raw=$(timeout 120 gcloud compute instances list --project="$PROJECT" \
@@ -39,6 +49,11 @@ while :; do
     [ -n "${r// /}" ] && reqs="$reqs $z:$r"
   done
 
+  [ -n "$inst" ] && seen_any=1
+  if [ "$seen_any" = "0" ]; then
+    echo "[$(date -u +%H:%MZ)] no node matching '$PAT' seen yet -- waiting for the run to appear"
+    clean=0; sleep "$POLL"; continue
+  fi
   if [ -z "$inst" ] && [ -z "${reqs// /}" ]; then
     clean=$((clean+1))
     echo "[$(date -u +%H:%MZ)] no collection nodes, no queued requests (${clean}/2)"
