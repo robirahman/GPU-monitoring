@@ -1,0 +1,58 @@
+[scope-wrapper] run_id=02ae88b73bba  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_scope_02ae88b73bba_20260926_094031.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 09:40:34,622 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_K_online_learning, run=02ae88b73bba)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 09:45:34,896 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_NVIDIA_H200_NVL_02ae88b7_20260926_094034.parquet.partial
+Strategy K: Online Learning Camouflage
+  Model: resnet50, Batch: 128, Duration: 300s
+  Identical to inference except: backward pass + weight update per batch
+  Pass 4: 40000 samples, 1323 img/s, mem=164MB, 30.2s
+  Pass 9: 90000 samples, 1340 img/s, mem=164MB, 67.1s
+  Pass 13: 130000 samples, 1327 img/s, mem=164MB, 98.0s
+  Pass 17: 170000 samples, 1315 img/s, mem=164MB, 129.3s
+  Pass 21: 210000 samples, 1314 img/s, mem=164MB, 159.8s
+  Pass 25: 250000 samples, 1316 img/s, mem=164MB, 189.9s
+  Pass 29: 290000 samples, 1317 img/s, mem=164MB, 220.2s
+  Pass 34: 340000 samples, 1321 img/s, mem=164MB, 257.4s
+  Pass 38: 380000 samples, 1319 img/s, mem=164MB, 288.0s
+Strategy K complete. 396016 samples, 1319 img/s, 300.3s
+2026-09-26 09:45:41,633 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 09:45:41,641 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_NVIDIA_H200_NVL_02ae88b7_20260926_094034.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_K_online_learning
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round3.py --strategy K --duration 300 --batch-size 128
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      02ae88b73bba
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_NVIDIA_H200_NVL_02ae88b7_20260926_094034.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_NVIDIA_H200_NVL_02ae88b7_20260926_094034.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round3.py --strategy K --duration 300 --batch-size 128
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=303.0s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_NVIDIA_H200_NVL_02ae88b7_20260926_094034.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_bmc_02ae88b73bba_20260926_094031.parquet: 312 samples, 100% valid, mean 829 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_dcgm_02ae88b73bba_20260926_094031.parquet: 1553 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_scope_02ae88b73bba_20260926_094031.parquet: 306476 bins, 306.4 s span, 304943620 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_K_online_learning_scope_02ae88b73bba_20260926_094031_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

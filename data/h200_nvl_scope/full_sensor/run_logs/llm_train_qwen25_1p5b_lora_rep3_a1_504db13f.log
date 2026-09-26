@@ -1,0 +1,96 @@
+[scope-wrapper] run_id=504db13f1f66  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_scope_504db13f1f66_20260926_025738.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 02:57:42,078 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_train_qwen25_1p5b_lora, run=504db13f1f66)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Loading Qwen/Qwen2.5-1.5B-Instruct (fp16)
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  45%|████▍     | 151/338 [00:00<00:00, 1497.09it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 1926.50it/s]
+  params: 1.54 B  |  post-load memory: 2944 MB
+
+WARN  Python GIL is enabled: Multi-gpu quant acceleration for MoE models is sub-optimal and multi-core accelerated cpu packing is also disabled. We recommend Python >= 3.13.3t with Pytorch > 2.8 for mult-gpu quantization and multi-cpu packing with env `PYTHON_GIL=0`.
+INFO  ENV: Auto setting PYTORCH_ALLOC_CONF='expandable_segments:True,max_split_size_mb:256,garbage_collection_threshold:0.7' for memory saving.
+INFO  ENV: Auto setting CUDA_DEVICE_ORDER=PCI_BUS_ID for correctness.           
+INFO:datasets:PyTorch version 2.11.0+cu128 available.
+INFO  
+
+┌─────────────┐    ┌────────────────────────┐    ┌────────────┐    ┌─────────┐
+│ GPT-QModel  │ -> │ ▓▓▓▓▓▓▓▓▓▓▓▓ 16bit     │ -> │ ▒▒▒▒ 8bit  │ -> │ ░░ 4bit │
+└─────────────┘    └────────────────────────┘    └────────────┘    └─────────┘
+GPT-QModel   : 7.3.4+c138fcf
+Transformers : 5.15.1
+Torch        : 2.11.0+cu128
+Triton       : 3.6.0
+2026-09-26 03:02:42,155 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_NVIDIA_H200_NVL_504db13f_20260926_025742.parquet.partial
+  LoRA r=16 alpha=32: 2.2 M trainable / 1546 M total (0.14%)
+  step   238  loss=13.454  12169 tok/s  mem=3197 MB  t=10s
+  step   519  loss=13.496  13260 tok/s  mem=3197 MB  t=20s
+  step   821  loss=13.525  13991 tok/s  mem=3197 MB  t=30s
+  step  1123  loss=13.545  14358 tok/s  mem=3197 MB  t=40s
+  step  1425  loss=13.557  14576 tok/s  mem=3197 MB  t=50s
+  step  1727  loss=13.566  14722 tok/s  mem=3197 MB  t=60s
+  step  2029  loss=13.574  14826 tok/s  mem=3197 MB  t=70s
+  step  2331  loss=13.580  14903 tok/s  mem=3197 MB  t=80s
+  step  2631  loss=13.585  14949 tok/s  mem=3197 MB  t=90s
+  step  2893  loss=13.589  14793 tok/s  mem=3197 MB  t=100s
+  step  3154  loss=13.594  14663 tok/s  mem=3197 MB  t=110s
+  step  3415  loss=13.597  14554 tok/s  mem=3197 MB  t=120s
+  step  3676  loss=13.601  14461 tok/s  mem=3197 MB  t=130s
+  step  3937  loss=13.603  14382 tok/s  mem=3197 MB  t=140s
+  step  4221  loss=13.606  14391 tok/s  mem=3197 MB  t=150s
+  step  4523  loss=13.608  14457 tok/s  mem=3197 MB  t=160s
+  step  4825  loss=13.610  14516 tok/s  mem=3197 MB  t=170s
+  step  5100  loss=13.612  14490 tok/s  mem=3197 MB  t=180s
+  step  5361  loss=13.614  14431 tok/s  mem=3197 MB  t=190s
+  step  5623  loss=13.615  14377 tok/s  mem=3197 MB  t=200s
+  step  5884  loss=13.617  14328 tok/s  mem=3197 MB  t=210s
+  step  6145  loss=13.618  14284 tok/s  mem=3197 MB  t=220s
+  step  6406  loss=13.620  14244 tok/s  mem=3197 MB  t=230s
+  step  6667  loss=13.621  14207 tok/s  mem=3197 MB  t=240s
+  step  6928  loss=13.622  14172 tok/s  mem=3197 MB  t=250s
+  step  7200  loss=13.624  14162 tok/s  mem=3197 MB  t=260s
+  step  7503  loss=13.625  14211 tok/s  mem=3197 MB  t=270s
+  step  7806  loss=13.626  14256 tok/s  mem=3197 MB  t=280s
+  step  8106  loss=13.628  14294 tok/s  mem=3197 MB  t=290s
+LoRA train done: 8398 steps, 4299776 tokens, 14332 tok/s in 300.0s
+2026-09-26 03:02:52,658 [spar.telemetry] INFO: Telemetry stopped. 311 samples collected.
+2026-09-26 03:02:52,663 [spar.telemetry] INFO: Saved 311 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_NVIDIA_H200_NVL_504db13f_20260926_025742.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_train_qwen25_1p5b_lora
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model Qwen/Qwen2.5-1.5B-Instruct --duration 300 --batch-size 2 --seq-len 256 --rank 16
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      504db13f1f66
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_NVIDIA_H200_NVL_504db13f_20260926_025742.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_NVIDIA_H200_NVL_504db13f_20260926_025742.parquet.partial
+  Timeout:     480s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model Qwen/Qwen2.5-1.5B-Instruct --duration 300 --batch-size 2 --seq-len 256 --rank 16
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=306.6s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 311
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_NVIDIA_H200_NVL_504db13f_20260926_025742.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_dcgm_504db13f1f66_20260926_025738.parquet: 1574 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_bmc_504db13f1f66_20260926_025738.parquet: 316 samples, 100% valid, mean 595 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_scope_504db13f1f66_20260926_025738.parquet: 310395 bins, 310.3 s span, 308843025 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_qwen25_1p5b_lora_scope_504db13f1f66_20260926_025738_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

@@ -1,0 +1,44 @@
+[scope-wrapper] run_id=2807943fa1fd  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_scope_2807943fa1fd_20260926_040855.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 04:08:58,698 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=idle, run=2807943fa1fd)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+Idle workload: sleeping for 120s
+Idle workload complete (120s)
+2026-09-26 04:11:02,814 [spar.telemetry] INFO: Telemetry stopped. 125 samples collected.
+2026-09-26 04:11:02,825 [spar.telemetry] INFO: Saved 125 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_NVIDIA_H200_NVL_2807943f_20260926_040858.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    idle
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/idle.py
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      2807943fa1fd
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_NVIDIA_H200_NVL_2807943f_20260926_040858.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_NVIDIA_H200_NVL_2807943f_20260926_040858.parquet.partial
+  Timeout:     130s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/idle.py
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=120.1s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 125
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_NVIDIA_H200_NVL_2807943f_20260926_040858.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_dcgm_2807943fa1fd_20260926_040855.parquet: 642 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_bmc_2807943fa1fd_20260926_040855.parquet: 130 samples, 100% valid, mean 375 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_scope_2807943fa1fd_20260926_040855.parquet: 124846 bins, 124.8 s span, 124221770 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/idle_scope_2807943fa1fd_20260926_040855_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

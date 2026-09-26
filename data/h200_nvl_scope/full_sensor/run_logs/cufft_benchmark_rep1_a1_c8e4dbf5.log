@@ -1,0 +1,69 @@
+[scope-wrapper] run_id=c8e4dbf5fe83  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_scope_c8e4dbf5fe83_20260926_041337.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 04:13:40,656 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=cufft_benchmark, run=c8e4dbf5fe83)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 04:18:40,736 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_NVIDIA_H200_NVL_c8e4dbf5_20260926_041340.parquet.partial
+2026-09-26 04:23:40,755 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_NVIDIA_H200_NVL_c8e4dbf5_20260926_041340.parquet.partial
+Scientific HPC workload: cufft
+  Device: cuda
+  cuFFT benchmark: (512, 512, 64) complex float32 tensors, 600s
+  Iteration 36243: 30.0s elapsed
+  Iteration 72526: 60.0s elapsed
+  Iteration 108812: 90.0s elapsed
+  Iteration 145100: 120.0s elapsed
+  Iteration 181387: 150.0s elapsed
+  Iteration 217675: 180.0s elapsed
+  Iteration 253962: 210.0s elapsed
+  Iteration 290250: 240.0s elapsed
+  Iteration 326539: 270.0s elapsed
+  Iteration 362829: 300.0s elapsed
+  Iteration 399115: 330.0s elapsed
+  Iteration 435402: 360.0s elapsed
+  Iteration 471690: 390.0s elapsed
+  Iteration 507977: 420.0s elapsed
+  Iteration 544266: 450.0s elapsed
+  Iteration 580555: 480.0s elapsed
+  Iteration 616844: 510.0s elapsed
+  Iteration 653131: 540.0s elapsed
+  Iteration 689419: 570.0s elapsed
+cuFFT complete. Iterations: 725694, Wall time: 600.0s
+2026-09-26 04:23:46,031 [spar.telemetry] INFO: Telemetry stopped. 606 samples collected.
+2026-09-26 04:23:46,035 [spar.telemetry] INFO: Saved 606 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_NVIDIA_H200_NVL_c8e4dbf5_20260926_041340.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    cufft_benchmark
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/scientific_hpc.py --workload cufft --duration 600
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      c8e4dbf5fe83
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_NVIDIA_H200_NVL_c8e4dbf5_20260926_041340.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_NVIDIA_H200_NVL_c8e4dbf5_20260926_041340.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/scientific_hpc.py --workload cufft --duration 600
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=601.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 606
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_NVIDIA_H200_NVL_c8e4dbf5_20260926_041340.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_dcgm_c8e4dbf5fe83_20260926_041337.parquet: 3047 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_bmc_c8e4dbf5fe83_20260926_041337.parquet: 611 samples, 100% valid, mean 1318 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_scope_c8e4dbf5fe83_20260926_041337.parquet: 603816 bins, 603.7 s span, 600796920 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/cufft_benchmark_scope_c8e4dbf5fe83_20260926_041337_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

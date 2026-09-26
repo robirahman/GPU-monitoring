@@ -1,0 +1,96 @@
+[scope-wrapper] run_id=784cf28aeab0  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_scope_784cf28aeab0_20260926_030306.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 03:03:10,045 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_train_smollm2_1p7b_lora, run=784cf28aeab0)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Loading HuggingFaceTB/SmolLM2-1.7B-Instruct (fp16)
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights:   8%|▊         | 18/218 [00:00<00:01, 169.49it/s]Loading weights:  21%|██        | 45/218 [00:00<00:00, 218.06it/s]Loading weights:  34%|███▍      | 75/218 [00:00<00:00, 253.77it/s]Loading weights:  47%|████▋     | 103/218 [00:00<00:00, 247.82it/s]Loading weights:  60%|██████    | 131/218 [00:00<00:00, 258.61it/s]Loading weights:  72%|███████▏  | 158/218 [00:00<00:00, 261.78it/s]Loading weights:  87%|████████▋ | 189/218 [00:00<00:00, 272.17it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 265.79it/s]
+  params: 1.71 B  |  post-load memory: 3264 MB
+
+WARN  Python GIL is enabled: Multi-gpu quant acceleration for MoE models is sub-optimal and multi-core accelerated cpu packing is also disabled. We recommend Python >= 3.13.3t with Pytorch > 2.8 for mult-gpu quantization and multi-cpu packing with env `PYTHON_GIL=0`.
+INFO  ENV: Auto setting PYTORCH_ALLOC_CONF='expandable_segments:True,max_split_size_mb:256,garbage_collection_threshold:0.7' for memory saving.
+INFO  ENV: Auto setting CUDA_DEVICE_ORDER=PCI_BUS_ID for correctness.           
+INFO:datasets:PyTorch version 2.11.0+cu128 available.
+INFO  
+
+┌─────────────┐    ┌────────────────────────┐    ┌────────────┐    ┌─────────┐
+│ GPT-QModel  │ -> │ ▓▓▓▓▓▓▓▓▓▓▓▓ 16bit     │ -> │ ▒▒▒▒ 8bit  │ -> │ ░░ 4bit │
+└─────────────┘    └────────────────────────┘    └────────────┘    └─────────┘
+GPT-QModel   : 7.3.4+c138fcf
+Transformers : 5.15.1
+Torch        : 2.11.0+cu128
+Triton       : 3.6.0
+2026-09-26 03:08:10,123 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_NVIDIA_H200_NVL_784cf28a_20260926_030310.parquet.partial
+  LoRA r=16 alpha=32: 3.1 M trainable / 1715 M total (0.18%)
+  step   297  loss=11.626  15165 tok/s  mem=3508 MB  t=10s
+  step   616  loss=11.548  15736 tok/s  mem=3508 MB  t=20s
+  step   937  loss=11.513  15954 tok/s  mem=3508 MB  t=30s
+  step  1262  loss=11.492  16117 tok/s  mem=3508 MB  t=40s
+  step  1631  loss=11.479  16667 tok/s  mem=3508 MB  t=50s
+  step  2000  loss=11.471  17035 tok/s  mem=3508 MB  t=60s
+  step  2369  loss=11.464  17296 tok/s  mem=3508 MB  t=70s
+  step  2729  loss=11.460  17436 tok/s  mem=3508 MB  t=80s
+  step  3047  loss=11.458  17304 tok/s  mem=3508 MB  t=90s
+  step  3365  loss=11.456  17202 tok/s  mem=3508 MB  t=100s
+  step  3712  loss=11.453  17251 tok/s  mem=3508 MB  t=110s
+  step  4080  loss=11.451  17382 tok/s  mem=3508 MB  t=120s
+  step  4448  loss=11.449  17493 tok/s  mem=3508 MB  t=130s
+  step  4809  loss=11.448  17563 tok/s  mem=3508 MB  t=140s
+  step  5128  loss=11.446  17480 tok/s  mem=3508 MB  t=150s
+  step  5497  loss=11.445  17567 tok/s  mem=3508 MB  t=160s
+  step  5868  loss=11.443  17648 tok/s  mem=3508 MB  t=170s
+  step  6238  loss=11.442  17720 tok/s  mem=3508 MB  t=180s
+  step  6608  loss=11.441  17784 tok/s  mem=3508 MB  t=190s
+  step  6978  loss=11.440  17841 tok/s  mem=3508 MB  t=200s
+  step  7348  loss=11.439  17893 tok/s  mem=3508 MB  t=210s
+  step  7718  loss=11.438  17939 tok/s  mem=3508 MB  t=220s
+  step  8088  loss=11.437  17981 tok/s  mem=3508 MB  t=230s
+  step  8458  loss=11.436  18020 tok/s  mem=3508 MB  t=240s
+  step  8828  loss=11.436  18055 tok/s  mem=3508 MB  t=250s
+  step  9198  loss=11.435  18088 tok/s  mem=3508 MB  t=260s
+  step  9523  loss=11.434  18034 tok/s  mem=3508 MB  t=270s
+  step  9843  loss=11.434  17973 tok/s  mem=3508 MB  t=280s
+  step 10194  loss=11.433  17972 tok/s  mem=3508 MB  t=290s
+LoRA train done: 10500 steps, 5376000 tokens, 17920 tok/s in 300.0s
+2026-09-26 03:08:21,628 [spar.telemetry] INFO: Telemetry stopped. 312 samples collected.
+2026-09-26 03:08:21,632 [spar.telemetry] INFO: Saved 312 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_NVIDIA_H200_NVL_784cf28a_20260926_030310.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_train_smollm2_1p7b_lora
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model HuggingFaceTB/SmolLM2-1.7B-Instruct --duration 300 --batch-size 2 --seq-len 256 --rank 16
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      784cf28aeab0
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_NVIDIA_H200_NVL_784cf28a_20260926_030310.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_NVIDIA_H200_NVL_784cf28a_20260926_030310.parquet.partial
+  Timeout:     480s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model HuggingFaceTB/SmolLM2-1.7B-Instruct --duration 300 --batch-size 2 --seq-len 256 --rank 16
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=307.6s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 312
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_NVIDIA_H200_NVL_784cf28a_20260926_030310.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_dcgm_784cf28aeab0_20260926_030306.parquet: 1579 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_bmc_784cf28aeab0_20260926_030306.parquet: 317 samples, 100% valid, mean 684 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_scope_784cf28aeab0_20260926_030306.parquet: 311484 bins, 311.4 s span, 309926580 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_smollm2_1p7b_lora_scope_784cf28aeab0_20260926_030306_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

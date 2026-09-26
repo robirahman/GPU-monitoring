@@ -1,0 +1,73 @@
+[scope-wrapper] run_id=825985777c4f  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_scope_825985777c4f_20260926_054035.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 05:40:39,069 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=bert_sst2, run=825985777c4f)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+BERT-base fine-tuning on SST-2
+  Device: cuda, Steps: 300, Batch: 32, AMP: False
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 4577.53it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: bert-base-uncased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Loading SST-2 dataset...
+  Step 50/300: loss=0.1828, elapsed=3.5s
+  Step 100/300: loss=0.5000, elapsed=6.8s
+  Step 150/300: loss=0.0490, elapsed=10.1s
+  Step 200/300: loss=0.0460, elapsed=13.3s
+  Step 250/300: loss=0.0659, elapsed=16.6s
+  Step 300/300: loss=0.0122, elapsed=20.0s
+BERT fine-tuning complete. Steps: 300, Wall time: 20.0s
+2026-09-26 05:41:10,374 [spar.telemetry] INFO: Telemetry stopped. 32 samples collected.
+2026-09-26 05:41:10,384 [spar.telemetry] INFO: Saved 32 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_NVIDIA_H200_NVL_82598577_20260926_054039.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    bert_sst2
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/bert_finetune.py --steps 300 --batch-size 32
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      825985777c4f
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_NVIDIA_H200_NVL_82598577_20260926_054039.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_NVIDIA_H200_NVL_82598577_20260926_054039.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/bert_finetune.py --steps 300 --batch-size 32
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=27.3s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 32
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_NVIDIA_H200_NVL_82598577_20260926_054039.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_dcgm_825985777c4f_20260926_054035.parquet: 181 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_bmc_825985777c4f_20260926_054035.parquet: 37 samples, 100% valid, mean 595 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_scope_825985777c4f_20260926_054035.parquet: 32567 bins, 32.6 s span, 32404165 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/bert_sst2_scope_825985777c4f_20260926_054035_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

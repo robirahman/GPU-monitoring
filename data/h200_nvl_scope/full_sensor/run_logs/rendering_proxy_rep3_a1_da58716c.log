@@ -1,0 +1,69 @@
+[scope-wrapper] run_id=da58716c91fe  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_scope_da58716c91fe_20260926_070946.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 07:09:49,529 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=rendering_proxy, run=da58716c91fe)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 07:14:49,607 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_NVIDIA_H200_NVL_da58716c_20260926_070949.parquet.partial
+2026-09-26 07:19:49,626 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_NVIDIA_H200_NVL_da58716c_20260926_070949.parquet.partial
+GPU rendering proxy (Monte Carlo path tracing)
+  Device: cuda
+  Path tracing proxy: 32768 rays, 4 bounces, 600s
+  Frame 22727: 757.57 fps, 30.0s elapsed
+  Frame 45612: 760.19 fps, 60.0s elapsed
+  Frame 68501: 761.11 fps, 90.0s elapsed
+  Frame 91396: 761.62 fps, 120.0s elapsed
+  Frame 114283: 761.87 fps, 150.0s elapsed
+  Frame 137171: 762.05 fps, 180.0s elapsed
+  Frame 160062: 762.19 fps, 210.0s elapsed
+  Frame 182949: 762.27 fps, 240.0s elapsed
+  Frame 205836: 762.34 fps, 270.0s elapsed
+  Frame 228724: 762.40 fps, 300.0s elapsed
+  Frame 251617: 762.46 fps, 330.0s elapsed
+  Frame 274514: 762.52 fps, 360.0s elapsed
+  Frame 297414: 762.58 fps, 390.0s elapsed
+  Frame 320313: 762.63 fps, 420.0s elapsed
+  Frame 343211: 762.68 fps, 450.0s elapsed
+  Frame 366105: 762.70 fps, 480.0s elapsed
+  Frame 389000: 762.73 fps, 510.0s elapsed
+  Frame 411890: 762.74 fps, 540.0s elapsed
+  Frame 434774: 762.75 fps, 570.0s elapsed
+Rendering proxy complete. Frames: 457654, 762.76 fps, 600.0s
+2026-09-26 07:19:54,839 [spar.telemetry] INFO: Telemetry stopped. 606 samples collected.
+2026-09-26 07:19:54,844 [spar.telemetry] INFO: Saved 606 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_NVIDIA_H200_NVL_da58716c_20260926_070949.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    rendering_proxy
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/rendering_proxy.py --duration 600 --rays 32768 --bounces 4
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      da58716c91fe
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_NVIDIA_H200_NVL_da58716c_20260926_070949.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_NVIDIA_H200_NVL_da58716c_20260926_070949.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/rendering_proxy.py --duration 600 --rays 32768 --bounces 4
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=601.3s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 606
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_NVIDIA_H200_NVL_da58716c_20260926_070949.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_dcgm_da58716c91fe_20260926_070946.parquet: 3046 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_bmc_da58716c91fe_20260926_070946.parquet: 611 samples, 100% valid, mean 570 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_scope_da58716c91fe_20260926_070946.parquet: 603644 bins, 603.5 s span, 600625780 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/rendering_proxy_scope_da58716c91fe_20260926_070946_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True
