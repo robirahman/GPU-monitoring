@@ -162,9 +162,16 @@ def validate(label, run_id, all_sensors=False):
     if len(t) < 15:
         return False, f"telemetry too short ({len(t)} rows)"
     te = epoch_col(t)
-    cover = (s.epoch_s.min() <= te.iloc[2]) and (s.epoch_s.max() >= te.iloc[-3])
+    # scope is SIGTERM-flushed at workload end and can drop a few seconds of its
+    # streaming tail (USB ring buffer), so require coverage from near the start
+    # through all but a modest end gap (5% of span, >=15 s) rather than to the
+    # 3rd-from-last NVML sample — which false-fails otherwise-complete captures.
+    span = float(te.iloc[-1] - te.iloc[0])
+    end_tol = max(0.05 * span, 15.0)
+    cover = (s.epoch_s.min() <= te.iloc[2]) and (s.epoch_s.max() >= te.iloc[-1] - end_tol)
     if not cover:
-        return False, "scope capture does not cover telemetry span"
+        return False, (f"scope does not cover telemetry span "
+                       f"(scope ends {te.iloc[-1] - s.epoch_s.max():.1f}s before NVML, tol {end_tol:.1f}s)")
     ripple_a = float((s.v_rms_ac ** 2).mean() ** 0.5 / 0.1)
     nvml_w = float(t.power_draw_w.mean())
     extra = ""
