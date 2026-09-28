@@ -1,0 +1,477 @@
+[scope-wrapper] run_id=42148b99d2fc  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_scope_42148b99d2fc_20260927_032608.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 03:26:12,218 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=whisper_inference, run=42148b99d2fc)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Device: cuda
+Loading Whisper large-v3-turbo...
+  0%|                                              | 0.00/1.51G [00:00<?, ?iB/s]  0%|                                      | 816k/1.51G [00:00<03:14, 8.32MiB/s]  0%|▏                                    | 5.66M/1.51G [00:00<00:56, 28.7MiB/s]  1%|▎                                    | 11.2M/1.51G [00:00<00:39, 41.0MiB/s]  1%|▍                                    | 16.4M/1.51G [00:00<00:34, 46.0MiB/s]  2%|▌                                    | 23.1M/1.51G [00:00<00:29, 54.7MiB/s]  2%|▋                                    | 28.4M/1.51G [00:00<00:33, 47.5MiB/s]  2%|▊                                    | 34.5M/1.51G [00:00<00:30, 52.1MiB/s]  3%|▉                                    | 40.8M/1.51G [00:00<00:27, 56.4MiB/s]  3%|█▏                                   | 47.0M/1.51G [00:00<00:28, 55.2MiB/s]  3%|█▎                                   | 52.4M/1.51G [00:01<00:30, 51.3MiB/s]  4%|█▍                                   | 57.9M/1.51G [00:01<00:29, 53.1MiB/s]  4%|█▌                                   | 64.7M/1.51G [00:01<00:26, 57.9MiB/s]  5%|█▋                                   | 70.3M/1.51G [00:01<00:28, 55.1MiB/s]  5%|█▊                                   | 77.1M/1.51G [00:01<00:25, 59.8MiB/s]  5%|██                                   | 84.1M/1.51G [00:01<00:24, 63.4MiB/s]  6%|██▏                                  | 91.4M/1.51G [00:01<00:22, 67.3MiB/s]  6%|██▎                                  | 98.0M/1.51G [00:01<00:22, 67.6MiB/s]  7%|██▌                                   | 104M/1.51G [00:01<00:24, 61.8MiB/s]  7%|██▊                                   | 112M/1.51G [00:02<00:22, 65.6MiB/s]  8%|██▉                                   | 119M/1.51G [00:02<00:21, 69.1MiB/s]  8%|███                                   | 126M/1.51G [00:02<00:22, 67.3MiB/s]  9%|███▎                                  | 132M/1.51G [00:02<00:24, 61.6MiB/s]  9%|███▍                                  | 138M/1.51G [00:02<00:24, 59.2MiB/s]  9%|███▌                                  | 145M/1.51G [00:02<00:23, 61.3MiB/s] 10%|███▋                                  | 151M/1.51G [00:02<00:25, 57.3MiB/s] 10%|███▊                                  | 156M/1.51G [00:02<00:26, 54.3MiB/s] 11%|████                                  | 164M/1.51G [00:02<00:23, 61.3MiB/s] 11%|████▏                                 | 170M/1.51G [00:03<00:23, 61.5MiB/s] 11%|████▎                                 | 176M/1.51G [00:03<00:23, 61.5MiB/s] 12%|████▍                                 | 182M/1.51G [00:03<00:24, 59.3MiB/s] 12%|████▋                                 | 188M/1.51G [00:03<00:23, 60.6MiB/s] 13%|████▊                                 | 194M/1.51G [00:03<00:23, 59.8MiB/s] 13%|████▉                                 | 200M/1.51G [00:03<00:24, 57.7MiB/s] 13%|█████                                 | 205M/1.51G [00:03<00:26, 52.5MiB/s] 14%|█████▏                                | 211M/1.51G [00:03<00:25, 54.4MiB/s] 14%|█████▎                                | 217M/1.51G [00:03<00:25, 55.3MiB/s] 14%|█████▍                                | 223M/1.51G [00:04<00:24, 57.0MiB/s] 15%|█████▌                                | 228M/1.51G [00:04<00:25, 54.8MiB/s] 15%|█████▊                                | 234M/1.51G [00:04<00:23, 58.0MiB/s] 16%|█████▉                                | 240M/1.51G [00:04<00:25, 53.2MiB/s] 16%|██████                                | 246M/1.51G [00:04<00:24, 56.4MiB/s] 16%|██████▏                               | 252M/1.51G [00:04<00:25, 52.1MiB/s] 17%|██████▎                               | 257M/1.51G [00:04<00:25, 52.2MiB/s] 17%|██████▍                               | 262M/1.51G [00:04<00:25, 52.9MiB/s] 17%|██████▌                               | 267M/1.51G [00:04<00:26, 51.0MiB/s] 18%|██████▋                               | 272M/1.51G [00:05<00:25, 52.3MiB/s] 18%|██████▊                               | 278M/1.51G [00:05<00:24, 53.1MiB/s] 18%|██████▉                               | 283M/1.51G [00:05<00:25, 51.4MiB/s] 19%|███████                               | 288M/1.51G [00:05<00:26, 49.6MiB/s] 19%|███████▏                              | 292M/1.51G [00:05<00:26, 49.7MiB/s] 19%|███████▎                              | 297M/1.51G [00:05<00:28, 45.3MiB/s] 20%|███████▍                              | 303M/1.51G [00:05<00:25, 50.2MiB/s] 20%|███████▌                              | 308M/1.51G [00:05<00:26, 48.4MiB/s] 20%|███████▋                              | 313M/1.51G [00:05<00:26, 48.2MiB/s] 21%|███████▊                              | 318M/1.51G [00:06<00:27, 47.5MiB/s] 21%|███████▉                              | 322M/1.51G [00:06<00:27, 46.0MiB/s] 21%|████████                              | 327M/1.51G [00:06<00:26, 48.8MiB/s] 22%|████████▏                             | 332M/1.51G [00:06<00:27, 45.9MiB/s] 22%|████████▎                             | 338M/1.51G [00:06<00:25, 49.6MiB/s] 22%|████████▍                             | 343M/1.51G [00:06<00:24, 51.6MiB/s] 23%|████████▌                             | 349M/1.51G [00:06<00:23, 53.4MiB/s] 23%|████████▋                             | 354M/1.51G [00:06<00:22, 55.3MiB/s] 23%|████████▉                             | 360M/1.51G [00:06<00:21, 57.1MiB/s] 24%|█████████                             | 367M/1.51G [00:06<00:20, 59.4MiB/s] 24%|█████████▏                            | 372M/1.51G [00:07<00:20, 59.6MiB/s] 25%|█████████▎                            | 378M/1.51G [00:07<00:22, 53.7MiB/s] 25%|█████████▍                            | 383M/1.51G [00:07<00:22, 54.0MiB/s] 25%|█████████▌                            | 389M/1.51G [00:07<00:24, 49.7MiB/s] 25%|█████████▋                            | 393M/1.51G [00:07<00:25, 47.3MiB/s] 26%|█████████▊                            | 398M/1.51G [00:07<00:26, 45.5MiB/s] 26%|█████████▉                            | 402M/1.51G [00:07<00:26, 45.0MiB/s] 26%|██████████                            | 407M/1.51G [00:07<00:26, 45.4MiB/s] 27%|██████████▏                           | 411M/1.51G [00:08<00:25, 46.0MiB/s] 27%|██████████▏                           | 416M/1.51G [00:08<00:27, 43.5MiB/s] 27%|██████████▎                           | 421M/1.51G [00:08<00:25, 45.7MiB/s] 28%|██████████▍                           | 425M/1.51G [00:08<00:26, 43.6MiB/s] 28%|██████████▌                           | 430M/1.51G [00:08<00:26, 44.2MiB/s] 28%|██████████▋                           | 435M/1.51G [00:08<00:23, 48.8MiB/s] 29%|██████████▊                           | 440M/1.51G [00:08<00:23, 48.6MiB/s] 29%|██████████▉                           | 445M/1.51G [00:08<00:24, 47.9MiB/s] 29%|███████████                           | 449M/1.51G [00:08<00:25, 44.4MiB/s] 30%|███████████▏                          | 455M/1.51G [00:08<00:23, 48.9MiB/s] 30%|███████████▎                          | 460M/1.51G [00:09<00:23, 48.4MiB/s] 30%|███████████▍                          | 466M/1.51G [00:09<00:24, 46.6MiB/s] 31%|███████████▌                          | 471M/1.51G [00:09<00:22, 50.2MiB/s] 31%|███████████▋                          | 476M/1.51G [00:09<00:22, 48.8MiB/s] 31%|███████████▊                          | 481M/1.51G [00:09<00:25, 43.3MiB/s] 31%|███████████▉                          | 486M/1.51G [00:09<00:24, 45.7MiB/s] 32%|████████████                          | 490M/1.51G [00:09<00:25, 43.3MiB/s] 32%|████████████▏                         | 495M/1.51G [00:09<00:26, 42.2MiB/s] 32%|████████████▎                         | 500M/1.51G [00:10<00:24, 45.3MiB/s] 33%|████████████▍                         | 505M/1.51G [00:10<00:24, 44.4MiB/s] 33%|████████████▌                         | 510M/1.51G [00:10<00:22, 47.1MiB/s] 33%|████████████▋                         | 515M/1.51G [00:10<00:23, 45.1MiB/s] 34%|████████████▊                         | 521M/1.51G [00:10<00:21, 49.7MiB/s] 34%|████████████▉                         | 526M/1.51G [00:10<00:21, 50.2MiB/s] 34%|█████████████                         | 531M/1.51G [00:10<00:19, 53.1MiB/s] 35%|█████████████▏                        | 537M/1.51G [00:10<00:19, 55.0MiB/s] 35%|█████████████▎                        | 542M/1.51G [00:10<00:21, 49.5MiB/s] 36%|█████████████▌                        | 550M/1.51G [00:11<00:18, 57.4MiB/s] 36%|█████████████▋                        | 556M/1.51G [00:11<00:17, 60.3MiB/s] 36%|█████████████▊                        | 562M/1.51G [00:11<00:19, 51.7MiB/s] 37%|█████████████▉                        | 568M/1.51G [00:11<00:20, 49.3MiB/s] 37%|██████████████                        | 573M/1.51G [00:11<00:19, 51.0MiB/s] 37%|██████████████▏                       | 578M/1.51G [00:11<00:20, 50.2MiB/s] 38%|██████████████▍                       | 586M/1.51G [00:11<00:17, 57.5MiB/s] 38%|██████████████▌                       | 591M/1.51G [00:11<00:19, 52.2MiB/s] 39%|██████████████▋                       | 598M/1.51G [00:11<00:18, 52.8MiB/s] 39%|██████████████▊                       | 604M/1.51G [00:12<00:17, 55.0MiB/s] 40%|███████████████                       | 610M/1.51G [00:12<00:17, 55.2MiB/s] 40%|███████████████▏                      | 615M/1.51G [00:12<00:17, 54.4MiB/s] 40%|███████████████▎                      | 621M/1.51G [00:12<00:17, 56.6MiB/s] 41%|███████████████▍                      | 628M/1.51G [00:12<00:15, 61.5MiB/s] 41%|███████████████▋                      | 635M/1.51G [00:12<00:14, 64.5MiB/s] 42%|███████████████▊                      | 641M/1.51G [00:12<00:14, 65.2MiB/s] 42%|███████████████▉                      | 647M/1.51G [00:12<00:18, 51.8MiB/s] 42%|████████████████▏                     | 655M/1.51G [00:12<00:15, 58.7MiB/s] 43%|████████████████▎                     | 662M/1.51G [00:13<00:14, 62.4MiB/s] 43%|████████████████▍                     | 668M/1.51G [00:13<00:15, 57.3MiB/s] 44%|████████████████▋                     | 675M/1.51G [00:13<00:14, 60.9MiB/s] 44%|████████████████▊                     | 681M/1.51G [00:13<00:15, 56.7MiB/s] 45%|████████████████▉                     | 687M/1.51G [00:13<00:15, 58.1MiB/s] 45%|█████████████████                     | 693M/1.51G [00:13<00:15, 57.2MiB/s] 45%|█████████████████▏                    | 698M/1.51G [00:13<00:16, 55.2MiB/s] 46%|█████████████████▎                    | 705M/1.51G [00:13<00:14, 60.0MiB/s] 46%|█████████████████▌                    | 712M/1.51G [00:13<00:13, 63.8MiB/s] 47%|█████████████████▋                    | 719M/1.51G [00:14<00:15, 55.6MiB/s] 47%|█████████████████▊                    | 725M/1.51G [00:14<00:14, 58.2MiB/s] 47%|██████████████████                    | 732M/1.51G [00:14<00:13, 61.7MiB/s] 48%|██████████████████▏                   | 738M/1.51G [00:14<00:14, 57.5MiB/s] 48%|██████████████████▎                   | 744M/1.51G [00:14<00:15, 55.9MiB/s] 49%|██████████████████▍                   | 750M/1.51G [00:14<00:14, 57.5MiB/s] 49%|██████████████████▌                   | 756M/1.51G [00:14<00:13, 60.0MiB/s] 49%|██████████████████▊                   | 762M/1.51G [00:14<00:13, 59.7MiB/s] 50%|██████████████████▉                   | 768M/1.51G [00:15<00:13, 61.1MiB/s] 50%|███████████████████                   | 775M/1.51G [00:15<00:12, 63.3MiB/s] 51%|███████████████████▎                  | 782M/1.51G [00:15<00:12, 65.7MiB/s] 51%|███████████████████▍                  | 789M/1.51G [00:15<00:11, 68.6MiB/s] 52%|███████████████████▌                  | 796M/1.51G [00:15<00:11, 69.7MiB/s] 52%|███████████████████▊                  | 803M/1.51G [00:15<00:11, 70.2MiB/s] 52%|███████████████████▉                  | 810M/1.51G [00:15<00:10, 70.4MiB/s] 53%|████████████████████                  | 816M/1.51G [00:15<00:15, 49.9MiB/s] 53%|████████████████████▎                 | 822M/1.51G [00:15<00:14, 52.8MiB/s] 54%|████████████████████▍                 | 828M/1.51G [00:16<00:14, 53.5MiB/s] 54%|████████████████████▌                 | 834M/1.51G [00:16<00:13, 53.8MiB/s] 54%|████████████████████▋                 | 840M/1.51G [00:16<00:13, 56.0MiB/s] 55%|████████████████████▊                 | 845M/1.51G [00:16<00:13, 56.0MiB/s] 55%|████████████████████▉                 | 852M/1.51G [00:16<00:12, 60.1MiB/s] 56%|█████████████████████▏                | 858M/1.51G [00:16<00:11, 60.0MiB/s] 56%|█████████████████████▎                | 864M/1.51G [00:16<00:12, 54.8MiB/s] 56%|█████████████████████▍                | 869M/1.51G [00:16<00:12, 55.0MiB/s] 57%|█████████████████████▌                | 875M/1.51G [00:16<00:12, 58.1MiB/s] 57%|█████████████████████▋                | 882M/1.51G [00:17<00:11, 62.9MiB/s] 58%|█████████████████████▉                | 889M/1.51G [00:17<00:11, 62.1MiB/s] 58%|██████████████████████                | 895M/1.51G [00:17<00:11, 60.6MiB/s] 58%|██████████████████████▏               | 902M/1.51G [00:17<00:10, 65.6MiB/s] 59%|██████████████████████▎               | 908M/1.51G [00:17<00:10, 64.9MiB/s] 59%|██████████████████████▌               | 915M/1.51G [00:17<00:09, 66.6MiB/s] 60%|██████████████████████▋               | 922M/1.51G [00:17<00:10, 65.0MiB/s] 60%|██████████████████████▉               | 929M/1.51G [00:17<00:09, 67.7MiB/s] 61%|███████████████████████               | 936M/1.51G [00:17<00:10, 61.7MiB/s] 61%|███████████████████████▏              | 942M/1.51G [00:18<00:10, 59.0MiB/s] 61%|███████████████████████▎              | 947M/1.51G [00:18<00:11, 55.4MiB/s] 62%|███████████████████████▌              | 954M/1.51G [00:18<00:10, 60.3MiB/s] 62%|███████████████████████▋              | 960M/1.51G [00:18<00:10, 61.0MiB/s] 63%|███████████████████████▊              | 966M/1.51G [00:18<00:10, 56.8MiB/s] 63%|███████████████████████▉              | 973M/1.51G [00:18<00:09, 60.1MiB/s] 63%|████████████████████████              | 979M/1.51G [00:18<00:10, 57.8MiB/s] 64%|████████████████████████▎             | 985M/1.51G [00:18<00:09, 59.4MiB/s] 64%|████████████████████████▍             | 991M/1.51G [00:18<00:09, 61.6MiB/s] 65%|████████████████████████▌             | 997M/1.51G [00:18<00:09, 61.6MiB/s] 65%|████████████████████████             | 0.98G/1.51G [00:19<00:08, 67.3MiB/s] 66%|████████████████████████▎            | 0.99G/1.51G [00:19<00:07, 69.7MiB/s] 66%|████████████████████████▍            | 1.00G/1.51G [00:19<00:07, 71.3MiB/s] 67%|████████████████████████▌            | 1.00G/1.51G [00:19<00:07, 71.3MiB/s] 67%|████████████████████████▊            | 1.01G/1.51G [00:19<00:07, 69.5MiB/s] 67%|████████████████████████▉            | 1.02G/1.51G [00:19<00:07, 68.5MiB/s] 68%|█████████████████████████            | 1.02G/1.51G [00:19<00:07, 71.2MiB/s] 68%|█████████████████████████▎           | 1.03G/1.51G [00:19<00:07, 70.5MiB/s] 69%|█████████████████████████▍           | 1.04G/1.51G [00:19<00:07, 64.1MiB/s] 69%|█████████████████████████▌           | 1.04G/1.51G [00:20<00:07, 64.2MiB/s] 70%|█████████████████████████▊           | 1.05G/1.51G [00:20<00:07, 67.0MiB/s] 70%|█████████████████████████▉           | 1.06G/1.51G [00:20<00:08, 54.2MiB/s] 70%|██████████████████████████           | 1.06G/1.51G [00:20<00:08, 58.4MiB/s] 71%|██████████████████████████▏          | 1.07G/1.51G [00:20<00:07, 59.8MiB/s] 71%|██████████████████████████▎          | 1.07G/1.51G [00:20<00:08, 58.1MiB/s] 72%|██████████████████████████▌          | 1.08G/1.51G [00:20<00:07, 60.9MiB/s] 72%|██████████████████████████▋          | 1.09G/1.51G [00:20<00:06, 65.0MiB/s] 73%|██████████████████████████▊          | 1.09G/1.51G [00:20<00:06, 65.2MiB/s] 73%|███████████████████████████          | 1.10G/1.51G [00:21<00:07, 62.4MiB/s] 73%|███████████████████████████▏         | 1.11G/1.51G [00:21<00:06, 68.0MiB/s] 74%|███████████████████████████▎         | 1.11G/1.51G [00:21<00:06, 69.4MiB/s] 74%|███████████████████████████▌         | 1.12G/1.51G [00:21<00:05, 69.9MiB/s] 75%|███████████████████████████▋         | 1.13G/1.51G [00:21<00:05, 69.9MiB/s] 75%|███████████████████████████▊         | 1.13G/1.51G [00:21<00:05, 70.2MiB/s] 76%|████████████████████████████         | 1.14G/1.51G [00:21<00:05, 72.1MiB/s] 76%|████████████████████████████▏        | 1.15G/1.51G [00:21<00:05, 69.9MiB/s] 77%|████████████████████████████▍        | 1.16G/1.51G [00:21<00:05, 73.7MiB/s] 77%|████████████████████████████▌        | 1.16G/1.51G [00:22<00:05, 66.0MiB/s] 78%|████████████████████████████▋        | 1.17G/1.51G [00:22<00:05, 62.8MiB/s] 78%|████████████████████████████▊        | 1.17G/1.51G [00:22<00:05, 60.8MiB/s] 78%|█████████████████████████████        | 1.18G/1.51G [00:22<00:05, 63.2MiB/s] 79%|█████████████████████████████▏       | 1.19G/1.51G [00:22<00:05, 60.0MiB/s] 79%|█████████████████████████████▎       | 1.19G/1.51G [00:22<00:05, 60.2MiB/s] 80%|█████████████████████████████▍       | 1.20G/1.51G [00:22<00:05, 60.7MiB/s] 80%|█████████████████████████████▌       | 1.20G/1.51G [00:22<00:06, 53.5MiB/s] 80%|█████████████████████████████▋       | 1.21G/1.51G [00:22<00:05, 58.3MiB/s] 81%|█████████████████████████████▉       | 1.22G/1.51G [00:23<00:05, 58.4MiB/s] 81%|██████████████████████████████       | 1.22G/1.51G [00:23<00:04, 61.6MiB/s] 82%|██████████████████████████████▏      | 1.23G/1.51G [00:23<00:05, 56.3MiB/s] 82%|██████████████████████████████▎      | 1.24G/1.51G [00:23<00:04, 60.8MiB/s] 82%|██████████████████████████████▍      | 1.24G/1.51G [00:23<00:04, 60.9MiB/s] 83%|██████████████████████████████▋      | 1.25G/1.51G [00:23<00:04, 64.5MiB/s] 83%|██████████████████████████████▊      | 1.25G/1.51G [00:23<00:04, 57.8MiB/s] 84%|██████████████████████████████▉      | 1.26G/1.51G [00:23<00:04, 62.6MiB/s] 84%|███████████████████████████████▏     | 1.27G/1.51G [00:23<00:04, 63.0MiB/s] 85%|███████████████████████████████▎     | 1.27G/1.51G [00:24<00:04, 62.4MiB/s] 85%|███████████████████████████████▍     | 1.28G/1.51G [00:24<00:04, 60.5MiB/s] 85%|███████████████████████████████▌     | 1.29G/1.51G [00:24<00:03, 61.6MiB/s] 86%|███████████████████████████████▋     | 1.29G/1.51G [00:24<00:03, 58.3MiB/s] 86%|███████████████████████████████▊     | 1.30G/1.51G [00:24<00:03, 58.2MiB/s] 87%|████████████████████████████████     | 1.30G/1.51G [00:24<00:03, 61.7MiB/s] 87%|████████████████████████████████▏    | 1.31G/1.51G [00:24<00:03, 60.6MiB/s] 87%|████████████████████████████████▎    | 1.32G/1.51G [00:24<00:03, 61.1MiB/s] 88%|████████████████████████████████▍    | 1.32G/1.51G [00:24<00:03, 58.2MiB/s] 88%|████████████████████████████████▌    | 1.33G/1.51G [00:24<00:03, 60.4MiB/s] 89%|████████████████████████████████▊    | 1.33G/1.51G [00:25<00:02, 62.6MiB/s] 89%|████████████████████████████████▉    | 1.34G/1.51G [00:25<00:02, 61.2MiB/s] 89%|█████████████████████████████████    | 1.35G/1.51G [00:25<00:02, 61.1MiB/s] 90%|█████████████████████████████████▏   | 1.35G/1.51G [00:25<00:02, 63.9MiB/s] 90%|█████████████████████████████████▎   | 1.36G/1.51G [00:25<00:02, 65.1MiB/s] 91%|█████████████████████████████████▌   | 1.37G/1.51G [00:25<00:02, 66.2MiB/s] 91%|█████████████████████████████████▋   | 1.37G/1.51G [00:25<00:02, 64.3MiB/s] 91%|█████████████████████████████████▊   | 1.38G/1.51G [00:25<00:02, 66.9MiB/s] 92%|█████████████████████████████████▉   | 1.38G/1.51G [00:25<00:01, 65.9MiB/s] 92%|██████████████████████████████████▏  | 1.39G/1.51G [00:26<00:01, 66.1MiB/s] 93%|██████████████████████████████████▎  | 1.40G/1.51G [00:26<00:01, 62.5MiB/s] 93%|██████████████████████████████████▍  | 1.40G/1.51G [00:26<00:01, 66.7MiB/s] 94%|██████████████████████████████████▋  | 1.41G/1.51G [00:26<00:01, 69.1MiB/s] 94%|██████████████████████████████████▊  | 1.42G/1.51G [00:26<00:01, 69.2MiB/s] 95%|██████████████████████████████████▉  | 1.42G/1.51G [00:26<00:01, 71.2MiB/s] 95%|███████████████████████████████████▏ | 1.43G/1.51G [00:26<00:01, 71.7MiB/s] 95%|███████████████████████████████████▎ | 1.44G/1.51G [00:26<00:01, 64.0MiB/s] 96%|███████████████████████████████████▍ | 1.44G/1.51G [00:26<00:01, 65.9MiB/s] 96%|███████████████████████████████████▋ | 1.45G/1.51G [00:26<00:00, 67.7MiB/s] 97%|███████████████████████████████████▊ | 1.46G/1.51G [00:27<00:00, 65.1MiB/s] 97%|███████████████████████████████████▉ | 1.46G/1.51G [00:27<00:00, 58.1MiB/s] 98%|████████████████████████████████████ | 1.47G/1.51G [00:27<00:00, 55.3MiB/s] 98%|████████████████████████████████████▏| 1.48G/1.51G [00:27<00:00, 58.7MiB/s] 98%|████████████████████████████████████▍| 1.48G/1.51G [00:27<00:00, 60.0MiB/s] 99%|████████████████████████████████████▌| 1.49G/1.51G [00:27<00:00, 60.6MiB/s] 99%|████████████████████████████████████▋| 1.49G/1.51G [00:27<00:00, 60.7MiB/s]100%|████████████████████████████████████▊| 1.50G/1.51G [00:27<00:00, 62.2MiB/s]100%|████████████████████████████████████▉| 1.51G/1.51G [00:27<00:00, 61.3MiB/s]100%|█████████████████████████████████████| 1.51G/1.51G [00:27<00:00, 57.8MiB/s]
+Whisper loaded: 807M params
+  Iter 5: 13s elapsed, 0.40 transcriptions/s
+  Iter 10: 13s elapsed, 0.76 transcriptions/s
+  Iter 15: 14s elapsed, 1.08 transcriptions/s
+  Iter 20: 41s elapsed, 0.49 transcriptions/s
+  Iter 25: 41s elapsed, 0.61 transcriptions/s
+  Iter 30: 42s elapsed, 0.72 transcriptions/s
+  Iter 35: 42s elapsed, 0.83 transcriptions/s
+  Iter 40: 43s elapsed, 0.93 transcriptions/s
+  Iter 45: 44s elapsed, 1.03 transcriptions/s
+  Iter 50: 45s elapsed, 1.12 transcriptions/s
+  Iter 55: 45s elapsed, 1.22 transcriptions/s
+  Iter 60: 46s elapsed, 1.30 transcriptions/s
+  Iter 65: 46s elapsed, 1.40 transcriptions/s
+  Iter 70: 47s elapsed, 1.49 transcriptions/s
+  Iter 75: 47s elapsed, 1.58 transcriptions/s
+  Iter 80: 48s elapsed, 1.67 transcriptions/s
+  Iter 85: 49s elapsed, 1.75 transcriptions/s
+  Iter 90: 49s elapsed, 1.84 transcriptions/s
+  Iter 95: 50s elapsed, 1.92 transcriptions/s
+  Iter 100: 51s elapsed, 1.98 transcriptions/s
+  Iter 105: 51s elapsed, 2.06 transcriptions/s
+  Iter 110: 52s elapsed, 2.13 transcriptions/s
+  Iter 115: 52s elapsed, 2.21 transcriptions/s
+  Iter 120: 53s elapsed, 2.27 transcriptions/s
+  Iter 125: 54s elapsed, 2.33 transcriptions/s
+  Iter 130: 54s elapsed, 2.40 transcriptions/s
+  Iter 135: 55s elapsed, 2.46 transcriptions/s
+  Iter 140: 56s elapsed, 2.51 transcriptions/s
+  Iter 145: 56s elapsed, 2.57 transcriptions/s
+  Iter 150: 57s elapsed, 2.64 transcriptions/s
+  Iter 155: 57s elapsed, 2.70 transcriptions/s
+  Iter 160: 58s elapsed, 2.76 transcriptions/s
+  Iter 165: 59s elapsed, 2.81 transcriptions/s
+  Iter 170: 60s elapsed, 2.85 transcriptions/s
+  Iter 175: 60s elapsed, 2.90 transcriptions/s
+  Iter 180: 61s elapsed, 2.96 transcriptions/s
+  Iter 185: 62s elapsed, 2.98 transcriptions/s
+  Iter 190: 63s elapsed, 3.03 transcriptions/s
+  Iter 195: 63s elapsed, 3.08 transcriptions/s
+  Iter 200: 64s elapsed, 3.11 transcriptions/s
+  Iter 205: 65s elapsed, 3.16 transcriptions/s
+  Iter 210: 65s elapsed, 3.22 transcriptions/s
+  Iter 215: 66s elapsed, 3.27 transcriptions/s
+  Iter 220: 66s elapsed, 3.32 transcriptions/s
+  Iter 225: 67s elapsed, 3.37 transcriptions/s
+  Iter 230: 67s elapsed, 3.43 transcriptions/s
+  Iter 235: 68s elapsed, 3.48 transcriptions/s
+  Iter 240: 69s elapsed, 3.50 transcriptions/s
+  Iter 245: 69s elapsed, 3.53 transcriptions/s
+  Iter 250: 70s elapsed, 3.59 transcriptions/s
+  Iter 255: 70s elapsed, 3.64 transcriptions/s
+  Iter 260: 71s elapsed, 3.67 transcriptions/s
+  Iter 265: 71s elapsed, 3.72 transcriptions/s
+  Iter 270: 72s elapsed, 3.76 transcriptions/s
+  Iter 275: 72s elapsed, 3.81 transcriptions/s
+  Iter 280: 73s elapsed, 3.82 transcriptions/s
+  Iter 285: 74s elapsed, 3.83 transcriptions/s
+  Iter 290: 75s elapsed, 3.86 transcriptions/s
+  Iter 295: 76s elapsed, 3.89 transcriptions/s
+  Iter 300: 76s elapsed, 3.94 transcriptions/s
+  Iter 305: 77s elapsed, 3.98 transcriptions/s
+  Iter 310: 77s elapsed, 4.01 transcriptions/s
+  Iter 315: 78s elapsed, 4.05 transcriptions/s
+  Iter 320: 79s elapsed, 4.06 transcriptions/s
+  Iter 325: 80s elapsed, 4.09 transcriptions/s
+  Iter 330: 80s elapsed, 4.11 transcriptions/s
+  Iter 335: 81s elapsed, 4.13 transcriptions/s
+  Iter 340: 82s elapsed, 4.15 transcriptions/s
+  Iter 345: 82s elapsed, 4.19 transcriptions/s
+  Iter 350: 83s elapsed, 4.21 transcriptions/s
+  Iter 355: 83s elapsed, 4.26 transcriptions/s
+  Iter 360: 84s elapsed, 4.29 transcriptions/s
+  Iter 365: 85s elapsed, 4.32 transcriptions/s
+  Iter 370: 85s elapsed, 4.34 transcriptions/s
+  Iter 375: 86s elapsed, 4.36 transcriptions/s
+  Iter 380: 86s elapsed, 4.40 transcriptions/s
+  Iter 385: 87s elapsed, 4.43 transcriptions/s
+  Iter 390: 87s elapsed, 4.46 transcriptions/s
+  Iter 395: 88s elapsed, 4.49 transcriptions/s
+  Iter 400: 89s elapsed, 4.50 transcriptions/s
+  Iter 405: 89s elapsed, 4.53 transcriptions/s
+  Iter 410: 90s elapsed, 4.56 transcriptions/s
+  Iter 415: 91s elapsed, 4.57 transcriptions/s
+  Iter 420: 92s elapsed, 4.59 transcriptions/s
+  Iter 425: 92s elapsed, 4.60 transcriptions/s
+  Iter 430: 93s elapsed, 4.62 transcriptions/s
+  Iter 435: 94s elapsed, 4.63 transcriptions/s
+  Iter 440: 94s elapsed, 4.67 transcriptions/s
+  Iter 445: 95s elapsed, 4.68 transcriptions/s
+  Iter 450: 96s elapsed, 4.70 transcriptions/s
+  Iter 455: 96s elapsed, 4.74 transcriptions/s
+  Iter 460: 97s elapsed, 4.73 transcriptions/s
+  Iter 465: 98s elapsed, 4.76 transcriptions/s
+  Iter 470: 99s elapsed, 4.75 transcriptions/s
+  Iter 475: 100s elapsed, 4.77 transcriptions/s
+  Iter 480: 100s elapsed, 4.80 transcriptions/s
+  Iter 485: 100s elapsed, 4.83 transcriptions/s
+  Iter 490: 101s elapsed, 4.84 transcriptions/s
+  Iter 495: 102s elapsed, 4.87 transcriptions/s
+  Iter 500: 102s elapsed, 4.88 transcriptions/s
+  Iter 505: 103s elapsed, 4.90 transcriptions/s
+  Iter 510: 104s elapsed, 4.91 transcriptions/s
+  Iter 515: 104s elapsed, 4.94 transcriptions/s
+  Iter 520: 105s elapsed, 4.94 transcriptions/s
+  Iter 525: 106s elapsed, 4.95 transcriptions/s
+  Iter 530: 106s elapsed, 4.99 transcriptions/s
+  Iter 535: 107s elapsed, 5.00 transcriptions/s
+  Iter 540: 108s elapsed, 5.02 transcriptions/s
+  Iter 545: 108s elapsed, 5.03 transcriptions/s
+  Iter 550: 109s elapsed, 5.05 transcriptions/s
+  Iter 555: 110s elapsed, 5.06 transcriptions/s
+  Iter 560: 110s elapsed, 5.07 transcriptions/s
+  Iter 565: 111s elapsed, 5.10 transcriptions/s
+  Iter 570: 112s elapsed, 5.09 transcriptions/s
+  Iter 575: 112s elapsed, 5.11 transcriptions/s
+  Iter 580: 113s elapsed, 5.14 transcriptions/s
+  Iter 585: 114s elapsed, 5.14 transcriptions/s
+  Iter 590: 114s elapsed, 5.17 transcriptions/s
+  Iter 595: 115s elapsed, 5.19 transcriptions/s
+  Iter 600: 115s elapsed, 5.20 transcriptions/s
+  Iter 605: 116s elapsed, 5.22 transcriptions/s
+  Iter 610: 116s elapsed, 5.25 transcriptions/s
+  Iter 615: 117s elapsed, 5.27 transcriptions/s
+  Iter 620: 117s elapsed, 5.29 transcriptions/s
+  Iter 625: 118s elapsed, 5.31 transcriptions/s
+  Iter 630: 119s elapsed, 5.31 transcriptions/s
+  Iter 635: 119s elapsed, 5.33 transcriptions/s
+  Iter 640: 120s elapsed, 5.35 transcriptions/s
+  Iter 645: 120s elapsed, 5.36 transcriptions/s
+  Iter 650: 121s elapsed, 5.37 transcriptions/s
+  Iter 655: 122s elapsed, 5.37 transcriptions/s
+  Iter 660: 122s elapsed, 5.39 transcriptions/s
+  Iter 665: 123s elapsed, 5.40 transcriptions/s
+  Iter 670: 124s elapsed, 5.42 transcriptions/s
+  Iter 675: 124s elapsed, 5.43 transcriptions/s
+  Iter 680: 125s elapsed, 5.45 transcriptions/s
+  Iter 685: 125s elapsed, 5.46 transcriptions/s
+  Iter 690: 126s elapsed, 5.48 transcriptions/s
+  Iter 695: 126s elapsed, 5.50 transcriptions/s
+  Iter 700: 127s elapsed, 5.51 transcriptions/s
+  Iter 705: 127s elapsed, 5.54 transcriptions/s
+  Iter 710: 128s elapsed, 5.53 transcriptions/s
+  Iter 715: 129s elapsed, 5.55 transcriptions/s
+  Iter 720: 130s elapsed, 5.55 transcriptions/s
+  Iter 725: 130s elapsed, 5.57 transcriptions/s
+  Iter 730: 131s elapsed, 5.58 transcriptions/s
+  Iter 735: 131s elapsed, 5.59 transcriptions/s
+  Iter 740: 132s elapsed, 5.62 transcriptions/s
+  Iter 745: 132s elapsed, 5.63 transcriptions/s
+  Iter 750: 133s elapsed, 5.63 transcriptions/s
+  Iter 755: 134s elapsed, 5.65 transcriptions/s
+  Iter 760: 134s elapsed, 5.66 transcriptions/s
+  Iter 765: 135s elapsed, 5.68 transcriptions/s
+  Iter 770: 135s elapsed, 5.70 transcriptions/s
+  Iter 775: 136s elapsed, 5.70 transcriptions/s
+  Iter 780: 136s elapsed, 5.72 transcriptions/s
+  Iter 785: 137s elapsed, 5.73 transcriptions/s
+  Iter 790: 137s elapsed, 5.75 transcriptions/s
+  Iter 795: 138s elapsed, 5.76 transcriptions/s
+  Iter 800: 139s elapsed, 5.75 transcriptions/s
+  Iter 805: 139s elapsed, 5.77 transcriptions/s
+  Iter 810: 140s elapsed, 5.79 transcriptions/s
+  Iter 815: 140s elapsed, 5.80 transcriptions/s
+  Iter 820: 141s elapsed, 5.80 transcriptions/s
+  Iter 825: 142s elapsed, 5.81 transcriptions/s
+  Iter 830: 142s elapsed, 5.83 transcriptions/s
+  Iter 835: 143s elapsed, 5.85 transcriptions/s
+  Iter 840: 143s elapsed, 5.86 transcriptions/s
+  Iter 845: 144s elapsed, 5.87 transcriptions/s
+  Iter 850: 145s elapsed, 5.88 transcriptions/s
+  Iter 855: 145s elapsed, 5.89 transcriptions/s
+  Iter 860: 146s elapsed, 5.88 transcriptions/s
+  Iter 865: 147s elapsed, 5.88 transcriptions/s
+  Iter 870: 148s elapsed, 5.88 transcriptions/s
+  Iter 875: 149s elapsed, 5.89 transcriptions/s
+  Iter 880: 149s elapsed, 5.89 transcriptions/s
+  Iter 885: 150s elapsed, 5.89 transcriptions/s
+  Iter 890: 150s elapsed, 5.92 transcriptions/s
+  Iter 895: 151s elapsed, 5.92 transcriptions/s
+  Iter 900: 152s elapsed, 5.93 transcriptions/s
+  Iter 905: 152s elapsed, 5.94 transcriptions/s
+  Iter 910: 153s elapsed, 5.95 transcriptions/s
+  Iter 915: 154s elapsed, 5.95 transcriptions/s
+  Iter 920: 154s elapsed, 5.96 transcriptions/s
+  Iter 925: 155s elapsed, 5.98 transcriptions/s
+  Iter 930: 155s elapsed, 6.00 transcriptions/s
+  Iter 935: 156s elapsed, 6.01 transcriptions/s
+  Iter 940: 156s elapsed, 6.02 transcriptions/s
+  Iter 945: 157s elapsed, 6.03 transcriptions/s
+  Iter 950: 157s elapsed, 6.03 transcriptions/s
+  Iter 955: 158s elapsed, 6.04 transcriptions/s
+  Iter 960: 159s elapsed, 6.05 transcriptions/s
+  Iter 965: 159s elapsed, 6.06 transcriptions/s
+  Iter 970: 160s elapsed, 6.07 transcriptions/s
+  Iter 975: 160s elapsed, 6.09 transcriptions/s
+  Iter 980: 161s elapsed, 6.10 transcriptions/s
+  Iter 985: 161s elapsed, 6.12 transcriptions/s
+  Iter 990: 162s elapsed, 6.13 transcriptions/s
+  Iter 995: 163s elapsed, 6.12 transcriptions/s
+  Iter 1000: 163s elapsed, 6.13 transcriptions/s
+  Iter 1005: 164s elapsed, 6.14 transcriptions/s
+  Iter 1010: 164s elapsed, 6.15 transcriptions/s
+  Iter 1015: 165s elapsed, 6.16 transcriptions/s
+  Iter 1020: 166s elapsed, 6.16 transcriptions/s
+  Iter 1025: 166s elapsed, 6.17 transcriptions/s
+  Iter 1030: 166s elapsed, 6.19 transcriptions/s
+  Iter 1035: 167s elapsed, 6.20 transcriptions/s
+  Iter 1040: 168s elapsed, 6.18 transcriptions/s
+  Iter 1045: 169s elapsed, 6.18 transcriptions/s
+  Iter 1050: 170s elapsed, 6.19 transcriptions/s
+  Iter 1055: 170s elapsed, 6.20 transcriptions/s
+  Iter 1060: 171s elapsed, 6.21 transcriptions/s
+  Iter 1065: 171s elapsed, 6.22 transcriptions/s
+  Iter 1070: 172s elapsed, 6.21 transcriptions/s
+  Iter 1075: 173s elapsed, 6.22 transcriptions/s
+  Iter 1080: 174s elapsed, 6.21 transcriptions/s
+  Iter 1085: 174s elapsed, 6.23 transcriptions/s
+  Iter 1090: 175s elapsed, 6.24 transcriptions/s
+  Iter 1095: 175s elapsed, 6.25 transcriptions/s
+  Iter 1100: 176s elapsed, 6.26 transcriptions/s
+  Iter 1105: 176s elapsed, 6.26 transcriptions/s
+  Iter 1110: 177s elapsed, 6.27 transcriptions/s
+  Iter 1115: 178s elapsed, 6.27 transcriptions/s
+  Iter 1120: 178s elapsed, 6.29 transcriptions/s
+  Iter 1125: 179s elapsed, 6.30 transcriptions/s
+  Iter 1130: 179s elapsed, 6.31 transcriptions/s
+  Iter 1135: 180s elapsed, 6.30 transcriptions/s
+  Iter 1140: 181s elapsed, 6.31 transcriptions/s
+  Iter 1145: 182s elapsed, 6.31 transcriptions/s
+  Iter 1150: 182s elapsed, 6.32 transcriptions/s
+  Iter 1155: 182s elapsed, 6.33 transcriptions/s
+  Iter 1160: 183s elapsed, 6.35 transcriptions/s
+  Iter 1165: 184s elapsed, 6.35 transcriptions/s
+  Iter 1170: 184s elapsed, 6.34 transcriptions/s
+  Iter 1175: 185s elapsed, 6.34 transcriptions/s
+  Iter 1180: 186s elapsed, 6.34 transcriptions/s
+  Iter 1185: 187s elapsed, 6.35 transcriptions/s
+  Iter 1190: 187s elapsed, 6.35 transcriptions/s
+  Iter 1195: 188s elapsed, 6.36 transcriptions/s
+  Iter 1200: 188s elapsed, 6.37 transcriptions/s
+  Iter 1205: 189s elapsed, 6.38 transcriptions/s
+  Iter 1210: 190s elapsed, 6.38 transcriptions/s
+  Iter 1215: 190s elapsed, 6.39 transcriptions/s
+  Iter 1220: 191s elapsed, 6.39 transcriptions/s
+  Iter 1225: 191s elapsed, 6.40 transcriptions/s
+  Iter 1230: 192s elapsed, 6.41 transcriptions/s
+  Iter 1235: 193s elapsed, 6.41 transcriptions/s
+  Iter 1240: 193s elapsed, 6.42 transcriptions/s
+  Iter 1245: 194s elapsed, 6.42 transcriptions/s
+  Iter 1250: 194s elapsed, 6.43 transcriptions/s
+  Iter 1255: 195s elapsed, 6.43 transcriptions/s
+  Iter 1260: 196s elapsed, 6.43 transcriptions/s
+  Iter 1265: 197s elapsed, 6.44 transcriptions/s
+  Iter 1270: 197s elapsed, 6.44 transcriptions/s
+  Iter 1275: 198s elapsed, 6.45 transcriptions/s
+  Iter 1280: 198s elapsed, 6.45 transcriptions/s
+  Iter 1285: 199s elapsed, 6.46 transcriptions/s
+  Iter 1290: 200s elapsed, 6.46 transcriptions/s
+  Iter 1295: 201s elapsed, 6.46 transcriptions/s
+  Iter 1300: 201s elapsed, 6.47 transcriptions/s
+  Iter 1305: 202s elapsed, 6.46 transcriptions/s
+  Iter 1310: 203s elapsed, 6.46 transcriptions/s
+  Iter 1315: 203s elapsed, 6.47 transcriptions/s
+  Iter 1320: 204s elapsed, 6.47 transcriptions/s
+  Iter 1325: 204s elapsed, 6.48 transcriptions/s
+  Iter 1330: 205s elapsed, 6.49 transcriptions/s
+  Iter 1335: 206s elapsed, 6.49 transcriptions/s
+  Iter 1340: 206s elapsed, 6.49 transcriptions/s
+  Iter 1345: 207s elapsed, 6.50 transcriptions/s
+  Iter 1350: 208s elapsed, 6.50 transcriptions/s
+  Iter 1355: 208s elapsed, 6.51 transcriptions/s
+  Iter 1360: 209s elapsed, 6.51 transcriptions/s
+  Iter 1365: 209s elapsed, 6.53 transcriptions/s
+  Iter 1370: 210s elapsed, 6.53 transcriptions/s
+  Iter 1375: 211s elapsed, 6.51 transcriptions/s
+  Iter 1380: 212s elapsed, 6.51 transcriptions/s
+  Iter 1385: 213s elapsed, 6.51 transcriptions/s
+  Iter 1390: 214s elapsed, 6.51 transcriptions/s
+  Iter 1395: 214s elapsed, 6.52 transcriptions/s
+  Iter 1400: 214s elapsed, 6.53 transcriptions/s
+  Iter 1405: 215s elapsed, 6.52 transcriptions/s
+  Iter 1410: 216s elapsed, 6.53 transcriptions/s
+  Iter 1415: 216s elapsed, 6.54 transcriptions/s
+  Iter 1420: 217s elapsed, 6.54 transcriptions/s
+  Iter 1425: 218s elapsed, 6.55 transcriptions/s
+  Iter 1430: 218s elapsed, 6.56 transcriptions/s
+  Iter 1435: 219s elapsed, 6.56 transcriptions/s
+  Iter 1440: 219s elapsed, 6.57 transcriptions/s
+  Iter 1445: 220s elapsed, 6.57 transcriptions/s
+  Iter 1450: 220s elapsed, 6.58 transcriptions/s
+  Iter 1455: 221s elapsed, 6.58 transcriptions/s
+  Iter 1460: 222s elapsed, 6.59 transcriptions/s
+  Iter 1465: 222s elapsed, 6.59 transcriptions/s
+  Iter 1470: 223s elapsed, 6.59 transcriptions/s
+  Iter 1475: 223s elapsed, 6.60 transcriptions/s
+  Iter 1480: 224s elapsed, 6.60 transcriptions/s
+  Iter 1485: 225s elapsed, 6.61 transcriptions/s
+  Iter 1490: 225s elapsed, 6.61 transcriptions/s
+  Iter 1495: 226s elapsed, 6.61 transcriptions/s
+  Iter 1500: 227s elapsed, 6.62 transcriptions/s
+  Iter 1505: 227s elapsed, 6.63 transcriptions/s
+  Iter 1510: 228s elapsed, 6.62 transcriptions/s
+  Iter 1515: 229s elapsed, 6.63 transcriptions/s
+  Iter 1520: 229s elapsed, 6.63 transcriptions/s
+  Iter 1525: 230s elapsed, 6.63 transcriptions/s
+  Iter 1530: 231s elapsed, 6.64 transcriptions/s
+  Iter 1535: 231s elapsed, 6.64 transcriptions/s
+  Iter 1540: 232s elapsed, 6.64 transcriptions/s
+  Iter 1545: 232s elapsed, 6.65 transcriptions/s
+  Iter 1550: 233s elapsed, 6.66 transcriptions/s
+  Iter 1555: 233s elapsed, 6.66 transcriptions/s
+  Iter 1560: 234s elapsed, 6.67 transcriptions/s
+  Iter 1565: 235s elapsed, 6.67 transcriptions/s
+  Iter 1570: 235s elapsed, 6.68 transcriptions/s
+  Iter 1575: 236s elapsed, 6.68 transcriptions/s
+  Iter 1580: 236s elapsed, 6.69 transcriptions/s
+  Iter 1585: 237s elapsed, 6.69 transcriptions/s
+  Iter 1590: 238s elapsed, 6.69 transcriptions/s
+  Iter 1595: 239s elapsed, 6.69 transcriptions/s
+  Iter 1600: 239s elapsed, 6.70 transcriptions/s
+  Iter 1605: 240s elapsed, 6.70 transcriptions/s
+  Iter 1610: 240s elapsed, 6.70 transcriptions/s
+  Iter 1615: 241s elapsed, 6.71 transcriptions/s
+  Iter 1620: 242s elapsed, 6.70 transcriptions/s
+  Iter 1625: 242s elapsed, 6.71 transcriptions/s
+  Iter 1630: 243s elapsed, 6.72 transcriptions/s
+  Iter 1635: 243s elapsed, 6.72 transcriptions/s
+  Iter 1640: 244s elapsed, 6.72 transcriptions/s
+  Iter 1645: 245s elapsed, 6.72 transcriptions/s
+  Iter 1650: 245s elapsed, 6.73 transcriptions/s
+  Iter 1655: 245s elapsed, 6.74 transcriptions/s
+  Iter 1660: 246s elapsed, 6.74 transcriptions/s
+  Iter 1665: 247s elapsed, 6.75 transcriptions/s
+  Iter 1670: 248s elapsed, 6.74 transcriptions/s
+  Iter 1675: 248s elapsed, 6.75 transcriptions/s
+  Iter 1680: 249s elapsed, 6.75 transcriptions/s
+  Iter 1685: 249s elapsed, 6.75 transcriptions/s
+  Iter 1690: 250s elapsed, 6.76 transcriptions/s
+  Iter 1695: 251s elapsed, 6.76 transcriptions/s
+  Iter 1700: 251s elapsed, 6.76 transcriptions/s
+  Iter 1705: 252s elapsed, 6.77 transcriptions/s2026-09-27 03:31:12,333 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_NVIDIA_H200_NVL_42148b99_20260927_032612.parquet.partial
+
+  Iter 1710: 252s elapsed, 6.77 transcriptions/s
+  Iter 1715: 253s elapsed, 6.78 transcriptions/s
+  Iter 1720: 254s elapsed, 6.78 transcriptions/s
+  Iter 1725: 254s elapsed, 6.78 transcriptions/s
+  Iter 1730: 255s elapsed, 6.79 transcriptions/s
+  Iter 1735: 255s elapsed, 6.79 transcriptions/s
+  Iter 1740: 256s elapsed, 6.80 transcriptions/s
+  Iter 1745: 257s elapsed, 6.80 transcriptions/s
+  Iter 1750: 257s elapsed, 6.80 transcriptions/s
+  Iter 1755: 258s elapsed, 6.80 transcriptions/s
+  Iter 1760: 258s elapsed, 6.81 transcriptions/s
+  Iter 1765: 259s elapsed, 6.81 transcriptions/s
+  Iter 1770: 259s elapsed, 6.82 transcriptions/s
+  Iter 1775: 260s elapsed, 6.83 transcriptions/s
+  Iter 1780: 260s elapsed, 6.83 transcriptions/s
+  Iter 1785: 261s elapsed, 6.83 transcriptions/s
+  Iter 1790: 262s elapsed, 6.84 transcriptions/s
+  Iter 1795: 262s elapsed, 6.84 transcriptions/s
+  Iter 1800: 263s elapsed, 6.85 transcriptions/s
+  Iter 1805: 263s elapsed, 6.86 transcriptions/s
+  Iter 1810: 264s elapsed, 6.85 transcriptions/s
+  Iter 1815: 265s elapsed, 6.86 transcriptions/s
+  Iter 1820: 265s elapsed, 6.87 transcriptions/s
+  Iter 1825: 266s elapsed, 6.87 transcriptions/s
+  Iter 1830: 266s elapsed, 6.88 transcriptions/s
+  Iter 1835: 267s elapsed, 6.88 transcriptions/s
+  Iter 1840: 267s elapsed, 6.89 transcriptions/s
+  Iter 1845: 268s elapsed, 6.89 transcriptions/s
+  Iter 1850: 269s elapsed, 6.89 transcriptions/s
+  Iter 1855: 269s elapsed, 6.90 transcriptions/s
+  Iter 1860: 270s elapsed, 6.90 transcriptions/s
+  Iter 1865: 270s elapsed, 6.91 transcriptions/s
+  Iter 1870: 271s elapsed, 6.91 transcriptions/s
+  Iter 1875: 271s elapsed, 6.91 transcriptions/s
+  Iter 1880: 272s elapsed, 6.92 transcriptions/s
+  Iter 1885: 272s elapsed, 6.92 transcriptions/s
+  Iter 1890: 273s elapsed, 6.93 transcriptions/s
+  Iter 1895: 273s elapsed, 6.94 transcriptions/s
+  Iter 1900: 273s elapsed, 6.95 transcriptions/s
+  Iter 1905: 274s elapsed, 6.95 transcriptions/s
+  Iter 1910: 275s elapsed, 6.95 transcriptions/s
+  Iter 1915: 276s elapsed, 6.95 transcriptions/s
+  Iter 1920: 276s elapsed, 6.95 transcriptions/s
+  Iter 1925: 277s elapsed, 6.95 transcriptions/s
+  Iter 1930: 277s elapsed, 6.96 transcriptions/s
+  Iter 1935: 278s elapsed, 6.97 transcriptions/s
+  Iter 1940: 278s elapsed, 6.97 transcriptions/s
+  Iter 1945: 279s elapsed, 6.97 transcriptions/s
+  Iter 1950: 280s elapsed, 6.97 transcriptions/s
+  Iter 1955: 280s elapsed, 6.97 transcriptions/s
+  Iter 1960: 281s elapsed, 6.98 transcriptions/s
+  Iter 1965: 281s elapsed, 6.99 transcriptions/s
+  Iter 1970: 282s elapsed, 7.00 transcriptions/s
+  Iter 1975: 282s elapsed, 7.00 transcriptions/s
+  Iter 1980: 282s elapsed, 7.01 transcriptions/s
+  Iter 1985: 283s elapsed, 7.01 transcriptions/s
+  Iter 1990: 283s elapsed, 7.02 transcriptions/s
+  Iter 1995: 284s elapsed, 7.03 transcriptions/s
+  Iter 2000: 284s elapsed, 7.03 transcriptions/s
+  Iter 2005: 285s elapsed, 7.04 transcriptions/s
+  Iter 2010: 285s elapsed, 7.05 transcriptions/s
+  Iter 2015: 286s elapsed, 7.04 transcriptions/s
+  Iter 2020: 287s elapsed, 7.04 transcriptions/s
+  Iter 2025: 287s elapsed, 7.05 transcriptions/s
+  Iter 2030: 288s elapsed, 7.05 transcriptions/s
+  Iter 2035: 288s elapsed, 7.06 transcriptions/s
+  Iter 2040: 289s elapsed, 7.06 transcriptions/s
+  Iter 2045: 289s elapsed, 7.07 transcriptions/s
+  Iter 2050: 290s elapsed, 7.07 transcriptions/s
+  Iter 2055: 291s elapsed, 7.07 transcriptions/s
+  Iter 2060: 291s elapsed, 7.08 transcriptions/s
+  Iter 2065: 292s elapsed, 7.08 transcriptions/s
+  Iter 2070: 292s elapsed, 7.09 transcriptions/s
+  Iter 2075: 293s elapsed, 7.09 transcriptions/s
+  Iter 2080: 293s elapsed, 7.10 transcriptions/s
+  Iter 2085: 294s elapsed, 7.09 transcriptions/s
+  Iter 2090: 294s elapsed, 7.10 transcriptions/s
+  Iter 2095: 295s elapsed, 7.10 transcriptions/s
+  Iter 2100: 295s elapsed, 7.11 transcriptions/s
+  Iter 2105: 296s elapsed, 7.11 transcriptions/s
+  Iter 2110: 297s elapsed, 7.11 transcriptions/s
+  Iter 2115: 297s elapsed, 7.12 transcriptions/s
+  Iter 2120: 297s elapsed, 7.13 transcriptions/s
+  Iter 2125: 298s elapsed, 7.13 transcriptions/s
+  Iter 2130: 299s elapsed, 7.13 transcriptions/s
+  Iter 2135: 300s elapsed, 7.13 transcriptions/s
+Whisper inference complete: 2139 transcriptions, 300.0s, 7.13 transcriptions/s
+2026-09-27 03:31:49,987 [spar.telemetry] INFO: Telemetry stopped. 338 samples collected.
+2026-09-27 03:31:49,991 [spar.telemetry] INFO: Saved 338 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_NVIDIA_H200_NVL_42148b99_20260927_032612.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    whisper_inference
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/modern_inference.py --model whisper --duration 300
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      42148b99d2fc
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_NVIDIA_H200_NVL_42148b99_20260927_032612.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_NVIDIA_H200_NVL_42148b99_20260927_032612.parquet.partial
+  Timeout:     420s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/modern_inference.py --model whisper --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=333.8s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 338
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_NVIDIA_H200_NVL_42148b99_20260927_032612.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_dcgm_42148b99d2fc_20260927_032608.parquet: 1707 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_bmc_42148b99d2fc_20260927_032608.parquet: 343 samples, 100% valid, mean 557 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_scope_42148b99d2fc_20260927_032608.parquet: 337580 bins, 337.5 s span, 335892100 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/whisper_inference_scope_42148b99d2fc_20260927_032608_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

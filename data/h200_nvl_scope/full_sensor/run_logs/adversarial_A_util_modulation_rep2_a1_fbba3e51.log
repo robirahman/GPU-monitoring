@@ -1,0 +1,50 @@
+[scope-wrapper] run_id=fbba3e51e157  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_scope_fbba3e51e157_20260926_144316.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 14:43:19,292 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_A_util_modulation, run=fbba3e51e157)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Device: cuda
+Strategy A: Utilization Modulation
+  Sleep range: 0.10-0.50s between batches
+2026-09-26 14:48:19,369 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_NVIDIA_H200_NVL_fbba3e51_20260926_144319.parquet.partial
+  Epoch 5: loss=0.0602, steps=927, elapsed=300s
+Strategy A complete: 927 steps, 300.4s, 790 samples/sec
+2026-09-26 14:48:26,465 [spar.telemetry] INFO: Telemetry stopped. 308 samples collected.
+2026-09-26 14:48:26,468 [spar.telemetry] INFO: Saved 308 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_NVIDIA_H200_NVL_fbba3e51_20260926_144319.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_A_util_modulation
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_training.py --strategy A --duration 300 --sleep-min 0.1 --sleep-max 0.5
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      fbba3e51e157
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_NVIDIA_H200_NVL_fbba3e51_20260926_144319.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_NVIDIA_H200_NVL_fbba3e51_20260926_144319.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_training.py --strategy A --duration 300 --sleep-min 0.1 --sleep-max 0.5
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=303.2s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 308
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_NVIDIA_H200_NVL_fbba3e51_20260926_144319.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_dcgm_fbba3e51e157_20260926_144316.parquet: 1558 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_bmc_fbba3e51e157_20260926_144316.parquet: 313 samples, 100% valid, mean 422 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_scope_fbba3e51e157_20260926_144316.parquet: 306893 bins, 306.8 s span, 305358535 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_A_util_modulation_scope_fbba3e51e157_20260926_144316_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True
