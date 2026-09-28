@@ -23,6 +23,7 @@ import uuid
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = "data/h200_nvl_scope/shaping"
 PROGRESS = os.path.join(_REPO_ROOT, OUT_DIR, "shaping_progress.json")
+RAW_SECONDS = 25  # seconds of raw ~1 MS/s waveform saved per run (override via --raw-seconds)
 MAIN_PY = os.path.expanduser("~/pico-venv/bin/python")
 LLMC = os.path.expanduser("~/llm.c/train_gpt2cu")
 WEIGHTS = os.path.expanduser("~/llm.c/gpt2_124M_bf16.bin")
@@ -61,6 +62,29 @@ CONFIGS = [
     # raising mem_utilization toward HPC levels WITHOUT a cover process (no
     # stream contention). Still tiny batch (low footprint). Same training family.
     ("adversarial_mm_freq", ["-b", "1", "-r", "2", "-d", "1024"], "16000"),
+    # ── MPS co-execution evaders (the crux "are physical sensors necessary?" set) ──
+    # Tiny-batch training (b=1, low footprint, bursty compute) co-executes under
+    # CUDA MPS with a steady DRAM-bandwidth cover kernel, so aggregate NVML util /
+    # mem_utilization / dram_active / occupancy are pinned flat-high (HPC-like) and
+    # mem_used is padded by the cover working set — burying the training signature.
+    # Tuned 2026-09-27: cover intensity 1.0 STARVES training (0 steps in 900 s);
+    # intensity 0.3 pins NVML flat-high (util/mem_util 100 %, mem_used 6.9 GB) while
+    # training still progresses (~60 s/step at 2175 tok/s, loss decreasing). So the
+    # cover runs at 0.3 duty; ~60 s/step means -x 5 ≈ 300 s per run. Two footprint
+    # levels: cover 3 GB (~6.9 GB total) and cover 8 GB (~12 GB, big-HPC-like pad).
+    ("adversarial_mm_mps_cover_g3_i30", ["MPSCOVER:3:0.3", "-b", "1", "-r", "2"], "5"),
+    ("adversarial_mm_mps_cover_g8_i30", ["MPSCOVER:8:0.3", "-b", "1", "-r", "2"], "5"),
+    # ── memory-minimization evader across MODEL SCALES ──
+    # Same b=1 -r 2 tiny-activation-footprint trick as mm_min_noshape, but on
+    # GPT-2 355M / 774M (weights+optimizer state grow with model size, so the
+    # resident footprint rises even with minimized activations). Tests whether the
+    # footprint-evasion generalizes past 124M — i.e. at what scale the footprint
+    # becomes large enough for the classifier to flag. -e overrides COMMON's 124M
+    # (last flag wins). Steps tuned for ~250 s (validated on first rep).
+    ("adversarial_mm_min_355M", ["-e", os.path.expanduser("~/llm.c/gpt2_355M_bf16.bin"),
+                                  "-b", "1", "-r", "2", "-Sw", "0"], "40"),
+    ("adversarial_mm_min_774M", ["-e", os.path.expanduser("~/llm.c/gpt2_774M_bf16.bin"),
+                                  "-b", "1", "-r", "2", "-Sw", "0"], "20"),
 ]
 
 
@@ -108,8 +132,16 @@ def run_rep(label, extra, steps, rep, attempt):
     # paths relative to the llm.c dir, but run_workload.py launches the workload
     # with cwd=<GPU-monitoring repo>. Run it from ~/llm.c via a shell wrapper.
     llmc_dir = os.path.dirname(LLMC)
-    if extra and extra[0].startswith("COVER:"):
-        # co-execution: cover kernel + training via covered_train.sh
+    if extra and extra[0].startswith("MPSCOVER:"):
+        # MPS co-execution: DRAM cover kernel + tiny-batch training as concurrent
+        # MPS clients (covered_train_mps.sh <cover_gb> <intensity> -- <train args>),
+        # so their kernels share the GPU instead of time-slicing. Goal: flatten
+        # ALL NVML features (util/mem_util/dram/occupancy) high while training.
+        _, cover_gb, intensity = extra[0].split(":")
+        script = os.path.join(_REPO_ROOT, "scripts", "covered_train_mps.sh")
+        train_cmd = ["bash", script, cover_gb, intensity, "--"] + COMMON + ["-x", steps] + extra[1:]
+    elif extra and extra[0].startswith("COVER:"):
+        # co-execution (no MPS): cover kernel + training via covered_train.sh
         cover_gb = extra[0].split(":", 1)[1]
         script = os.path.join(_REPO_ROOT, "scripts", "covered_train.sh")
         train_cmd = ["bash", script, cover_gb, "--"] + COMMON + ["-x", steps] + extra[1:]
@@ -121,7 +153,7 @@ def run_rep(label, extra, steps, rep, attempt):
         subprocess.call("sudo nv-hostengine >/dev/null 2>&1", shell=True); time.sleep(3)
     cmd = [MAIN_PY, os.path.join(_REPO_ROOT, "scripts", "run_workload_with_scope.py"),
            "--workload", label, "--gpu-index", "0", "--output-dir", OUT_DIR,
-           "--run-id", run_id, "--no-dcgm", "--dcgm", "--bmc", "--raw-seconds", "25",
+           "--run-id", run_id, "--no-dcgm", "--dcgm", "--bmc", "--raw-seconds", str(RAW_SECONDS),
            "--timeout", "900",
            "--"] + train_cmd
     log_dir = os.path.join(_REPO_ROOT, OUT_DIR, "run_logs")
@@ -144,7 +176,11 @@ def main():
     ap.add_argument("--reset", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--out-dir", type=str, default="")
+    ap.add_argument("--raw-seconds", type=float, default=25.0,
+                    help="seconds of raw ~1 MS/s waveform to save per run")
     args = ap.parse_args()
+    global RAW_SECONDS
+    RAW_SECONDS = args.raw_seconds
     if args.out_dir:
         global OUT_DIR, PROGRESS
         OUT_DIR = args.out_dir

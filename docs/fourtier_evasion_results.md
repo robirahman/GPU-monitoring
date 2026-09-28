@@ -80,14 +80,59 @@ Conversely the *shaped* families backfire: dropping util to 9% via idle-gap
 shaping (and padding the footprint to 5.3 GB in `spoof_infer`) reintroduces a
 bursty step cadence the classifier reads as training — detected 100% on NVML.
 
+## The co-execution evader (MPS) — the decisive case
+
+The above evaders leave *some* residual signal (DCGM/scope raise P(train) toward
+the threshold). The natural strongest attack flattens **every** channel at once:
+run tiny-batch training concurrently with a steady DRAM-bandwidth cover kernel
+under **CUDA MPS**, so they share the GPU (`scripts/covered_train_mps.sh`,
+`scripts/cover_kernel.py`; data in `coexec_evaders/`, cover 3 GB and 8 GB at duty
+0.3). Tuning note: cover duty 1.0 *starves* training (0 steps/900 s); 0.3 pins
+NVML flat-high while training still progresses (~60 s/step).
+
+| evader | NVML | +DCGM | +scope | +BMC | all four |
+|---|---|---|---|---|---|
+| mm_mps_cover (6.9 GB) | 0.966 | 1.000 | 0.915 | 0.966 | 0.966 |
+| mm_mps_cover (12 GB) | 0.975 | 0.975 | 0.938 | 0.975 | 0.963 |
+
+**It evades ~96–97% on every tier, including all four sensors** (P(train)≈0.38–0.44).
+And it *neutralizes the DCGM tier* that was the best added discriminator: the cover
+drives `dram_active` to **0.83** (HPC-like; mm_freq was 0.22), so DCGM gives no
+signal — adding it even *raises* evasion (0.966→1.000). Scope helps only marginally
+(ripple is smoothed to ~1.5–1.9 A, steady, vs 9.3 A for the bursty bare evaders).
+BMC draws the **highest node power of any class (947–952 W)** — cover + training
+combined — yet is useless, because that is the same band as qwen-32B *inference*
+(938 W).
+
+## Footprint-min evasion generalizes across model scale
+
+Re-running the tiny-batch (`-b 1 -r 2`) footprint evasion on GPT-2 **355M and 774M**
+(`scale_evaders/`) evades **100% on all four tiers** (P(train) 0.25 / 0.23, creeping
+up only slightly from 124M's 0.11 as weights+optimizer grow the footprint). Even at
+774M the minimized-activation footprint stays inference-like. So this is not a
+124M-only artifact.
+
 ## Takeaway
 
-The extra physical sensor (BMC node power) does **not** close the memory-
-minimization evasion gap; it is redundant with NVML power and, like all power
-channels, cannot distinguish training from heavy inference. The evasion attacks
-the *memory-footprint* feature, which is orthogonal to every power/thermal
-channel. Sensors that see *what kind* of work is happening (DCGM pipe/DRAM
-activity, scope ripple structure) help more than sensors that see *how much*
-power is drawn — but even all four together are insufficient here at the deployed
-threshold. Closing this gap needs a footprint- or cadence-aware feature (or a
-lower threshold with its FP cost), not another power probe.
+Across three evasion families and four sensor tiers, the extra physical/telemetry
+sensors do **not** provide robust protection:
+
+- **BMC node power** is redundant with NVML power and, like all power channels,
+  cannot separate training from heavy inference (evaders sit at 790–952 W, right
+  among honest inference at 718–938 W). It never helps, in any family.
+- **DCGM (DRAM activity)** and **scope (ripple)** help against the *simple*
+  footprint evaders — but a co-execution adversary flattens exactly those channels
+  (dram→0.83, ripple→steady), neutralizing them. Against the co-exec evader all
+  four tiers together still leave ~96 % evasion.
+- The **memory-footprint** leak (tiny-batch training reading as inference) is
+  orthogonal to every power/thermal channel and persists across model scale.
+
+Bottom line: a determined co-execution adversary can flatten every observable
+channel while genuinely training, and no combination of these four sensors detects
+it at the deployed threshold. Robust detection would need either a fundamentally
+different signal (e.g. footprint/cadence-aware features, or isolating the tenant's
+own process rather than aggregate node telemetry) or accepting a much lower
+threshold and its false-positive cost — not another physical power probe.
+
+*(Reproduce: `python -m classifier.eval_fourtier_evasion`; evader data in
+`data/h200_nvl_scope/{evaders_4tier,coexec_evaders,scale_evaders}`.)*

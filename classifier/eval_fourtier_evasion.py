@@ -36,7 +36,9 @@ from classifier.eval_shaping_evasion import load_runs, windows_with_scope
 
 DATA = PROJECT_ROOT / "data"
 REF_DIR = "full_sensor"          # honest 4-sensor reference corpus (positives + negatives)
-EVADER_DIR = "evaders_4tier"     # held-out attack set, all 4 sensors
+# held-out attack sets, all 4 sensors: the memory-min families + the MPS co-exec
+# evaders (tiny-batch training co-executing with a DRAM cover to flatten NVML).
+EVADER_DIRS = ["evaders_4tier", "coexec_evaders", "scale_evaders"]
 
 # The evader families re-collected with all four tiers. Ground-truth label for
 # every one is ml_training (they ARE training; threeway_label maps adversarial_*
@@ -46,6 +48,13 @@ EVADER_FAMILIES = [
     "adversarial_mm_min_shaped",      # + inference-like idle-gap shaping
     "adversarial_mm_spoof_infer_shaped",  # + footprint padded to mimic an infer server
     "adversarial_mm_freq",            # grad-accum 1: near-continuous weight-write DRAM traffic
+    # MPS co-execution: tiny-batch training + steady DRAM cover kernel as concurrent
+    # MPS clients — flattens util/mem_util/dram_active high AND smooths scope ripple.
+    "adversarial_mm_mps_cover_g3_i30",  # cover 3 GB (~6.9 GB total footprint)
+    "adversarial_mm_mps_cover_g8_i30",  # cover 8 GB (~12 GB total footprint)
+    # memory-min footprint evasion at larger model scale (weights+optimizer grow)
+    "adversarial_mm_min_355M",
+    "adversarial_mm_min_774M",
 ]
 
 BMC_FEATURE_NAMES = [
@@ -155,7 +164,7 @@ TIERS = ["nvml", "nvml+dcgm", "nvml+scope", "nvml+bmc", "all"]
 def main():
     pd.set_option("display.width", 160)
     print("Loading full_sensor reference + evaders_4tier (NVML+DCGM merge)…", flush=True)
-    df = load_runs(only_dirs=[REF_DIR, EVADER_DIR], attach_dcgm=True)
+    df = load_runs(only_dirs=[REF_DIR] + EVADER_DIRS, attach_dcgm=True)
     win = windows_with_scope(df)
     win = attach_bmc_features(win, build_bmc_path_map([str(DATA)]))
     all_cols = get_feature_cols(win)
