@@ -150,7 +150,7 @@ def _train_predictor(variant, X, y_str, groups, feature_cols, xgb_params, le):
         return clf, (lambda X_te: clf.predict(X_te))
 
 
-def run_analysis(variant="threeway"):
+def run_analysis(variant="threeway", holdout_prefixes=()):
     from sklearn.metrics import accuracy_score, classification_report
     from sklearn.model_selection import StratifiedGroupKFold
     from sklearn.preprocessing import LabelEncoder
@@ -290,6 +290,15 @@ def run_analysis(variant="threeway"):
                 hardening_labels.add(label)
         except ValueError:
             pass
+
+    # Hold out chosen families from the hardened TRAINING set (they are still
+    # evaluated below) — measures whether the defender generalizes to an evasion
+    # family it has never trained on. E.g. --holdout-prefixes adversarial_mm_
+    # keeps every memory-minimized evader out of Round-2/3 training.
+    if holdout_prefixes:
+        held = {l for l in hardening_labels if any(l.startswith(p) for p in holdout_prefixes)}
+        hardening_labels -= held
+        log.info(f"  Holding {len(held)} families out of hardened training: {sorted(held)}")
 
     hardening_mask = df_win["workload_label"].isin(hardening_labels)
     df_hardened_train = pd.concat([df_clean, df_win[hardening_mask]])
@@ -476,5 +485,8 @@ def run_analysis(variant="threeway"):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--classifier", choices=["threeway", "twostage"], default="threeway")
+    ap.add_argument("--holdout-prefixes", type=str, default="",
+                    help="comma-separated label prefixes to hold out of hardened training")
     args = ap.parse_args()
-    run_analysis(variant=args.classifier)
+    prefixes = tuple(p.strip() for p in args.holdout_prefixes.split(",") if p.strip())
+    run_analysis(variant=args.classifier, holdout_prefixes=prefixes)

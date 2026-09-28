@@ -1,0 +1,56 @@
+[scope-wrapper] run_id=fbecf2a50946  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_scope_fbecf2a50946_20260926_091855.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 09:18:59,129 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_J_pid_75, run=fbecf2a50946)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 09:23:59,209 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_NVIDIA_H200_NVL_fbecf2a5_20260926_091859.parquet.partial
+Strategy J: Thermal-Matched PID Training (target_util=75%)
+  30s: util=33% (target=75%), power=136W, sleep=0.0ms, steps=4094
+  60s: util=33% (target=75%), power=138W, sleep=0.0ms, steps=8247
+  90s: util=33% (target=75%), power=136W, sleep=0.0ms, steps=12378
+  120s: util=33% (target=75%), power=136W, sleep=0.0ms, steps=16529
+  150s: util=33% (target=75%), power=137W, sleep=0.0ms, steps=20689
+  180s: util=33% (target=75%), power=137W, sleep=0.0ms, steps=24845
+  210s: util=33% (target=75%), power=137W, sleep=0.0ms, steps=28991
+  240s: util=33% (target=75%), power=136W, sleep=0.0ms, steps=33168
+  270s: util=34% (target=75%), power=138W, sleep=0.0ms, steps=37351
+Strategy J complete. 41531 steps, sleep=0.0ms, 300s
+2026-09-26 09:24:05,800 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 09:24:05,805 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_NVIDIA_H200_NVL_fbecf2a5_20260926_091859.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_J_pid_75
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round2.py --strategy J --duration 300 --target-util 75
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      fbecf2a50946
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_NVIDIA_H200_NVL_fbecf2a5_20260926_091859.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_NVIDIA_H200_NVL_fbecf2a5_20260926_091859.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round2.py --strategy J --duration 300 --target-util 75
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_NVIDIA_H200_NVL_fbecf2a5_20260926_091859.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_dcgm_fbecf2a50946_20260926_091855.parquet: 1555 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_bmc_fbecf2a50946_20260926_091855.parquet: 312 samples, 100% valid, mean 448 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_scope_fbecf2a50946_20260926_091855.parquet: 306488 bins, 306.4 s span, 304955560 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_J_pid_75_scope_fbecf2a50946_20260926_091855_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

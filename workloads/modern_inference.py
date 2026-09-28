@@ -130,7 +130,7 @@ def run_whisper(args, device):
 
     print("Loading Whisper large-v3-turbo...")
     model = whisper.load_model("large-v3-turbo", device=device,
-                               download_root="/home/claude/.cache/whisper")
+                               download_root=os.path.expanduser("~/.cache/whisper"))
     print(f"Whisper loaded: {sum(p.numel() for p in model.parameters())/1e6:.0f}M params")
 
     start = time.time()
@@ -178,7 +178,9 @@ def main():
     device = args.device
     print(f"Device: {device}")
 
-    os.environ["HF_HOME"] = "/home/claude/.cache/huggingface"
+    # Respect an HF_HOME set by the launcher; otherwise default to the invoking
+    # user's cache (was hardcoded to a sandbox path that doesn't exist here).
+    os.environ.setdefault("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
 
     models = {"deepseek_r1": run_deepseek_r1, "qwen25": run_qwen25, "whisper": run_whisper}
     models[args.model](args, device)

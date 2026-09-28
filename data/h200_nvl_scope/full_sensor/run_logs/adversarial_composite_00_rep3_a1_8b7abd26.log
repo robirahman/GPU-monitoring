@@ -1,0 +1,61 @@
+[scope-wrapper] run_id=8b7abd26edc0  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_scope_8b7abd26edc0_20260926_160552.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 16:05:55,580 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_composite_00, run=8b7abd26edc0)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Composite Adversarial Training
+  Idle fraction: 0%
+  Batch size: 256
+  Grad accumulation: 4 steps
+  Memory pre-alloc: 4096 MB
+  Duration: 120s
+  Device: cuda
+  Pre-allocated: 4096 MB on GPU
+  Step 4900: loss=0.0189, 18033 samples/sec, 69s
+
+Composite adversarial complete:
+  Steps: 8494
+  Samples: 2166896
+  Throughput: 18051 samples/sec
+  Duration: 120.0s
+  Idle fraction: 0%
+  EVASION_TAX_DATA: idle_frac=0.0, throughput=18051.5, samples=2166896, steps=8494, duration=120.0
+2026-09-26 16:08:02,305 [spar.telemetry] INFO: Telemetry stopped. 127 samples collected.
+2026-09-26 16:08:02,316 [spar.telemetry] INFO: Saved 127 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_NVIDIA_H200_NVL_8b7abd26_20260926_160555.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_composite_00
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_composite.py --idle-fraction 0.0 --duration 120
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      8b7abd26edc0
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_NVIDIA_H200_NVL_8b7abd26_20260926_160555.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_NVIDIA_H200_NVL_8b7abd26_20260926_160555.parquet.partial
+  Timeout:     180s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_composite.py --idle-fraction 0.0 --duration 120
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=122.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 127
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_NVIDIA_H200_NVL_8b7abd26_20260926_160555.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_dcgm_8b7abd26edc0_20260926_160552.parquet: 657 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_bmc_8b7abd26edc0_20260926_160552.parquet: 132 samples, 100% valid, mean 885 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_scope_8b7abd26edc0_20260926_160552.parquet: 127471 bins, 127.4 s span, 126833645 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_composite_00_scope_8b7abd26edc0_20260926_160552_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

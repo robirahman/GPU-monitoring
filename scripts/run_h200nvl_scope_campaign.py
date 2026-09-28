@@ -69,6 +69,61 @@ PHASE_B = [
     ("adversarial_L_diluted_10", MAIN_PY),
     ("adversarial_L_diluted_20", MAIN_PY),
 ]
+# Phase C: single-GPU classes that ran on other cards (RTX/A100/B200/H100) but
+# never on the H200 — collected here with all four sensors to make the corpus
+# cross-GPU-complete on this card.
+PHASE_C = [
+    # evasion / adversarial families
+    ("adversarial_A_util_modulation", MAIN_PY),
+    ("adversarial_B_low_util", MAIN_PY),
+    ("adversarial_D_temporal_disruption", MAIN_PY),
+    ("adversarial_composite_00", MAIN_PY),
+    ("adversarial_composite_30", MAIN_PY),
+    ("adversarial_composite_50", MAIN_PY),
+    ("adversarial_composite_70", MAIN_PY),
+    ("adversarial_composite_90", MAIN_PY),
+    ("adversarial_composite_95", MAIN_PY),
+    ("adversarial_M_composite_memmin_10", MAIN_PY),
+    ("adversarial_M_composite_memmin_20", MAIN_PY),
+    ("adversarial_M_composite_memmin_30", MAIN_PY),
+    ("adversarial_M_composite_memmin_40", MAIN_PY),
+    ("adversarial_N_grad_accum_4", MAIN_PY),
+    ("adversarial_N_grad_accum_8", MAIN_PY),
+    ("adversarial_N_grad_accum_16", MAIN_PY),
+    ("dilution_sweep_N1", MAIN_PY),
+    ("dilution_sweep_N2", MAIN_PY),
+    ("dilution_sweep_N3", MAIN_PY),
+    ("dilution_sweep_N5", MAIN_PY),
+    ("dilution_sweep_N10", MAIN_PY),
+    ("dilution_sweep_N20", MAIN_PY),
+    ("dilution_sweep_inference", MAIN_PY),
+    ("whitebox_diluted_N10", MAIN_PY),
+    ("whitebox_diluted_N20", MAIN_PY),
+    ("whitebox_diluted_N50", MAIN_PY),
+    ("whitebox_diluted_N5_ckpt", MAIN_PY),
+    ("whitebox_diluted_N10_ckpt", MAIN_PY),
+    ("whitebox_diluted_N20_ckpt", MAIN_PY),
+    ("whitebox_lora_N5", MAIN_PY),
+    ("whitebox_lora_N10", MAIN_PY),
+    ("whitebox_lora_N20", MAIN_PY),
+    ("whitebox_oracle", MAIN_PY),
+    # PPO/RLHF (undisguised P0 via adversarial_symgemm.py; special-cased in run_rep)
+    ("ppo_rlhf_r8", MAIN_PY),
+    ("ppo_rlhf_r32", MAIN_PY),
+    # consumer-scale inference
+    ("llm_infer_qwen25_1p5b", MAIN_PY),
+    ("llm_infer_qwen25_1p5b_seq4096", MAIN_PY),
+    ("llm_infer_qwen25_1p5b_streaming", MAIN_PY),
+    ("llm_infer_smollm2_1p7b", MAIN_PY),
+    ("llm_infer_tinyllama_seq1024", MAIN_PY),
+    ("llm_infer_tinyllama_seq2048", MAIN_PY),
+    ("llm_infer_phi3_mini_seq2048", MAIN_PY),
+    ("llm_infer_bge_embed_bs128", MAIN_PY),
+    ("llm_infer_clip_embed_bs256", MAIN_PY),
+    ("llm_infer_clip_embed_batched", MAIN_PY),
+    ("qwen25_inference", MAIN_PY),
+    ("whisper_inference", MAIN_PY),
+]
 
 
 def load_progress():
@@ -88,11 +143,14 @@ def epoch_col(df):
     return (pd.to_datetime(df["timestamp_utc"]) - pd.Timestamp(0, tz="UTC")).dt.total_seconds()
 
 
-def validate(label, run_id):
-    """Both files exist, scope covers the telemetry span. Returns (ok, message)."""
+def validate(label, run_id, all_sensors=False):
+    """Required sensor files exist and cover the telemetry span. Returns (ok, msg)."""
     import pandas as pd
+    def others(f):
+        b = os.path.basename(f)
+        return all(k not in b for k in ("_scope", "_dcgm", "_bmc"))
     tel = [f for f in glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_*_{run_id[:8]}_*.parquet"))
-           if "_scope" not in os.path.basename(f)]
+           if others(f)]
     sco = glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_scope_{run_id}_*.parquet"))
     if not tel:
         return False, "telemetry parquet missing"
@@ -104,15 +162,35 @@ def validate(label, run_id):
     if len(t) < 15:
         return False, f"telemetry too short ({len(t)} rows)"
     te = epoch_col(t)
-    cover = (s.epoch_s.min() <= te.iloc[2]) and (s.epoch_s.max() >= te.iloc[-3])
+    # scope is SIGTERM-flushed at workload end and can drop a few seconds of its
+    # streaming tail (USB ring buffer), so require coverage from near the start
+    # through all but a modest end gap (5% of span, >=15 s) rather than to the
+    # 3rd-from-last NVML sample — which false-fails otherwise-complete captures.
+    span = float(te.iloc[-1] - te.iloc[0])
+    end_tol = max(0.05 * span, 15.0)
+    cover = (s.epoch_s.min() <= te.iloc[2]) and (s.epoch_s.max() >= te.iloc[-1] - end_tol)
     if not cover:
-        return False, "scope capture does not cover telemetry span"
-    # informational ripple-vs-power check against the calibration curve
+        return False, (f"scope does not cover telemetry span "
+                       f"(scope ends {te.iloc[-1] - s.epoch_s.max():.1f}s before NVML, tol {end_tol:.1f}s)")
     ripple_a = float((s.v_rms_ac ** 2).mean() ** 0.5 / 0.1)
-    est_w = 111.9 * ripple_a + 80.0
     nvml_w = float(t.power_draw_w.mean())
-    return True, (f"{len(t)} tel rows, {len(s)} scope bins, ripple {ripple_a:.2f} A "
-                  f"(est {est_w:.0f} W vs nvml {nvml_w:.0f} W)")
+    extra = ""
+    if all_sensors:
+        dcg = glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_dcgm_{run_id}_*.parquet"))
+        bmc = glob.glob(os.path.join(_REPO_ROOT, OUT_DIR, f"{label}_bmc_{run_id}_*.parquet"))
+        if not dcg:
+            return False, "dcgm parquet missing"
+        if not bmc:
+            return False, "bmc parquet missing"
+        g = pd.read_parquet(dcg[0]); b = pd.read_parquet(bmc[0])
+        if len(g) < 5 or g["dcgm_dram_active"].notna().mean() < 0.5:
+            return False, f"dcgm empty/invalid ({len(g)} rows) — is nv-hostengine up?"
+        if len(b) < 5 or b["bmc_power_w"].notna().mean() < 0.5:
+            return False, f"bmc empty/invalid ({len(b)} rows)"
+        dram = float(g["dcgm_dram_active"].fillna(0).mean())
+        bmc_w = float(b["bmc_power_w"].mean())
+        extra = f", {len(g)} dcgm (dram {dram:.2f}), {len(b)} bmc (node {bmc_w:.0f} W)"
+    return True, (f"{len(t)} tel, {len(s)} scope, ripple {ripple_a:.2f} A, nvml {nvml_w:.0f} W" + extra)
 
 
 def run_rep(label, py, rep, attempt, args):
@@ -121,6 +199,13 @@ def run_rep(label, py, rep, attempt, args):
     cmd = [py, os.path.join(_REPO_ROOT, "scripts", "run_workload_with_scope.py"),
            "--workload", label, "--gpu-index", "0", "--output-dir", OUT_DIR,
            "--run-id", run_id, "--no-dcgm"]
+    if getattr(args, "all_sensors", False):
+        # Ensure the DCGM host engine is up (it can die during host downtime);
+        # otherwise the dcgm logger records 0 samples and the rep fails validation.
+        if subprocess.call("pgrep -f nv-hostengine >/dev/null", shell=True) != 0:
+            subprocess.call("sudo nv-hostengine >/dev/null 2>&1", shell=True)
+            time.sleep(3)
+        cmd += ["--dcgm", "--bmc", "--raw-seconds", "25"]
     if label == "llm_infer_mistral_7b_q4":
         # Aug 2026: transformers-5/gptqmodel-7 runs GPTQ CPU-bound (~4.6 tok/s,
         # GPU idle). Collect via vLLM's Marlin kernels instead — same model,
@@ -129,6 +214,17 @@ def run_rep(label, py, rep, attempt, args):
                 VLLM_PY, "workloads/llm_inference_vllm.py",
                 "--model", "mistral_7b_q4", "--duration", "300",
                 "--batch-size", "1", "--max-tokens", "256"]
+    elif label.startswith("ppo_rlhf"):
+        # No registry entry: PPO/RLHF is undisguised generate+train (mode P0) via
+        # adversarial_symgemm.py — rollout N samples per step (r8 / r32 from the
+        # label). Passthrough command; torch backend, TinyLlama-1.1B, bf16.
+        rollout = label.rsplit("_r", 1)[-1] if "_r" in label else "8"
+        cmd += ["--timeout", "420", "--",
+                MAIN_PY, "workloads/adversarial_symgemm.py",
+                "--mode", "P0", "--model", "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+                "--batch-size", "4", "--prompt-len", "128", "--gen-tokens", "64",
+                "--dtype", "bfloat16", "--lr", "1e-5", "--duration", "300",
+                "--rollout", rollout, "--backend", "torch"]
     log_dir = os.path.join(_REPO_ROOT, OUT_DIR, "run_logs")
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, f"{label}_rep{rep}_a{attempt}_{run_id[:8]}.log")
@@ -139,20 +235,29 @@ def run_rep(label, py, rep, attempt, args):
     if rc != 0:
         tail = subprocess.run(["tail", "-3", log_path], capture_output=True, text=True).stdout
         return False, f"exit code {rc}; log tail: {tail.strip()[-300:]}"
-    return validate(label, run_id)
+    return validate(label, run_id, all_sensors=getattr(args, "all_sensors", False))
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--phase", choices=["A", "B", "all"], default="A")
+    ap.add_argument("--phase", choices=["A", "B", "C", "all"], default="A")
     ap.add_argument("--reps", type=int, default=3)
     ap.add_argument("--retries", type=int, default=2)
     ap.add_argument("--reset", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--only", type=str, default="", help="comma-separated label filter")
+    ap.add_argument("--all-sensors", action="store_true",
+                    help="record all four tiers: NVML + scope + DCGM + BMC (25 s raw)")
+    ap.add_argument("--out-dir", type=str, default="",
+                    help="override output dir (default data/h200_nvl_scope)")
     args = ap.parse_args()
+    if args.out_dir:
+        global OUT_DIR, PROGRESS
+        OUT_DIR = args.out_dir
+        PROGRESS = os.path.join(_REPO_ROOT, OUT_DIR, "campaign_progress.json")
 
-    plan = {"A": PHASE_A, "B": PHASE_B, "all": PHASE_A + PHASE_B}[args.phase]
+    plan = {"A": PHASE_A, "B": PHASE_B, "C": PHASE_C,
+            "all": PHASE_A + PHASE_B + PHASE_C}[args.phase]
     if args.only:
         keep = {x.strip() for x in args.only.split(",")}
         plan = [p for p in plan if p[0] in keep]

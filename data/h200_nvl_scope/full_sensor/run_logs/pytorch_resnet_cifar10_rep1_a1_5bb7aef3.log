@@ -1,0 +1,59 @@
+[scope-wrapper] run_id=5bb7aef3ab3a  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_scope_5bb7aef3ab3a_20260926_053341.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 05:33:44,840 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=pytorch_resnet_cifar10, run=5bb7aef3ab3a)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Training resnet18 on cifar10
+  Device: cuda
+  Epochs: 10, Batch size: 512, LR: 0.01
+  AMP: False
+  Epoch 1/10: loss=1.7188, acc=35.7%, time=2.8s
+  Epoch 2/10: loss=1.2348, acc=55.0%, time=2.6s
+  Epoch 3/10: loss=0.9813, acc=64.8%, time=2.6s
+  Epoch 4/10: loss=0.7916, acc=71.9%, time=2.6s
+  Epoch 5/10: loss=0.6185, acc=78.4%, time=2.6s
+  Epoch 6/10: loss=0.4577, acc=84.6%, time=2.6s
+  Epoch 7/10: loss=0.2858, acc=91.0%, time=2.6s
+  Epoch 8/10: loss=0.1509, acc=95.8%, time=2.6s
+  Epoch 9/10: loss=0.0656, acc=98.6%, time=2.6s
+  Epoch 10/10: loss=0.0223, acc=99.7%, time=2.6s
+Training complete. Total wall time: 25.9s
+2026-09-26 05:34:17,495 [spar.telemetry] INFO: Telemetry stopped. 33 samples collected.
+2026-09-26 05:34:17,506 [spar.telemetry] INFO: Saved 33 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_NVIDIA_H200_NVL_5bb7aef3_20260926_053344.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    pytorch_resnet_cifar10
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/pytorch_training.py --model resnet18 --dataset cifar10 --epochs 10 --batch-size 512
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      5bb7aef3ab3a
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_NVIDIA_H200_NVL_5bb7aef3_20260926_053344.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_NVIDIA_H200_NVL_5bb7aef3_20260926_053344.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/pytorch_training.py --model resnet18 --dataset cifar10 --epochs 10 --batch-size 512
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=28.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 33
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_NVIDIA_H200_NVL_5bb7aef3_20260926_053344.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_dcgm_5bb7aef3ab3a_20260926_053341.parquet: 188 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_bmc_5bb7aef3ab3a_20260926_053341.parquet: 38 samples, 100% valid, mean 727 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_scope_5bb7aef3ab3a_20260926_053341.parquet: 33938 bins, 33.9 s span, 33768310 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_resnet_cifar10_scope_5bb7aef3ab3a_20260926_053341_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

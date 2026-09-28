@@ -1,0 +1,57 @@
+[scope-wrapper] run_id=4b982e01215a  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_scope_4b982e01215a_20260926_083543.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 08:35:47,044 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_H_mimicry_mining, run=4b982e01215a)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 08:40:47,121 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_NVIDIA_H200_NVL_4b982e01_20260926_083547.parquet.partial
+Strategy H: Mimicry Training (target=mining)
+  Target util: 75%, power: 140W
+  30s: util=51%, power=133W, train_prob=0.35, train=4802, mimic=11180
+  60s: util=51%, power=134W, train_prob=0.40, train=9919, mimic=20649
+  90s: util=49%, power=136W, train_prob=0.45, train=15285, mimic=28656
+  120s: util=51%, power=137W, train_prob=0.50, train=20849, mimic=35404
+  150s: util=50%, power=138W, train_prob=0.55, train=26627, mimic=41014
+  180s: util=47%, power=138W, train_prob=0.60, train=32542, mimic=45849
+  210s: util=48%, power=141W, train_prob=0.65, train=38601, mimic=49834
+  240s: util=48%, power=141W, train_prob=0.70, train=44777, mimic=53118
+  270s: util=47%, power=142W, train_prob=0.75, train=51071, mimic=55711
+Strategy H complete. train=57416, mimic=57868, ratio=0.50, 300s
+2026-09-26 08:40:53,755 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 08:40:53,761 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_NVIDIA_H200_NVL_4b982e01_20260926_083547.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_H_mimicry_mining
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round2.py --strategy H --duration 300 --target mining
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      4b982e01215a
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_NVIDIA_H200_NVL_4b982e01_20260926_083547.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_NVIDIA_H200_NVL_4b982e01_20260926_083547.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round2.py --strategy H --duration 300 --target mining
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_NVIDIA_H200_NVL_4b982e01_20260926_083547.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_dcgm_4b982e01215a_20260926_083543.parquet: 1555 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_bmc_4b982e01215a_20260926_083543.parquet: 312 samples, 100% valid, mean 447 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_scope_4b982e01215a_20260926_083543.parquet: 306560 bins, 306.5 s span, 305027200 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_H_mimicry_mining_scope_4b982e01215a_20260926_083543_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

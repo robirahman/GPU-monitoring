@@ -1,0 +1,148 @@
+[scope-wrapper] run_id=f9db649e56ed  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_scope_f9db649e56ed_20260927_021052.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 02:10:55,362 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_infer_clip_embed_bs256, run=f9db649e56ed)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading CLIP ViT-L/14
+Loading weights:   0%|          | 0/590 [00:00<?, ?it/s]Loading weights: 100%|██████████| 590/590 [00:00<00:00, 12186.32it/s]
+2026-09-27 02:15:55,440 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_NVIDIA_H200_NVL_f9db649e_20260927_021055.parquet.partial
+  batch 25: 3s, 2053.5 img/s
+  batch 50: 6s, 2077.9 img/s
+  batch 75: 9s, 2083.7 img/s
+  batch 100: 12s, 2086.0 img/s
+  batch 125: 15s, 2086.4 img/s
+  batch 150: 18s, 2086.2 img/s
+  batch 175: 21s, 2085.8 img/s
+  batch 200: 25s, 2085.3 img/s
+  batch 225: 28s, 2084.9 img/s
+  batch 250: 31s, 2084.6 img/s
+  batch 275: 34s, 2084.1 img/s
+  batch 300: 37s, 2083.6 img/s
+  batch 325: 40s, 2083.2 img/s
+  batch 350: 43s, 2082.7 img/s
+  batch 375: 46s, 2082.3 img/s
+  batch 400: 49s, 2082.0 img/s
+  batch 425: 52s, 2081.6 img/s
+  batch 450: 55s, 2081.3 img/s
+  batch 475: 58s, 2080.9 img/s
+  batch 500: 62s, 2080.6 img/s
+  batch 525: 65s, 2080.3 img/s
+  batch 550: 68s, 2080.1 img/s
+  batch 575: 71s, 2079.9 img/s
+  batch 600: 74s, 2079.6 img/s
+  batch 625: 77s, 2079.5 img/s
+  batch 650: 80s, 2079.3 img/s
+  batch 675: 83s, 2079.2 img/s
+  batch 700: 86s, 2079.0 img/s
+  batch 725: 89s, 2078.8 img/s
+  batch 750: 92s, 2078.7 img/s
+  batch 775: 95s, 2078.5 img/s
+  batch 800: 99s, 2078.4 img/s
+  batch 825: 102s, 2078.3 img/s
+  batch 850: 105s, 2078.1 img/s
+  batch 875: 108s, 2078.0 img/s
+  batch 900: 111s, 2077.9 img/s
+  batch 925: 114s, 2077.8 img/s
+  batch 950: 117s, 2077.7 img/s
+  batch 975: 120s, 2077.6 img/s
+  batch 1000: 123s, 2077.5 img/s
+  batch 1025: 126s, 2077.4 img/s
+  batch 1050: 129s, 2077.3 img/s
+  batch 1075: 132s, 2077.2 img/s
+  batch 1100: 136s, 2077.1 img/s
+  batch 1125: 139s, 2077.0 img/s
+  batch 1150: 142s, 2077.0 img/s
+  batch 1175: 145s, 2076.9 img/s
+  batch 1200: 148s, 2076.9 img/s
+  batch 1225: 151s, 2076.8 img/s
+  batch 1250: 154s, 2076.7 img/s
+  batch 1275: 157s, 2076.7 img/s
+  batch 1300: 160s, 2076.6 img/s
+  batch 1325: 163s, 2076.6 img/s
+  batch 1350: 166s, 2076.5 img/s
+  batch 1375: 170s, 2076.5 img/s
+  batch 1400: 173s, 2076.4 img/s
+  batch 1425: 176s, 2076.4 img/s
+  batch 1450: 179s, 2076.3 img/s
+  batch 1475: 182s, 2076.3 img/s
+  batch 1500: 185s, 2076.2 img/s
+  batch 1525: 188s, 2076.2 img/s
+  batch 1550: 191s, 2076.2 img/s
+  batch 1575: 194s, 2076.1 img/s
+  batch 1600: 197s, 2076.1 img/s
+  batch 1625: 200s, 2076.0 img/s
+  batch 1650: 203s, 2076.0 img/s
+  batch 1675: 207s, 2076.0 img/s
+  batch 1700: 210s, 2075.9 img/s
+  batch 1725: 213s, 2075.9 img/s
+  batch 1750: 216s, 2075.9 img/s
+  batch 1775: 219s, 2075.9 img/s
+  batch 1800: 222s, 2075.8 img/s
+  batch 1825: 225s, 2075.8 img/s
+  batch 1850: 228s, 2075.8 img/s
+  batch 1875: 231s, 2075.8 img/s
+  batch 1900: 234s, 2075.7 img/s
+  batch 1925: 237s, 2075.7 img/s
+  batch 1950: 240s, 2075.7 img/s
+  batch 1975: 244s, 2075.6 img/s
+  batch 2000: 247s, 2075.6 img/s
+  batch 2025: 250s, 2075.6 img/s
+  batch 2050: 253s, 2075.6 img/s
+  batch 2075: 256s, 2075.6 img/s
+  batch 2100: 259s, 2075.5 img/s
+  batch 2125: 262s, 2075.5 img/s
+  batch 2150: 265s, 2075.5 img/s
+  batch 2175: 268s, 2075.5 img/s
+  batch 2200: 271s, 2075.4 img/s
+  batch 2225: 274s, 2075.4 img/s
+  batch 2250: 278s, 2075.4 img/s
+  batch 2275: 281s, 2075.4 img/s
+  batch 2300: 284s, 2075.3 img/s
+  batch 2325: 287s, 2075.3 img/s
+  batch 2350: 290s, 2075.3 img/s
+  batch 2375: 293s, 2075.3 img/s
+  batch 2400: 296s, 2075.2 img/s
+  batch 2425: 299s, 2075.2 img/s
+CLIP done: 2432 batches, 622592 images, 2075.2 img/s in 300.0s
+2026-09-27 02:16:05,527 [spar.telemetry] INFO: Telemetry stopped. 311 samples collected.
+2026-09-27 02:16:05,531 [spar.telemetry] INFO: Saved 311 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_NVIDIA_H200_NVL_f9db649e_20260927_021055.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_infer_clip_embed_bs256
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model clip_l14 --duration 300 --batch-size 256
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      f9db649e56ed
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_NVIDIA_H200_NVL_f9db649e_20260927_021055.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_NVIDIA_H200_NVL_f9db649e_20260927_021055.parquet.partial
+  Timeout:     420s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model clip_l14 --duration 300 --batch-size 256
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=306.2s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 311
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_NVIDIA_H200_NVL_f9db649e_20260927_021055.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_dcgm_f9db649e56ed_20260927_021052.parquet: 1573 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_bmc_f9db649e56ed_20260927_021052.parquet: 316 samples, 100% valid, mean 1415 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_scope_f9db649e56ed_20260927_021052.parquet: 309877 bins, 309.8 s span, 308327615 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_bs256_scope_f9db649e56ed_20260927_021052_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

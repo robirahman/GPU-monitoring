@@ -1,0 +1,69 @@
+[scope-wrapper] run_id=7db3e1a5f872  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_scope_7db3e1a5f872_20260926_062813.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 06:28:16,273 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=nbody_sim, run=7db3e1a5f872)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 06:33:16,352 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_NVIDIA_H200_NVL_7db3e1a5_20260926_062816.parquet.partial
+2026-09-26 06:38:16,368 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_NVIDIA_H200_NVL_7db3e1a5_20260926_062816.parquet.partial
+Scientific HPC workload: nbody
+  Device: cuda
+  N-body simulation: 4096 bodies, 600s
+  Step 28146: 30.0s elapsed
+  Step 56320: 60.0s elapsed
+  Step 84492: 90.0s elapsed
+  Step 112665: 120.0s elapsed
+  Step 140840: 150.0s elapsed
+  Step 169013: 180.0s elapsed
+  Step 197189: 210.0s elapsed
+  Step 225362: 240.0s elapsed
+  Step 253536: 270.0s elapsed
+  Step 281709: 300.0s elapsed
+  Step 309881: 330.0s elapsed
+  Step 338053: 360.0s elapsed
+  Step 366224: 390.0s elapsed
+  Step 394397: 420.0s elapsed
+  Step 422570: 450.0s elapsed
+  Step 450742: 480.0s elapsed
+  Step 478916: 510.0s elapsed
+  Step 507086: 540.0s elapsed
+  Step 535260: 570.0s elapsed
+N-body complete. Steps: 563422, Wall time: 600.0s
+2026-09-26 06:38:21,686 [spar.telemetry] INFO: Telemetry stopped. 606 samples collected.
+2026-09-26 06:38:21,689 [spar.telemetry] INFO: Saved 606 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_NVIDIA_H200_NVL_7db3e1a5_20260926_062816.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    nbody_sim
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/scientific_hpc.py --workload nbody --duration 600 --n-bodies 4096
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      7db3e1a5f872
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_NVIDIA_H200_NVL_7db3e1a5_20260926_062816.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_NVIDIA_H200_NVL_7db3e1a5_20260926_062816.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/scientific_hpc.py --workload nbody --duration 600 --n-bodies 4096
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=601.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 606
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_NVIDIA_H200_NVL_7db3e1a5_20260926_062816.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_dcgm_7db3e1a5f872_20260926_062813.parquet: 3047 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_bmc_7db3e1a5f872_20260926_062813.parquet: 611 samples, 100% valid, mean 859 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_scope_7db3e1a5f872_20260926_062813.parquet: 603836 bins, 603.7 s span, 600816820 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/nbody_sim_scope_7db3e1a5f872_20260926_062813_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

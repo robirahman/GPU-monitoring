@@ -1,0 +1,50 @@
+[scope-wrapper] run_id=94d4d54dcd99  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_scope_94d4d54dcd99_20260927_025311.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 02:53:14,344 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_B_low_util, run=94d4d54dcd99)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-27 02:58:14,555 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_NVIDIA_H200_NVL_94d4d54d_20260927_025314.parquet.partial
+Device: cuda
+Strategy B: Low-Utilization Training
+  Batch size: 2, heavy CPU augmentation
+  Epoch 2: loss=0.9512, steps=50000, elapsed=227s
+Strategy B complete: 66488 steps, 300.0s, 443 samples/sec
+2026-09-27 02:58:20,997 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-27 02:58:21,001 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_NVIDIA_H200_NVL_94d4d54d_20260927_025314.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_B_low_util
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_training.py --strategy B --duration 300
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      94d4d54dcd99
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_NVIDIA_H200_NVL_94d4d54d_20260927_025314.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_NVIDIA_H200_NVL_94d4d54d_20260927_025314.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_training.py --strategy B --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_NVIDIA_H200_NVL_94d4d54d_20260927_025314.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_dcgm_94d4d54dcd99_20260927_025311.parquet: 1555 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_bmc_94d4d54dcd99_20260927_025311.parquet: 312 samples, 100% valid, mean 492 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_scope_94d4d54dcd99_20260927_025311.parquet: 299551 bins, 299.5 s span, 298053245 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_B_low_util_scope_94d4d54dcd99_20260927_025311_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

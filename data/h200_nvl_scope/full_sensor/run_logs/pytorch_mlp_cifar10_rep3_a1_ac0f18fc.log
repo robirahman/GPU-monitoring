@@ -1,0 +1,69 @@
+[scope-wrapper] run_id=ac0f18fcda11  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_scope_ac0f18fcda11_20260926_053949.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 05:39:52,786 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=pytorch_mlp_cifar10, run=ac0f18fcda11)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Training simple_mlp on cifar10
+  Device: cuda
+  Epochs: 20, Batch size: 512, LR: 0.01
+  AMP: False
+  Epoch 1/20: loss=1.9216, acc=32.2%, time=1.2s
+  Epoch 2/20: loss=1.6105, acc=43.4%, time=1.1s
+  Epoch 3/20: loss=1.4930, acc=47.5%, time=1.1s
+  Epoch 4/20: loss=1.4088, acc=50.8%, time=1.1s
+  Epoch 5/20: loss=1.3388, acc=53.2%, time=1.1s
+  Epoch 6/20: loss=1.2809, acc=55.4%, time=1.1s
+  Epoch 7/20: loss=1.2201, acc=57.5%, time=1.1s
+  Epoch 8/20: loss=1.1690, acc=59.6%, time=1.1s
+  Epoch 9/20: loss=1.1224, acc=61.1%, time=1.1s
+  Epoch 10/20: loss=1.0741, acc=62.9%, time=1.1s
+  Epoch 11/20: loss=1.0358, acc=64.2%, time=1.1s
+  Epoch 12/20: loss=0.9847, acc=65.9%, time=1.1s
+  Epoch 13/20: loss=0.9326, acc=68.0%, time=1.1s
+  Epoch 14/20: loss=0.9000, acc=69.0%, time=1.1s
+  Epoch 15/20: loss=0.8622, acc=70.2%, time=1.1s
+  Epoch 16/20: loss=0.8137, acc=71.8%, time=1.1s
+  Epoch 17/20: loss=0.7844, acc=73.1%, time=1.1s
+  Epoch 18/20: loss=0.7394, acc=74.5%, time=1.1s
+  Epoch 19/20: loss=0.7065, acc=75.7%, time=1.1s
+  Epoch 20/20: loss=0.6637, acc=77.5%, time=1.1s
+Training complete. Total wall time: 22.7s
+2026-09-26 05:40:22,230 [spar.telemetry] INFO: Telemetry stopped. 30 samples collected.
+2026-09-26 05:40:22,247 [spar.telemetry] INFO: Saved 30 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_NVIDIA_H200_NVL_ac0f18fc_20260926_053952.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    pytorch_mlp_cifar10
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/pytorch_training.py --model simple_mlp --dataset cifar10 --epochs 20 --batch-size 512
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      ac0f18fcda11
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_NVIDIA_H200_NVL_ac0f18fc_20260926_053952.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_NVIDIA_H200_NVL_ac0f18fc_20260926_053952.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/pytorch_training.py --model simple_mlp --dataset cifar10 --epochs 20 --batch-size 512
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=25.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 30
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_NVIDIA_H200_NVL_ac0f18fc_20260926_053952.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_dcgm_ac0f18fcda11_20260926_053949.parquet: 171 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_bmc_ac0f18fcda11_20260926_053949.parquet: 35 samples, 100% valid, mean 411 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_scope_ac0f18fcda11_20260926_053949.parquet: 30612 bins, 30.6 s span, 30458940 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/pytorch_mlp_cifar10_scope_ac0f18fcda11_20260926_053949_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

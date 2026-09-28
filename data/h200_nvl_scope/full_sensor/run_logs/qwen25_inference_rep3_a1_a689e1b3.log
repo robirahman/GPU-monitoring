@@ -1,0 +1,68 @@
+[scope-wrapper] run_id=a689e1b3f705  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_scope_a689e1b3f705_20260927_032041.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 03:20:44,422 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=qwen25_inference, run=a689e1b3f705)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Device: cuda
+Loading Qwen 2.5 0.5B...
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 5239.40it/s]
+2026-09-27 03:25:44,497 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_NVIDIA_H200_NVL_a689e1b3_20260927_032044.parquet.partial
+Model loaded: 0.5B params
+  Iter 10: 2560 tokens, 41.7 tok/s, 61s
+  Iter 20: 5120 tokens, 64.7 tok/s, 79s
+  Iter 30: 7680 tokens, 79.2 tok/s, 97s
+  Iter 40: 10240 tokens, 89.3 tok/s, 115s
+  Iter 50: 12800 tokens, 96.6 tok/s, 133s
+  Iter 60: 15360 tokens, 102.2 tok/s, 150s
+  Iter 70: 17920 tokens, 106.6 tok/s, 168s
+  Iter 80: 20480 tokens, 110.2 tok/s, 186s
+  Iter 90: 23040 tokens, 113.1 tok/s, 204s
+  Iter 100: 25600 tokens, 115.6 tok/s, 221s
+  Iter 110: 28160 tokens, 117.7 tok/s, 239s
+  Iter 120: 30720 tokens, 119.5 tok/s, 257s
+  Iter 130: 33280 tokens, 121.1 tok/s, 275s
+  Iter 140: 35840 tokens, 122.4 tok/s, 293s
+Qwen 2.5 inference complete: 145 iterations, 37120 tokens, 123.1 tok/s, 301.6s
+2026-09-27 03:25:55,050 [spar.telemetry] INFO: Telemetry stopped. 311 samples collected.
+2026-09-27 03:25:55,054 [spar.telemetry] INFO: Saved 311 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_NVIDIA_H200_NVL_a689e1b3_20260927_032044.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    qwen25_inference
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/modern_inference.py --model qwen25 --duration 300 --max-tokens 256
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      a689e1b3f705
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_NVIDIA_H200_NVL_a689e1b3_20260927_032044.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_NVIDIA_H200_NVL_a689e1b3_20260927_032044.parquet.partial
+  Timeout:     420s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/modern_inference.py --model qwen25 --duration 300 --max-tokens 256
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=306.6s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 311
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_NVIDIA_H200_NVL_a689e1b3_20260927_032044.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_dcgm_a689e1b3f705_20260927_032041.parquet: 1575 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_bmc_a689e1b3f705_20260927_032041.parquet: 316 samples, 100% valid, mean 423 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_scope_a689e1b3f705_20260927_032041.parquet: 310370 bins, 310.3 s span, 308818150 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/qwen25_inference_scope_a689e1b3f705_20260927_032041_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

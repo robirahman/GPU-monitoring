@@ -1,0 +1,75 @@
+[scope-wrapper] run_id=c40351af1672  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_scope_c40351af1672_20260927_012611.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 01:26:14,687 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_infer_phi3_mini_seq2048, run=c40351af1672)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Loading phi3_mini (microsoft/Phi-3-mini-4k-instruct, fp16)
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights:  13%|█▎        | 26/195 [00:00<00:00, 255.68it/s]Loading weights:  36%|███▋      | 71/195 [00:00<00:00, 356.69it/s]Loading weights:  63%|██████▎   | 122/195 [00:00<00:00, 424.39it/s]Loading weights:  88%|████████▊ | 172/195 [00:00<00:00, 443.36it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 426.60it/s]
+2026-09-27 01:31:14,763 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_NVIDIA_H200_NVL_c40351af_20260927_012614.parquet.partial
+  params: 3.82B | batch_size=1 | seq_len=2048 | max_tokens=256
+  iter 5: 1280 tok, 88.8 tok/s, 14s
+  iter 10: 2560 tok, 91.6 tok/s, 28s
+  iter 15: 3840 tok, 92.5 tok/s, 41s
+  iter 20: 5120 tok, 93.0 tok/s, 55s
+  iter 25: 6400 tok, 93.3 tok/s, 69s
+  iter 30: 7680 tok, 93.5 tok/s, 82s
+  iter 35: 8960 tok, 93.7 tok/s, 96s
+  iter 40: 10240 tok, 93.8 tok/s, 109s
+  iter 45: 11520 tok, 93.9 tok/s, 123s
+  iter 50: 12800 tok, 93.9 tok/s, 136s
+  iter 55: 14080 tok, 94.0 tok/s, 150s
+  iter 60: 15360 tok, 94.0 tok/s, 163s
+  iter 65: 16640 tok, 94.1 tok/s, 177s
+  iter 70: 17920 tok, 94.1 tok/s, 190s
+  iter 75: 19200 tok, 94.1 tok/s, 204s
+  iter 80: 20480 tok, 94.1 tok/s, 218s
+  iter 85: 21760 tok, 94.2 tok/s, 231s
+  iter 90: 23040 tok, 94.2 tok/s, 245s
+  iter 95: 24320 tok, 94.2 tok/s, 258s
+  iter 100: 25600 tok, 94.2 tok/s, 272s
+  iter 105: 26880 tok, 94.2 tok/s, 285s
+  iter 110: 28160 tok, 94.3 tok/s, 299s
+phi3_mini done: 111 iters, 28416 tok, 94.3 tok/s, 301.5s wall
+2026-09-27 01:31:25,668 [spar.telemetry] INFO: Telemetry stopped. 311 samples collected.
+2026-09-27 01:31:25,671 [spar.telemetry] INFO: Saved 311 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_NVIDIA_H200_NVL_c40351af_20260927_012614.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_infer_phi3_mini_seq2048
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model phi3_mini --duration 300 --batch-size 1 --seq-len 2048 --max-tokens 256
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      c40351af1672
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_NVIDIA_H200_NVL_c40351af_20260927_012614.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_NVIDIA_H200_NVL_c40351af_20260927_012614.parquet.partial
+  Timeout:     480s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model phi3_mini --duration 300 --batch-size 1 --seq-len 2048 --max-tokens 256
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=307.0s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 311
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_NVIDIA_H200_NVL_c40351af_20260927_012614.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_dcgm_c40351af1672_20260927_012611.parquet: 1576 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_bmc_c40351af1672_20260927_012611.parquet: 317 samples, 100% valid, mean 567 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_scope_c40351af1672_20260927_012611.parquet: 310877 bins, 310.8 s span, 309322615 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_phi3_mini_seq2048_scope_c40351af1672_20260927_012611_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

@@ -1,0 +1,62 @@
+[scope-wrapper] run_id=1daa0fd49000  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_scope_1daa0fd49000_20260926_174333.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 17:43:36,798 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_M_composite_memmin_40, run=1daa0fd49000)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 17:48:36,880 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_NVIDIA_H200_NVL_1daa0fd4_20260926_174336.parquet.partial
+Strategy M: Composite + Memory Minimal
+  Idle fraction: 40%
+  Batch size: 4 (tiny, like E)
+  Gradient checkpointing: ON
+  Memory pre-alloc: 4096 MB
+  Duration: 300s
+  Pre-allocated: 4096 MB on GPU
+  Step 401: loss=2.7545, mem=4250MB, 30s
+  Step 806: loss=2.6000, mem=4250MB, 60s
+  Step 1218: loss=2.5190, mem=4250MB, 90s
+  Step 1627: loss=2.4677, mem=4250MB, 120s
+  Step 2032: loss=2.4268, mem=4250MB, 150s
+  Step 2442: loss=2.3928, mem=4250MB, 180s
+  Step 2848: loss=2.3672, mem=4250MB, 210s
+  Step 3257: loss=2.3411, mem=4250MB, 240s
+  Step 3666: loss=2.3165, mem=4250MB, 270s
+Strategy M complete. 4072 steps, 54.3 samples/sec, 300.0s
+2026-09-26 17:48:43,402 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 17:48:43,407 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_NVIDIA_H200_NVL_1daa0fd4_20260926_174336.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_M_composite_memmin_40
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round4.py --strategy M --idle-fraction 0.4 --duration 300
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      1daa0fd49000
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_NVIDIA_H200_NVL_1daa0fd4_20260926_174336.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_NVIDIA_H200_NVL_1daa0fd4_20260926_174336.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round4.py --strategy M --idle-fraction 0.4 --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.6s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_NVIDIA_H200_NVL_1daa0fd4_20260926_174336.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_dcgm_1daa0fd49000_20260926_174333.parquet: 1554 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_bmc_1daa0fd49000_20260926_174333.parquet: 312 samples, 100% valid, mean 399 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_scope_1daa0fd49000_20260926_174333.parquet: 306837 bins, 306.8 s span, 305302815 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_M_composite_memmin_40_scope_1daa0fd49000_20260926_174333_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

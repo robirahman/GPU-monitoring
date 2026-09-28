@@ -1,0 +1,430 @@
+[scope-wrapper] run_id=00f739abbe0b  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_scope_00f739abbe0b_20260927_021619.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 02:16:22,846 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_infer_clip_embed_batched, run=00f739abbe0b)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading CLIP ViT-L/14
+Loading weights:   0%|          | 0/590 [00:00<?, ?it/s]Loading weights: 100%|██████████| 590/590 [00:00<00:00, 12845.26it/s]
+  batch 25: 1s, 1534.7 img/s
+  batch 50: 2s, 1759.3 img/s
+  batch 75: 3s, 1849.6 img/s
+  batch 100: 3s, 1896.9 img/s
+  batch 125: 4s, 1925.2 img/s
+  batch 150: 5s, 1944.4 img/s
+  batch 175: 6s, 1958.6 img/s
+  batch 200: 6s, 1969.9 img/s
+  batch 225: 7s, 1978.3 img/s
+  batch 250: 8s, 1984.3 img/s
+  batch 275: 9s, 1988.9 img/s
+  batch 300: 10s, 1992.4 img/s
+  batch 325: 10s, 1995.5 img/s
+  batch 350: 11s, 1998.1 img/s
+  batch 375: 12s, 2000.9 img/s
+  batch 400: 13s, 2003.0 img/s
+  batch 425: 14s, 2004.6 img/s
+  batch 450: 14s, 2006.1 img/s
+  batch 475: 15s, 2007.6 img/s
+  batch 500: 16s, 2008.8 img/s
+  batch 525: 17s, 2009.9 img/s
+  batch 550: 18s, 2010.7 img/s
+  batch 575: 18s, 2011.5 img/s
+  batch 600: 19s, 2012.3 img/s
+  batch 625: 20s, 2013.1 img/s
+  batch 650: 21s, 2013.8 img/s
+  batch 675: 21s, 2014.4 img/s
+  batch 700: 22s, 2014.8 img/s
+  batch 725: 23s, 2015.4 img/s
+  batch 750: 24s, 2015.9 img/s
+  batch 775: 25s, 2016.4 img/s
+  batch 800: 25s, 2016.8 img/s
+  batch 825: 26s, 2017.1 img/s
+  batch 850: 27s, 2017.4 img/s
+  batch 875: 28s, 2017.8 img/s
+  batch 900: 29s, 2018.1 img/s
+  batch 925: 29s, 2018.4 img/s
+  batch 950: 30s, 2018.6 img/s
+  batch 975: 31s, 2018.8 img/s
+  batch 1000: 32s, 2019.1 img/s
+  batch 1025: 32s, 2019.4 img/s
+  batch 1050: 33s, 2019.6 img/s
+  batch 1075: 34s, 2019.8 img/s
+  batch 1100: 35s, 2020.0 img/s
+  batch 1125: 36s, 2020.2 img/s
+  batch 1150: 36s, 2020.3 img/s
+  batch 1175: 37s, 2020.5 img/s
+  batch 1200: 38s, 2020.7 img/s
+  batch 1225: 39s, 2020.8 img/s
+  batch 1250: 40s, 2021.0 img/s
+  batch 1275: 40s, 2021.1 img/s
+  batch 1300: 41s, 2021.2 img/s
+  batch 1325: 42s, 2021.4 img/s
+  batch 1350: 43s, 2021.5 img/s
+  batch 1375: 44s, 2021.6 img/s
+  batch 1400: 44s, 2021.7 img/s
+  batch 1425: 45s, 2021.8 img/s
+  batch 1450: 46s, 2021.9 img/s
+  batch 1475: 47s, 2022.0 img/s
+  batch 1500: 47s, 2022.1 img/s
+  batch 1525: 48s, 2022.2 img/s
+  batch 1550: 49s, 2022.3 img/s
+  batch 1575: 50s, 2022.4 img/s
+  batch 1600: 51s, 2022.4 img/s
+  batch 1625: 51s, 2022.6 img/s
+  batch 1650: 52s, 2022.6 img/s
+  batch 1675: 53s, 2022.7 img/s
+  batch 1700: 54s, 2022.8 img/s
+  batch 1725: 55s, 2022.9 img/s
+  batch 1750: 55s, 2023.0 img/s
+  batch 1775: 56s, 2023.0 img/s
+  batch 1800: 57s, 2023.1 img/s
+  batch 1825: 58s, 2023.2 img/s
+  batch 1850: 59s, 2023.2 img/s
+  batch 1875: 59s, 2023.3 img/s
+  batch 1900: 60s, 2023.3 img/s
+  batch 1925: 61s, 2023.4 img/s
+  batch 1950: 62s, 2023.4 img/s
+  batch 1975: 62s, 2023.5 img/s
+  batch 2000: 63s, 2023.5 img/s
+  batch 2025: 64s, 2023.6 img/s
+  batch 2050: 65s, 2023.6 img/s
+  batch 2075: 66s, 2023.6 img/s
+  batch 2100: 66s, 2023.7 img/s
+  batch 2125: 67s, 2023.7 img/s
+  batch 2150: 68s, 2023.8 img/s
+  batch 2175: 69s, 2023.8 img/s
+  batch 2200: 70s, 2023.9 img/s
+  batch 2225: 70s, 2023.9 img/s
+  batch 2250: 71s, 2024.0 img/s
+  batch 2275: 72s, 2024.0 img/s
+  batch 2300: 73s, 2024.0 img/s
+  batch 2325: 74s, 2024.0 img/s
+  batch 2350: 74s, 2024.1 img/s
+  batch 2375: 75s, 2024.1 img/s
+  batch 2400: 76s, 2024.1 img/s
+  batch 2425: 77s, 2024.2 img/s
+  batch 2450: 77s, 2024.2 img/s
+  batch 2475: 78s, 2024.2 img/s
+  batch 2500: 79s, 2024.3 img/s
+  batch 2525: 80s, 2024.3 img/s
+  batch 2550: 81s, 2024.3 img/s
+  batch 2575: 81s, 2024.3 img/s
+  batch 2600: 82s, 2024.4 img/s
+  batch 2625: 83s, 2024.4 img/s
+  batch 2650: 84s, 2024.4 img/s
+  batch 2675: 85s, 2024.4 img/s
+  batch 2700: 85s, 2024.5 img/s
+  batch 2725: 86s, 2024.5 img/s
+  batch 2750: 87s, 2024.5 img/s
+  batch 2775: 88s, 2024.6 img/s
+  batch 2800: 89s, 2024.6 img/s
+  batch 2825: 89s, 2024.6 img/s
+  batch 2850: 90s, 2024.6 img/s
+  batch 2875: 91s, 2024.7 img/s
+  batch 2900: 92s, 2024.7 img/s
+  batch 2925: 92s, 2024.7 img/s
+  batch 2950: 93s, 2024.7 img/s
+  batch 2975: 94s, 2024.8 img/s
+  batch 3000: 95s, 2024.8 img/s
+  batch 3025: 96s, 2024.8 img/s
+  batch 3050: 96s, 2024.8 img/s
+  batch 3075: 97s, 2024.8 img/s
+  batch 3100: 98s, 2024.8 img/s
+  batch 3125: 99s, 2024.8 img/s
+  batch 3150: 100s, 2024.9 img/s
+  batch 3175: 100s, 2024.9 img/s
+  batch 3200: 101s, 2024.9 img/s
+  batch 3225: 102s, 2024.9 img/s
+  batch 3250: 103s, 2024.9 img/s
+  batch 3275: 104s, 2024.9 img/s
+  batch 3300: 104s, 2025.0 img/s
+  batch 3325: 105s, 2025.0 img/s
+  batch 3350: 106s, 2025.0 img/s
+  batch 3375: 107s, 2025.0 img/s
+  batch 3400: 107s, 2025.0 img/s
+  batch 3425: 108s, 2025.1 img/s
+  batch 3450: 109s, 2025.1 img/s
+  batch 3475: 110s, 2025.1 img/s
+  batch 3500: 111s, 2025.1 img/s
+  batch 3525: 111s, 2025.1 img/s
+  batch 3550: 112s, 2025.1 img/s
+  batch 3575: 113s, 2025.1 img/s
+  batch 3600: 114s, 2025.2 img/s
+  batch 3625: 115s, 2025.2 img/s
+  batch 3650: 115s, 2025.2 img/s
+  batch 3675: 116s, 2025.2 img/s
+  batch 3700: 117s, 2025.2 img/s
+  batch 3725: 118s, 2025.2 img/s
+  batch 3750: 119s, 2025.2 img/s
+  batch 3775: 119s, 2025.3 img/s
+  batch 3800: 120s, 2025.3 img/s
+  batch 3825: 121s, 2025.3 img/s
+  batch 3850: 122s, 2025.3 img/s
+  batch 3875: 122s, 2025.3 img/s
+  batch 3900: 123s, 2025.3 img/s
+  batch 3925: 124s, 2025.3 img/s
+  batch 3950: 125s, 2025.4 img/s
+  batch 3975: 126s, 2025.4 img/s
+  batch 4000: 126s, 2025.4 img/s
+  batch 4025: 127s, 2025.4 img/s
+  batch 4050: 128s, 2025.4 img/s
+  batch 4075: 129s, 2025.4 img/s
+  batch 4100: 130s, 2025.4 img/s
+  batch 4125: 130s, 2025.5 img/s
+  batch 4150: 131s, 2025.5 img/s
+  batch 4175: 132s, 2025.5 img/s
+  batch 4200: 133s, 2025.5 img/s
+  batch 4225: 133s, 2025.5 img/s
+  batch 4250: 134s, 2025.5 img/s
+  batch 4275: 135s, 2025.5 img/s
+  batch 4300: 136s, 2025.5 img/s
+  batch 4325: 137s, 2025.5 img/s
+  batch 4350: 137s, 2025.5 img/s
+  batch 4375: 138s, 2025.5 img/s
+  batch 4400: 139s, 2025.5 img/s
+  batch 4425: 140s, 2025.6 img/s
+  batch 4450: 141s, 2025.6 img/s
+  batch 4475: 141s, 2025.6 img/s
+  batch 4500: 142s, 2025.6 img/s
+  batch 4525: 143s, 2025.6 img/s
+  batch 4550: 144s, 2025.6 img/s
+  batch 4575: 145s, 2025.6 img/s
+  batch 4600: 145s, 2025.6 img/s
+  batch 4625: 146s, 2025.6 img/s
+  batch 4650: 147s, 2025.6 img/s
+  batch 4675: 148s, 2025.6 img/s
+  batch 4700: 148s, 2025.6 img/s
+  batch 4725: 149s, 2025.6 img/s
+  batch 4750: 150s, 2025.6 img/s
+  batch 4775: 151s, 2025.6 img/s
+  batch 4800: 152s, 2025.6 img/s
+  batch 4825: 152s, 2025.6 img/s
+  batch 4850: 153s, 2025.7 img/s
+  batch 4875: 154s, 2025.7 img/s
+  batch 4900: 155s, 2025.7 img/s
+  batch 4925: 156s, 2025.7 img/s
+  batch 4950: 156s, 2025.7 img/s
+  batch 4975: 157s, 2025.7 img/s
+  batch 5000: 158s, 2025.7 img/s
+  batch 5025: 159s, 2025.7 img/s
+  batch 5050: 160s, 2025.7 img/s
+  batch 5075: 160s, 2025.7 img/s
+  batch 5100: 161s, 2025.7 img/s
+  batch 5125: 162s, 2025.8 img/s
+  batch 5150: 163s, 2025.8 img/s
+  batch 5175: 163s, 2025.8 img/s
+  batch 5200: 164s, 2025.8 img/s
+  batch 5225: 165s, 2025.8 img/s
+  batch 5250: 166s, 2025.8 img/s
+  batch 5275: 167s, 2025.8 img/s
+  batch 5300: 167s, 2025.8 img/s
+  batch 5325: 168s, 2025.8 img/s
+  batch 5350: 169s, 2025.8 img/s
+  batch 5375: 170s, 2025.8 img/s
+  batch 5400: 171s, 2025.8 img/s
+  batch 5425: 171s, 2025.8 img/s
+  batch 5450: 172s, 2025.8 img/s
+  batch 5475: 173s, 2025.8 img/s
+  batch 5500: 174s, 2025.8 img/s
+  batch 5525: 175s, 2025.8 img/s
+  batch 5550: 175s, 2025.9 img/s
+  batch 5575: 176s, 2025.9 img/s
+  batch 5600: 177s, 2025.9 img/s
+  batch 5625: 178s, 2025.9 img/s
+  batch 5650: 178s, 2025.9 img/s
+  batch 5675: 179s, 2025.9 img/s
+  batch 5700: 180s, 2025.9 img/s
+  batch 5725: 181s, 2025.9 img/s
+  batch 5750: 182s, 2025.9 img/s
+  batch 5775: 182s, 2025.9 img/s
+  batch 5800: 183s, 2025.9 img/s
+  batch 5825: 184s, 2025.9 img/s
+  batch 5850: 185s, 2025.9 img/s
+  batch 5875: 186s, 2025.9 img/s
+  batch 5900: 186s, 2025.9 img/s
+  batch 5925: 187s, 2025.9 img/s
+  batch 5950: 188s, 2025.9 img/s
+  batch 5975: 189s, 2025.9 img/s
+  batch 6000: 190s, 2025.9 img/s
+  batch 6025: 190s, 2026.0 img/s
+  batch 6050: 191s, 2026.0 img/s
+  batch 6075: 192s, 2026.0 img/s
+  batch 6100: 193s, 2026.0 img/s
+  batch 6125: 193s, 2026.0 img/s
+  batch 6150: 194s, 2026.0 img/s
+  batch 6175: 195s, 2026.0 img/s
+  batch 6200: 196s, 2026.0 img/s
+  batch 6225: 197s, 2026.0 img/s
+  batch 6250: 197s, 2026.0 img/s
+  batch 6275: 198s, 2026.0 img/s
+  batch 6300: 199s, 2026.0 img/s
+  batch 6325: 200s, 2026.0 img/s
+  batch 6350: 201s, 2026.0 img/s2026-09-27 02:21:22,926 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_NVIDIA_H200_NVL_00f739ab_20260927_021622.parquet.partial
+
+  batch 6375: 201s, 2026.0 img/s
+  batch 6400: 202s, 2026.0 img/s
+  batch 6425: 203s, 2026.0 img/s
+  batch 6450: 204s, 2026.0 img/s
+  batch 6475: 205s, 2026.0 img/s
+  batch 6500: 205s, 2026.0 img/s
+  batch 6525: 206s, 2026.0 img/s
+  batch 6550: 207s, 2026.0 img/s
+  batch 6575: 208s, 2026.0 img/s
+  batch 6600: 208s, 2026.0 img/s
+  batch 6625: 209s, 2026.0 img/s
+  batch 6650: 210s, 2026.0 img/s
+  batch 6675: 211s, 2026.0 img/s
+  batch 6700: 212s, 2026.0 img/s
+  batch 6725: 212s, 2026.1 img/s
+  batch 6750: 213s, 2026.1 img/s
+  batch 6775: 214s, 2026.1 img/s
+  batch 6800: 215s, 2026.1 img/s
+  batch 6825: 216s, 2026.1 img/s
+  batch 6850: 216s, 2026.1 img/s
+  batch 6875: 217s, 2026.1 img/s
+  batch 6900: 218s, 2026.1 img/s
+  batch 6925: 219s, 2026.1 img/s
+  batch 6950: 220s, 2026.1 img/s
+  batch 6975: 220s, 2026.1 img/s
+  batch 7000: 221s, 2026.1 img/s
+  batch 7025: 222s, 2026.1 img/s
+  batch 7050: 223s, 2026.1 img/s
+  batch 7075: 223s, 2026.1 img/s
+  batch 7100: 224s, 2026.1 img/s
+  batch 7125: 225s, 2026.1 img/s
+  batch 7150: 226s, 2026.1 img/s
+  batch 7175: 227s, 2026.1 img/s
+  batch 7200: 227s, 2026.1 img/s
+  batch 7225: 228s, 2026.1 img/s
+  batch 7250: 229s, 2026.1 img/s
+  batch 7275: 230s, 2026.1 img/s
+  batch 7300: 231s, 2026.1 img/s
+  batch 7325: 231s, 2026.1 img/s
+  batch 7350: 232s, 2026.1 img/s
+  batch 7375: 233s, 2026.1 img/s
+  batch 7400: 234s, 2026.1 img/s
+  batch 7425: 235s, 2026.1 img/s
+  batch 7450: 235s, 2026.1 img/s
+  batch 7475: 236s, 2026.1 img/s
+  batch 7500: 237s, 2026.1 img/s
+  batch 7525: 238s, 2026.1 img/s
+  batch 7550: 238s, 2026.1 img/s
+  batch 7575: 239s, 2026.2 img/s
+  batch 7600: 240s, 2026.2 img/s
+  batch 7625: 241s, 2026.2 img/s
+  batch 7650: 242s, 2026.2 img/s
+  batch 7675: 242s, 2026.2 img/s
+  batch 7700: 243s, 2026.2 img/s
+  batch 7725: 244s, 2026.2 img/s
+  batch 7750: 245s, 2026.2 img/s
+  batch 7775: 246s, 2026.2 img/s
+  batch 7800: 246s, 2026.2 img/s
+  batch 7825: 247s, 2026.2 img/s
+  batch 7850: 248s, 2026.2 img/s
+  batch 7875: 249s, 2026.2 img/s
+  batch 7900: 250s, 2026.2 img/s
+  batch 7925: 250s, 2026.2 img/s
+  batch 7950: 251s, 2026.2 img/s
+  batch 7975: 252s, 2026.2 img/s
+  batch 8000: 253s, 2026.2 img/s
+  batch 8025: 253s, 2026.2 img/s
+  batch 8050: 254s, 2026.2 img/s
+  batch 8075: 255s, 2026.2 img/s
+  batch 8100: 256s, 2026.2 img/s
+  batch 8125: 257s, 2026.2 img/s
+  batch 8150: 257s, 2026.2 img/s
+  batch 8175: 258s, 2026.2 img/s
+  batch 8200: 259s, 2026.2 img/s
+  batch 8225: 260s, 2026.2 img/s
+  batch 8250: 261s, 2026.2 img/s
+  batch 8275: 261s, 2026.2 img/s
+  batch 8300: 262s, 2026.2 img/s
+  batch 8325: 263s, 2026.2 img/s
+  batch 8350: 264s, 2026.2 img/s
+  batch 8375: 265s, 2026.2 img/s
+  batch 8400: 265s, 2026.2 img/s
+  batch 8425: 266s, 2026.2 img/s
+  batch 8450: 267s, 2026.2 img/s
+  batch 8475: 268s, 2026.2 img/s
+  batch 8500: 268s, 2026.2 img/s
+  batch 8525: 269s, 2026.3 img/s
+  batch 8550: 270s, 2026.3 img/s
+  batch 8575: 271s, 2026.3 img/s
+  batch 8600: 272s, 2026.3 img/s
+  batch 8625: 272s, 2026.3 img/s
+  batch 8650: 273s, 2026.3 img/s
+  batch 8675: 274s, 2026.3 img/s
+  batch 8700: 275s, 2026.3 img/s
+  batch 8725: 276s, 2026.3 img/s
+  batch 8750: 276s, 2026.3 img/s
+  batch 8775: 277s, 2026.3 img/s
+  batch 8800: 278s, 2026.3 img/s
+  batch 8825: 279s, 2026.3 img/s
+  batch 8850: 280s, 2026.3 img/s
+  batch 8875: 280s, 2026.3 img/s
+  batch 8900: 281s, 2026.3 img/s
+  batch 8925: 282s, 2026.3 img/s
+  batch 8950: 283s, 2026.3 img/s
+  batch 8975: 283s, 2026.3 img/s
+  batch 9000: 284s, 2026.3 img/s
+  batch 9025: 285s, 2026.3 img/s
+  batch 9050: 286s, 2026.3 img/s
+  batch 9075: 287s, 2026.3 img/s
+  batch 9100: 287s, 2026.3 img/s
+  batch 9125: 288s, 2026.3 img/s
+  batch 9150: 289s, 2026.3 img/s
+  batch 9175: 290s, 2026.3 img/s
+  batch 9200: 291s, 2026.3 img/s
+  batch 9225: 291s, 2026.3 img/s
+  batch 9250: 292s, 2026.3 img/s
+  batch 9275: 293s, 2026.3 img/s
+  batch 9300: 294s, 2026.3 img/s
+  batch 9325: 295s, 2026.3 img/s
+  batch 9350: 295s, 2026.3 img/s
+  batch 9375: 296s, 2026.3 img/s
+  batch 9400: 297s, 2026.3 img/s
+  batch 9425: 298s, 2026.3 img/s
+  batch 9450: 298s, 2026.3 img/s
+  batch 9475: 299s, 2026.3 img/s
+CLIP done: 9499 batches, 607936 images, 2026.3 img/s in 300.0s
+2026-09-27 02:21:33,220 [spar.telemetry] INFO: Telemetry stopped. 311 samples collected.
+2026-09-27 02:21:33,224 [spar.telemetry] INFO: Saved 311 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_NVIDIA_H200_NVL_00f739ab_20260927_021622.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_infer_clip_embed_batched
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model clip_l14 --duration 300 --batch-size 64
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      00f739abbe0b
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_NVIDIA_H200_NVL_00f739ab_20260927_021622.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_NVIDIA_H200_NVL_00f739ab_20260927_021622.parquet.partial
+  Timeout:     420s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model clip_l14 --duration 300 --batch-size 64
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=306.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 311
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_NVIDIA_H200_NVL_00f739ab_20260927_021622.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_dcgm_00f739abbe0b_20260927_021619.parquet: 1573 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_bmc_00f739abbe0b_20260927_021619.parquet: 316 samples, 100% valid, mean 1417 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_scope_00f739abbe0b_20260927_021619.parquet: 310138 bins, 310.1 s span, 308587310 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_clip_embed_batched_scope_00f739abbe0b_20260927_021619_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True
