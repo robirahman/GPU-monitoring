@@ -108,8 +108,22 @@ say() { echo "[$(date -u '+%H:%M:%SZ')] $*"; }
 if [ "${1:-}" = "--teardown" ]; then
   for z in $ZONES; do
     say "[$z] tearing down spar-flex-{req,mig,tpl}-${RUN_STAMP}-${z}"
-    gcloud compute instance-groups managed resize-requests cancel "spar-flex-mig-${RUN_STAMP}-${z}" \
-      --resize-request="spar-flex-req-${RUN_STAMP}-${z}" --project="$PROJECT" --zone="$z" --quiet >/dev/null 2>&1
+    # --resize-requests, PLURAL and comma-separated. The singular form is not a
+    # flag gcloud accepts, so with stderr discarded this cancelled nothing, ever,
+    # and quietly: teardown deleted the MIG and template while leaving the resize
+    # request queued. Those orphans keep drawing on the REGIONAL GPU quota, which
+    # is the same pool a relaunch needs -- so a teardown-then-retry could be
+    # starved by the very requests the teardown claimed to have removed.
+    # Failures are reported now rather than swallowed.
+    if ! out=$(gcloud compute instance-groups managed resize-requests cancel \
+         "spar-flex-mig-${RUN_STAMP}-${z}" \
+         --resize-requests="spar-flex-req-${RUN_STAMP}-${z}" \
+         --project="$PROJECT" --zone="$z" --quiet 2>&1); then
+      case "$out" in
+        *"not found"*|*"was not found"*) : ;;   # already gone: fine
+        *) say "[$z] WARN cancel failed: $(printf '%s' "$out" | head -1)" ;;
+      esac
+    fi
     gcloud compute instance-groups managed delete "spar-flex-mig-${RUN_STAMP}-${z}" \
       --project="$PROJECT" --zone="$z" --quiet >/dev/null 2>&1
     gcloud compute instance-templates delete "spar-flex-tpl-${RUN_STAMP}-${z}" \
