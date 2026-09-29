@@ -1215,6 +1215,25 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_nonml_stencil;         mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/hpc_distributed.py --mode stencil --grid 768 --duration "$DUR"
   c=s16_nonml_nccl_bw;         mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/hpc_distributed.py --mode nccl --max-mb 256 --duration "$DUR"
 
+  # -- REAL HPC, not our idea of it. Every non-ML multi-node cell above is
+  # something this project wrote: FFT shards, halo stencils, NCCL sweeps, duty
+  # and low-power loops. They are one author's notion of what non-ML GPU work
+  # looks like, and infershard_qwen is still the worst false-alarm family we
+  # have. HPL and GROMACS are what HPC clusters actually run. HPL is dense FP64
+  # LU -- a communication pattern nothing else here produces -- and GROMACS is
+  # neighbour-list-bound molecular dynamics, which resembles nothing in the ML
+  # corpus at all.
+  #
+  # From the NGC images, which pull ANONYMOUSLY (verified against the registry:
+  # nvcr.io/nvidia/hpc-benchmarks:24.09 and nvcr.io/hpc/gromacs:2023.2 both
+  # return HTTP 200 for a manifest under an anonymous bearer token). That is what
+  # unblocks this: the earlier attempt died trying to build a CUDA GROMACS on the
+  # node, since the Ubuntu package is CPU-only. s8_single because the workload
+  # shards itself across the node's 8 GPUs and must not be replicated per GPU.
+  # TIMEOUT_BIG because a cold image pull is minutes before any compute starts.
+  c=s16_nonml_hpl;             s8_single "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/hpc_container.py --benchmark hpl --duration "$DUR"
+  c=s16_nonml_gromacs;         s8_single "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/hpc_container.py --benchmark gromacs --duration "$DUR"
+
   # -- NEW TRAINING PROGRAMS. The training side is the worse failure: 0.5%
   # held-out recall. Two families become six.
   # LoRA: real training whose gradient all-reduce is 2-3 orders of magnitude
