@@ -120,7 +120,10 @@ if [ "${1:-}" = "--teardown" ]; then
          --resize-requests="spar-flex-req-${RUN_STAMP}-${z}" \
          --project="$PROJECT" --zone="$z" --quiet 2>&1); then
       case "$out" in
-        *"not found"*|*"was not found"*) : ;;   # already gone: fine
+        # gcloud says "Could not fetch resource" for a request that is already
+        # gone, not "not found", so matching only the latter made every teardown
+        # of an already-clean stamp print a warning that looked like a failure.
+        *"not found"*|*"was not found"*|*"Could not fetch resource"*) : ;;
         *) say "[$z] WARN cancel failed: $(printf '%s' "$out" | head -1)" ;;
       esac
     fi
