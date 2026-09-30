@@ -434,8 +434,13 @@ def main():
               f"size={args.size} internode_mbps="
               f"{inter_node_bytes * 8 / elapsed / 1e6:.1f}", flush=True)
 
+    # sync_teardown() barriers AND destroys the process group. Calling
+    # destroy_process_group() again here trips `assert pg is not None` inside
+    # torch, which is what failed every rank of s16_advtrain_pipe1b_rank0 on
+    # 2026-09-30 -- after the workload had already run its full 1044 steps and
+    # printed EVASION_TAX_DATA. A teardown bug should never be able to mark a
+    # completed cell as failed.
     sync_teardown()
-    dist.destroy_process_group()
 
 
 if __name__ == "__main__":

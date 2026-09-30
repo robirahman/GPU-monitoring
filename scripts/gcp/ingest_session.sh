@@ -53,7 +53,15 @@ for f in sorted(glob.glob(os.path.join(src, "**", "*.parquet"), recursive=True))
     base = os.path.basename(f)
     if base.endswith(".partial"):
         continue
-    if thresh > 0 and not base.startswith(("idle", "nic_")):
+    # `idle` cells are exempt because being idle is the point of them -- and so
+    # are the deliberate stall controls, for exactly the same reason. On
+    # 2026-09-30 the screen quarantined all 32 streams of
+    # s16_stalled_train_fsdp1b, a cell that ran to completion and reported
+    # STALLED_CONTROL_DATA ... train_steps=0: 0% utilisation IS its measurement.
+    # The identical cell in 20260822ctl sits in the corpus unscreened, so the
+    # screen was also splitting one family across two treatments.
+    exempt = base.startswith(("idle", "nic_")) or "stalled" in base
+    if thresh > 0 and not exempt:
         try:
             u = pd.read_parquet(f, columns=["gpu_utilization_pct"])
             med = float(u["gpu_utilization_pct"].median())

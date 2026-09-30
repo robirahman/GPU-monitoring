@@ -37,6 +37,28 @@ LOG="${LOG:-logs/queue_${RUN_STAMP}$([ "${SMOKE:-0}" = 1 ] && echo _smoke).log}"
 # ModuleNotFoundError after loading weights.
 export VLLM_USE_FLASHINFER_SAMPLER=0
 
+# --- periodic sync ----------------------------------------------------------
+# Without this, telemetry reaches GCS only when the queue exits or the shutdown
+# hook fires. run_when_free.sh starts the loop; the MIG/bootstrap path did not,
+# so the 2026-09-29 round ran 2 h with 77 parquets on local disk and nothing in
+# the bucket. Those nodes were created with --instance-termination-action=DELETE
+# -- the boot disk goes with the VM, so the ~30 s ExecStop flush was the only
+# thing standing between that round and total loss. Starting the loop HERE
+# covers every launch path, because every path comes through this script.
+#
+# The guard is a PIDFILE, not pgrep: `pgrep -f "sync_data.sh --loop"` matches
+# the command line of the shell issuing it, so it always reports the loop as
+# already running and the loop never starts.
+SYNC_PID_FILE=/tmp/spar_sync_loop.pid
+if [ ! -s "$SYNC_PID_FILE" ] || ! kill -0 "$(cat "$SYNC_PID_FILE" 2>/dev/null)" 2>/dev/null; then
+  setsid bash "${GCPDIR:-/opt/spar/gcp}/sync_data.sh" --loop "${SYNC_SECS:-120}" \
+    </dev/null >/tmp/sync_loop.log 2>&1 &
+  echo $! > "$SYNC_PID_FILE"
+  echo "[launch_queue] periodic sync loop started (pid $(cat "$SYNC_PID_FILE"), every ${SYNC_SECS:-120}s)"
+else
+  echo "[launch_queue] periodic sync loop already running (pid $(cat "$SYNC_PID_FILE"))"
+fi
+
 MASTER_ADDR="${MASTER_ADDR:-spar-gpu-0}" \
 MASTER_PORT="${MASTER_PORT:-29500}" \
 NODE_RANK="$NODE_RANK" \

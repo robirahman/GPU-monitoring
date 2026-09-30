@@ -286,6 +286,58 @@ if ! have_phase dcgm; then
 fi
 
 ########################################################################
+# Phase (c2): container runtime for the NGC HPC cells
+########################################################################
+# s16_nonml_hpl and s16_nonml_gromacs run real HPC benchmarks out of the NGC
+# containers. On 2026-09-30 all four attempts died two seconds in with
+#   FATAL: no docker/podman on PATH
+# because the image family we provision (common-cu129-ubuntu-2204-nvidia-580)
+# does not ship a container runtime. The workload had been validated on a
+# machine that happened to have docker, which is exactly the kind of check that
+# proves nothing about the target.
+#
+# This phase is best-effort on purpose: every other cell in the queue runs fine
+# without a container runtime, so a failure here must cost us two cells, never
+# the round.
+if ! have_phase container; then
+  log "(c2) installing container runtime + NVIDIA container toolkit"
+  if command -v docker >/dev/null 2>&1; then
+    log "(c2) docker already present at $(command -v docker)"
+  else
+    apt_get install docker.io || log "(c2) WARN: docker.io install failed"
+  fi
+  # The toolkit is what makes `docker run --gpus all` work; docker alone is not
+  # enough and fails only at run time, inside the cell.
+  if ! dpkg -s nvidia-container-toolkit >/dev/null 2>&1; then
+    _nvctk_list=/etc/apt/sources.list.d/nvidia-container-toolkit.list
+    if curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
+         | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg 2>/dev/null; then
+      curl -fsSL https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list \
+        | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' \
+        > "$_nvctk_list" 2>/dev/null || true
+      apt_get update || true
+      apt_get install nvidia-container-toolkit || log "(c2) WARN: toolkit install failed"
+    else
+      log "(c2) WARN: could not fetch the NVIDIA container-toolkit key"
+    fi
+  fi
+  if command -v nvidia-ctk >/dev/null 2>&1; then
+    nvidia-ctk runtime configure --runtime=docker >/dev/null 2>&1 || true
+    systemctl restart docker >/dev/null 2>&1 || true
+  fi
+  # Prove it end to end rather than trusting the installs. `docker run --gpus
+  # all` seeing zero GPUs is the failure hpc_container.py already refuses on,
+  # and it is far cheaper to learn about it here than 6 hours into a queue.
+  if command -v docker >/dev/null 2>&1 \
+     && timeout 300 docker run --rm --gpus all ubuntu:22.04 true >/dev/null 2>&1; then
+    log "(c2) container runtime OK (docker + --gpus all)"
+    mark_phase container
+  else
+    log "(c2) WARN: no working GPU container runtime -- the HPC cells will skip"
+  fi
+fi
+
+########################################################################
 # Phase (d): private repo clone + the TWO venvs
 ########################################################################
 if ! have_phase repo; then
