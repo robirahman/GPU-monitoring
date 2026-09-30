@@ -1,0 +1,143 @@
+2026-09-30 01:52:40,070 [spar.multi_gpu] INFO: Multi-GPU run: s16_nonml_himem_obl, 8 GPUs, node=1, run_id=d948afa53a36
+Run ID: d948afa53a36
+2026-09-30 01:52:40,101 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,101 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,101 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,115 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,115 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,115 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,129 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,129 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,129 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,143 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,144 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,144 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,158 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,158 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,158 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,176 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,176 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,176 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,193 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,193 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,193 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:40,211 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:52:40,211 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_himem_obl, run=d948afa53a36)
+2026-09-30 01:52:40,211 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:52:42,214 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-hpc-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration 600
+W0930 01:52:43.890000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0930 01:52:43.890000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0930 01:52:43.890000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0930 01:52:43.890000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+[rank15]: Traceback (most recent call last):
+[rank15]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank15]:     main()
+[rank15]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank15]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank15]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 7 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank9]: Traceback (most recent call last):
+[rank9]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank9]:     main()
+[rank9]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank9]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank9]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 1 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank14]: Traceback (most recent call last):
+[rank14]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank14]:     main()
+[rank14]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank14]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank14]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 6 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank8]: Traceback (most recent call last):
+[rank8]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank8]:     main()
+[rank8]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank8]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank8]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 0 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank13]: Traceback (most recent call last):
+[rank13]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank13]:     main()
+[rank13]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank13]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank13]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 5 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank10]: Traceback (most recent call last):
+[rank10]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank10]:     main()
+[rank10]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank10]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank10]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 2 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank8]:[W930 01:52:54.807061257 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank12]: Traceback (most recent call last):
+[rank12]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank12]:     main()
+[rank12]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank12]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank12]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 4 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank11]: Traceback (most recent call last):
+[rank11]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 211, in <module>
+[rank11]:     main()
+[rank11]:   File "/opt/spar/repo/workloads/nonml_distributed.py", line 111, in main
+[rank11]:     dummy = torch.empty(n, dtype=torch.float32, device=device)
+[rank11]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.98 GiB. GPU 3 has a total capacity of 39.49 GiB of which 38.22 GiB is free. Including non-PyTorch memory, this process has 1.26 GiB memory in use. Of the allocated memory 800.00 MiB is allocated by PyTorch, and 2.00 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0930 01:52:54.854000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43445 closing signal SIGTERM
+W0930 01:52:54.855000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43446 closing signal SIGTERM
+W0930 01:52:54.855000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43447 closing signal SIGTERM
+W0930 01:52:54.855000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43448 closing signal SIGTERM
+W0930 01:52:54.855000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43449 closing signal SIGTERM
+W0930 01:52:54.856000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43450 closing signal SIGTERM
+W0930 01:52:54.856000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 43451 closing signal SIGTERM
+E0930 01:52:55.898000 43374 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 7 (pid: 43452) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/nonml_distributed.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-30_01:52:54
+  host      : spar-hpc-1.c.focus-surfer-494820-g0.internal
+  rank      : 15 (local_rank: 7)
+  exitcode  : 1 (pid: 43452)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-09-30 01:52:56,404 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-30 01:52:58,406 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,427 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu0_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,429 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_nonml_himem_obl_node1_gpu0_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,429 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,433 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu1_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,435 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_nonml_himem_obl_node1_gpu1_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,435 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,439 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu2_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,441 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_nonml_himem_obl_node1_gpu2_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,441 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,446 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu3_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,447 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_nonml_himem_obl_node1_gpu3_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,447 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,452 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu4_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,453 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_nonml_himem_obl_node1_gpu4_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,453 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,458 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu5_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,459 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_nonml_himem_obl_node1_gpu5_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,459 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,464 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu6_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,465 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_nonml_himem_obl_node1_gpu6_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,466 [spar.telemetry] INFO: Telemetry stopped. 19 samples collected.
+2026-09-30 01:52:58,470 [spar.telemetry] INFO: Saved 19 rows to data/s16_nonml_himem_obl_node1_gpu7_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet
+2026-09-30 01:52:58,471 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_nonml_himem_obl_node1_gpu7_NVIDIA_A100_SXM4_40GB_d948afa53a36.parquet (19 rows)
+2026-09-30 01:52:58,472 [spar.multi_gpu] INFO: Multi-GPU run complete: d948afa53a36 (rc=1)
