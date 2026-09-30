@@ -17,14 +17,21 @@ already knows how to classify `xr_*` names as shape rather than level. Only the
 wiring was missing; `scope_ladder_eval.py` was the sole caller.
 
 That matters because the measured spread is enormous. Median inter-node
-throughput over multi-node cells:
+throughput over multi-node cells, in MiB/s -- which is what the nic_*_mbps
+columns actually hold despite their name (see collect_host_telemetry.py; the
+figures below were previously quoted as Mbps, which understated every one of
+them by 8.4x):
 
-    train_fsdp  16077 Mbps        inferrec_dlrm  5907 Mbps
+    train_fsdp  16077 MiB/s       inferrec_dlrm  5907 MiB/s
     contrastive  1947             nonml (hpc)    2835
     diffusion     580             inferserve       93
     pipe          513             infershard        37
     ddp           184
     lora            0.003
+
+The ratio that matters -- FSDP against sharded inference, ~440x -- is unchanged,
+because it is a ratio. In Mbit/s the top of that table is ~135 Gbps and the
+bottom ~0.025 Mbps.
 
 FSDP against sharded LLM inference is ~440x, which is the separation this
 project has been relying on. But the 2026-09-23 round broke the heuristic: the

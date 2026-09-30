@@ -41,6 +41,26 @@ log = logging.getLogger("spar.host")
 # NVML KB/s by 1024, i.e. reports MiB/s). Keeping the same unit means NIC and
 # PCIe rates are directly comparable in a feature vector.
 _MIB = 1024.0 * 1024.0
+# UNITS. Every `nic_*_mbps` column below is bytes/2**20/dt -- MEBIBYTES PER
+# SECOND, not megabits. The name is wrong and has been since the collector was
+# written; it is kept because 423 nic_*.parquet in the corpus carry it and a
+# rename would split the schema for no analytical gain.
+#
+# Nothing published so far is affected: every comparison drawn from these
+# columns is a RATIO (FSDP ~440x sharded inference), and ratios do not care
+# about the unit. What it does affect is any ABSOLUTE comparison -- e.g. against
+# the 100 Mbps consumer link in arXiv 2605.29359. Read straight off the column,
+# `train_pipe 513` was reported as 513 Mbps; the true figure is 513 MiB/s, i.e.
+# 4302 Mbps, 8.4x higher.
+#
+# Use MBPS_PER_MIBPS for anything that compares against a bitrate.
+MBPS_PER_MIBPS = 8.0 * 1024.0 * 1024.0 / 1e6      # 8.389
+def mibps_to_mbps(v):
+    """MiB/s (what these columns hold) -> Mbit/s (what link rates are quoted in)."""
+    return v * MBPS_PER_MIBPS
+def mbps_to_mibps(v):
+    """Mbit/s -> MiB/s. 100 Mbps -> 11.92, the shaping verification threshold."""
+    return v / MBPS_PER_MIBPS
 
 
 def _read_proc_net_dev() -> dict:
