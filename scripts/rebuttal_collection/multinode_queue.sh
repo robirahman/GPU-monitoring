@@ -1287,6 +1287,20 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_train_moe_bal;       mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_moe.py --experts-per-rank 2 --top-k 2 --duration "$DUR"
   c=s16_train_moe_skew;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_moe.py --experts-per-rank 2 --top-k 2 --router-skew 4.0 --duration "$DUR"
   c=s16_train_moe_top1;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_moe.py --experts-per-rank 4 --top-k 1 --duration "$DUR"
+
+  # Megatron tensor parallelism: ~98 collectives per step instead of one, each
+  # sized by the ACTIVATION rather than the model. High message RATE at small
+  # message size is the axis the corpus has never sampled, and the regime where
+  # per-window aggregates most plausibly wash the signal out.
+  #
+  # The two cells are the same program either side of the node boundary, which
+  # is the whole point: tp16 puts every activation collective on the NIC, while
+  # tp8dp2 is the arrangement a real deployment picks (TP over NVLink, data
+  # parallel over the NIC) and is nearly silent between gradient all-reduces.
+  # A detector that keys on inter-node volume should find these two very
+  # different despite their being the identical workload.
+  c=s16_train_tp16;          mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_tp.py --tp-size 16 --duration "$DUR"
+  c=s16_train_tp8;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_tp.py --tp-size 8  --duration "$DUR"
   # Pipeline-parallel, HONEST. Same GPipe mechanism the MN-P cells use, but
   # named for what it is and run at a realistic microbatch count rather than the
   # mb1 extreme the evasion ladder sweeps to. honest_mask() excludes every
