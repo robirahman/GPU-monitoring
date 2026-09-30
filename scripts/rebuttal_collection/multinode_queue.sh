@@ -185,6 +185,14 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
   # rid = sha1(RUN_STAMP_cell_rep), so keying the marker on it makes it unique
   # per REP. Keyed on cell alone, rep 2 and rep 3 saw rep 1's marker and skipped
   # every cell -- REPS=3 silently collected a single rep.
+  #
+  # Clear any bandwidth shaping before EVERY cell, shaped or not. A cell that
+  # died mid-run with a qdisc installed would silently cap every later cell in
+  # the queue, and an unshaped cell recorded under a shaped name is worse than a
+  # missing one. Reset-on-entry is the guarantee; the trap in mn_torchrun_bw
+  # only covers a clean exit.
+  bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true
+
   local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
   local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
   if [ -f "$marker" ]; then say "SKIP  $stage ($(cat "$marker"))"; return 0; fi
@@ -317,6 +325,34 @@ mn_torchrun() {  # mn_torchrun <stage> <run_id> <timeout> -- <workload.py args..
         --rdzv-backend=c10d --rdzv-endpoint="${MASTER_ADDR}:${MASTER_PORT}" \
         --rdzv-conf="join_timeout=${RENDEZVOUS_TIMEOUT}" --nproc-per-node=8 \
         "$@"
+}
+
+# mn_torchrun_bw <stage> <run_id> <timeout> -- <workload.py args...>
+# Identical to mn_torchrun except the PEER LINK is capped for the cell's
+# duration. Shaping goes on AFTER cell_barrier (which talks to GCS) and comes
+# off unconditionally, including on timeout and on signal.
+#
+# A _bw cell that runs UNSHAPED is a mislabelled cell, and the name is
+# load-bearing: rid_for() derives the shared run_id and the GCS barrier key from
+# it, so a node cannot rename at runtime without deadlocking against its peer.
+# The honest outcome when shaping is unavailable is to skip -- the unshaped half
+# of the round still runs and returns its value.
+mn_torchrun_bw() {
+  local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
+  if ! NETSHAPE_CELL="$stage" NETSHAPE_RID="$rid" \
+       bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" up \
+         --ttl "$((to + 300))" --json "$OUTDIR" 2>&1 | grep -q "shaped "; then
+    say "SKIP  $stage (shaping unavailable; a _bw cell that is not shaped would"
+    say "      be a mislabelled cell, so it is skipped rather than faked)"
+    bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true
+    return 0
+  fi
+  trap 'bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true' EXIT INT TERM
+  mn_torchrun "$stage" "$rid" "$to" -- "$@"
+  local rc=$?
+  bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down --json "$OUTDIR" >/dev/null 2>&1 || true
+  trap - EXIT INT TERM
+  return $rc
 }
 
 # Sharded vLLM inference across both nodes via Ray. Asymmetric: node0 is the
@@ -1301,6 +1337,38 @@ for rep in $(seq 1 "$REPS"); do
   # different despite their being the identical workload.
   c=s16_train_tp16;          mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_tp.py --tp-size 16 --duration "$DUR"
   c=s16_train_tp8;           mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_tp.py --tp-size 8  --duration "$DUR"
+
+  # ── Distributed RL: train and infer on ONE cluster, per rank ──────────────
+  # No training family in the corpus has ranks doing categorically different
+  # work. An IMPALA actor runs pure inference while the learner trains, at the
+  # same instant, so xr_level_spread and the cross-rank correlations see
+  # something they never have. --learner-rank 15 is the adversarially
+  # interesting one: sliding_windows_multinode takes its single-stream features
+  # from the LOWEST rank, so the canonical stream becomes an actor doing pure
+  # inference while the job is training.
+  c=s16_train_impala_a15;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_rl_dist.py --arch impala --learner-rank 0  --actor-jitter 2 --duration "$DUR"
+  c=s16_train_impala_r15;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_rl_dist.py --arch impala --learner-rank 15 --actor-jitter 2 --duration "$DUR"
+  c=s16_train_apexrl_replay; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_rl_dist.py --arch apex --actor-jitter 3 --duration "$DUR"
+  c=s16_train_ppodist_r4;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_rl_dist.py --arch ppo --rollout-steps 4 --duration "$DUR"
+
+  # ── Streaming / Decoupled DiLoCo ──────────────────────────────────────────
+  # A replica is a NODE, not a rank: at 2 replicas the compressed all-gather
+  # costs exactly what an all-reduce would, so E3M0's 8x is realised. At 16
+  # replicas it nets 1.00x and int8 nets 0.50x -- the _r16 cell exists to
+  # MEASURE that prediction rather than assert it.
+  c=s16_train_streamdiloco_f8;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode streaming --fragments 8 --sync-every 100 --tau 1  --compress e3m0 --duration "$DUR"
+  c=s16_train_streamdiloco_t20; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode streaming --fragments 8 --sync-every 100 --tau 20 --compress e3m0 --duration "$DUR"
+  c=s16_train_streamdiloco_r16; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode streaming --fragments 8 --sync-every 100 --tau 1  --compress e3m0 --replica-ranks 1 --duration "$DUR"
+  c=s16_train_decoupdiloco_k1;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode decoupled --fragments 24 --sync-every 24 --tau 2 --quorum 1 --grace 1 --speed-jitter 0.1 --compress e3m0 --duration "$DUR"
+
+  # ── The same cells on a 100 Mbps / 100 ms link ────────────────────────────
+  # The regime the paper actually models. Shaped and unshaped share a family
+  # (family() discards everything past the second token), so bandwidth is a
+  # within-family variable and holding out the family holds out both regimes.
+  c=s16_train_localsgd_h50_bw100;    mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 50 --duration "$DUR"
+  c=s16_train_streamdiloco_f8_bw100; mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode streaming --fragments 8 --sync-every 100 --tau 1 --compress e3m0 --duration "$DUR"
+  c=s16_train_decoupdiloco_k1_bw100; mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode decoupled --fragments 24 --sync-every 24 --tau 2 --quorum 1 --grace 1 --speed-jitter 0.1 --compress e3m0 --duration "$DUR"
+  c=s16_train_impala_a15_bw100;      mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_rl_dist.py --arch impala --learner-rank 0 --actor-jitter 2 --duration "$DUR"
   # Pipeline-parallel, HONEST. Same GPipe mechanism the MN-P cells use, but
   # named for what it is and run at a realistic microbatch count rather than the
   # mb1 extreme the evasion ladder sweeps to. honest_mask() excludes every

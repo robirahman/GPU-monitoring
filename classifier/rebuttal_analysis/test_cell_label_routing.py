@@ -44,6 +44,22 @@ from multinode_family_holdout import family  # noqa: E402
 # (cell, expected class). Every cell this round collects, plus the ones already
 # in the corpus whose routing we rely on.
 CELLS = [
+    # --- F. distributed training over low-bandwidth links, and distributed RL ---
+    # Every one starts s16_train_ so cls=train satisfies threeway_label's
+    # substring chain; the SECOND token picks the holdout family and everything
+    # past it is discarded, which is what makes _bw100 a within-family variable.
+    ("s16_train_impala_a15", "ml_training"),
+    ("s16_train_impala_r15", "ml_training"),
+    ("s16_train_impala_a15_bw100", "ml_training"),
+    ("s16_train_apexrl_replay", "ml_training"),
+    ("s16_train_ppodist_r4", "ml_training"),
+    ("s16_train_streamdiloco_f8", "ml_training"),
+    ("s16_train_streamdiloco_t20", "ml_training"),
+    ("s16_train_streamdiloco_r16", "ml_training"),
+    ("s16_train_streamdiloco_f8_bw100", "ml_training"),
+    ("s16_train_decoupdiloco_k1", "ml_training"),
+    ("s16_train_decoupdiloco_k1_bw100", "ml_training"),
+    ("s16_train_localsgd_h50_bw100", "ml_training"),
     # --- A. async serving (written, fixed, never collected) ---
     ("s16_inferserve_poisson_7b", "ml_inference"),
     ("s16_inferserve_saturate_7b", "ml_inference"),
