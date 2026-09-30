@@ -1259,6 +1259,34 @@ for rep in $(seq 1 "$REPS"); do
   # Diffusion: activation memory rises and falls WITHIN a step. The corpus has
   # no training program whose memory moves.
   c=s16_train_diffusion;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diffusion.py --resolution 256 --batch-size 16 --duration "$DUR"
+
+  # ── Parallelism strategies the corpus has never seen ──────────────────────
+  # The 2026-09-30 LOFO put held-out TRAIN recall at 0.5687 with train_ddp at
+  # 0.0255, and the ablations showed neither more data nor more NIC coverage
+  # moves it -- train_ddp already has sidecars on 80.6% of its windows. What is
+  # missing is training whose COMMUNICATION MACHINERY differs, so these cells
+  # are chosen for their collectives, not for their model size.
+
+  # Local SGD / DiLoCo: the ranks are independent between syncs, so the NIC goes
+  # completely silent for H steps and then moves the whole parameter set at once.
+  # Long flat stretches punctuated by rare huge bursts is a shape no family in
+  # the corpus produces -- and the one that most resembles independent inference
+  # replicas, which is the disguise this project exists to detect. The sweep over
+  # H is the point: H=1 is ordinary data parallelism and H=500 is nearly silent,
+  # so the cells bracket where detection fails.
+  c=s16_train_localsgd_h1;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 1   --duration "$DUR"
+  c=s16_train_localsgd_h50;  mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 50  --duration "$DUR"
+  c=s16_train_localsgd_h200; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 200 --duration "$DUR"
+  c=s16_train_localsgd_h500; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 500 --duration "$DUR"
+
+  # MoE expert parallelism: all-to-all, a collective no other cell uses, with
+  # volume that scales with TOKENS rather than parameters. The skewed variant is
+  # deliberately router-collapsed so some ranks are much busier than others --
+  # every other training family is rank-symmetric, so the cross-rank features
+  # have never seen a training job whose ranks legitimately disagree.
+  c=s16_train_moe_bal;       mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_moe.py --experts-per-rank 2 --top-k 2 --duration "$DUR"
+  c=s16_train_moe_skew;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_moe.py --experts-per-rank 2 --top-k 2 --router-skew 4.0 --duration "$DUR"
+  c=s16_train_moe_top1;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_moe.py --experts-per-rank 4 --top-k 1 --duration "$DUR"
   # Pipeline-parallel, HONEST. Same GPipe mechanism the MN-P cells use, but
   # named for what it is and run at a realistic microbatch count rather than the
   # mb1 extreme the evasion ladder sweeps to. honest_mask() excludes every
