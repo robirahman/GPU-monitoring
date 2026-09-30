@@ -943,7 +943,12 @@ for rep in $(seq 1 "$REPS"); do
       --batch-size 32 --gpu-memory-utilization 0.92
   c=s16_train_fsdp7b_seq2k;   mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/fsdp_training.py --size 7b --batch-size 2 --seq-len 2048 --duration "$DUR"
 
-  c=s16_nonml_himem_obl;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration "$DUR"
+  # --alloc-gb 44 is the cell's identity, not a tunable, so this is gated rather
+  # than scaled: on the A100-40GB pair drawn on 2026-09-30 every rank died with
+  # "Tried to allocate 40.98 GiB. GPU has a total capacity of 39.49 GiB" and the
+  # round spent 20 minutes collecting 19 rows of an OOM. Skipping is the honest
+  # outcome on a card that cannot hold it.
+  c=s16_nonml_himem_obl;      need_gb 48 "$c" && mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/nonml_distributed.py --mode hpc --alloc-gb 44 --duty 1.0 --duration "$DUR"
   # 1b first, as a cheap proof of the rank0-init/broadcast path before the 70b
   # cell spends ~78 GB of host init and 45 min on it.
   c=s16_advtrain_pipe1b_rank0; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/adversarial_multinode_pipeline.py --size 1b --rank0-init 1 --microbatches 1 --batch-size 8 --seq-len 1024 --duration "$DUR"
