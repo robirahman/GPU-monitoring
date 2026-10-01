@@ -27,6 +27,11 @@
 #     ZONES='us-west1-b asia-southeast1-c' bash scripts/gcp/provision_spot_pair.sh
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
+# Remember what the CALLER set before env.sh gets a say. env.sh defaults
+# MACHINE_TYPE to a3-highgpu-8g, so a plain `MACHINE_TYPE="${MACHINE_TYPE:-a2-...}"`
+# after sourcing it silently never applies -- which is how this script spent
+# four zones trying to create H100s while reporting "no capacity" for A100s.
+_MT_SET="${MACHINE_TYPE:-}"
 source scripts/gcp/env.sh 2>/dev/null || true
 
 PROJECT="${PROJECT:-focus-surfer-494820-g0}"
@@ -35,7 +40,7 @@ RUN_STAMP="${RUN_STAMP:?set RUN_STAMP}"
 SESSION="${SESSION:-${RUN_STAMP%[a-z]}}"
 NODE0="${SPOT_NODE0:-spar-spot-0}"
 NODE1="${SPOT_NODE1:-spar-spot-1}"
-MACHINE_TYPE="${MACHINE_TYPE:-a2-highgpu-8g}"
+MACHINE_TYPE="${_MT_SET:-a2-highgpu-8g}"
 IMAGE_FAMILY="${IMAGE_FAMILY:-common-cu129-ubuntu-2204-nvidia-580}"
 IMAGE_PROJECT="${IMAGE_PROJECT:-deeplearning-platform-release}"
 BOOT_DISK_SIZE="${BOOT_DISK_SIZE:-500GB}"
@@ -56,7 +61,7 @@ existing="$(gcloud compute instances list --project="$PROJECT" \
 # database, so the 9p working tree cannot corrupt it.
 read -r -a STAGE_PATHS <<< "${SPAR_STAGE_PATHS:-workloads scripts classifier requirements_v2.txt requirements_gcp_extra.txt requirements_tpu.txt requirements.txt}"
 COMMIT="$(git rev-parse HEAD)"
-TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
+TMP="$(mktemp -d)"   # NOT auto-removed: it holds the create logs
 git archive --format=tar HEAD -- "${STAGE_PATHS[@]}" | gzip -9 > "$TMP/spar_repo.tar.gz"
 say "repo archive $(du -h "$TMP/spar_repo.tar.gz" | cut -f1) at ${COMMIT:0:12} -> $STAGING/"
 gcloud storage cp "$TMP/spar_repo.tar.gz" "$STAGING/spar_repo.tar.gz" >/dev/null 2>&1 || {
@@ -164,23 +169,54 @@ mk() {  # mk <zone> <name> <idx>
     --metadata-from-file=startup-script="$TMP/startup.sh" \
     --metadata="spar-session=${SESSION},spar-master-addr=${NODE0},spar-master-port=${MASTER_PORT},spar-bucket=${BUCKET},spar-node0-name=${NODE0},spar-node1-name=${NODE1},spar-node-index=$3,spar-run-stamp=${RUN_STAMP}" \
     --labels="spar-role=gpu,spar-stamp=$(printf '%s' "$RUN_STAMP" | tr -cd 'a-z0-9-')" \
-    >/dev/null 2>&1
+    2>&1 | tee "$TMP/create.$2.log" | grep -qE "^NAME|Created \["
+}
+why() {  # the reason the last create failed, not just that it did
+  grep -viE "^$|global DNS|zonal-dns|^WARNING|Disk size|^NAME|resize_pd" \
+    "$TMP/create.$1.log" 2>/dev/null | head -4 | tr '\n' ' '
 }
 rm_() { gcloud compute instances delete "$2" --project="$PROJECT" --zone="$1" --quiet >/dev/null 2>&1; }
 
+# A nonzero gcloud exit does NOT mean the VM was not created. On 2026-10-01 the
+# create of node0 in us-west1-b returned `gcloud crashed (ReadTimeout)` after
+# 300 s -- and the instance existed and was RUNNING. The script read the nonzero
+# status as "this zone has no capacity", moved on without ever trying node1, and
+# left an 8xA100 billing while every later zone collided on the name it had
+# supposedly failed to take.
+#
+# So: never infer absence from a failed call. Ask.
+exists() { gcloud compute instances describe "$2" --project="$PROJECT" --zone="$1" \
+             --format='value(name)' >/dev/null 2>&1; }
+
+for pass in $(seq 1 "${PASSES:-1}"); do
 for z in $ZONES; do
-  say "trying $z"
-  if ! mk "$z" "$NODE0" 0; then say "  $NODE0 unavailable in $z"; continue; fi
-  say "  $NODE0 landed -- racing for $NODE1"
-  if mk "$z" "$NODE1" 1; then
+  say "pass $pass: trying $z"
+  if ! mk "$z" "$NODE0" 0; then
+    # Verify before believing it. A timeout is "unknown", not "absent".
+    if exists "$z" "$NODE0"; then
+      say "  $NODE0 create reported failure but the VM EXISTS in $z -- continuing with it"
+    else
+      say "  $NODE0 failed in $z: $(why "$NODE0")"; continue
+    fi
+  fi
+  say "  $NODE0 landed in $z -- racing for $NODE1"
+  if mk "$z" "$NODE1" 1 || exists "$z" "$NODE1"; then
     say "PAIR UP in $z (SPOT): $NODE0 + $NODE1"
     say "  cells:  $ONLY_CELLS  (REPS=$REPS)"
     say "  DWS requests for $RUN_STAMP are deliberately LEFT QUEUED as the fallback."
     say "  watch:  gcloud compute instances list --filter='name~^spar-spot'"
     exit 0
   fi
-  say "  $NODE1 failed -- releasing $NODE0 rather than leaving half a pair billing"
+  say "  $NODE1 failed in $z: $(why "$NODE1")"
+  say "  releasing $NODE0 rather than leaving half a pair billing"
   rm_ "$z" "$NODE0"
+  # And CONFIRM the release, because the next zone's create will collide on the
+  # name if this silently failed -- which is what turned one bad zone into five.
+  for _ in $(seq 1 30); do exists "$z" "$NODE0" || break; sleep 10; done
+  exists "$z" "$NODE0" && say "  WARNING: $NODE0 still present in $z after delete"
 done
-say "no zone had capacity for a Spot pair"
+[ "${PASSES:-1}" -gt 1 ] && [ "$pass" -lt "${PASSES:-1}" ] && \
+  { say "pass $pass found nothing; sleeping ${SLEEP_BETWEEN:-180}s"; sleep "${SLEEP_BETWEEN:-180}"; }
+done
+say "no zone had capacity for a Spot pair after ${PASSES:-1} pass(es)"
 exit 1
