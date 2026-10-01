@@ -28,6 +28,7 @@ exits, which is how you check a new image tag without burning a cell.
 """
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -81,9 +82,12 @@ def docker_ok(exe: str) -> bool:
         if r.returncode != 0:
             print(f"  {exe} info failed: {r.stderr.strip()[:200]}", flush=True)
             return False
-        r = run([exe, "run", "--rm", "--gpus", "all", IMAGES["hpl"],
-                 "nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], timeout=900)
-        n = len([l for l in r.stdout.splitlines() if l.strip()])
+        r = run([exe, "run", "--rm", "--gpus", "all", "--entrypoint", "",
+                 IMAGES["hpl"], "nvidia-smi", "-L"], timeout=900)
+        # Count only real GPU lines. Counting every non-empty line is how an
+        # 8-GPU node reported 23: the entrypoint's banner came through too.
+        n = len([l for l in r.stdout.splitlines()
+                 if re.match(r"^GPU \d+:", l.strip())])
         print(f"  container sees {n} GPU(s)", flush=True)
         return n > 0
     except Exception as e:
@@ -102,15 +106,28 @@ def pull(exe: str, image: str) -> bool:
 
 def find_launcher(exe: str, bench: str) -> str:
     image = IMAGES[bench]
+    # --entrypoint="" is load-bearing on every probe below. These NGC images
+    # define an ENTRYPOINT, so `docker run IMAGE test -x /path` does NOT run
+    # `test` -- it passes "test -x /path" as ARGUMENTS to the entrypoint, which
+    # ignores them and exits 0 or prints a banner. Measured 2026-10-01: the
+    # GROMACS launcher probe therefore never executed a single test, reported
+    # "no launcher for gromacs", and failed the cell in 23 s -- while the GPU
+    # probe counted the HPL image's banner lines and announced "container sees
+    # 23 GPU(s)" on an 8-GPU node. Same bug, two symptoms.
     for path in LAUNCHERS[bench]:
-        r = run([exe, "run", "--rm", image, "test", "-x", path], timeout=300)
+        r = run([exe, "run", "--rm", "--entrypoint", "", image,
+                 "test", "-x", path], timeout=300)
         if r.returncode == 0:
             print(f"  launcher: {path}", flush=True)
             return path
     # Fall back to a search rather than giving up: the point of probing.
-    name = "gmx" if bench == "gromacs" else f"{bench}.sh"
-    r = run([exe, "run", "--rm", image, "bash", "-lc",
-             f"find / -maxdepth 6 -name {name} -type f 2>/dev/null | head -5"], timeout=600)
+    # -type f misses a symlink, and GROMACS installs SIMD-specific trees
+    # (/usr/local/gromacs/avx2_256/bin/gmx) deeper than maxdepth 6.
+    name = "gmx*" if bench == "gromacs" else f"{bench}.sh"
+    r = run([exe, "run", "--rm", "--entrypoint", "", image, "bash", "-lc",
+             f"command -v gmx gmx_mpi 2>/dev/null; "
+             f"find / -maxdepth 9 \\( -type f -o -type l \\) -name '{name}' "
+             f"-perm -u+x 2>/dev/null | head -5"], timeout=900)
     found = [l.strip() for l in r.stdout.splitlines() if l.strip()]
     if found:
         print(f"  launcher (found by search): {found[0]}", flush=True)
@@ -124,7 +141,7 @@ def find_dat(exe: str, bench: str) -> str:
     if bench != "hpl":
         return ""
     image = IMAGES[bench]
-    r = run([exe, "run", "--rm", image, "bash", "-lc",
+    r = run([exe, "run", "--rm", "--entrypoint", "", image, "bash", "-lc",
              "find / -maxdepth 7 -name 'HPL*.dat' 2>/dev/null | head -20"], timeout=600)
     dats = [l.strip() for l in r.stdout.splitlines() if l.strip()]
     if not dats:
@@ -189,8 +206,17 @@ def main():
         prep = "echo prep-done"
 
     cmd = [exe, "run", "--rm", "--gpus", "all", "--shm-size=1g",
-           "--ulimit", "memlock=-1", "--ulimit", "stack=67108864",
-           image, "bash", "-lc", f"{prep}; timeout {args.duration} bash -lc '{inner}'"]
+           "--ulimit", "memlock=-1", "--ulimit", "stack=67108864"]
+    # HPL/HPCG are PROVEN on the stock entrypoint -- s16_nonml_hpl ran a full
+    # 735 s through it on 2026-10-01 -- and that entrypoint may be what puts
+    # mpirun and the CUDA libs on PATH, so it is left alone. GROMACS never got
+    # this far, and its image swallowed `bash -lc` during probing, so there the
+    # entrypoint is bypassed and `bash -l` sources /etc/profile to recover
+    # whatever environment it would have set.
+    if args.benchmark == "gromacs":
+        cmd += ["--entrypoint", ""]
+    cmd += [image, "bash", "-lc",
+            f"{prep}; timeout {args.duration} bash -lc '{inner}'"]
     print(f"  running for {args.duration}s", flush=True)
     t0 = time.time()
     p = subprocess.run(cmd, text=True)
