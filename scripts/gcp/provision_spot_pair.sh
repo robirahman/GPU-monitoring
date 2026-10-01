@@ -49,6 +49,10 @@ REPS="${REPS:-2}"
 ONLY_CELLS="${ONLY_CELLS:-^s16_}"
 ZONES="${ZONES:-us-west1-b asia-southeast1-c us-central1-a europe-west4-b}"
 MAX_RUN="${MAX_RUN:-43200s}"
+# SPOT by default; STANDARD gives a non-preemptible pair. Three Spot pairs were
+# reclaimed inside 25 minutes each on 2026-10-01, against a 5.1 h round, so the
+# cheaper option can cost more wall clock than it saves in dollars.
+PROVISIONING_MODEL="${PROVISIONING_MODEL:-SPOT}"
 STAGING="${BUCKET}/staging/${RUN_STAMP}"
 CTRL="${BUCKET}/runs/${SESSION}/control"
 say() { echo "[$(date -u '+%H:%M:%SZ')] $*"; }
@@ -164,7 +168,8 @@ mk() {  # mk <zone> <name> <idx>
     --machine-type="$MACHINE_TYPE" \
     --image-family="$IMAGE_FAMILY" --image-project="$IMAGE_PROJECT" \
     --boot-disk-size="$BOOT_DISK_SIZE" --boot-disk-type=pd-balanced \
-    --provisioning-model=SPOT --instance-termination-action=DELETE \
+    --provisioning-model="$PROVISIONING_MODEL" --instance-termination-action=DELETE \
+    --maintenance-policy=TERMINATE \
     --max-run-duration="$MAX_RUN" --scopes=cloud-platform \
     --metadata-from-file=startup-script="$TMP/startup.sh" \
     --metadata="spar-session=${SESSION},spar-master-addr=${NODE0},spar-master-port=${MASTER_PORT},spar-bucket=${BUCKET},spar-node0-name=${NODE0},spar-node1-name=${NODE1},spar-node-index=$3,spar-run-stamp=${RUN_STAMP}" \
@@ -201,7 +206,7 @@ for z in $ZONES; do
   fi
   say "  $NODE0 landed in $z -- racing for $NODE1"
   if mk "$z" "$NODE1" 1 || exists "$z" "$NODE1"; then
-    say "PAIR UP in $z (SPOT): $NODE0 + $NODE1"
+    say "PAIR UP in $z ($PROVISIONING_MODEL): $NODE0 + $NODE1"
     say "  cells:  $ONLY_CELLS  (REPS=$REPS)"
     say "  DWS requests for $RUN_STAMP are deliberately LEFT QUEUED as the fallback."
     say "  watch:  gcloud compute instances list --filter='name~^spar-spot'"
