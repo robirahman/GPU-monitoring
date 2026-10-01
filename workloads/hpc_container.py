@@ -158,12 +158,46 @@ def make_dat(ngpu: int, n: int) -> str:
             q = cand
             break
     p_rows = ngpu // q
-    return "\n".join([
-        "HPLinpack benchmark input file", "spar-generated", "HPL.out", "6",
-        "1", str(n), "1", "1024", "0", "1", str(p_rows), str(q),
-        "16.0", "1", "2", "1", "4", "1", "1", "1", "0", "1", "0", "2", "0",
-        "1", "1", "8", "8", "2", "64", "0",
-    ])
+    # HPL.dat is POSITIONAL and unforgiving: every line is read by index, so one
+    # missing or extra line shifts everything after it and HPL rejects the file
+    # with an error naming a field you never touched. The first attempt at this
+    # omitted a count line, which pushed NDIVs onto a "1" and produced
+    # "Value of NDIV less than 2" -- a complaint about line 19 caused by line 15.
+    # Hence one entry per line with its meaning attached.
+    rows = [
+        ("HPLinpack benchmark input file", "title"),
+        ("spar-generated", "comment"),
+        ("HPL.out", "output file"),
+        ("6", "device out (6=stdout)"),
+        ("1", "# of problem sizes"),
+        (str(n), "Ns"),
+        ("1", "# of NBs"),
+        ("1024", "NBs"),
+        ("0", "PMAP (0=row-major)"),
+        ("1", "# of process grids"),
+        (str(p_rows), "Ps"),
+        (str(q), "Qs"),
+        ("16.0", "threshold"),
+        ("1", "# of panel fact"),
+        ("2", "PFACTs (2=right)"),
+        ("1", "# of recursive stopping criteria"),
+        ("4", "NBMINs (>=1)"),
+        ("1", "# of panels in recursion"),
+        ("2", "NDIVs (>=2)"),
+        ("1", "# of recursive panel fact"),
+        ("1", "RFACTs (1=crout)"),
+        ("1", "# of broadcast"),
+        ("0", "BCASTs"),
+        ("1", "# of lookahead depth"),
+        ("0", "DEPTHs (>=0)"),
+        ("2", "SWAP (2=mix)"),
+        ("64", "swapping threshold"),
+        ("0", "L1 transposed"),
+        ("0", "U transposed"),
+        ("1", "Equilibration (1=yes)"),
+        ("8", "memory alignment in doubles"),
+    ]
+    return "\n".join(v for v, _ in rows)
 
 
 def find_dat(exe: str, bench: str) -> str:
