@@ -60,6 +60,49 @@ def _worker(rank, world, initfile, results):
     dist.destroy_process_group()
 
 
+def test_delta_vs_param_form():
+    """The reason compression had to switch the sync to delta form.
+
+    Top-k on a PARAMETER tensor keeps the largest 1% of the weights and zeroes
+    the other 99%, destroying the model in a single sync. Top-k on a DELTA keeps
+    the largest 1% of the CHANGE and postpones the rest, which error feedback
+    carries forward. Both run. Both move exactly the same number of bytes. Only
+    one of them is training.
+    """
+    import torch as _t
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from workloads.gradcompress import TopKCodec
+
+    _t.manual_seed(0)
+    codec = TopKCodec(k_frac=0.01, error_feedback=True)
+    params = _t.randn(10000) * 0.1 + 1.0          # weights near 1.0
+    delta = _t.randn(10000) * 1e-3                # a plausible inner-loop change
+
+    p_payload, p_meta = codec.encode(params)
+    d_payload, d_meta = codec.encode(delta)
+    p_back = codec.decode(p_payload, p_meta)
+    d_back = codec.decode(d_payload, d_meta)
+
+    p_zero = float((p_back == 0).float().mean())
+    fails = []
+    if p_zero < 0.9:
+        fails.append(f"top-k on parameters zeroed only {p_zero:.1%} -- the test "
+                     f"cannot demonstrate the hazard it exists for")
+    # In delta form the RECONSTRUCTED PARAMETER is base + decoded delta, which
+    # is never mostly zero however sparse the delta is. That is the whole point.
+    recon = params + d_back
+    r_zero = float((recon == 0).float().mean())
+    if r_zero > 0.01:
+        fails.append(f"delta form still zeroed {r_zero:.1%} of the parameters")
+    if float((recon - params).abs().max()) == 0.0:
+        fails.append("delta form applied no change at all")
+    # Byte counts are identical, which is why this cannot be caught downstream.
+    if codec.payload_bytes(p_payload, p_meta) != codec.payload_bytes(d_payload, d_meta):
+        fails.append("the two forms move different byte counts, so the hazard "
+                     "would be visible in telemetry after all")
+    return fails
+
+
 def main():
     world = 2
     mp.set_start_method("spawn", force=True)
@@ -70,7 +113,7 @@ def main():
         mp.spawn(_worker, args=(world, initfile, results), nprocs=world, join=True)
         results = dict(results)
 
-    fails = []
+    fails = test_delta_vs_param_form()
 
     # 1. Every rank leaves the sync holding identical weights. If this fails the
     #    replicas never actually merged and the job is N independent models.

@@ -1369,6 +1369,20 @@ for rep in $(seq 1 "$REPS"); do
   c=s16_train_streamdiloco_f8_bw100; mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode streaming --fragments 8 --sync-every 100 --tau 1 --compress e3m0 --duration "$DUR"
   c=s16_train_decoupdiloco_k1_bw100; mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_diloco_stream.py --mode decoupled --fragments 24 --sync-every 24 --tau 2 --quorum 1 --grace 1 --speed-jitter 0.1 --compress e3m0 --duration "$DUR"
   c=s16_train_impala_a15_bw100;      mn_torchrun_bw "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_rl_dist.py --arch impala --learner-rank 0 --actor-jitter 2 --duration "$DUR"
+
+  # ── SWARM: stochastic routing, straggler bypass, a real mid-run migration ──
+  # strided puts every stage across both nodes so roughly half of each hop
+  # crosses the NIC; blocked keeps stages inside a node so only one edge does.
+  # Same program, either side of the boundary.
+  c=s16_train_swarm_s4;      mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/train_swarm.py --stages 4 --layout strided --straggler-ranks 5,11 --straggler-factor 3.0 --rebalance-every 300 --act-compress int8 --duration "$DUR"
+  c=s16_train_swarm_blocked; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT_BIG" -- workloads/train_swarm.py --stages 4 --layout blocked --ban-rank 6 --ban-at 120 --act-compress int8 --duration "$DUR"
+
+  # ── Compression on an existing family, in DELTA form ──────────────────────
+  # At one replica per rank the compressed all-gather costs W/2 times an
+  # all-reduce, so e3m0 is predicted to net 1.00x and topk 1% about 6.25x.
+  # These two cells measure that rather than taking it on trust.
+  c=s16_train_localsgd_q4;    mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 50 --compress e3m0 --duration "$DUR"
+  c=s16_train_localsgd_topk1; mn_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT" -- workloads/train_localsgd.py --size 1b --sync-every 50 --compress topk:0.01 --duration "$DUR"
   # Pipeline-parallel, HONEST. Same GPipe mechanism the MN-P cells use, but
   # named for what it is and run at a realistic microbatch count rather than the
   # mb1 extreme the evasion ladder sweeps to. honest_mask() excludes every

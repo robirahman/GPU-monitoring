@@ -65,6 +65,34 @@ import torch
 import torch.nn as nn
 import torch.distributed as dist
 
+try:
+    from workloads.gradcompress import (
+        CompressedAllReduce, EFState, make_codec, ring_allreduce_bytes)
+except ImportError:
+    from gradcompress import (
+        CompressedAllReduce, EFState, make_codec, ring_allreduce_bytes)
+
+
+class _EFSlot:
+    """Views one parameter's slot in a shared EFState.
+
+    CompressedAllReduce indexes residuals by POSITION in the tensor list it is
+    handed, and here that list is a single delta -- so every parameter would
+    share slot 0 and overwrite each other's residual. This maps the caller's
+    parameter index onto slot 0 of a per-parameter view.
+    """
+
+    def __init__(self, ef, idx):
+        self._ef, self._i = ef, idx
+
+    def get(self, _i, like):
+        return self._ef.get(self._i, like) if self._ef is not None else \
+            torch.zeros_like(like)
+
+    def set(self, _i, v):
+        if self._ef is not None:
+            self._ef.set(self._i, v)
+
 # A replica-per-rank workload cannot lean on sharding, so it wants a smaller
 # default than the FSDP cells. 350m keeps the whole thing comfortable on a
 # 40 GB card at seq 1024 while still producing a multi-GB sync burst.
@@ -95,6 +123,13 @@ def parse_args():
     p.add_argument("--outer-lr", type=float, default=0.7,
                    help="DiLoCo outer step size on the pseudo-gradient")
     p.add_argument("--outer-momentum", type=float, default=0.9)
+    p.add_argument("--compress", default="none",
+                   help="none | e3m0 | e3m0:sr | int8 | topk:0.01 | topk:0.01,noef. "
+                        "Compression switches the sync to DELTA form; see "
+                        "local_sgd_sync. Note that at one replica per rank "
+                        "(world 16) the compressed all-gather costs W/2 times an "
+                        "all-reduce, so e3m0 nets 1.00x and int8 nets 0.50x -- "
+                        "see workloads/gradcompress.py")
     p.add_argument("--outer-opt", default="nesterov", choices=("nesterov", "avg"),
                    help="'avg' is plain parameter averaging with no outer state, "
                         "for when GPU/CPU memory is the binding constraint")
@@ -102,22 +137,42 @@ def parse_args():
 
 
 @torch.no_grad()
-def local_sgd_sync(model, outer, args, world_size):
+def local_sgd_sync(model, outer, args, world_size, codec=None, ef=None):
     """Average replicas across ranks and take the DiLoCo outer step.
 
-    Returns the number of parameter BYTES each rank pushed through the
-    all-reduce, so the caller can report interconnect volume the same way the
-    pipeline workload does.
+    Returns the number of BYTES ON THE WIRE this rank transmitted, so the caller
+    can report interconnect volume honestly. With a codec that is the compressed
+    payload under the all-gather cost model, not the parameter size.
 
     The averaging itself is what an adversary cannot avoid: however long the
     inner loop runs, the replicas have to meet eventually or they are not
     training one model.
+
+    DELTA FORM, and this is the part that must not be got wrong.  Uncompressed,
+    reducing `p.data` directly is fine. Compressed, it is not: top-k on a
+    PARAMETER tensor keeps the largest 1% of the weights and zeroes the other
+    99%, destroying the model in one sync. Top-k on a DELTA keeps the largest 1%
+    of the CHANGE and merely postpones the rest, which error feedback then
+    carries into the next round. So with a codec the quantity reduced is
+    `p - prev`, and `prev` -- the outer optimizer's CPU copy -- is already
+    maintained for exactly this. With codec=None the two forms are
+    algebraically identical, and scripts/test_localsgd_sync.py asserts that.
     """
     moved = 0
-    for name, p in model.named_parameters():
-        dist.all_reduce(p.data, op=dist.ReduceOp.SUM)
-        p.data /= world_size
-        moved += p.data.numel() * p.data.element_size()
+    for i, (name, p) in enumerate(model.named_parameters()):
+        if codec is None:
+            dist.all_reduce(p.data, op=dist.ReduceOp.SUM)
+            p.data /= world_size
+            moved += ring_allreduce_bytes(
+                p.data.numel() * p.data.element_size(), world_size)
+        else:
+            prev_cpu = outer[name][0] if args.outer_opt != "avg" else None
+            base = (prev_cpu.to(p.device) if prev_cpu is not None
+                    else p.data.detach().clone())
+            delta = [p.data.float() - base]
+            car = CompressedAllReduce(codec, world_size=world_size)
+            moved += car.mean_(delta, ef=_EFSlot(ef, i))
+            p.data.copy_((base + delta[0]).to(p.data.dtype))
 
         if args.outer_opt == "avg":
             continue
@@ -127,7 +182,7 @@ def local_sgd_sync(model, outer, args, world_size):
         # two more full parameter copies off the GPU; at one touch per H steps
         # the transfer does not show up in the telemetry.
         prev, buf = outer[name]
-        pseudo_grad = prev - p.data.detach().to("cpu")   # global - averaged
+        pseudo_grad = prev - p.data.detach().float().to("cpu")  # global - averaged
         buf.mul_(args.outer_momentum).add_(pseudo_grad)
         update = pseudo_grad.add(buf, alpha=args.outer_momentum)
         prev.add_(update, alpha=-args.outer_lr)
@@ -160,6 +215,9 @@ def main():
         dist.broadcast(p.data, src=0)
     torch.manual_seed(1234 + rank)
 
+    codec = make_codec(args.compress) if args.compress != "none" else None
+    ef = EFState() if (codec is not None and getattr(codec, "uses_error_feedback",
+                                                     False)) else None
     inner = torch.optim.AdamW(model.parameters(), lr=args.inner_lr)
     outer = {}
     if args.outer_opt == "nesterov":
@@ -203,12 +261,15 @@ def main():
         tokens += batch_size * args.seq_len
 
         if step % args.sync_every == 0:
-            moved = local_sgd_sync(model, outer, args, world_size)
+            moved = local_sgd_sync(model, outer, args, world_size,
+                                   codec=codec, ef=ef)
             syncs += 1
             # Only the traffic that leaves this node counts as inter-node. Take
             # the ranks-per-node figure from torchrun rather than assuming 8:
             # the s8 cells run this same file with half the world.
             if world_size > local_world:
+                # `moved` is already wire bytes from the cost model, so this
+                # only takes the share of them that crosses the node boundary.
                 inter_node_bytes += moved * (world_size - local_world) // world_size
             if rank == 0:
                 emit_step("train", step, tokens=tokens, node=node_rank, rank=rank,

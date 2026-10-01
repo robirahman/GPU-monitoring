@@ -17,6 +17,14 @@
 #   netshape.sh status
 #   netshape.sh reap                       # internal: TTL watchdog
 #
+# SMOKED ON THE REAL IMAGE, 2026-09-30. Two e2-standard-2 Spot VMs booted from
+# common-cu129-ubuntu-2204-nvidia-580 (kernel 6.8.0-1066-gcp): tc present,
+# sch_htb and sch_netem both loadable, peer link 4201 Mbps -> 96.2 Mbps under a
+# 100mbit cap (-3.8%), ping +50.7 ms, HTB overlimits 3558. Class 1:20 recorded
+# 40,261,270 bytes against a 40 MB test transfer, i.e. ONLY the peer's traffic
+# entered the shaped class -- a gcloud storage call completed normally while the
+# cap was on. Teardown restored 4632 Mbps and left `qdisc mq` behind.
+#
 # UNITS. --delay-ms is ONE WAY. Both nodes shape egress, so 50 gives a 100 ms
 # RTT, which is what the paper means. And 100 Mbps is 11.92 MiB/s in the NIC
 # sidecar's columns -- those are named nic_*_mbps but hold MEBIBYTES per second
@@ -156,6 +164,7 @@ up)
 
 down)
   IFACE="$(cat "$IFACE_F" 2>/dev/null)"
+  PEER_IP_R="$(resolve_peer 2>/dev/null)" || PEER_IP_R=""   # for the sidecar only
   # Record the post-hoc counters BEFORE tearing the qdisc down: `overlimits`
   # is the only proof that HTB actually throttled rather than merely being
   # installed on traffic that never reached the cap.

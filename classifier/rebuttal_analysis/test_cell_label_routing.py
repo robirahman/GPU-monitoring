@@ -60,6 +60,10 @@ CELLS = [
     ("s16_train_decoupdiloco_k1", "ml_training"),
     ("s16_train_decoupdiloco_k1_bw100", "ml_training"),
     ("s16_train_localsgd_h50_bw100", "ml_training"),
+    ("s16_train_swarm_s4", "ml_training"),
+    ("s16_train_swarm_blocked", "ml_training"),
+    ("s16_train_localsgd_q4", "ml_training"),
+    ("s16_train_localsgd_topk1", "ml_training"),
     # --- A. async serving (written, fixed, never collected) ---
     ("s16_inferserve_poisson_7b", "ml_inference"),
     ("s16_inferserve_saturate_7b", "ml_inference"),
