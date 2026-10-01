@@ -41,6 +41,11 @@ SESSION="${SESSION:-${RUN_STAMP%[a-z]}}"
 NODE0="${SPOT_NODE0:-spar-spot-0}"
 NODE1="${SPOT_NODE1:-spar-spot-1}"
 MACHINE_TYPE="${_MT_SET:-a2-highgpu-8g}"
+# Several machine types, tried in order within each zone. A100 and H100 draw on
+# different capacity pools, and on 2026-10-01 A100 was exhausted in all 15 zones
+# we hold quota in -- for both Spot and on-demand -- so trying only one type
+# means sitting out a drought that the other type may not be in.
+MACHINE_TYPES="${MACHINE_TYPES:-$MACHINE_TYPE}"
 IMAGE_FAMILY="${IMAGE_FAMILY:-common-cu129-ubuntu-2204-nvidia-580}"
 IMAGE_PROJECT="${IMAGE_PROJECT:-deeplearning-platform-release}"
 BOOT_DISK_SIZE="${BOOT_DISK_SIZE:-500GB}"
@@ -195,7 +200,8 @@ exists() { gcloud compute instances describe "$2" --project="$PROJECT" --zone="$
 
 for pass in $(seq 1 "${PASSES:-1}"); do
 for z in $ZONES; do
-  say "pass $pass: trying $z"
+ for MACHINE_TYPE in $MACHINE_TYPES; do
+  say "pass $pass: trying $z ($MACHINE_TYPE)"
   if ! mk "$z" "$NODE0" 0; then
     # Verify before believing it. A timeout is "unknown", not "absent".
     if exists "$z" "$NODE0"; then
@@ -206,7 +212,7 @@ for z in $ZONES; do
   fi
   say "  $NODE0 landed in $z -- racing for $NODE1"
   if mk "$z" "$NODE1" 1 || exists "$z" "$NODE1"; then
-    say "PAIR UP in $z ($PROVISIONING_MODEL): $NODE0 + $NODE1"
+    say "PAIR UP in $z ($PROVISIONING_MODEL $MACHINE_TYPE): $NODE0 + $NODE1"
     say "  cells:  $ONLY_CELLS  (REPS=$REPS)"
     say "  DWS requests for $RUN_STAMP are deliberately LEFT QUEUED as the fallback."
     say "  watch:  gcloud compute instances list --filter='name~^spar-spot'"
@@ -219,6 +225,7 @@ for z in $ZONES; do
   # name if this silently failed -- which is what turned one bad zone into five.
   for _ in $(seq 1 30); do exists "$z" "$NODE0" || break; sleep 10; done
   exists "$z" "$NODE0" && say "  WARNING: $NODE0 still present in $z after delete"
+ done
 done
 [ "${PASSES:-1}" -gt 1 ] && [ "$pass" -lt "${PASSES:-1}" ] && \
   { say "pass $pass found nothing; sleeping ${SLEEP_BETWEEN:-180}s"; sleep "${SLEEP_BETWEEN:-180}"; }
