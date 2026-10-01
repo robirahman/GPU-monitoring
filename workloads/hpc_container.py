@@ -30,6 +30,7 @@ import argparse
 import os
 import re
 import shutil
+import threading
 import subprocess
 import sys
 import time
@@ -44,6 +45,8 @@ IMAGES = {
 # that exists wins. Keeping this a list rather than a constant is the whole
 # point -- 24.09 moved hpl.sh out of /workspace, and a hardcoded path would have
 # failed at cell time rather than at probe time.
+MIN_BUSY_PCT = 10          # peak GPU utilisation a real HPC cell must reach
+
 LAUNCHERS = {
     "hpl": ["/workspace/hpl.sh", "/workspace/hpl-linux-x86_64/hpl.sh",
             "/usr/local/bin/hpl.sh", "/workspace/hpl-aarch64/hpl.sh"],
@@ -135,6 +138,34 @@ def find_launcher(exe: str, bench: str) -> str:
     return ""
 
 
+def make_dat(ngpu: int, n: int) -> str:
+    """An HPL input deck sized for this node, written into the container.
+
+    The stock decks are the reason s16_nonml_hpl collected 735 s of IDLE GPUs on
+    2026-10-01 while reporting success. find_dat() picked
+    HPL-dgx-1N-2.dat, which specifies N=136608 with P=2 Q=1 -- a full-DGX
+    problem on two ranks. HPL spends the first phase generating and factoring
+    on the host, so within a 600 s cell it never reached GPU compute, and the
+    telemetry is 600 s of 0% utilisation labelled as HPC.
+
+    P*Q must equal the MPI rank count or HPL refuses to start, so both are
+    derived from ngpu here rather than inherited from a deck written for
+    someone else's machine.
+    """
+    q = 1
+    for cand in range(int(ngpu ** 0.5), 0, -1):
+        if ngpu % cand == 0:
+            q = cand
+            break
+    p_rows = ngpu // q
+    return "\n".join([
+        "HPLinpack benchmark input file", "spar-generated", "HPL.out", "6",
+        "1", str(n), "1", "1024", "0", "1", str(p_rows), str(q),
+        "16.0", "1", "2", "1", "4", "1", "1", "1", "0", "1", "0", "2", "0",
+        "1", "1", "8", "8", "2", "64", "0",
+    ])
+
+
 def find_dat(exe: str, bench: str) -> str:
     """HPL needs an input deck. The containers ship sample decks sized per node
     type; prefer a 1-node A100 one, else take whatever is smallest."""
@@ -160,6 +191,9 @@ def main():
     ap.add_argument("--benchmark", required=True, choices=sorted(IMAGES))
     ap.add_argument("--duration", type=int, default=600)
     ap.add_argument("--gpus", type=int, default=0, help="0 = all visible")
+    ap.add_argument("--hpl-n", type=int, default=45000,
+                    help="HPL problem order; sized so the factorisation fits "
+                         "inside the cell rather than outliving it")
     ap.add_argument("--probe", action="store_true",
                     help="report image/launcher/input availability and exit")
     args = ap.parse_args()
@@ -201,9 +235,14 @@ def main():
         prep = (f"cd /tmp && {launcher} pdb2gmx -h >/dev/null 2>&1; echo prep-done")
     else:
         np = ngpu
-        inner = (f"while true; do mpirun --allow-run-as-root -np {np} {launcher}"
-                 + (f" --dat {dat}" if dat else "") + " || break; done")
-        prep = "echo prep-done"
+        # N sized so the factorisation lands inside the cell rather than
+        # outliving it. ~45k on 8 A100s is a few minutes of real GPU work, and
+        # the while-loop repeats it if it finishes early.
+        deck = make_dat(np, args.hpl_n)
+        prep = ("mkdir -p /tmp/spar && cat > /tmp/spar/HPL.dat <<\"EOF\"\n"
+                + deck + "\nEOF\necho prep-done")
+        inner = (f"while true; do cd /tmp/spar && mpirun --allow-run-as-root "
+                 f"-np {np} {launcher} --dat /tmp/spar/HPL.dat || break; done")
 
     cmd = [exe, "run", "--rm", "--gpus", "all", "--shm-size=1g",
            "--ulimit", "memlock=-1", "--ulimit", "stack=67108864"]
@@ -219,12 +258,42 @@ def main():
             f"{prep}; timeout {args.duration} bash -lc '{inner}'"]
     print(f"  running for {args.duration}s", flush=True)
     t0 = time.time()
+    util_samples = []
+    stop = threading.Event()
+
+    def _sample():
+        while not stop.wait(5.0):
+            try:
+                r = run(["nvidia-smi", "--query-gpu=utilization.gpu",
+                         "--format=csv,noheader,nounits"], timeout=15)
+                vals = [int(x) for x in r.stdout.split() if x.strip().isdigit()]
+                if vals:
+                    util_samples.append(max(vals))
+            except Exception:
+                pass
+
+    watcher = threading.Thread(target=_sample, daemon=True)
+    watcher.start()
     p = subprocess.run(cmd, text=True)
+    stop.set()
     el = time.time() - t0
     # `timeout` returns 124 when it does its job, which is the expected exit here.
-    ok = p.returncode in (0, 124) and el >= args.duration * 0.8
-    print(f"  finished rc={p.returncode} after {el:.0f}s ({'OK' if ok else 'SHORT'})",
-          flush=True)
+    ran_long = p.returncode in (0, 124) and el >= args.duration * 0.8
+    # Running for the full duration is NOT evidence of having done any work.
+    # s16_nonml_hpl ran 735 s, exited cleanly, and recorded 0% GPU utilisation
+    # throughout -- and the queue marked it OK, which would have put 600 s of
+    # idle telemetry into the corpus labelled as an HPC workload. That is worse
+    # than a failure, because a failure is visible.
+    busy = max(util_samples) if util_samples else -1
+    if ran_long and busy >= 0 and busy < MIN_BUSY_PCT:
+        print(f"  finished rc={p.returncode} after {el:.0f}s but peak GPU "
+              f"utilisation was {busy}% (< {MIN_BUSY_PCT}%) -- reporting FAILURE "
+              f"rather than contributing idle telemetry as an HPC cell",
+              flush=True)
+        return 7
+    ok = ran_long
+    print(f"  finished rc={p.returncode} after {el:.0f}s peak_util={busy}% "
+          f"({'OK' if ok else 'SHORT'})", flush=True)
     return 0 if ok else 6
 
 
