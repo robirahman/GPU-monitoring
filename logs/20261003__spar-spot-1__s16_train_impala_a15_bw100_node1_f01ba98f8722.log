@@ -1,0 +1,171 @@
+2026-10-03 15:09:04,743 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_impala_a15_bw100, 8 GPUs, node=1, run_id=f01ba98f8722
+Run ID: f01ba98f8722
+2026-10-03 15:09:04,808 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,808 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,808 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,821 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,821 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,821 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,834 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,835 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,835 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,847 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,848 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,848 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,861 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,861 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,861 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,875 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,876 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,876 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,889 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,889 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,889 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,902 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,903 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,903 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:06,905 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_rl_dist.py --arch impala --learner-rank 0 --actor-jitter 2 --duration 600
+W1003 15:09:07.850000 40998 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1003 15:09:07.850000 40998 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1003 15:09:07.850000 40998 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1003 15:09:07.850000 40998 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+STEP ts=1791040297.854 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040297.865 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040297.865 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=9 phase=rollout
+[rl] tick1 rank=9 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=12 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=15 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=8 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=13 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=11 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=10 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=14 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+STEP ts=1791040299.222 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040299.225 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040299.225 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040299.482 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040299.483 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040300.092 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040300.094 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040300.098 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040300.255 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040300.257 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040300.259 kind=infer batch_idx=1 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040301.354 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040301.354 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040301.356 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040301.357 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040301.357 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040302.003 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040302.004 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040302.005 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040438.363 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040438.365 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040438.365 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040438.365 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040438.366 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040438.366 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040438.367 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040438.367 kind=infer batch_idx=2 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040439.015 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040439.017 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040439.017 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040440.078 kind=infer batch_idx=8 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040440.079 kind=infer batch_idx=8 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040440.080 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040440.081 kind=infer batch_idx=8 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040440.081 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040440.631 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040440.632 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040440.633 kind=infer batch_idx=3 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040440.728 kind=infer batch_idx=9 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040440.729 kind=infer batch_idx=9 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040440.730 kind=infer batch_idx=9 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040441.860 kind=infer batch_idx=10 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040441.861 kind=infer batch_idx=10 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040441.861 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040441.862 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040441.862 kind=infer batch_idx=10 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040580.584 kind=infer batch_idx=11 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040580.587 kind=infer batch_idx=11 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040580.588 kind=infer batch_idx=11 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040581.532 kind=infer batch_idx=12 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040581.533 kind=infer batch_idx=12 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040581.535 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040581.535 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040581.535 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040581.536 kind=infer batch_idx=12 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040581.536 kind=infer batch_idx=4 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040581.536 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040582.182 kind=infer batch_idx=13 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040582.182 kind=infer batch_idx=13 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040582.184 kind=infer batch_idx=13 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040583.149 kind=infer batch_idx=14 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040583.149 kind=infer batch_idx=14 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040583.150 kind=infer batch_idx=14 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040583.150 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040583.150 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040583.701 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040583.701 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040583.703 kind=infer batch_idx=5 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040583.798 kind=infer batch_idx=15 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040583.798 kind=infer batch_idx=15 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040583.799 kind=infer batch_idx=15 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040718.123 kind=infer batch_idx=16 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040718.125 kind=infer batch_idx=16 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040718.126 kind=infer batch_idx=8 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040718.127 kind=infer batch_idx=8 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040718.128 kind=infer batch_idx=16 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040718.776 kind=infer batch_idx=17 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040718.777 kind=infer batch_idx=17 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040718.781 kind=infer batch_idx=17 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040719.717 kind=infer batch_idx=18 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040719.719 kind=infer batch_idx=9 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040719.719 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040719.719 kind=infer batch_idx=9 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040719.720 kind=infer batch_idx=18 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040719.720 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040719.721 kind=infer batch_idx=18 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040719.721 kind=infer batch_idx=6 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040720.370 kind=infer batch_idx=19 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040720.371 kind=infer batch_idx=19 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040720.373 kind=infer batch_idx=19 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040721.337 kind=infer batch_idx=20 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040721.338 kind=infer batch_idx=20 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040721.339 kind=infer batch_idx=20 tokens=256 passes=1 node=1 rank=12 phase=rollout
+STEP ts=1791040721.339 kind=infer batch_idx=10 tokens=256 passes=1 node=1 rank=10 phase=rollout
+STEP ts=1791040721.339 kind=infer batch_idx=10 tokens=256 passes=1 node=1 rank=13 phase=rollout
+STEP ts=1791040856.240 kind=infer batch_idx=21 tokens=256 passes=1 node=1 rank=15 phase=rollout
+STEP ts=1791040856.242 kind=infer batch_idx=21 tokens=256 passes=1 node=1 rank=9 phase=rollout
+STEP ts=1791040856.243 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=14 phase=rollout
+STEP ts=1791040856.243 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=11 phase=rollout
+STEP ts=1791040856.243 kind=infer batch_idx=7 tokens=256 passes=1 node=1 rank=8 phase=rollout
+STEP ts=1791040856.244 kind=infer batch_idx=21 tokens=256 passes=1 node=1 rank=12 phase=rollout
+W1003 15:20:59.570000 40998 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1282] The node 'spar-spot-1.c.focus-surfer-494820-g0.internal_40998_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+W1003 15:20:59.576000 40998 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1282] The node 'spar-spot-1.c.focus-surfer-494820-g0.internal_40998_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+2026-10-03 15:20:59,905 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-10-03 15:21:01,947 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,966 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu0_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,969 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_impala_a15_bw100_node1_gpu0_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,969 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,974 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu1_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,976 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_impala_a15_bw100_node1_gpu1_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,976 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,981 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu2_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,983 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_impala_a15_bw100_node1_gpu2_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,984 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,988 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu3_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,990 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_impala_a15_bw100_node1_gpu3_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,990 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,994 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu4_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,997 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_impala_a15_bw100_node1_gpu4_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,998 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:02,002 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu5_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:02,004 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_impala_a15_bw100_node1_gpu5_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:02,021 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:02,025 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu6_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:02,028 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_impala_a15_bw100_node1_gpu6_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:02,028 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:02,032 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node1_gpu7_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:02,034 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_impala_a15_bw100_node1_gpu7_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:02,035 [spar.multi_gpu] INFO: Multi-GPU run complete: f01ba98f8722 (rc=0)
