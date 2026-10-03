@@ -255,6 +255,55 @@ def test_cost_must_come_from_the_control_matrix():
           "have caught the bug it exists for")
 
 
+def test_migration_transfer_size():
+    """A migration's transfer size is stage-specific, and guessing it is a hang.
+
+    Every rank has to put the size of the moved stage's parameters into the
+    plan, including the ranks that do not serve that stage, so it is computed
+    on the meta device. If that count were wrong -- or if one size were reused
+    for every stage -- the donor would send a different number of elements than
+    the mover posted a receive for, which NCCL and gloo both answer with
+    silence rather than an error.
+
+    Stage 0 carries the embeddings and the last stage the head, so the sizes
+    genuinely differ; a test that only checked "returns an int" would pass on
+    an implementation that returned the local stage's count every time.
+    """
+    import argparse
+    from workloads.train_swarm import StageModule, stage_param_numel
+
+    args = argparse.Namespace(hidden=256, layers_per_stage=2, heads=4,
+                              ffn=512, vocab=1000, stages=4)
+    sizes = []
+    for st in range(args.stages):
+        want = sum(p.numel() for p in StageModule(
+            args.hidden, args.layers_per_stage, args.heads, args.ffn,
+            args.vocab, st, args.stages).parameters())
+        got = stage_param_numel(args, st)
+        check(got == want,
+              f"stage {st}: meta-device count {got} != real module {want} -- "
+              f"the donor would send a payload the mover never sized for")
+        sizes.append(got)
+
+    check(len(set(sizes)) > 1,
+          f"every stage reported the same parameter count {sizes[0]} -- stage 0 "
+          f"holds the embeddings and the last stage the head, so a single size "
+          f"reused across stages is a mismatched transfer")
+    check(sizes[0] != sizes[1],
+          f"stage 0 ({sizes[0]}) and stage 1 ({sizes[1]}) sized the same despite "
+          f"stage 0 carrying the token and position embeddings")
+
+    # The module a mover builds for its new stage must agree about which end of
+    # the pipeline it is on -- that disagreement is what killed swarm_blocked.
+    first = StageModule(args.hidden, args.layers_per_stage, args.heads,
+                        args.ffn, args.vocab, 0, args.stages)
+    mid = StageModule(args.hidden, args.layers_per_stage, args.heads,
+                      args.ffn, args.vocab, 1, args.stages)
+    check(first.is_first and not mid.is_first,
+          "is_first did not follow the stage the module was built for, so a "
+          "migrated rank cannot tell whether to feed it tokens or activations")
+
+
 def main():
     test_iwrr_is_weighted()
     test_ban_reroutes()
@@ -263,6 +312,7 @@ def main():
     test_rebalance_is_pure_and_safe()
     test_plan_is_identical_across_ranks()
     test_cost_must_come_from_the_control_matrix()
+    test_migration_transfer_size()
     if FAILS:
         print("FAIL")
         for f in FAILS:

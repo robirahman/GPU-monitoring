@@ -219,6 +219,22 @@ class StageModule(nn.Module):
         return x
 
 
+def stage_param_numel(args, stage: int, _cache={}) -> int:
+    """How many parameters a given stage holds, without allocating any.
+
+    Every rank needs this for a stage it does not serve, because a migration's
+    transfer size has to be in the plan and the plan has to be identical on all
+    of them. `torch.device("meta")` builds the module's shape graph and no
+    storage, so asking costs nothing.
+    """
+    if stage not in _cache:
+        with torch.device("meta"):
+            m = StageModule(args.hidden, args.layers_per_stage, args.heads,
+                            args.ffn, args.vocab, stage, args.stages)
+        _cache[stage] = sum(p.numel() for p in m.parameters())
+    return _cache[stage]
+
+
 def parse_args():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -304,7 +320,12 @@ def main():
         # Local compute for this tick, timed so IWRR has a real cost to sort on.
         c0 = time.time()
         if not banned:
-            if my_stage == 0:
+            # Keyed on the MODULE, not on the stage map. The two can disagree
+            # for exactly one tick around a migration, and when they did -- with
+            # the map already moved and the module not yet -- rank 3 fed a float
+            # activation into stage 0's embedding and killed s16_train_swarm_blocked
+            # after 18,267 clean ticks.
+            if model.is_first:
                 x = torch.randint(0, args.vocab, (args.batch_size, args.seq_len),
                                   device=device)
             else:
@@ -377,9 +398,47 @@ def main():
             mv = smap.rebalance(-depth)
             if mv is not None:
                 migrations += 1
+                mover, to_stage = mv[0], mv[2]
+                # A migration that moves the MAP and not the PARAMETERS is not a
+                # migration -- it is a rank being told to serve a stage whose
+                # weights it does not have. SWARM's own description is that the
+                # moved peer's parameters arrive before it serves, and the
+                # arrival is most of what a migration costs on the wire, so it
+                # is the part worth measuring.
+                donor = next((p for p in smap.peers(to_stage) if p != mover),
+                             None)
+                if donor is not None:
+                    n_par = stage_param_numel(args, to_stage)
+                    xfer = [Transfer(src=donor, dst=mover, numel=n_par,
+                                     tag=40000 + (tick % 64))]
+                    got, moved = ch.run(
+                        xfer, rank,
+                        get_send=lambda t: torch.cat(
+                            [q.data.reshape(-1) for q in model.parameters()]),
+                        make_recv=lambda t: torch.zeros(t.numel, device=device),
+                        world=world)
+                    wire += moved
+                    if rank == mover:
+                        flat = next(iter(got.values()))
+                        torch.manual_seed(1234 + to_stage)
+                        model = StageModule(args.hidden, args.layers_per_stage,
+                                            args.heads, args.ffn, args.vocab,
+                                            to_stage, args.stages).to(device)
+                        off = 0
+                        with torch.no_grad():
+                            for q in model.parameters():
+                                k = q.numel()
+                                q.copy_(flat[off:off + k].view_as(q))
+                                off += k
+                        opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
+                    # Routing has to follow the map, on every rank, or the next
+                    # plan is derived from peer sets that no longer exist.
+                    routers = {st: SwarmRouter(smap.peers(st))
+                               for st in range(args.stages)}
                 if rank == 0:
-                    print(f"  rebalance: rank {mv[0]} stage {mv[1]} -> {mv[2]}",
-                          flush=True)
+                    print(f"  rebalance: rank {mv[0]} stage {mv[1]} -> {mv[2]}"
+                          f" ({stage_param_numel(args, to_stage)/1e6:.0f}M "
+                          f"params pulled from rank {donor})", flush=True)
             last_rebalance = time.time()
 
         emit_step("train", tick, tokens=args.batch_size * args.seq_len,
