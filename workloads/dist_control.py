@@ -243,14 +243,28 @@ def warm_p2p_ring(rank: int, world: int, device, group=None) -> None:
     nxt, prv = (rank + 1) % world, (rank - 1) % world
     send = torch.zeros(1, dtype=torch.float32, device=device)
     recv = torch.zeros(1, dtype=torch.float32, device=device)
-    # Even ranks send first, odd ranks receive first: a symmetric blocking
-    # send/recv pair would deadlock on a transport with no buffering.
-    if rank % 2 == 0:
-        dist.send(send, dst=nxt, group=group)
-        dist.recv(recv, src=prv, group=group)
-    else:
-        dist.recv(recv, src=prv, group=group)
-        dist.send(send, dst=nxt, group=group)
+    # NON-BLOCKING, recv posted first on EVERY rank -- the same pattern run_plan
+    # uses and the only one proven to work here.
+    #
+    # The first version alternated blocking send/recv by rank parity, which is
+    # the textbook way to avoid a ring deadlock and which NCCL rejects outright:
+    # on 2026-10-02 all 16 ranks died with "NCCL Error 5: invalid usage" inside
+    # dist.send, about 25 s into every cell that used a P2PChannel. That one
+    # call took out all four distributed-RL cells and both SWARM cells -- six of
+    # the round's seven failures -- from a function whose only job is to warm
+    # communicators it does not need to exchange anything through.
+    #
+    # Which is also why it is now best-effort: a warm-up that cannot fail the
+    # cell is worth having, and one that can is not.
+    try:
+        rq = dist.irecv(recv, src=prv, group=group)
+        sq = dist.isend(send, dst=nxt, group=group)
+        rq.wait()
+        sq.wait()
+    except Exception as e:                      # noqa: BLE001
+        print(f"[dist_control] P2P warm-up skipped ({type(e).__name__}: "
+              f"{str(e)[:120]}); the first real transfer will pay the "
+              f"communicator setup instead", flush=True)
 
 
 def new_p2p_group(ranks=None):
