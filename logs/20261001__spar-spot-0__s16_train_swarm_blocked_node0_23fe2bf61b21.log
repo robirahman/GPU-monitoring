@@ -1,0 +1,143 @@
+2026-10-02 08:12:44,906 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_swarm_blocked, 8 GPUs, node=0, run_id=23fe2bf61b21
+Run ID: 23fe2bf61b21
+2026-10-02 08:12:44,971 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:44,971 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:44,971 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:44,983 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:44,983 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:44,983 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:44,994 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:44,995 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:44,995 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:45,009 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:45,010 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:45,010 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:45,022 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:45,022 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:45,022 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:45,035 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:45,035 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:45,035 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:45,059 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:45,059 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:45,059 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:45,073 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 08:12:45,073 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_swarm_blocked, run=23fe2bf61b21)
+2026-10-02 08:12:45,073 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 08:12:47,075 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_swarm.py --stages 4 --layout blocked --ban-rank 6 --ban-at 120 --act-compress int8 --duration 600
+W1002 08:12:48.019000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1002 08:12:48.019000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1002 08:12:48.019000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1002 08:12:48.019000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+SWARM: stages=4 layout=blocked peers/stage=4 params/stage=87M micro=4 compress=int8 stragglers=[]
+[rank4]:[E1002 08:23:02.770477195 ProcessGroupNCCL.cpp:616] [Rank 4] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=0, OpType=RECV, NumelIn=524288, NumelOut=524288, Timeout(ms)=600000) ran for 600069 milliseconds before timing out.
+[rank4]:[E1002 08:23:02.770715486 ProcessGroupNCCL.cpp:1785] [PG ID 1 PG GUID 1 Rank 4] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank4]:[E1002 08:23:03.815229163 ProcessGroupNCCL.cpp:1834] [PG ID 1 PG GUID 1 Rank 4] Timeout at NCCL work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank4]:[E1002 08:23:03.815266828 ProcessGroupNCCL.cpp:630] [Rank 4] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank4]:[E1002 08:23:03.815273044 ProcessGroupNCCL.cpp:636] [Rank 4] To avoid data inconsistency, we are taking the entire process down.
+[rank4]:[E1002 08:23:03.816335797 ProcessGroupNCCL.cpp:1595] [PG ID 1 PG GUID 1 Rank 4] Process group watchdog thread terminated with exception: [Rank 4] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=0, OpType=RECV, NumelIn=524288, NumelOut=524288, Timeout(ms)=600000) ran for 600069 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x785f20b6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x785ed6000a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x785ed6007ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x785ed600993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x785f20ffd5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x785f21a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x1268e0 (0x785f21b268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 1 PG GUID 1 Rank 4] Process group watchdog thread terminated with exception: [Rank 4] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=0, OpType=RECV, NumelIn=524288, NumelOut=524288, Timeout(ms)=600000) ran for 600069 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x785f20b6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x785ed6000a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x785ed6007ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x785ed600993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x785f20ffd5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x785f21a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x1268e0 (0x785f21b268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x785f20b6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x785ed5c7eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x785f20ffd5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x785f21a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x1268e0 (0x785f21b268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/opt/spar/repo/workloads/train_swarm.py", line 388, in <module>
+[rank5]:     main()
+[rank5]:   File "/opt/spar/repo/workloads/train_swarm.py", line 341, in main
+[rank5]:     _, sent = ch.run(plan, rank,
+[rank5]:   File "/opt/spar/repo/workloads/dist_control.py", line 288, in run
+[rank5]:     recv, sent = run_plan(plan, rank, get_send, make_recv,
+[rank5]:   File "/opt/spar/repo/workloads/dist_control.py", line 211, in run_plan
+[rank5]:     recv_handles.append(dist.irecv(buf, src=t.src, group=group, tag=t.tag))
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 2110, in irecv
+[rank5]:     return pg.recv([tensor], group_src_rank, tag)
+[rank5]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.cpp:81, remote process exited or there was a network error, NCCL version 2.21.5
+[rank5]: ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+[rank5]: Last error:
+[rank5]: socketProgress: Connection closed by remote peer spar-spot-0.c.focus-surfer-494820-g0.internal<55708>
+W1002 08:23:41.496000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121060 closing signal SIGTERM
+W1002 08:23:41.497000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121061 closing signal SIGTERM
+W1002 08:23:41.497000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121062 closing signal SIGTERM
+W1002 08:23:41.497000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121063 closing signal SIGTERM
+W1002 08:23:41.498000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121065 closing signal SIGTERM
+W1002 08:23:41.499000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121066 closing signal SIGTERM
+W1002 08:23:41.499000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 121067 closing signal SIGTERM
+E1002 08:23:42.729000 120990 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: -6) local_rank: 4 (pid: 121064) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+===========================================================
+workloads/train_swarm.py FAILED
+-----------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+-----------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-10-02_08:23:41
+  host      : spar-spot-0.c.focus-surfer-494820-g0.internal
+  rank      : 4 (local_rank: 4)
+  exitcode  : -6 (pid: 121064)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 121064
+===========================================================
+2026-10-02 08:23:43,057 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-10-02 08:23:45,093 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,108 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu0_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,110 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_swarm_blocked_node0_gpu0_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,110 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,115 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu1_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,117 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_swarm_blocked_node0_gpu1_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,117 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,121 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu2_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,123 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_swarm_blocked_node0_gpu2_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,123 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,128 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu3_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,130 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_swarm_blocked_node0_gpu3_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,146 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,151 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu4_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,153 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_swarm_blocked_node0_gpu4_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,153 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,157 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu5_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,159 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_swarm_blocked_node0_gpu5_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,192 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,196 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu6_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,198 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_swarm_blocked_node0_gpu6_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,199 [spar.telemetry] INFO: Telemetry stopped. 661 samples collected.
+2026-10-02 08:23:45,203 [spar.telemetry] INFO: Saved 661 rows to data/s16_train_swarm_blocked_node0_gpu7_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet
+2026-10-02 08:23:45,205 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_swarm_blocked_node0_gpu7_NVIDIA_H100_80GB_HBM3_23fe2bf61b21.parquet (661 rows)
+2026-10-02 08:23:45,206 [spar.multi_gpu] INFO: Multi-GPU run complete: 23fe2bf61b21 (rc=1)

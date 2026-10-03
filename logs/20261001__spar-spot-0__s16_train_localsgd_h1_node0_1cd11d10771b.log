@@ -1,0 +1,108 @@
+2026-10-02 05:04:44,123 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_localsgd_h1, 8 GPUs, node=0, run_id=1cd11d10771b
+Run ID: 1cd11d10771b
+2026-10-02 05:04:44,187 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,187 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,187 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,199 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,199 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,199 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,211 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,211 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,211 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,226 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,226 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,226 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,238 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,238 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,238 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,251 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,252 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,252 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,265 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,265 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,265 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:44,277 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:04:44,277 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=1cd11d10771b)
+2026-10-02 05:04:44,277 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:04:46,279 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_localsgd.py --size 1b --sync-every 1 --duration 600
+W1002 05:04:47.266000 32754 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1002 05:04:47.266000 32754 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1002 05:04:47.266000 32754 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1002 05:04:47.266000 32754 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+Local SGD / DiLoCo: size=1b params=1.34B world_size=16 sync_every=1 outer=nesterov batch=4 seq=1024
+  replica memory: 5.0 GB after init
+STEP ts=1790917534.090 kind=train batch_idx=1 tokens=4096 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917547.630 kind=train batch_idx=2 tokens=8192 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917561.342 kind=train batch_idx=3 tokens=12288 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917575.352 kind=train batch_idx=4 tokens=16384 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917589.467 kind=train batch_idx=5 tokens=20480 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917603.827 kind=train batch_idx=6 tokens=24576 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917617.960 kind=train batch_idx=7 tokens=28672 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917632.150 kind=train batch_idx=8 tokens=32768 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917646.270 kind=train batch_idx=9 tokens=36864 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917660.742 kind=train batch_idx=10 tokens=40960 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917674.981 kind=train batch_idx=11 tokens=45056 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917689.147 kind=train batch_idx=12 tokens=49152 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917703.215 kind=train batch_idx=13 tokens=53248 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917717.374 kind=train batch_idx=14 tokens=57344 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917731.658 kind=train batch_idx=15 tokens=61440 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917745.903 kind=train batch_idx=16 tokens=65536 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917760.185 kind=train batch_idx=17 tokens=69632 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917774.524 kind=train batch_idx=18 tokens=73728 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917788.851 kind=train batch_idx=19 tokens=77824 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917803.152 kind=train batch_idx=20 tokens=81920 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917817.485 kind=train batch_idx=21 tokens=86016 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917831.907 kind=train batch_idx=22 tokens=90112 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917846.367 kind=train batch_idx=23 tokens=94208 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917860.691 kind=train batch_idx=24 tokens=98304 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917875.236 kind=train batch_idx=25 tokens=102400 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917889.574 kind=train batch_idx=26 tokens=106496 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917903.948 kind=train batch_idx=27 tokens=110592 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917918.267 kind=train batch_idx=28 tokens=114688 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917932.581 kind=train batch_idx=29 tokens=118784 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917946.845 kind=train batch_idx=30 tokens=122880 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917961.150 kind=train batch_idx=31 tokens=126976 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917975.572 kind=train batch_idx=32 tokens=131072 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790917989.713 kind=train batch_idx=33 tokens=135168 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918003.971 kind=train batch_idx=34 tokens=139264 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918018.208 kind=train batch_idx=35 tokens=143360 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918032.559 kind=train batch_idx=36 tokens=147456 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918046.870 kind=train batch_idx=37 tokens=151552 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918061.288 kind=train batch_idx=38 tokens=155648 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918075.581 kind=train batch_idx=39 tokens=159744 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918090.103 kind=train batch_idx=40 tokens=163840 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918104.485 kind=train batch_idx=41 tokens=167936 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918118.850 kind=train batch_idx=42 tokens=172032 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790918133.263 kind=train batch_idx=43 tokens=176128 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+
+Local SGD complete: 43 steps, 43 syncs in 612.8s
+  Useful tokens: 176,128 (287 tok/s)
+  Steps with NO inter-node traffic: 0.0%
+  Inter-node bytes (this rank): 216.66 GB = 353.5 MB/s = 2828 Mbps
+  EVASION_TAX_DATA: strategy=LOCALSGD world_size=16 train_frac=1.0 dilution= steps=43 train_steps=43 useful_tokens=176128 attributed_tokens=176128 duration=612.8 sync_every=1 syncs=43 size=1b internode_mbps=2828.2
+2026-10-02 05:15:36,617 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-10-02 05:15:38,619 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,637 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu0_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,640 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_localsgd_h1_node0_gpu0_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,640 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,644 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu1_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,646 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_localsgd_h1_node0_gpu1_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,647 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,651 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu2_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,653 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_localsgd_h1_node0_gpu2_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,653 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,658 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu3_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,660 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_localsgd_h1_node0_gpu3_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,660 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,664 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu4_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,667 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_localsgd_h1_node0_gpu4_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,667 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,671 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu5_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,673 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_localsgd_h1_node0_gpu5_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,674 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,678 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu6_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,680 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_localsgd_h1_node0_gpu6_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,680 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-10-02 05:15:38,684 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_localsgd_h1_node0_gpu7_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet
+2026-10-02 05:15:38,686 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_localsgd_h1_node0_gpu7_NVIDIA_H100_80GB_HBM3_1cd11d10771b.parquet (655 rows)
+2026-10-02 05:15:38,687 [spar.multi_gpu] INFO: Multi-GPU run complete: 1cd11d10771b (rc=0)

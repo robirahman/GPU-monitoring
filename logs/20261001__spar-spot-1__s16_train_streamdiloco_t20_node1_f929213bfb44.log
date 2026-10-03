@@ -1,0 +1,57 @@
+2026-10-02 07:11:17,244 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_streamdiloco_t20, 8 GPUs, node=1, run_id=f929213bfb44
+Run ID: f929213bfb44
+2026-10-02 07:11:17,308 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,308 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,308 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,321 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,321 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,321 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,333 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,334 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,334 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,347 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,347 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,347 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,361 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,361 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,361 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,375 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,375 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,375 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,388 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,388 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,388 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:17,403 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 07:11:17,403 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_streamdiloco_t20, run=f929213bfb44)
+2026-10-02 07:11:17,403 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 07:11:19,405 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_diloco_stream.py --mode streaming --fragments 8 --sync-every 100 --tau 20 --compress e3m0 --duration 600
+W1002 07:11:20.367000 92111 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1002 07:11:20.367000 92111 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1002 07:11:20.367000 92111 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1002 07:11:20.367000 92111 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+2026-10-02 07:21:39,847 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-10-02 07:21:41,850 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,868 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu0_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,870 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_streamdiloco_t20_node1_gpu0_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,871 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,875 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu1_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,877 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_streamdiloco_t20_node1_gpu1_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,877 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,882 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu2_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,884 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_streamdiloco_t20_node1_gpu2_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,884 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,888 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu3_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,890 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_streamdiloco_t20_node1_gpu3_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,890 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,894 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu4_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,897 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_streamdiloco_t20_node1_gpu4_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,897 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,901 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu5_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,903 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_streamdiloco_t20_node1_gpu5_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,903 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,907 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu6_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,909 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_streamdiloco_t20_node1_gpu6_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,909 [spar.telemetry] INFO: Telemetry stopped. 625 samples collected.
+2026-10-02 07:21:41,913 [spar.telemetry] INFO: Saved 625 rows to data/s16_train_streamdiloco_t20_node1_gpu7_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet
+2026-10-02 07:21:41,915 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_streamdiloco_t20_node1_gpu7_NVIDIA_H100_80GB_HBM3_f929213bfb44.parquet (625 rows)
+2026-10-02 07:21:41,916 [spar.multi_gpu] INFO: Multi-GPU run complete: f929213bfb44 (rc=0)

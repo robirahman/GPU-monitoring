@@ -1,0 +1,108 @@
+2026-10-02 06:56:31,769 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_apexrl_replay, 8 GPUs, node=0, run_id=242050c3cf42
+Run ID: 242050c3cf42
+2026-10-02 06:56:31,834 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,835 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,835 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,847 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,848 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,848 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,861 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,861 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,861 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,875 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,875 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,875 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,889 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,889 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,889 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,903 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,903 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,903 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,916 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,916 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,916 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:31,929 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:56:31,929 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_apexrl_replay, run=242050c3cf42)
+2026-10-02 06:56:31,929 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:56:33,931 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_rl_dist.py --arch apex --actor-jitter 3 --duration 600
+W1002 06:56:34.890000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1002 06:56:34.890000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1002 06:56:34.890000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1002 06:56:34.890000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/opt/spar/repo/workloads/train_rl_dist.py", line 391, in <module>
+[rank2]:     main()
+[rank2]:   File "/opt/spar/repo/workloads/train_rl_dist.py", line 272, in main
+[rank2]:     ch.warm(rank, world, device)
+[rank2]:   File "/opt/spar/repo/workloads/dist_control.py", line 284, in warm
+[rank2]:     warm_p2p_ring(rank, world, device, group=self.group)
+[rank2]:   File "/opt/spar/repo/workloads/dist_control.py", line 249, in warm_p2p_ring
+[rank2]:     dist.send(send, dst=nxt, group=group)
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+[rank2]:     return func(*args, **kwargs)
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 2151, in send
+[rank2]:     group.send([tensor], group_dst_rank, tag).wait()
+[rank2]: RuntimeError: NCCL Error 5: invalid usage (run with NCCL_DEBUG=WARN for details)
+W1002 06:56:54.383000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85006 closing signal SIGTERM
+W1002 06:56:54.383000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85007 closing signal SIGTERM
+W1002 06:56:54.384000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85009 closing signal SIGTERM
+W1002 06:56:54.384000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85010 closing signal SIGTERM
+W1002 06:56:54.385000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85011 closing signal SIGTERM
+W1002 06:56:54.385000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85012 closing signal SIGTERM
+W1002 06:56:54.386000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 85013 closing signal SIGTERM
+E1002 06:56:55.528000 84922 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 2 (pid: 85008) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/train_rl_dist.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-10-02_06:56:54
+  host      : spar-spot-0.c.focus-surfer-494820-g0.internal
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 85008)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-10-02 06:56:55,849 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-10-02 06:56:57,881 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,895 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu0_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,896 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_apexrl_replay_node0_gpu0_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,896 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,899 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu1_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,900 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_apexrl_replay_node0_gpu1_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,910 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,912 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu2_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,913 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_apexrl_replay_node0_gpu2_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,921 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,924 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu3_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,925 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_apexrl_replay_node0_gpu3_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,936 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,939 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu4_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,940 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_apexrl_replay_node0_gpu4_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,949 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,951 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu5_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,952 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_apexrl_replay_node0_gpu5_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,961 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,964 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu6_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,965 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_apexrl_replay_node0_gpu6_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,975 [spar.telemetry] INFO: Telemetry stopped. 27 samples collected.
+2026-10-02 06:56:57,977 [spar.telemetry] INFO: Saved 27 rows to data/s16_train_apexrl_replay_node0_gpu7_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet
+2026-10-02 06:56:57,978 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_apexrl_replay_node0_gpu7_NVIDIA_H100_80GB_HBM3_242050c3cf42.parquet (27 rows)
+2026-10-02 06:56:57,978 [spar.multi_gpu] INFO: Multi-GPU run complete: 242050c3cf42 (rc=1)
