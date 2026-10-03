@@ -351,6 +351,22 @@ mn_torchrun() {  # mn_torchrun <stage> <run_id> <timeout> -- <workload.py args..
 # of the round still runs and returns its value.
 mn_torchrun_bw() {
   local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
+  # A shaped cell needs a cap set by the SHAPED link, not the unshaped one.
+  # s16_train_localsgd_h50_bw100, 2026-10-03: shaping confirmed at 3,646,367
+  # overlimits and 9.2 GB through the class, and the cell was still killed at
+  # 900 s on step 49 of a 50-step sync interval -- caught mid-way through the
+  # first outer sync it ever reached. Two things stretch it, both deliberate
+  # elsewhere: inner steps run ~18 s under shaping, and train_localsgd checks
+  # its deadline only at sync boundaries, on purpose, so that a per-step
+  # collective does not stamp an inter-node rhythm onto a job whose signature
+  # is the absence of one. So the earliest the workload can even consider
+  # stopping is step 50, and a full-model all-reduce at 11.92 MiB/s is another
+  # twenty minutes on top.
+  #
+  # The cap is not a duration -- a cell that finishes early still exits early --
+  # so one generous value covers the shaped cells whose payloads are tiny too.
+  to="${TIMEOUT_BW:-3600}"
+  say "      shaped cell: timeout raised to ${to}s (the link is 100x slower)"
   if ! NETSHAPE_CELL="$stage" NETSHAPE_RID="$rid" \
        bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" up \
          --ttl "$((to + 300))" --json "$OUTDIR" 2>&1 | grep -q "shaped "; then
