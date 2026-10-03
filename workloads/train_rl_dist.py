@@ -62,12 +62,14 @@ import time
 try:
     from workloads._step import emit_step
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
-    from workloads.dist_control import ControlPlane, P2PChannel, Transfer
+    from workloads.dist_control import (
+        ControlPlane, P2PChannel, Transfer, assert_plan_agreed, plan_digest)
     from workloads import fsdp_training as _fsdp
 except ImportError:  # launched as `torchrun workloads/train_rl_dist.py`
     from _step import emit_step
     from dist_deadline import CollectiveDeadline, sync_teardown
-    from dist_control import ControlPlane, P2PChannel, Transfer
+    from dist_control import (
+        ControlPlane, P2PChannel, Transfer, assert_plan_agreed, plan_digest)
     import fsdp_training as _fsdp
 
 import torch
@@ -338,6 +340,16 @@ def main():
             senders = senders[:max(1, args.replay // 2)] if senders else []
         plan = [Transfer(src=s, dst=lead, numel=traj_numel, tag=1000 + s)
                 for s in senders]
+        if tick == 1:
+            # Named exception instead of a silent timeout. run_plan's whole
+            # contract is that the plan is byte-identical on every rank, and
+            # when it is not the symptom is ranks blocked in isend and irecv
+            # while the rest spin in the deadline vote -- which is what
+            # s16_train_impala_r15 and s16_train_apexrl_replay both did on
+            # 2026-10-03, for 900 s each, saying nothing.
+            print(f"[rl] tick1 rank={rank} senders={senders} lead={lead} "
+                  f"numel={traj_numel} digest={plan_digest(plan)}", flush=True)
+            assert_plan_agreed(plan, device, tick=tick)
 
         recvd, sent = ch.run(
             plan, rank,

@@ -170,6 +170,16 @@ def assert_plan_matched(plan, world: int) -> None:
         seen.add(key)
 
 
+def _is_gloo(group=None) -> bool:
+    """True when `group`'s transport is gloo, so payloads must be on the host."""
+    if not dist.is_initialized():
+        return False
+    try:
+        return "gloo" in str(dist.get_backend(group)).lower()
+    except Exception:                               # noqa: BLE001
+        return False
+
+
 def assert_plan_agreed(plan, device, group=None, tick: int | None = None) -> None:
     """All-gather the plan digest; raise unless every rank derived the same one.
 
@@ -245,18 +255,30 @@ def run_plan(plan, rank: int, get_send, make_recv, group=None,
     if paranoid:
         assert_plan_matched(plan, world or dist.get_world_size(group))
 
-    recv_handles, recv_bufs = [], {}
+    # gloo moves CPU tensors only, so a CUDA payload is staged through host
+    # memory. `stage` is empty on a NCCL group and the code below is the same
+    # either way.
+    host = _is_gloo(group)
+
+    recv_handles, recv_bufs, stage = [], {}, []
     for t in plan:
         if t.dst == rank:
             buf = make_recv(t)
             recv_bufs[t] = buf
-            recv_handles.append(dist.irecv(buf, src=t.src, group=group, tag=t.tag))
+            into = buf
+            if host and buf.device.type != "cpu":
+                into = torch.empty_like(buf, device="cpu")
+                stage.append((buf, into))
+            recv_handles.append(dist.irecv(into, src=t.src, group=group,
+                                           tag=t.tag))
 
     send_handles, sent = [], 0
     for t in plan:
         if t.src == rank:
             payload = get_send(t)
             sent += payload.numel() * payload.element_size()
+            if host and payload.device.type != "cpu":
+                payload = payload.detach().to("cpu", copy=True)
             send_handles.append(dist.isend(payload, dst=t.dst, group=group,
                                            tag=t.tag))
 
@@ -264,6 +286,8 @@ def run_plan(plan, rank: int, get_send, make_recv, group=None,
         h.wait()
     for h in send_handles:
         h.wait()
+    for dev_buf, host_buf in stage:
+        dev_buf.copy_(host_buf)
     return recv_bufs, sent
 
 
@@ -306,14 +330,15 @@ def warm_p2p_ring(rank: int, world: int, device, group=None) -> None:
     # The quorum. Not optional, and deliberately the first thing: everything
     # below is an optimisation, and an optimisation must not be able to decide
     # whether the cell runs.
-    dist.all_reduce(torch.zeros(1, dtype=torch.float32, device=device),
+    probe_dev = "cpu" if _is_gloo(group) else device
+    dist.all_reduce(torch.zeros(1, dtype=torch.float32, device=probe_dev),
                     group=group)
 
     if os.environ.get("SPAR_P2P_WARM", "") != "1":
         return
     nxt, prv = (rank + 1) % world, (rank - 1) % world
-    send = torch.zeros(1, dtype=torch.float32, device=device)
-    recv = torch.zeros(1, dtype=torch.float32, device=device)
+    send = torch.zeros(1, dtype=torch.float32, device=probe_dev)
+    recv = torch.zeros(1, dtype=torch.float32, device=probe_dev)
     try:
         if rank % 2 == 0:
             dist.send(send, dst=nxt, group=group)
@@ -326,17 +351,50 @@ def warm_p2p_ring(rank: int, world: int, device, group=None) -> None:
               f"{str(e)[:120]}); the group is up either way", flush=True)
 
 
-def new_p2p_group(ranks=None):
-    """A process group reserved for point-to-point traffic.
+def new_p2p_group(ranks=None, backend: str | None = None):
+    """A process group reserved for point-to-point traffic, on GLOO.
 
     Created once, at startup, by every rank -- `new_group` is itself collective,
     so it cannot be called mid-run or on a subset.
+
+    WHY GLOO AND NOT NCCL. Measured on two H100 nodes, 2026-10-03, with a
+    sixteen-rank reproduction of one tick: a default-group all_gather, then a
+    plan in which five ranks send to one, then a default-group all_reduce that
+    the ten ranks with no transfer reach immediately.
+
+        NCCL subgroup   senders never leave tick 1; the ten uninvolved ranks
+                        run all six ticks and the job dies on a timeout
+        NCCL default    tick 1 takes 36.3 s, then ncclRemoteError
+        GLOO subgroup   six ticks, 4.2 s, every rank through
+
+    The same plan WITHOUT the surrounding collectives completes on NCCL in
+    1.3 s, so neither the plan nor run_plan's ordering is at fault: it is NCCL
+    point-to-point under partial participation, interleaved with collectives
+    that the non-participating ranks race ahead into. That is the shape of
+    every workload here -- excluding a straggler by its ABSENCE from the plan
+    is the whole design -- so the transport has to be the thing that changes.
+
+    What this costs, stated plainly because it changes what the telemetry
+    means: payloads cross host memory and TCP rather than NVLink and the
+    GPU-direct path, so transfers no longer hold the GPU busy and the cells'
+    utilisation during a transfer drops. The inter-node BYTES are unchanged and
+    the NIC sidecar still measures them honestly, which is the measurement
+    these cells exist for. Collectives are untouched -- they stay on NCCL, on
+    the default group, where they have always worked.
     """
     if not dist.is_initialized():
         return None
     if ranks is None:
         ranks = list(range(dist.get_world_size()))
-    return dist.new_group(ranks=ranks)
+    backend = backend or os.environ.get("SPAR_P2P_BACKEND", "gloo")
+    try:
+        return dist.new_group(ranks=ranks, backend=backend)
+    except Exception as e:                          # noqa: BLE001
+        print(f"[dist_control] could not build a {backend} P2P group "
+              f"({type(e).__name__}: {str(e)[:100]}); falling back to the "
+              f"default backend, which deadlocks under partial plans",
+              flush=True)
+        return dist.new_group(ranks=ranks)
 
 
 class P2PChannel:
@@ -349,8 +407,8 @@ class P2PChannel:
             recv, sent = ch.run(make_plan(ctl), rank, get_send, make_recv)
     """
 
-    def __init__(self, ranks=None):
-        self.group = new_p2p_group(ranks)
+    def __init__(self, ranks=None, backend: str | None = None):
+        self.group = new_p2p_group(ranks, backend=backend)
         self.bytes_sent = 0
 
     def warm(self, rank: int, world: int, device) -> None:
