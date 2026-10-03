@@ -181,6 +181,80 @@ def test_plan_is_identical_across_ranks():
           "to each other's receive")
 
 
+def test_cost_must_come_from_the_control_matrix():
+    """The bug that cost s16_train_swarm_s4 its whole 1560 s timeout.
+
+    Routing depends on accumulated per-peer cost, and cost is a wall-clock
+    measurement, so WHERE each rank gets it from decides whether sixteen ranks
+    derive one plan or sixteen. The loop reads it out of the control matrix that
+    every rank already all-gathers. The obvious alternative -- each rank timing
+    its own step and updating its own stage's router -- leaves every rank with a
+    different router state and is a guaranteed deadlock on tick 1.
+
+    Both halves are asserted here. The second is not a hypothetical: it is the
+    code that actually shipped on 2026-10-02, and the only reason it was not
+    caught is that the existing plan test never updates a cost at all.
+    """
+    world, stages, micro = 16, 4, 4
+
+    # --- what the loop does now: cost from the shared matrix -----------------
+    # ctl[:, 1] = availability, ctl[:, 2] = that rank's last step in microseconds
+    # -- deliberately all different, which is exactly the realistic case.
+    ctl = torch.ones(world, 4, dtype=torch.int64)
+    for r in range(world):
+        ctl[r, 2] = 10_000 + 137 * r
+
+    digests = set()
+    for _ in range(world):                      # each rank builds independently
+        smap = StageMap(world, stages, "strided")
+        routers = {s: SwarmRouter(smap.peers(s)) for s in range(stages)}
+        for tick in range(5):                   # accumulate over several ticks
+            for s, rt in routers.items():
+                for pr in rt.peers:
+                    rt.update_cost(pr, float(ctl[pr, 2]) / 1e6)
+            plan = plan_micro_round(smap, routers, ctl, micro,
+                                    tag_base=(tick % 64) * 512)
+        digests.add(plan_digest(plan))
+    check(len(digests) == 1,
+          f"with the cost taken from the control matrix the ranks still "
+          f"derived {len(digests)} different plans")
+
+    # The straggler must actually be routed away from, or the matrix is being
+    # read but not used and the cell is a plain pipeline wearing a SWARM name.
+    slow = torch.ones(world, 4, dtype=torch.int64)
+    slow[:, 2] = 10_000
+    for r in (5, 11):
+        slow[r, 2] = 30_000                     # the --straggler-ranks of s4
+    smap = StageMap(world, stages, "strided")
+    routers = {s: SwarmRouter(smap.peers(s)) for s in range(stages)}
+    hits = {p: 0 for p in range(world)}
+    for _ in range(200):
+        for s, rt in routers.items():
+            for pr in rt.peers:
+                rt.update_cost(pr, float(slow[pr, 2]) / 1e6)
+        for t in plan_micro_round(smap, routers, slow, micro):
+            hits[t.dst] += 1
+    stage1 = [p for p in range(world) if p % stages == 1]
+    share = hits[5] / max(sum(hits[p] for p in stage1), 1)
+    check(share < 0.22,
+          f"the 3x straggler still took {share:.1%} of stage 1's microbatches "
+          f"(0.25 is round-robin) -- the cost is reaching the router but not "
+          f"changing its mind")
+
+    # --- what it must NEVER go back to: cost from a local measurement --------
+    local = set()
+    for rank in range(world):
+        smap = StageMap(world, stages, "strided")
+        routers = {s: SwarmRouter(smap.peers(s)) for s in range(stages)}
+        routers[smap.stage_of(rank)].update_cost(rank, 0.010 + 0.001 * rank)
+        local.add(plan_digest(plan_micro_round(smap, routers, ctl, micro,
+                                               tag_base=512)))
+    check(len(local) > 1,
+          "seeding only the local rank's own router produced ONE plan, so this "
+          "test can no longer tell the two sources of cost apart and would not "
+          "have caught the bug it exists for")
+
+
 def main():
     test_iwrr_is_weighted()
     test_ban_reroutes()
@@ -188,6 +262,7 @@ def main():
     test_stage_map_layouts()
     test_rebalance_is_pure_and_safe()
     test_plan_is_identical_across_ranks()
+    test_cost_must_come_from_the_control_matrix()
     if FAILS:
         print("FAIL")
         for f in FAILS:
@@ -195,7 +270,8 @@ def main():
         return 1
     print("OK: IWRR routes away from the straggler, bans reroute, the stage map "
           "rebalances deterministically without emptying a stage, and all 16 "
-          "ranks derive one identical plan")
+          "ranks derive one identical plan from the shared control matrix "
+          "(and visibly diverge when cost comes from a local clock)")
     return 0
 
 

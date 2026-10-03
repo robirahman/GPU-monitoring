@@ -56,12 +56,14 @@ from datetime import timedelta
 try:
     from workloads._step import emit_step
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
-    from workloads.dist_control import ControlPlane, P2PChannel, Transfer
+    from workloads.dist_control import (
+        ControlPlane, P2PChannel, Transfer, assert_plan_agreed)
     from workloads.gradcompress import Int8Codec
 except ImportError:  # launched as `torchrun workloads/train_swarm.py`
     from _step import emit_step
     from dist_deadline import CollectiveDeadline, sync_teardown
-    from dist_control import ControlPlane, P2PChannel, Transfer
+    from dist_control import (
+        ControlPlane, P2PChannel, Transfer, assert_plan_agreed)
     from gradcompress import Int8Codec
 
 import numpy as np
@@ -318,18 +320,38 @@ def main():
             opt.step()
             opt.zero_grad(set_to_none=True)
         dt = time.time() - c0
-        routers[my_stage].update_cost(rank, dt)
 
-        ctl = cp.exchange(torch.tensor([avail], dtype=torch.int64, device=device))
+        # EVERY input to the plan comes out of the control matrix, because the
+        # plan has to be byte-identical on all sixteen ranks and a wall-clock
+        # measurement is the one thing that can never be. The obvious version of
+        # this loop -- `routers[my_stage].update_cost(rank, dt)` -- seeds each
+        # rank's own stage router with its own timing and leaves every other
+        # stage's router pristine, so rank 1 and rank 0 disagree about where
+        # stage 1 should route before the first microbatch moves. That cost
+        # s16_train_swarm_s4 its entire 1560 s timeout on 2026-10-02: ten
+        # distinct plans across sixteen ranks on tick 1, the four that agreed
+        # emitting their STEP lines and the rest blocked in recv.
+        #
+        # So the cost is published as integer microseconds and EVERY rank
+        # accumulates it into EVERY router, from the one matrix all of them see.
+        cost_us = int(max(min(dt, 60.0), 0.0) * 1e6)
+        ctl = cp.exchange(torch.tensor([avail, cost_us], dtype=torch.int64,
+                                       device=device))
         for s, r in routers.items():
             for p in r.peers:
                 if int(ctl[p, 1]) == 0:
                     r.ban(p)
                 else:
                     r.unban(p)
+                r.update_cost(p, float(ctl[p, 2]) / 1e6)
 
         plan = plan_micro_round(smap, routers, ctl, args.micro,
                                 tag_base=(tick % 64) * 512)
+        if tick == 1:
+            # One extra collective, once, on the DEFAULT group -- never the P2P
+            # one -- turning the whole class of plan-divergence bugs from a
+            # silent timeout into a named exception on the first tick.
+            assert_plan_agreed(plan, device, tick=tick)
         payload = torch.randn(act_numel, device=device)
         if codec is not None:
             enc, meta = codec.encode(payload)

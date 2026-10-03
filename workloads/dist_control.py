@@ -169,6 +169,47 @@ def assert_plan_matched(plan, world: int) -> None:
         seen.add(key)
 
 
+def assert_plan_agreed(plan, device, group=None, tick: int | None = None) -> None:
+    """All-gather the plan digest; raise unless every rank derived the same one.
+
+    `assert_plan_matched` only checks a plan against ITSELF. It cannot see that
+    two ranks built DIFFERENT plans, and that is the failure that actually costs
+    a cell its whole timeout: on 2026-10-02 s16_train_swarm_s4 derived ten
+    distinct plans across sixteen ranks on its very first tick, because each
+    rank had seeded its router with its own wall-clock timing. The four ranks
+    that happened to agree finished the tick and emitted their STEP lines; the
+    other twelve blocked in recv and the cell burned 1560 s at 100% utilisation
+    before the queue's timeout killed it, with nothing in the log but silence.
+
+    MUST be called from every rank in `group`, which is why it takes the DEFAULT
+    group rather than the P2P one: a collective on the point-to-point
+    communicator is the deadlock `run_plan` exists to avoid. Nothing may be
+    outstanding when it runs, so call it before posting any transfer.
+    """
+    if not dist.is_initialized():
+        return
+    world = dist.get_world_size(group)
+    if world < 2:
+        return
+    mine = torch.tensor([int(plan_digest(plan)[:15], 16)],
+                        dtype=torch.int64, device=device)
+    out = [torch.empty_like(mine) for _ in range(world)]
+    dist.all_gather(out, mine, group=group)
+    vals = [int(t.item()) for t in out]
+    if len(set(vals)) == 1:
+        return
+    groups: dict[int, list[int]] = {}
+    for r, v in enumerate(vals):
+        groups.setdefault(v, []).append(r)
+    summary = "; ".join(f"{ranks} -> {v:x}" for v, ranks in
+                        sorted(groups.items(), key=lambda kv: -len(kv[1])))
+    raise PlanError(
+        f"ranks derived {len(groups)} different plans"
+        f"{'' if tick is None else f' at tick {tick}'}: {summary}. "
+        "Every input to the plan must come from the control matrix every rank "
+        "sees identically -- never from a local measurement.")
+
+
 def plan_digest(plan) -> str:
     """Stable hash of a plan, for asserting every rank derived the same one.
 

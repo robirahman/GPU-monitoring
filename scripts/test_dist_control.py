@@ -31,8 +31,7 @@ import torch.multiprocessing as mp
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from workloads.dist_control import (  # noqa: E402
     ControlPlane, P2PChannel, PlanError, Transfer, assert_plan_matched,
-    plan_digest, run_plan, warm_p2p_ring,
-)
+    assert_plan_agreed, plan_digest, run_plan, warm_p2p_ring)
 
 FAILS = []
 
@@ -166,6 +165,29 @@ def _worker(rank, world, initfile, results):
         out["divergence_caught"] = True
         out["divergence_msg"] = str(e)[:80]
 
+    # ── tick 5: assert_plan_agreed. The plan-divergence guard is the only
+    #    thing standing between a wrong routing input and a cell that burns its
+    #    whole timeout in silence, so it is exercised both ways: an agreed plan
+    #    must pass without comment, and a plan one rank built differently must
+    #    raise on EVERY rank -- a guard that fires on only the odd rank out
+    #    leaves the others blocked in recv, which is the hang it exists to
+    #    replace.
+    agreed = [Transfer(src=1, dst=0, numel=8, tag=7)]
+    out["agree_ok"] = True
+    try:
+        assert_plan_agreed(agreed, dev, tick=5)
+    except PlanError as e:
+        out["agree_ok"] = False
+        out["agree_err"] = str(e)[:120]
+
+    skewed = agreed if rank == 0 else [Transfer(src=1, dst=0, numel=8, tag=9)]
+    out["disagree_caught"] = False
+    try:
+        assert_plan_agreed(skewed, dev, tick=6)
+    except PlanError as e:
+        out["disagree_caught"] = True
+        out["disagree_msg"] = str(e)[:140]
+
     results[rank] = out
     try:
         dist.destroy_process_group()
@@ -218,6 +240,19 @@ def test_distributed():
           "tick-counter divergence was NOT caught -- a ControlPlane rebuilt on "
           "some ranks mid-run would silently derive plans from a matrix whose "
           "rows describe different ticks")
+
+    # assert_plan_agreed, both directions.
+    check(r0["agree_ok"] and r1["agree_ok"],
+          f"assert_plan_agreed rejected a plan both ranks agreed on: "
+          f"{r0.get('agree_err') or r1.get('agree_err')}")
+    check(r0["disagree_caught"] and r1["disagree_caught"],
+          f"plan divergence was not raised on BOTH ranks "
+          f"(rank0={r0['disagree_caught']}, rank1={r1['disagree_caught']}) -- a "
+          f"guard that fires on only one rank leaves the other blocked in recv, "
+          f"which is the hang it exists to replace")
+    check("2 different plans" in r0.get("disagree_msg", ""),
+          f"the divergence message does not name the split: "
+          f"{r0.get('disagree_msg')!r}")
 
 
 def main():
