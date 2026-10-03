@@ -46,8 +46,21 @@ MACHINE_TYPE="${_MT_SET:-a2-highgpu-8g}"
 # we hold quota in -- for both Spot and on-demand -- so trying only one type
 # means sitting out a drought that the other type may not be in.
 MACHINE_TYPES="${MACHINE_TYPES:-$MACHINE_TYPE}"
-IMAGE_FAMILY="${IMAGE_FAMILY:-common-cu129-ubuntu-2204-nvidia-580}"
-IMAGE_PROJECT="${IMAGE_PROJECT:-deeplearning-platform-release}"
+# The baked node image. Validated on a3-highgpu-8g (H100 80GB) 2026-10-03:
+# bootstrap_node.sh ran COMPLETE in 44 s -- every phase marker, torch seeing 8
+# devices, nvlink topology and DCGM nvlink OK, GCS writable, chrony at +4 ms --
+# against the tens of minutes a cold node spends building two venvs and pulling
+# 16 GB of NGC images. On Spot, where a pair can be reclaimed inside half an
+# hour, that difference is most of the round.
+#
+# It carries apt, both venvs, docker + the NVIDIA container toolkit, both NGC
+# images and CIFAR-10, with the apt/container/repo phase markers baked. The
+# DRIVER is deliberately not baked: the base DL image installs it at boot and a
+# baked one would pin a driver to whatever GPU the builder happened to have.
+# The repo tree is overwritten from GCS by the startup script before bootstrap,
+# so the baked copy is never the one that runs.
+IMAGE_FAMILY="${IMAGE_FAMILY:-spar-node}"
+IMAGE_PROJECT="${IMAGE_PROJECT:-$PROJECT}"
 BOOT_DISK_SIZE="${BOOT_DISK_SIZE:-500GB}"
 MASTER_PORT="${MASTER_PORT:-29500}"
 REPS="${REPS:-2}"
