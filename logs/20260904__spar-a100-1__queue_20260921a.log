@@ -1,0 +1,86 @@
+[2026-09-21T03:15:47Z] node1 queue start: NNODES=2 NODE_RANK=1 MASTER=spar-a100-0:29500 REPS=2 DUR=600 SMOKE=0 ONLY_CELLS=^s16_(infershard_(qwen7b_kv16k_b32|qwen1_5b_kv16k_b48|qwen72b_kv16k_b24|qwen72b_kv4k_b48)|inferserve_|infermem_qwen72b_(u45|u65|u85)|infermem_qwen7b_|trainmem_fsdp(7b_nockpt|13b_b2)|train_accum)
+[2026-09-21T03:15:47Z] node1 ===== rep 1 / 2 =====
+[2026-09-21T03:15:47Z] node1 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_infershard_qwen72b_kv1k (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_infershard_qwen72b_kv8k (ONLY_CELLS filter)
+[2026-09-21T03:15:47Z] node1 SKIP  s16_infershard_qwen72b_kv32k_out2k (ONLY_CELLS filter)
+[2026-09-21T03:16:01Z] node1 ray cluster ready: 16 GPUs
+[2026-09-21T03:16:01Z] node1 START s16_infershard_qwen7b_kv16k_b32 (rid=8df7513269f7) -> logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.log
+[2026-09-21T03:26:03Z] node1 OK    s16_infershard_qwen7b_kv16k_b32 (602s)
+[2026-09-21T03:52:06Z] node1 WARN  2 compute process(es) still resident after 1500s -- proceeding
+[2026-09-21T03:52:07Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T03:52:07Z] node1 WARN  s16_infershard_qwen1_5b_kv16k_b48: 2 stray compute process(es) resident -- reaping
+[2026-09-21T03:52:22Z] node1 WARN  s16_infershard_qwen1_5b_kv16k_b48: 2 process(es) STILL resident after reap -- cell may OOM
+[2026-09-21T03:52:22Z] node1 START s16_infershard_qwen1_5b_kv16k_b48 (rid=3cf1892d4f65) -> logs/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.log
+[2026-09-21T03:52:23Z] node1 FAIL  s16_infershard_qwen1_5b_kv16k_b48 rc=1 (1s) -- continuing
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 2872, in nvmlInitWithFlags
+            _nvmlCheckReturn(ret)
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 1076, in _nvmlCheckReturn
+            raise NVMLError(ret)
+        pynvml.NVMLError_LibRmVersionMismatch: RM has detected an NVML/RM version mismatch.
+[2026-09-21T04:18:24Z] node1 WARN  2 compute process(es) still resident after 1500s -- proceeding
+[2026-09-21T04:18:25Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T04:18:25Z] node1 WARN  s16_infershard_qwen72b_kv16k_b24: 2 stray compute process(es) resident -- reaping
+[2026-09-21T04:18:40Z] node1 WARN  s16_infershard_qwen72b_kv16k_b24: 2 process(es) STILL resident after reap -- cell may OOM
+[2026-09-21T04:18:40Z] node1 START s16_infershard_qwen72b_kv16k_b24 (rid=b5f87baee6e1) -> logs/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.log
+[2026-09-21T04:18:41Z] node1 FAIL  s16_infershard_qwen72b_kv16k_b24 rc=1 (1s) -- continuing
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 2872, in nvmlInitWithFlags
+            _nvmlCheckReturn(ret)
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 1076, in _nvmlCheckReturn
+            raise NVMLError(ret)
+        pynvml.NVMLError_LibRmVersionMismatch: RM has detected an NVML/RM version mismatch.
+[2026-09-21T04:44:43Z] node1 WARN  2 compute process(es) still resident after 1500s -- proceeding
+[2026-09-21T04:44:44Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T04:44:44Z] node1 WARN  s16_infershard_qwen72b_kv4k_b48: 2 stray compute process(es) resident -- reaping
+[2026-09-21T04:44:59Z] node1 WARN  s16_infershard_qwen72b_kv4k_b48: 2 process(es) STILL resident after reap -- cell may OOM
+[2026-09-21T04:44:59Z] node1 START s16_infershard_qwen72b_kv4k_b48 (rid=dc0433299895) -> logs/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.log
+[2026-09-21T04:44:59Z] node1 FAIL  s16_infershard_qwen72b_kv4k_b48 rc=1 (0s) -- continuing
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 2872, in nvmlInitWithFlags
+            _nvmlCheckReturn(ret)
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 1076, in _nvmlCheckReturn
+            raise NVMLError(ret)
+        pynvml.NVMLError_LibRmVersionMismatch: RM has detected an NVML/RM version mismatch.
+[2026-09-21T05:11:01Z] node1 WARN  2 compute process(es) still resident after 1500s -- proceeding
+[2026-09-21T05:11:02Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T05:11:02Z] node1 WARN  s16_inferserve_poisson_7b: 2 stray compute process(es) resident -- reaping
+[2026-09-21T05:11:17Z] node1 WARN  s16_inferserve_poisson_7b: 2 process(es) STILL resident after reap -- cell may OOM
+[2026-09-21T05:11:17Z] node1 START s16_inferserve_poisson_7b (rid=7e452901d223) -> logs/s16_inferserve_poisson_7b_node1_7e452901d223.log
+[2026-09-21T05:11:18Z] node1 FAIL  s16_inferserve_poisson_7b rc=1 (1s) -- continuing
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 2872, in nvmlInitWithFlags
+            _nvmlCheckReturn(ret)
+          File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/pynvml.py", line 1076, in _nvmlCheckReturn
+            raise NVMLError(ret)
+        pynvml.NVMLError_LibRmVersionMismatch: RM has detected an NVML/RM version mismatch.
