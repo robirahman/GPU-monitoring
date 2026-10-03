@@ -268,46 +268,52 @@ def run_plan(plan, rank: int, get_send, make_recv, group=None,
 
 
 def warm_p2p_ring(rank: int, world: int, device, group=None) -> None:
-    """One 1-element send/recv around a ring, before the measured window opens.
+    """Bring the P2P group's communicator up with a RANK-UNIFORM COLLECTIVE.
 
-    NCCL builds a P2P communicator lazily on first use between a given pair. A
-    workload that first touches P2P inside its timed loop pays that setup as a
-    multi-hundred-millisecond stall, which lands in the telemetry as a feature
-    of the workload rather than of the harness -- and doing the FIRST one
-    concurrently with a collective is the documented ncclRemoteError.
+    The name is historical; the ring is now opt-in and almost certainly not what
+    you want. What this function exists for is the one thing that genuinely has
+    to happen before a partial plan can run.
 
-    Rank r sends to r+1 and receives from r-1, so every adjacent pair is warmed.
-    A full mesh would be W*(W-1) transfers; the ring is enough to force the
-    communicator machinery up without paying for pairs most plans never use.
+    `new_group` builds its NCCL communicator LAZILY, on first use, and that
+    build is collective over the whole group. A plan where only some ranks have
+    a transfer -- which is the entire point of `run_plan`, and of excluding a
+    straggler by absence -- therefore cannot be the first thing to touch a fresh
+    P2P group: the ranks with nothing to do skip `run_plan` entirely and race on
+    to the next collective, the ranks that do have a transfer block inside the
+    communicator build waiting for them, and neither side ever moves.
+
+    Observed in full on 2026-10-03, s16_train_impala_r15, py-spy across all 16
+    ranks: rank 15 (the learner) in `irecv`, ranks 9 and 12 in `isend`, and the
+    ten ranks with no transfer this tick already spinning in
+    CollectiveDeadline.expired(). Nothing wrong with the plan -- every rank had
+    derived the same one -- and nothing wrong with the ordering inside run_plan.
+    The group's communicator simply had no quorum to come up with.
+
+    An all_reduce of one float is that quorum. Every rank calls it, it is a
+    collective and so can neither deadlock on P2P ordering nor hit the
+    ncclInvalidUsage that a send/recv as the group's first op does, and
+    afterwards partial plans work because the group is already up.
+
+    The old ring warm-up -- one send/recv hop per adjacent pair, to pre-pay the
+    per-pair setup inside the measured window -- is kept behind SPAR_P2P_WARM=1.
+    It bought a few hundred milliseconds and cost two rounds: by rank parity it
+    raised "NCCL Error 5: invalid usage" on all 16 ranks, and recv-first it
+    deadlocked, every rank blocked on its predecessor around a closed ring.
     """
-    if world < 2 or not dist.is_initialized():
+    if not dist.is_initialized() or world < 2:
+        return
+
+    # The quorum. Not optional, and deliberately the first thing: everything
+    # below is an optimisation, and an optimisation must not be able to decide
+    # whether the cell runs.
+    dist.all_reduce(torch.zeros(1, dtype=torch.float32, device=device),
+                    group=group)
+
+    if os.environ.get("SPAR_P2P_WARM", "") != "1":
         return
     nxt, prv = (rank + 1) % world, (rank - 1) % world
     send = torch.zeros(1, dtype=torch.float32, device=device)
     recv = torch.zeros(1, dtype=torch.float32, device=device)
-    # OFF unless SPAR_P2P_WARM=1, and the reason is worth the paragraph.
-    #
-    # There are two ways to warm a ring and this project has now paid for both
-    # on rented H100s. Alternating blocking send/recv by rank parity -- the
-    # textbook deadlock-free ordering -- died on all 16 ranks with "NCCL Error
-    # 5: invalid usage" about 25 s in, taking out four distributed-RL cells and
-    # both SWARM cells on 2026-10-02. Posting the recv first on every rank --
-    # the pattern run_plan uses and which is correct for a plan where sends and
-    # recvs are matched -- hangs, because here they are not: rank r's irecv
-    # blocks inside NCCL's lazy per-pair communicator bootstrap waiting for rank
-    # r-1, which is itself blocked in ITS irecv and will never reach its isend.
-    # Every rank waits on its predecessor around a closed ring. Observed live on
-    # 2026-10-03, 8 minutes into s16_train_impala_a15, 0% utilisation and not
-    # one line of output, py-spy pointing at distributed_c10d.py:2110.
-    #
-    # What this function buys is a few hundred milliseconds of communicator
-    # setup moved out of a 600 s measurement window -- a rounding error in the
-    # telemetry. What it has cost is two rounds. So the first real transfer pays
-    # the setup, which is what the fallback path always said would happen, and
-    # the ring stays available behind an env flag for anyone who wants to
-    # measure that cost deliberately.
-    if os.environ.get("SPAR_P2P_WARM", "") != "1":
-        return
     try:
         if rank % 2 == 0:
             dist.send(send, dst=nxt, group=group)
@@ -316,9 +322,8 @@ def warm_p2p_ring(rank: int, world: int, device, group=None) -> None:
             dist.recv(recv, src=prv, group=group)
             dist.send(send, dst=nxt, group=group)
     except Exception as e:                      # noqa: BLE001
-        print(f"[dist_control] P2P warm-up skipped ({type(e).__name__}: "
-              f"{str(e)[:120]}); the first real transfer will pay the "
-              f"communicator setup instead", flush=True)
+        print(f"[dist_control] P2P ring warm-up skipped ({type(e).__name__}: "
+              f"{str(e)[:120]}); the group is up either way", flush=True)
 
 
 def new_p2p_group(ranks=None):
