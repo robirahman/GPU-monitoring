@@ -83,8 +83,37 @@ existing="$(gcloud compute instances list --project="$PROJECT" \
 # database, so the 9p working tree cannot corrupt it.
 read -r -a STAGE_PATHS <<< "${SPAR_STAGE_PATHS:-workloads scripts classifier requirements_v2.txt requirements_gcp_extra.txt requirements_tpu.txt requirements.txt}"
 COMMIT="$(git rev-parse HEAD)"
-TMP="$(mktemp -d)"   # NOT auto-removed: it holds the create logs
+
+# Sweep this script's OWN leavings before adding more. Each run drops ~14 MB of
+# tarball plus the create logs in a mktemp dir and deliberately never removes
+# it, so a supervisor cycling for hours fills /tmp by itself -- which is exactly
+# what happened on 2026-10-03: sixteen dirs, 1.8 GB, and the disk at 99%.
+for _old in /tmp/tmp.*; do
+  [ -d "$_old" ] && [ -e "$_old/startup.sh" ] && [ "$_old" != "${TMP:-}" ] \
+    && rm -rf "$_old"
+done
+_free_kb="$(df -Pk /tmp | awk 'NR==2{print $4}')"
+if [ "${_free_kb:-0}" -lt 102400 ]; then
+  say "FATAL: only $((_free_kb/1024)) MB free on /tmp -- a short write here is"
+  say "       silent, and an empty startup-script boots a pair that does nothing"
+  exit 1
+fi
+
+TMP="$(mktemp -d)"   # holds the create logs; swept by the loop above next run
 git archive --format=tar HEAD -- "${STAGE_PATHS[@]}" | gzip -9 > "$TMP/spar_repo.tar.gz"
+
+# SIZE-CHECK BOTH ARTEFACTS, because neither failure announces itself. On
+# 2026-10-03 /tmp filled, `git archive | gzip` wrote 0 bytes, the startup-script
+# heredoc wrote 0 bytes, and gcloud attached the empty file as metadata without
+# a murmur: `No startup scripts to run`, and an H100 pair booted the baked image
+# and idled for 28 minutes at $0.65/min. `gcloud storage cp` of a 0-byte file
+# SUCCEEDS, so the error check that was already here could never have caught it.
+_arc_kb=$(( $(wc -c < "$TMP/spar_repo.tar.gz") / 1024 ))
+if [ "$_arc_kb" -lt 1024 ]; then
+  say "FATAL: repo archive is ${_arc_kb} KB -- expected megabytes. Refusing to"
+  say "       stage it; a pair booted against a truncated archive fails late."
+  exit 1
+fi
 say "repo archive $(du -h "$TMP/spar_repo.tar.gz" | cut -f1) at ${COMMIT:0:12} -> $STAGING/"
 gcloud storage cp "$TMP/spar_repo.tar.gz" "$STAGING/spar_repo.tar.gz" >/dev/null 2>&1 || {
   say "FATAL: could not stage the repo archive"; exit 1; }
@@ -180,6 +209,15 @@ HOME="\${HOME:-/root}" STAMP="\$STAMP" PEER="\$PEER" ONLY="\$ONLY" REPS="\$REPS"
   bash "\$REPO/scripts/gcp/run_stage_and_stop.sh"
 echo "=== stage armed \$(date -u +%FT%TZ) ==="
 STARTUP
+
+# The startup script is the ONLY thing that makes a node do any work. An empty
+# one costs a full pair's hourly rate for as long as nobody looks.
+_su_b=$(wc -c < "$TMP/startup.sh")
+if [ "$_su_b" -lt 512 ]; then
+  say "FATAL: startup-script is ${_su_b} bytes -- the heredoc did not write."
+  say "       Refusing to create a pair that would boot and sit idle."
+  exit 1
+fi
 
 mk() {  # mk <zone> <name> <idx>
   gcloud compute instances create "$2" --project="$PROJECT" --zone="$1" \
