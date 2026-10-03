@@ -191,7 +191,19 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
   # the queue, and an unshaped cell recorded under a shaped name is worse than a
   # missing one. Reset-on-entry is the guarantee; the trap in mn_torchrun_bw
   # only covers a clean exit.
-  bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true
+  #
+  # EXCEPT when the caller installed the shaping on purpose. mn_torchrun_bw
+  # shapes and THEN calls mn_torchrun, which lands here -- so for the first four
+  # _bw100 cells ever run, 2026-10-03, this line tore down the qdisc seconds
+  # after it went up and every one of them collected at line rate under a
+  # shaped name: exactly the outcome the comment above calls worse than a
+  # missing cell. netshape.sh had already written {"applied": true} and was
+  # telling the truth about the moment it was asked.
+  if [ "${NETSHAPE_OWNED:-0}" = "1" ]; then
+    say "      (shaping owned by this cell -- not clearing it)"
+  else
+    bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true
+  fi
 
   local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
   local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
@@ -348,10 +360,29 @@ mn_torchrun_bw() {
     return 0
   fi
   trap 'bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true' EXIT INT TERM
+  export NETSHAPE_OWNED=1          # read by run_stage's reset-on-entry
   mn_torchrun "$stage" "$rid" "$to" -- "$@"
   local rc=$?
-  bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down --json "$OUTDIR" >/dev/null 2>&1 || true
+  unset NETSHAPE_OWNED
+  NETSHAPE_CELL="$stage" NETSHAPE_RID="$rid" \
+    bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down --json "$OUTDIR" >/dev/null 2>&1 || true
   trap - EXIT INT TERM
+
+  # MEASURE, do not assume. HTB's `overlimits` counter is the only evidence
+  # that the cap ever bit; "applied" merely says tc accepted the commands, and
+  # that is precisely the claim that was true while the cell ran at line rate.
+  # A _bw cell that was not actually throttled is a mislabelled cell, so its
+  # .done marker is withdrawn and the next pass re-runs it.
+  local js="${OUTDIR}/netshape_${stage}_node${NODE_RANK}_${rid}.json"
+  local over
+  over="$(grep -oE '"class_overlimits": *[0-9]+' "$js" 2>/dev/null | grep -oE '[0-9]+$')"
+  if [ -z "$over" ] || [ "$over" -eq 0 ] 2>/dev/null; then
+    say "FAIL  $stage ran UNSHAPED (overlimits=${over:-absent}) -- withdrawing"
+    say "      its .done marker so it is collected again rather than trusted"
+    rm -f "${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
+    return 1
+  fi
+  say "      shaping confirmed: HTB overlimits=$over"
   return $rc
 }
 
