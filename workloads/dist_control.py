@@ -68,6 +68,7 @@ collective.
 from __future__ import annotations
 
 import hashlib
+import os
 from collections import namedtuple
 
 import torch
@@ -284,24 +285,36 @@ def warm_p2p_ring(rank: int, world: int, device, group=None) -> None:
     nxt, prv = (rank + 1) % world, (rank - 1) % world
     send = torch.zeros(1, dtype=torch.float32, device=device)
     recv = torch.zeros(1, dtype=torch.float32, device=device)
-    # NON-BLOCKING, recv posted first on EVERY rank -- the same pattern run_plan
-    # uses and the only one proven to work here.
+    # OFF unless SPAR_P2P_WARM=1, and the reason is worth the paragraph.
     #
-    # The first version alternated blocking send/recv by rank parity, which is
-    # the textbook way to avoid a ring deadlock and which NCCL rejects outright:
-    # on 2026-10-02 all 16 ranks died with "NCCL Error 5: invalid usage" inside
-    # dist.send, about 25 s into every cell that used a P2PChannel. That one
-    # call took out all four distributed-RL cells and both SWARM cells -- six of
-    # the round's seven failures -- from a function whose only job is to warm
-    # communicators it does not need to exchange anything through.
+    # There are two ways to warm a ring and this project has now paid for both
+    # on rented H100s. Alternating blocking send/recv by rank parity -- the
+    # textbook deadlock-free ordering -- died on all 16 ranks with "NCCL Error
+    # 5: invalid usage" about 25 s in, taking out four distributed-RL cells and
+    # both SWARM cells on 2026-10-02. Posting the recv first on every rank --
+    # the pattern run_plan uses and which is correct for a plan where sends and
+    # recvs are matched -- hangs, because here they are not: rank r's irecv
+    # blocks inside NCCL's lazy per-pair communicator bootstrap waiting for rank
+    # r-1, which is itself blocked in ITS irecv and will never reach its isend.
+    # Every rank waits on its predecessor around a closed ring. Observed live on
+    # 2026-10-03, 8 minutes into s16_train_impala_a15, 0% utilisation and not
+    # one line of output, py-spy pointing at distributed_c10d.py:2110.
     #
-    # Which is also why it is now best-effort: a warm-up that cannot fail the
-    # cell is worth having, and one that can is not.
+    # What this function buys is a few hundred milliseconds of communicator
+    # setup moved out of a 600 s measurement window -- a rounding error in the
+    # telemetry. What it has cost is two rounds. So the first real transfer pays
+    # the setup, which is what the fallback path always said would happen, and
+    # the ring stays available behind an env flag for anyone who wants to
+    # measure that cost deliberately.
+    if os.environ.get("SPAR_P2P_WARM", "") != "1":
+        return
     try:
-        rq = dist.irecv(recv, src=prv, group=group)
-        sq = dist.isend(send, dst=nxt, group=group)
-        rq.wait()
-        sq.wait()
+        if rank % 2 == 0:
+            dist.send(send, dst=nxt, group=group)
+            dist.recv(recv, src=prv, group=group)
+        else:
+            dist.recv(recv, src=prv, group=group)
+            dist.send(send, dst=nxt, group=group)
     except Exception as e:                      # noqa: BLE001
         print(f"[dist_control] P2P warm-up skipped ({type(e).__name__}: "
               f"{str(e)[:120]}); the first real transfer will pay the "
