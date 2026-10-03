@@ -107,7 +107,25 @@ def _worker(rank, world, initfile, results):
     # on one communicator can deadlock; on gloo/CPU both arrangements work, so
     # this is a precaution carried for the GPU path, not a measured fix.
     ch = P2PChannel()
-    ch.warm(rank, world, dev)
+    # warm() must bring the group's communicator up with a RANK-UNIFORM
+    # COLLECTIVE, not with point-to-point traffic. Under NCCL a new_group's
+    # communicator is built lazily and that build needs every rank in the
+    # group; a partial plan -- which is what run_plan is FOR -- can therefore
+    # never be the first thing to touch it. Counted rather than assumed,
+    # because the symptom when it is missing is not an error: it is ten ranks
+    # spinning in the deadline vote while the rest block in isend, which is
+    # how s16_train_impala_r15 spent its whole timeout on 2026-10-03.
+    _real_ar, seen = dist.all_reduce, []
+    def _counting_all_reduce(t, *a, **kw):
+        seen.append(kw.get("group", a[1] if len(a) > 1 else None))
+        return _real_ar(t, *a, **kw)
+    dist.all_reduce = _counting_all_reduce
+    try:
+        ch.warm(rank, world, dev)
+    finally:
+        dist.all_reduce = _real_ar
+    out["warm_collectives"] = len(seen)
+    out["warm_on_p2p_group"] = bool(seen) and seen[0] is ch.group
     out["warmed"] = True
 
     cp = ControlPlane(dev, width=4)
@@ -240,6 +258,16 @@ def test_distributed():
           "tick-counter divergence was NOT caught -- a ControlPlane rebuilt on "
           "some ranks mid-run would silently derive plans from a matrix whose "
           "rows describe different ticks")
+
+    check(r0["warm_collectives"] >= 1 and r1["warm_collectives"] >= 1,
+          f"P2PChannel.warm() ran no collective "
+          f"(rank0={r0['warm_collectives']}, rank1={r1['warm_collectives']}) -- "
+          f"a new_group's NCCL communicator is built lazily and collectively, "
+          f"so a partial plan would block forever on the ranks that have "
+          f"nothing to send")
+    check(r0["warm_on_p2p_group"] and r1["warm_on_p2p_group"],
+          "warm()'s collective did not run on the P2P group, so it brings up "
+          "the wrong communicator and the P2P group is still cold")
 
     # assert_plan_agreed, both directions.
     check(r0["agree_ok"] and r1["agree_ok"],
