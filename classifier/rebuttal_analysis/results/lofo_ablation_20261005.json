@@ -1,0 +1,1080 @@
+{
+  "generated_utc": "2026-10-06T07:49:26.343460Z",
+  "protocol": "multi-node only; family-level 60/20/20 holdout, stratified by dominant class; tuned on val, reported on test; repeated over seeds",
+  "n_windows": 13011,
+  "n_jobs": 326,
+  "n_workloads": 88,
+  "n_families": 39,
+  "families": {
+    "advtrain_bubble": "ml_training",
+    "advtrain_flatarena": "ml_training",
+    "advtrain_pipe": "ml_training",
+    "advtrain_satfiller": "ml_training",
+    "advtrain_satint": "ml_training",
+    "inferasr_whisper": "ml_inference",
+    "infercnn_rn": "ml_inference",
+    "inferdiff_sdxl": "ml_inference",
+    "inferembed_bge": "ml_inference",
+    "inferembed_clip": "ml_inference",
+    "inferhf_qwen": "ml_inference",
+    "inferhf_shard": "ml_inference",
+    "infermem_qwen": "ml_inference",
+    "inferrec_dlrm": "ml_inference",
+    "inferrep_qwen": "ml_inference",
+    "inferserve_bursty": "ml_inference",
+    "inferserve_chunked": "ml_inference",
+    "inferserve_decode": "ml_inference",
+    "inferserve_poisson": "ml_inference",
+    "inferserve_prefill": "ml_inference",
+    "inferserve_saturate": "ml_inference",
+    "infershard_qwen": "ml_inference",
+    "infervis_vitl": "ml_inference",
+    "nonml_comm": "other",
+    "nonml_fftshard": "other",
+    "nonml_himem": "other",
+    "nonml_hpc": "other",
+    "nonml_lowpower": "other",
+    "nonml_nccl": "other",
+    "nonml_sat": "other",
+    "nonml_stencil": "other",
+    "stalled_train": "ml_training",
+    "train_accumsync": "ml_training",
+    "train_contrastive": "ml_training",
+    "train_ddp": "ml_training",
+    "train_diffusion": "ml_training",
+    "train_fsdp": "ml_training",
+    "train_lora": "ml_training",
+    "train_pipe": "ml_training"
+  },
+  "grid": [
+    "rf200",
+    "rf200_leaf5",
+    "rf200_d20",
+    "rf200_bal",
+    "rf300_mf03",
+    "et300",
+    "hgb"
+  ],
+  "per_seed": [
+    {
+      "seed": 0,
+      "model": "hgb",
+      "val_acc": 0.8537353735373537,
+      "test_acc": 0.5688960515713135,
+      "test_job_acc": 0.5806451612903226,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.5694670386388476,
+      "test_acc_honest": 0.6524953789279113,
+      "test_acc_adversarial": 0.0,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "advtrain_satfiller",
+        "infercnn_rn",
+        "inferrec_dlrm",
+        "inferserve_saturate",
+        "nonml_hpc",
+        "train_diffusion"
+      ]
+    },
+    {
+      "seed": 1,
+      "model": "rf200_leaf5",
+      "val_acc": 0.6948989412897016,
+      "test_acc": 0.786390740091196,
+      "test_job_acc": 0.8028169014084507,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7433137643495494,
+      "test_acc_honest": 0.7548441449031171,
+      "test_acc_adversarial": 0.9433962264150944,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "advtrain_satint",
+        "inferhf_shard",
+        "inferserve_poisson",
+        "infervis_vitl",
+        "nonml_nccl",
+        "train_fsdp"
+      ]
+    },
+    {
+      "seed": 2,
+      "model": "hgb",
+      "val_acc": 0.6239410681399632,
+      "test_acc": 0.6961736150770989,
+      "test_job_acc": 0.7073170731707317,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.6590100960265343,
+      "test_acc_honest": 0.6448202959830867,
+      "test_acc_adversarial": 0.7565217391304347,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "advtrain_pipe",
+        "infercnn_rn",
+        "inferembed_clip",
+        "inferrec_dlrm",
+        "nonml_sat",
+        "train_diffusion"
+      ]
+    },
+    {
+      "seed": 3,
+      "model": "rf200_leaf5",
+      "val_acc": 0.56571827544074,
+      "test_acc": 0.8521229868228404,
+      "test_job_acc": 0.8529411764705882,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.8215797547781353,
+      "test_acc_honest": 0.8220720720720721,
+      "test_acc_adversarial": 0.9079497907949791,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "advtrain_bubble",
+        "advtrain_flatarena",
+        "inferembed_clip",
+        "inferhf_qwen",
+        "infermem_qwen",
+        "nonml_fftshard"
+      ]
+    },
+    {
+      "seed": 4,
+      "model": "rf200_bal",
+      "val_acc": 0.8166615992702949,
+      "test_acc": 0.4595924104005622,
+      "test_job_acc": 0.4594594594594595,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.4048632878709299,
+      "test_acc_honest": 0.4363496932515337,
+      "test_acc_adversarial": 0.7142857142857143,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "inferembed_bge",
+        "inferserve_decode",
+        "inferserve_prefill",
+        "nonml_lowpower",
+        "stalled_train",
+        "train_accumsync"
+      ]
+    },
+    {
+      "seed": 5,
+      "model": "rf200_leaf5",
+      "val_acc": 0.828125,
+      "test_acc": 0.5935334872979214,
+      "test_job_acc": 0.6111111111111112,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.5542066683874692,
+      "test_acc_honest": 0.5613160518444666,
+      "test_acc_adversarial": 1.0,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "advtrain_bubble",
+        "inferhf_qwen",
+        "inferrec_dlrm",
+        "inferserve_prefill",
+        "nonml_lowpower",
+        "train_ddp"
+      ]
+    },
+    {
+      "seed": 6,
+      "model": "rf200_bal",
+      "val_acc": 0.8400361500225938,
+      "test_acc": 0.8295165394402035,
+      "test_job_acc": 0.868421052631579,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.8484051636391778,
+      "test_acc_honest": 0.8630419821059876,
+      "test_acc_adversarial": 0.42016806722689076,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "infermem_qwen",
+        "inferserve_saturate",
+        "infervis_vitl",
+        "nonml_hpc",
+        "stalled_train",
+        "train_ddp"
+      ]
+    },
+    {
+      "seed": 7,
+      "model": "et300",
+      "val_acc": 0.8823529411764706,
+      "test_acc": 0.770199370409234,
+      "test_job_acc": 0.803921568627451,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.6409943382141252,
+      "test_acc_honest": 0.7107942973523421,
+      "test_acc_adversarial": 0.8333333333333334,
+      "n_train_fams": 24,
+      "n_val_fams": 9,
+      "n_test_fams": 6,
+      "test_families": [
+        "advtrain_pipe",
+        "inferhf_qwen",
+        "inferrep_qwen",
+        "inferserve_chunked",
+        "nonml_hpc",
+        "stalled_train"
+      ]
+    }
+  ],
+  "per_family": [
+    {
+      "family": "advtrain_satfiller",
+      "seed": 0,
+      "n": 159,
+      "cls": "ml_training",
+      "acc": 0.0
+    },
+    {
+      "family": "infercnn_rn",
+      "seed": 0,
+      "n": 117,
+      "cls": "ml_inference",
+      "acc": 0.9487179487179487
+    },
+    {
+      "family": "inferrec_dlrm",
+      "seed": 0,
+      "n": 315,
+      "cls": "ml_inference",
+      "acc": 0.0
+    },
+    {
+      "family": "inferserve_saturate",
+      "seed": 0,
+      "n": 160,
+      "cls": "ml_inference",
+      "acc": 0.975
+    },
+    {
+      "family": "nonml_hpc",
+      "seed": 0,
+      "n": 331,
+      "cls": "other",
+      "acc": 0.8459214501510574
+    },
+    {
+      "family": "train_diffusion",
+      "seed": 0,
+      "n": 159,
+      "cls": "ml_training",
+      "acc": 1.0
+    },
+    {
+      "family": "advtrain_satint",
+      "seed": 1,
+      "n": 477,
+      "cls": "ml_training",
+      "acc": 0.9433962264150944
+    },
+    {
+      "family": "inferhf_shard",
+      "seed": 1,
+      "n": 255,
+      "cls": "ml_inference",
+      "acc": 0.7450980392156863
+    },
+    {
+      "family": "inferserve_poisson",
+      "seed": 1,
+      "n": 359,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "infervis_vitl",
+      "seed": 1,
+      "n": 78,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "nonml_nccl",
+      "seed": 1,
+      "n": 157,
+      "cls": "other",
+      "acc": 1.0
+    },
+    {
+      "family": "train_fsdp",
+      "seed": 1,
+      "n": 1525,
+      "cls": "ml_training",
+      "acc": 0.6609836065573771
+    },
+    {
+      "family": "advtrain_pipe",
+      "seed": 2,
+      "n": 805,
+      "cls": "ml_training",
+      "acc": 0.7565217391304347
+    },
+    {
+      "family": "infercnn_rn",
+      "seed": 2,
+      "n": 117,
+      "cls": "ml_inference",
+      "acc": 0.8205128205128205
+    },
+    {
+      "family": "inferembed_clip",
+      "seed": 2,
+      "n": 199,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferrec_dlrm",
+      "seed": 2,
+      "n": 315,
+      "cls": "ml_inference",
+      "acc": 0.0
+    },
+    {
+      "family": "nonml_sat",
+      "seed": 2,
+      "n": 156,
+      "cls": "other",
+      "acc": 1.0
+    },
+    {
+      "family": "train_diffusion",
+      "seed": 2,
+      "n": 159,
+      "cls": "ml_training",
+      "acc": 1.0
+    },
+    {
+      "family": "advtrain_bubble",
+      "seed": 3,
+      "n": 159,
+      "cls": "ml_training",
+      "acc": 1.0
+    },
+    {
+      "family": "advtrain_flatarena",
+      "seed": 3,
+      "n": 319,
+      "cls": "ml_training",
+      "acc": 0.8620689655172413
+    },
+    {
+      "family": "inferembed_clip",
+      "seed": 3,
+      "n": 199,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferhf_qwen",
+      "seed": 3,
+      "n": 120,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "infermem_qwen",
+      "seed": 3,
+      "n": 256,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "nonml_fftshard",
+      "seed": 3,
+      "n": 313,
+      "cls": "other",
+      "acc": 0.4952076677316294
+    },
+    {
+      "family": "inferembed_bge",
+      "seed": 4,
+      "n": 158,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferserve_decode",
+      "seed": 4,
+      "n": 198,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferserve_prefill",
+      "seed": 4,
+      "n": 118,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "nonml_lowpower",
+      "seed": 4,
+      "n": 825,
+      "cls": "other",
+      "acc": 0.11515151515151516
+    },
+    {
+      "family": "stalled_train",
+      "seed": 4,
+      "n": 119,
+      "cls": "ml_training",
+      "acc": 0.7142857142857143
+    },
+    {
+      "family": "train_accumsync",
+      "seed": 4,
+      "n": 5,
+      "cls": "ml_training",
+      "acc": 0.0
+    },
+    {
+      "family": "advtrain_bubble",
+      "seed": 5,
+      "n": 159,
+      "cls": "ml_training",
+      "acc": 1.0
+    },
+    {
+      "family": "inferhf_qwen",
+      "seed": 5,
+      "n": 120,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferrec_dlrm",
+      "seed": 5,
+      "n": 315,
+      "cls": "ml_inference",
+      "acc": 0.0
+    },
+    {
+      "family": "inferserve_prefill",
+      "seed": 5,
+      "n": 118,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "nonml_lowpower",
+      "seed": 5,
+      "n": 825,
+      "cls": "other",
+      "acc": 0.3333333333333333
+    },
+    {
+      "family": "train_ddp",
+      "seed": 5,
+      "n": 628,
+      "cls": "ml_training",
+      "acc": 0.9761146496815286
+    },
+    {
+      "family": "infermem_qwen",
+      "seed": 6,
+      "n": 256,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferserve_saturate",
+      "seed": 6,
+      "n": 160,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "infervis_vitl",
+      "seed": 6,
+      "n": 78,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "nonml_hpc",
+      "seed": 6,
+      "n": 331,
+      "cls": "other",
+      "acc": 0.8912386706948641
+    },
+    {
+      "family": "stalled_train",
+      "seed": 6,
+      "n": 119,
+      "cls": "ml_training",
+      "acc": 0.42016806722689076
+    },
+    {
+      "family": "train_ddp",
+      "seed": 6,
+      "n": 628,
+      "cls": "ml_training",
+      "acc": 0.7404458598726115
+    },
+    {
+      "family": "advtrain_pipe",
+      "seed": 7,
+      "n": 805,
+      "cls": "ml_training",
+      "acc": 0.8583850931677018
+    },
+    {
+      "family": "inferhf_qwen",
+      "seed": 7,
+      "n": 120,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferrep_qwen",
+      "seed": 7,
+      "n": 332,
+      "cls": "ml_inference",
+      "acc": 1.0
+    },
+    {
+      "family": "inferserve_chunked",
+      "seed": 7,
+      "n": 199,
+      "cls": "ml_inference",
+      "acc": 0.9949748743718593
+    },
+    {
+      "family": "nonml_hpc",
+      "seed": 7,
+      "n": 331,
+      "cls": "other",
+      "acc": 0.14501510574018128
+    },
+    {
+      "family": "stalled_train",
+      "seed": 7,
+      "n": 119,
+      "cls": "ml_training",
+      "acc": 0.6638655462184874
+    }
+  ],
+  "all_runs": [
+    {
+      "seed": 0,
+      "model": "rf200",
+      "val_acc": 0.774977497749775,
+      "test_acc": 0.5954875100725222,
+      "test_job_acc": 0.6129032258064516,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.5846419418320729
+    },
+    {
+      "seed": 0,
+      "model": "rf200_leaf5",
+      "val_acc": 0.7781278127812782,
+      "test_acc": 0.5979049153908138,
+      "test_job_acc": 0.6129032258064516,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.5870385418307386
+    },
+    {
+      "seed": 0,
+      "model": "rf200_d20",
+      "val_acc": 0.7767776777677767,
+      "test_acc": 0.5979049153908138,
+      "test_job_acc": 0.6129032258064516,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.586933144139682
+    },
+    {
+      "seed": 0,
+      "model": "rf200_bal",
+      "val_acc": 0.7641764176417641,
+      "test_acc": 0.5842062852538276,
+      "test_job_acc": 0.5806451612903226,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.5732324498760585
+    },
+    {
+      "seed": 0,
+      "model": "rf300_mf03",
+      "val_acc": 0.7817281728172817,
+      "test_acc": 0.5995165189363416,
+      "test_job_acc": 0.6129032258064516,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.588558386287072
+    },
+    {
+      "seed": 0,
+      "model": "et300",
+      "val_acc": 0.7331233123312331,
+      "test_acc": 0.6051571313456889,
+      "test_job_acc": 0.6129032258064516,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.5958029769503614
+    },
+    {
+      "seed": 0,
+      "model": "hgb",
+      "val_acc": 0.8537353735373537,
+      "test_acc": 0.5688960515713135,
+      "test_job_acc": 0.5806451612903226,
+      "n_test_jobs": 31,
+      "test_macro_f1": 0.5694670386388476
+    },
+    {
+      "seed": 1,
+      "model": "rf200",
+      "val_acc": 0.6804619826756496,
+      "test_acc": 0.7860399859698352,
+      "test_job_acc": 0.7887323943661971,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7532582561677698
+    },
+    {
+      "seed": 1,
+      "model": "rf200_leaf5",
+      "val_acc": 0.6948989412897016,
+      "test_acc": 0.786390740091196,
+      "test_job_acc": 0.8028169014084507,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7433137643495494
+    },
+    {
+      "seed": 1,
+      "model": "rf200_d20",
+      "val_acc": 0.6801411613731152,
+      "test_acc": 0.7839354612416696,
+      "test_job_acc": 0.7887323943661971,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7477804729635946
+    },
+    {
+      "seed": 1,
+      "model": "rf200_bal",
+      "val_acc": 0.6403593198588386,
+      "test_acc": 0.8214661522272887,
+      "test_job_acc": 0.8309859154929577,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7679261331373652
+    },
+    {
+      "seed": 1,
+      "model": "rf300_mf03",
+      "val_acc": 0.6907282643567533,
+      "test_acc": 0.7050157839354613,
+      "test_job_acc": 0.704225352112676,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.6539425125557035
+    },
+    {
+      "seed": 1,
+      "model": "et300",
+      "val_acc": 0.6788578761629772,
+      "test_acc": 0.7649947386881796,
+      "test_job_acc": 0.7746478873239436,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7094646796574752
+    },
+    {
+      "seed": 1,
+      "model": "hgb",
+      "val_acc": 0.670837343599615,
+      "test_acc": 0.7934058225184146,
+      "test_job_acc": 0.8028169014084507,
+      "n_test_jobs": 71,
+      "test_macro_f1": 0.7051987156800185
+    },
+    {
+      "seed": 2,
+      "model": "rf200",
+      "val_acc": 0.5775322283609576,
+      "test_acc": 0.7361507709880069,
+      "test_job_acc": 0.7560975609756098,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.6955437448040023
+    },
+    {
+      "seed": 2,
+      "model": "rf200_leaf5",
+      "val_acc": 0.5797421731123389,
+      "test_acc": 0.6841804683038264,
+      "test_job_acc": 0.6829268292682927,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.661763115197404
+    },
+    {
+      "seed": 2,
+      "model": "rf200_d20",
+      "val_acc": 0.5786372007366483,
+      "test_acc": 0.7367218732153056,
+      "test_job_acc": 0.7560975609756098,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.6959187460395796
+    },
+    {
+      "seed": 2,
+      "model": "rf200_bal",
+      "val_acc": 0.5841620626151013,
+      "test_acc": 0.7555682467161622,
+      "test_job_acc": 0.7560975609756098,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.7083672650111831
+    },
+    {
+      "seed": 2,
+      "model": "rf300_mf03",
+      "val_acc": 0.5554327808471455,
+      "test_acc": 0.7047401484865791,
+      "test_job_acc": 0.7073170731707317,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.6747353053706074
+    },
+    {
+      "seed": 2,
+      "model": "et300",
+      "val_acc": 0.6025782688766114,
+      "test_acc": 0.7515705311250714,
+      "test_job_acc": 0.7560975609756098,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.689243768753677
+    },
+    {
+      "seed": 2,
+      "model": "hgb",
+      "val_acc": 0.6239410681399632,
+      "test_acc": 0.6961736150770989,
+      "test_job_acc": 0.7073170731707317,
+      "n_test_jobs": 41,
+      "test_macro_f1": 0.6590100960265343
+    },
+    {
+      "seed": 3,
+      "model": "rf200",
+      "val_acc": 0.4826322220282772,
+      "test_acc": 0.8433382137628112,
+      "test_job_acc": 0.8235294117647058,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.822757370281952
+    },
+    {
+      "seed": 3,
+      "model": "rf200_leaf5",
+      "val_acc": 0.56571827544074,
+      "test_acc": 0.8521229868228404,
+      "test_job_acc": 0.8529411764705882,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.8215797547781353
+    },
+    {
+      "seed": 3,
+      "model": "rf200_d20",
+      "val_acc": 0.4826322220282772,
+      "test_acc": 0.8433382137628112,
+      "test_job_acc": 0.8235294117647058,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.822757370281952
+    },
+    {
+      "seed": 3,
+      "model": "rf200_bal",
+      "val_acc": 0.5018327805899808,
+      "test_acc": 0.8448023426061494,
+      "test_job_acc": 0.8235294117647058,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.8156242497598466
+    },
+    {
+      "seed": 3,
+      "model": "rf300_mf03",
+      "val_acc": 0.4915342991796125,
+      "test_acc": 0.9224011713030746,
+      "test_job_acc": 0.9411764705882353,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.9272573877850757
+    },
+    {
+      "seed": 3,
+      "model": "et300",
+      "val_acc": 0.40443358352242975,
+      "test_acc": 0.7159590043923866,
+      "test_job_acc": 0.7058823529411765,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.5609603642650874
+    },
+    {
+      "seed": 3,
+      "model": "hgb",
+      "val_acc": 0.5409320998429045,
+      "test_acc": 0.7152269399707174,
+      "test_job_acc": 0.7058823529411765,
+      "n_test_jobs": 34,
+      "test_macro_f1": 0.555109961978422
+    },
+    {
+      "seed": 4,
+      "model": "rf200",
+      "val_acc": 0.751900273639404,
+      "test_acc": 0.4652143359100492,
+      "test_job_acc": 0.4594594594594595,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.42707271972691024
+    },
+    {
+      "seed": 4,
+      "model": "rf200_leaf5",
+      "val_acc": 0.7674065065369413,
+      "test_acc": 0.46099789177793393,
+      "test_job_acc": 0.4594594594594595,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.42191244470064176
+    },
+    {
+      "seed": 4,
+      "model": "rf200_d20",
+      "val_acc": 0.7515962298570994,
+      "test_acc": 0.46591707659873505,
+      "test_job_acc": 0.4594594594594595,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.42795736721259897
+    },
+    {
+      "seed": 4,
+      "model": "rf200_bal",
+      "val_acc": 0.8166615992702949,
+      "test_acc": 0.4595924104005622,
+      "test_job_acc": 0.4594594594594595,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.4048632878709299
+    },
+    {
+      "seed": 4,
+      "model": "rf300_mf03",
+      "val_acc": 0.6813621161447249,
+      "test_acc": 0.5579761068165847,
+      "test_job_acc": 0.5405405405405406,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.5182246326799559
+    },
+    {
+      "seed": 4,
+      "model": "et300",
+      "val_acc": 0.7835208269990879,
+      "test_acc": 0.48418833450456783,
+      "test_job_acc": 0.43243243243243246,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.46090915364079726
+    },
+    {
+      "seed": 4,
+      "model": "hgb",
+      "val_acc": 0.6734569778048038,
+      "test_acc": 0.46732255797610683,
+      "test_job_acc": 0.43243243243243246,
+      "n_test_jobs": 37,
+      "test_macro_f1": 0.43241415728345717
+    },
+    {
+      "seed": 5,
+      "model": "rf200",
+      "val_acc": 0.7390625,
+      "test_acc": 0.5810623556581986,
+      "test_job_acc": 0.5925925925925926,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.5410807373885232
+    },
+    {
+      "seed": 5,
+      "model": "rf200_leaf5",
+      "val_acc": 0.828125,
+      "test_acc": 0.5935334872979214,
+      "test_job_acc": 0.6111111111111112,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.5542066683874692
+    },
+    {
+      "seed": 5,
+      "model": "rf200_d20",
+      "val_acc": 0.7375,
+      "test_acc": 0.5727482678983834,
+      "test_job_acc": 0.5555555555555556,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.5313950145499566
+    },
+    {
+      "seed": 5,
+      "model": "rf200_bal",
+      "val_acc": 0.7578125,
+      "test_acc": 0.548729792147806,
+      "test_job_acc": 0.5370370370370371,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.5035895916102058
+    },
+    {
+      "seed": 5,
+      "model": "rf300_mf03",
+      "val_acc": 0.7307291666666667,
+      "test_acc": 0.6960739030023094,
+      "test_job_acc": 0.7037037037037037,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.6650422562936763
+    },
+    {
+      "seed": 5,
+      "model": "et300",
+      "val_acc": 0.7578125,
+      "test_acc": 0.5071593533487297,
+      "test_job_acc": 0.5,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.4456876231751657
+    },
+    {
+      "seed": 5,
+      "model": "hgb",
+      "val_acc": 0.7786458333333334,
+      "test_acc": 0.6605080831408776,
+      "test_job_acc": 0.6666666666666666,
+      "n_test_jobs": 54,
+      "test_macro_f1": 0.6286591557429196
+    },
+    {
+      "seed": 6,
+      "model": "rf200",
+      "val_acc": 0.8215092634432897,
+      "test_acc": 0.8638676844783715,
+      "test_job_acc": 0.9210526315789473,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.8746292920268335
+    },
+    {
+      "seed": 6,
+      "model": "rf200_leaf5",
+      "val_acc": 0.8029823768639855,
+      "test_acc": 0.8244274809160306,
+      "test_job_acc": 0.8421052631578947,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.8377147701677026
+    },
+    {
+      "seed": 6,
+      "model": "rf200_d20",
+      "val_acc": 0.8228648892905558,
+      "test_acc": 0.8670483460559797,
+      "test_job_acc": 0.9210526315789473,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.878274891352599
+    },
+    {
+      "seed": 6,
+      "model": "rf200_bal",
+      "val_acc": 0.8400361500225938,
+      "test_acc": 0.8295165394402035,
+      "test_job_acc": 0.868421052631579,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.8484051636391778
+    },
+    {
+      "seed": 6,
+      "model": "rf300_mf03",
+      "val_acc": 0.8002711251694532,
+      "test_acc": 0.7531806615776081,
+      "test_job_acc": 0.7894736842105263,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.752120551994944
+    },
+    {
+      "seed": 6,
+      "model": "et300",
+      "val_acc": 0.8346136466335291,
+      "test_acc": 0.8695928753180662,
+      "test_job_acc": 0.868421052631579,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.8685140148894112
+    },
+    {
+      "seed": 6,
+      "model": "hgb",
+      "val_acc": 0.7849073655671035,
+      "test_acc": 0.811704834605598,
+      "test_job_acc": 0.8421052631578947,
+      "n_test_jobs": 38,
+      "test_macro_f1": 0.824143961648292
+    },
+    {
+      "seed": 7,
+      "model": "rf200",
+      "val_acc": 0.8522352941176471,
+      "test_acc": 0.7612801678908709,
+      "test_job_acc": 0.8235294117647058,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.6173358233644263
+    },
+    {
+      "seed": 7,
+      "model": "rf200_leaf5",
+      "val_acc": 0.851764705882353,
+      "test_acc": 0.7313746065057712,
+      "test_job_acc": 0.7843137254901961,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.5765732693444948
+    },
+    {
+      "seed": 7,
+      "model": "rf200_d20",
+      "val_acc": 0.8527058823529412,
+      "test_acc": 0.7628541448058762,
+      "test_job_acc": 0.8235294117647058,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.6185992429116176
+    },
+    {
+      "seed": 7,
+      "model": "rf200_bal",
+      "val_acc": 0.851764705882353,
+      "test_acc": 0.7266526757607555,
+      "test_job_acc": 0.7647058823529411,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.5784226175747054
+    },
+    {
+      "seed": 7,
+      "model": "rf300_mf03",
+      "val_acc": 0.8108235294117647,
+      "test_acc": 0.6747114375655824,
+      "test_job_acc": 0.7058823529411765,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.563550823199331
+    },
+    {
+      "seed": 7,
+      "model": "et300",
+      "val_acc": 0.8823529411764706,
+      "test_acc": 0.770199370409234,
+      "test_job_acc": 0.803921568627451,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.6409943382141252
+    },
+    {
+      "seed": 7,
+      "model": "hgb",
+      "val_acc": 0.8484705882352941,
+      "test_acc": 0.6915005246589717,
+      "test_job_acc": 0.7450980392156863,
+      "n_test_jobs": 51,
+      "test_macro_f1": 0.5199171341491764
+    }
+  ]
+}
