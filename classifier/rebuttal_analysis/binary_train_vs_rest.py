@@ -49,6 +49,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(
 from classifier.threeway_improved import (  # noqa: E402
     load_all_data, sliding_windows, get_feature_cols, workload_group)
 from classifier.multinode_features import assign_stream_and_job_ids  # noqa: E402
+from classifier.run_alerts import run_alert_rate  # noqa: E402
 from classifier.twostage import TwoStageClassifier  # noqa: E402
 from sklearn.model_selection import GroupKFold  # noqa: E402
 from sklearn.metrics import (  # noqa: E402
@@ -137,7 +138,7 @@ def main():
             print(f"  fold {i}: skipped, training fold lacks a class")
             continue
         clf = TwoStageClassifier(random_state=0)
-        clf.fit(X[tr], sub.threeway_label.values, groups=sub.run_id.values,
+        clf.fit(X[tr], sub.threeway_label.values, groups=sub.job_id.values,
                 feature_cols=list(cols))
         p[te] = clf.predict_proba_training(X[te])
         print(f"  fold {i}: fitted on {len(tr):,}, scored {len(te):,}", flush=True)
@@ -156,19 +157,10 @@ def main():
     print(f"  TP {tp}  FP {fp}  FN {fn}  TN {tn}   (FPR {fp / (fp + tn):.4f})")
 
     def run_rule(mask, by, tau):
-        """k-of-m consecutive windows above tau, grouped by stream or by job."""
-        alerts = n = 0
+        """Temporal stream alerts, optionally aggregated to physical jobs."""
         sub = wk[mask].reset_index(drop=True)
         pp = pk[np.asarray(mask)]
-        for _key, idx in sub.groupby(by).indices.items():
-            v = pp[idx]
-            n += 1
-            if len(v) < a.m:
-                alerts += int((v > tau).sum() >= a.k)
-            else:
-                alerts += int(any((v[i:i + a.m] > tau).sum() >= a.k
-                                  for i in range(len(v) - a.m + 1)))
-        return (alerts / n if n else float("nan")), n
+        return run_alert_rate(sub, pp, tau, a.k, a.m, by)
 
     pos = (yk == 1)
     runlevel = {}

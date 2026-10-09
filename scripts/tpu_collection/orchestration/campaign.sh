@@ -243,15 +243,30 @@ run_scope(){  # zone prefix nodecount scope key
   local z=$1 pfx=$2 nc=$3 scope=$4 key=$5
   local first="$pfx"; [ "$nc" -gt 1 ] && first="${pfx}-0"
   say "RUN $key: scope=$scope nodes=$nc @ $z (first=$first)"
+  # A slice can contain several worker hosts. Count the live endpoints rather
+  # than accepting one successful host (or treating slice count as host count).
+  local expected=0 workers
+  for i in $(seq 0 $((nc-1))); do
+    local n="$pfx"; [ "$nc" -gt 1 ] && n="${pfx}-${i}"
+    if ! workers=$(gcloud compute tpus tpu-vm describe "$n" --project="$PROJECT" --zone="$z" \
+        --format='value(networkEndpoints[].ipAddress)' 2>/dev/null \
+        | tr ';,' '\n' | grep -c '[0-9]'); then
+      say "SETUP FAILED -- cannot determine worker count for $n"
+      return 1
+    fi
+    [ "$workers" -ge 1 ] || return 1
+    expected=$((expected + workers))
+  done
   # setup every worker of every slice, in parallel
   for i in $(seq 0 $((nc-1))); do
     local n="$pfx"; [ "$nc" -gt 1 ] && n="${pfx}-${i}"
     gcloud compute tpus tpu-vm scp /tmp/.pat "$n":/tmp/.pat --project=$PROJECT --zone="$z" --worker=all >/dev/null 2>&1 &
   done; wait
   local setup_out=/tmp/setup.$key.log; : > "$setup_out"
+  local setup_pids=() setup_rc=0 pid
   for i in $(seq 0 $((nc-1))); do
     local n="$pfx"; [ "$nc" -gt 1 ] && n="${pfx}-${i}"
-    ( gcloud compute tpus tpu-vm ssh "$n" --project=$PROJECT --zone="$z" --worker=all --command="set -e
+    ( gcloud compute tpus tpu-vm ssh "$n" --project=$PROJECT --zone="$z" --worker=all --command="set -e -o pipefail
 sudo apt-get update -q >/dev/null 2>&1
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q python3-pip git >/dev/null 2>&1
 cd \$HOME && rm -rf repo
@@ -259,8 +274,10 @@ git -c credential.helper='!f(){ echo username=x-access-token; echo \"password=\$
 cd repo && pip install -q -r requirements_tpu.txt -f https://storage.googleapis.com/jax-releases/libtpu_releases.html 2>&1|tail -1
 rm -f /tmp/.pat
 python3 -c 'import jax; print(\"JAXOK\", jax.__version__, jax.device_count())'
-echo SETUP_OK_\$(hostname)" 2>&1 >> "$setup_out" ) &
-  done; wait
+echo SETUP_OK_\$(hostname)" >> "$setup_out" 2>&1 ) &
+    setup_pids+=($!)
+  done
+  for pid in "${setup_pids[@]}"; do wait "$pid" || setup_rc=1; done
   # ASSERT setup. Previously the SETUP_OK count went to a discarded subshell, so a
   # failed clone or pip install passed silently -- and then every cell died in ~35s
   # with 0/N workers, which is almost certainly what happened overnight.
@@ -273,9 +290,8 @@ echo SETUP_OK_\$(hostname)" 2>&1 >> "$setup_out" ) &
   local n_ok n_jax
   n_ok=$(grep -c 'SETUP_OK' "$setup_out" 2>/dev/null); n_ok=${n_ok//[^0-9]/}; n_ok=${n_ok:-0}
   n_jax=$(grep -c 'JAXOK' "$setup_out" 2>/dev/null); n_jax=${n_jax//[^0-9]/}; n_jax=${n_jax:-0}
-  say "  setup: SETUP_OK=$n_ok JAXOK=$n_jax of $nc worker(s) (need >=1 of each)"
-  [ "$n_ok" -lt "$nc" ] && say "  WARNING: only $n_ok/$nc workers completed setup"
-  if [ "$n_ok" -lt 1 ] || [ "$n_jax" -lt 1 ]; then
+  say "  setup: SETUP_OK=$n_ok JAXOK=$n_jax of $expected worker(s), ssh_rc=$setup_rc"
+  if [ "$setup_rc" -ne 0 ] || [ "$n_ok" -ne "$expected" ] || [ "$n_jax" -ne "$expected" ]; then
     say "  SETUP FAILED -- not running cells, not marking collected. Tail:"
     tail -12 "$setup_out" | sed 's/^/      /'
     return 1

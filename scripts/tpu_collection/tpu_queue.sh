@@ -132,18 +132,22 @@ derive_workers() {
   for n in $(slice_nodes); do
     c=$(gcloud compute tpus tpu-vm describe "$n" --project="$PROJECT" --zone="$ZONE" \
         --format='value(networkEndpoints[].ipAddress)' 2>/dev/null \
-        | tr ';,' '\n' | grep -c '[0-9]')
+        | tr ';,' '\n' | grep -c '[0-9]') || return 1
+    [ "$c" -ge 1 ] || return 1
     total=$((total + c))
   done
   echo "$total"
 }
 WORKERS_DERIVED=""
 if [ -z "$NUM_WORKERS" ]; then
-  NUM_WORKERS=$(derive_workers)
+  if ! NUM_WORKERS=$(derive_workers); then
+    say "ABORT: cannot determine every slice's worker count"
+    exit 1
+  fi
   WORKERS_DERIVED=1
   if ! [ "$NUM_WORKERS" -ge 1 ] 2>/dev/null; then
-    say "WARN: could not derive worker count (slice not up yet?); defaulting to 1"
-    NUM_WORKERS=1
+    say "ABORT: no live workers found"
+    exit 1
   fi
   say "derived NUM_WORKERS=$NUM_WORKERS from $NODE_COUNT slice(s)"
 fi

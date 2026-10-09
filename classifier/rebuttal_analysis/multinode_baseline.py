@@ -33,6 +33,7 @@ from classifier.threeway_improved import (  # noqa: E402
     _normalize_columns, get_feature_cols, sliding_windows, threeway_label,
     workload_group)
 from classifier.twostage import TwoStageClassifier  # noqa: E402
+from classifier.run_alerts import run_alert_rate  # noqa: E402
 from sklearn.model_selection import LeaveOneGroupOut  # noqa: E402
 
 # Platform = (vendor family, topology). Only genuinely multi-machine rungs.
@@ -59,6 +60,10 @@ def load(paths, window, stride, stream_to_job=None):
     if stream_to_job is None:
         stream_to_job = {}
     for p in paths:
+        if (p.name.startswith("nic_") or "_scope_" in p.name
+                or "_dcgm_" in p.name
+                or any("_quarantine" in part for part in p.parts)):
+            continue
         stem = p.stem
         cell, hw = cell_of(stem)
         if cell is None:
@@ -75,6 +80,14 @@ def load(paths, window, stride, stream_to_job=None):
         # job-level ones. Keep both: stem for windowing, parquet run_id for
         # aggregation.
         job = d["run_id"].iloc[0] if "run_id" in d.columns and len(d) else stem
+        job = str(job) if pd.notna(job) else stem
+        # s1/s8 cells execute independently on each node even though the queue
+        # assigns both nodes the same deterministic run_id.
+        if re.match(r"^s(?:1|8)_", lab):
+            node = re.search(r"_node\d+(?=_|$)", cell)
+            host = d["hostname"].iloc[0] if "hostname" in d.columns and len(d) else None
+            host = str(host) if pd.notna(host) else (node.group(0) if node else stem)
+            job = f"{job}|{host}"
         stream_to_job[stem] = job
         d["workload_label"] = lab
         d["run_id"] = stem
@@ -85,6 +98,8 @@ def load(paths, window, stride, stream_to_job=None):
         return None
     df = pd.concat(frames, ignore_index=True)
     w = sliding_windows(df, window, stride)
+    if w.empty:
+        return None
     w["grp"] = workload_group(w.workload_label.values)
     w["cls"] = [threeway_label(l) for l in w.workload_label]
     w["is_adv"] = [bool(ADV.search(l)) for l in w.workload_label]
@@ -106,7 +121,7 @@ def evaluate(w, cols, tau, k, m, seed=0):
         X = np.nan_to_num(w_tr[cols].to_numpy(np.float32), nan=0.0,
                           posinf=0.0, neginf=0.0)
         clf = TwoStageClassifier(random_state=seed)
-        clf.fit(X, w_tr.cls.values, groups=w_tr.run_id.values,
+        clf.fit(X, w_tr.cls.values, groups=w_tr.job_id.values,
                 feature_cols=list(cols))
         Xte = np.nan_to_num(honest.iloc[te][cols].to_numpy(np.float32),
                             nan=0.0, posinf=0.0, neginf=0.0)
@@ -124,30 +139,11 @@ def evaluate(w, cols, tau, k, m, seed=0):
         fpr_nonml=float((ph[(h.cls == "other").values] > tau).mean())
         if (h.cls == "other").any() else float("nan"),
     )
-    # Run-level k-of-m on consecutive windows of a run.
-    def _kofm(v):
-        if len(v) < m:
-            return (v > tau).sum() >= k
-        return any((v[i:i + m] > tau).sum() >= k for i in range(len(v) - m + 1))
-
-    def run_rule(sub, pr, by="run_id"):
-        """k-of-m alerting, grouped by stream (run_id) or by JOB (job_id).
-
-        Grouping by run_id answers "would this STREAM alert" and inflates the
-        denominator 16x on a 2-node job. Grouping by job_id answers the
-        operational question -- would the monitor watching this JOB alert --
-        and is the number that belongs in a paper.
-        """
-        alerts, n = 0, 0
-        for _key, idx in sub.groupby(by).indices.items():
-            n += 1
-            alerts += int(_kofm(pr[idx]))
-        return alerts / n if n else float("nan")
     for by, suffix in (("run_id", "_stream"), ("job_id", "")):
-        out["run_tpr" + suffix] = (run_rule(h[pos.values], ph[pos.values], by)
-                                   if pos.any() else float("nan"))
-        out["run_fpr" + suffix] = (run_rule(h[~pos.values], ph[~pos.values], by)
-                                   if (~pos).any() else float("nan"))
+        out["run_tpr" + suffix] = run_alert_rate(
+            h[pos.values], ph[pos.values], tau, k, m, by)[0]
+        out["run_fpr" + suffix] = run_alert_rate(
+            h[~pos.values], ph[~pos.values], tau, k, m, by)[0]
     out["n_jobs"] = int(h.job_id.nunique())
     out["n_streams"] = int(h.run_id.nunique())
     return out, h, ph

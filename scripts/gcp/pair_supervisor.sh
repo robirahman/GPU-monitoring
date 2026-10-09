@@ -18,21 +18,34 @@ set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
 PROJECT="${PROJECT:-focus-surfer-494820-g0}"
 RUN_STAMP="${RUN_STAMP:?set RUN_STAMP}"
+SESSION="${SESSION:-${RUN_STAMP%[a-z]}}"
+BUCKET="${BUCKET:-gs://${PROJECT}-telemetry}"
+CTRL="${BUCKET}/runs/${SESSION}/control"
 NODE0="${SPOT_NODE0:-spar-spot-0}"; NODE1="${SPOT_NODE1:-spar-spot-1}"
 MAX_CYCLES="${MAX_CYCLES:-40}"
 CHECK_SECS="${CHECK_SECS:-120}"
 say() { echo "[$(date -u '+%H:%M:%SZ')] [supervisor] $*"; }
 
 alive() {
-  local n
-  n=$(gcloud compute instances list --project="$PROJECT" \
+  local rows
+  rows=$(gcloud compute instances list --project="$PROJECT" \
         --filter="name=($NODE0 OR $NODE1) AND status=RUNNING" \
-        --format='value(name)' 2>/dev/null | wc -l)
-  echo "${n:-0}"
+        --format='value(name)' 2>/dev/null) || return 1
+  printf '%s\n' "$rows" | awk 'NF {n++} END {print n+0}'
 }
 
 for cycle in $(seq 1 "$MAX_CYCLES"); do
-  n=$(alive)
+  # A completed pair deliberately shuts down. Treating that as preemption
+  # would rent another pair repeatedly after the whole round has finished.
+  if gcloud storage ls "$CTRL/$NODE0/stage_${RUN_STAMP}_complete.txt" \
+      "$CTRL/$NODE1/stage_${RUN_STAMP}_complete.txt" >/dev/null 2>&1; then
+    say "both nodes finished round $RUN_STAMP; stopping"
+    exit 0
+  fi
+  if ! n=$(alive); then
+    say "instance listing failed; leaving the pair unchanged"
+    sleep "$CHECK_SECS"; continue
+  fi
   if [ "$n" -ge 2 ]; then
     sleep "$CHECK_SECS"; continue
   fi
