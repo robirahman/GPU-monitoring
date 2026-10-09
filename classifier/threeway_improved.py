@@ -953,7 +953,7 @@ def workload_group(labels) -> np.ndarray:
 
 def get_feature_cols(df: pd.DataFrame) -> list:
     """Return all numeric feature columns (exclude metadata)."""
-    exclude = {"run_id", "threeway_label", "workload_label", "gpu_name",
+    exclude = {"run_id", "threeway_label", "binary_label", "workload_label", "gpu_name",
                "window_start", "window_end", "window_sec", "n_samples",
                "window_train_active"}   # per-window ground truth, never a feature
     return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]

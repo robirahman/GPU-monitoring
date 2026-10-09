@@ -48,7 +48,7 @@ _SHORT_NAME_OVERRIDES = {
     "H100 80GB HBM3": "H100 80GB",
 }
 GPU_ORDER = [
-    "RTX 4050 Laptop", "RTX 5080", "RTX 5090",
+    "RTX 3090", "RTX 4050 Laptop", "RTX 5080", "RTX 5090",
     "A100 40GB", "A100 80GB", "H100 80GB",
     "H100 NVL", "H200", "B200",
 ]
