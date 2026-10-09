@@ -355,6 +355,11 @@ def load_all_data() -> pd.DataFrame:
         # wherever a future quarantine directory ends up.
         if any("_quarantine" in part for part in p.parts):
             continue
+        # Skip physical-sensor sidecar files (scope envelope / DCGM logger output).
+        # These are not NVML telemetry — they lack the raw signals and would load
+        # as garbage all-zero "runs" labelled by their sidecar filename.
+        if "_scope_" in p.name or "_dcgm_" in p.name:
+            continue
         try:
             df = pd.read_parquet(p)
             df = _normalize_columns(df)
@@ -772,6 +777,17 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
         fp32 = chunk["dcgm_fp32_pipe_active"].fillna(0).mean()
         total = fp16 + fp32
         feats["dcgm_fp16_ratio"] = float(fp16 / total) if total > 0 else 0.0
+    # dram_active is the compulsory-weight-write signal that cadence shaping
+    # cannot remove; sm_active gives an occupancy duty cycle independent of the
+    # NVML util heuristic. Both are collected by DcgmCollector but were not
+    # previously featurized.
+    for col in ("dcgm_dram_active", "dcgm_sm_active"):
+        if col in chunk.columns:
+            s = chunk[col].fillna(0).values.astype(float)
+            feats[f"{col}_mean"] = float(s.mean())
+            feats[f"{col}_max"] = float(s.max())
+            feats[f"{col}_p95"] = float(np.percentile(s, 95))
+            feats[f"{col}_active_frac"] = float((s > 0.05).mean())
 
     return feats
 

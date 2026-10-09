@@ -1,0 +1,61 @@
+[scope-wrapper] run_id=b6364f5c35b0  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_scope_b6364f5c35b0_20260926_054259.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 05:43:03,116 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=gpt2_wikitext2, run=b6364f5c35b0)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+GPT-2 124M fine-tuning
+  Device: cuda, Steps: 400, Batch: 8, AMP: False
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 4904.73it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (2403644 > 1024). Running this sequence through the model will result in indexing errors
+Loading WikiText-2 dataset...
+[transformers] `loss_type=None` was set in the config but it is unrecognized. Using the default loss: `ForCausalLMLoss`.
+  Step 50/400: loss=3.3555, elapsed=5.0s
+  Step 100/400: loss=3.4516, elapsed=9.9s
+  Step 150/400: loss=3.2524, elapsed=14.8s
+  Step 200/400: loss=3.2510, elapsed=19.6s
+  Step 250/400: loss=2.9773, elapsed=24.5s
+  Step 300/400: loss=3.0556, elapsed=29.5s
+  Step 350/400: loss=3.1042, elapsed=34.3s
+  Step 400/400: loss=3.0851, elapsed=39.2s
+GPT-2 fine-tuning complete. Steps: 400, Wall time: 39.3s
+2026-09-26 05:43:58,001 [spar.telemetry] INFO: Telemetry stopped. 55 samples collected.
+2026-09-26 05:43:58,012 [spar.telemetry] INFO: Saved 55 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_NVIDIA_H200_NVL_b6364f5c_20260926_054303.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    gpt2_wikitext2
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/gpt2_finetune.py --steps 400 --batch-size 8
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      b6364f5c35b0
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_NVIDIA_H200_NVL_b6364f5c_20260926_054303.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_NVIDIA_H200_NVL_b6364f5c_20260926_054303.parquet.partial
+  Timeout:     1200s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/gpt2_finetune.py --steps 400 --batch-size 8
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=50.9s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 55
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_NVIDIA_H200_NVL_b6364f5c_20260926_054303.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_bmc_b6364f5c35b0_20260926_054259.parquet: 60 samples, 100% valid, mean 786 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_dcgm_b6364f5c35b0_20260926_054259.parquet: 298 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_scope_b6364f5c35b0_20260926_054259.parquet: 56022 bins, 56.0 s span, 55741890 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/gpt2_wikitext2_scope_b6364f5c35b0_20260926_054259_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

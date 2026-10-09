@@ -130,7 +130,7 @@ def run_whisper(args, device):
 
     print("Loading Whisper large-v3-turbo...")
     model = whisper.load_model("large-v3-turbo", device=device,
-                               download_root="/home/claude/.cache/whisper")
+                               download_root=os.path.expanduser("~/.cache/whisper"))
     print(f"Whisper loaded: {sum(p.numel() for p in model.parameters())/1e6:.0f}M params")
 
     start = time.time()

@@ -1,0 +1,62 @@
+[scope-wrapper] run_id=b4ddcf386fad  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_scope_b4ddcf386fad_20260926_081931.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 08:19:35,148 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_G_clock_throttled, run=b4ddcf386fad)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 08:24:35,225 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_NVIDIA_H200_NVL_b4ddcf38_20260926_081935.parquet.partial
+Strategy G: Clock-Throttled Stealth Training
+  Power limit: 100W
+  Original power limit: 600.0W
+  Set power limit to 100W
+  Locked GPU clocks to 210-600 MHz
+  Step 1979: loss=1.7675, mem=196MB, 30s
+  Step 3965: loss=1.5565, mem=196MB, 60s
+  Step 5934: loss=1.4131, mem=196MB, 90s
+  Step 7841: loss=1.3098, mem=196MB, 120s
+  Step 9811: loss=1.2278, mem=196MB, 150s
+  Step 11799: loss=1.1602, mem=196MB, 180s
+  Step 13800: loss=1.1044, mem=196MB, 210s
+  Step 15801: loss=1.0561, mem=196MB, 240s
+  Step 17805: loss=1.0146, mem=196MB, 270s
+  Restored power limit to 600W
+  Reset GPU clocks to default
+Strategy G complete. 19805 steps in 300s
+2026-09-26 08:24:41,839 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 08:24:41,842 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_NVIDIA_H200_NVL_b4ddcf38_20260926_081935.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_G_clock_throttled
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_advanced.py --strategy G --duration 300 --power-limit 100
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      b4ddcf386fad
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_NVIDIA_H200_NVL_b4ddcf38_20260926_081935.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_NVIDIA_H200_NVL_b4ddcf38_20260926_081935.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_advanced.py --strategy G --duration 300 --power-limit 100
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_NVIDIA_H200_NVL_b4ddcf38_20260926_081935.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_bmc_b4ddcf386fad_20260926_081931.parquet: 312 samples, 100% valid, mean 423 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_dcgm_b4ddcf386fad_20260926_081931.parquet: 1556 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_scope_b4ddcf386fad_20260926_081931.parquet: 306528 bins, 306.5 s span, 304995360 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_G_clock_throttled_scope_b4ddcf386fad_20260926_081931_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

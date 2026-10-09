@@ -1,0 +1,82 @@
+[scope-wrapper] run_id=af0904d6f56a  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_scope_af0904d6f56a_20260927_004234.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-27 00:42:37,816 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_infer_smollm2_1p7b, run=af0904d6f56a)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Loading smollm2_1p7b (HuggingFaceTB/SmolLM2-1.7B-Instruct, fp16)
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights:  34%|███▍      | 75/218 [00:00<00:00, 696.93it/s]Loading weights:  85%|████████▍ | 185/218 [00:00<00:00, 923.91it/s]Loading weights: 100%|██████████| 218/218 [00:00<00:00, 934.90it/s]
+2026-09-27 00:47:37,897 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_NVIDIA_H200_NVL_af0904d6_20260927_004237.parquet.partial
+  params: 1.71B | batch_size=1 | seq_len=256 | max_tokens=256
+  iter 5: 1280 tok, 22.6 tok/s, 57s
+  iter 10: 2560 tok, 39.2 tok/s, 65s
+  iter 15: 3840 tok, 51.9 tok/s, 74s
+  iter 20: 5120 tok, 62.0 tok/s, 83s
+  iter 25: 6400 tok, 70.1 tok/s, 91s
+  iter 30: 7680 tok, 76.9 tok/s, 100s
+  iter 35: 8960 tok, 82.5 tok/s, 109s
+  iter 40: 10240 tok, 87.3 tok/s, 117s
+  iter 45: 11520 tok, 91.5 tok/s, 126s
+  iter 50: 12800 tok, 95.1 tok/s, 135s
+  iter 55: 14080 tok, 98.3 tok/s, 143s
+  iter 60: 15360 tok, 101.1 tok/s, 152s
+  iter 65: 16640 tok, 103.7 tok/s, 161s
+  iter 70: 17920 tok, 105.9 tok/s, 169s
+  iter 75: 19200 tok, 108.0 tok/s, 178s
+  iter 80: 20480 tok, 109.8 tok/s, 186s
+  iter 85: 21760 tok, 111.6 tok/s, 195s
+  iter 90: 23040 tok, 113.1 tok/s, 204s
+  iter 95: 24320 tok, 114.6 tok/s, 212s
+  iter 100: 25600 tok, 115.9 tok/s, 221s
+  iter 105: 26880 tok, 117.2 tok/s, 229s
+  iter 110: 28160 tok, 118.3 tok/s, 238s
+  iter 115: 29440 tok, 119.4 tok/s, 247s
+  iter 120: 30720 tok, 120.4 tok/s, 255s
+  iter 125: 32000 tok, 121.3 tok/s, 264s
+  iter 130: 33280 tok, 122.2 tok/s, 272s
+  iter 135: 34560 tok, 123.0 tok/s, 281s
+  iter 140: 35840 tok, 123.8 tok/s, 290s
+  iter 145: 37120 tok, 124.5 tok/s, 298s
+smollm2_1p7b done: 147 iters, 37632 tok, 124.8 tok/s, 301.6s wall
+2026-09-27 00:47:48,340 [spar.telemetry] INFO: Telemetry stopped. 311 samples collected.
+2026-09-27 00:47:48,343 [spar.telemetry] INFO: Saved 311 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_NVIDIA_H200_NVL_af0904d6_20260927_004237.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_infer_smollm2_1p7b
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model smollm2_1p7b --duration 300 --batch-size 1 --seq-len 256 --max-tokens 256
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      af0904d6f56a
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_NVIDIA_H200_NVL_af0904d6_20260927_004237.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_NVIDIA_H200_NVL_af0904d6_20260927_004237.parquet.partial
+  Timeout:     420s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/llm_inference.py --model smollm2_1p7b --duration 300 --batch-size 1 --seq-len 256 --max-tokens 256
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=306.5s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 311
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_NVIDIA_H200_NVL_af0904d6_20260927_004237.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_dcgm_af0904d6f56a_20260927_004234.parquet: 1575 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_bmc_af0904d6f56a_20260927_004234.parquet: 316 samples, 100% valid, mean 463 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_scope_af0904d6f56a_20260927_004234.parquet: 310376 bins, 310.3 s span, 308824120 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_infer_smollm2_1p7b_scope_af0904d6f56a_20260927_004234_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

@@ -1,0 +1,175 @@
+diff --git a/train_gpt2.cu b/train_gpt2.cu
+index 70d8d0c..5d5afb1 100644
+--- a/train_gpt2.cu
++++ b/train_gpt2.cu
+@@ -30,6 +30,9 @@ GPT-2 Transformer Neural Net training loop. See README.md for usage.
+ #include "llmc/mfu.h"
+ // defines: OutlierDetector, init_detector, update_detector
+ #include "llmc/outlier_detector.h"
++// defines: sidechannel_init/free, sidechannel_marker, sidechannel_gap,
++//          sidechannel_calibrate, sc_mark, sc_log, SC_MODE_*
++#include "llmc/sidechannel.h"
+ // ----------- GPU utilities -----------
+ // defines:
+ // WARP_SIZE, MAX_1024_THREADS_BLOCKS, CEIL_DIV, cudaCheck, PRECISION_MODE
+@@ -74,6 +77,10 @@ GPT-2 Transformer Neural Net training loop. See README.md for usage.
+ // global vars for I/O
+ char filename_buffer[512];
+ 
++// ----------------------------------------------------------------------------
++// side-channel experiment: CUDA events bracketing the marked fwd+bwd region
++cudaEvent_t sc_fb_start, sc_fb_end;
++
+ // ----------------------------------------------------------------------------
+ // global vars containing information about the GPU this process is running on
+ cudaDeviceProp deviceProp; // fills in common_start()
+@@ -1411,6 +1418,14 @@ void error_usage() {
+     fprintf(stderr, "  -pm <string> nccl_init_method: tcp,fs,mpi (default = mpi)\n");
+     fprintf(stderr, "  -ps <string> server_ip - used only when nccl_init_method is tcp (default = -1)\n");
+     fprintf(stderr, "  -pp <string> fs_path - used only when nccl_init_method is fs (default = /tmp)\n");
++    // side-channel power-trace experiment
++    fprintf(stderr, "  -Sd <string> side-channel marker device, e.g. /dev/ttyUSB0 (DTR is the marker line)\n");
++    fprintf(stderr, "  -Sl <string> side-channel timeline CSV log path\n");
++    fprintf(stderr, "  -Sw <int>    workload shaping: 0=training (default), 1=modified-inference\n");
++    fprintf(stderr, "  -Sg <int>    idle gap between micro-steps in microseconds (mode 1 only)\n");
++    fprintf(stderr, "  -Sj <int>    uniform jitter added to that gap, microseconds (mode 1 only)\n");
++    fprintf(stderr, "  -Sc <int>    emit N marker calibration pulses at startup (0 = off)\n");
++    fprintf(stderr, "  -Sm <int>    hold a fixed extra GPU allocation, MiB (memory-footprint spoof)\n");
+     exit(EXIT_FAILURE);
+ }
+ 
+@@ -1456,6 +1471,14 @@ int main(int argc, char *argv[]) {
+     char nccl_init_method[256] = "mpi";  // "tcp" or "fs" or "mpi"
+     char server_ip[256] = "";  // used if init_method set to "tcp" -> set to your server ip address
+     char fs_path[256] = "";  // used if init_method set to "fs" -> set to a shared filesystem path
++    // side-channel experiment settings
++    char sc_marker_device[256] = "";   // USB-UART whose DTR line is the marker
++    char sc_timeline_path[256] = "";   // CSV timeline log
++    int  sc_mode = SC_MODE_TRAINING;   // 0 = training, 1 = modified-inference
++    long sc_gap_us = 0;                // inter-micro-step idle gap
++    long sc_gap_jitter_us = 0;         // uniform jitter on that gap
++    int  sc_calibrate = 0;             // emit N calibration pulses then continue
++    long sc_mem_pad_mb = 0;            // spoof: hold a fixed extra GPU allocation
+     for (int i = 1; i < argc; i+=2) {
+         if (i + 1 >= argc) { error_usage(); } // must have arg after flag
+         if (argv[i][0] != '-') { error_usage(); } // must start with dash
+@@ -1498,12 +1521,40 @@ int main(int argc, char *argv[]) {
+         else if (argv[i][1] == 's' && argv[i][2] == 'g') { skip_update_gradz = atof(argv[i+1]); }
+         else if (argv[i][1] == 'n' && argv[i][2] == 'k') { checkpoints_keep = atoi(argv[i+1]); }
+         else if (argv[i][1] == 'n' && argv[i][2] == 'm') { major_checkpoint_every = atoi(argv[i+1]); }
++        // side-channel experiment flags
++        else if (argv[i][1] == 'S' && argv[i][2] == 'd') { strcpy(sc_marker_device, argv[i+1]); }
++        else if (argv[i][1] == 'S' && argv[i][2] == 'l') { strcpy(sc_timeline_path, argv[i+1]); }
++        else if (argv[i][1] == 'S' && argv[i][2] == 'w') { sc_mode = atoi(argv[i+1]); }
++        else if (argv[i][1] == 'S' && argv[i][2] == 'g') { sc_gap_us = atol(argv[i+1]); }
++        else if (argv[i][1] == 'S' && argv[i][2] == 'j') { sc_gap_jitter_us = atol(argv[i+1]); }
++        else if (argv[i][1] == 'S' && argv[i][2] == 'c') { sc_calibrate = atoi(argv[i+1]); }
++        else if (argv[i][1] == 'S' && argv[i][2] == 'm') { sc_mem_pad_mb = atol(argv[i+1]); }
+         else { error_usage(); }
+     }
+ 
+     multi_gpu_config = multi_gpu_config_init(num_processes, process_rank, gpus_per_node, server_ip, fs_path, nccl_init_method);
+     common_start(override_enable_tf32, false); // common init code for train/test/profile
+ 
++    // side-channel instrumentation: marker line, timeline log, shaping params
++    sidechannel_init(sc_marker_device, sc_timeline_path, sc_mode,
++                     sc_gap_us, sc_gap_jitter_us,
++                     0x9E3779B97F4A7C15ULL + multi_gpu_config.process_rank);
++    if (sc_calibrate > 0) { sidechannel_calibrate(sc_calibrate, 10000); }
++
++    // side-channel memory spoof: hold a fixed extra allocation so the resident
++    // footprint (NVML mem_used) mimics a non-training workload's flat profile,
++    // countering a detector that keys on the training memory footprint. Allocated
++    // once up front (before any marked region) and touched so it is truly
++    // resident; freed at teardown. This changes only the memory level, not the
++    // arithmetic — same evasion contract as the timing shaping.
++    void* sc_mem_pad = NULL;
++    if (sc_mem_pad_mb > 0) {
++        size_t pad_bytes = (size_t)sc_mem_pad_mb * 1024 * 1024;
++        cudaCheck(cudaMalloc(&sc_mem_pad, pad_bytes));
++        cudaCheck(cudaMemset(sc_mem_pad, 0, pad_bytes));
++        printf0("| sidechannel mem pad   | %-50ld MiB |\n", sc_mem_pad_mb);
++    }
++
+     // should do a bit more error checking here
+     assert(warmup_iterations >= 0);
+     if (output_log_dir != NULL) {
+@@ -1547,6 +1598,10 @@ int main(int argc, char *argv[]) {
+     printf0("| use_master_weights    | %-50s |\n", use_master_weights ? "enabled" : "disabled");
+     printf0("| gelu_fusion           | %-50d |\n", gelu_fusion);
+     printf0("| recompute             | %-50d |\n", recompute);
++    printf0("| sc workload mode      | %-50s |\n", sc_mode_name(sc_mode));
++    printf0("| sc gap / jitter (us)  | %-25ld %-24ld |\n", sc_gap_us, sc_gap_jitter_us);
++    printf0("| sc marker device      | %-50s |\n", sc_marker_device[0] ? sc_marker_device : "none");
++    printf0("| sc timeline log       | %-50s |\n", sc_timeline_path[0] ? sc_timeline_path : "none");
+     printf0("+-----------------------+----------------------------------------------------+\n");
+     const char* precision_str = (PRECISION_MODE == PRECISION_FP32)
+                               ? (cublas_compute == CUBLAS_COMPUTE_32F_FAST_TF32 ? "TF32" : "FP32")
+@@ -1706,6 +1761,10 @@ int main(int argc, char *argv[]) {
+     cudaEvent_t start, end;
+     cudaCheck(cudaEventCreate(&start));
+     cudaCheck(cudaEventCreate(&end));
++    // side-channel: GPU-side timing of the marked forward+backward region,
++    // used to validate the host timestamps written to the timeline log
++    cudaCheck(cudaEventCreate(&sc_fb_start));
++    cudaCheck(cudaEventCreate(&sc_fb_end));
+     cudaCheck(cudaProfilerStart());
+     double total_sum_iteration_time_s = 0.0;
+     float ema_tokens_per_second = 0.0f;
+@@ -1827,12 +1886,44 @@ int main(int argc, char *argv[]) {
+         cudaCheck(cudaEventRecord(start));
+         // gradient and loss accumulation loop over micro-batches
+         for (int micro_step = 0; micro_step < grad_accum_steps; micro_step++) {
+-            // fetch the next data batch
++            // --- side-channel: idle gap BEFORE the burst -------------------
++            // In modified-inference mode this is what turns a metronomic
++            // training cadence into request-like bursts. Placed before the
++            // marked region so the gap is never inside the measured window.
++            sidechannel_gap(step, micro_step);
++
++            // fetch the next data batch.
++            // Deliberately OUTSIDE the marked window: this is host-side file
++            // I/O plus an H2D copy, not model computation. Use -a 1
++            // (overfit_single_batch) to remove its variance entirely.
++            sc_log(step, micro_step, "dataload_begin", -1.0, "");
+             dataloader_next_batch(&train_loader);
++
++            // --- MARKED REGION: exactly one forward + backward -------------
++            // No cudaDeviceSynchronize() needed on either side: gpt2_forward
++            // and gpt2_backward_and_reduce each END with one internally, so
++            // when control reaches the marker the GPU is genuinely idle.
++            cudaCheck(cudaEventRecord(sc_fb_start));
++            sc_mark(step, micro_step, "marker_high", 1);
++
+             // forward pass. note that we pass in grad_accum_steps, which scales down the loss
+             gpt2_forward(&model, train_loader.inputs, B, T);
++            sc_log(step, micro_step, "forward_end", -1.0, "");
+             // backward pass. all model params accumulate gradients with += inside this inner loop
+             gpt2_backward_and_reduce(&model, train_loader.inputs, train_loader.targets, grad_accum_steps, micro_step);
++
++            sc_mark(step, micro_step, "marker_low", 0);
++            cudaCheck(cudaEventRecord(sc_fb_end));
++            // --- END MARKED REGION -----------------------------------------
++
++            // Cross-check: GPU-measured elapsed time for the same region the
++            // marker bracketed. If this disagrees with the host-clock delta
++            // between marker_high and marker_low in the timeline log, the host
++            // timestamps cannot be trusted for scope correlation.
++            cudaCheck(cudaEventSynchronize(sc_fb_end));
++            float sc_fb_ms = 0.0f;
++            cudaCheck(cudaEventElapsedTime(&sc_fb_ms, sc_fb_start, sc_fb_end));
++            sc_log(step, micro_step, "fwdbwd_cuda_ms", (double)sc_fb_ms, "");
+         }
+         float zloss = (float)(update_detector(&loss_outlier_detector, (double)model.mean_loss)); // loss z-score
+         // fetch the next learning rate
+@@ -1896,6 +1987,10 @@ int main(int argc, char *argv[]) {
+     free(cpu_logits_raw);
+     free(cpu_logits);
+     free(gen_tokens);
++    cudaCheck(cudaEventDestroy(sc_fb_start));
++    cudaCheck(cudaEventDestroy(sc_fb_end));
++    if (sc_mem_pad != NULL) { cudaCheck(cudaFree(sc_mem_pad)); }
++    sidechannel_free();
+     multi_gpu_config_free(&multi_gpu_config);
+     gpt2_free(&model);
+     common_free(model);

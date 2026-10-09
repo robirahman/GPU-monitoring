@@ -1,0 +1,60 @@
+[scope-wrapper] run_id=fbe2228ea3c8  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_scope_fbe2228ea3c8_20260926_174857.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 17:49:00,728 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_N_grad_accum_4, run=fbe2228ea3c8)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 17:54:01,005 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_NVIDIA_H200_NVL_fbe2228e_20260926_174900.parquet.partial
+Strategy N: Gradient Accumulation Dilution
+  Accumulation steps: 4
+  Model: resnet50, Batch: 128
+  Duration: 300s
+  Effective update rate: 1/4 batches
+  Batch 287: 36400 samples, 1212 img/s, updates=71, mem=249MB, 30s
+  Batch 567: 71792 samples, 1193 img/s, updates=141, mem=249MB, 60s
+  Batch 866: 109728 samples, 1212 img/s, updates=216, mem=249MB, 91s
+  Batch 1163: 147296 samples, 1222 img/s, updates=290, mem=249MB, 121s
+  Batch 1476: 186912 samples, 1240 img/s, updates=369, mem=155MB, 151s
+  Batch 1787: 226272 samples, 1252 img/s, updates=446, mem=249MB, 181s
+  Batch 2104: 266400 samples, 1264 img/s, updates=526, mem=155MB, 211s
+  Batch 2407: 304736 samples, 1266 img/s, updates=601, mem=249MB, 241s
+  Batch 2735: 346272 samples, 1279 img/s, updates=683, mem=249MB, 271s
+Strategy N complete. 384096 samples (1280 img/s), batches=3034, updates=758, effective_update_rate=1/4, 300.0s
+2026-09-26 17:54:07,405 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 17:54:07,408 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_NVIDIA_H200_NVL_fbe2228e_20260926_174900.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_N_grad_accum_4
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round4.py --strategy N --accum-steps 4 --duration 300
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      fbe2228ea3c8
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_NVIDIA_H200_NVL_fbe2228e_20260926_174900.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_NVIDIA_H200_NVL_fbe2228e_20260926_174900.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_round4.py --strategy N --accum-steps 4 --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.7s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_NVIDIA_H200_NVL_fbe2228e_20260926_174900.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_dcgm_fbe2228ea3c8_20260926_174857.parquet: 1552 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_bmc_fbe2228ea3c8_20260926_174857.parquet: 312 samples, 100% valid, mean 819 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_scope_fbe2228ea3c8_20260926_174857.parquet: 306026 bins, 306.0 s span, 304495870 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_N_grad_accum_4_scope_fbe2228ea3c8_20260926_174857_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

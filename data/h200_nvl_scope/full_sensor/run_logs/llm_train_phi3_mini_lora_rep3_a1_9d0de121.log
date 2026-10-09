@@ -1,0 +1,97 @@
+[scope-wrapper] run_id=9d0de12112fe  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_scope_9d0de12112fe_20260926_034658.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 03:47:02,118 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_train_phi3_mini_lora, run=9d0de12112fe)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Loading microsoft/Phi-3-mini-4k-instruct (fp16)
+Loading weights:   0%|          | 0/195 [00:00<?, ?it/s]Loading weights:  13%|█▎        | 25/195 [00:00<00:00, 249.43it/s]Loading weights:  33%|███▎      | 65/195 [00:00<00:00, 335.82it/s]Loading weights:  55%|█████▌    | 108/195 [00:00<00:00, 374.35it/s]Loading weights:  79%|███████▉  | 154/195 [00:00<00:00, 396.08it/s]Loading weights: 100%|██████████| 195/195 [00:00<00:00, 392.71it/s]
+  params: 3.82 B  |  post-load memory: 7288 MB
+
+WARN  Python GIL is enabled: Multi-gpu quant acceleration for MoE models is sub-optimal and multi-core accelerated cpu packing is also disabled. We recommend Python >= 3.13.3t with Pytorch > 2.8 for mult-gpu quantization and multi-cpu packing with env `PYTHON_GIL=0`.
+INFO  ENV: Auto setting PYTORCH_ALLOC_CONF='expandable_segments:True,max_split_size_mb:256,garbage_collection_threshold:0.7' for memory saving.
+INFO  ENV: Auto setting CUDA_DEVICE_ORDER=PCI_BUS_ID for correctness.           
+INFO:datasets:PyTorch version 2.11.0+cu128 available.
+INFO  
+
+┌─────────────┐    ┌────────────────────────┐    ┌────────────┐    ┌─────────┐
+│ GPT-QModel  │ -> │ ▓▓▓▓▓▓▓▓▓▓▓▓ 16bit     │ -> │ ▒▒▒▒ 8bit  │ -> │ ░░ 4bit │
+└─────────────┘    └────────────────────────┘    └────────────┘    └─────────┘
+GPT-QModel   : 7.3.4+c138fcf
+Transformers : 5.15.1
+Torch        : 2.11.0+cu128
+Triton       : 3.6.0
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+2026-09-26 03:52:02,196 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_NVIDIA_H200_NVL_9d0de121_20260926_034702.parquet.partial
+  LoRA r=16 alpha=32: 9.4 M trainable / 3831 M total (0.25%)
+  step    98  loss=11.056  2500 tok/s  mem=7479 MB  t=10s
+  step   210  loss=10.828  2677 tok/s  mem=7479 MB  t=20s
+  step   321  loss=10.756  2728 tok/s  mem=7480 MB  t=30s
+  step   446  loss=10.714  2845 tok/s  mem=7479 MB  t=40s
+  step   568  loss=10.689  2901 tok/s  mem=7479 MB  t=50s
+  step   691  loss=10.672  2939 tok/s  mem=7480 MB  t=60s
+  step   817  loss=10.660  2978 tok/s  mem=7480 MB  t=70s
+  step   940  loss=10.650  2998 tok/s  mem=7479 MB  t=80s
+  step  1066  loss=10.642  3014 tok/s  mem=7479 MB  t=91s
+  step  1192  loss=10.635  3034 tok/s  mem=7479 MB  t=101s
+  step  1315  loss=10.631  3043 tok/s  mem=7480 MB  t=111s
+  step  1441  loss=10.626  3057 tok/s  mem=7480 MB  t=121s
+  step  1564  loss=10.622  3063 tok/s  mem=7479 MB  t=131s
+  step  1687  loss=10.619  3069 tok/s  mem=7480 MB  t=141s
+  step  1813  loss=10.616  3078 tok/s  mem=7480 MB  t=151s
+  step  1936  loss=10.613  3082 tok/s  mem=7479 MB  t=161s
+  step  2059  loss=10.611  3085 tok/s  mem=7480 MB  t=171s
+  step  2183  loss=10.609  3089 tok/s  mem=7480 MB  t=181s
+  step  2298  loss=10.607  3081 tok/s  mem=7479 MB  t=191s
+  step  2424  loss=10.605  3088 tok/s  mem=7479 MB  t=201s
+  step  2547  loss=10.603  3091 tok/s  mem=7480 MB  t=211s
+  step  2671  loss=10.601  3093 tok/s  mem=7480 MB  t=221s
+  step  2797  loss=10.600  3099 tok/s  mem=7480 MB  t=231s
+  step  2920  loss=10.599  3101 tok/s  mem=7479 MB  t=241s
+  step  3043  loss=10.598  3103 tok/s  mem=7480 MB  t=251s
+  step  3169  loss=10.596  3107 tok/s  mem=7480 MB  t=261s
+  step  3293  loss=10.595  3109 tok/s  mem=7480 MB  t=271s
+  step  3417  loss=10.594  3110 tok/s  mem=7480 MB  t=281s
+  step  3541  loss=10.593  3112 tok/s  mem=7480 MB  t=291s
+LoRA train done: 3651 steps, 934656 tokens, 3115 tok/s in 300.1s
+2026-09-26 03:52:13,226 [spar.telemetry] INFO: Telemetry stopped. 312 samples collected.
+2026-09-26 03:52:13,229 [spar.telemetry] INFO: Saved 312 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_NVIDIA_H200_NVL_9d0de121_20260926_034702.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_train_phi3_mini_lora
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model microsoft/Phi-3-mini-4k-instruct --duration 300 --batch-size 1 --seq-len 256 --rank 16 --grad-ckpt --target-modules qkv_proj,o_proj
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      9d0de12112fe
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_NVIDIA_H200_NVL_9d0de121_20260926_034702.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_NVIDIA_H200_NVL_9d0de121_20260926_034702.parquet.partial
+  Timeout:     600s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model microsoft/Phi-3-mini-4k-instruct --duration 300 --batch-size 1 --seq-len 256 --rank 16 --grad-ckpt --target-modules qkv_proj,o_proj
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=307.1s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 312
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_NVIDIA_H200_NVL_9d0de121_20260926_034702.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_dcgm_9d0de12112fe_20260926_034658.parquet: 1577 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_bmc_9d0de12112fe_20260926_034658.parquet: 317 samples, 100% valid, mean 545 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_scope_9d0de12112fe_20260926_034658.parquet: 310851 bins, 310.8 s span, 309296745 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_phi3_mini_lora_scope_9d0de12112fe_20260926_034658_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

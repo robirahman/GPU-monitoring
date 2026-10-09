@@ -1,0 +1,97 @@
+[scope-wrapper] run_id=915ca565c078  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_scope_915ca565c078_20260926_040326.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 04:03:29,962 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_train_mistral_7b_lora, run=915ca565c078)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+Failed to load /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /home/tenant/pico-venv/lib/python3.12/site-packages/torchao/_C_cutlass_90a.abi3.so
+Loading mistralai/Mistral-7B-Instruct-v0.2 (fp16)
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   7%|▋         | 19/291 [00:00<00:01, 183.04it/s]Loading weights:  19%|█▉        | 55/291 [00:00<00:00, 280.90it/s]Loading weights:  30%|██▉       | 87/291 [00:00<00:00, 296.70it/s]Loading weights:  42%|████▏     | 123/291 [00:00<00:00, 309.63it/s]Loading weights:  57%|█████▋    | 165/291 [00:00<00:00, 348.11it/s]Loading weights:  69%|██████▊   | 200/291 [00:00<00:00, 335.88it/s]Loading weights:  80%|████████  | 234/291 [00:00<00:00, 333.73it/s]Loading weights:  92%|█████████▏| 268/291 [00:00<00:00, 329.99it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 326.26it/s]
+  params: 7.24 B  |  post-load memory: 13813 MB
+
+WARN  Python GIL is enabled: Multi-gpu quant acceleration for MoE models is sub-optimal and multi-core accelerated cpu packing is also disabled. We recommend Python >= 3.13.3t with Pytorch > 2.8 for mult-gpu quantization and multi-cpu packing with env `PYTHON_GIL=0`.
+INFO  ENV: Auto setting PYTORCH_ALLOC_CONF='expandable_segments:True,max_split_size_mb:256,garbage_collection_threshold:0.7' for memory saving.
+INFO  ENV: Auto setting CUDA_DEVICE_ORDER=PCI_BUS_ID for correctness.           
+INFO:datasets:PyTorch version 2.11.0+cu128 available.
+INFO  
+
+┌─────────────┐    ┌────────────────────────┐    ┌────────────┐    ┌─────────┐
+│ GPT-QModel  │ -> │ ▓▓▓▓▓▓▓▓▓▓▓▓ 16bit     │ -> │ ▒▒▒▒ 8bit  │ -> │ ░░ 4bit │
+└─────────────┘    └────────────────────────┘    └────────────┘    └─────────┘
+GPT-QModel   : 7.3.4+c138fcf
+Transformers : 5.15.1
+Torch        : 2.11.0+cu128
+Triton       : 3.6.0
+[transformers] `use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+2026-09-26 04:08:30,041 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_NVIDIA_H200_NVL_915ca565_20260926_040329.parquet.partial
+  LoRA r=16 alpha=32: 6.8 M trainable / 7249 M total (0.09%)
+  step   106  loss=10.516  2703 tok/s  mem=13974 MB  t=10s
+  step   224  loss=10.457  2854 tok/s  mem=13975 MB  t=20s
+  step   347  loss=10.437  2949 tok/s  mem=13975 MB  t=30s
+  step   473  loss=nan  3018 tok/s  mem=13974 MB  t=40s
+  step   599  loss=nan  3058 tok/s  mem=13975 MB  t=50s
+  step   722  loss=nan  3073 tok/s  mem=13974 MB  t=60s
+  step   857  loss=nan  3126 tok/s  mem=13974 MB  t=70s
+  step   989  loss=nan  3156 tok/s  mem=13974 MB  t=80s
+  step  1118  loss=nan  3172 tok/s  mem=13974 MB  t=90s
+  step  1247  loss=nan  3184 tok/s  mem=13975 MB  t=100s
+  step  1370  loss=nan  3180 tok/s  mem=13974 MB  t=110s
+  step  1496  loss=nan  3184 tok/s  mem=13975 MB  t=120s
+  step  1631  loss=nan  3204 tok/s  mem=13975 MB  t=130s
+  step  1763  loss=nan  3216 tok/s  mem=13975 MB  t=140s
+  step  1881  loss=nan  3201 tok/s  mem=13974 MB  t=150s
+  step  1997  loss=nan  3186 tok/s  mem=13974 MB  t=160s
+  step  2120  loss=nan  3184 tok/s  mem=13975 MB  t=170s
+  step  2243  loss=nan  3182 tok/s  mem=13975 MB  t=180s
+  step  2364  loss=nan  3176 tok/s  mem=13975 MB  t=191s
+  step  2482  loss=nan  3168 tok/s  mem=13974 MB  t=201s
+  step  2600  loss=nan  3161 tok/s  mem=13975 MB  t=211s
+  step  2716  loss=nan  3151 tok/s  mem=13975 MB  t=221s
+  step  2831  loss=nan  3141 tok/s  mem=13975 MB  t=231s
+  step  2951  loss=nan  3138 tok/s  mem=13975 MB  t=241s
+  step  3086  loss=nan  3151 tok/s  mem=13974 MB  t=251s
+  step  3218  loss=nan  3159 tok/s  mem=13974 MB  t=261s
+  step  3350  loss=nan  3167 tok/s  mem=13974 MB  t=271s
+  step  3478  loss=nan  3169 tok/s  mem=13974 MB  t=281s
+  step  3593  loss=nan  3161 tok/s  mem=13974 MB  t=291s
+LoRA train done: 3698 steps, 946688 tokens, 3155 tok/s in 300.0s
+2026-09-26 04:08:41,339 [spar.telemetry] INFO: Telemetry stopped. 312 samples collected.
+2026-09-26 04:08:41,343 [spar.telemetry] INFO: Saved 312 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_NVIDIA_H200_NVL_915ca565_20260926_040329.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_train_mistral_7b_lora
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model mistralai/Mistral-7B-Instruct-v0.2 --duration 300 --batch-size 1 --seq-len 256 --rank 16 --grad-ckpt
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      915ca565c078
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_NVIDIA_H200_NVL_915ca565_20260926_040329.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_NVIDIA_H200_NVL_915ca565_20260926_040329.parquet.partial
+  Timeout:     720s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/lora_training.py --model mistralai/Mistral-7B-Instruct-v0.2 --duration 300 --batch-size 1 --seq-len 256 --rank 16 --grad-ckpt
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=307.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 312
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_NVIDIA_H200_NVL_915ca565_20260926_040329.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_dcgm_915ca565c078_20260926_040326.parquet: 1579 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_bmc_915ca565c078_20260926_040326.parquet: 317 samples, 100% valid, mean 557 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_scope_915ca565c078_20260926_040326.parquet: 311157 bins, 311.1 s span, 309601215 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/llm_train_mistral_7b_lora_scope_915ca565c078_20260926_040326_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

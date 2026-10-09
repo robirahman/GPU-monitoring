@@ -1,0 +1,69 @@
+[scope-wrapper] run_id=0263191afb7e  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_scope_0263191afb7e_20260926_044447.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 04:44:50,530 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=mining_ethash_proxy, run=0263191afb7e)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 04:49:50,608 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_NVIDIA_H200_NVL_0263191a_20260926_044450.parquet.partial
+2026-09-26 04:54:50,627 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_NVIDIA_H200_NVL_0263191a_20260926_044450.parquet.partial
+Crypto mining proxy workload (Ethash-like)
+  Device: cuda
+  Ethash proxy: DAG=1024MB (16,777,216 elements), 600s
+  Iteration 20762: ~0.71 MH/s, 30.0s elapsed
+  Iteration 41550: ~0.71 MH/s, 60.0s elapsed
+  Iteration 62323: ~0.71 MH/s, 90.0s elapsed
+  Iteration 83147: ~0.71 MH/s, 120.0s elapsed
+  Iteration 104055: ~0.71 MH/s, 150.0s elapsed
+  Iteration 124958: ~0.71 MH/s, 180.0s elapsed
+  Iteration 145831: ~0.71 MH/s, 210.0s elapsed
+  Iteration 166682: ~0.71 MH/s, 240.0s elapsed
+  Iteration 187528: ~0.71 MH/s, 270.0s elapsed
+  Iteration 208352: ~0.71 MH/s, 300.0s elapsed
+  Iteration 229204: ~0.71 MH/s, 330.0s elapsed
+  Iteration 250039: ~0.71 MH/s, 360.0s elapsed
+  Iteration 270898: ~0.71 MH/s, 390.0s elapsed
+  Iteration 291755: ~0.71 MH/s, 420.0s elapsed
+  Iteration 312601: ~0.71 MH/s, 450.0s elapsed
+  Iteration 333456: ~0.71 MH/s, 480.0s elapsed
+  Iteration 354310: ~0.71 MH/s, 510.0s elapsed
+  Iteration 375164: ~0.71 MH/s, 540.0s elapsed
+  Iteration 396039: ~0.71 MH/s, 570.0s elapsed
+Ethash proxy complete. Iterations: 416881, ~0.71 MH/s, 600.0s
+2026-09-26 04:54:55,889 [spar.telemetry] INFO: Telemetry stopped. 606 samples collected.
+2026-09-26 04:54:55,895 [spar.telemetry] INFO: Saved 606 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_NVIDIA_H200_NVL_0263191a_20260926_044450.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    mining_ethash_proxy
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/mining_proxy.py --duration 600 --dag-size-mb 1024
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      0263191afb7e
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_NVIDIA_H200_NVL_0263191a_20260926_044450.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_NVIDIA_H200_NVL_0263191a_20260926_044450.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/mining_proxy.py --duration 600 --dag-size-mb 1024
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=601.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 606
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_NVIDIA_H200_NVL_0263191a_20260926_044450.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_dcgm_0263191afb7e_20260926_044447.parquet: 3046 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_bmc_0263191afb7e_20260926_044447.parquet: 611 samples, 100% valid, mean 424 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_scope_0263191afb7e_20260926_044447.parquet: 603376 bins, 603.2 s span, 600359120 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/mining_ethash_proxy_scope_0263191afb7e_20260926_044447_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True

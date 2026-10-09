@@ -1,0 +1,57 @@
+[scope-wrapper] run_id=81224cfc72c7  scope -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_scope_81224cfc72c7_20260926_072009.parquet
+/home/tenant/GPU-monitoring/scripts/collect_telemetry.py:32: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2026-09-26 07:20:12,447 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=adversarial_E_memory_minimal, run=81224cfc72c7)
+streaming: 995223 S/s, range ±5000 mV, 16-bit, 152.59 µV/LSB
+/home/tenant/pico-venv/lib/python3.12/site-packages/torch/cuda/__init__.py:61: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-09-26 07:25:12,526 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_NVIDIA_H200_NVL_81224cfc_20260926_072012.parquet.partial
+Strategy E: Memory-Minimal Training
+  Gradient checkpointing + tiny batch + aggressive GC
+  Step 496: loss=2.7094, mem=154MB, 30s
+  Step 988: loss=2.5407, mem=154MB, 60s
+  Step 1482: loss=2.4553, mem=154MB, 90s
+  Step 1979: loss=2.3945, mem=154MB, 120s
+  Step 2479: loss=2.3545, mem=154MB, 150s
+  Step 2975: loss=2.3187, mem=154MB, 180s
+  Step 3480: loss=2.2925, mem=154MB, 210s
+  Step 3983: loss=2.2649, mem=154MB, 240s
+  Step 4487: loss=2.2429, mem=154MB, 270s
+Strategy E complete. 4987 steps in 300s, avg loss=2.2264
+2026-09-26 07:25:19,089 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-09-26 07:25:19,093 [spar.telemetry] INFO: Saved 307 rows to /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_NVIDIA_H200_NVL_81224cfc_20260926_072012.parquet
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_E_memory_minimal
+  Command:     /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_advanced.py --strategy E --duration 300
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      81224cfc72c7
+  Output:      /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_NVIDIA_H200_NVL_81224cfc_20260926_072012.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_NVIDIA_H200_NVL_81224cfc_20260926_072012.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/pico-venv/bin/python /home/tenant/GPU-monitoring/workloads/adversarial_advanced.py --strategy E --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=302.6s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Output file: /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_NVIDIA_H200_NVL_81224cfc_20260926_072012.parquet
+============================================================
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_dcgm_81224cfc72c7_20260926_072009.parquet: 1554 samples, dram_active non-NaN frac 1.00
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_bmc_81224cfc72c7_20260926_072009.parquet: 312 samples, 100% valid, mean 404 W
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_scope_81224cfc72c7_20260926_072009.parquet: 306664 bins, 306.6 s span, 305130680 samples
+wrote /home/tenant/GPU-monitoring/data/h200_nvl_scope/full_sensor/adversarial_E_memory_minimal_scope_81224cfc72c7_20260926_072009_raw.npy: 24880573 raw samples (25.0 s)
+[scope-wrapper] workload exit=0  scope ok=True  dcgm ok=True  bmc ok=True
