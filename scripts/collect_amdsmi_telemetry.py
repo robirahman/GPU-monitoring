@@ -252,26 +252,65 @@ class RdcCollector:
         "RDC_FI_PROF_TENSOR_ACTIVE_PERCENT": "rdc_tensor_active",
     }
 
+    # Basic fields arrive in raw RDC units (see `rdci dmon -l`). We disable
+    # RdcReader's partial default unit conversion and scale explicitly here so
+    # column names stay honest. Profiling fields (percentages, FLOPS, cycles,
+    # waves) are kept raw. mem_used_bytes stays in bytes.
+    RDC_UNIT_SCALE = {
+        "rdc_power_usage": 1e-6,   # microwatts -> watts
+        "rdc_gpu_temp":    1e-3,   # millidegrees C -> C
+        "rdc_gpu_clock":   1e-6,   # Hz -> MHz
+        "rdc_mem_clock":   1e-6,   # Hz -> MHz
+    }
+
+    @staticmethod
+    def _discover_rdc_python_path() -> str | None:
+        """Locate the RDC Python bindings across ROCm layouts.
+
+        ROCm <=6 shipped them at /opt/rocm/share/rdc/python; ROCm 7 moved them
+        to <rocm>/libexec/rdc/python_binding. Return the first dir that holds
+        RdcReader.py, or None.
+        """
+        import glob
+        candidates = [
+            "/opt/rocm/share/rdc/python",            # ROCm <= 6 (and symlinks)
+            "/opt/rocm/libexec/rdc/python_binding",  # ROCm 7 via /opt/rocm
+        ]
+        # Versioned install roots, newest first.
+        for root in sorted(glob.glob("/opt/rocm-*"), reverse=True):
+            candidates.append(os.path.join(root, "libexec/rdc/python_binding"))
+            candidates.append(os.path.join(root, "share/rdc/python"))
+        for c in candidates:
+            if os.path.isfile(os.path.join(c, "RdcReader.py")):
+                return c
+        return None
+
     def __init__(self, gpu_index: int = 0):
-        # RDC Python bindings ship under /opt/rocm/share/rdc/python.
-        rdc_python = "/opt/rocm/share/rdc/python"
-        if os.path.isdir(rdc_python) and rdc_python not in sys.path:
+        rdc_python = self._discover_rdc_python_path()
+        if rdc_python and rdc_python not in sys.path:
             sys.path.insert(0, rdc_python)
 
         try:
             from RdcReader import RdcReader  # type: ignore
             import rdc_bootstrap  # noqa: F401  type: ignore
             from rdc_bootstrap import rdc_field_t  # type: ignore
+            from rdc_bootstrap import rdc_field_type_t  # type: ignore
         except ImportError as e:
             raise ImportError(
                 f"RDC Python bindings not found ({e}). Install with "
                 "`sudo apt install rdc` and ensure rdcd is running "
-                "(`sudo systemctl enable --now rdc`)."
+                "(`sudo systemctl enable --now rdc`). If installed, ensure "
+                "librdc_bootstrap.so is on LD_LIBRARY_PATH (e.g. "
+                "/opt/rocm/lib)."
             )
 
         self._RdcReader = RdcReader
         self._rdc_field_t = rdc_field_t
+        self._rdc_field_type_t = rdc_field_type_t
         self._gpu_index = gpu_index
+        # Field-id -> latest value, populated by the reader's handle_field
+        # callback (RdcReader.process() returns None and dispatches per-field).
+        self._captured: dict[int, float] = {}
 
         # Resolve field-id constants; some names may not exist in older RDC.
         def resolve(name):
@@ -292,18 +331,66 @@ class RdcCollector:
             if fid is not None:
                 prof_ids[int(fid)] = col
 
-        # Build the reader. RdcReader handles the host-engine connection and
-        # field-watch lifecycle. ip="localhost" assumes rdcd is running.
-        all_field_ids = list(self._field_map.keys()) + list(prof_ids.keys())
-        try:
-            self._reader = self._RdcReader(
+        # RdcReader.process() returns None and dispatches each field to
+        # handle_field(); worse, the base process() does an in-place
+        # `value.value.l_int = int(value.value.dbl)` that clobbers the shared
+        # ctypes union, truncating DOUBLE fields (tensor %, occupancy) to ints
+        # before handle_field ever sees them. We override process() to read the
+        # raw double *before* any conversion and capture into self._captured.
+        import rdc_bootstrap as _rdcb
+        capture = self._captured
+        _rdc = _rdcb.rdc
+        _rdc_field_value = _rdcb.rdc_field_value
+        _rdc_status_t = _rdcb.rdc_status_t
+        double_type = int(self._rdc_field_type_t.DOUBLE)
+        # Kept for cleanup(): RdcReader has no stop()/destructor, so the field
+        # group and GPU group it creates on rdcd leak unless we destroy them.
+        # After enough runs rdcd returns RDC_ST_MAX_LIMIT and refuses new
+        # groups, silently disabling Tier-2 for the rest of a long sweep.
+        self._rdc = _rdc
+        self._rdc_status_t = _rdc_status_t
+
+        class _CapturingRdcReader(self._RdcReader):  # type: ignore[misc, valid-type]
+            def process(self_inner):
+                has_succeed = False
+                for gindex in self_inner.gpu_indexes:
+                    for fid in self_inner.field_ids:
+                        value = _rdc_field_value()
+                        result = _rdc.rdc_field_get_latest_value(
+                            self_inner.rdc_handle, gindex, fid, value)
+                        if _rdc_status_t(result) != _rdc_status_t.RDC_ST_OK:
+                            continue
+                        try:
+                            key = int(value.field_id.value)
+                        except AttributeError:
+                            key = int(value.field_id)
+                        if int(value.type.value) == double_type:
+                            capture[key] = float(value.value.dbl)
+                        else:
+                            capture[key] = float(value.value.l_int)
+                        has_succeed = True
+                if (self_inner.gpu_indexes and self_inner.field_ids
+                        and not has_succeed):
+                    self_inner.try_reconnect()
+
+        def _make_reader(field_ids):
+            # unit_converter={} disables RdcReader's partial default scaling;
+            # we scale explicitly in sample() via RDC_UNIT_SCALE.
+            return _CapturingRdcReader(
                 ip_port="localhost:50051",
-                field_ids=all_field_ids,
+                field_ids=field_ids,
+                unit_converter={},
                 update_freq=1_000_000,   # microseconds (1s)
                 max_keep_age=30,
                 max_keep_samples=30,
                 gpu_indexes=[gpu_index],
             )
+
+        # Build the reader. RdcReader handles the host-engine connection and
+        # field-watch lifecycle. ip="localhost" assumes rdcd is running.
+        all_field_ids = list(self._field_map.keys()) + list(prof_ids.keys())
+        try:
+            self._reader = _make_reader(all_field_ids)
             # If the reader accepted profiling fields, include them in the map.
             self._field_map.update(prof_ids)
             self._using_profiling = bool(prof_ids)
@@ -318,40 +405,59 @@ class RdcCollector:
                 "RDC profiling fields unsupported on this GPU (%s); "
                 "retrying with basic fields only.", e,
             )
-            self._reader = self._RdcReader(
-                ip_port="localhost:50051",
-                field_ids=list(self._field_map.keys()),
-                update_freq=1_000_000,
-                max_keep_age=30,
-                max_keep_samples=30,
-                gpu_indexes=[gpu_index],
-            )
+            self._reader = _make_reader(list(self._field_map.keys()))
             log.info(
                 "RDC Tier 2 collector initialized with BASIC fields "
                 "(gpu_index=%d, fields=%d)", gpu_index, len(self._field_map),
             )
 
     def sample(self) -> dict:
-        """Read latest RDC field values. Returns dict with rdc_* keys."""
+        """Read latest RDC field values. Returns dict with rdc_* keys.
+
+        process() refreshes self._captured (field_id -> raw value) via the
+        handle_field callback; we map those onto column names and apply
+        explicit unit scaling.
+        """
         result = {col: float("nan") for col in self._field_map.values()}
+        # A field that fails this poll must remain missing, not repeat a value
+        # retained from an earlier successful poll.
+        self._captured.clear()
         try:
-            samples = self._reader.process()
-            # samples is a list of (gpu_index, field_id, value, timestamp)
-            for gpu_idx, field_id, value, _ts in samples:
-                if gpu_idx != self._gpu_index:
-                    continue
-                col = self._field_map.get(int(field_id))
-                if col is not None and value is not None:
-                    result[col] = float(value)
+            self._reader.process()
+            for field_id, col in self._field_map.items():
+                if field_id in self._captured:
+                    val = self._captured[field_id]
+                    result[col] = val * self.RDC_UNIT_SCALE.get(col, 1.0)
         except Exception as e:
             log.warning("RDC sample error: %s", e)
         return result
 
     def cleanup(self):
-        try:
-            self._reader.stop()
-        except Exception:
-            pass
+        # RdcReader has no stop()/destructor. Release the watch and destroy the
+        # field + GPU groups it created, then disconnect — otherwise each run
+        # leaks two groups on rdcd until it hits RDC_ST_MAX_LIMIT.
+        r = getattr(self, "_reader", None)
+        if r is None:
+            return
+        handle = getattr(r, "rdc_handle", None)
+        ok = self._rdc_status_t.RDC_ST_OK
+        for fn, args in (
+            (self._rdc.rdc_field_unwatch,
+             (handle, getattr(r, "gpu_group_id", None), getattr(r, "field_group_id", None))),
+            (self._rdc.rdc_group_field_destroy,
+             (handle, getattr(r, "field_group_id", None))),
+            (self._rdc.rdc_group_gpu_destroy,
+             (handle, getattr(r, "gpu_group_id", None))),
+            (self._rdc.rdc_disconnect, (handle,)),
+        ):
+            try:
+                if any(a is None for a in args):
+                    continue
+                rc = fn(*args)
+                if self._rdc_status_t(rc) != ok:
+                    log.debug("RDC cleanup: %s returned %s", fn.__name__, rc)
+            except Exception as e:
+                log.debug("RDC cleanup: %s raised %s", getattr(fn, "__name__", fn), e)
 
 
 # ---------------------------------------------------------------------------

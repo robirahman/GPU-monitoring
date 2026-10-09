@@ -129,8 +129,13 @@ def run_whisper(args, device):
     import whisper
 
     print("Loading Whisper large-v3-turbo...")
+    # Cache under the user's home (the old hardcoded /home/claude path does not
+    # exist on most boxes). Honour WHISPER_CACHE if set.
+    download_root = os.environ.get(
+        "WHISPER_CACHE", os.path.join(os.path.expanduser("~"), ".cache", "whisper"))
+    os.makedirs(download_root, exist_ok=True)
     model = whisper.load_model("large-v3-turbo", device=device,
-                               download_root=os.path.expanduser("~/.cache/whisper"))
+                               download_root=download_root)
     print(f"Whisper loaded: {sum(p.numel() for p in model.parameters())/1e6:.0f}M params")
 
     start = time.time()
@@ -164,9 +169,8 @@ def run_whisper_hf(args, device):
     """Whisper ASR via transformers -- the dependency-free path.
 
     `run_whisper` above uses openai-whisper, which is pinned in no requirements
-    file, pulls ffmpeg for audio decoding, and hardcodes
-    download_root=/home/claude/.cache/whisper, a directory that does not exist on
-    a collection node. transformers is already installed (requirements_gcp_extra)
+    file and pulls ffmpeg for audio decoding. Its cache can be configured with
+    WHISPER_CACHE. transformers is already installed (requirements_gcp_extra)
     and takes the log-mel features directly, so nothing has to decode audio.
 
     This is the encoder-DECODER shape, which the corpus otherwise lacks entirely:
