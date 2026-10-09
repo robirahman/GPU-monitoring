@@ -1,0 +1,110 @@
+honest multi-node windows 151,632  jobs 326  workloads 90  families 31  features 174 (shape-only 96)
+  TRAIN windows 41,344   NOT-TRAIN windows 110,288
+
+family                      side        wkl    windows   jobs
+  inferasr_whisper           not-train    1     2,486      5
+  inferdiff_sdxl             not-train    1     2,706      5
+  inferembed_bge             not-train    1     2,537      4
+  inferembed_clip            not-train    1     2,565      5
+  inferhf_qwen               not-train    1     1,920      3
+  inferrec_dlrm              not-train    2     5,120      8
+  inferrep                   not-train    3     2,320     13
+  inferrep_qwen              not-train    2     3,614     13
+  inferserve_bursty          not-train    1     2,664      4
+  inferserve_chunked         not-train    1     2,720      4
+  inferserve_decode          not-train    1     2,784      4
+  inferserve_poisson         not-train    2     5,608      8
+  inferserve_prefill         not-train    1     1,376      2
+  inferserve_saturate        not-train    1     2,712      4
+  infershard                 not-train    3     2,306     13
+  infershard_qwen            not-train   13    23,613     41
+  nonml_comm                 not-train    5     5,625     21
+  nonml_duty                 not-train    7     6,759     28
+  nonml_fftshard             not-train    2     5,120      8
+  nonml_himem                not-train    3     4,080      6
+  nonml_hpc                  not-train    1     4,600      7
+  nonml_lowpower             not-train    7     4,480      7
+  nonml_nccl                 not-train    1     2,560      4
+  nonml_sat                  not-train    7     7,453     30
+  nonml_stencil              not-train    1     2,560      4
+  train_contrastive          TRAIN        1     2,560      4
+  train_ddp                  TRAIN        4     8,656     13
+  train_diffusion            TRAIN        1     2,560      4
+  train_fsdp                 TRAIN       11    20,608     44
+  train_lora                 TRAIN        3     4,064      6
+  train_pipe                 TRAIN        1     2,896      4
+
+=== leave-one-family-out ===
+held-out family            side       win-acc(all) win-acc(shape) job-acc(all)  train fams left
+  inferasr_whisper           not-train        1.0000         1.0000       1.0000                6
+  inferdiff_sdxl             not-train        0.6600         0.7398       1.0000                6
+  inferembed_bge             not-train        1.0000         1.0000       1.0000                6
+  inferembed_clip            not-train        1.0000         1.0000       1.0000                6
+  inferhf_qwen               not-train        0.9500         0.9500       1.0000                6
+  inferrec_dlrm              not-train        0.5779         0.8225       0.6250                6
+  inferrep                   not-train        1.0000         0.9996       1.0000                6
+  inferrep_qwen              not-train        0.9696         0.9931       1.0000                6
+  inferserve_bursty          not-train        0.9996         1.0000       1.0000                6
+  inferserve_chunked         not-train        0.9989         0.9989       1.0000                6
+  inferserve_decode          not-train        1.0000         0.9978       1.0000                6
+  inferserve_poisson         not-train        0.9954         0.9950       1.0000                6
+  inferserve_prefill         not-train        1.0000         1.0000       1.0000                6
+  inferserve_saturate        not-train        0.9993         0.9985       1.0000                6
+  infershard                 not-train        0.9610         0.9748       1.0000                6
+  infershard_qwen            not-train        0.9944         0.8960       1.0000                6
+  nonml_comm                 not-train        0.9554         0.9982       1.0000                6
+  nonml_duty                 not-train        0.9999         0.9997       1.0000                6
+  nonml_fftshard             not-train        1.0000         1.0000       1.0000                6
+  nonml_himem                not-train        0.9086         0.9914       1.0000                6
+  nonml_hpc                  not-train        0.9928         0.9909       1.0000                6
+  nonml_lowpower             not-train        0.7641         0.8252       0.7143                6
+  nonml_nccl                 not-train        1.0000         1.0000       1.0000                6
+  nonml_sat                  not-train        0.9683         0.9987       0.9000                6
+  nonml_stencil              not-train        1.0000         1.0000       1.0000                6
+  train_contrastive          TRAIN            0.9484         0.8207       1.0000                5
+  train_ddp                  TRAIN            0.2220         0.1079       0.2308                5
+  train_diffusion            TRAIN            1.0000         1.0000       1.0000                5
+  train_fsdp                 TRAIN            0.2916         0.6457       0.2045                5
+  train_lora                 TRAIN            0.0770         0.7421       0.0000                5
+  train_pipe                 TRAIN            0.0680         0.0563       0.0000                5
+
+=== fraction of held-out windows flagged as training, by tau ===
+(TRAIN rows are recall -- want high; not-train rows are the false-alarm rate -- want low)
+held-out family            side         p_med   tau=0.8   tau=0.5   tau=0.3   tau=0.2   tau=0.1  tau=0.05
+  train_contrastive        TRAIN        0.798    0.4891    0.9484    1.0000    1.0000    1.0000    1.0000
+  train_ddp                TRAIN        0.170    0.0006    0.2220    0.2921    0.4424    0.5622    0.8068
+  train_diffusion          TRAIN        0.945    0.9996    1.0000    1.0000    1.0000    1.0000    1.0000
+  train_fsdp               TRAIN        0.372    0.1792    0.2916    0.6994    0.8317    0.8655    0.8763
+  train_lora               TRAIN        0.325    0.0069    0.0770    0.7948    0.8329    0.9783    0.9995
+  train_pipe               TRAIN        0.392    0.0162    0.0680    0.9534    0.9786    1.0000    1.0000
+  inferasr_whisper         not-train    0.039    0.0000    0.0000    0.0000    0.0000    0.0088    0.2261
+  inferdiff_sdxl           not-train    0.410    0.0177    0.3400    0.7938    0.9095    0.9941    0.9970
+  inferembed_bge           not-train    0.012    0.0000    0.0000    0.0000    0.0000    0.0000    0.0004
+  inferembed_clip          not-train    0.023    0.0000    0.0000    0.0000    0.0062    0.0160    0.0331
+  inferhf_qwen             not-train    0.091    0.0281    0.0500    0.1625    0.1755    0.3615    0.9953
+  inferrec_dlrm            not-train    0.346    0.0000    0.4221    0.5000    0.5016    0.5070    0.5127
+  inferrep                 not-train    0.000    0.0000    0.0000    0.0009    0.0095    0.0190    0.0302
+  inferrep_qwen            not-train    0.026    0.0000    0.0304    0.0542    0.0783    0.1328    0.1909
+  inferserve_bursty        not-train    0.003    0.0000    0.0004    0.0026    0.0053    0.0113    0.0195
+  inferserve_chunked       not-train    0.000    0.0000    0.0011    0.0018    0.0040    0.0103    0.0158
+  inferserve_decode        not-train    0.003    0.0000    0.0000    0.0011    0.0036    0.0101    0.0230
+  inferserve_poisson       not-train    0.000    0.0000    0.0046    0.0093    0.0185    0.0432    0.0653
+  inferserve_prefill       not-train    0.069    0.0000    0.0000    0.0015    0.0044    0.1010    0.7057
+  inferserve_saturate      not-train    0.006    0.0000    0.0007    0.0022    0.0055    0.0147    0.0391
+  infershard               not-train    0.017    0.0113    0.0390    0.0494    0.0568    0.0611    0.0776
+  infershard_qwen          not-train    0.139    0.0001    0.0056    0.1052    0.2571    0.6463    0.7738
+  nonml_comm               not-train    0.013    0.0208    0.0446    0.0617    0.0738    0.3044    0.3179
+  nonml_duty               not-train    0.017    0.0000    0.0001    0.0009    0.0194    0.1224    0.2194
+  nonml_fftshard           not-train    0.010    0.0000    0.0000    0.0000    0.0123    0.3238    0.3572
+  nonml_himem              not-train    0.100    0.0005    0.0914    0.1181    0.1755    0.3463    0.5417
+  nonml_hpc                not-train    0.000    0.0000    0.0072    0.0176    0.0280    0.2343    0.2393
+  nonml_lowpower           not-train    0.251    0.0187    0.2359    0.3063    0.7315    0.8438    0.9038
+  nonml_nccl               not-train    0.007    0.0000    0.0000    0.0000    0.0000    0.0000    0.0020
+  nonml_sat                not-train    0.000    0.0001    0.0317    0.0338    0.0785    0.0829    0.0845
+  nonml_stencil            not-train    0.000    0.0000    0.0000    0.0000    0.0000    0.0125    0.0223
+
+--- summary ---
+  TRAIN      n=6 families   win-acc(all) mean 0.4345 min 0.0680   win-acc(shape) mean 0.5621 min 0.0563
+  not-train  n=25 families   win-acc(all) mean 0.9478 min 0.5779   win-acc(shape) mean 0.9668 min 0.7398
+
+wrote /var/tmp/spar_analysis/lofo_20260923.csv

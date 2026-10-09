@@ -1,0 +1,139 @@
+[07:18:20Z] [lofo] === phase 1: repo ===
+Fetching origin
+Already on 'multinode-tpu-experiments'
+Your branch is up to date with 'origin/multinode-tpu-experiments'.
+Already up to date.
+[07:18:21Z] [lofo]   HEAD 6edd0f3b Round 20261003d: the first _bw100 cell to run to completion
+[07:18:24Z] [lofo]   data/gcp sessions: 20260820 20260820c 20260821adv_README.md 20260822ctl 20260824sat 20260825fp 20260904 20260908 20260909 20260917 20260921 20260923 20260926 20260929 20261001 20261003 _quarantine_idle 
+[07:18:24Z] [lofo]   parquets on disk : 13807
+[07:18:24Z] [lofo] === phase 2: round 20261003d from GCS (it never reached GitHub) ===
+[07:18:24Z] [lofo]   round d streams present: 20
+[07:18:24Z] [lofo] === phase 3: python env ===
+[07:18:26Z] [lofo]   using /opt/spar/repo/venv-analysis/bin/python (pandas 2.3.3 sklearn 1.7.2)
+[07:18:26Z] [lofo] === phase 4: corpus inventory ===
+  adversarial              53 workloads   136 runs   1000 streams    11,033 stream-min
+  honest                  160 workloads   916 runs   5055 streams    53,259 stream-min
+
+wall-clock across distinct runs: 417 h against 1,494 stream-h (2026-03-09 .. 2026-10-03)
+
+wrote /var/tmp/spar_analysis/inv4.parquet
+[07:19:19Z] [lofo] === phase 5: multi-node window cache (30 s window, 15 s stride) ===
+[07:19:19Z] [lofo]   RAM: 31 GB total, 30 avail
+[07:19:19Z] [lofo]   discarding stale raw_mn.parquet (2026-09-25 16:18:34)
+[07:19:19Z] [lofo]   discarding stale mnpart_001.parquet (2026-10-06 06:57:17)
+[07:19:19Z] [lofo]   discarding stale mnpart_002.parquet (2026-10-06 06:57:26)
+[07:19:19Z] [lofo]   discarding stale mnpart_003.parquet (2026-10-06 06:57:25)
+[07:19:19Z] [lofo]   discarding stale mnpart_004.parquet (2026-10-06 06:57:13)
+[07:19:19Z] [lofo]   discarding stale mnpart_005.parquet (2026-10-06 07:02:10)
+[07:19:19Z] [lofo]   discarding stale mnpart_006.parquet (2026-10-06 07:02:42)
+[07:19:19Z] [lofo]   discarding stale mnpart_007.parquet (2026-10-06 07:01:48)
+[07:19:19Z] [lofo]   discarding stale mnpart_008.parquet (2026-10-06 07:04:29)
+[07:19:19Z] [lofo]   discarding stale mnpart_009.parquet (2026-10-06 07:07:47)
+[07:19:19Z] [lofo]   discarding stale mnpart_010.parquet (2026-10-06 07:07:38)
+[07:19:19Z] [lofo]   discarding stale mnpart_011.parquet (2026-10-06 07:08:41)
+[07:19:19Z] [lofo]   discarding stale mnpart_012.parquet (2026-10-06 07:10:11)
+[179s] spilled 0.19 GB
+[180s] 2,198 jobs in 12 chunks across 4 workers
+[535s] chunk 2: 184 jobs -> 5,045 windows
+[554s] chunk 4: 183 jobs -> 4,930 windows
+[580s] chunk 1: 184 jobs -> 5,509 windows
+[591s] chunk 3: 183 jobs -> 5,816 windows
+[944s] chunk 6: 183 jobs -> 4,889 windows
+[951s] chunk 5: 183 jobs -> 5,387 windows
+[953s] chunk 7: 183 jobs -> 5,276 windows
+[1019s] chunk 8: 183 jobs -> 6,203 windows
+[1334s] chunk 11: 183 jobs -> 5,370 windows
+[1383s] chunk 10: 183 jobs -> 6,906 windows
+[1386s] chunk 9: 183 jobs -> 6,809 windows
+[1398s] chunk 12: 183 jobs -> 5,468 windows
+[1399s] windows 67,608 -> /var/tmp/spar_analysis/win_stream_30_15.parquet
+  jobs 1,999  groups 445  xr_ features 107  xragg_ features 38  peakRSS 24.80 GB
+threeway_label
+ml_training     33731
+ml_inference    19529
+other           14348
+[07:42:39Z] [lofo]   cache 41M
+[07:42:39Z] [lofo] === phase 6: ablation cache (same windows minus the new rounds) ===
+  cache columns: ['gpu_utilization_pct_mean', 'gpu_utilization_pct_std', 'gpu_utilization_pct_min', 'gpu_utilization_pct_max', 'gpu_utilization_pct_p25', 'gpu_utilization_pct_p50', 'gpu_utilization_pct_p75', 'gpu_utilization_pct_p95', 'gpu_utilization_pct_iqr', 'gpu_utilization_pct_range', 'gpu_utilization_pct_cv', 'gpu_utilization_pct_skew', 'gpu_utilization_pct_kurt', 'mem_utilization_pct_mean']
+  new-round cells: 26
+  windows 67,608 -> 66,378 (1,230 dropped, on 'grp')
+[07:42:41Z] [lofo] === phase 7: LOFO, full corpus ===
+  ml_inference  inferrec_dlrm            held out 3x  acc 0.0000 [0.0000, 0.0000]  n~315
+  ml_training   advtrain_satfiller       held out 1x  acc 0.0000 [0.0000, 0.0000]  n~159
+  ml_training   train_accumsync          held out 1x  acc 0.0000 [0.0000, 0.0000]  n~5
+  other         nonml_hpc                held out 1x  acc 0.0091 [0.0091, 0.0091]  n~331
+  other         nonml_comm               held out 2x  acc 0.0756 [0.0683, 0.0829]  n~205
+  other         nonml_lowpower           held out 1x  acc 0.0800 [0.0800, 0.0800]  n~825
+  ml_inference  inferhf_shard            held out 1x  acc 0.2667 [0.2667, 0.2667]  n~255
+  other         nonml_fftshard           held out 1x  acc 0.4984 [0.4984, 0.4984]  n~313
+  ml_training   stalled_train            held out 2x  acc 0.6639 [0.5546, 0.7731]  n~119
+  other         nonml_stencil            held out 2x  acc 0.7278 [0.4557, 1.0000]  n~158
+  ml_inference  infercnn_rn              held out 2x  acc 0.7479 [0.4957, 1.0000]  n~117
+  ml_training   advtrain_satint          held out 2x  acc 0.7642 [0.7442, 0.7841]  n~477
+  ml_training   advtrain_pipe            held out 2x  acc 0.8453 [0.8261, 0.8646]  n~805
+  ml_training   train_localsgd           held out 4x  acc 0.9082 [0.8499, 0.9452]  n~493
+  ml_training   train_lora               held out 3x  acc 0.9244 [0.8836, 0.9821]  n~335
+  ml_training   train_ddp                held out 2x  acc 0.9283 [0.8774, 0.9793]  n~628
+  ml_training   train_fsdp               held out 1x  acc 0.9495 [0.9495, 0.9495]  n~1,525
+  ml_training   train_pipe               held out 1x  acc 0.9889 [0.9889, 0.9889]  n~180
+  ml_inference  inferrep_qwen            held out 1x  acc 0.9940 [0.9940, 0.9940]  n~332
+  ml_training   train_impala             held out 3x  acc 0.9947 [0.9840, 1.0000]  n~125
+  ml_inference  inferembed_clip          held out 2x  acc 0.9950 [0.9899, 1.0000]  n~199
+  ml_inference  inferhf_qwen             held out 3x  acc 0.9972 [0.9917, 1.0000]  n~120
+  ml_inference  inferserve_saturate      held out 2x  acc 1.0000 [1.0000, 1.0000]  n~160
+  ml_training   advtrain_flatarena       held out 2x  acc 1.0000 [1.0000, 1.0000]  n~319
+  ml_inference  inferembed_bge           held out 1x  acc 1.0000 [1.0000, 1.0000]  n~158
+  ml_inference  infervis_vitl            held out 2x  acc 1.0000 [1.0000, 1.0000]  n~78
+  ml_training   train_apexrl             held out 1x  acc 1.0000 [1.0000, 1.0000]  n~40
+  ml_inference  inferserve_prefill       held out 2x  acc 1.0000 [1.0000, 1.0000]  n~118
+  ml_inference  inferserve_decode        held out 1x  acc 1.0000 [1.0000, 1.0000]  n~198
+  ml_inference  inferserve_poisson       held out 1x  acc 1.0000 [1.0000, 1.0000]  n~359
+  ml_inference  inferserve_chunked       held out 1x  acc 1.0000 [1.0000, 1.0000]  n~199
+  ml_inference  infermem_qwen            held out 2x  acc 1.0000 [1.0000, 1.0000]  n~256
+  ml_training   train_streamdiloco       held out 2x  acc 1.0000 [1.0000, 1.0000]  n~167
+  ml_training   train_ppodist            held out 2x  acc 1.0000 [1.0000, 1.0000]  n~40
+  ml_training   train_moe                held out 3x  acc 1.0000 [1.0000, 1.0000]  n~119
+  ml_training   train_decoupdiloco       held out 2x  acc 1.0000 [1.0000, 1.0000]  n~88
+  ml_training   train_contrastive        held out 4x  acc 1.0000 [1.0000, 1.0000]  n~158
+  ml_training   train_tp                 held out 1x  acc 1.0000 [1.0000, 1.0000]  n~80
+  ml_training   train_swarm              held out 1x  acc 1.0000 [1.0000, 1.0000]  n~78
+  other         nonml_nccl               held out 1x  acc 1.0000 [1.0000, 1.0000]  n~157
+
+  model chosen: {'hgb': 3, 'rf200_bal': 2, 'rf300_mf03': 1, 'rf200_d20': 1, 'et300': 1}
+  val-to-test drop: mean -0.0086
+
+wrote /var/tmp/spar_analysis/lofo_full_20261005.json
+  families in run: 48; six new present: ['train_apexrl', 'train_decoupdiloco', 'train_impala', 'train_ppodist', 'train_streamdiloco', 'train_swarm']
+[07:46:15Z] [lofo] === phase 8: LOFO, ablation (minus 20261001+20261003) ===
+  other         nonml_fftshard           held out 1x  acc 0.4952 [0.4952, 0.4952]  n~313
+  ml_training   stalled_train            held out 3x  acc 0.5994 [0.4202, 0.7143]  n~119
+  other         nonml_hpc                held out 3x  acc 0.6274 [0.1450, 0.8912]  n~331
+  ml_training   train_fsdp               held out 1x  acc 0.6610 [0.6610, 0.6610]  n~1,525
+  ml_inference  inferhf_shard            held out 1x  acc 0.7451 [0.7451, 0.7451]  n~255
+  ml_training   advtrain_pipe            held out 2x  acc 0.8075 [0.7565, 0.8584]  n~805
+  ml_training   train_ddp                held out 2x  acc 0.8583 [0.7404, 0.9761]  n~628
+  ml_training   advtrain_flatarena       held out 1x  acc 0.8621 [0.8621, 0.8621]  n~319
+  ml_inference  infercnn_rn              held out 2x  acc 0.8846 [0.8205, 0.9487]  n~117
+  ml_training   advtrain_satint          held out 1x  acc 0.9434 [0.9434, 0.9434]  n~477
+  ml_inference  inferserve_saturate      held out 2x  acc 0.9875 [0.9750, 1.0000]  n~160
+  ml_inference  inferserve_chunked       held out 1x  acc 0.9950 [0.9950, 0.9950]  n~199
+  ml_training   advtrain_bubble          held out 2x  acc 1.0000 [1.0000, 1.0000]  n~159
+  ml_inference  infervis_vitl            held out 2x  acc 1.0000 [1.0000, 1.0000]  n~78
+  ml_inference  inferserve_poisson       held out 1x  acc 1.0000 [1.0000, 1.0000]  n~359
+  ml_inference  inferserve_prefill       held out 2x  acc 1.0000 [1.0000, 1.0000]  n~118
+  ml_inference  inferserve_decode        held out 1x  acc 1.0000 [1.0000, 1.0000]  n~198
+  ml_inference  inferembed_clip          held out 2x  acc 1.0000 [1.0000, 1.0000]  n~199
+  ml_inference  infermem_qwen            held out 2x  acc 1.0000 [1.0000, 1.0000]  n~256
+  ml_inference  inferrep_qwen            held out 1x  acc 1.0000 [1.0000, 1.0000]  n~332
+  ml_inference  inferembed_bge           held out 1x  acc 1.0000 [1.0000, 1.0000]  n~158
+  ml_inference  inferhf_qwen             held out 3x  acc 1.0000 [1.0000, 1.0000]  n~120
+  ml_training   train_diffusion          held out 2x  acc 1.0000 [1.0000, 1.0000]  n~159
+  other         nonml_nccl               held out 1x  acc 1.0000 [1.0000, 1.0000]  n~157
+  other         nonml_sat                held out 1x  acc 1.0000 [1.0000, 1.0000]  n~156
+
+  model chosen: {'rf200_leaf5': 3, 'hgb': 2, 'rf200_bal': 2, 'et300': 1}
+  val-to-test drop: mean +0.0686
+
+wrote /var/tmp/spar_analysis/lofo_ablation_20261005.json
+[07:49:26Z] [lofo] === phase 9: publish ===
+[07:49:28Z] [lofo]   results -> gs://focus-surfer-494820-g0-telemetry/analysis/20261005/

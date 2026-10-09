@@ -1,0 +1,41 @@
+{
+  "summary_csv": "/home/robi/GPU-monitoring/classifier/results/scope_ladder_summary.csv",
+  "monotonicity_csv": "/home/robi/GPU-monitoring/classifier/results/scope_ladder_monotonicity.csv",
+  "scopes": [
+    "s1",
+    "s16",
+    "s8"
+  ],
+  "arms": [
+    "pergpu",
+    "pergpu_plus",
+    "crossrank"
+  ],
+  "config": {
+    "window": 30.0,
+    "stride": 15.0,
+    "k": 3,
+    "m": 5,
+    "target_fp_per_gpu_hour": 0.1,
+    "arms": [
+      "pergpu",
+      "pergpu_plus",
+      "crossrank"
+    ],
+    "negatives": [
+      "inferrep",
+      "infershard"
+    ],
+    "ablations": [
+      "none",
+      "drop_pcie",
+      "drop_nvlink",
+      "drop_nic",
+      "drop_all_comm",
+      "xr_only"
+    ],
+    "bootstrap": 200,
+    "synthetic": true,
+    "out_prefix": "scope_ladder"
+  }
+}

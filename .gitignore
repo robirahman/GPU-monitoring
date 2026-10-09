@@ -77,3 +77,7 @@ classifier/results/*_cv_combined.parquet
 classifier/results/leakage_before_after.csv
 classifier/results/run_level*.csv
 classifier/results/whitebox_rescored*
+
+# gsutil partial-download artifacts. A 157 MB one was swept into a commit by
+# `git add -A` and rejected by GitHub (100 MB limit); it also filled /home.
+*.gstmp

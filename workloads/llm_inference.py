@@ -226,10 +226,22 @@ def run_vit_l(args, device: str) -> None:
     """ViT-L/16 ImageNet classification at batch — encoder-only vision path."""
     from transformers import ViTForImageClassification
 
-    model_id = "google/vit-large-patch16-224"
+    # The -in21k checkpoint, not the in1k one, because it is the only ViT-L/16
+    # that ships safetensors. google/vit-large-patch16-224 carries only
+    # pytorch_model.bin, and transformers refuses to torch.load ANY .bin under
+    # torch < 2.6 on security grounds -- this repo pins torch 2.5.1, so that cell
+    # could never load and died on every replica of the 2026-09-23 round with
+    # "we now require users to upgrade torch to at least v2.6". Verified against
+    # the Hub API: -in21k has model.safetensors, the in1k repo has none.
+    #
+    # Same architecture, same 224x224 patch-16 compute, which is all this cell is
+    # for. It has no in1k head, so ViTForImageClassification adds a randomly
+    # initialised classifier and warns; that is one linear layer on top of 24
+    # encoder blocks and does not change the telemetry.
+    model_id = "google/vit-large-patch16-224-in21k"
     print(f"Loading {model_id}")
     model = ViTForImageClassification.from_pretrained(
-        model_id, torch_dtype=torch.float16,
+        model_id, torch_dtype=torch.float16, use_safetensors=True,
     ).to(device).eval()
 
     def fake_batch(n):

@@ -60,7 +60,8 @@ class ClassifierOracle:
     4. Returns P(ml_training) from the same XGBoost model
     """
 
-    def __init__(self, gpu_index=0, max_buffer_sec=120, backend="auto"):
+    def __init__(self, gpu_index=0, max_buffer_sec=120, backend="auto",
+                 model_path=None):
         """
         backend:
           "nvidia" — force pynvml/NVML
@@ -69,6 +70,9 @@ class ClassifierOracle:
         """
         self.gpu_index = gpu_index
         self.max_buffer_sec = max_buffer_sec
+        # Path to a persisted honest-only detector (classifier/model_store.py).
+        # None => fall back to retraining in-process, the historical behaviour.
+        self.model_path = model_path
         # Retain the first `_head_keep` samples of the run permanently. The
         # causal run-level features (first_30s_mem_*, time_to_mem_plateau) need
         # the run start, which a plain rolling buffer would discard. 60 samples
@@ -110,6 +114,10 @@ class ClassifierOracle:
         self._clf = None
         self._le = None
         self._feature_cols = None
+        # Index of the ml_training column in _clf.predict_proba output. Set when
+        # a persisted model is loaded (it exposes classes_ directly and has no
+        # LabelEncoder); stays None on the retrain path, which uses _le.
+        self._train_idx = None
         self._build_classifier()
 
     def _init_nvidia(self):
@@ -143,8 +151,53 @@ class ClassifierOracle:
         log.info(f"ClassifierOracle: amdsmi backend, "
                  f"gpu_index={self.gpu_index}, {asic.get('market_name', '?')}")
 
+    def _load_persisted(self):
+        """Load the honest-only detector if available. True on success."""
+        try:
+            from classifier.model_store import load, DEFAULT_MODEL_PATH
+        except Exception as e:
+            log.warning("Oracle: model_store unavailable (%s)", e)
+            return False
+        path = self.model_path or DEFAULT_MODEL_PATH
+        try:
+            clf, meta = load(path)
+        except FileNotFoundError:
+            log.info("Oracle: no persisted model at %s", path)
+            return False
+        except Exception as e:
+            log.warning("Oracle: could not load %s (%s)", path, e)
+            return False
+        cols = meta.get("feature_cols")
+        if not cols:
+            log.warning("Oracle: artifact %s has no feature_cols; ignoring", path)
+            return False
+        classes = [str(c) for c in getattr(clf, "classes_", [])]
+        if "ml_training" not in classes:
+            log.warning("Oracle: artifact has no ml_training class; ignoring")
+            return False
+        self._clf = clf
+        self._feature_cols = cols
+        self._train_idx = classes.index("ml_training")
+        log.info("Oracle: loaded persisted detector %s (%d features, "
+                 "window=%ss, honest-only)", path, len(cols),
+                 meta.get("window_sec"))
+        return True
+
     def _build_classifier(self):
-        """Train the same XGBoost classifier used by the defender."""
+        """Obtain the detector the adversary queries.
+
+        Prefers a PERSISTED HONEST-ONLY model (classifier/model_store.py). That
+        matters for more than startup time: retraining here fitted on the entire
+        unfiltered corpus -- including disguised families and this oracle's own
+        previous runs -- at 60 s/30 s windows, while every evaluator scores at
+        30 s/15 s with the attack family held out. The attacker was therefore
+        querying a *different* model from the one the result is measured against,
+        which makes "the attacker knows the detector" false in exactly the way an
+        evasion claim depends on. Loading the evaluated artifact also removes the
+        ~182 s in-process refit measured on every previous WB-O run.
+        """
+        if self._load_persisted():
+            return
         try:
             from sklearn.preprocessing import LabelEncoder
             import xgboost as xgb
@@ -157,7 +210,8 @@ class ClassifierOracle:
             compute_sample_weights,
         )
 
-        log.info("Oracle: training classifier from existing data...")
+        log.info("Oracle: no persisted model; training from existing data "
+                 "(slow, and NOT the model the evaluation scores against)...")
         df_raw = load_all_data()
 
         # Use 60s windows (same as LOO evaluation)
@@ -349,7 +403,10 @@ class ClassifierOracle:
 
         # Query classifier
         proba = self._clf.predict_proba(x)[0]
-        training_idx = int(self._le.transform(["ml_training"])[0])
+        if self._train_idx is not None:
+            training_idx = self._train_idx      # persisted model: classes_ order
+        else:
+            training_idx = int(self._le.transform(["ml_training"])[0])
         return float(proba[training_idx])
 
 

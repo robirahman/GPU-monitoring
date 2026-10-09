@@ -17,6 +17,13 @@ import os
 import sys
 import time
 
+try:
+    from workloads._step import emit_step
+    from workloads.dist_deadline import CollectiveDeadline, sync_teardown
+except ImportError:  # launched as `torchrun workloads/fsdp_training.py` (cwd on path)
+    from _step import emit_step
+    from dist_deadline import CollectiveDeadline, sync_teardown
+
 import torch
 import torch.nn as nn
 import torch.distributed as dist
@@ -103,8 +110,28 @@ def param_init_fn(module: nn.Module, device: torch.device):
         b.zero_()
 
 
-def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False):
-    """Wrap model in FSDP with FULL_SHARD + bf16 mixed precision."""
+def _to_empty_only(device):
+    """param_init_fn that ALLOCATES but does not initialise.
+
+    Paired with sync_module_states=True: the values arrive by broadcast from
+    the group's rank 0, so initialising here would be wasted work on a tensor
+    that is about to be overwritten.
+    """
+    def _fn(module):
+        module.to_empty(device=device, recurse=False)
+    return _fn
+
+
+def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False,
+                     process_group=None, materialized=False,
+                     sync_module_states=False):
+    """Wrap model in FSDP with FULL_SHARD + bf16 mixed precision.
+
+    process_group restricts sharding to a subset of the world. MN-P needs this:
+    its pipeline stages are sharded WITHIN a node so that the parameter
+    all-gathers ride intra-node NVLink and never cross the NIC, which is the
+    whole point of the disguise (see findings section 22).
+    """
     mp_policy = MixedPrecision(
         param_dtype=torch.bfloat16,
         reduce_dtype=torch.bfloat16,
@@ -128,8 +155,32 @@ def build_fsdp_model(model, device, activation_ckpt=True, cpu_offload=False):
         auto_wrap_policy=wrap_policy,
         cpu_offload=offload,
         device_id=device if not cpu_offload else None,
-        param_init_fn=functools.partial(param_init_fn, device=init_device),
+        # materialized=True means the caller already gave every parameter real
+        # storage, so param_init_fn must NOT run: to_empty() would throw the
+        # initialised weights away. MN-P needs this because FSDP's meta-init
+        # path does not materialise the ROOT parameters of a sliced pipeline
+        # stage -- stage 1's lm_head stayed on meta and flattening it died with
+        #   setStorage: sizes [32000, 2048] ... storage of size 0
+        # Three init regimes:
+        #  * default            -- everything on meta, param_init_fn gives it
+        #                          storage AND random values.
+        #  * materialized       -- the caller already gave every parameter real
+        #                          storage and values; param_init_fn must not
+        #                          run or to_empty() would discard them.
+        #  * sync_module_states -- only the group's rank 0 holds real values
+        #                          (the rest are on meta), so meta parameters
+        #                          need STORAGE but not values: FSDP broadcasts
+        #                          rank 0's over them. This is what lets a 70b
+        #                          pipeline stage be built at all -- 39.2B
+        #                          parameters is 78 GB of host bf16, and doing
+        #                          that on all 8 ranks of a node would want
+        #                          627 GB of its 680 GB of RAM.
+        param_init_fn=(_to_empty_only(init_device) if sync_module_states else
+                       None if materialized else
+                       functools.partial(param_init_fn, device=init_device)),
+        sync_module_states=sync_module_states,
         limit_all_gathers=True,
+        process_group=process_group,
     )
 
     if activation_ckpt:
@@ -168,6 +219,18 @@ def main():
                         help="Override optimizer (default: auto based on model size)")
     parser.add_argument("--cpu-offload", action="store_true",
                         help="Offload optimizer states to CPU")
+    parser.add_argument("--grad-accum", type=int, default=1,
+                        help="microbatches per optimizer step. >1 makes the "
+                             "optimizer step (and, with FSDP no_sync, the "
+                             "gradient reduce-scatter) RARE, so the telemetry "
+                             "loses the per-step training signature -- the "
+                             "'training that looks like inference' direction the "
+                             "corpus has no cell for.")
+    parser.add_argument("--accum-sync-every-microbatch", action="store_true",
+                        help="reduce-scatter on every microbatch instead of only "
+                             "on the accumulation boundary. Isolates which of the "
+                             "two effects (rare optimizer step vs rare "
+                             "inter-node collective) the detector was using.")
     parser.add_argument("--no-activation-ckpt", action="store_true",
                         help="Disable activation checkpointing")
     args = parser.parse_args()
@@ -176,6 +239,7 @@ def main():
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
     world_size = int(os.environ.get("WORLD_SIZE", 1))
     rank = int(os.environ.get("RANK", 0))
+    node_rank = int(os.environ.get("GROUP_RANK", 0))  # torchrun: this node's index
 
     dist.init_process_group(backend="nccl")
     torch.cuda.set_device(local_rank)
@@ -238,8 +302,13 @@ def main():
     # Training loop with synthetic data
     wall_start = time.time()
     step = 0
+    # Every rank must leave this loop on the SAME iteration. A local
+    # `time.time() - wall_start < duration` test does not guarantee that, and a
+    # rank that exits early strands its peers inside a ReduceScatter.
+    deadline = CollectiveDeadline(args.duration, device)
 
-    while time.time() - wall_start < args.duration:
+    micro = 0
+    while not deadline.expired():
         # Random token ids -- no real dataset needed
         input_ids = torch.randint(0, vocab, (batch_size, args.seq_len), device=device)
 
@@ -255,11 +324,36 @@ def main():
                 shift_labels.view(-1),
             )
 
-            # Backward: ReduceScatter grads for each FSDP unit
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad(set_to_none=True)
-            step += 1
+            # Backward: ReduceScatter grads for each FSDP unit.
+            # With --grad-accum N the loss is scaled so the accumulated gradient
+            # matches a single N-times-larger batch, and (unless the caller asks
+            # otherwise) FSDP's no_sync suppresses the reduce-scatter on every
+            # microbatch but the last -- which is what real accumulation does and
+            # what removes the inter-node collective from N-1 of every N steps.
+            accum = max(1, args.grad_accum)
+            boundary = (micro + 1) % accum == 0
+            if accum > 1:
+                loss = loss / accum
+            if boundary or args.accum_sync_every_microbatch or accum == 1:
+                loss.backward()
+            else:
+                with fsdp_model.no_sync():
+                    loss.backward()
+            micro += 1
+            if boundary:
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+                step += 1
+
+            # Per-window ground truth. Rank 0 only: every rank runs the same
+            # synchronous step, so one emitter per node-0 fully labels the job.
+            # Emitted on the OPTIMIZER step, not the microbatch, so `passes`
+            # reports how many forward/backward passes that step consumed.
+            if rank == 0 and boundary:
+                emit_step("train", step,
+                          tokens=batch_size * world_size * args.seq_len * accum,
+                          passes=accum, node=node_rank, rank=rank,
+                          loss=f"{loss.item() * accum:.4f}")
 
         except torch.cuda.OutOfMemoryError:
             if rank == 0:
@@ -286,7 +380,7 @@ def main():
         print(f"  Throughput: {total_tokens / wall_time:.0f} tok/s")
         print(f"  Peak GPU memory: {torch.cuda.max_memory_allocated(device) / 1e9:.1f} GB")
 
-    dist.destroy_process_group()
+    sync_teardown()
 
 
 if __name__ == "__main__":

@@ -495,6 +495,78 @@ WORKLOAD_REGISTRY = {
         "description": "ViT-L/16 ImageNet classification @ batch 64 — non-CLIP encoder-only vision path",
         "default_timeout": 420,
     },
+    # --- Workload-diversity round (2026-09-23): multi-node REPLICATED negatives ---
+    # These are the existing single-GPU non-LLM kernels at --duration 600, driven
+    # by mn_replicated_main so eight independent replicas run per node. The
+    # existing llm_infer_* entries above are 300 s and the command is baked into
+    # the registry, so a duration change needs its own entry rather than a flag.
+    #
+    # Purpose: the honest not-training class is nominally ten families but really
+    # three programs (nonml_distributed.py, vLLM, TPU-JAX), and held-out
+    # infershard_qwen is falsely flagged on 71% of its windows. These are six
+    # genuinely different inference programs, which is what that number needs.
+    "mn_infer_vit_l_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "vit_l", "--duration", "600", "--batch-size", "64",
+        ],
+        "description": "ViT-L/16 classification, 600 s — encoder-only vision, multi-node replicated",
+        "default_timeout": 900,
+    },
+    "mn_infer_bge_embed_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "bge_large", "--duration", "600", "--batch-size", "128",
+        ],
+        "description": "BGE-large text embedding, 600 s — bidirectional encoder, multi-node replicated",
+        "default_timeout": 900,
+    },
+    "mn_infer_clip_embed_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "clip_l14", "--duration", "600", "--batch-size", "256",
+        ],
+        "description": "CLIP ViT-L/14 image embedding, 600 s — dual-encoder, multi-node replicated",
+        "default_timeout": 900,
+    },
+    "mn_infer_sdxl_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference.py"),
+            "--model", "sdxl", "--duration", "600",
+            "--sdxl-steps", "30", "--sdxl-size", "1024",
+        ],
+        "description": "SDXL diffusion, 600 s — iterative denoising, the only non-autoregressive generator",
+        "default_timeout": 1200,
+    },
+    "mn_infer_whisper_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "modern_inference.py"),
+            "--model", "whisper_hf", "--duration", "600",
+        ],
+        "description": "Whisper large-v3-turbo ASR via transformers, 600 s — encoder-decoder",
+        "default_timeout": 900,
+    },
+    "mn_infer_rn50_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "inference.py"),
+            "--model", "resnet50", "--batch-size", "256", "--duration", "600",
+        ],
+        "description": "ResNet-50 classification, 600 s — pure convolutional, no attention anywhere",
+        "default_timeout": 900,
+    },
+    # llm_inference.py's MODEL_REGISTRY stops at qwen25_3b, so the 7B HF cell uses
+    # llm_inference_hf_sharded.py, which draws its models from VLLM_MODELS and so
+    # sits at exactly the scale the vLLM cells do. With one visible GPU per
+    # replica, accelerate's device_map simply places the model on it.
+    "mn_infer_hf_qwen7b_d600": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_hf_sharded.py"),
+            "--model", "qwen25_7b_fp16", "--duration", "600", "--batch-size", "8",
+            "--max-new-tokens", "128", "--prompt-tokens", "1024",
+        ],
+        "description": "Qwen2.5-7B via HF generate, 600 s — a SECOND LLM engine; every other LLM stream in the corpus is vLLM",
+        "default_timeout": 900,
+    },
     # --- Round 5b (phase 4): Matched-pair LoRA training (consumer tier) ---
     # Paired with existing llm_infer_* workloads at the same model scale so
     # the classifier can learn train-vs-infer on the same GPU / same model.
@@ -573,6 +645,28 @@ WORKLOAD_REGISTRY = {
     # (A100-80, H100-80, H200, B200). Paired with existing FSDP-7B/13B/30B
     # training runs so the classifier can learn train-vs-infer at matched
     # scale on datacenter hardware.
+    "llm_infer_qwen25_1_5b_bs1": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_1_5b_fp16",
+            "--duration", "300", "--batch-size", "1", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 1.5B FP16 via vLLM, batch 1 — latency-bound second "
+                       "inference negative. Distinct workload from the batch-8 cell, "
+                       "so it contributes an INDEPENDENT job rather than a correlated "
+                       "repeat: each cell yields only one job per rep, and the ladder "
+                       "needs >=8 jobs per class to clear the eval's low_n flag.",
+        "default_timeout": 600,
+    },
+    "llm_infer_qwen25_1_5b_fp16": {
+        "command": [
+            sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),
+            "--model", "qwen25_1_5b_fp16",
+            "--duration", "300", "--batch-size", "8", "--max-tokens", "256",
+        ],
+        "description": "Qwen 2.5 1.5B Instruct FP16 (~3 GB) via vLLM — matched-pair for fsdp_1b training",
+        "default_timeout": 600,
+    },
     "llm_infer_qwen25_7b_fp16": {
         "command": [
             sys.executable, os.path.join(_WORKLOADS_DIR, "llm_inference_vllm.py"),

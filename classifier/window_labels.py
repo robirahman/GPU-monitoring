@@ -41,13 +41,27 @@ import pandas as pd
 STEP_RE = re.compile(
     r"STEP\s+ts=(?P<ts>[\d.]+)\s+kind=(?P<kind>train|infer)\s+batch_idx=(?P<idx>\d+)")
 RUNID_RE = re.compile(r"Run ID:\s*(?P<run_id>\S+)")
+# Trailing key=value fields, scanned after the positional prefix. Promoted from
+# rebuttal_analysis/symgemm_throughput.py, which was the ONLY tokens-aware STEP
+# parser in the repo -- this module's parser matched the prefix and then threw
+# `tokens=`/`passes=` away, so progress could never be joined to a window even
+# though every workload emits it. Tolerating any order and any extra fields also
+# means the superset dialect (node=/rank=/phase=/loss=/p_train=) parses here.
+FIELD_RE = re.compile(r"(\w+)=([-\w.]+)")
 
 
 def parse_step_log(path: str) -> tuple[str | None, pd.DataFrame]:
-    """Return ``(run_id, DataFrame[ts, kind])`` parsed from one teed launcher log.
+    """Return ``(run_id, DataFrame[ts, kind, tokens, passes])`` from one teed log.
 
     ``run_id`` is taken from the first ``Run ID:`` line (``None`` if absent, in
     which case the caller must supply an override).
+
+    ``tokens`` is the workload's own count of USEFUL work in that step and
+    ``passes`` what an observer who believed the disguise would attribute to it
+    (see workloads/_step.py). Both default to 0/1 when a workload omits them, so
+    older subset-dialect logs still parse. Keeping them is what lets progress be
+    joined to a telemetry window, which is the missing half of any
+    "detection rate vs throughput sacrificed" comparison.
     """
     run_id = None
     steps = []
@@ -59,9 +73,29 @@ def parse_step_log(path: str) -> tuple[str | None, pd.DataFrame]:
                     run_id = mr.group("run_id")
             ms = STEP_RE.search(line)
             if ms:
-                steps.append((float(ms.group("ts")), ms.group("kind")))
-    df = pd.DataFrame(steps, columns=["ts", "kind"])
+                fields = dict(FIELD_RE.findall(line[ms.end():]))
+                steps.append((
+                    float(ms.group("ts")),
+                    ms.group("kind"),
+                    _as_int(fields.get("tokens"), 0),
+                    _as_int(fields.get("passes"), 1),
+                    # node/rank are the superset dialect's attribution fields.
+                    # They were parsed and thrown away, which was harmless only
+                    # while every multi-node workload emitted from rank 0 alone.
+                    # -1 marks "this log did not say", which is not rank 0.
+                    _as_int(fields.get("node"), -1),
+                    _as_int(fields.get("rank"), -1),
+                ))
+    df = pd.DataFrame(steps, columns=["ts", "kind", "tokens", "passes",
+                                      "node", "rank"])
     return run_id, df
+
+
+def _as_int(v, default):
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return default
 
 
 def match_run_id(log_run_id: str | None, override: str | None, known_run_ids) -> str | None:
@@ -98,16 +132,52 @@ def build_step_log_map(log_globs, known_run_ids, overrides=None) -> dict:
     for pattern in log_globs:
         logs.extend(sorted(glob.glob(pattern)))
 
-    out = {}
+    # ACCUMULATE, never replace. `rid_for()` in multinode_queue.sh is
+    # deterministic and IDENTICAL on both nodes, and both nodes' logs are
+    # gathered into logs/ and globbed together here. The previous version did
+    # `out[rid] = {...}`, so the second log seen for a run silently discarded
+    # the first. That was harmless only because every multi-node workload so far
+    # emits STEP lines from rank 0 alone, leaving node1's log empty and dropped
+    # by the `steps.empty` guard above.
+    #
+    # It stops being harmless the moment a workload emits from every rank --
+    # which distributed RL must, because its ranks genuinely diverge (an actor
+    # is running inference while the learner trains). There, node1's log would
+    # have overwritten node0's and every label for the job would have been
+    # computed from ranks 8-15 alone. Nothing would have failed; the numbers
+    # would just have been wrong for exactly the cells whose per-rank
+    # attribution is the entire point.
+    acc = {}
     for log_path in logs:
         log_run_id, steps = parse_step_log(log_path)
         rid = match_run_id(log_run_id, overrides.get(log_path), known_run_ids)
         if rid is None or steps.empty:
             continue
+        acc.setdefault(rid, []).append((Path(log_path).name, steps))
+
+    out = {}
+    for rid, parts in acc.items():
+        allsteps = pd.concat([s for _, s in parts], ignore_index=True)
+        # by_rank keeps the attribution the flat arrays cannot express: with an
+        # actor and a learner in the same run at the same second, "was this
+        # window training?" has no answer that is right for both streams.
+        by_rank = {}
+        if (allsteps["rank"] >= 0).any():
+            for (nd, rk), g in allsteps[allsteps["rank"] >= 0].groupby(
+                    ["node", "rank"], sort=True):
+                by_rank[(int(nd), int(rk))] = {
+                    "train_ts": np.sort(
+                        g.loc[g["kind"] == "train", "ts"].to_numpy()),
+                    "infer_ts": np.sort(
+                        g.loc[g["kind"] == "infer", "ts"].to_numpy()),
+                }
         out[rid] = {
-            "train_ts": steps.loc[steps["kind"] == "train", "ts"].to_numpy(),
-            "infer_ts": steps.loc[steps["kind"] == "infer", "ts"].to_numpy(),
-            "log": Path(log_path).name,
+            "train_ts": np.sort(
+                allsteps.loc[allsteps["kind"] == "train", "ts"].to_numpy()),
+            "infer_ts": np.sort(
+                allsteps.loc[allsteps["kind"] == "infer", "ts"].to_numpy()),
+            "log": ",".join(sorted(n for n, _ in parts)),
+            "by_rank": by_rank,
         }
     return out
 

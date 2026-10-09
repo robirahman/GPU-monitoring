@@ -1,0 +1,111 @@
+2026-10-01 16:59:18,219 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_localsgd_h1, 8 GPUs, node=0, run_id=22550e6923c5
+Run ID: 22550e6923c5
+2026-10-01 16:59:18,248 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,248 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,248 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,262 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,262 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,262 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,279 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,279 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,279 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,294 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,294 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,294 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,308 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,309 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,309 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,323 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,323 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,323 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,340 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,340 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,340 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:18,360 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-01 16:59:18,360 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_localsgd_h1, run=22550e6923c5)
+2026-10-01 16:59:18,360 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-01 16:59:20,362 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_localsgd.py --size 1b --sync-every 1 --duration 600
+W1001 16:59:21.902000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1001 16:59:21.902000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1001 16:59:21.902000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1001 16:59:21.902000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+Local SGD / DiLoCo: size=1b params=1.34B world_size=16 sync_every=1 outer=nesterov batch=4 seq=1024
+  replica memory: 5.0 GB after init
+STEP ts=1790874020.372 kind=train batch_idx=1 tokens=4096 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790874045.045 kind=train batch_idx=2 tokens=8192 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790874069.503 kind=train batch_idx=3 tokens=12288 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790874094.466 kind=train batch_idx=4 tokens=16384 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790874119.399 kind=train batch_idx=5 tokens=20480 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+STEP ts=1790874144.678 kind=train batch_idx=6 tokens=24576 passes=1 node=0 rank=0 sync=1 sync_mb=9610.3
+[rank0]:[E1001 17:02:36.468673924 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=1834, OpType=ALLREDUCE, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-spot-1.c.focus-surfer-494820-g0.internal<34786>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x79654acb9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7965002002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7965002004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x796500207eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x79650020993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x79654b0ee5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x79654ba94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x79654bb268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank0]:[E1001 17:02:36.470904850 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 0] Exception (either an error or timeout) detected by watchdog at work: 1834, last enqueued NCCL work: 1834, last completed NCCL work: 1833.
+W1001 17:02:39.268000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGTERM death signal, shutting down workers
+W1001 17:02:39.269000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15020 closing signal SIGTERM
+W1001 17:02:39.269000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15021 closing signal SIGTERM
+W1001 17:02:39.269000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15022 closing signal SIGTERM
+W1001 17:02:39.273000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15023 closing signal SIGTERM
+W1001 17:02:39.273000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15024 closing signal SIGTERM
+W1001 17:02:39.274000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15025 closing signal SIGTERM
+W1001 17:02:39.274000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15026 closing signal SIGTERM
+W1001 17:02:39.274000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15027 closing signal SIGTERM
+W1001 17:02:40.420000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15020 closing signal SIGTERM
+W1001 17:02:40.420000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15021 closing signal SIGTERM
+W1001 17:02:40.421000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15022 closing signal SIGTERM
+W1001 17:02:40.421000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15023 closing signal SIGTERM
+W1001 17:02:40.421000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15024 closing signal SIGTERM
+W1001 17:02:40.421000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15025 closing signal SIGTERM
+W1001 17:02:40.421000 14954 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 15027 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 14954 got signal: 15
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 705, in run
+    self._shutdown(e.sigval)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/local_elastic_agent.py", line 365, in _shutdown
+    self._pcontext.close(death_sig)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 572, in close
+    self._close(death_sig=death_sig, timeout=timeout)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 909, in _close
+    handler.proc.wait(time_to_wait)
+  File "/usr/lib/python3.10/subprocess.py", line 1209, in wait
+    return self._wait(timeout=timeout)
+  File "/usr/lib/python3.10/subprocess.py", line 1953, in _wait
+    time.sleep(delay)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 14954 got signal: 15

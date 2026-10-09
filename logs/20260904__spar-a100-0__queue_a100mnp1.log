@@ -1,0 +1,54 @@
+[2026-09-07T23:44:57Z] node0 queue start: NNODES=2 NODE_RANK=0 MASTER=spar-a100-0:29500 REPS=3 DUR=600 SMOKE=0 ONLY_CELLS=^s16_(advtrain_pipe1b_mb1|advtrain_pipe1b_mb4|advtrain_pipe1b_mb16|train_fsdp1b|advtrain_flatarena|advtrain_bubble|advtrain_flatbubble|nonml_comm|nonml_hpc|inferrep_qwen1_5b|infershard_qwen1_5b_tp4pp4)$
+[2026-09-07T23:44:57Z] node0 ===== rep 1 / 3 =====
+[2026-09-07T23:44:57Z] node0 START s16_train_fsdp1b (rid=766403d7e025) -> logs/s16_train_fsdp1b_node0_766403d7e025.log
+[2026-09-07T23:55:25Z] node0 OK    s16_train_fsdp1b (628s)
+[2026-09-07T23:56:25Z] node0 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-07T23:56:40Z] node0 ray cluster ready: 16 GPUs
+[2026-09-07T23:56:40Z] node0 START s16_infershard_qwen1_5b_tp4pp4 (rid=e4e7982fb120) -> logs/s16_infershard_qwen1_5b_tp4pp4_node0_e4e7982fb120.log
+[2026-09-08T00:08:18Z] node0 OK    s16_infershard_qwen1_5b_tp4pp4 (698s)
+[2026-09-08T00:09:18Z] node0 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T00:09:18Z] node0 START s16_inferrep_qwen1_5b (rid=afe36dea675f) -> logs/s16_inferrep_qwen1_5b_node0_afe36dea675f.log
+[2026-09-08T00:15:19Z] node0 OK    s16_inferrep_qwen1_5b (361s)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T00:16:19Z] node0 START s16_nonml_hpc (rid=31cc3993bfc5) -> logs/s16_nonml_hpc_node0_31cc3993bfc5.log
+[2026-09-08T00:27:02Z] node0 OK    s16_nonml_hpc (643s)
+[2026-09-08T00:28:02Z] node0 START s16_nonml_comm (rid=c686c5594c37) -> logs/s16_nonml_comm_node0_c686c5594c37.log
+[2026-09-08T00:29:40Z] node0 FAIL  s16_nonml_comm rc=1 (98s) -- continuing
+        2026-09-08 00:29:40,074 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_nonml_comm_node0_gpu6_NVIDIA_A100_SXM4_40GB_c686c5594c37.parquet (97 rows)
+        2026-09-08 00:29:40,074 [spar.telemetry] INFO: Telemetry stopped. 97 samples collected.
+        2026-09-08 00:29:40,079 [spar.telemetry] INFO: Saved 97 rows to data/s16_nonml_comm_node0_gpu7_NVIDIA_A100_SXM4_40GB_c686c5594c37.parquet
+        2026-09-08 00:29:40,081 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_nonml_comm_node0_gpu7_NVIDIA_A100_SXM4_40GB_c686c5594c37.parquet (97 rows)
+        2026-09-08 00:29:40,081 [spar.multi_gpu] INFO: Multi-GPU run complete: c686c5594c37 (rc=1)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-08T00:30:40Z] node0 START s16_advtrain_pipe1b_mb1 (rid=aea02895d189) -> logs/s16_advtrain_pipe1b_mb1_node0_aea02895d189.log
+Terminated
+[2026-09-08T00:31:36Z] node0 FAIL  s16_advtrain_pipe1b_mb1 rc=143 (56s) -- continuing
+        W0908 00:31:36.199000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33468 closing signal SIGTERM
+        W0908 00:31:36.199000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33469 closing signal SIGTERM
+        W0908 00:31:36.199000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33470 closing signal SIGTERM
+        W0908 00:31:36.200000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33471 closing signal SIGTERM
+        W0908 00:31:36.200000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33472 closing signal SIGTERM

@@ -1,0 +1,535 @@
+[2026-09-08T02:32:57Z] node0 queue start: NNODES=2 NODE_RANK=0 MASTER=spar-a100-0:29500 REPS=3 DUR=600 SMOKE=0 ONLY_CELLS=^s16_advtrain_pipe1b_mb(1|4|16)$
+[2026-09-08T02:32:57Z] node0 ===== rep 1 / 3 =====
+[2026-09-08T02:32:57Z] node0 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T02:32:57Z] node0 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 SKIP  s16_nonml_himem_obl (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 SKIP  s16_advtrain_pipe1b_rank0 (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 SKIP  s16_advtrain_pipe70b_mb1 (ONLY_CELLS filter)
+[2026-09-08T02:32:58Z] node0 START s16_advtrain_pipe1b_mb1 (rid=4c5748655e0f) -> logs/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.log
+[2026-09-08T02:43:49Z] node0 FAIL  s16_advtrain_pipe1b_mb1 rc=1 (650s) -- continuing
+        2026-09-08 02:43:48,871 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet (650 rows)
+        2026-09-08 02:43:48,871 [spar.telemetry] INFO: Telemetry stopped. 650 samples collected.
+        2026-09-08 02:43:48,879 [spar.telemetry] INFO: Saved 650 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+        2026-09-08 02:43:48,883 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet (650 rows)
+        2026-09-08 02:43:48,884 [spar.multi_gpu] INFO: Multi-GPU run complete: 4c5748655e0f (rc=1)
+[2026-09-08T02:44:49Z] node0 START s16_advtrain_pipe1b_mb4 (rid=e0c4075c3b0e) -> logs/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.log
+[2026-09-08T02:55:37Z] node0 FAIL  s16_advtrain_pipe1b_mb4 rc=1 (647s) -- continuing
+        2026-09-08 02:55:36,879 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet (648 rows)
+        2026-09-08 02:55:36,885 [spar.telemetry] INFO: Telemetry stopped. 648 samples collected.
+        2026-09-08 02:55:36,893 [spar.telemetry] INFO: Saved 648 rows to data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+        2026-09-08 02:55:36,896 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet (648 rows)
+        2026-09-08 02:55:36,898 [spar.multi_gpu] INFO: Multi-GPU run complete: e0c4075c3b0e (rc=1)
+[2026-09-08T02:56:37Z] node0 START s16_advtrain_pipe1b_mb16 (rid=1aa23a2fa6fb) -> logs/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.log
+[2026-09-08T03:07:48Z] node0 FAIL  s16_advtrain_pipe1b_mb16 rc=1 (671s) -- continuing
+        2026-09-08 03:07:47,896 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet (671 rows)
+        2026-09-08 03:07:47,917 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+        2026-09-08 03:07:47,925 [spar.telemetry] INFO: Saved 671 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+        2026-09-08 03:07:47,929 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet (671 rows)
+        2026-09-08 03:07:47,930 [spar.multi_gpu] INFO: Multi-GPU run complete: 1aa23a2fa6fb (rc=1)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_flatarena (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_bubble (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_flatbubble (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_train_fsdp30b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_train_ddpstagger_k (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_train_ddpkaccum8 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_infershard_qwen72b_tp8 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_infershard_qwen1_5b_tp4pp2 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s8_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s1_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 ===== rep 2 / 3 =====
+[2026-09-08T03:08:48Z] node0 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_nonml_himem_obl (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_pipe1b_rank0 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 SKIP  s16_advtrain_pipe70b_mb1 (ONLY_CELLS filter)
+[2026-09-08T03:08:48Z] node0 START s16_advtrain_pipe1b_mb1 (rid=c865042d4ea1) -> logs/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.log
+[2026-09-08T03:19:29Z] node0 FAIL  s16_advtrain_pipe1b_mb1 rc=1 (641s) -- continuing
+        2026-09-08 03:19:29,702 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet (641 rows)
+        2026-09-08 03:19:29,702 [spar.telemetry] INFO: Telemetry stopped. 641 samples collected.
+        2026-09-08 03:19:29,709 [spar.telemetry] INFO: Saved 641 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+        2026-09-08 03:19:29,713 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet (641 rows)
+        2026-09-08 03:19:29,714 [spar.multi_gpu] INFO: Multi-GPU run complete: c865042d4ea1 (rc=1)
+[2026-09-08T03:20:29Z] node0 START s16_advtrain_pipe1b_mb4 (rid=3461ce203a6f) -> logs/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.log
+[2026-09-08T03:31:16Z] node0 FAIL  s16_advtrain_pipe1b_mb4 rc=1 (647s) -- continuing
+        2026-09-08 03:31:16,187 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet (646 rows)
+        2026-09-08 03:31:16,188 [spar.telemetry] INFO: Telemetry stopped. 646 samples collected.
+        2026-09-08 03:31:16,195 [spar.telemetry] INFO: Saved 646 rows to data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+        2026-09-08 03:31:16,199 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet (646 rows)
+        2026-09-08 03:31:16,200 [spar.multi_gpu] INFO: Multi-GPU run complete: 3461ce203a6f (rc=1)
+[2026-09-08T03:32:16Z] node0 START s16_advtrain_pipe1b_mb16 (rid=6a5daf1bd43a) -> logs/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.log
+[2026-09-08T03:43:19Z] node0 FAIL  s16_advtrain_pipe1b_mb16 rc=1 (663s) -- continuing
+        2026-09-08 03:43:19,325 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet (663 rows)
+        2026-09-08 03:43:19,325 [spar.telemetry] INFO: Telemetry stopped. 663 samples collected.
+        2026-09-08 03:43:19,332 [spar.telemetry] INFO: Saved 663 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+        2026-09-08 03:43:19,336 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet (663 rows)
+        2026-09-08 03:43:19,338 [spar.multi_gpu] INFO: Multi-GPU run complete: 6a5daf1bd43a (rc=1)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_advtrain_flatarena (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_advtrain_bubble (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_advtrain_flatbubble (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_train_fsdp30b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_train_ddpstagger_k (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_train_ddpkaccum8 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_infershard_qwen72b_tp8 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_infershard_qwen1_5b_tp4pp2 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s8_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s1_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 ===== rep 3 / 3 =====
+[2026-09-08T03:44:19Z] node0 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T03:44:19Z] node0 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_nonml_himem_obl (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_pipe1b_rank0 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 SKIP  s16_advtrain_pipe70b_mb1 (ONLY_CELLS filter)
+[2026-09-08T03:44:20Z] node0 START s16_advtrain_pipe1b_mb1 (rid=c8f4c8380a3b) -> logs/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.log
+[2026-09-08T03:55:01Z] node0 FAIL  s16_advtrain_pipe1b_mb1 rc=1 (641s) -- continuing
+        2026-09-08 03:55:00,962 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet (640 rows)
+        2026-09-08 03:55:00,962 [spar.telemetry] INFO: Telemetry stopped. 640 samples collected.
+        2026-09-08 03:55:00,969 [spar.telemetry] INFO: Saved 640 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+        2026-09-08 03:55:00,973 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet (640 rows)
+        2026-09-08 03:55:00,974 [spar.multi_gpu] INFO: Multi-GPU run complete: c8f4c8380a3b (rc=1)
+[2026-09-08T03:56:01Z] node0 START s16_advtrain_pipe1b_mb4 (rid=96c71fada69e) -> logs/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.log
+[2026-09-08T04:06:49Z] node0 FAIL  s16_advtrain_pipe1b_mb4 rc=1 (648s) -- continuing
+        2026-09-08 04:06:49,863 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet (648 rows)
+        2026-09-08 04:06:49,863 [spar.telemetry] INFO: Telemetry stopped. 648 samples collected.
+        2026-09-08 04:06:49,871 [spar.telemetry] INFO: Saved 648 rows to data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+        2026-09-08 04:06:49,874 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet (648 rows)
+        2026-09-08 04:06:49,876 [spar.multi_gpu] INFO: Multi-GPU run complete: 96c71fada69e (rc=1)
+[2026-09-08T04:07:50Z] node0 START s16_advtrain_pipe1b_mb16 (rid=33f2483ee7b3) -> logs/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.log
+[2026-09-08T04:18:56Z] node0 FAIL  s16_advtrain_pipe1b_mb16 rc=1 (666s) -- continuing
+        2026-09-08 04:18:56,383 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+        2026-09-08 04:18:56,383 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+        2026-09-08 04:18:56,390 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+        2026-09-08 04:18:56,394 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+        2026-09-08 04:18:56,395 [spar.multi_gpu] INFO: Multi-GPU run complete: 33f2483ee7b3 (rc=1)
+[2026-09-08T04:19:56Z] node0 SKIP  s16_advtrain_flatarena (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s16_advtrain_bubble (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s16_advtrain_flatbubble (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_infershard_qwen72b_tp8 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_infershard_qwen1_5b_tp4pp2 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s8_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_hpc (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_comm (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_sat (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_himem (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-08T04:19:56Z] node0 SKIP  s1_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-08T04:20:00Z] node0 queue complete (node0).
+[launch_queue] queue exited rc=0
+[2026-09-08T04:20:00Z] sync --once  spar-a100-0 -> gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0
+[sync data] At file://data/**, worker process 16049 thread 126534210877248 listed 530...
+[sync data] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/**, worker process 16049 thread 126534210877248 listed 449...
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.parquet.partial
+[sync data]   
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb4_node0_96c71fada69e.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb4_node0_96c71fada69e.parquet.partial
+[sync data] Copying file://data/nic_s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/nic_s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.parquet.partial
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_1aa23a2fa6fb.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_6a5daf1bd43a.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c5748655e0f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c865042d4ea1.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_c8f4c8380a3b.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu0_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu0_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu0_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu0_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu0_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu0_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu1_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu1_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu1_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu1_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu1_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu1_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu2_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu2_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu2_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu2_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu2_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu2_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu3_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu3_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu3_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu3_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu3_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu3_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu4_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu4_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu4_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu4_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu4_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu4_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu5_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu5_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu5_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu5_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu5_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu5_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu6_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_3461ce203a6f.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_96c71fada69e.parquet
+[sync data] Copying file://data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/s16_advtrain_pipe1b_mb4_node0_gpu7_NVIDIA_A100_SXM4_40GB_e0c4075c3b0e.parquet
+[sync data] .
+[sync data] 
+[sync data] Average throughput: 27.3MiB/s
+[sync ctrl] At file://logs/.done/**, worker process 16301 thread 137620761548608 listed 63...
+[sync ctrl] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/**, worker process 16301 thread 137620761548608 listed 54...
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.failed
+[sync ctrl]   
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.failed
+[sync ctrl] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/a100mnp3/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.failed
+[sync ctrl] .
+[sync ctrl] 
+[sync ctrl] Average throughput: 6.1kiB/s
+[sync logs] At file://logs/**, worker process 16527 thread 139823291418432 listed 226...
+[sync logs] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/**, worker process 16527 thread 139823291418432 listed 198...
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.failed
+[sync logs]   
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.failed
+[sync logs] Copying file://logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/.done/a100mnp3/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.failed
+[sync logs] Copying file://logs/multinode_master.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/multinode_master.log
+[sync logs] Copying file://logs/queue_a100mnp3.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/queue_a100mnp3.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb16_node0_1aa23a2fa6fb.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb16_node0_33f2483ee7b3.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb16_node0_6a5daf1bd43a.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb1_node0_4c5748655e0f.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb1_node0_c865042d4ea1.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb1_node0_c8f4c8380a3b.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb4_node0_3461ce203a6f.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb4_node0_96c71fada69e.nic.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.log
+[sync logs] Copying file://logs/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/s16_advtrain_pipe1b_mb4_node0_e0c4075c3b0e.nic.log
+[sync logs] .
+[sync logs] 
+[sync logs] Average throughput: 7.4MiB/s
+[launch_queue] STOP_WHEN_DONE=1 -- syncing and powering off in 2 min
+[2026-09-08T04:20:09Z] sync --once  spar-a100-0 -> gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0
+[sync data] At file://data/**, worker process 16812 thread 135147910891328 listed 530...
+[sync data] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/data/**, worker process 16812 thread 135147910891328 listed 530...
+[sync data]   
+[sync data] 
+[sync ctrl] At file://logs/.done/**, worker process 16951 thread 132410034255680 listed 63...
+[sync ctrl] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-0/**, worker process 16951 thread 132410034255680 listed 63...
+[sync ctrl]   
+[sync ctrl] 
+[sync logs] At file://logs/**, worker process 17093 thread 126366305220416 listed 226...
+[sync logs] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/**, worker process 17093 thread 126366305220416 listed 226...
+[sync logs] Copying file://logs/queue_a100mnp3.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-0/logs/queue_a100mnp3.log
+[sync logs]   
+[sync logs] 
+Shutdown scheduled for Tue 2026-09-08 04:22:15 UTC, use 'shutdown -c' to cancel.

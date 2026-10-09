@@ -1,0 +1,14 @@
+Markers excluded before running prune_unmarked_cells.py for the rep-1 preliminary
+analysis. Only run stamp 20260820c (today's clean run) is analysed.
+
+* All 20260820b markers (yesterday's run) are excluded even where the cell config
+  is byte-identical (s16_train_fsdp30b, s8_train_ddp_resnet50). Those cells ran
+  during the window when orphaned vLLM processes were pinning ~73 GB per GPU
+  (bug 16) and the two nodes had drifted out of lockstep (bug 13). A .done marker
+  records that the workload exited 0; it does NOT record that the GPUs were
+  uncontended while it ran. Pooling them risks contaminating a clean run with
+  cells whose power/memory/utilisation traces were distorted. 20260820c has zero
+  failures and no orphan contamination, so prefer the clean 15-cell rep.
+* All smoke_* markers (stamps val/val2..val7/full) are excluded: that telemetry
+  is 60 s smoke output written to logs/smoke_data and is explicitly not usable
+  data.

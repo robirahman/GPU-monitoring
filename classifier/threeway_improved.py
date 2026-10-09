@@ -17,6 +17,7 @@ Usage:
 
 import json
 import logging
+import re
 import sys
 import warnings
 from pathlib import Path
@@ -215,8 +216,13 @@ def threeway_label(label: str) -> str:
         return "ml_inference"
     if label in OTHER_LABELS:
         return "other"
-    # Heuristic fallback
-    lc = label.lower()
+    # Heuristic fallback. Strip the per-stream rank token first so a multi-node
+    # filename label (e.g. s16_train_fsdp7b_node1_gpu3, or a TPU s16 analogue
+    # ..._w2c1) routes on its base label exactly as the single-stream label
+    # would -- otherwise the trailing token defeats the endswith/keyword checks.
+    lc = re.sub(r"_node\d+_gpu\d+$", "", label.lower())
+    lc = re.sub(r"_w\d+c\d+$", "", lc)
+    lc = re.sub(r"_gpu\d+$", "", lc)
     # White-box variants carry a model/duration suffix (whitebox_lora_7b_long,
     # whitebox_diluted_7b_N10_1h, ...) that the explicit lists above do not
     # enumerate, and none of them contain "train"/"adversarial_". Without these
@@ -330,7 +336,25 @@ def load_all_data() -> pd.DataFrame:
     frames = []
 
     # 1. Main data/ directory
+    _skipped: list[tuple[str, str]] = []
     for p in sorted((PROJECT_ROOT / "data").rglob("*.parquet")):
+        # nic_*.parquet are host-NIC sidecar series, not per-GPU telemetry
+        # streams. multinode_features.attach_nic_sidecar joins them on
+        # (node_id, epoch second) from this same tree; loading them here as well
+        # injects rows with no `ts`/`gpu_name`, and the NaN run_start that
+        # follows crashes assign_stream_and_job_ids with IntCastingNaNError.
+        if p.name.startswith("nic_"):
+            continue
+        # Quarantined streams are NOT corpus. ingest_session.sh moves idle
+        # streams (median utilisation <= 1%) into a _quarantine_idle/ directory
+        # so a multi-node cell whose peer died cannot enter as labelled
+        # workload data -- but that directory sits under data/, and this loader
+        # rglobs data/**, so the quarantine was cosmetic: all 78 streams it
+        # caught on 2026-09-08 were being loaded anyway, including into a
+        # retrain. Excluding by PATH here is the invariant that actually holds,
+        # wherever a future quarantine directory ends up.
+        if any("_quarantine" in part for part in p.parts):
+            continue
         # Skip physical-sensor sidecar files (scope envelope / DCGM logger output).
         # These are not NVML telemetry — they lack the raw signals and would load
         # as garbage all-zero "runs" labelled by their sidecar filename.
@@ -342,12 +366,31 @@ def load_all_data() -> pd.DataFrame:
             if "workload_label" not in df.columns:
                 # Parse from filename
                 stem = p.stem
-                parts = stem.split("_NVIDIA_")[0] if "_NVIDIA_" in stem else stem.rsplit("_", 3)[0]
+                # TPU parquets end `..._w<W>c<C>_Google_TPU_<gen>_<run_id>`, and the
+                # generic rsplit("_", 3) fallback strips only the last three fields,
+                # leaving a label of `tpuTMS_nonml_duty30_rep2_w0c0_Google` -- a
+                # truncated device name glued to the chip token. That label then
+                # defeats workload_group(), whose `_rep\d+$` anchor no longer
+                # matches, so every rep and every chip of every TPU cell becomes its
+                # own "workload" and held-out-by-workload CV silently degenerates
+                # into run-grouped CV -- exactly the leak that criterion exists to
+                # remove. Split on the accelerator name as the NVIDIA path does.
+                if "_NVIDIA_" in stem:
+                    parts = stem.split("_NVIDIA_")[0]
+                elif "_Google_TPU_" in stem:
+                    parts = stem.split("_Google_TPU_")[0]
+                else:
+                    parts = stem.rsplit("_", 3)[0]
                 df["workload_label"] = parts
             if "run_id" not in df.columns:
                 df["run_id"] = p.stem
             frames.append(df)
         except Exception as e:
+            # Counted and reported at WARNING below. Six of nine legacy *tpu*
+            # parquets were being dropped here without a single visible line,
+            # and a schema the loader does not expect will do the same to real
+            # TPU telemetry.
+            _skipped.append((p.name, str(e)[:120]))
             log.debug(f"skip {p.name}: {e}")
 
     # 2. Week 4 data
@@ -418,15 +461,53 @@ def load_all_data() -> pd.DataFrame:
 
     combined = pd.concat(frames, ignore_index=True)
 
-    # Deduplicate: some files may appear in multiple directories
+    # Drop rows with no timestamp. A few parquets carry an all-null padding row
+    # (every metric NaN, including ts/gpu_name/hostname) -- most likely a
+    # *.parquet.partial checkpoint flushed with a header and no sample. Such a
+    # row cannot be windowed, and it propagates a NaN run_start into
+    # assign_stream_and_job_ids, which then dies with IntCastingNaNError.
+    # NON-FINITE counts as "no timestamp" too. `.isna()` is False for +/-inf, and
+    # assign_stream_and_job_ids casts (run_start / BUCKET) to int64 -- so a single
+    # infinite ts anywhere in the corpus raises the same IntCastingNaNError this
+    # guard exists to prevent, taking every other run down with it. Observed on
+    # the full 3.6 M-row corpus, where it aborted the binary train-vs-rest CV.
+    if "ts" in combined.columns:
+        _ts = pd.to_numeric(combined["ts"], errors="coerce")
+        bad = ~np.isfinite(_ts.to_numpy(dtype="float64", na_value=np.nan))
+        n_bad = int(bad.sum())
+        if n_bad:
+            log.warning(f"dropping {n_bad} row(s) with a missing or non-finite "
+                        f"timestamp")
+            combined = combined[~bad].reset_index(drop=True)
+
+    # Deduplicate: some files may appear in multiple directories.
+    # gpu_uuid must be in the key. NVIDIA runs survive on (ts, run_id) only by
+    # luck: one collector process per GPU means each has its own datetime.now(),
+    # so the float epochs differ. The TPU collector samples every chip in ONE
+    # poll and stamps them with a single `now`
+    # (scripts/collect_tpu_telemetry.py:428-429), and the queue mandates a shared
+    # run_id across workers -- so a 16-chip slice would silently collapse to one
+    # chip. Adding the per-chip uuid keeps the original intent (identical rows
+    # from duplicated files still dedup, since a copy shares all three keys).
     if "ts" in combined.columns and "run_id" in combined.columns:
-        combined = combined.drop_duplicates(subset=["ts", "run_id"], keep="first")
+        _key = ["ts", "run_id"]
+        if "gpu_uuid" in combined.columns:
+            _key.append("gpu_uuid")
+        _before = len(combined)
+        combined = combined.drop_duplicates(subset=_key, keep="first")
+        log.info(f"dedup on {_key}: {_before:,} -> {len(combined):,} rows")
         combined = combined.sort_values(["run_id", "ts"]).reset_index(drop=True)
 
     # Add three-way labels
     combined["threeway_label"] = combined["workload_label"].apply(threeway_label)
 
     label_dist = combined.groupby("threeway_label")["run_id"].nunique()
+    if _skipped:
+        log.warning(f"skipped {len(_skipped)} unreadable/incompatible parquet(s) "
+                    f"under data/: " + ", ".join(n for n, _ in _skipped[:5])
+                    + (" ..." if len(_skipped) > 5 else ""))
+        for _n, _e in _skipped[:5]:
+            log.warning(f"  {_n}: {_e}")
     log.info(f"Total rows: {len(combined):,} | runs: {combined['run_id'].nunique()}")
     log.info(f"Three-way distribution (runs):\n{label_dist.to_string()}")
 
@@ -483,27 +564,47 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
     feats = {}
 
     # ── 1. Base statistics (9 signals × 13 stats = 117 features) ─────────
-    for sig in RAW_SIGNALS:
-        vals = chunk[sig].fillna(0).values.astype(float) if sig in chunk.columns else np.zeros(max(len(chunk), 1))
-        n = len(vals)
-        mu = vals.mean()
-        sd = vals.std()
-        vmin, vmax = vals.min(), vals.max()
-        p25, p50, p75, p95 = np.percentile(vals, [25, 50, 75, 95]) if n > 1 else (mu,) * 4
+    # BATCHED ACROSS SIGNALS, not because it is tidier but because the per-call
+    # overhead dominated. Profiled on 2026-09-18: windowing the corpus cost
+    # 23.4 ms/window, of which scipy.stats' axis_nan_policy wrapper was 56% --
+    # 18 calls per window (9 signals x skew+kurtosis), and most of that time was
+    # the wrapper re-deriving each function's signature with inspect and
+    # re-broadcasting its arguments, not computing moments. scipy guarantees
+    # f(M, axis=0)[i] == f(M[:, i]), verified here including NaN placement on
+    # constant columns, so batching is numerically identical and turns 18 calls
+    # into 2 (and 9 np.percentile calls into 1).
+    cols = [chunk[s].fillna(0).values.astype(float) if s in chunk.columns
+            else np.zeros(max(len(chunk), 1)) for s in RAW_SIGNALS]
+    M = np.column_stack(cols)
+    n = M.shape[0]
+    mus = M.mean(axis=0)
+    sds = M.std(axis=0)
+    vmins = M.min(axis=0)
+    vmaxs = M.max(axis=0)
+    P = (np.percentile(M, [25, 50, 75, 95], axis=0) if n > 1
+         else np.tile(mus, (4, 1)))
+    # Constant columns (an idle GPU, or a TPU's hard-wired -1 sentinel) make
+    # scipy return NaN here -- that is the EXISTING behaviour, preserved: the
+    # hot paths nan_to_num it to 0 downstream.
+    skews = (sp_stats.skew(M, axis=0) if n > 2 else np.zeros(len(RAW_SIGNALS)))
+    kurts = (sp_stats.kurtosis(M, axis=0) if n > 3 else np.zeros(len(RAW_SIGNALS)))
 
+    for i, sig in enumerate(RAW_SIGNALS):
+        mu, sd = mus[i], sds[i]
+        p25, p50, p75, p95 = P[0, i], P[1, i], P[2, i], P[3, i]
         feats[f"{sig}_mean"] = mu
         feats[f"{sig}_std"] = sd
-        feats[f"{sig}_min"] = vmin
-        feats[f"{sig}_max"] = vmax
+        feats[f"{sig}_min"] = vmins[i]
+        feats[f"{sig}_max"] = vmaxs[i]
         feats[f"{sig}_p25"] = p25
         feats[f"{sig}_p50"] = p50
         feats[f"{sig}_p75"] = p75
         feats[f"{sig}_p95"] = p95
         feats[f"{sig}_iqr"] = p75 - p25
-        feats[f"{sig}_range"] = vmax - vmin
+        feats[f"{sig}_range"] = vmaxs[i] - vmins[i]
         feats[f"{sig}_cv"] = sd / (abs(mu) + 1e-9)
-        feats[f"{sig}_skew"] = float(sp_stats.skew(vals)) if n > 2 else 0.0
-        feats[f"{sig}_kurt"] = float(sp_stats.kurtosis(vals)) if n > 3 else 0.0
+        feats[f"{sig}_skew"] = float(skews[i])
+        feats[f"{sig}_kurt"] = float(kurts[i])
 
     # ── 2. Cross-signal derived features (5) ─────────────────────────────
     util = chunk["gpu_utilization_pct"].fillna(0).values.astype(float)
@@ -515,7 +616,18 @@ def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
 
     feats["power_per_util"] = power.mean() / (util.mean() + 1.0)
     feats["pcie_total_mean"] = (pcie_tx + pcie_rx).mean()
-    feats["util_per_sm_pct"] = util.mean() / (sm_clk.mean() + 1.0) * 1000.0
+    # Clamp the clock mean at >= 0 before the +1 guard. Non-NVIDIA collectors
+    # write -1 for channels the hardware never exposes (TPU: all of power,
+    # temperature and both clocks -- scripts/collect_tpu_telemetry.py:74-78), and
+    # -1 + 1 = 0 made this exactly +inf. Every hot path uses .fillna(0), which
+    # does NOT touch infinities, so model_store --fit, twostage --train,
+    # evasion_cost_eval and scope_ladder_eval all raised
+    # "Input X contains infinity"; worse, the cross-vendor evaluators call
+    # np.nan_to_num without posinf= and silently turned it into 3.4e38.
+    # Clamping makes a -1 sentinel behave exactly like an absent column, which
+    # _normalize_columns already zero-fills.
+    _sm_mean = max(float(sm_clk.mean()), 0.0)
+    feats["util_per_sm_pct"] = util.mean() / (_sm_mean + 1.0) * 1000.0
 
     # DRAM-activity cross-signal ratios (Round 6 monitor response). mem_util is
     # NVML's fraction of the sample period spent reading/writing device memory —
@@ -814,6 +926,30 @@ def sliding_windows(
 
 
 # ── Classification ───────────────────────────────────────────────────────────
+
+def workload_group(labels) -> np.ndarray:
+    """Group key for held-out-by-WORKLOAD validation.
+
+    Grouping CV by run_id leaks workload identity. There are ~2100 runs over
+    ~170 distinct workloads, so every held-out run has siblings of the SAME
+    workload in the training fold, and the score measures "recognise a workload
+    I have already seen" rather than "generalise to one I have not". Measured
+    consequence: run-grouped CV endorsed tau=0.10, which turns out to fire on
+    >50% of windows of honest non-ML workloads held out by workload.
+
+    The deployment question is whether an HPC job the detector has never seen
+    trips it, so validation must hold out whole workloads.
+    """
+    s = pd.Series(labels).astype(str)
+    s = s.str.replace(r"_node\d+_gpu\d+$", "", regex=True)
+    # TPU per-chip rank token, e.g. `..._rep2_w0c0` (worker 0 chip 0; the worker
+    # index is slice*1000 + host index on a multislice group). It sits AFTER the
+    # rep token, so it must be stripped first or the `_rep\d+$` anchor below never
+    # matches and each chip stream is treated as a separate workload.
+    s = s.str.replace(r"_w\d+c\d+$", "", regex=True)
+    s = s.str.replace(r"_rep\d+$", "", regex=True)
+    return s.values
+
 
 def get_feature_cols(df: pd.DataFrame) -> list:
     """Return all numeric feature columns (exclude metadata)."""

@@ -1,0 +1,347 @@
+2026-10-03 15:09:04,613 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_impala_a15_bw100, 8 GPUs, node=0, run_id=f01ba98f8722
+Run ID: f01ba98f8722
+2026-10-03 15:09:04,678 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,678 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,678 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,690 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,690 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,690 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,702 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,702 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,702 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,716 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,716 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,716 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,729 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,729 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,729 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,743 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,744 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,744 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,756 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,756 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,756 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:04,769 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-03 15:09:04,770 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_impala_a15_bw100, run=f01ba98f8722)
+2026-10-03 15:09:04,770 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-03 15:09:06,770 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_rl_dist.py --arch impala --learner-rank 0 --actor-jitter 2 --duration 600
+W1003 15:09:07.738000 45134 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1003 15:09:07.738000 45134 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1003 15:09:07.738000 45134 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1003 15:09:07.738000 45134 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+Distributed RL: arch=impala params=370M world=16 learners=[0] actors=15 batch=8 gen=32 jitter=2
+STEP ts=1791040280.950 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040291.331 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=3 phase=rollout
+[rl] tick1 rank=3 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=1 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=2 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=6 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=5 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=7 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=4 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+[rl] tick1 rank=0 senders=[3, 6, 9, 12, 15] lead=0 numel=1024 digest=1e32ffbe836d084c
+STEP ts=1791040298.613 kind=train batch_idx=1 tokens=256 passes=1 node=0 rank=0 phase=update stale=1
+STEP ts=1791040298.649 kind=train batch_idx=2 tokens=256 passes=1 node=0 rank=0 phase=update stale=1
+STEP ts=1791040298.685 kind=train batch_idx=3 tokens=256 passes=1 node=0 rank=0 phase=update stale=1
+STEP ts=1791040298.724 kind=train batch_idx=4 tokens=256 passes=1 node=0 rank=0 phase=update stale=1
+STEP ts=1791040298.762 kind=train batch_idx=5 tokens=256 passes=1 node=0 rank=0 phase=update stale=1
+STEP ts=1791040299.175 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040299.175 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040299.428 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040299.429 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040299.430 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040299.775 kind=train batch_idx=6 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040299.813 kind=train batch_idx=7 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040299.852 kind=train batch_idx=8 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040299.890 kind=train batch_idx=9 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040299.928 kind=train batch_idx=10 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040299.966 kind=train batch_idx=11 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040300.003 kind=train batch_idx=12 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040300.041 kind=train batch_idx=13 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040300.044 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040300.045 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040300.079 kind=train batch_idx=14 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040300.117 kind=train batch_idx=15 tokens=256 passes=1 node=0 rank=0 phase=update stale=2
+STEP ts=1791040300.199 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=2 phase=rollout
+STEP ts=1791040300.290 kind=infer batch_idx=1 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040300.550 kind=train batch_idx=16 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.589 kind=train batch_idx=17 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.626 kind=train batch_idx=18 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.664 kind=train batch_idx=19 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.702 kind=train batch_idx=20 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.740 kind=train batch_idx=21 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.777 kind=train batch_idx=22 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.819 kind=train batch_idx=23 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.857 kind=train batch_idx=24 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040300.896 kind=train batch_idx=25 tokens=256 passes=1 node=0 rank=0 phase=update stale=3
+STEP ts=1791040301.304 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040301.306 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040301.306 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040301.307 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040301.307 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040301.685 kind=train batch_idx=26 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.723 kind=train batch_idx=27 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.761 kind=train batch_idx=28 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.799 kind=train batch_idx=29 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.836 kind=train batch_idx=30 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.874 kind=train batch_idx=31 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.914 kind=train batch_idx=32 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.952 kind=train batch_idx=33 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040301.955 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040301.955 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040301.990 kind=train batch_idx=34 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040302.030 kind=train batch_idx=35 tokens=256 passes=1 node=0 rank=0 phase=update stale=4
+STEP ts=1791040302.334 kind=train batch_idx=36 tokens=256 passes=1 node=0 rank=0 phase=update stale=5
+STEP ts=1791040302.371 kind=train batch_idx=37 tokens=256 passes=1 node=0 rank=0 phase=update stale=5
+STEP ts=1791040302.409 kind=train batch_idx=38 tokens=256 passes=1 node=0 rank=0 phase=update stale=5
+STEP ts=1791040302.447 kind=train batch_idx=39 tokens=256 passes=1 node=0 rank=0 phase=update stale=5
+STEP ts=1791040302.485 kind=train batch_idx=40 tokens=256 passes=1 node=0 rank=0 phase=update stale=5
+STEP ts=1791040438.312 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=2 phase=rollout
+STEP ts=1791040438.313 kind=infer batch_idx=2 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040438.314 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040438.314 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040438.314 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040438.315 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040438.315 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040438.699 kind=train batch_idx=41 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.737 kind=train batch_idx=42 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.775 kind=train batch_idx=43 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.813 kind=train batch_idx=44 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.851 kind=train batch_idx=45 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.888 kind=train batch_idx=46 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.926 kind=train batch_idx=47 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.964 kind=train batch_idx=48 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040438.965 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040438.967 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040439.001 kind=train batch_idx=49 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.039 kind=train batch_idx=50 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.077 kind=train batch_idx=51 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.114 kind=train batch_idx=52 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.152 kind=train batch_idx=53 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.190 kind=train batch_idx=54 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.228 kind=train batch_idx=55 tokens=256 passes=1 node=0 rank=0 phase=update stale=6
+STEP ts=1791040439.469 kind=train batch_idx=56 tokens=256 passes=1 node=0 rank=0 phase=update stale=7
+STEP ts=1791040439.507 kind=train batch_idx=57 tokens=256 passes=1 node=0 rank=0 phase=update stale=7
+STEP ts=1791040439.544 kind=train batch_idx=58 tokens=256 passes=1 node=0 rank=0 phase=update stale=7
+STEP ts=1791040439.582 kind=train batch_idx=59 tokens=256 passes=1 node=0 rank=0 phase=update stale=7
+STEP ts=1791040439.620 kind=train batch_idx=60 tokens=256 passes=1 node=0 rank=0 phase=update stale=7
+STEP ts=1791040440.028 kind=infer batch_idx=8 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040440.029 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040440.030 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040440.030 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040440.030 kind=infer batch_idx=8 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040440.411 kind=train batch_idx=61 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.449 kind=train batch_idx=62 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.487 kind=train batch_idx=63 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.525 kind=train batch_idx=64 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.562 kind=train batch_idx=65 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.578 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=2 phase=rollout
+STEP ts=1791040440.600 kind=train batch_idx=66 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.638 kind=train batch_idx=67 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.676 kind=train batch_idx=68 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.677 kind=infer batch_idx=3 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040440.677 kind=infer batch_idx=9 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040440.680 kind=infer batch_idx=9 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040440.713 kind=train batch_idx=69 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040440.751 kind=train batch_idx=70 tokens=256 passes=1 node=0 rank=0 phase=update stale=8
+STEP ts=1791040441.059 kind=train batch_idx=71 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.097 kind=train batch_idx=72 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.135 kind=train batch_idx=73 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.174 kind=train batch_idx=74 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.212 kind=train batch_idx=75 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.250 kind=train batch_idx=76 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.288 kind=train batch_idx=77 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.326 kind=train batch_idx=78 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.364 kind=train batch_idx=79 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.402 kind=train batch_idx=80 tokens=256 passes=1 node=0 rank=0 phase=update stale=9
+STEP ts=1791040441.812 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040441.812 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040441.812 kind=infer batch_idx=10 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040441.812 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040441.813 kind=infer batch_idx=10 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040442.192 kind=train batch_idx=81 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.230 kind=train batch_idx=82 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.267 kind=train batch_idx=83 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.305 kind=train batch_idx=84 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.343 kind=train batch_idx=85 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.381 kind=train batch_idx=86 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.418 kind=train batch_idx=87 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.456 kind=train batch_idx=88 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.494 kind=train batch_idx=89 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040442.532 kind=train batch_idx=90 tokens=256 passes=1 node=0 rank=0 phase=update stale=10
+STEP ts=1791040561.762 kind=infer batch_idx=11 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040572.416 kind=infer batch_idx=11 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040580.922 kind=train batch_idx=91 tokens=256 passes=1 node=0 rank=0 phase=update stale=11
+STEP ts=1791040580.960 kind=train batch_idx=92 tokens=256 passes=1 node=0 rank=0 phase=update stale=11
+STEP ts=1791040580.998 kind=train batch_idx=93 tokens=256 passes=1 node=0 rank=0 phase=update stale=11
+STEP ts=1791040581.036 kind=train batch_idx=94 tokens=256 passes=1 node=0 rank=0 phase=update stale=11
+STEP ts=1791040581.074 kind=train batch_idx=95 tokens=256 passes=1 node=0 rank=0 phase=update stale=11
+STEP ts=1791040581.482 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=2 phase=rollout
+STEP ts=1791040581.482 kind=infer batch_idx=4 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040581.482 kind=infer batch_idx=12 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040581.482 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040581.485 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040581.485 kind=infer batch_idx=12 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040581.487 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040581.865 kind=train batch_idx=96 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040581.904 kind=train batch_idx=97 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040581.942 kind=train batch_idx=98 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040581.980 kind=train batch_idx=99 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.017 kind=train batch_idx=100 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.056 kind=train batch_idx=101 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.095 kind=train batch_idx=102 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.130 kind=infer batch_idx=13 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040582.133 kind=train batch_idx=103 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.134 kind=infer batch_idx=13 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040582.171 kind=train batch_idx=104 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.209 kind=train batch_idx=105 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.247 kind=train batch_idx=106 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.284 kind=train batch_idx=107 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.322 kind=train batch_idx=108 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.360 kind=train batch_idx=109 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.398 kind=train batch_idx=110 tokens=256 passes=1 node=0 rank=0 phase=update stale=12
+STEP ts=1791040582.539 kind=train batch_idx=111 tokens=256 passes=1 node=0 rank=0 phase=update stale=13
+STEP ts=1791040582.576 kind=train batch_idx=112 tokens=256 passes=1 node=0 rank=0 phase=update stale=13
+STEP ts=1791040582.615 kind=train batch_idx=113 tokens=256 passes=1 node=0 rank=0 phase=update stale=13
+STEP ts=1791040582.652 kind=train batch_idx=114 tokens=256 passes=1 node=0 rank=0 phase=update stale=13
+STEP ts=1791040582.690 kind=train batch_idx=115 tokens=256 passes=1 node=0 rank=0 phase=update stale=13
+STEP ts=1791040583.097 kind=infer batch_idx=14 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040583.098 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040583.100 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040583.100 kind=infer batch_idx=14 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040583.101 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040583.480 kind=train batch_idx=116 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.518 kind=train batch_idx=117 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.556 kind=train batch_idx=118 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.594 kind=train batch_idx=119 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.632 kind=train batch_idx=120 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.648 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=2 phase=rollout
+STEP ts=1791040583.670 kind=train batch_idx=121 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.707 kind=train batch_idx=122 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.745 kind=train batch_idx=123 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.746 kind=infer batch_idx=5 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040583.746 kind=infer batch_idx=15 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040583.749 kind=infer batch_idx=15 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040583.783 kind=train batch_idx=124 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040583.821 kind=train batch_idx=125 tokens=256 passes=1 node=0 rank=0 phase=update stale=14
+STEP ts=1791040584.128 kind=train batch_idx=126 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.166 kind=train batch_idx=127 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.204 kind=train batch_idx=128 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.241 kind=train batch_idx=129 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.279 kind=train batch_idx=130 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.317 kind=train batch_idx=131 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.355 kind=train batch_idx=132 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.393 kind=train batch_idx=133 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.431 kind=train batch_idx=134 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040584.469 kind=train batch_idx=135 tokens=256 passes=1 node=0 rank=0 phase=update stale=15
+STEP ts=1791040718.074 kind=infer batch_idx=16 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040718.074 kind=infer batch_idx=8 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040718.075 kind=infer batch_idx=8 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040718.076 kind=infer batch_idx=8 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040718.076 kind=infer batch_idx=16 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040718.462 kind=train batch_idx=136 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.501 kind=train batch_idx=137 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.539 kind=train batch_idx=138 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.577 kind=train batch_idx=139 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.615 kind=train batch_idx=140 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.655 kind=train batch_idx=141 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.693 kind=train batch_idx=142 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.725 kind=infer batch_idx=17 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040718.728 kind=infer batch_idx=17 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040718.731 kind=train batch_idx=143 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.769 kind=train batch_idx=144 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040718.807 kind=train batch_idx=145 tokens=256 passes=1 node=0 rank=0 phase=update stale=16
+STEP ts=1791040719.106 kind=train batch_idx=146 tokens=256 passes=1 node=0 rank=0 phase=update stale=17
+STEP ts=1791040719.145 kind=train batch_idx=147 tokens=256 passes=1 node=0 rank=0 phase=update stale=17
+STEP ts=1791040719.183 kind=train batch_idx=148 tokens=256 passes=1 node=0 rank=0 phase=update stale=17
+STEP ts=1791040719.220 kind=train batch_idx=149 tokens=256 passes=1 node=0 rank=0 phase=update stale=17
+STEP ts=1791040719.258 kind=train batch_idx=150 tokens=256 passes=1 node=0 rank=0 phase=update stale=17
+STEP ts=1791040719.666 kind=infer batch_idx=18 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040719.666 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040719.666 kind=infer batch_idx=9 tokens=256 passes=1 node=0 rank=4 phase=rolloutSTEP ts=1791040719.666 kind=infer batch_idx=6 tokens=256 passes=1 node=0 rank=2 phase=rollout
+
+STEP ts=1791040719.667 kind=infer batch_idx=9 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040719.669 kind=infer batch_idx=18 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040719.671 kind=infer batch_idx=9 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040720.053 kind=train batch_idx=151 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.091 kind=train batch_idx=152 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.129 kind=train batch_idx=153 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.167 kind=train batch_idx=154 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.205 kind=train batch_idx=155 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.244 kind=train batch_idx=156 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.282 kind=train batch_idx=157 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.320 kind=train batch_idx=158 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.320 kind=infer batch_idx=19 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040720.322 kind=infer batch_idx=19 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040720.358 kind=train batch_idx=159 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.396 kind=train batch_idx=160 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.434 kind=train batch_idx=161 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.472 kind=train batch_idx=162 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.510 kind=train batch_idx=163 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.548 kind=train batch_idx=164 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.586 kind=train batch_idx=165 tokens=256 passes=1 node=0 rank=0 phase=update stale=18
+STEP ts=1791040720.727 kind=train batch_idx=166 tokens=256 passes=1 node=0 rank=0 phase=update stale=19
+STEP ts=1791040720.765 kind=train batch_idx=167 tokens=256 passes=1 node=0 rank=0 phase=update stale=19
+STEP ts=1791040720.803 kind=train batch_idx=168 tokens=256 passes=1 node=0 rank=0 phase=update stale=19
+STEP ts=1791040720.841 kind=train batch_idx=169 tokens=256 passes=1 node=0 rank=0 phase=update stale=19
+STEP ts=1791040720.879 kind=train batch_idx=170 tokens=256 passes=1 node=0 rank=0 phase=update stale=19
+STEP ts=1791040721.286 kind=infer batch_idx=10 tokens=256 passes=1 node=0 rank=4 phase=rollout
+STEP ts=1791040721.287 kind=infer batch_idx=20 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040721.288 kind=infer batch_idx=10 tokens=256 passes=1 node=0 rank=7 phase=rollout
+STEP ts=1791040721.289 kind=infer batch_idx=20 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040721.289 kind=infer batch_idx=10 tokens=256 passes=1 node=0 rank=1 phase=rollout
+STEP ts=1791040721.670 kind=train batch_idx=171 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.708 kind=train batch_idx=172 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.746 kind=train batch_idx=173 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.784 kind=train batch_idx=174 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.823 kind=train batch_idx=175 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.861 kind=train batch_idx=176 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.900 kind=train batch_idx=177 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.939 kind=train batch_idx=178 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040721.977 kind=train batch_idx=179 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040722.015 kind=train batch_idx=180 tokens=256 passes=1 node=0 rank=0 phase=update stale=20
+STEP ts=1791040840.585 kind=infer batch_idx=21 tokens=256 passes=1 node=0 rank=6 phase=rollout
+STEP ts=1791040843.067 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=5 phase=rollout
+STEP ts=1791040848.503 kind=infer batch_idx=21 tokens=256 passes=1 node=0 rank=3 phase=rollout
+STEP ts=1791040853.450 kind=infer batch_idx=7 tokens=256 passes=1 node=0 rank=2 phase=rollout
+STEP ts=1791040856.578 kind=train batch_idx=181 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.616 kind=train batch_idx=182 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.654 kind=train batch_idx=183 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.692 kind=train batch_idx=184 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.729 kind=train batch_idx=185 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.767 kind=train batch_idx=186 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.804 kind=train batch_idx=187 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.843 kind=train batch_idx=188 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.881 kind=train batch_idx=189 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+STEP ts=1791040856.919 kind=train batch_idx=190 tokens=256 passes=1 node=0 rank=0 phase=update stale=21
+
+RL complete: arch=impala 21 ticks in 579.8s
+  rollout steps (all ranks): 190   update steps: 190
+  Inter-node bytes: 0.00 GB = 0 Mbps
+  EVASION_TAX_DATA: strategy=RL-IMPALA world_size=16 train_frac=1.0 dilution= steps=21 train_steps=190 infer_steps=190 train_ranks=1 infer_ranks=15 useful_tokens=48640 attributed_tokens=48640 duration=579.8 internode_mbps=0.0
+2026-10-03 15:20:59,795 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-10-03 15:21:01,801 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,820 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu0_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,823 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_impala_a15_bw100_node0_gpu0_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,823 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,828 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu1_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,830 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_impala_a15_bw100_node0_gpu1_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,835 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,840 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu2_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,842 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_impala_a15_bw100_node0_gpu2_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,851 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,855 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu3_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,857 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_impala_a15_bw100_node0_gpu3_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,857 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,862 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu4_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,864 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_impala_a15_bw100_node0_gpu4_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,869 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,873 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu5_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,875 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_impala_a15_bw100_node0_gpu5_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,882 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,887 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu6_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,890 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_impala_a15_bw100_node0_gpu6_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,899 [spar.telemetry] INFO: Telemetry stopped. 718 samples collected.
+2026-10-03 15:21:01,904 [spar.telemetry] INFO: Saved 718 rows to data/s16_train_impala_a15_bw100_node0_gpu7_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet
+2026-10-03 15:21:01,906 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_impala_a15_bw100_node0_gpu7_NVIDIA_H100_80GB_HBM3_f01ba98f8722.parquet (718 rows)
+2026-10-03 15:21:01,907 [spar.multi_gpu] INFO: Multi-GPU run complete: f01ba98f8722 (rc=0)

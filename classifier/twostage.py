@@ -73,6 +73,7 @@ import numpy as np
 import pandas as pd
 
 from classifier.threeway_improved import (
+    workload_group,
     load_all_data,
     sliding_windows,
     get_feature_cols,
@@ -114,9 +115,39 @@ LEVEL_FEATURE_NAMES |= {f"{sig}_range" for sig in LEVEL_SIGNALS}
 LEVEL_FEATURE_NAMES |= {"pcie_total_mean"}
 
 
+# Level-stat suffixes, for signals not enumerated in LEVEL_SIGNALS. Mirrors
+# multinode_features._LEVEL_SUFFIXES.
+_LEVEL_SUFFIXES = ("_mean", "_min", "_max", "_p25", "_p50", "_p75", "_p95", "_range")
+# Structure/shape prefixes that must never be treated as levels even though some
+# carry a level-looking suffix (cross-rank correlation, lag, cadence).
+_STRUCTURE_PREFIXES = ("xr_corr", "xr_lag", "xr_fft", "xr_dip", "xr_active",
+                       "xr_n_ranks", "acf")
+# Ratios and differences are dimensionless: mem_util_per_gpu_util_p95 carries a
+# level suffix but is a RATIO, and it is one of the Round-6 DRAM features that
+# the disguised-training evidence rests on. The existing explicit set already
+# keeps power_per_util / power_per_mem_util for the same reason, so treating
+# _per_ / _minus_ as structure matches current behaviour rather than changing it.
+_STRUCTURE_INFIXES = ("_per_", "_minus_")
+
+
 def stage2_feature_mask(feature_cols: list[str]) -> np.ndarray:
-    """Boolean mask selecting the shape/periodicity-only feature subset."""
-    return np.array([c not in LEVEL_FEATURE_NAMES for c in feature_cols], dtype=bool)
+    """Boolean mask selecting the shape/periodicity-only feature subset.
+
+    LEVEL_FEATURE_NAMES is an explicit set built from the nine NVIDIA
+    RAW_SIGNALS, so a level statistic on any signal outside that list was being
+    handed to Stage 2 as if it were a shape feature -- which would reopen the
+    level-spoofing hole Stage 2 exists to close as soon as TPU-native columns
+    (hlo_exec_us_p90, hbm_bw_util_pct, tensorcore_util_pct, dcn_collective_lat_us_*)
+    enter the vocabulary. The suffix rule closes that generally.
+    """
+    keep = []
+    for c in feature_cols:
+        is_level = c in LEVEL_FEATURE_NAMES
+        if (not is_level and not c.startswith(_STRUCTURE_PREFIXES)
+                and not any(k in c for k in _STRUCTURE_INFIXES)):
+            is_level = c.endswith(_LEVEL_SUFFIXES)
+        keep.append(not is_level)
+    return np.array(keep, dtype=bool)
 
 
 class TwoStageClassifier:
@@ -153,6 +184,10 @@ class TwoStageClassifier:
         rescue_tau: float = 0.7,
         rescue_floor: float = 0.1,
         backend: str = "random_forest",
+        rf_n_estimators: int = 400,
+        rf_max_depth: int | None = None,
+        rf_min_samples_leaf: int = 2,
+        rf_max_features="sqrt",
     ):
         self.stage1_n_estimators = stage1_n_estimators
         self.stage1_max_depth = stage1_max_depth
@@ -166,6 +201,15 @@ class TwoStageClassifier:
         if backend not in ("xgboost", "random_forest"):
             raise ValueError(f"backend must be 'xgboost' or 'random_forest', got {backend!r}")
         self.backend = backend
+        # The RF path used to hardcode these, so max_depth/n_estimators passed to
+        # __init__ were silently ignored. Unlimited depth with min_samples_leaf=2
+        # is a memorisation machine, which is what a run-grouped CV could not see:
+        # 11.6 points of its accuracy came from workload recognition. Defaults
+        # below reproduce the old behaviour exactly.
+        self.rf_n_estimators = rf_n_estimators
+        self.rf_max_depth = rf_max_depth
+        self.rf_min_samples_leaf = rf_min_samples_leaf
+        self.rf_max_features = rf_max_features
 
         self._feature_cols: list[str] | None = None
         self._stage2_mask: np.ndarray | None = None
@@ -194,10 +238,10 @@ class TwoStageClassifier:
         # unlimited depth to match the Appendix G baseline.
         from sklearn.ensemble import RandomForestClassifier
         return RandomForestClassifier(
-            n_estimators=400,
-            max_depth=None,
-            min_samples_leaf=2,
-            max_features="sqrt",
+            n_estimators=self.rf_n_estimators,
+            max_depth=self.rf_max_depth,
+            min_samples_leaf=self.rf_min_samples_leaf,
+            max_features=self.rf_max_features,
             random_state=self.random_state,
             n_jobs=-1,
         )
@@ -361,7 +405,14 @@ def train_and_evaluate_twostage(window_secs=(15, 30, 60), stride_ratio: float = 
         feature_cols = get_feature_cols(df_win)
         X = df_win[feature_cols].fillna(0).values.astype(np.float32)
         y = df_win["threeway_label"].values
-        groups = df_win["run_id"].values
+        # Report BOTH groupings. The GAP between them is the quantity of
+        # interest: it is how much of the score comes from recognising a
+        # workload already seen rather than generalising to a new one. Selection
+        # is on the workload-grouped number -- that is the deployment question.
+        grouping = {
+            "run": df_win["run_id"].values,
+            "workload": workload_group(df_win["workload_label"]),
+        }
 
         log.info(f"Windows: {len(df_win)} | Features: {len(feature_cols)}")
         log.info(f"Class distribution: {pd.Series(y).value_counts().to_dict()}")
@@ -371,34 +422,40 @@ def train_and_evaluate_twostage(window_secs=(15, 30, 60), stride_ratio: float = 
             log.warning(f"Only {len(unique_classes)} classes found, skipping")
             continue
 
-        run_class_counts = df_win.groupby("run_id")["threeway_label"].first().value_counts()
-        n_splits = min(5, int(run_class_counts.min()))
-        if n_splits < 2:
-            n_splits = 2
-        log.info(f"Using {n_splits}-fold cross-validation")
+        scored = {}
+        for gname, groups in grouping.items():
+            gser = pd.Series(groups)
+            per_class_groups = (df_win.assign(_g=gser.values)
+                                .groupby("threeway_label")["_g"].nunique())
+            n_splits = max(2, min(5, int(per_class_groups.min())))
+            log.info(f"Using {n_splits}-fold CV grouped by {gname} "
+                     f"({gser.nunique()} groups; smallest class has "
+                     f"{int(per_class_groups.min())})")
+            cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
+            accs, f1s, all_y_true, all_y_pred = [], [], [], []
+            for tr_idx, te_idx in cv.split(X, y, groups):
+                clf = TwoStageClassifier()
+                clf.fit(X[tr_idx], y[tr_idx], groups=groups[tr_idx],
+                        feature_cols=feature_cols)
+                y_pred = clf.predict(X[te_idx])
+                accs.append(accuracy_score(y[te_idx], y_pred))
+                f1s.append(f1_score(y[te_idx], y_pred, average="macro", zero_division=0))
+                all_y_true.extend(y[te_idx]); all_y_pred.extend(y_pred)
+            scored[gname] = (float(np.mean(accs)), float(np.std(accs)), float(np.mean(f1s)))
+            log.info(f"  [TwoStage {win_sec}s / {gname}-grouped] "
+                     f"acc={scored[gname][0]:.4f}±{scored[gname][1]:.4f} "
+                     f"f1_macro={scored[gname][2]:.4f}")
+            log.info("\n" + classification_report(all_y_true, all_y_pred, zero_division=0))
 
-        cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
-        accs, f1s = [], []
-        all_y_true, all_y_pred = [], []
-
-        for fold_idx, (tr_idx, te_idx) in enumerate(cv.split(X, y, groups)):
-            clf = TwoStageClassifier()
-            clf.fit(X[tr_idx], y[tr_idx], groups=groups[tr_idx], feature_cols=feature_cols)
-            y_pred = clf.predict(X[te_idx])
-            acc = accuracy_score(y[te_idx], y_pred)
-            f1 = f1_score(y[te_idx], y_pred, average="macro", zero_division=0)
-            accs.append(acc)
-            f1s.append(f1)
-            all_y_true.extend(y[te_idx])
-            all_y_pred.extend(y_pred)
-
-        mean_acc = float(np.mean(accs))
-        std_acc = float(np.std(accs))
-        mean_f1 = float(np.mean(f1s))
-        log.info(f"  [TwoStage {win_sec}s] acc={mean_acc:.4f}±{std_acc:.4f}  f1_macro={mean_f1:.4f}")
-        log.info("\n" + classification_report(all_y_true, all_y_pred, zero_division=0))
+        mean_acc, std_acc, mean_f1 = scored["workload"]
+        run_acc = scored["run"][0]
+        log.info(f"  IDENTITY GAP at {win_sec}s: run-grouped {run_acc:.4f} vs "
+                 f"workload-grouped {mean_acc:.4f} "
+                 f"(={run_acc - mean_acc:+.4f} from workload recognition)")
 
         rows.append({
+            "acc_run_grouped": run_acc,
+            "identity_gap": run_acc - mean_acc,
             "classifier": "TwoStage",
             "window_sec": win_sec,
             "acc_mean": mean_acc,

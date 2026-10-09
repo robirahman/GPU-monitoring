@@ -272,6 +272,13 @@ def evaluate_sweep():
 
         X_adv = df_adv_win[all_feature_cols].fillna(0).values.astype(np.float32)
 
+        # Measured cost, if the workload logged it. adversarial_composite.py:182
+        # has always emitted an EVASION_TAX_DATA line carrying the real
+        # samples/sec, and nothing ever read it -- so the throughput reported
+        # here was the ASSUMED 1-idle_frac below. Prefer the measurement, and
+        # say which one was used so a reader can tell.
+        measured_tp = _measured_throughput_fraction(idle_frac)
+
         # Compute telemetry summary
         mean_power = df_adv["power_draw_w"].mean() if "power_draw_w" in df_adv.columns else 0
         mean_util = df_adv["gpu_utilization_pct"].mean() if "gpu_utilization_pct" in df_adv.columns else 0
@@ -286,14 +293,23 @@ def evaluate_sweep():
             detection_rate = (y_pred == "ml_training").mean()
             n_windows = len(X_sub)
 
-            throughput_fraction = 1.0 - idle_frac  # Approximate
+            # Measured when the run logged it; the 1-idle_frac fallback is an
+            # upper bound on utility (it assumes the non-idle fraction is spent
+            # at full honest throughput, which idle padding does not guarantee).
+            if measured_tp is not None:
+                throughput_fraction = measured_tp
+                tp_source = "measured"
+            else:
+                throughput_fraction = 1.0 - idle_frac
+                tp_source = "assumed(1-idle)"
 
             log.info(f"  idle={idle_frac:.0%} | {subset_name:25s} | "
                      f"detected={detection_rate:.1%} ({n_windows} win) | "
-                     f"throughput≈{throughput_fraction:.0%}")
+                     f"throughput={throughput_fraction:.0%} [{tp_source}]")
 
             sweep_results.append({
                 "idle_fraction": idle_frac,
+                "throughput_source": tp_source,
                 "throughput_fraction": throughput_fraction,
                 "feature_set": subset_name,
                 "detection_rate": detection_rate,
@@ -349,6 +365,43 @@ def evaluate_sweep():
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
+
+def _measured_throughput_fraction(idle_frac, log_glob="logs/*.log"):
+    """Real throughput of the idle_frac run over the idle_frac=0 run, or None.
+
+    Reads the EVASION_TAX_DATA lines that adversarial_composite.py already
+    emits. Returns None when the logs are absent, so callers fall back to the
+    old assumption rather than failing.
+    """
+    import glob as _glob
+    import re as _re
+
+    tax_re = _re.compile(r"EVASION_TAX_DATA:\s*(?P<body>.*)")
+    field_re = _re.compile(r"(\w+)=([-\w.]*)")
+    by_idle = {}
+    for path in _glob.glob(log_glob):
+        try:
+            with open(path, errors="ignore") as fh:
+                for line in fh:
+                    m = tax_re.search(line)
+                    if not m:
+                        continue
+                    f = dict(field_re.findall(m.group("body")))
+                    try:
+                        k = round(float(f.get("idle_frac", "nan")), 3)
+                        tp = float(f["throughput"])
+                    except (KeyError, ValueError):
+                        continue
+                    by_idle.setdefault(k, []).append(tp)
+        except OSError:
+            continue
+    base = by_idle.get(0.0)
+    mine = by_idle.get(round(float(idle_frac), 3))
+    if not base or not mine:
+        return None
+    b = sum(base) / len(base)
+    return (sum(mine) / len(mine)) / b if b else None
+
 
 def main():
     parser = argparse.ArgumentParser(description="Evasion tax bound analysis")

@@ -160,10 +160,63 @@ def run_whisper(args, device):
           f"{iterations/elapsed:.2f} transcriptions/s")
 
 
+def run_whisper_hf(args, device):
+    """Whisper ASR via transformers -- the dependency-free path.
+
+    `run_whisper` above uses openai-whisper, which is pinned in no requirements
+    file, pulls ffmpeg for audio decoding, and hardcodes
+    download_root=/home/claude/.cache/whisper, a directory that does not exist on
+    a collection node. transformers is already installed (requirements_gcp_extra)
+    and takes the log-mel features directly, so nothing has to decode audio.
+
+    This is the encoder-DECODER shape, which the corpus otherwise lacks entirely:
+    a convolutional front end feeding a cross-attending autoregressive decoder.
+    Every other inference cell is either decoder-only (the Qwen family) or
+    encoder-only (ViT, BGE, CLIP).
+    """
+    from transformers import WhisperForConditionalGeneration, WhisperProcessor
+
+    model_id = "openai/whisper-large-v3-turbo"
+    print(f"Loading {model_id} (transformers)")
+    processor = WhisperProcessor.from_pretrained(model_id)
+    model = WhisperForConditionalGeneration.from_pretrained(
+        model_id, torch_dtype=torch.float16).to(device).eval()
+    print(f"Whisper loaded: {sum(p.numel() for p in model.parameters())/1e6:.0f}M params")
+
+    sr = 16000
+    start = time.time()
+    iterations = 0
+    while time.time() - start < args.duration:
+        # Synthetic speech-band audio. Whisper pads/truncates to its own 30 s
+        # window, so varying the source length varies the DECODE length, not the
+        # encoder cost -- which is the realistic asymmetry.
+        secs = int(np.random.choice([5, 10, 15, 30]))
+        t = np.linspace(0, secs, secs * sr, dtype=np.float32)
+        audio = (np.random.randn(secs * sr).astype(np.float32) * 0.1)
+        for freq in (200, 400, 800, 1200, 2000):
+            audio += 0.05 * np.sin(2 * np.pi * freq * t
+                                   + np.random.random() * 2 * np.pi).astype(np.float32)
+
+        feats = processor(audio, sampling_rate=sr, return_tensors="pt").input_features
+        feats = feats.to(device, dtype=torch.float16)
+        with torch.inference_mode():
+            ids = model.generate(feats, max_new_tokens=args.max_tokens, language="en")
+        iterations += 1
+        if iterations % 5 == 0:
+            elapsed = time.time() - start
+            print(f"  Iter {iterations}: {elapsed:.0f}s elapsed, "
+                  f"{iterations/elapsed:.2f} transcriptions/s, "
+                  f"last {int(ids.shape[1])} tok")
+
+    elapsed = time.time() - start
+    print(f"Whisper (hf) inference complete: {iterations} transcriptions, "
+          f"{elapsed:.1f}s, {iterations/elapsed:.2f} transcriptions/s")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Modern model inference workloads")
     parser.add_argument("--model", type=str, required=True,
-                        choices=["deepseek_r1", "qwen25", "whisper"],
+                        choices=["deepseek_r1", "qwen25", "whisper", "whisper_hf"],
                         help="Model to run inference on")
     parser.add_argument("--duration", type=int, default=300,
                         help="Run duration in seconds (default: 300)")
@@ -178,11 +231,16 @@ def main():
     device = args.device
     print(f"Device: {device}")
 
-    # Respect an HF_HOME set by the launcher; otherwise default to the invoking
-    # user's cache (was hardcoded to a sandbox path that doesn't exist here).
+    # Only if the caller has not already said where the cache lives. This used to
+    # be an unconditional assignment to /home/claude/.cache/huggingface, a path
+    # that does not exist on a collection node -- it would override the HF_HOME
+    # multinode_queue.sh sets (line 34) and throw away everything
+    # preload_vllm_models.sh had already downloaded, re-fetching the weights
+    # inside the measurement window.
     os.environ.setdefault("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
 
-    models = {"deepseek_r1": run_deepseek_r1, "qwen25": run_qwen25, "whisper": run_whisper}
+    models = {"deepseek_r1": run_deepseek_r1, "qwen25": run_qwen25,
+              "whisper": run_whisper, "whisper_hf": run_whisper_hf}
     models[args.model](args, device)
 
 

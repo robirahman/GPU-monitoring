@@ -1,0 +1,87 @@
+2026-10-02 05:03:13,958 [spar.multi_gpu] INFO: Multi-GPU run: s16_nonml_gromacs, 8 GPUs, node=1, run_id=b2a89d3af1ea
+Run ID: b2a89d3af1ea
+2026-10-02 05:03:14,024 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,024 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,024 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,042 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,042 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,042 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,054 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,055 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,055 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,066 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,067 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,067 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,079 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,080 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,080 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,095 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,095 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,095 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,109 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,109 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,109 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:14,122 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 05:03:14,123 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_nonml_gromacs, run=b2a89d3af1ea)
+2026-10-02 05:03:14,123 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 05:03:16,125 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/python workloads/hpc_container.py --benchmark gromacs --duration 600
+HPC container workload: gromacs
+  runtime: docker
+  gpus: 8
+  pulling nvcr.io/hpc/gromacs:2023.2 (anonymous)
+  container sees 8 GPU(s)
+  launcher (found by search): /usr/local/gromacs/avx2_256/bin/gmx
+  running for 600s
+prep-done
+     :-) GROMACS - gmx mdrun, 2023.2-dev-20230712-a3d6917-dirty-unknown (-:
+
+Executable:   /usr/local/gromacs/avx2_256/bin/gmx
+Data prefix:  /usr/local/gromacs/avx2_256
+Working dir:  /tmp
+Command line:
+  gmx mdrun -nsteps 20000 -resetstep 1000 -noconfout -nb gpu -pme gpu -ntmpi 8 -ntomp 4 -s /tmp/bench.tpr
+
+
+-------------------------------------------------------
+Program:     gmx mdrun, version 2023.2-dev-20230712-a3d6917-dirty-unknown
+Source file: src/gromacs/commandline/cmdlineparser.cpp (line 271)
+Function:    void gmx::CommandLineParser::parse(int*, char**)
+
+Error in user input:
+Invalid command-line options
+  In command-line option -s
+    File '/tmp/bench.tpr' does not exist or is not accessible.
+    The file could not be opened.
+      Reason: No such file or directory
+      (call to fopen() returned error code 2)
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at http://www.gromacs.org/Documentation/Errors
+-------------------------------------------------------
+  finished rc=0 after 8s peak_util=0% (SHORT)
+2026-10-02 05:03:35,885 [spar.multi_gpu] INFO:   Workload finished: FAIL(6)
+2026-10-02 05:03:37,888 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,901 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu0_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,902 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_nonml_gromacs_node1_gpu0_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,903 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,905 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu1_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,906 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_nonml_gromacs_node1_gpu1_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,907 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,909 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu2_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,910 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_nonml_gromacs_node1_gpu2_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,910 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,913 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu3_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,914 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_nonml_gromacs_node1_gpu3_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,914 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,916 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu4_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,917 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_nonml_gromacs_node1_gpu4_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,917 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,920 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu5_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,921 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_nonml_gromacs_node1_gpu5_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,921 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,923 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu6_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,924 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_nonml_gromacs_node1_gpu6_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,924 [spar.telemetry] INFO: Telemetry stopped. 24 samples collected.
+2026-10-02 05:03:37,927 [spar.telemetry] INFO: Saved 24 rows to data/s16_nonml_gromacs_node1_gpu7_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet
+2026-10-02 05:03:37,928 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_nonml_gromacs_node1_gpu7_NVIDIA_H100_80GB_HBM3_b2a89d3af1ea.parquet (24 rows)
+2026-10-02 05:03:37,928 [spar.multi_gpu] INFO: Multi-GPU run complete: b2a89d3af1ea (rc=6)

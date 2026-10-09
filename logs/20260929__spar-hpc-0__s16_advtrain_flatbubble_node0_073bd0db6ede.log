@@ -1,0 +1,173 @@
+2026-09-30 05:39:05,545 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_flatbubble, 8 GPUs, node=0, run_id=073bd0db6ede
+Run ID: 073bd0db6ede
+2026-09-30 05:39:05,575 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,576 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,576 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,590 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,590 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,590 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,604 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,604 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,604 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,620 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,620 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,620 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,634 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,634 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,634 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,648 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,649 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,649 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,662 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,662 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,662 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:05,678 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 05:39:05,678 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatbubble, run=073bd0db6ede)
+2026-09-30 05:39:05,678 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 05:39:07,678 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-hpc-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/adversarial_multinode.py --strategy MN-FB --size 1b --arena-mb 9216 --bubble-frac 1.0 --duration 600
+W0930 05:39:09.378000 129356 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0930 05:39:09.378000 129356 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0930 05:39:09.378000 129356 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0930 05:39:09.378000 129356 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+Adversarial multinode: MN-FB, 1b on 16 GPUs
+  Per-GPU batch: 8, Seq len: 1024
+  Trains EVERY step. arena_mb=9216 bubble_frac=1.0
+  Duration: 600s
+  MN-F arena: requested 9216 MB, reserved 9216 MB before model init
+  Post-init GPU memory: 9.7 GB
+  Schedule seed: 1892880144
+STEP ts=1790746764.355 kind=train batch_idx=0 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746769.264 kind=train batch_idx=1 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746774.806 kind=train batch_idx=2 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746780.877 kind=train batch_idx=3 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746787.285 kind=train batch_idx=4 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746793.585 kind=train batch_idx=5 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  34s: steps=6 train=6 useful=23270 tok/s filler=0 bubble_iters=4791 reserved_mb=14674 loss=10.3750
+STEP ts=1790746800.242 kind=train batch_idx=6 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746807.793 kind=train batch_idx=7 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746815.553 kind=train batch_idx=8 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746823.541 kind=train batch_idx=9 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746831.631 kind=train batch_idx=10 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  72s: steps=11 train=11 useful=20069 tok/s filler=0 bubble_iters=12105 reserved_mb=14674 loss=10.3750
+STEP ts=1790746839.818 kind=train batch_idx=11 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746848.188 kind=train batch_idx=12 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746856.586 kind=train batch_idx=13 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746865.028 kind=train batch_idx=14 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  105s: steps=15 train=15 useful=18682 tok/s filler=0 bubble_iters=19075 reserved_mb=14674 loss=10.3750
+STEP ts=1790746873.525 kind=train batch_idx=15 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746882.271 kind=train batch_idx=16 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746890.942 kind=train batch_idx=17 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746899.394 kind=train batch_idx=18 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  140s: steps=19 train=19 useful=17839 tok/s filler=0 bubble_iters=26439 reserved_mb=14674 loss=10.3750
+STEP ts=1790746907.510 kind=train batch_idx=19 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746915.582 kind=train batch_idx=20 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746923.689 kind=train batch_idx=21 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746932.204 kind=train batch_idx=22 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  172s: steps=23 train=23 useful=17485 tok/s filler=0 bubble_iters=33707 reserved_mb=14674 loss=10.3750
+STEP ts=1790746940.770 kind=train batch_idx=23 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746949.421 kind=train batch_idx=24 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746958.083 kind=train batch_idx=25 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746966.802 kind=train batch_idx=26 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  207s: steps=27 train=27 useful=17095 tok/s filler=0 bubble_iters=41079 reserved_mb=14674 loss=10.3750
+STEP ts=1790746975.574 kind=train batch_idx=27 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746984.354 kind=train batch_idx=28 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790746993.109 kind=train batch_idx=29 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747001.752 kind=train batch_idx=30 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  242s: steps=31 train=31 useful=16793 tok/s filler=0 bubble_iters=48654 reserved_mb=14674 loss=10.3750
+STEP ts=1790747009.776 kind=train batch_idx=31 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747017.543 kind=train batch_idx=32 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747024.767 kind=train batch_idx=33 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747032.128 kind=train batch_idx=34 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  272s: steps=35 train=35 useful=16845 tok/s filler=0 bubble_iters=55867 reserved_mb=14674 loss=10.3750
+STEP ts=1790747039.632 kind=train batch_idx=35 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747046.644 kind=train batch_idx=36 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747053.270 kind=train batch_idx=37 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747059.706 kind=train batch_idx=38 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747066.909 kind=train batch_idx=39 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  307s: steps=40 train=40 useful=17071 tok/s filler=0 bubble_iters=63829 reserved_mb=14674 loss=10.3750
+STEP ts=1790747074.116 kind=train batch_idx=40 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747081.380 kind=train batch_idx=41 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747088.494 kind=train batch_idx=42 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747095.100 kind=train batch_idx=43 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747101.837 kind=train batch_idx=44 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  342s: steps=45 train=45 useful=17244 tok/s filler=0 bubble_iters=71539 reserved_mb=14674 loss=10.3750
+STEP ts=1790747109.547 kind=train batch_idx=45 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747117.552 kind=train batch_idx=46 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747125.705 kind=train batch_idx=47 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747133.981 kind=train batch_idx=48 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  374s: steps=49 train=49 useful=17164 tok/s filler=0 bubble_iters=77952 reserved_mb=14674 loss=10.3750
+STEP ts=1790747142.496 kind=train batch_idx=49 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747151.033 kind=train batch_idx=50 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747159.631 kind=train batch_idx=51 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747168.309 kind=train batch_idx=52 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  409s: steps=53 train=53 useful=17005 tok/s filler=0 bubble_iters=85134 reserved_mb=14674 loss=10.3750
+STEP ts=1790747177.091 kind=train batch_idx=53 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747185.840 kind=train batch_idx=54 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747194.559 kind=train batch_idx=55 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747203.174 kind=train batch_idx=56 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  443s: steps=57 train=57 useful=16850 tok/s filler=0 bubble_iters=92659 reserved_mb=14674 loss=10.3750
+STEP ts=1790747211.891 kind=train batch_idx=57 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747220.718 kind=train batch_idx=58 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747229.558 kind=train batch_idx=59 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747238.350 kind=train batch_idx=60 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  479s: steps=61 train=61 useful=16707 tok/s filler=0 bubble_iters=100255 reserved_mb=14674 loss=10.3750
+STEP ts=1790747247.164 kind=train batch_idx=61 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747254.345 kind=train batch_idx=62 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747261.146 kind=train batch_idx=63 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747267.591 kind=train batch_idx=64 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747273.528 kind=train batch_idx=65 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  514s: steps=66 train=66 useful=16839 tok/s filler=0 bubble_iters=109089 reserved_mb=14674 loss=10.3750
+STEP ts=1790747279.646 kind=train batch_idx=66 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747285.690 kind=train batch_idx=67 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747291.541 kind=train batch_idx=68 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747297.711 kind=train batch_idx=69 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747303.752 kind=train batch_idx=70 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  544s: steps=71 train=71 useful=17108 tok/s filler=0 bubble_iters=116033 reserved_mb=14674 loss=10.3750
+STEP ts=1790747310.309 kind=train batch_idx=71 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747316.570 kind=train batch_idx=72 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747322.691 kind=train batch_idx=73 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747329.048 kind=train batch_idx=74 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747335.787 kind=train batch_idx=75 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  576s: steps=76 train=76 useful=17294 tok/s filler=0 bubble_iters=122869 reserved_mb=14674 loss=10.3750
+STEP ts=1790747342.611 kind=train batch_idx=76 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747349.437 kind=train batch_idx=77 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747356.513 kind=train batch_idx=78 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747363.687 kind=train batch_idx=79 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747370.897 kind=train batch_idx=80 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  611s: steps=81 train=81 useful=17373 tok/s filler=0 bubble_iters=130227 reserved_mb=14674 loss=10.3750
+STEP ts=1790747378.533 kind=train batch_idx=81 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747386.052 kind=train batch_idx=82 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1790747393.269 kind=train batch_idx=83 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+
+MN-FB complete: 84 steps, 84 training
+  Useful tokens: 11,010,048 (17380 tok/s)
+  Measured train-step time: 3658 ms (filler slot length)
+  Realised TIME fraction training: 48.5%
+  Attributed tokens: 11,010,048 (17380 tok/s)
+  EVASION_TAX_DATA: strategy=MN-FB world_size=16 train_frac= dilution= steps=84 train_steps=84 useful_tokens=11010048 attributed_tokens=11010048 duration=633.5 train_step_sec=3.6578 oracle_queries=0 oracle_allowed=0 oracle_warmup_allowed=0
+2026-09-30 05:49:56,025 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-30 05:49:58,027 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,057 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu0_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,061 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_flatbubble_node0_gpu0_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,061 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,069 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu1_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,073 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_flatbubble_node0_gpu1_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,073 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,082 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu2_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,086 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_flatbubble_node0_gpu2_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,086 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,094 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu3_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,098 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_flatbubble_node0_gpu3_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,098 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,106 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu4_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,110 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_flatbubble_node0_gpu4_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,110 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,119 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu5_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,123 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_flatbubble_node0_gpu5_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,123 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,130 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu6_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,134 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_flatbubble_node0_gpu6_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,134 [spar.telemetry] INFO: Telemetry stopped. 653 samples collected.
+2026-09-30 05:49:58,142 [spar.telemetry] INFO: Saved 653 rows to data/s16_advtrain_flatbubble_node0_gpu7_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet
+2026-09-30 05:49:58,146 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_flatbubble_node0_gpu7_NVIDIA_A100_SXM4_40GB_073bd0db6ede.parquet (653 rows)
+2026-09-30 05:49:58,147 [spar.multi_gpu] INFO: Multi-GPU run complete: 073bd0db6ede (rc=0)

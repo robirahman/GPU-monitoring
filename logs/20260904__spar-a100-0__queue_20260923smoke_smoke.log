@@ -1,0 +1,54 @@
+SMOKE MODE: 60 s cells, output to logs/smoke_data/ (NOT usable data).
+[2026-09-23T17:57:18Z] node0 queue start: NNODES=2 NODE_RANK=0 MASTER=spar-a100-0:29500 REPS=1 DUR=60 SMOKE=1 ONLY_CELLS=^s16_(infervis|inferembed|inferdiff|inferasr|infercnn|inferrec|inferhf|inferserve|nonml_(fftshard|stencil|nccl))|^s16_train_(lora|pipe|contrastive|diffusion)
+[2026-09-23T17:57:18Z] node0 ===== rep 1 / 1 =====
+[2026-09-23T17:57:18Z] node0 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_kv1k (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_kv8k (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_kv32k_out2k (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen7b_kv16k_b32 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen1_5b_kv16k_b48 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_kv16k_b24 (ONLY_CELLS filter)
+[2026-09-23T17:57:18Z] node0 SKIP  s16_infershard_qwen72b_kv4k_b48 (ONLY_CELLS filter)
+[2026-09-23T17:57:39Z] node0 ray cluster ready: 16 GPUs
+[2026-09-23T17:57:44Z] node0   barrier s16_inferserve_poisson_7b: spar-a100-1 aligned after 1s
+[2026-09-23T17:57:44Z] node0 START s16_inferserve_poisson_7b (rid=c9cc36e34591) -> logs/smoke_s16_inferserve_poisson_7b_node0_c9cc36e34591.log
+Terminated
+[2026-09-23T18:00:41Z] node0 FAIL  s16_inferserve_poisson_7b rc=143 (177s) -- continuing
+        (APIServer pid=9379) WARNING 09-23 18:00:41 [utils.py:640] [shutdown] Process manager: force killing remaining process EngineCore pid 9562
+        (EngineCore pid=9562) [36m(RayWorkerProc pid=9797)[0m (Worker_PP0_TP0 pid=9797) WARNING 09-23 18:00:20 [jit_monitor.py:141] Triton kernel JIT compilation during inference: _post_update_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+        (EngineCore pid=9562) [36m(RayWorkerProc pid=8638, ip=10.128.15.224)[0m (Worker_PP3_TP3 pid=8638) INFO 09-23 18:00:11 [jit_monitor.py:85] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.[32m [repeated 15x across cluster][0m
+        (EngineCore pid=9562) INFO 09-23 18:00:41 [core.py:1329] [shutdown] EngineCore: trigger received signal=SIGTERM
+        (EngineCore pid=9562) INFO 09-23 18:00:41 [core.py:1465] [shutdown] EngineCore: start mode=abort timeout=0s

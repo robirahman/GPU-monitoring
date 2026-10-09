@@ -30,6 +30,15 @@ import time
 VLLM_MODELS = {
     # Single-GPU dense inference at FSDP-matched sizes (phase 5).
     # 7B/14B/32B fit in 16/32/64 GB FP16 — any datacenter GPU.
+    # Matched-pair partner for fsdp_1b training: the scope ladder must vary
+    # SCOPE only, so the inference negative has to sit at the same model scale as
+    # the training positive. With training at 1.3B, a 7B negative would let a
+    # classifier separate the arms by size rather than by train-vs-inference.
+    "qwen25_1_5b_fp16": (
+        "Qwen/Qwen2.5-1.5B-Instruct",
+        "float16",
+        1, 1,
+    ),
     "qwen25_7b_fp16": (
         "Qwen/Qwen2.5-7B-Instruct",
         "float16",
@@ -96,22 +105,58 @@ PROMPTS = [
 ]
 
 
+_PAD_CACHE = {}
+
+
+def _pad_prompt(llm, base, n_tokens):
+    """Grow `base` to exactly n_tokens using the model's own tokenizer.
+
+    Encoding, slicing and decoding back (rather than passing token ids) keeps
+    this working across vLLM versions, whose TokensPrompt API has moved around.
+    Cached because the padding is identical every iteration and tokenising 32k
+    tokens per request per step would show up as CPU time in the telemetry.
+    """
+    key = (base[:32], n_tokens)
+    if key in _PAD_CACHE:
+        return _PAD_CACHE[key]
+    tok = llm.get_tokenizer()
+    filler = (" " + base) * (n_tokens // max(len(tok.encode(base)), 1) + 2)
+    ids = tok.encode(base + filler)[:n_tokens]
+    _PAD_CACHE[key] = tok.decode(ids)
+    return _PAD_CACHE[key]
+
+
 def run_vllm(args) -> None:
     from vllm import LLM, SamplingParams
 
     model_id, dtype, min_gpus, default_tp = VLLM_MODELS[args.model]
     tp = args.tensor_parallel_size or default_tp
+    pp = args.pipeline_parallel_size
 
     print(f"Loading {args.model} via vLLM")
-    print(f"  model_id={model_id} dtype={dtype} tensor_parallel_size={tp}")
+    print(f"  model_id={model_id} dtype={dtype} "
+          f"tensor_parallel_size={tp} pipeline_parallel_size={pp} "
+          f"backend={args.distributed_executor_backend}")
 
+    # tensor_parallel_size shards each layer within a node (NVLink); with
+    # pipeline_parallel_size>1, vLLM splits the layer stack across pipeline
+    # stages, which is how a model spans two servers. TP8 x PP2 => a 16-GPU,
+    # 2-node serving job whose only cross-server traffic is pipeline activation
+    # hand-off -- the "sharded inference" negative for the S16 comparison. Ray
+    # is required for the multi-node case (mp is single-node only).
     llm = LLM(
         model=model_id,
         dtype=dtype,
         tensor_parallel_size=tp,
+        pipeline_parallel_size=pp,
+        distributed_executor_backend=args.distributed_executor_backend,
         gpu_memory_utilization=args.gpu_memory_utilization,
         trust_remote_code=True,
-        max_model_len=args.max_model_len,
+        # 0 => omit, so vLLM derives it from the model. Passing a value ABOVE
+        # max_position_embeddings is what killed kv32k_out2k on every rep
+        # (34816 > 32768); passing one BELOW the prompt length is what killed the
+        # kv16k cells. Deriving it avoids both.
+        **({"max_model_len": args.max_model_len} if args.max_model_len else {}),
         # enforce eager for smaller batches — compiled graphs are marginal here
         enforce_eager=args.enforce_eager,
     )
@@ -130,6 +175,9 @@ def run_vllm(args) -> None:
         # continuous scheduler actually has something to schedule.
         batch_prompts = [PROMPTS[(iterations * args.batch_size + b) % len(PROMPTS)]
                          for b in range(args.batch_size)]
+        if args.prompt_tokens > 0:
+            batch_prompts = [_pad_prompt(llm, p, args.prompt_tokens)
+                             for p in batch_prompts]
         outputs = llm.generate(batch_prompts, sampling_params)
         for out in outputs:
             for comp in out.outputs:
@@ -152,9 +200,39 @@ def main():
     ap.add_argument("--batch-size", type=int, default=8,
                     help="Concurrent requests submitted per iteration.")
     ap.add_argument("--max-tokens", type=int, default=256)
-    ap.add_argument("--max-model-len", type=int, default=4096)
+    ap.add_argument("--max-model-len", type=int, default=0,
+                    help="0 (default) = let vLLM take the model's own "
+                         "max_position_embeddings. The old default of 4096 was "
+                         "ALWAYS passed, so a cell that deliberately omitted the "
+                         "flag still got 4096 -- and every --prompt-tokens above "
+                         "that died during prompt rendering. Measured 2026-09-21: "
+                         "s16_infershard_qwen72b_kv16k_b24 (prompt 16000) and "
+                         "_kv4k_b48 (4000 + 128 out > 4096) both failed this way "
+                         "after a clean 60 s engine init.")
+    ap.add_argument("--prompt-tokens", type=int, default=0,
+                    help="Pad every prompt to this many tokens. 0 keeps the "
+                         "short PROMPTS as-is.\n"
+                         "This exists to make a job MULTI-NODE OBLIGATORY. "
+                         "Qwen2.5-72B's weights are only 145 GB and fit on one "
+                         "8x80GB node, so raising --max-model-len alone proves "
+                         "nothing: it caps sequence length without lengthening "
+                         "the actual sequences, and the ~40-token PROMPTS leave "
+                         "the KV cache nearly empty. Obligation has to come "
+                         "from KV: at 0.328 MB/token, serving --batch-size B "
+                         "sequences of N tokens needs B*N*0.328 MB, and "
+                         "64 x 32768 = 2.1M tokens = 688 GB, which with the "
+                         "weights exceeds one node and fits across two.")
     ap.add_argument("--tensor-parallel-size", type=int, default=0,
                     help="0 = use model's default TP size")
+    ap.add_argument("--pipeline-parallel-size", type=int, default=1,
+                    help="Pipeline stages. >1 splits the layer stack across "
+                         "stages so the model spans multiple nodes (needs "
+                         "--distributed-executor-backend ray).")
+    ap.add_argument("--distributed-executor-backend", type=str, default=None,
+                    choices=["mp", "ray"],
+                    help="mp = single-node multiprocessing (default when "
+                         "unset); ray = multi-node (start the Ray cluster "
+                         "first with `ray start`).")
     ap.add_argument("--gpu-memory-utilization", type=float, default=0.9)
     ap.add_argument("--enforce-eager", action="store_true",
                     help="Skip CUDA graph capture (useful on short runs).")

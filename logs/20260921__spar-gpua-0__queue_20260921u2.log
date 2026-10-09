@@ -1,0 +1,71 @@
+[2026-09-21T12:52:36Z] node0 queue start: NNODES=2 NODE_RANK=0 MASTER=spar-gpu-0:29500 REPS=2 DUR=600 SMOKE=0 ONLY_CELLS=^s16_(infershard_(qwen7b_kv16k_b32|qwen1_5b_kv16k_b48|qwen72b_kv16k_b24|qwen72b_kv4k_b48)|inferserve_|infermem_qwen72b_(u30|u45|u60)|infermem_qwen7b_|trainmem_fsdp(70b_nockpt|30b_b16)|train_accum)
+[2026-09-21T12:52:36Z] node0 ===== rep 1 / 2 =====
+[2026-09-21T12:52:36Z] node0 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_infershard_qwen72b_kv1k (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_infershard_qwen72b_kv8k (ONLY_CELLS filter)
+[2026-09-21T12:52:36Z] node0 SKIP  s16_infershard_qwen72b_kv32k_out2k (ONLY_CELLS filter)
+[2026-09-21T12:57:50Z] node0 ray cluster NOT ready: 8/16 GPUs after 300s
+[2026-09-21T12:57:50Z] node0 FAIL  s16_infershard_qwen7b_kv16k_b32: ray-cluster-incomplete -- skipping cell (see logs/s16_infershard_qwen7b_kv16k_b32_node0_3b0d91a84cf8.ray.log)
+[2026-09-21T13:02:27Z] node0 ray cluster ready: 16 GPUs
+[2026-09-21T13:02:27Z] node0 START s16_infershard_qwen1_5b_kv16k_b48 (rid=ea9098eed3e5) -> logs/s16_infershard_qwen1_5b_kv16k_b48_node0_ea9098eed3e5.log
+[2026-09-21T13:16:53Z] node0 FAIL  s16_infershard_qwen1_5b_kv16k_b48 rc=1 (866s) -- continuing
+        2026-09-21 13:16:53,205 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu6_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+        2026-09-21 13:16:53,205 [spar.telemetry] INFO: Telemetry stopped. 865 samples collected.
+        2026-09-21 13:16:53,214 [spar.telemetry] INFO: Saved 865 rows to data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu7_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet
+        2026-09-21 13:16:53,219 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_infershard_qwen1_5b_kv16k_b48_node0_gpu7_NVIDIA_A100_SXM4_80GB_ea9098eed3e5.parquet (865 rows)
+        2026-09-21 13:16:53,220 [spar.multi_gpu] INFO: Multi-GPU run complete: ea9098eed3e5 (rc=1)
+[2026-09-21T13:17:54Z] node0       reusing ray cluster (16 GPUs)
+[2026-09-21T13:17:54Z] node0 WARN  s16_infershard_qwen72b_kv16k_b24: 8 stray compute process(es) resident -- reaping
+[2026-09-21T13:18:09Z] node0       reaped clean; GPUs free
+[2026-09-21T13:18:09Z] node0 START s16_infershard_qwen72b_kv16k_b24 (rid=e0ce57ac59ab) -> logs/s16_infershard_qwen72b_kv16k_b24_node0_e0ce57ac59ab.log
+[2026-09-21T13:32:24Z] node0 FAIL  s16_infershard_qwen72b_kv16k_b24 rc=1 (855s) -- continuing
+        2026-09-21 13:32:24,236 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu6_NVIDIA_A100_SXM4_80GB_e0ce57ac59ab.parquet (854 rows)
+        2026-09-21 13:32:24,236 [spar.telemetry] INFO: Telemetry stopped. 854 samples collected.
+        2026-09-21 13:32:24,245 [spar.telemetry] INFO: Saved 854 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu7_NVIDIA_A100_SXM4_80GB_e0ce57ac59ab.parquet
+        2026-09-21 13:32:24,250 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu7_NVIDIA_A100_SXM4_80GB_e0ce57ac59ab.parquet (854 rows)
+        2026-09-21 13:32:24,253 [spar.multi_gpu] INFO: Multi-GPU run complete: e0ce57ac59ab (rc=1)
+[2026-09-21T13:33:25Z] node0       reusing ray cluster (16 GPUs)
+[2026-09-21T13:33:25Z] node0 WARN  s16_infershard_qwen72b_kv4k_b48: 8 stray compute process(es) resident -- reaping
+[2026-09-21T13:33:40Z] node0       reaped clean; GPUs free
+[2026-09-21T13:33:40Z] node0 START s16_infershard_qwen72b_kv4k_b48 (rid=baac6c681157) -> logs/s16_infershard_qwen72b_kv4k_b48_node0_baac6c681157.log
+[2026-09-21T13:47:52Z] node0 FAIL  s16_infershard_qwen72b_kv4k_b48 rc=1 (852s) -- continuing
+        2026-09-21 13:47:52,830 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_infershard_qwen72b_kv4k_b48_node0_gpu6_NVIDIA_A100_SXM4_80GB_baac6c681157.parquet (852 rows)
+        2026-09-21 13:47:52,830 [spar.telemetry] INFO: Telemetry stopped. 852 samples collected.
+        2026-09-21 13:47:52,838 [spar.telemetry] INFO: Saved 852 rows to data/s16_infershard_qwen72b_kv4k_b48_node0_gpu7_NVIDIA_A100_SXM4_80GB_baac6c681157.parquet
+        2026-09-21 13:47:52,843 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_infershard_qwen72b_kv4k_b48_node0_gpu7_NVIDIA_A100_SXM4_80GB_baac6c681157.parquet (852 rows)
+        2026-09-21 13:47:52,845 [spar.multi_gpu] INFO: Multi-GPU run complete: baac6c681157 (rc=1)
+[2026-09-21T13:48:53Z] node0       reusing ray cluster (16 GPUs)
+[2026-09-21T13:48:54Z] node0 START s16_inferserve_poisson_7b (rid=e1dcbcdbd466) -> logs/s16_inferserve_poisson_7b_node0_e1dcbcdbd466.log

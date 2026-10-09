@@ -1,0 +1,45 @@
+# TPU host requirements -- PINNED.
+#
+# scripts/tpu_collection/setup_tpu_host.sh previously ran
+#     pip install -q -U "jax[tpu]" -f <libtpu_releases>
+# with no version constraint at all, against a `v2-alpha-tpuv6e` runtime. That
+# made every TPU run irreproducible on a moving target: jax, jaxlib and libtpu
+# must agree, libtpu must match the TPU runtime image, and libtpu METRIC NAMES
+# drift between releases -- which matters directly here because
+# scripts/collect_tpu_telemetry.py:160 classifies metrics by lowercase substring
+# precisely to survive that drift. An unpinned upgrade can therefore change what
+# telemetry columns exist, silently, between two cells of the same experiment.
+#
+# Resolved by `pip install --dry-run` for jax[tpu]==0.6.2 on 2026-08-26; the
+# libtpu pairing below is what that resolution selected, not a guess.
+#
+# Install:
+#     pip install -r requirements_tpu.txt \
+#         -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+#
+# VALIDATE ON THE SMOKE before trusting a collection run: confirm libtpu 0.0.17
+# actually initialises on the provisioned runtime and that
+# `collect_tpu_telemetry.py` reports tpu_metrics_live=1 with the expected metric
+# names. If the runtime image demands a different libtpu, change it HERE and
+# record the pairing rather than letting pip float.
+
+# ── JAX + TPU runtime (the three must agree) ─────────────────────────────────
+jax==0.6.2
+jaxlib==0.6.2
+libtpu==0.0.17
+
+# ── JAX transitive deps, pinned so a resolver change cannot move them ────────
+ml_dtypes==0.6.0
+numpy==2.2.6
+opt_einsum==3.4.0
+scipy==1.15.3
+
+# ── Telemetry collection (scripts/collect_tpu_telemetry.py) ──────────────────
+# tpu-info is one of the collector's metric sources, tried after
+# libtpu.sdk.tpumonitoring and before the `tpu-info` CLI and psutil fallbacks.
+tpu-info==0.14.2
+psutil==7.2.2
+
+# ── Parquet writing (must match the GPU side so schemas stay comparable) ─────
+pandas==2.3.3
+pyarrow==25.0.1

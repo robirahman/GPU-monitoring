@@ -1,0 +1,42 @@
+{
+  "summary_csv": "/home/robi/GPU-monitoring/classifier/results/ladder_ablations_summary.csv",
+  "monotonicity_csv": "/home/robi/GPU-monitoring/classifier/results/ladder_ablations_monotonicity.csv",
+  "scopes": [
+    "s1",
+    "s16",
+    "s8"
+  ],
+  "arms": [
+    "pergpu",
+    "crossrank"
+  ],
+  "config": {
+    "window": 30.0,
+    "stride": 15.0,
+    "k": 3,
+    "m": 5,
+    "target_fp_per_gpu_hour": 0.1,
+    "arms": [
+      "pergpu",
+      "crossrank"
+    ],
+    "negatives": [
+      "inferrep",
+      "infershard"
+    ],
+    "train_workloads": [
+      "fsdp1b"
+    ],
+    "ablations": [
+      "none",
+      "drop_pcie",
+      "drop_nvlink",
+      "drop_nic",
+      "drop_all_comm",
+      "xr_only"
+    ],
+    "bootstrap": 500,
+    "synthetic": false,
+    "out_prefix": "ladder_ablations"
+  }
+}

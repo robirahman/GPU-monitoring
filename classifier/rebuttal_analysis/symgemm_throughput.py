@@ -37,8 +37,13 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent.parent
 OUT = Path(__file__).resolve().parent / "symgemm_throughput.json"
 
-STEP_RE = re.compile(
-    r"STEP ts=([\d.]+) kind=(\w+) batch_idx=(\d+) tokens=(\d+) passes=(\d+)")
+# Tolerant core: match the positional prefix, then scan the remaining
+# key=value fields. This survives the superset dialect (extra node=/rank=/
+# phase=/loss= fields, any order) and defaults tokens/passes when a workload
+# omits them, instead of silently matching zero lines as the old fixed-order
+# regex did.
+STEP_RE = re.compile(r"STEP\s+ts=([\d.]+)\s+kind=(\w+)\s+batch_idx=(\d+)")
+FIELD_RE = re.compile(r"(\w+)=([-\w.]+)")
 RUNID_RE = re.compile(r"Run ID:\s*(\S+)")
 # Modes whose weights actually change; only these produce useful training.
 LEARNS = ("L4", "L5")
@@ -59,10 +64,11 @@ def parse_log(path):
         for line in fh:
             m = STEP_RE.search(line)
             if m:
+                fields = dict(FIELD_RE.findall(line[m.end():]))
                 ts.append(float(m.group(1)))
                 kinds.append(m.group(2))
-                tokens.append(int(m.group(4)))
-                passes.append(int(m.group(5)))
+                tokens.append(int(fields.get("tokens", 0)))
+                passes.append(int(fields.get("passes", 1)))
             elif run_id is None:
                 r = RUNID_RE.search(line)
                 if r:

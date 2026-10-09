@@ -1,0 +1,1020 @@
+[2026-09-21T05:26:44Z] node1 queue start: NNODES=2 NODE_RANK=1 MASTER=spar-a100-0:29500 REPS=2 DUR=600 SMOKE=0 ONLY_CELLS=^s16_(infershard_(qwen7b_kv16k_b32|qwen1_5b_kv16k_b48|qwen72b_kv16k_b24|qwen72b_kv4k_b48)|inferserve_|infermem_qwen72b_(u45|u65|u85)|infermem_qwen7b_|trainmem_fsdp(7b_nockpt|13b_b2)|train_accum)
+[2026-09-21T05:26:44Z] node1 ===== rep 1 / 2 =====
+[2026-09-21T05:26:44Z] node1 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_infershard_qwen72b_kv1k (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_infershard_qwen72b_kv8k (ONLY_CELLS filter)
+[2026-09-21T05:26:44Z] node1 SKIP  s16_infershard_qwen72b_kv32k_out2k (ONLY_CELLS filter)
+[2026-09-21T05:26:58Z] node1 ray cluster ready: 16 GPUs
+[2026-09-21T05:26:58Z] node1 START s16_infershard_qwen7b_kv16k_b32 (rid=b26074f5aab7) -> logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.log
+[2026-09-21T05:36:59Z] node1 OK    s16_infershard_qwen7b_kv16k_b32 (601s)
+[2026-09-21T05:41:00Z] node1       head's workers exited after 181s; GPUs idle
+[2026-09-21T05:41:01Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T05:41:02Z] node1 START s16_infershard_qwen1_5b_kv16k_b48 (rid=050db65dd9b4) -> logs/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.log
+[2026-09-21T05:51:03Z] node1 OK    s16_infershard_qwen1_5b_kv16k_b48 (601s)
+[2026-09-21T05:53:33Z] node1       head's workers exited after 90s; GPUs idle
+[2026-09-21T05:53:34Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T05:53:34Z] node1 START s16_infershard_qwen72b_kv16k_b24 (rid=26e7da7848ed) -> logs/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.log
+[2026-09-21T06:03:35Z] node1 OK    s16_infershard_qwen72b_kv16k_b24 (601s)
+[2026-09-21T06:10:38Z] node1       head's workers exited after 363s; GPUs idle
+[2026-09-21T06:10:39Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T06:10:39Z] node1 START s16_infershard_qwen72b_kv4k_b48 (rid=b7331ae2b98b) -> logs/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.log
+[2026-09-21T06:20:40Z] node1 OK    s16_infershard_qwen72b_kv4k_b48 (601s)
+[2026-09-21T06:23:11Z] node1       head's workers exited after 91s; GPUs idle
+[2026-09-21T06:23:12Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T06:23:12Z] node1 START s16_inferserve_poisson_7b (rid=8e4f2318cf0b) -> logs/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.log
+[2026-09-21T06:33:13Z] node1 OK    s16_inferserve_poisson_7b (601s)
+[2026-09-21T06:34:13Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T06:34:14Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T06:34:14Z] node1 START s16_inferserve_saturate_7b (rid=935025d192cf) -> logs/s16_inferserve_saturate_7b_node1_935025d192cf.log
+[2026-09-21T06:44:15Z] node1 OK    s16_inferserve_saturate_7b (601s)
+[2026-09-21T06:45:15Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T06:45:16Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T06:45:16Z] node1 START s16_inferserve_bursty_7b (rid=08d026238451) -> logs/s16_inferserve_bursty_7b_node1_08d026238451.log
+[2026-09-21T06:55:17Z] node1 OK    s16_inferserve_bursty_7b (601s)
+[2026-09-21T06:56:17Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T06:56:18Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T06:56:18Z] node1 START s16_inferserve_prefill_72b (rid=02a0f3e2c420) -> logs/s16_inferserve_prefill_72b_node1_02a0f3e2c420.log
+[2026-09-21T07:06:19Z] node1 OK    s16_inferserve_prefill_72b (601s)
+[2026-09-21T07:07:19Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T07:07:20Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T07:07:20Z] node1 START s16_inferserve_decode_72b (rid=d7e96d120a7b) -> logs/s16_inferserve_decode_72b_node1_d7e96d120a7b.log
+[2026-09-21T07:17:21Z] node1 OK    s16_inferserve_decode_72b (601s)
+[2026-09-21T07:18:21Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T07:18:22Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T07:18:22Z] node1 START s16_inferserve_poisson_72b (rid=1d76ebd58a2e) -> logs/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.log
+[2026-09-21T07:28:23Z] node1 OK    s16_inferserve_poisson_72b (601s)
+[2026-09-21T07:29:23Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T07:29:24Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T07:29:24Z] node1 START s16_inferserve_chunked_72b (rid=ea07553963c0) -> logs/s16_inferserve_chunked_72b_node1_ea07553963c0.log
+[2026-09-21T07:39:25Z] node1 OK    s16_inferserve_chunked_72b (601s)
+[2026-09-21T07:40:25Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T07:40:25Z] node1 SKIP  s16_infermem_qwen72b_u30 (ONLY_CELLS filter)
+[2026-09-21T07:40:26Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T07:40:26Z] node1 START s16_infermem_qwen72b_u45 (rid=638ad0fd8ba5) -> logs/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.log
+[2026-09-21T07:50:27Z] node1 OK    s16_infermem_qwen72b_u45 (601s)
+[2026-09-21T07:51:27Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T07:51:27Z] node1 SKIP  s16_infermem_qwen72b_u60 (ONLY_CELLS filter)
+[2026-09-21T07:51:28Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T07:51:29Z] node1 START s16_infermem_qwen7b_u20 (rid=6a4af8db1568) -> logs/s16_infermem_qwen7b_u20_node1_6a4af8db1568.log
+[2026-09-21T08:01:29Z] node1 OK    s16_infermem_qwen7b_u20 (600s)
+[2026-09-21T08:02:30Z] node1       head's workers exited after 1s; GPUs idle
+[2026-09-21T08:02:31Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T08:02:31Z] node1 START s16_infermem_qwen7b_u40 (rid=870beca15719) -> logs/s16_infermem_qwen7b_u40_node1_870beca15719.log
+[2026-09-21T08:12:32Z] node1 OK    s16_infermem_qwen7b_u40 (601s)
+[2026-09-21T08:13:32Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T08:13:32Z] node1 SKIP  s16_infermem_qwen72b_u45 (2026-09-21T07:50:27Z rc=0 dur=601s rid=638ad0fd8ba5)
+[2026-09-21T08:13:33Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T08:13:33Z] node1 START s16_infermem_qwen72b_u65 (rid=9e88ff30b665) -> logs/s16_infermem_qwen72b_u65_node1_9e88ff30b665.log
+[2026-09-21T08:23:34Z] node1 OK    s16_infermem_qwen72b_u65 (601s)
+[2026-09-21T08:24:34Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T08:24:35Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T08:24:35Z] node1 START s16_infermem_qwen72b_u85 (rid=ad589a932459) -> logs/s16_infermem_qwen72b_u85_node1_ad589a932459.log
+[2026-09-21T08:34:36Z] node1 OK    s16_infermem_qwen72b_u85 (601s)
+[2026-09-21T08:35:36Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T08:35:36Z] node1 START s16_trainmem_fsdp7b_nockpt (rid=4e57db6b0e25) -> logs/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.log
+[2026-09-21T08:37:21Z] node1 FAIL  s16_trainmem_fsdp7b_nockpt rc=1 (105s) -- continuing
+        2026-09-21 08:37:21,236 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_trainmem_fsdp7b_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet (104 rows)
+        2026-09-21 08:37:21,236 [spar.telemetry] INFO: Telemetry stopped. 104 samples collected.
+        2026-09-21 08:37:21,241 [spar.telemetry] INFO: Saved 104 rows to data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+        2026-09-21 08:37:21,243 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet (104 rows)
+        2026-09-21 08:37:21,243 [spar.multi_gpu] INFO: Multi-GPU run complete: 4e57db6b0e25 (rc=1)
+[2026-09-21T08:38:21Z] node1 START s16_trainmem_fsdp13b_b2 (rid=a44b57985d86) -> logs/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.log
+[2026-09-21T08:40:28Z] node1 FAIL  s16_trainmem_fsdp13b_b2 rc=1 (127s) -- continuing
+        2026-09-21 08:40:28,607 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_trainmem_fsdp13b_b2_node1_gpu6_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet (127 rows)
+        2026-09-21 08:40:28,607 [spar.telemetry] INFO: Telemetry stopped. 127 samples collected.
+        2026-09-21 08:40:28,612 [spar.telemetry] INFO: Saved 127 rows to data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+        2026-09-21 08:40:28,614 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet (127 rows)
+        2026-09-21 08:40:28,615 [spar.multi_gpu] INFO: Multi-GPU run complete: a44b57985d86 (rc=1)
+[2026-09-21T08:41:28Z] node1 SKIP  s16_trainmem_fsdp70b_nockpt (ONLY_CELLS filter)
+[2026-09-21T08:41:28Z] node1 SKIP  s16_trainmem_fsdp30b_b16 (ONLY_CELLS filter)
+[2026-09-21T08:41:28Z] node1 START s16_train_accum64_fsdp7b (rid=32c093c51b60) -> logs/s16_train_accum64_fsdp7b_node1_32c093c51b60.log
+[2026-09-21T08:43:16Z] node1 FAIL  s16_train_accum64_fsdp7b rc=1 (108s) -- continuing
+        2026-09-21 08:43:16,206 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_accum64_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet (107 rows)
+        2026-09-21 08:43:16,206 [spar.telemetry] INFO: Telemetry stopped. 107 samples collected.
+        2026-09-21 08:43:16,211 [spar.telemetry] INFO: Saved 107 rows to data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+        2026-09-21 08:43:16,213 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet (107 rows)
+        2026-09-21 08:43:16,213 [spar.multi_gpu] INFO: Multi-GPU run complete: 32c093c51b60 (rc=1)
+[2026-09-21T08:44:16Z] node1 START s16_train_accumsync_fsdp7b (rid=c0a158aea813) -> logs/s16_train_accumsync_fsdp7b_node1_c0a158aea813.log
+[2026-09-21T08:46:46Z] node1 FAIL  s16_train_accumsync_fsdp7b rc=1 (150s) -- continuing
+        2026-09-21 08:46:46,096 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_accumsync_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet (150 rows)
+        2026-09-21 08:46:46,103 [spar.telemetry] INFO: Telemetry stopped. 150 samples collected.
+        2026-09-21 08:46:46,108 [spar.telemetry] INFO: Saved 150 rows to data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+        2026-09-21 08:46:46,110 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet (150 rows)
+        2026-09-21 08:46:46,110 [spar.multi_gpu] INFO: Multi-GPU run complete: c0a158aea813 (rc=1)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_fsdp1b_b32_nockpt (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_fsdp1b_seq2k_nockpt (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_fsdp7b_nockpt (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_ddp_resnet50_b512 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_infershard_qwen72b_kv32k_b8 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_infershard_qwen72b_kv32k_b16 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_infershard_qwen72b_kv32k_b32 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_fsdp7b_seq2k (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_nonml_himem_obl (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_pipe1b_rank0 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_pipe70b_mb1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_pipe1b_mb1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_pipe1b_mb4 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_pipe1b_mb16 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_flatarena (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_bubble (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_flatbubble (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_fsdp30b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_ddpstagger_k (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_ddpkaccum8 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_train_fsdp1b_b1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_train_fsdp7b_b1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_infershard_qwen72b_tp8 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_infershard_qwen1_5b_tp4pp2 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s8_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_train_fsdp1b_b1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s1_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 ===== rep 2 / 2 =====
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_infershard_qwen72b_tp8pp2 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_infershard_qwen1_5b_tp4pp4 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T08:47:46Z] node1 SKIP  s16_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_train_fsdp70b (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_infershard_qwen72b_kv32k (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_infershard_qwen72b_kv1k (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_infershard_qwen72b_kv8k (ONLY_CELLS filter)
+[2026-09-21T08:47:47Z] node1 SKIP  s16_infershard_qwen72b_kv32k_out2k (ONLY_CELLS filter)
+[2026-09-21T08:47:48Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T08:47:48Z] node1 START s16_infershard_qwen7b_kv16k_b32 (rid=16706d0837a1) -> logs/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.log
+[2026-09-21T08:57:49Z] node1 OK    s16_infershard_qwen7b_kv16k_b32 (601s)
+[2026-09-21T08:58:49Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T08:58:50Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T08:58:50Z] node1 START s16_infershard_qwen1_5b_kv16k_b48 (rid=17d2c6e92ceb) -> logs/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.log
+[2026-09-21T09:08:51Z] node1 OK    s16_infershard_qwen1_5b_kv16k_b48 (601s)
+[2026-09-21T09:09:51Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T09:09:52Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T09:09:52Z] node1 START s16_infershard_qwen72b_kv16k_b24 (rid=a2bb9daa8b9d) -> logs/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.log
+[2026-09-21T09:19:53Z] node1 OK    s16_infershard_qwen72b_kv16k_b24 (601s)
+[2026-09-21T09:20:53Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T09:20:54Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T09:20:54Z] node1 START s16_infershard_qwen72b_kv4k_b48 (rid=b84156ff77f3) -> logs/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.log
+[2026-09-21T09:30:55Z] node1 OK    s16_infershard_qwen72b_kv4k_b48 (601s)
+[2026-09-21T09:31:55Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T09:31:56Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T09:31:56Z] node1 START s16_inferserve_poisson_7b (rid=ace3d4d34f88) -> logs/s16_inferserve_poisson_7b_node1_ace3d4d34f88.log
+[2026-09-21T09:41:57Z] node1 OK    s16_inferserve_poisson_7b (601s)
+[2026-09-21T09:42:57Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T09:42:58Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T09:42:58Z] node1 START s16_inferserve_saturate_7b (rid=99041a0f1869) -> logs/s16_inferserve_saturate_7b_node1_99041a0f1869.log
+[2026-09-21T09:52:59Z] node1 OK    s16_inferserve_saturate_7b (601s)
+[2026-09-21T09:53:59Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T09:54:00Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T09:54:01Z] node1 START s16_inferserve_bursty_7b (rid=ad54d8a73644) -> logs/s16_inferserve_bursty_7b_node1_ad54d8a73644.log
+[2026-09-21T10:04:01Z] node1 OK    s16_inferserve_bursty_7b (600s)
+[2026-09-21T10:13:35Z] node1       head's workers exited after 514s; GPUs idle
+[2026-09-21T10:13:36Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T10:13:36Z] node1 START s16_inferserve_prefill_72b (rid=62b7ac1e816b) -> logs/s16_inferserve_prefill_72b_node1_62b7ac1e816b.log
+[2026-09-21T10:23:37Z] node1 OK    s16_inferserve_prefill_72b (601s)
+[2026-09-21T10:25:53Z] node1       head's workers exited after 76s; GPUs idle
+[2026-09-21T10:25:54Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T10:25:54Z] node1 START s16_inferserve_decode_72b (rid=92a897234a31) -> logs/s16_inferserve_decode_72b_node1_92a897234a31.log
+[2026-09-21T10:35:55Z] node1 OK    s16_inferserve_decode_72b (601s)
+[2026-09-21T10:38:10Z] node1       head's workers exited after 75s; GPUs idle
+[2026-09-21T10:38:11Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T10:38:12Z] node1 START s16_inferserve_poisson_72b (rid=0e59d0804b4a) -> logs/s16_inferserve_poisson_72b_node1_0e59d0804b4a.log
+[2026-09-21T10:48:13Z] node1 OK    s16_inferserve_poisson_72b (600s)
+[2026-09-21T10:50:43Z] node1       head's workers exited after 90s; GPUs idle
+[2026-09-21T10:50:44Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T10:50:44Z] node1 START s16_inferserve_chunked_72b (rid=24c1a39cd9d0) -> logs/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.log
+[2026-09-21T11:00:45Z] node1 OK    s16_inferserve_chunked_72b (601s)
+[2026-09-21T11:03:16Z] node1       head's workers exited after 91s; GPUs idle
+[2026-09-21T11:03:16Z] node1 SKIP  s16_infermem_qwen72b_u30 (ONLY_CELLS filter)
+[2026-09-21T11:03:17Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T11:03:17Z] node1 START s16_infermem_qwen72b_u45 (rid=3b68de8c3a09) -> logs/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.log
+[2026-09-21T11:13:18Z] node1 OK    s16_infermem_qwen72b_u45 (601s)
+[2026-09-21T11:14:18Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T11:14:18Z] node1 SKIP  s16_infermem_qwen72b_u60 (ONLY_CELLS filter)
+[2026-09-21T11:14:19Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T11:14:19Z] node1 START s16_infermem_qwen7b_u20 (rid=bbea362781e0) -> logs/s16_infermem_qwen7b_u20_node1_bbea362781e0.log
+[2026-09-21T11:24:20Z] node1 OK    s16_infermem_qwen7b_u20 (601s)
+[2026-09-21T11:25:20Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T11:25:21Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T11:25:21Z] node1 START s16_infermem_qwen7b_u40 (rid=8dc94e28a23f) -> logs/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.log
+[2026-09-21T11:35:22Z] node1 OK    s16_infermem_qwen7b_u40 (601s)
+[2026-09-21T11:36:23Z] node1       head's workers exited after 1s; GPUs idle
+[2026-09-21T11:36:23Z] node1 SKIP  s16_infermem_qwen72b_u45 (2026-09-21T11:13:18Z rc=0 dur=601s rid=3b68de8c3a09)
+[2026-09-21T11:36:24Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T11:36:24Z] node1 START s16_infermem_qwen72b_u65 (rid=2979b291413d) -> logs/s16_infermem_qwen72b_u65_node1_2979b291413d.log
+[2026-09-21T11:46:25Z] node1 OK    s16_infermem_qwen72b_u65 (601s)
+[2026-09-21T11:47:25Z] node1       head's workers exited after 0s; GPUs idle
+[2026-09-21T11:47:26Z] node1       reusing ray cluster (16 GPUs)
+[2026-09-21T11:47:26Z] node1 START s16_infermem_qwen72b_u85 (rid=2bc6c50f7bd0) -> logs/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.log
+[2026-09-21T11:57:27Z] node1 OK    s16_infermem_qwen72b_u85 (601s)
+[2026-09-21T11:59:57Z] node1       head's workers exited after 90s; GPUs idle
+[2026-09-21T11:59:57Z] node1 START s16_trainmem_fsdp7b_nockpt (rid=5c021a79f50b) -> logs/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.log
+[2026-09-21T12:02:59Z] node1 FAIL  s16_trainmem_fsdp7b_nockpt rc=1 (182s) -- continuing
+        2026-09-21 12:02:59,357 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_trainmem_fsdp7b_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet (181 rows)
+        2026-09-21 12:02:59,357 [spar.telemetry] INFO: Telemetry stopped. 181 samples collected.
+        2026-09-21 12:02:59,362 [spar.telemetry] INFO: Saved 181 rows to data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+        2026-09-21 12:02:59,365 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet (181 rows)
+        2026-09-21 12:02:59,365 [spar.multi_gpu] INFO: Multi-GPU run complete: 5c021a79f50b (rc=1)
+[2026-09-21T12:03:59Z] node1 WARN  s16_trainmem_fsdp13b_b2: 8 stray compute process(es) resident -- reaping
+[2026-09-21T12:04:14Z] node1       reaped clean; GPUs free
+[2026-09-21T12:04:14Z] node1 START s16_trainmem_fsdp13b_b2 (rid=4bc26daf753b) -> logs/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.log
+[2026-09-21T12:06:32Z] node1 FAIL  s16_trainmem_fsdp13b_b2 rc=1 (138s) -- continuing
+        2026-09-21 12:06:32,652 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_trainmem_fsdp13b_b2_node1_gpu6_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet (138 rows)
+        2026-09-21 12:06:32,653 [spar.telemetry] INFO: Telemetry stopped. 138 samples collected.
+        2026-09-21 12:06:32,657 [spar.telemetry] INFO: Saved 138 rows to data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+        2026-09-21 12:06:32,660 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet (138 rows)
+        2026-09-21 12:06:32,660 [spar.multi_gpu] INFO: Multi-GPU run complete: 4bc26daf753b (rc=1)
+[2026-09-21T12:07:32Z] node1 SKIP  s16_trainmem_fsdp70b_nockpt (ONLY_CELLS filter)
+[2026-09-21T12:07:32Z] node1 SKIP  s16_trainmem_fsdp30b_b16 (ONLY_CELLS filter)
+[2026-09-21T12:07:32Z] node1 START s16_train_accum64_fsdp7b (rid=3d459c3d4f9e) -> logs/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.log
+[2026-09-21T12:09:35Z] node1 FAIL  s16_train_accum64_fsdp7b rc=1 (123s) -- continuing
+        2026-09-21 12:09:35,179 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_accum64_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet (122 rows)
+        2026-09-21 12:09:35,179 [spar.telemetry] INFO: Telemetry stopped. 122 samples collected.
+        2026-09-21 12:09:35,184 [spar.telemetry] INFO: Saved 122 rows to data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+        2026-09-21 12:09:35,186 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet (122 rows)
+        2026-09-21 12:09:35,187 [spar.multi_gpu] INFO: Multi-GPU run complete: 3d459c3d4f9e (rc=1)
+[2026-09-21T12:10:35Z] node1 START s16_train_accumsync_fsdp7b (rid=b89186cdcd9a) -> logs/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.log
+[2026-09-21T12:12:22Z] node1 FAIL  s16_train_accumsync_fsdp7b rc=1 (107s) -- continuing
+        2026-09-21 12:12:22,366 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_accumsync_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet (107 rows)
+        2026-09-21 12:12:22,366 [spar.telemetry] INFO: Telemetry stopped. 107 samples collected.
+        2026-09-21 12:12:22,371 [spar.telemetry] INFO: Saved 107 rows to data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+        2026-09-21 12:12:22,373 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet (107 rows)
+        2026-09-21 12:12:22,373 [spar.multi_gpu] INFO: Multi-GPU run complete: b89186cdcd9a (rc=1)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_fsdp1b_b32_nockpt (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_fsdp1b_seq2k_nockpt (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_fsdp7b_nockpt (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_ddp_resnet50_b512 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_infershard_qwen72b_kv32k_b8 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_infershard_qwen72b_kv32k_b16 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_infershard_qwen72b_kv32k_b32 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_fsdp7b_seq2k (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_nonml_himem_obl (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_pipe1b_rank0 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_pipe70b_mb1 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_pipe1b_mb1 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_pipe1b_mb4 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_pipe1b_mb16 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_flatarena (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_bubble (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_advtrain_flatbubble (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_fsdp30b (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_ddpstagger_k (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s16_train_ddpkaccum8 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_train_fsdp1b_b1 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_train_fsdp7b_b1 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_infershard_qwen72b_tp8 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_infershard_qwen1_5b_tp4pp2 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T12:13:22Z] node1 SKIP  s8_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s8_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_train_fsdp1b_b1 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_train_ddp_resnet50 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_inferrep_qwen1_5b (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_interleave_f50 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_interleave_f20 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_interleave_f10 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_oracle (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_filler_only (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_interleave_f05 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_interleave_f02 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_oracle_tau50 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_oracle_tau70 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_oracle_tau90 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_stalled_train_fsdp1b (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_hpc (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_comm (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_satfiller_only (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_satint_f05 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_satint_f20 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_advtrain_satint_f50 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_sat (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_himem (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lowpower (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lp_d15 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lp_d50 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lp_d70 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lp_d30m16 (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lp_d50fft (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_nonml_lp_d50hash (ONLY_CELLS filter)
+[2026-09-21T12:13:23Z] node1 SKIP  s1_inferrep_qwen1_5b_bs1 (ONLY_CELLS filter)
+[2026-09-21T12:13:27Z] node1 queue complete (node1).
+[launch_queue] queue exited rc=0
+[2026-09-21T12:13:27Z] sync --once  spar-a100-1 -> gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1
+[sync data] At file://data/**, worker process 59969 thread 135053928613696 listed 1006...
+[sync data] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/**, worker process 59969 thread 135053928613696 listed 638...
+[sync data] Copying file://data/nic_s16_infermem_qwen72b_u45_node1_3b68de8c3a09.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen72b_u45_node1_3b68de8c3a09.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.parquet.partial
+[sync data]   
+[sync data] Copying file://data/nic_s16_infermem_qwen72b_u65_node1_2979b291413d.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen72b_u65_node1_2979b291413d.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen72b_u65_node1_9e88ff30b665.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen72b_u65_node1_9e88ff30b665.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen72b_u85_node1_ad589a932459.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen72b_u85_node1_ad589a932459.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen7b_u20_node1_6a4af8db1568.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen7b_u20_node1_6a4af8db1568.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen7b_u20_node1_bbea362781e0.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen7b_u20_node1_bbea362781e0.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen7b_u40_node1_870beca15719.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen7b_u40_node1_870beca15719.parquet.partial
+[sync data] Copying file://data/nic_s16_infermem_qwen7b_u40_node1_8dc94e28a23f.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infermem_qwen7b_u40_node1_8dc94e28a23f.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_bursty_7b_node1_08d026238451.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_bursty_7b_node1_08d026238451.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_bursty_7b_node1_ad54d8a73644.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_bursty_7b_node1_ad54d8a73644.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_chunked_72b_node1_24c1a39cd9d0.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_chunked_72b_node1_24c1a39cd9d0.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_chunked_72b_node1_ea07553963c0.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_chunked_72b_node1_ea07553963c0.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_decode_72b_node1_92a897234a31.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_decode_72b_node1_92a897234a31.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_decode_72b_node1_d7e96d120a7b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_decode_72b_node1_d7e96d120a7b.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_poisson_72b_node1_0e59d0804b4a.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_poisson_72b_node1_0e59d0804b4a.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_poisson_72b_node1_1d76ebd58a2e.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_poisson_72b_node1_1d76ebd58a2e.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_poisson_7b_node1_8e4f2318cf0b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_poisson_7b_node1_8e4f2318cf0b.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_poisson_7b_node1_ace3d4d34f88.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_poisson_7b_node1_ace3d4d34f88.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_prefill_72b_node1_02a0f3e2c420.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_prefill_72b_node1_02a0f3e2c420.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_prefill_72b_node1_62b7ac1e816b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_prefill_72b_node1_62b7ac1e816b.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_saturate_7b_node1_935025d192cf.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_saturate_7b_node1_935025d192cf.parquet.partial
+[sync data] Copying file://data/nic_s16_inferserve_saturate_7b_node1_99041a0f1869.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_inferserve_saturate_7b_node1_99041a0f1869.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.parquet.partial
+[sync data] Copying file://data/nic_s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.parquet.partial
+[sync data] Copying file://data/nic_s16_train_accum64_fsdp7b_node1_32c093c51b60.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_train_accum64_fsdp7b_node1_32c093c51b60.parquet.partial
+[sync data] Copying file://data/nic_s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.parquet.partial
+[sync data] Copying file://data/nic_s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.parquet.partial
+[sync data] Copying file://data/nic_s16_train_accumsync_fsdp7b_node1_c0a158aea813.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_train_accumsync_fsdp7b_node1_c0a158aea813.parquet.partial
+[sync data] Copying file://data/nic_s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.parquet.partial
+[sync data] Copying file://data/nic_s16_trainmem_fsdp13b_b2_node1_a44b57985d86.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_trainmem_fsdp13b_b2_node1_a44b57985d86.parquet.partial
+[sync data] Copying file://data/nic_s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.parquet.partial
+[sync data] Copying file://data/nic_s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.parquet.partial to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/nic_s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.parquet.partial
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu0_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu0_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu0_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu0_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu1_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu1_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu1_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu1_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu2_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu2_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu2_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu2_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu3_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu3_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu3_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu3_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu4_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu4_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu4_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu4_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu5_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu5_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu5_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu5_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu6_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu6_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu6_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu6_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu7_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu7_NVIDIA_A100_SXM4_40GB_3b68de8c3a09.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u45_node1_gpu7_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u45_node1_gpu7_NVIDIA_A100_SXM4_40GB_638ad0fd8ba5.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu0_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu0_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu0_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu0_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu1_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu1_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu1_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu1_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu2_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu2_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu2_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu2_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu3_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu3_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu3_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu3_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu4_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu4_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu4_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu4_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu5_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu5_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu5_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu5_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu6_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu6_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu6_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu6_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu7_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu7_NVIDIA_A100_SXM4_40GB_2979b291413d.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u65_node1_gpu7_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u65_node1_gpu7_NVIDIA_A100_SXM4_40GB_9e88ff30b665.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu0_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu0_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu0_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu0_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu1_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu1_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu1_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu1_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu2_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu2_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu2_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu2_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu3_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu3_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu3_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu3_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu4_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu4_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu4_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu4_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu5_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu5_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu5_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu5_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu6_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu6_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu6_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu6_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu7_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu7_NVIDIA_A100_SXM4_40GB_2bc6c50f7bd0.parquet
+[sync data] Copying file://data/s16_infermem_qwen72b_u85_node1_gpu7_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen72b_u85_node1_gpu7_NVIDIA_A100_SXM4_40GB_ad589a932459.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu0_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu0_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu0_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu0_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu1_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu1_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu1_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu1_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu2_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu2_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu2_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu2_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu3_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu3_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu3_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu3_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu4_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu4_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu4_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu4_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu5_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu5_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu5_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu5_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu6_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu6_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu6_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu6_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu7_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu7_NVIDIA_A100_SXM4_40GB_6a4af8db1568.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u20_node1_gpu7_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u20_node1_gpu7_NVIDIA_A100_SXM4_40GB_bbea362781e0.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu0_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu0_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu0_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu0_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu1_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu1_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu1_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu1_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu2_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu2_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu2_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu2_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu3_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu3_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu3_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu3_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu4_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu4_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu4_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu4_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu5_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu5_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu5_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu5_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu6_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu6_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu6_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu6_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu7_NVIDIA_A100_SXM4_40GB_870beca15719.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu7_NVIDIA_A100_SXM4_40GB_870beca15719.parquet
+[sync data] Copying file://data/s16_infermem_qwen7b_u40_node1_gpu7_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infermem_qwen7b_u40_node1_gpu7_NVIDIA_A100_SXM4_40GB_8dc94e28a23f.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] .Copying file://data/s16_inferserve_bursty_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_08d026238451.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_08d026238451.parquet
+[sync data] Copying file://data/s16_inferserve_bursty_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_bursty_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_ad54d8a73644.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_24c1a39cd9d0.parquet
+[sync data] Copying file://data/s16_inferserve_chunked_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_chunked_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_ea07553963c0.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_92a897234a31.parquet
+[sync data] Copying file://data/s16_inferserve_decode_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_decode_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_d7e96d120a7b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_0e59d0804b4a.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_1d76ebd58a2e.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_8e4f2318cf0b.parquet
+[sync data] Copying file://data/s16_inferserve_poisson_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_poisson_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_ace3d4d34f88.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu0_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu1_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu2_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu3_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu4_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu5_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu6_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_02a0f3e2c420.parquet
+[sync data] Copying file://data/s16_inferserve_prefill_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_prefill_72b_node1_gpu7_NVIDIA_A100_SXM4_40GB_62b7ac1e816b.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_935025d192cf.parquet
+[sync data] Copying file://data/s16_inferserve_saturate_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_inferserve_saturate_7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_99041a0f1869.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] .Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_050db65dd9b4.parquet
+[sync data] Copying file://data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen1_5b_kv16k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_17d2c6e92ceb.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu0_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu0_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu0_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu0_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu1_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu1_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu1_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu1_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu2_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu2_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu2_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu2_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu3_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu3_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu3_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu3_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu4_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu4_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu4_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu4_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu5_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu5_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu5_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu5_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu6_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu6_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu6_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu6_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu7_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu7_NVIDIA_A100_SXM4_40GB_26e7da7848ed.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv16k_b24_node1_gpu7_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv16k_b24_node1_gpu7_NVIDIA_A100_SXM4_40GB_a2bb9daa8b9d.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu0_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu1_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu2_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu3_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu4_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu5_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu6_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_b7331ae2b98b.parquet
+[sync data] Copying file://data/s16_infershard_qwen72b_kv4k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen72b_kv4k_b48_node1_gpu7_NVIDIA_A100_SXM4_40GB_b84156ff77f3.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu0_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu0_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu0_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu0_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu0_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu0_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu1_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu1_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu1_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu1_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu1_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu1_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu2_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu2_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu2_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu2_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu2_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu2_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu3_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu3_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu3_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu3_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu3_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu3_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu4_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu4_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu4_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu4_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu4_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu4_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu5_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu5_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu5_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu5_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu5_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu5_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu6_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu6_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu6_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu6_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu6_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu6_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu7_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu7_NVIDIA_A100_SXM4_40GB_16706d0837a1.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu7_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu7_NVIDIA_A100_SXM4_40GB_8df7513269f7.parquet
+[sync data] Copying file://data/s16_infershard_qwen7b_kv16k_b32_node1_gpu7_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_infershard_qwen7b_kv16k_b32_node1_gpu7_NVIDIA_A100_SXM4_40GB_b26074f5aab7.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_32c093c51b60.parquet
+[sync data] Copying file://data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accum64_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_3d459c3d4f9e.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu0_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu1_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu2_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu3_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu4_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu5_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu6_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_b89186cdcd9a.parquet
+[sync data] Copying file://data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_train_accumsync_fsdp7b_node1_gpu7_NVIDIA_A100_SXM4_40GB_c0a158aea813.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu0_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu0_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu0_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu0_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu1_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu1_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu1_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu1_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu2_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu2_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu2_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu2_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu3_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu3_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu3_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu3_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu4_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu4_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu4_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu4_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu5_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu5_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu5_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu5_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu6_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu6_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu6_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu6_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_4bc26daf753b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp13b_b2_node1_gpu7_NVIDIA_A100_SXM4_40GB_a44b57985d86.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu0_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu0_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu0_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu0_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu1_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu1_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu1_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu1_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu2_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu2_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu2_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu2_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu3_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu3_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu3_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu3_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu4_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu4_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu4_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu4_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu5_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu5_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu5_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu5_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_4e57db6b0e25.parquet
+[sync data] Copying file://data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/data/s16_trainmem_fsdp7b_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_5c021a79f50b.parquet
+[sync data] .
+[sync data] 
+[sync data] Average throughput: 18.5MiB/s
+[sync ctrl] At file://logs/.done/**, worker process 60221 thread 135313014286144 listed 123...
+[sync ctrl] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/**, worker process 60221 thread 135313014286144 listed 78...
+[sync ctrl] Copying file://logs/.done/20260921a/s16_inferserve_poisson_7b_node1_7e452901d223.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921a/s16_inferserve_poisson_7b_node1_7e452901d223.failed
+[sync ctrl] Copying file://logs/.done/20260921a/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921a/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.failed
+[sync ctrl]   
+[sync ctrl] Copying file://logs/.done/20260921a/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921a/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.failed
+[sync ctrl] Copying file://logs/.done/20260921a/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921a/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.failed
+[sync ctrl] Copying file://logs/.done/20260921a/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921a/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u65_node1_2979b291413d.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen72b_u65_node1_2979b291413d.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u65_node1_9e88ff30b665.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen72b_u65_node1_9e88ff30b665.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u85_node1_ad589a932459.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen72b_u85_node1_ad589a932459.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u20_node1_6a4af8db1568.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen7b_u20_node1_6a4af8db1568.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u20_node1_bbea362781e0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen7b_u20_node1_bbea362781e0.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u40_node1_870beca15719.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen7b_u40_node1_870beca15719.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_bursty_7b_node1_08d026238451.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_bursty_7b_node1_08d026238451.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_bursty_7b_node1_ad54d8a73644.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_bursty_7b_node1_ad54d8a73644.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_chunked_72b_node1_ea07553963c0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_chunked_72b_node1_ea07553963c0.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_decode_72b_node1_92a897234a31.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_decode_72b_node1_92a897234a31.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_decode_72b_node1_d7e96d120a7b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_decode_72b_node1_d7e96d120a7b.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_poisson_72b_node1_0e59d0804b4a.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_poisson_72b_node1_0e59d0804b4a.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_poisson_7b_node1_ace3d4d34f88.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_poisson_7b_node1_ace3d4d34f88.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_prefill_72b_node1_02a0f3e2c420.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_prefill_72b_node1_02a0f3e2c420.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_prefill_72b_node1_62b7ac1e816b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_prefill_72b_node1_62b7ac1e816b.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_saturate_7b_node1_935025d192cf.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_saturate_7b_node1_935025d192cf.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_inferserve_saturate_7b_node1_99041a0f1869.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_inferserve_saturate_7b_node1_99041a0f1869.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.done
+[sync ctrl] Copying file://logs/.done/20260921b/s16_train_accum64_fsdp7b_node1_32c093c51b60.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_train_accum64_fsdp7b_node1_32c093c51b60.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_train_accumsync_fsdp7b_node1_c0a158aea813.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_train_accumsync_fsdp7b_node1_c0a158aea813.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.failed
+[sync ctrl] Copying file://logs/.done/20260921b/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/control/spar-a100-1/20260921b/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.failed
+[sync ctrl] .
+[sync ctrl] 
+[sync ctrl] Average throughput: 32.0kiB/s
+[sync logs] At file://logs/**, worker process 60466 thread 134273191704384 listed 414...
+[sync logs] At gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/**, worker process 60466 thread 134273191704384 listed 273...
+[sync logs] Copying file://logs/.done/20260921a/s16_inferserve_poisson_7b_node1_7e452901d223.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921a/s16_inferserve_poisson_7b_node1_7e452901d223.failed
+[sync logs] Copying file://logs/.done/20260921a/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921a/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.failed
+[sync logs]   
+[sync logs] Copying file://logs/.done/20260921a/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921a/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.failed
+[sync logs] Copying file://logs/.done/20260921a/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921a/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.failed
+[sync logs] Copying file://logs/.done/20260921a/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921a/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u65_node1_2979b291413d.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen72b_u65_node1_2979b291413d.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u65_node1_9e88ff30b665.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen72b_u65_node1_9e88ff30b665.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen72b_u85_node1_ad589a932459.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen72b_u85_node1_ad589a932459.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u20_node1_6a4af8db1568.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen7b_u20_node1_6a4af8db1568.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u20_node1_bbea362781e0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen7b_u20_node1_bbea362781e0.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u40_node1_870beca15719.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen7b_u40_node1_870beca15719.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_bursty_7b_node1_08d026238451.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_bursty_7b_node1_08d026238451.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_bursty_7b_node1_ad54d8a73644.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_bursty_7b_node1_ad54d8a73644.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_chunked_72b_node1_ea07553963c0.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_chunked_72b_node1_ea07553963c0.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_decode_72b_node1_92a897234a31.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_decode_72b_node1_92a897234a31.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_decode_72b_node1_d7e96d120a7b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_decode_72b_node1_d7e96d120a7b.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_poisson_72b_node1_0e59d0804b4a.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_poisson_72b_node1_0e59d0804b4a.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_poisson_7b_node1_ace3d4d34f88.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_poisson_7b_node1_ace3d4d34f88.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_prefill_72b_node1_02a0f3e2c420.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_prefill_72b_node1_02a0f3e2c420.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_prefill_72b_node1_62b7ac1e816b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_prefill_72b_node1_62b7ac1e816b.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_saturate_7b_node1_935025d192cf.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_saturate_7b_node1_935025d192cf.done
+[sync logs] Copying file://logs/.done/20260921b/s16_inferserve_saturate_7b_node1_99041a0f1869.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_inferserve_saturate_7b_node1_99041a0f1869.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.done
+[sync logs] Copying file://logs/.done/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.done to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.done
+[sync logs] Copying file://logs/.done/20260921b/s16_train_accum64_fsdp7b_node1_32c093c51b60.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_train_accum64_fsdp7b_node1_32c093c51b60.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_train_accumsync_fsdp7b_node1_c0a158aea813.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_train_accumsync_fsdp7b_node1_c0a158aea813.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.failed
+[sync logs] Copying file://logs/.done/20260921b/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.failed to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/.done/20260921b/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.failed
+[sync logs] Copying file://logs/multinode_master.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/multinode_master.log
+[sync logs] Copying file://logs/queue_20260921a.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/queue_20260921a.log
+[sync logs] Copying file://logs/queue_20260921b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/queue_20260921b.log
+[sync logs] Copying file://logs/runstop_20260921a.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/runstop_20260921a.log
+[sync logs] Copying file://logs/runstop_20260921b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/runstop_20260921b.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u45_node1_3b68de8c3a09.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u45_node1_638ad0fd8ba5.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u65_node1_2979b291413d.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u65_node1_2979b291413d.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u65_node1_2979b291413d.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u65_node1_2979b291413d.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u65_node1_9e88ff30b665.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u65_node1_9e88ff30b665.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u65_node1_9e88ff30b665.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u65_node1_9e88ff30b665.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u85_node1_2bc6c50f7bd0.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u85_node1_ad589a932459.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u85_node1_ad589a932459.log
+[sync logs] Copying file://logs/s16_infermem_qwen72b_u85_node1_ad589a932459.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen72b_u85_node1_ad589a932459.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u20_node1_6a4af8db1568.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u20_node1_6a4af8db1568.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u20_node1_6a4af8db1568.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u20_node1_6a4af8db1568.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u20_node1_bbea362781e0.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u20_node1_bbea362781e0.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u20_node1_bbea362781e0.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u20_node1_bbea362781e0.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u40_node1_870beca15719.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u40_node1_870beca15719.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u40_node1_870beca15719.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u40_node1_870beca15719.nic.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.log
+[sync logs] Copying file://logs/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infermem_qwen7b_u40_node1_8dc94e28a23f.nic.log
+[sync logs] Copying file://logs/s16_inferserve_bursty_7b_node1_08d026238451.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_bursty_7b_node1_08d026238451.log
+[sync logs] Copying file://logs/s16_inferserve_bursty_7b_node1_08d026238451.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_bursty_7b_node1_08d026238451.nic.log
+[sync logs] Copying file://logs/s16_inferserve_bursty_7b_node1_ad54d8a73644.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_bursty_7b_node1_ad54d8a73644.log
+[sync logs] Copying file://logs/s16_inferserve_bursty_7b_node1_ad54d8a73644.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_bursty_7b_node1_ad54d8a73644.nic.log
+[sync logs] Copying file://logs/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.log
+[sync logs] Copying file://logs/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_chunked_72b_node1_24c1a39cd9d0.nic.log
+[sync logs] Copying file://logs/s16_inferserve_chunked_72b_node1_ea07553963c0.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_chunked_72b_node1_ea07553963c0.log
+[sync logs] Copying file://logs/s16_inferserve_chunked_72b_node1_ea07553963c0.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_chunked_72b_node1_ea07553963c0.nic.log
+[sync logs] Copying file://logs/s16_inferserve_decode_72b_node1_92a897234a31.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_decode_72b_node1_92a897234a31.log
+[sync logs] Copying file://logs/s16_inferserve_decode_72b_node1_92a897234a31.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_decode_72b_node1_92a897234a31.nic.log
+[sync logs] Copying file://logs/s16_inferserve_decode_72b_node1_d7e96d120a7b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_decode_72b_node1_d7e96d120a7b.log
+[sync logs] Copying file://logs/s16_inferserve_decode_72b_node1_d7e96d120a7b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_decode_72b_node1_d7e96d120a7b.nic.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_72b_node1_0e59d0804b4a.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_72b_node1_0e59d0804b4a.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_72b_node1_0e59d0804b4a.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_72b_node1_0e59d0804b4a.nic.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_72b_node1_1d76ebd58a2e.nic.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_7b_node1_7e452901d223.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_7b_node1_7e452901d223.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_7b_node1_7e452901d223.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_7b_node1_7e452901d223.nic.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_7b_node1_8e4f2318cf0b.nic.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_7b_node1_ace3d4d34f88.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_7b_node1_ace3d4d34f88.log
+[sync logs] Copying file://logs/s16_inferserve_poisson_7b_node1_ace3d4d34f88.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_poisson_7b_node1_ace3d4d34f88.nic.log
+[sync logs] Copying file://logs/s16_inferserve_prefill_72b_node1_02a0f3e2c420.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_prefill_72b_node1_02a0f3e2c420.log
+[sync logs] Copying file://logs/s16_inferserve_prefill_72b_node1_02a0f3e2c420.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_prefill_72b_node1_02a0f3e2c420.nic.log
+[sync logs] Copying file://logs/s16_inferserve_prefill_72b_node1_62b7ac1e816b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_prefill_72b_node1_62b7ac1e816b.log
+[sync logs] Copying file://logs/s16_inferserve_prefill_72b_node1_62b7ac1e816b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_prefill_72b_node1_62b7ac1e816b.nic.log
+[sync logs] Copying file://logs/s16_inferserve_saturate_7b_node1_935025d192cf.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_saturate_7b_node1_935025d192cf.log
+[sync logs] Copying file://logs/s16_inferserve_saturate_7b_node1_935025d192cf.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_saturate_7b_node1_935025d192cf.nic.log
+[sync logs] Copying file://logs/s16_inferserve_saturate_7b_node1_99041a0f1869.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_saturate_7b_node1_99041a0f1869.log
+[sync logs] Copying file://logs/s16_inferserve_saturate_7b_node1_99041a0f1869.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_inferserve_saturate_7b_node1_99041a0f1869.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.log
+[sync logs] Copying file://logs/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen1_5b_kv16k_b48_node1_050db65dd9b4.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.log
+[sync logs] Copying file://logs/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen1_5b_kv16k_b48_node1_17d2c6e92ceb.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.log
+[sync logs] Copying file://logs/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen1_5b_kv16k_b48_node1_3cf1892d4f65.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv16k_b24_node1_26e7da7848ed.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv16k_b24_node1_a2bb9daa8b9d.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv16k_b24_node1_b5f87baee6e1.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv4k_b48_node1_b7331ae2b98b.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv4k_b48_node1_b84156ff77f3.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.log
+[sync logs] Copying file://logs/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen72b_kv4k_b48_node1_dc0433299895.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_16706d0837a1.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.ray.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_8df7513269f7.ray.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.nic.log
+[sync logs] Copying file://logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.ray.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_infershard_qwen7b_kv16k_b32_node1_b26074f5aab7.ray.log
+[sync logs] Copying file://logs/s16_train_accum64_fsdp7b_node1_32c093c51b60.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accum64_fsdp7b_node1_32c093c51b60.log
+[sync logs] Copying file://logs/s16_train_accum64_fsdp7b_node1_32c093c51b60.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accum64_fsdp7b_node1_32c093c51b60.nic.log
+[sync logs] Copying file://logs/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.log
+[sync logs] .Copying file://logs/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accum64_fsdp7b_node1_3d459c3d4f9e.nic.log
+[sync logs] Copying file://logs/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.log
+[sync logs] Copying file://logs/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accumsync_fsdp7b_node1_b89186cdcd9a.nic.log
+[sync logs] Copying file://logs/s16_train_accumsync_fsdp7b_node1_c0a158aea813.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accumsync_fsdp7b_node1_c0a158aea813.log
+[sync logs] Copying file://logs/s16_train_accumsync_fsdp7b_node1_c0a158aea813.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_train_accumsync_fsdp7b_node1_c0a158aea813.nic.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp13b_b2_node1_4bc26daf753b.nic.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp13b_b2_node1_a44b57985d86.nic.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp7b_nockpt_node1_4e57db6b0e25.nic.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.log
+[sync logs] Copying file://logs/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.nic.log to gs://focus-surfer-494820-g0-telemetry/runs/20260904/spar-a100-1/logs/s16_trainmem_fsdp7b_nockpt_node1_5c021a79f50b.nic.log
+[sync logs] .
+[sync logs] 
+[sync logs] Average throughput: 2.9MiB/s

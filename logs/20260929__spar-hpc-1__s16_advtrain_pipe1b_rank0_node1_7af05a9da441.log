@@ -1,0 +1,166 @@
+2026-09-30 01:54:05,959 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_pipe1b_rank0, 8 GPUs, node=1, run_id=7af05a9da441
+Run ID: 7af05a9da441
+2026-09-30 01:54:05,994 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:05,995 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:05,995 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,008 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,009 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,009 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,022 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,023 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,023 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,039 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,040 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,040 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,054 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,054 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,054 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,071 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,071 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,071 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,090 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,090 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,090 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:06,110 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 01:54:06,110 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_rank0, run=7af05a9da441)
+2026-09-30 01:54:06,110 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 01:54:08,112 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-hpc-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/adversarial_multinode_pipeline.py --size 1b --rank0-init 1 --microbatches 1 --batch-size 8 --seq-len 1024 --duration 600
+W0930 01:54:09.782000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0930 01:54:09.782000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0930 01:54:09.782000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0930 01:54:09.782000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+[rank11]:[W930 01:54:41.323204114 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 11]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank15]:[W930 01:54:41.327844189 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 15]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank12]:[W930 01:54:41.328271450 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 12]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank13]:[W930 01:54:41.328965620 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 13]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank10]:[W930 01:54:41.330025320 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 10]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank14]:[W930 01:54:41.336675159 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 14]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank9]:[W930 01:54:41.340220122 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 9]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank8]:[W930 01:54:41.340991192 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 8]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank8]: Traceback (most recent call last):
+[rank8]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank8]:     main()
+[rank8]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank8]:     dist.destroy_process_group()
+[rank8]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank8]:     assert pg is not None
+[rank8]: AssertionError
+[rank10]: Traceback (most recent call last):
+[rank10]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank10]:     main()
+[rank10]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank10]:     dist.destroy_process_group()
+[rank10]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank10]:     assert pg is not None
+[rank10]: AssertionError
+[rank9]: Traceback (most recent call last):
+[rank9]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank9]:     main()
+[rank9]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank9]:     dist.destroy_process_group()
+[rank9]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank9]:     assert pg is not None
+[rank9]: AssertionError
+[rank12]: Traceback (most recent call last):
+[rank12]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank12]:     main()
+[rank12]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank12]:     dist.destroy_process_group()
+[rank12]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank12]:     assert pg is not None
+[rank12]: AssertionError
+[rank11]: Traceback (most recent call last):
+[rank11]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank11]:     main()
+[rank11]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank11]:     dist.destroy_process_group()
+[rank11]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank11]:     assert pg is not None
+[rank11]: AssertionError
+[rank14]: Traceback (most recent call last):
+[rank14]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank14]:     main()
+[rank14]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank14]:     dist.destroy_process_group()
+[rank14]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank14]:     assert pg is not None
+[rank14]: AssertionError
+[rank13]: Traceback (most recent call last):
+[rank13]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank13]:     main()
+[rank13]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank13]:     dist.destroy_process_group()
+[rank13]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank13]:     assert pg is not None
+[rank13]: AssertionError
+[rank15]: Traceback (most recent call last):
+[rank15]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank15]:     main()
+[rank15]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 438, in main
+[rank15]:     dist.destroy_process_group()
+[rank15]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py", line 1907, in destroy_process_group
+[rank15]:     assert pg is not None
+[rank15]: AssertionError
+W0930 02:04:45.280000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44555 closing signal SIGTERM
+W0930 02:04:45.281000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44556 closing signal SIGTERM
+W0930 02:04:45.281000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44557 closing signal SIGTERM
+W0930 02:04:45.282000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44558 closing signal SIGTERM
+W0930 02:04:45.282000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44559 closing signal SIGTERM
+W0930 02:04:45.282000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44560 closing signal SIGTERM
+W0930 02:04:45.282000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 44561 closing signal SIGTERM
+E0930 02:04:46.852000 44485 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 44554) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/adversarial_multinode_pipeline.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-30_02:04:45
+  host      : spar-hpc-1.c.focus-surfer-494820-g0.internal
+  rank      : 8 (local_rank: 0)
+  exitcode  : 1 (pid: 44554)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-09-30 02:04:47,364 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-30 02:04:49,366 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,396 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu0_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,400 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_pipe1b_rank0_node1_gpu0_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,401 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,409 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu1_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,412 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_pipe1b_rank0_node1_gpu1_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,413 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,420 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu2_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,424 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_pipe1b_rank0_node1_gpu2_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,425 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,432 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu3_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,436 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_pipe1b_rank0_node1_gpu3_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,436 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,444 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu4_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,448 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_pipe1b_rank0_node1_gpu4_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,448 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,455 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu5_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,459 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_pipe1b_rank0_node1_gpu5_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,460 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,467 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu6_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,471 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_rank0_node1_gpu6_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,471 [spar.telemetry] INFO: Telemetry stopped. 644 samples collected.
+2026-09-30 02:04:49,478 [spar.telemetry] INFO: Saved 644 rows to data/s16_advtrain_pipe1b_rank0_node1_gpu7_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet
+2026-09-30 02:04:49,482 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_rank0_node1_gpu7_NVIDIA_A100_SXM4_40GB_7af05a9da441.parquet (644 rows)
+2026-09-30 02:04:49,484 [spar.multi_gpu] INFO: Multi-GPU run complete: 7af05a9da441 (rc=1)

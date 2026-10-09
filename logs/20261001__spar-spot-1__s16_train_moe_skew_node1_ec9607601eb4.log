@@ -1,0 +1,57 @@
+2026-10-02 06:07:36,782 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_moe_skew, 8 GPUs, node=1, run_id=ec9607601eb4
+Run ID: ec9607601eb4
+2026-10-02 06:07:36,847 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,847 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,847 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,860 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,861 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,861 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,872 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,873 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,873 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,884 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,884 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,884 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,896 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,896 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,896 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,910 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,911 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,911 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,923 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,923 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,923 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:36,936 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-02 06:07:36,937 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=s16_train_moe_skew, run=ec9607601eb4)
+2026-10-02 06:07:36,937 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA H100 80GB HBM3)
+2026-10-02 06:07:38,939 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-spot-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_moe.py --experts-per-rank 2 --top-k 2 --router-skew 4.0 --duration 600
+W1002 06:07:39.911000 60252 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W1002 06:07:39.911000 60252 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W1002 06:07:39.911000 60252 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1002 06:07:39.911000 60252 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+2026-10-02 06:17:56,955 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-10-02 06:17:58,965 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:58,986 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu0_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:58,988 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_moe_skew_node1_gpu0_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:58,989 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:58,993 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu1_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:58,995 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_moe_skew_node1_gpu1_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:58,995 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:59,000 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu2_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:59,002 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_moe_skew_node1_gpu2_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:59,003 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:59,007 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu3_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:59,010 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_moe_skew_node1_gpu3_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:59,010 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:59,014 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu4_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:59,016 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_moe_skew_node1_gpu4_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:59,024 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:59,028 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu5_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:59,030 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_moe_skew_node1_gpu5_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:59,040 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:59,044 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu6_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:59,046 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_moe_skew_node1_gpu6_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:59,052 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-10-02 06:17:59,056 [spar.telemetry] INFO: Saved 623 rows to data/s16_train_moe_skew_node1_gpu7_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet
+2026-10-02 06:17:59,059 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_moe_skew_node1_gpu7_NVIDIA_H100_80GB_HBM3_ec9607601eb4.parquet (623 rows)
+2026-10-02 06:17:59,060 [spar.multi_gpu] INFO: Multi-GPU run complete: ec9607601eb4 (rc=0)

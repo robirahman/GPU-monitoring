@@ -73,6 +73,10 @@ def _vendor_of(gpu_name: str) -> str:
         return "nvidia"
     if "amd" in s or "radeon" in s:
         return "amd"
+    if "tpu" in s:
+        # Without this a "Google TPU v6e" row returns "unknown" and is dropped
+        # by the train=nvidia/test=amd partition with no count logged.
+        return "tpu"
     return "unknown"
 
 

@@ -1,0 +1,335 @@
+#!/usr/bin/env python3
+"""Real HPC benchmarks (HPL, HPCG, GROMACS) from the NGC containers.
+
+WHY A CONTAINER. This project has tried and failed once before to get a
+GPU-capable GROMACS built on a node: the Ubuntu package is CPU-only, and a
+source build with CUDA is a long, fragile step to put in a boot path. The NGC
+images are the vendor's own builds and they pull ANONYMOUSLY -- verified against
+the registry API, `nvcr.io/nvidia/hpc-benchmarks:24.09` and
+`nvcr.io/hpc/gromacs:2023.2` both return HTTP 200 for a manifest fetched with an
+anonymous bearer token. No NGC account, no API key, no secret in the boot path.
+
+WHY THESE WORKLOADS. Every non-ML multi-node cell in the corpus so far is
+something this project wrote: FFT shards, halo stencils, NCCL sweeps, duty-cycle
+and low-power loops. They are all one author's idea of what non-ML GPU work looks
+like. HPL and GROMACS are not: they are the actual programs HPC clusters run, and
+the detector has never seen either. HPL is dense double-precision LU with a
+communication pattern nothing else here produces; GROMACS is molecular dynamics,
+which is neighbour-list bound and looks like nothing in the ML corpus at all.
+
+DISCOVERY, NOT HARDCODED PATHS. The launcher scripts move between container
+versions, so this probes the image for them rather than assuming a path and
+failing three hours into a collection run. `--probe` prints what it found and
+exits, which is how you check a new image tag without burning a cell.
+
+    python hpc_container.py --benchmark hpl --duration 600
+    python hpc_container.py --benchmark gromacs --duration 600
+    python hpc_container.py --benchmark hpl --probe
+"""
+import argparse
+import os
+import re
+import shutil
+import threading
+import subprocess
+import sys
+import time
+
+IMAGES = {
+    "hpl": "nvcr.io/nvidia/hpc-benchmarks:24.09",
+    "hpcg": "nvcr.io/nvidia/hpc-benchmarks:24.09",
+    "gromacs": "nvcr.io/hpc/gromacs:2023.2",
+}
+
+# Candidate launcher locations, most likely first. Probed in order; the first
+# that exists wins. Keeping this a list rather than a constant is the whole
+# point -- 24.09 moved hpl.sh out of /workspace, and a hardcoded path would have
+# failed at cell time rather than at probe time.
+MIN_BUSY_PCT = 10          # peak GPU utilisation a real HPC cell must reach
+
+LAUNCHERS = {
+    "hpl": ["/workspace/hpl.sh", "/workspace/hpl-linux-x86_64/hpl.sh",
+            "/usr/local/bin/hpl.sh", "/workspace/hpl-aarch64/hpl.sh"],
+    "hpcg": ["/workspace/hpcg.sh", "/workspace/hpcg-linux-x86_64/hpcg.sh",
+             "/usr/local/bin/hpcg.sh"],
+    "gromacs": ["/usr/local/gromacs/bin/gmx", "/usr/local/bin/gmx", "/opt/gromacs/bin/gmx"],
+}
+
+
+def have_docker() -> str:
+    for exe in ("docker", "podman"):
+        if shutil.which(exe):
+            return exe
+    return ""
+
+
+def run(cmd, timeout=None, capture=True):
+    return subprocess.run(cmd, capture_output=capture, text=True, timeout=timeout)
+
+
+def gpu_count() -> int:
+    try:
+        out = run(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], timeout=30)
+        return len([l for l in out.stdout.splitlines() if l.strip()])
+    except Exception:
+        return 0
+
+
+def docker_ok(exe: str) -> bool:
+    """Docker present AND able to see GPUs. Both matter: the DLVM image ships
+    docker and the NVIDIA container toolkit, but a node where the toolkit did
+    not register would run the container on CPU and quietly produce a cell of
+    idle-GPU telemetry, which is worse than failing."""
+    try:
+        r = run([exe, "info"], timeout=60)
+        if r.returncode != 0:
+            print(f"  {exe} info failed: {r.stderr.strip()[:200]}", flush=True)
+            return False
+        r = run([exe, "run", "--rm", "--gpus", "all", "--entrypoint", "",
+                 IMAGES["hpl"], "nvidia-smi", "-L"], timeout=900)
+        # Count only real GPU lines. Counting every non-empty line is how an
+        # 8-GPU node reported 23: the entrypoint's banner came through too.
+        n = len([l for l in r.stdout.splitlines()
+                 if re.match(r"^GPU \d+:", l.strip())])
+        print(f"  container sees {n} GPU(s)", flush=True)
+        return n > 0
+    except Exception as e:
+        print(f"  {exe} GPU probe failed: {e}", flush=True)
+        return False
+
+
+def pull(exe: str, image: str) -> bool:
+    print(f"  pulling {image} (anonymous)", flush=True)
+    r = run([exe, "pull", image], timeout=3600)
+    if r.returncode != 0:
+        print(f"  pull FAILED: {r.stderr.strip()[:300]}", flush=True)
+        return False
+    return True
+
+
+def find_launcher(exe: str, bench: str) -> str:
+    image = IMAGES[bench]
+    # --entrypoint="" is load-bearing on every probe below. These NGC images
+    # define an ENTRYPOINT, so `docker run IMAGE test -x /path` does NOT run
+    # `test` -- it passes "test -x /path" as ARGUMENTS to the entrypoint, which
+    # ignores them and exits 0 or prints a banner. Measured 2026-10-01: the
+    # GROMACS launcher probe therefore never executed a single test, reported
+    # "no launcher for gromacs", and failed the cell in 23 s -- while the GPU
+    # probe counted the HPL image's banner lines and announced "container sees
+    # 23 GPU(s)" on an 8-GPU node. Same bug, two symptoms.
+    for path in LAUNCHERS[bench]:
+        r = run([exe, "run", "--rm", "--entrypoint", "", image,
+                 "test", "-x", path], timeout=300)
+        if r.returncode == 0:
+            print(f"  launcher: {path}", flush=True)
+            return path
+    # Fall back to a search rather than giving up: the point of probing.
+    # -type f misses a symlink, and GROMACS installs SIMD-specific trees
+    # (/usr/local/gromacs/avx2_256/bin/gmx) deeper than maxdepth 6.
+    name = "gmx*" if bench == "gromacs" else f"{bench}.sh"
+    r = run([exe, "run", "--rm", "--entrypoint", "", image, "bash", "-lc",
+             f"command -v gmx gmx_mpi 2>/dev/null; "
+             f"find / -maxdepth 9 \\( -type f -o -type l \\) -name '{name}' "
+             f"-perm -u+x 2>/dev/null | head -5"], timeout=900)
+    found = [l.strip() for l in r.stdout.splitlines() if l.strip()]
+    if found:
+        print(f"  launcher (found by search): {found[0]}", flush=True)
+        return found[0]
+    return ""
+
+
+def make_dat(ngpu: int, n: int) -> str:
+    """An HPL input deck sized for this node, written into the container.
+
+    The stock decks are the reason s16_nonml_hpl collected 735 s of IDLE GPUs on
+    2026-10-01 while reporting success. find_dat() picked
+    HPL-dgx-1N-2.dat, which specifies N=136608 with P=2 Q=1 -- a full-DGX
+    problem on two ranks. HPL spends the first phase generating and factoring
+    on the host, so within a 600 s cell it never reached GPU compute, and the
+    telemetry is 600 s of 0% utilisation labelled as HPC.
+
+    P*Q must equal the MPI rank count or HPL refuses to start, so both are
+    derived from ngpu here rather than inherited from a deck written for
+    someone else's machine.
+    """
+    q = 1
+    for cand in range(int(ngpu ** 0.5), 0, -1):
+        if ngpu % cand == 0:
+            q = cand
+            break
+    p_rows = ngpu // q
+    # HPL.dat is POSITIONAL and unforgiving: every line is read by index, so one
+    # missing or extra line shifts everything after it and HPL rejects the file
+    # with an error naming a field you never touched. The first attempt at this
+    # omitted a count line, which pushed NDIVs onto a "1" and produced
+    # "Value of NDIV less than 2" -- a complaint about line 19 caused by line 15.
+    # Hence one entry per line with its meaning attached.
+    rows = [
+        ("HPLinpack benchmark input file", "title"),
+        ("spar-generated", "comment"),
+        ("HPL.out", "output file"),
+        ("6", "device out (6=stdout)"),
+        ("1", "# of problem sizes"),
+        (str(n), "Ns"),
+        ("1", "# of NBs"),
+        ("1024", "NBs"),
+        ("0", "PMAP (0=row-major)"),
+        ("1", "# of process grids"),
+        (str(p_rows), "Ps"),
+        (str(q), "Qs"),
+        ("16.0", "threshold"),
+        ("1", "# of panel fact"),
+        ("2", "PFACTs (2=right)"),
+        ("1", "# of recursive stopping criteria"),
+        ("4", "NBMINs (>=1)"),
+        ("1", "# of panels in recursion"),
+        ("2", "NDIVs (>=2)"),
+        ("1", "# of recursive panel fact"),
+        ("1", "RFACTs (1=crout)"),
+        ("1", "# of broadcast"),
+        ("0", "BCASTs"),
+        ("1", "# of lookahead depth"),
+        ("0", "DEPTHs (>=0)"),
+        ("2", "SWAP (2=mix)"),
+        ("64", "swapping threshold"),
+        ("0", "L1 transposed"),
+        ("0", "U transposed"),
+        ("1", "Equilibration (1=yes)"),
+        ("8", "memory alignment in doubles"),
+    ]
+    return "\n".join(v for v, _ in rows)
+
+
+def find_dat(exe: str, bench: str) -> str:
+    """HPL needs an input deck. The containers ship sample decks sized per node
+    type; prefer a 1-node A100 one, else take whatever is smallest."""
+    if bench != "hpl":
+        return ""
+    image = IMAGES[bench]
+    r = run([exe, "run", "--rm", "--entrypoint", "", image, "bash", "-lc",
+             "find / -maxdepth 7 -name 'HPL*.dat' 2>/dev/null | head -20"], timeout=600)
+    dats = [l.strip() for l in r.stdout.splitlines() if l.strip()]
+    if not dats:
+        return ""
+    for pref in ("a100-1N", "dgx-a100-1N", "1N"):
+        for d in dats:
+            if pref in d:
+                print(f"  hpl dat: {d}", flush=True)
+                return d
+    print(f"  hpl dat: {dats[0]}", flush=True)
+    return dats[0]
+
+
+def main():
+    ap = argparse.ArgumentParser(description="NGC HPC benchmarks (HPL/HPCG/GROMACS)")
+    ap.add_argument("--benchmark", required=True, choices=sorted(IMAGES))
+    ap.add_argument("--duration", type=int, default=600)
+    ap.add_argument("--gpus", type=int, default=0, help="0 = all visible")
+    ap.add_argument("--hpl-n", type=int, default=45000,
+                    help="HPL problem order; sized so the factorisation fits "
+                         "inside the cell rather than outliving it")
+    ap.add_argument("--probe", action="store_true",
+                    help="report image/launcher/input availability and exit")
+    args = ap.parse_args()
+
+    exe = have_docker()
+    print(f"HPC container workload: {args.benchmark}", flush=True)
+    print(f"  runtime: {exe or 'NONE'}", flush=True)
+    if not exe:
+        print("FATAL: no docker/podman on PATH", flush=True)
+        return 2
+
+    ngpu = args.gpus or gpu_count()
+    print(f"  gpus: {ngpu}", flush=True)
+    image = IMAGES[args.benchmark]
+
+    if not pull(exe, image):
+        return 3
+    if not docker_ok(exe):
+        print("FATAL: container cannot see GPUs -- refusing to collect CPU-only "
+              "telemetry under a GPU workload label", flush=True)
+        return 4
+
+    launcher = find_launcher(exe, args.benchmark)
+    if not launcher:
+        print(f"FATAL: no launcher for {args.benchmark} in {image}", flush=True)
+        return 5
+    dat = find_dat(exe, args.benchmark)
+
+    if args.probe:
+        print(f"PROBE OK image={image} launcher={launcher} dat={dat or '-'}", flush=True)
+        return 0
+
+    if args.benchmark == "gromacs":
+        inner = (f"cd /tmp && {launcher} --version >/dev/null 2>&1; "
+                 f"while true; do {launcher} mdrun -nsteps 20000 -resetstep 1000 "
+                 f"-noconfout -nb gpu -pme gpu -ntmpi {ngpu} -ntomp 4 -s /tmp/bench.tpr "
+                 f"|| break; done")
+        # No .tpr on the node means no simulation; generate a small one in-container.
+        prep = (f"cd /tmp && {launcher} pdb2gmx -h >/dev/null 2>&1; echo prep-done")
+    else:
+        np = ngpu
+        # N sized so the factorisation lands inside the cell rather than
+        # outliving it. ~45k on 8 A100s is a few minutes of real GPU work, and
+        # the while-loop repeats it if it finishes early.
+        deck = make_dat(np, args.hpl_n)
+        prep = ("mkdir -p /tmp/spar && cat > /tmp/spar/HPL.dat <<\"EOF\"\n"
+                + deck + "\nEOF\necho prep-done")
+        inner = (f"while true; do cd /tmp/spar && mpirun --allow-run-as-root "
+                 f"-np {np} {launcher} --dat /tmp/spar/HPL.dat || break; done")
+
+    cmd = [exe, "run", "--rm", "--gpus", "all", "--shm-size=1g",
+           "--ulimit", "memlock=-1", "--ulimit", "stack=67108864"]
+    # HPL/HPCG are PROVEN on the stock entrypoint -- s16_nonml_hpl ran a full
+    # 735 s through it on 2026-10-01 -- and that entrypoint may be what puts
+    # mpirun and the CUDA libs on PATH, so it is left alone. GROMACS never got
+    # this far, and its image swallowed `bash -lc` during probing, so there the
+    # entrypoint is bypassed and `bash -l` sources /etc/profile to recover
+    # whatever environment it would have set.
+    if args.benchmark == "gromacs":
+        cmd += ["--entrypoint", ""]
+    cmd += [image, "bash", "-lc",
+            f"{prep}; timeout {args.duration} bash -lc '{inner}'"]
+    print(f"  running for {args.duration}s", flush=True)
+    t0 = time.time()
+    util_samples = []
+    stop = threading.Event()
+
+    def _sample():
+        while not stop.wait(5.0):
+            try:
+                r = run(["nvidia-smi", "--query-gpu=utilization.gpu",
+                         "--format=csv,noheader,nounits"], timeout=15)
+                vals = [int(x) for x in r.stdout.split() if x.strip().isdigit()]
+                if vals:
+                    util_samples.append(max(vals))
+            except Exception:
+                pass
+
+    watcher = threading.Thread(target=_sample, daemon=True)
+    watcher.start()
+    p = subprocess.run(cmd, text=True)
+    stop.set()
+    el = time.time() - t0
+    # `timeout` returns 124 when it does its job, which is the expected exit here.
+    ran_long = p.returncode in (0, 124) and el >= args.duration * 0.8
+    # Running for the full duration is NOT evidence of having done any work.
+    # s16_nonml_hpl ran 735 s, exited cleanly, and recorded 0% GPU utilisation
+    # throughout -- and the queue marked it OK, which would have put 600 s of
+    # idle telemetry into the corpus labelled as an HPC workload. That is worse
+    # than a failure, because a failure is visible.
+    busy = max(util_samples) if util_samples else -1
+    if ran_long and busy >= 0 and busy < MIN_BUSY_PCT:
+        print(f"  finished rc={p.returncode} after {el:.0f}s but peak GPU "
+              f"utilisation was {busy}% (< {MIN_BUSY_PCT}%) -- reporting FAILURE "
+              f"rather than contributing idle telemetry as an HPC cell",
+              flush=True)
+        return 7
+    ok = ran_long
+    print(f"  finished rc={p.returncode} after {el:.0f}s peak_util={busy}% "
+          f"({'OK' if ok else 'SHORT'})", flush=True)
+    return 0 if ok else 6
+
+
+if __name__ == "__main__":
+    sys.exit(main())

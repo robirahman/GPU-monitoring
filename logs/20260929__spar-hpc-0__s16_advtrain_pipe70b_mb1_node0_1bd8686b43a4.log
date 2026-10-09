@@ -1,0 +1,772 @@
+2026-09-30 02:05:56,749 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_pipe70b_mb1, 8 GPUs, node=0, run_id=1bd8686b43a4
+Run ID: 1bd8686b43a4
+2026-09-30 02:05:56,779 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,780 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,780 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,794 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,794 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,794 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,808 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,808 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,808 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,822 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,823 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,823 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,837 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,837 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,837 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,851 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,851 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,851 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,865 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,866 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,866 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:56,880 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:05:56,880 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe70b_mb1, run=1bd8686b43a4)
+2026-09-30 02:05:56,881 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:05:58,883 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-hpc-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/adversarial_multinode_pipeline.py --size 70b --rank0-init 1 --microbatches 1 --batch-size 1 --seq-len 512 --duration 600
+W0930 02:06:00.559000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0930 02:06:00.559000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0930 02:06:00.559000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0930 02:06:00.559000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+MN-P pipeline disguise: 70b over 2 stages x 8 FSDP ranks
+  stage layer bounds: [(0, 40), (40, 80)]  (n_layers=80)
+  microbatches=1 batch=1 seq=512 hidden=8192
+  activation tensor: 8.4 MB per rank per hop
+  predicted inter-node bytes/step: 134 MB (fwd activations + bwd grads, 8 ranks)
+  Duration: 600s
+[rank7]:[W930 02:16:09.829034185 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34038, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank7]:[W930 02:16:09.834852319 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34038, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank7]:     main()
+[rank7]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank7]:     model = build_fsdp_model(stage_mod, device,
+[rank7]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank7]:     fsdp_model = FSDP(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank7]:     _auto_wrap(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank7]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank7]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank7]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank7]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank7]:     return wrapper_cls(module, **kwargs)
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank7]:     _init_param_handle_from_module(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank7]:     _sync_module_params_and_buffers(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank7]:     _sync_params_and_buffers(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank7]:     dist._broadcast_coalesced(
+[rank7]: torch.distributed.DistBackendError: [7] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank7]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank7]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7ca2f96b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank7]: frame #1: <unknown function> + 0x15d8efb (0x7ca2e45d8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x7ca2e8fea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x7ca2e8feb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7ca2e8f9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7ca2e8f9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7ca2e8f9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7ca2e8f9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7ca2e8f9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x7ca2aebffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank7]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x7ca2aec0be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank7]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x7ca2aec1905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank7]: frame #12: <unknown function> + 0x5f8f8e6 (0x7ca2e8f8f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #13: <unknown function> + 0x5f9ab96 (0x7ca2e8f9ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #14: <unknown function> + 0x55b224b (0x7ca2e85b224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #15: <unknown function> + 0x55afad9 (0x7ca2e85afad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #16: <unknown function> + 0x1a8c3f8 (0x7ca2e4a8c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #17: <unknown function> + 0x5f9f9ba (0x7ca2e8f9f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #18: <unknown function> + 0x5faf59c (0x7ca2e8faf59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x7ca2e8fffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank7]: frame #20: <unknown function> + 0xd990ae (0x7ca2f8b990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank7]: frame #21: <unknown function> + 0x4cb474 (0x7ca2f82cb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank7]: frame #22: <unknown function> + 0x18b292 (0x5d73fceb3292 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #23: _PyObject_MakeTpCall + 0x25b (0x5d73fcea9bab in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x5d73fcea369e in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #25: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x5d73fce9ef92 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #27: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x5d73fce9dcc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #29: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x5d73fce9dcc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #31: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x5d73fcea8e2d in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #33: <unknown function> + 0x194f74 (0x5d73fcebcf74 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #34: <unknown function> + 0x181f2b (0x5d73fcea9f2b in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #35: PyObject_Call + 0xbb (0x5d73fcec183b in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x5d73fce9fee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #37: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #38: PyObject_Call + 0x122 (0x5d73fcec18a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x5d73fce9fee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #40: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #41: PyObject_Call + 0x122 (0x5d73fcec18a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x5d73fce9fee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #43: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #44: PyObject_Call + 0x122 (0x5d73fcec18a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x5d73fce9fee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #46: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #47: PyObject_Call + 0x122 (0x5d73fcec18a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x5d73fce9fee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #49: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x5d73fce9dcc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #51: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x5d73fcea8e2d in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #53: <unknown function> + 0x194f74 (0x5d73fcebcf74 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x5d73fcea9b4c in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x5d73fcea3fa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #56: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x5d73fce9ef92 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #58: _PyFunction_Vectorcall + 0x7c (0x5d73fceb3aec in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x5d73fce9dcc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #60: <unknown function> + 0x25b036 (0x5d73fcf83036 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #61: PyEval_EvalCode + 0x86 (0x5d73fcf82f06 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: frame #62: <unknown function> + 0x281a88 (0x5d73fcfa9a88 in /opt/spar/repo/venv-main/bin/python3)
+[rank7]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank6]:[W930 02:16:09.018837776 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34060, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank6]:[W930 02:16:09.019278284 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34060, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank7]:[W930 02:16:09.041251967 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank3]:[W930 02:16:09.041107746 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34068, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank3]:[W930 02:16:09.041536022 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34068, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank5]:[W930 02:16:09.048147111 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34010, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank5]:[W930 02:16:09.048507592 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34010, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank6]:     main()
+[rank6]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank6]:     model = build_fsdp_model(stage_mod, device,
+[rank6]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank6]:     fsdp_model = FSDP(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank6]:     _auto_wrap(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank6]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank6]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank6]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank6]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank6]:     return wrapper_cls(module, **kwargs)
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank6]:     _init_param_handle_from_module(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank6]:     _sync_module_params_and_buffers(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank6]:     _sync_params_and_buffers(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank6]:     dist._broadcast_coalesced(
+[rank6]: torch.distributed.DistBackendError: [6] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank6]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank6]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x75b7b0cb9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank6]: frame #1: <unknown function> + 0x15d8efb (0x75b79bbd8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x75b7a05ea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x75b7a05eb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x75b7a059bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x75b7a059bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x75b7a059bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x75b7a059bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x75b7a059bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x75b7661ffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank6]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x75b76620be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank6]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x75b76621905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank6]: frame #12: <unknown function> + 0x5f8f8e6 (0x75b7a058f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #13: <unknown function> + 0x5f9ab96 (0x75b7a059ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #14: <unknown function> + 0x55b224b (0x75b79fbb224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #15: <unknown function> + 0x55afad9 (0x75b79fbafad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #16: <unknown function> + 0x1a8c3f8 (0x75b79c08c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #17: <unknown function> + 0x5f9f9ba (0x75b7a059f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #18: <unknown function> + 0x5faf59c (0x75b7a05af59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x75b7a05ffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank6]: frame #20: <unknown function> + 0xd990ae (0x75b7b01990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank6]: frame #21: <unknown function> + 0x4cb474 (0x75b7af8cb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank6]: frame #22: <unknown function> + 0x18b292 (0x5a7b4b2e9292 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #23: _PyObject_MakeTpCall + 0x25b (0x5a7b4b2dfbab in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x5a7b4b2d969e in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #25: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x5a7b4b2d4f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #27: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x5a7b4b2d3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #29: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x5a7b4b2d3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #31: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x5a7b4b2dee2d in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #33: <unknown function> + 0x194f74 (0x5a7b4b2f2f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #34: <unknown function> + 0x181f2b (0x5a7b4b2dff2b in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #35: PyObject_Call + 0xbb (0x5a7b4b2f783b in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x5a7b4b2d5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #37: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #38: PyObject_Call + 0x122 (0x5a7b4b2f78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x5a7b4b2d5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #40: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #41: PyObject_Call + 0x122 (0x5a7b4b2f78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x5a7b4b2d5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #43: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #44: PyObject_Call + 0x122 (0x5a7b4b2f78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x5a7b4b2d5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #46: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #47: PyObject_Call + 0x122 (0x5a7b4b2f78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x5a7b4b2d5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #49: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x5a7b4b2d3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #51: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x5a7b4b2dee2d in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #53: <unknown function> + 0x194f74 (0x5a7b4b2f2f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x5a7b4b2dfb4c in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x5a7b4b2d9fa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #56: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x5a7b4b2d4f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #58: _PyFunction_Vectorcall + 0x7c (0x5a7b4b2e9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x5a7b4b2d3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #60: <unknown function> + 0x25b036 (0x5a7b4b3b9036 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #61: PyEval_EvalCode + 0x86 (0x5a7b4b3b8f06 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: frame #62: <unknown function> + 0x281a88 (0x5a7b4b3dfa88 in /opt/spar/repo/venv-main/bin/python3)
+[rank6]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank4]:[W930 02:16:09.062624798 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34040, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank4]:[W930 02:16:09.062936859 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34040, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank2]:[W930 02:16:09.063115093 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34048, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank2]:[W930 02:16:09.063372953 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34048, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank1]:[W930 02:16:09.079137446 socket.cpp:462] [c10d] waitForInput: poll for socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34064, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) returned 0, likely a timeout
+[rank1]:[W930 02:16:09.079483662 socket.cpp:487] [c10d] waitForInput: socket SocketImpl(fd=38, addr=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:34064, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500) timed out after 600000ms
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank3]:     main()
+[rank3]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank3]:     model = build_fsdp_model(stage_mod, device,
+[rank3]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank3]:     fsdp_model = FSDP(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank3]:     _auto_wrap(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank3]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank3]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank3]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank3]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank3]:     return wrapper_cls(module, **kwargs)
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank3]:     _init_param_handle_from_module(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank3]:     _sync_module_params_and_buffers(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank3]:     _sync_params_and_buffers(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank3]:     dist._broadcast_coalesced(
+[rank3]: torch.distributed.DistBackendError: [3] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank3]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank3]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f4506b6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank3]: frame #1: <unknown function> + 0x15d8efb (0x7f44f19d8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x7f44f63ea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x7f44f63eb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7f44f639bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7f44f639bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7f44f639bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7f44f639bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7f44f639bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x7f44bbfffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank3]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x7f44bc00be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank3]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x7f44bc01905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank3]: frame #12: <unknown function> + 0x5f8f8e6 (0x7f44f638f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #13: <unknown function> + 0x5f9ab96 (0x7f44f639ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #14: <unknown function> + 0x55b224b (0x7f44f59b224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #15: <unknown function> + 0x55afad9 (0x7f44f59afad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #16: <unknown function> + 0x1a8c3f8 (0x7f44f1e8c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #17: <unknown function> + 0x5f9f9ba (0x7f44f639f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #18: <unknown function> + 0x5faf59c (0x7f44f63af59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x7f44f63ffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank3]: frame #20: <unknown function> + 0xd990ae (0x7f4505f990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank3]: frame #21: <unknown function> + 0x4cb474 (0x7f45056cb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank3]: frame #22: <unknown function> + 0x18b292 (0x5dd440ad6292 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #23: _PyObject_MakeTpCall + 0x25b (0x5dd440accbab in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x5dd440ac669e in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #25: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x5dd440ac1f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #27: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x5dd440ac0cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #29: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x5dd440ac0cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #31: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x5dd440acbe2d in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #33: <unknown function> + 0x194f74 (0x5dd440adff74 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #34: <unknown function> + 0x181f2b (0x5dd440accf2b in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #35: PyObject_Call + 0xbb (0x5dd440ae483b in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x5dd440ac2ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #37: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #38: PyObject_Call + 0x122 (0x5dd440ae48a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x5dd440ac2ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #40: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #41: PyObject_Call + 0x122 (0x5dd440ae48a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x5dd440ac2ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #43: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #44: PyObject_Call + 0x122 (0x5dd440ae48a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x5dd440ac2ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #46: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #47: PyObject_Call + 0x122 (0x5dd440ae48a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x5dd440ac2ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #49: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x5dd440ac0cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #51: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x5dd440acbe2d in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #53: <unknown function> + 0x194f74 (0x5dd440adff74 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x5dd440accb4c in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x5dd440ac6fa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #56: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x5dd440ac1f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #58: _PyFunction_Vectorcall + 0x7c (0x5dd440ad6aec in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x5dd440ac0cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #60: <unknown function> + 0x25b036 (0x5dd440ba6036 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #61: PyEval_EvalCode + 0x86 (0x5dd440ba5f06 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: frame #62: <unknown function> + 0x281a88 (0x5dd440bcca88 in /opt/spar/repo/venv-main/bin/python3)
+[rank3]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank5]:     main()
+[rank5]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank5]:     model = build_fsdp_model(stage_mod, device,
+[rank5]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank5]:     fsdp_model = FSDP(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank5]:     _auto_wrap(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank5]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank5]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank5]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank5]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank5]:     return wrapper_cls(module, **kwargs)
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank5]:     _init_param_handle_from_module(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank5]:     _sync_module_params_and_buffers(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank5]:     _sync_params_and_buffers(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank5]:     dist._broadcast_coalesced(
+[rank5]: torch.distributed.DistBackendError: [5] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank5]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank5]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7c7da5d6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank5]: frame #1: <unknown function> + 0x15d8efb (0x7c7d90bd8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x7c7d955ea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x7c7d955eb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c7d9559bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c7d9559bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c7d9559bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c7d9559bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c7d9559bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x7c7d5b1ffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank5]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x7c7d5b20be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank5]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x7c7d5b21905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank5]: frame #12: <unknown function> + 0x5f8f8e6 (0x7c7d9558f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #13: <unknown function> + 0x5f9ab96 (0x7c7d9559ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #14: <unknown function> + 0x55b224b (0x7c7d94bb224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #15: <unknown function> + 0x55afad9 (0x7c7d94bafad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #16: <unknown function> + 0x1a8c3f8 (0x7c7d9108c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #17: <unknown function> + 0x5f9f9ba (0x7c7d9559f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #18: <unknown function> + 0x5faf59c (0x7c7d955af59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x7c7d955ffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank5]: frame #20: <unknown function> + 0xd990ae (0x7c7da51990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank5]: frame #21: <unknown function> + 0x4cb474 (0x7c7da48cb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank5]: frame #22: <unknown function> + 0x18b292 (0x5b125e3fb292 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #23: _PyObject_MakeTpCall + 0x25b (0x5b125e3f1bab in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x5b125e3eb69e in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #25: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x5b125e3e6f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #27: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x5b125e3e5cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #29: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x5b125e3e5cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #31: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x5b125e3f0e2d in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #33: <unknown function> + 0x194f74 (0x5b125e404f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #34: <unknown function> + 0x181f2b (0x5b125e3f1f2b in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #35: PyObject_Call + 0xbb (0x5b125e40983b in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x5b125e3e7ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #37: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #38: PyObject_Call + 0x122 (0x5b125e4098a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x5b125e3e7ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #40: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #41: PyObject_Call + 0x122 (0x5b125e4098a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x5b125e3e7ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #43: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #44: PyObject_Call + 0x122 (0x5b125e4098a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x5b125e3e7ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #46: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #47: PyObject_Call + 0x122 (0x5b125e4098a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x5b125e3e7ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #49: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x5b125e3e5cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #51: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x5b125e3f0e2d in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #53: <unknown function> + 0x194f74 (0x5b125e404f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x5b125e3f1b4c in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x5b125e3ebfa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #56: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x5b125e3e6f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #58: _PyFunction_Vectorcall + 0x7c (0x5b125e3fbaec in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x5b125e3e5cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #60: <unknown function> + 0x25b036 (0x5b125e4cb036 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #61: PyEval_EvalCode + 0x86 (0x5b125e4caf06 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: frame #62: <unknown function> + 0x281a88 (0x5b125e4f1a88 in /opt/spar/repo/venv-main/bin/python3)
+[rank5]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank4]:     main()
+[rank4]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank4]:     model = build_fsdp_model(stage_mod, device,
+[rank4]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank4]:     fsdp_model = FSDP(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank4]:     _auto_wrap(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank4]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank4]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank4]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank4]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank4]:     return wrapper_cls(module, **kwargs)
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank4]:     _init_param_handle_from_module(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank4]:     _sync_module_params_and_buffers(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank4]:     _sync_params_and_buffers(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank4]:     dist._broadcast_coalesced(
+[rank4]: torch.distributed.DistBackendError: [4] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank4]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank4]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x71141036c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank4]: frame #1: <unknown function> + 0x15d8efb (0x7113fb1d8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x7113ffbea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x7113ffbeb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7113ffb9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7113ffb9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7113ffb9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7113ffb9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7113ffb9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x7113c57ffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank4]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x7113c580be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank4]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x7113c581905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank4]: frame #12: <unknown function> + 0x5f8f8e6 (0x7113ffb8f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #13: <unknown function> + 0x5f9ab96 (0x7113ffb9ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #14: <unknown function> + 0x55b224b (0x7113ff1b224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #15: <unknown function> + 0x55afad9 (0x7113ff1afad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #16: <unknown function> + 0x1a8c3f8 (0x7113fb68c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #17: <unknown function> + 0x5f9f9ba (0x7113ffb9f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #18: <unknown function> + 0x5faf59c (0x7113ffbaf59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x7113ffbffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank4]: frame #20: <unknown function> + 0xd990ae (0x71140f7990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank4]: frame #21: <unknown function> + 0x4cb474 (0x71140eecb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank4]: frame #22: <unknown function> + 0x18b292 (0x5b09a5bb9292 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #23: _PyObject_MakeTpCall + 0x25b (0x5b09a5bafbab in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x5b09a5ba969e in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #25: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x5b09a5ba4f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #27: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x5b09a5ba3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #29: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x5b09a5ba3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #31: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x5b09a5baee2d in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #33: <unknown function> + 0x194f74 (0x5b09a5bc2f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #34: <unknown function> + 0x181f2b (0x5b09a5baff2b in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #35: PyObject_Call + 0xbb (0x5b09a5bc783b in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x5b09a5ba5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #37: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #38: PyObject_Call + 0x122 (0x5b09a5bc78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x5b09a5ba5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #40: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #41: PyObject_Call + 0x122 (0x5b09a5bc78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x5b09a5ba5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #43: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #44: PyObject_Call + 0x122 (0x5b09a5bc78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x5b09a5ba5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #46: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #47: PyObject_Call + 0x122 (0x5b09a5bc78a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x5b09a5ba5ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #49: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x5b09a5ba3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #51: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x5b09a5baee2d in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #53: <unknown function> + 0x194f74 (0x5b09a5bc2f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x5b09a5bafb4c in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x5b09a5ba9fa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #56: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x5b09a5ba4f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #58: _PyFunction_Vectorcall + 0x7c (0x5b09a5bb9aec in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x5b09a5ba3cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #60: <unknown function> + 0x25b036 (0x5b09a5c89036 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #61: PyEval_EvalCode + 0x86 (0x5b09a5c88f06 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: frame #62: <unknown function> + 0x281a88 (0x5b09a5cafa88 in /opt/spar/repo/venv-main/bin/python3)
+[rank4]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank2]:     main()
+[rank2]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank2]:     model = build_fsdp_model(stage_mod, device,
+[rank2]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank2]:     fsdp_model = FSDP(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank2]:     _auto_wrap(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank2]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank2]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank2]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank2]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank2]:     return wrapper_cls(module, **kwargs)
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank2]:     _init_param_handle_from_module(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank2]:     _sync_module_params_and_buffers(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank2]:     _sync_params_and_buffers(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank2]:     dist._broadcast_coalesced(
+[rank2]: torch.distributed.DistBackendError: [2] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank2]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank2]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x73c15656c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank2]: frame #1: <unknown function> + 0x15d8efb (0x73c1413d8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x73c145dea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x73c145deb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x73c145d9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x73c145d9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x73c145d9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x73c145d9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x73c145d9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x73c10b9ffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank2]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x73c10ba0be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank2]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x73c10ba1905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank2]: frame #12: <unknown function> + 0x5f8f8e6 (0x73c145d8f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #13: <unknown function> + 0x5f9ab96 (0x73c145d9ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #14: <unknown function> + 0x55b224b (0x73c1453b224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #15: <unknown function> + 0x55afad9 (0x73c1453afad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #16: <unknown function> + 0x1a8c3f8 (0x73c14188c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #17: <unknown function> + 0x5f9f9ba (0x73c145d9f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #18: <unknown function> + 0x5faf59c (0x73c145daf59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x73c145dffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank2]: frame #20: <unknown function> + 0xd990ae (0x73c1559990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank2]: frame #21: <unknown function> + 0x4cb474 (0x73c1550cb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank2]: frame #22: <unknown function> + 0x18b292 (0x5a2e1c31c292 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #23: _PyObject_MakeTpCall + 0x25b (0x5a2e1c312bab in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x5a2e1c30c69e in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #25: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x5a2e1c307f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #27: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x5a2e1c306cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #29: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x5a2e1c306cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #31: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x5a2e1c311e2d in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #33: <unknown function> + 0x194f74 (0x5a2e1c325f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #34: <unknown function> + 0x181f2b (0x5a2e1c312f2b in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #35: PyObject_Call + 0xbb (0x5a2e1c32a83b in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x5a2e1c308ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #37: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #38: PyObject_Call + 0x122 (0x5a2e1c32a8a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x5a2e1c308ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #40: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #41: PyObject_Call + 0x122 (0x5a2e1c32a8a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x5a2e1c308ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #43: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #44: PyObject_Call + 0x122 (0x5a2e1c32a8a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x5a2e1c308ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #46: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #47: PyObject_Call + 0x122 (0x5a2e1c32a8a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x5a2e1c308ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #49: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x5a2e1c306cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #51: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x5a2e1c311e2d in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #53: <unknown function> + 0x194f74 (0x5a2e1c325f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x5a2e1c312b4c in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x5a2e1c30cfa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #56: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x5a2e1c307f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #58: _PyFunction_Vectorcall + 0x7c (0x5a2e1c31caec in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x5a2e1c306cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #60: <unknown function> + 0x25b036 (0x5a2e1c3ec036 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #61: PyEval_EvalCode + 0x86 (0x5a2e1c3ebf06 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: frame #62: <unknown function> + 0x281a88 (0x5a2e1c412a88 in /opt/spar/repo/venv-main/bin/python3)
+[rank2]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 442, in <module>
+[rank1]:     main()
+[rank1]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 300, in main
+[rank1]:     model = build_fsdp_model(stage_mod, device,
+[rank1]:   File "/opt/spar/repo/workloads/fsdp_training.py", line 151, in build_fsdp_model
+[rank1]:     fsdp_model = FSDP(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 483, in __init__
+[rank1]:     _auto_wrap(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_wrap_utils.py", line 101, in _auto_wrap
+[rank1]:     _recursive_wrap(**recursive_wrap_kwargs, **root_kwargs)  # type: ignore[arg-type]
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank1]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 545, in _recursive_wrap
+[rank1]:     wrapped_child, num_wrapped_params = _recursive_wrap(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 563, in _recursive_wrap
+[rank1]:     return _wrap(module, wrapper_cls, **kwargs), nonwrapped_numel
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/wrap.py", line 492, in _wrap
+[rank1]:     return wrapper_cls(module, **kwargs)
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py", line 509, in __init__
+[rank1]:     _init_param_handle_from_module(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 629, in _init_param_handle_from_module
+[rank1]:     _sync_module_params_and_buffers(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/fsdp/_init_utils.py", line 1126, in _sync_module_params_and_buffers
+[rank1]:     _sync_params_and_buffers(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/utils.py", line 328, in _sync_params_and_buffers
+[rank1]:     dist._broadcast_coalesced(
+[rank1]: torch.distributed.DistBackendError: [1] is setting up NCCL communicator and retrieving ncclUniqueId from [0] via c10d key-value store by key '0', but store->get('0') got error: wait timeout after 600000ms, keys: //worker/attempt_0/default_pg/0//1//cuda//0
+[rank1]: Exception raised from doWait at ../torch/csrc/distributed/c10d/TCPStore.cpp:600 (most recent call first):
+[rank1]: frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7c2b772b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+[rank1]: frame #1: <unknown function> + 0x15d8efb (0x7c2b621d8efb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #2: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x7c2b66bea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #3: c10d::TCPStore::get(std::string const&) + 0x7a (0x7c2b66beb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #4: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c2b66b9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #5: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c2b66b9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #6: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c2b66b9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #7: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c2b66b9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #8: c10d::PrefixStore::get(std::string const&) + 0x31 (0x7c2b66b9bbc1 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #9: c10d::ProcessGroupNCCL::broadcastUniqueNCCLID(ncclUniqueId*, bool, std::string const&, int) + 0xaf (0x7c2b2c7ffebf in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank1]: frame #10: c10d::ProcessGroupNCCL::getNCCLComm(std::string const&, c10::Device&, c10d::OpType, int, bool) + 0xfbd (0x7c2b2c80be5d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank1]: frame #11: c10d::ProcessGroupNCCL::broadcast(std::vector<at::Tensor, std::allocator<at::Tensor> >&, c10d::BroadcastOptions const&) + 0x6eb (0x7c2b2c81905b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+[rank1]: frame #12: <unknown function> + 0x5f8f8e6 (0x7c2b66b8f8e6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #13: <unknown function> + 0x5f9ab96 (0x7c2b66b9ab96 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #14: <unknown function> + 0x55b224b (0x7c2b661b224b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #15: <unknown function> + 0x55afad9 (0x7c2b661afad9 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #16: <unknown function> + 0x1a8c3f8 (0x7c2b6268c3f8 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #17: <unknown function> + 0x5f9f9ba (0x7c2b66b9f9ba in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #18: <unknown function> + 0x5faf59c (0x7c2b66baf59c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #19: c10d::broadcast_coalesced(c10::intrusive_ptr<c10d::ProcessGroup, c10::detail::intrusive_target_default_null_type<c10d::ProcessGroup> > const&, c10::ArrayRef<at::Tensor>, unsigned long, int) + 0x7a4 (0x7c2b66bffb34 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+[rank1]: frame #20: <unknown function> + 0xd990ae (0x7c2b767990ae in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank1]: frame #21: <unknown function> + 0x4cb474 (0x7c2b75ecb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+[rank1]: frame #22: <unknown function> + 0x18b292 (0x60c1705e7292 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #23: _PyObject_MakeTpCall + 0x25b (0x60c1705ddbab in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #24: _PyEval_EvalFrameDefault + 0x609e (0x60c1705d769e in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #25: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #26: _PyEval_EvalFrameDefault + 0x1992 (0x60c1705d2f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #27: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x60c1705d1cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #29: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #30: _PyEval_EvalFrameDefault + 0x6c0 (0x60c1705d1cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #31: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #32: _PyObject_FastCallDictTstate + 0x16d (0x60c1705dce2d in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #33: <unknown function> + 0x194f74 (0x60c1705f0f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #34: <unknown function> + 0x181f2b (0x60c1705ddf2b in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #35: PyObject_Call + 0xbb (0x60c1705f583b in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #36: _PyEval_EvalFrameDefault + 0x28e9 (0x60c1705d3ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #37: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #38: PyObject_Call + 0x122 (0x60c1705f58a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #39: _PyEval_EvalFrameDefault + 0x28e9 (0x60c1705d3ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #40: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #41: PyObject_Call + 0x122 (0x60c1705f58a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #42: _PyEval_EvalFrameDefault + 0x28e9 (0x60c1705d3ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #43: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #44: PyObject_Call + 0x122 (0x60c1705f58a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #45: _PyEval_EvalFrameDefault + 0x28e9 (0x60c1705d3ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #46: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #47: PyObject_Call + 0x122 (0x60c1705f58a2 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #48: _PyEval_EvalFrameDefault + 0x28e9 (0x60c1705d3ee9 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #49: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #50: _PyEval_EvalFrameDefault + 0x6c0 (0x60c1705d1cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #51: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #52: _PyObject_FastCallDictTstate + 0x16d (0x60c1705dce2d in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #53: <unknown function> + 0x194f74 (0x60c1705f0f74 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #54: _PyObject_MakeTpCall + 0x1fc (0x60c1705ddb4c in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #55: _PyEval_EvalFrameDefault + 0x69a5 (0x60c1705d7fa5 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #56: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #57: _PyEval_EvalFrameDefault + 0x1992 (0x60c1705d2f92 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #58: _PyFunction_Vectorcall + 0x7c (0x60c1705e7aec in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #59: _PyEval_EvalFrameDefault + 0x6c0 (0x60c1705d1cc0 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #60: <unknown function> + 0x25b036 (0x60c1706b7036 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #61: PyEval_EvalCode + 0x86 (0x60c1706b6f06 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: frame #62: <unknown function> + 0x281a88 (0x60c1706dda88 in /opt/spar/repo/venv-main/bin/python3)
+[rank1]: . This may indicate a possible application crash on rank 0 or a network set up issue.
+[rank3]:[W930 02:16:10.270354985 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank5]:[W930 02:16:10.303184930 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank6]:[W930 02:16:10.307367028 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W930 02:16:10.315679666 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W930 02:16:10.354386891 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank4]:[W930 02:16:10.355847518 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0930 02:16:10.387000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51791 closing signal SIGTERM
+W0930 02:16:10.388000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51792 closing signal SIGTERM
+W0930 02:16:10.388000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51793 closing signal SIGTERM
+W0930 02:16:10.388000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51794 closing signal SIGTERM
+W0930 02:16:10.389000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51795 closing signal SIGTERM
+W0930 02:16:10.389000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51796 closing signal SIGTERM
+W0930 02:16:10.389000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 51797 closing signal SIGTERM
+E0930 02:16:12.307000 51725 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 7 (pid: 51798) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/adversarial_multinode_pipeline.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-30_02:16:10
+  host      : spar-hpc-0.c.focus-surfer-494820-g0.internal
+  rank      : 7 (local_rank: 7)
+  exitcode  : 1 (pid: 51798)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-09-30 02:16:12,803 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-30 02:16:14,803 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,831 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,836 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_pipe70b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,836 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,843 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,847 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_pipe70b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,847 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,855 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,859 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_pipe70b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,859 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,867 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,870 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_pipe70b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,870 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,878 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,882 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_pipe70b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,882 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,889 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,893 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_pipe70b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,893 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,900 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,904 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe70b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,904 [spar.telemetry] INFO: Telemetry stopped. 618 samples collected.
+2026-09-30 02:16:14,911 [spar.telemetry] INFO: Saved 618 rows to data/s16_advtrain_pipe70b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet
+2026-09-30 02:16:14,915 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe70b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_1bd8686b43a4.parquet (618 rows)
+2026-09-30 02:16:14,916 [spar.multi_gpu] INFO: Multi-GPU run complete: 1bd8686b43a4 (rc=1)

@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Wait for a GPU pair to stop, then restart it and launch a queue on it.
+#
+# WHY THIS EXISTS. Two things now stop a pair on their own: STOP_WHEN_DONE=1
+# powers it off when its queue drains (added after an idle pair burned ~$658),
+# and Spot preemption stops it whenever capacity is reclaimed. Both leave the
+# boot disk intact, so the next run is a restart rather than a rebuild -- but
+# something has to notice and do it. Polling here means the follow-up run
+# starts minutes after the machine frees up instead of whenever a human looks.
+#
+#   ZONE=us-central1-a NODE0=spar-gpu-0 NODE1=spar-gpu-1 \
+#   RUN_STAMP=h100obl1 ONLY_CELLS='^s16_(a|b)$' ARENA_MB=9216 \
+#     nohup bash scripts/gcp/run_when_free.sh &
+set -uo pipefail
+cd "$(git rev-parse --show-toplevel)"
+ZONE="${ZONE:?set ZONE}"
+NODE0="${NODE0:?set NODE0}"; NODE1="${NODE1:?set NODE1}"
+PROJECT="${PROJECT:-$(gcloud config get-value project 2>/dev/null)}"
+RUN_STAMP="${RUN_STAMP:?set RUN_STAMP}"
+ONLY_CELLS="${ONLY_CELLS:-}"
+POLL="${POLL:-300}"
+MAX_WAIT="${MAX_WAIT:-86400}"
+say() { echo "[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] $*"; }
+st()  { gcloud compute instances describe "$1" --zone="$ZONE" --project="$PROJECT" \
+          --format='value(status)' 2>/dev/null; }
+
+say "waiting for $NODE0 + $NODE1 to stop (poll ${POLL}s, giving up after ${MAX_WAIT}s)"
+t0=$SECONDS
+while :; do
+  s0="$(st "$NODE0")"; s1="$(st "$NODE1")"
+  [ "$s0" != "RUNNING" ] && [ "$s1" != "RUNNING" ] && { say "both stopped ($s0/$s1)"; break; }
+  if [ $((SECONDS - t0)) -ge "$MAX_WAIT" ]; then
+    say "GIVING UP after ${MAX_WAIT}s -- still $s0/$s1"; exit 1
+  fi
+  sleep "$POLL"
+done
+
+# RETRY the start. A stopped Spot pair cannot always restart on demand: on
+# 2026-09-16 both H100 nodes returned STOCKOUT in us-central1-a, and the old
+# code issued one start, ignored the failure, and went on to stage and launch
+# against instances that were still TERMINATED. Capacity comes back, so poll.
+# Start, then require the pair to STAY up. Winning the start is not the same as
+# holding the instance: on 2026-09-16 the retry loop started spar-gpu-1 three
+# times and Spot reclaimed it after 40, 39 and 38 seconds, far short of the
+# ~10 min of bootstrap and staging before the first cell. The old loop saw
+# RUNNING once and went on to stage against a node that was already gone.
+#
+# STABILITY_SEC is therefore a floor, not a nicety: if the pair cannot survive
+# it, the run cannot start, and saying so beats staging into a corpse.
+say "starting the pair (retry while short; must then hold ${STABILITY_SEC:-180}s)"
+_t0=$SECONDS
+while :; do
+  gcloud compute instances start "$NODE0" "$NODE1" --zone="$ZONE" --project="$PROJECT" >/dev/null 2>&1
+  s0="$(st "$NODE0")"; s1="$(st "$NODE1")"
+  if [ "$s0" = "RUNNING" ] && [ "$s1" = "RUNNING" ]; then
+    say "  both RUNNING -- confirming they hold for ${STABILITY_SEC:-180}s"
+    _held=1; _h0=$SECONDS
+    while [ $((SECONDS - _h0)) -lt "${STABILITY_SEC:-180}" ]; do
+      sleep 30
+      s0="$(st "$NODE0")"; s1="$(st "$NODE1")"
+      if [ "$s0" != "RUNNING" ] || [ "$s1" != "RUNNING" ]; then
+        say "  LOST during the hold ($s0/$s1) after $((SECONDS - _h0))s -- not staging"
+        _held=0; break
+      fi
+    done
+    [ "$_held" = "1" ] && { say "pair held ${STABILITY_SEC:-180}s -- proceeding"; break; }
+  fi
+  if [ $((SECONDS - _t0)) -ge "${START_WAIT:-10800}" ]; then
+    say "GIVING UP after ${START_WAIT:-10800}s: the pair will not stay up ($s0/$s1)."
+    say "  Spot capacity is reclaiming these instances faster than a run can start."
+    exit 1
+  fi
+  say "  retrying in ${START_RETRY:-300}s"
+  sleep "${START_RETRY:-300}"
+done
+
+for n in "$NODE0" "$NODE1"; do
+  for _ in $(seq 1 30); do
+    gcloud compute ssh "$n" --zone="$ZONE" --project="$PROJECT" \
+      --command=true >/dev/null 2>&1 && { say "$n reachable"; break; }
+    sleep 20
+  done
+done
+
+say "staging repo + runbook scripts"
+ZONE="$ZONE" PROJECT="$PROJECT" bash scripts/gcp/stage_repo.sh "$NODE0" "$NODE1" || exit 1
+for n in "$NODE0" "$NODE1"; do
+  gcloud compute scp --zone="$ZONE" --project="$PROJECT" scripts/gcp/*.sh "$n:/tmp/" >/dev/null 2>&1
+  gcloud compute ssh "$n" --zone="$ZONE" --project="$PROJECT" \
+    --command='sudo cp /tmp/*.sh /opt/spar/gcp/' >/dev/null 2>&1
+done
+
+# The periodic-sync guard is a PIDFILE, not pgrep. `pgrep -f "sync_data.sh
+# --loop"` matches the command line of the very shell issuing it, so the guard
+# always reported the loop as already running and the 120 s upload never
+# started -- on a100mnp2, a100mnp3, h100obl1 and here. Data then reached GCS
+# only through the shutdown flush: fine on a clean STOP_WHEN_DONE exit
+# (a100mnp3's 144 MN-P streams all landed) but not under a ~30 s Spot
+# preemption, where spar-gpu-0 lost its kv32k and himem_obl streams to local
+# disk while spar-gpu-1, preempted 3 minutes later, got its own up. The
+# bracket trick ([s]ync) survives one layer of quoting and not two, so this
+# does not play pattern games at all.
+#
+# STOP_WHEN_DONE again, so this follow-up run also retires itself.
+i=0
+for n in "$NODE0" "$NODE1"; do
+  say "launching queue on $n (node_rank $i)"
+  gcloud compute ssh "$n" --zone="$ZONE" --project="$PROJECT" --command="
+    if [ ! -s /tmp/spar_sync_loop.pid ] || ! kill -0 "$(cat /tmp/spar_sync_loop.pid)" 2>/dev/null; then
+      sudo nohup bash /opt/spar/gcp/sync_data.sh --loop 120 >/tmp/sync_loop.log 2>&1 &
+      echo $! > /tmp/spar_sync_loop.pid
+    fi
+    sleep 1
+    sudo RUN_STAMP='$RUN_STAMP' NNODES=2 ARENA_MB='${ARENA_MB:-9216}' STOP_WHEN_DONE=1 \
+      ONLY_CELLS='$ONLY_CELLS' bash /opt/spar/gcp/launch_queue.sh" 2>&1 | grep -a launched
+  i=$((i+1))
+done
+say "done -- $RUN_STAMP launched"

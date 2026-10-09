@@ -19,6 +19,7 @@ import argparse
 import json
 import logging
 import os
+import socket
 import sys
 import threading
 import time
@@ -60,6 +61,11 @@ class GpuMetadata:
         self.driver_version = pynvml.nvmlSystemGetDriverVersion()
         if isinstance(self.driver_version, bytes):
             self.driver_version = self.driver_version.decode("utf-8")
+        # Physical host this GPU lives on. On a multi-node job all ranks share
+        # one run_id and NVML numbers GPUs 0-7 on every node, so the hostname
+        # is the only thing that separates node0-gpu0 from node1-gpu0. Kept as
+        # a string column so get_feature_cols() never treats it as a feature.
+        self.hostname = socket.gethostname()
 
         try:
             cuda_ver_raw = pynvml.nvmlSystemGetCudaDriverVersion_v2()
@@ -100,6 +106,7 @@ class GpuMetadata:
             "total_memory_mb": self.total_memory_mb,
             "pcie_gen": self.pcie_gen,
             "pcie_width": self.pcie_width,
+            "hostname": self.hostname,
         }
 
     def cleanup(self):
@@ -465,6 +472,7 @@ class TelemetryCollector:
         df["gpu_name"] = self.metadata.gpu_name
         df["gpu_uuid"] = self.metadata.gpu_uuid
         df["driver_version"] = self.metadata.driver_version
+        df["hostname"] = self.metadata.hostname
         return df
 
     def _write_parquet(self, df: pd.DataFrame, path: Path):

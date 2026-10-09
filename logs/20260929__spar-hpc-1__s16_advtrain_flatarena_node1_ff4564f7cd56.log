@@ -1,0 +1,110 @@
+2026-09-30 02:17:23,466 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_flatarena, 8 GPUs, node=1, run_id=ff4564f7cd56
+Run ID: ff4564f7cd56
+2026-09-30 02:17:23,496 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,496 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,496 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,510 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,510 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,510 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,524 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,524 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,524 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,538 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,539 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,539 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,558 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,558 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,558 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,571 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,571 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,571 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,585 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,585 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,585 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:23,605 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-30 02:17:23,605 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_flatarena, run=ff4564f7cd56)
+2026-09-30 02:17:23,605 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-30 02:17:25,608 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-hpc-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/adversarial_multinode.py --strategy MN-F --size 1b --arena-mb 9216 --duration 600
+W0930 02:17:27.268000 52292 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0930 02:17:27.268000 52292 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0930 02:17:27.268000 52292 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0930 02:17:27.268000 52292 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0930 02:27:43.781000 52292 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1282] The node 'spar-hpc-1.c.focus-surfer-494820-g0.internal_52292_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+[W930 02:27:43.939471087 TCPStore.cpp:122] [c10d] sendBytes failed on SocketImpl(fd=3, addr=[spar-hpc-1.c.focus-surfer-494820-g0.internal]:47716, remote=[spar-hpc-0.c.focus-surfer-494820-g0.internal]:29500): Broken pipe
+Exception raised from sendBytes at ../torch/csrc/distributed/c10d/Utils.hpp:645 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7b9afa16c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x5fecb29 (0x7b9ae99ecb29 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: c10d::TCPStore::doWait(c10::ArrayRef<std::string>, std::chrono::duration<long, std::ratio<1l, 1000l> >) + 0x27e (0x7b9ae99ea56e in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: c10d::TCPStore::doGet(std::string const&) + 0x2a (0x7b9ae99ea9ca in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::get(std::string const&) + 0x7a (0x7b9ae99eb83a in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0xd71cbc (0x7b9af9571cbc in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #6: <unknown function> + 0x4cb474 (0x7b9af8ccb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #7: <unknown function> + 0x18b292 (0x596cfd81f292 in /opt/spar/repo/venv-main/bin/python3)
+frame #8: _PyObject_MakeTpCall + 0x25b (0x596cfd815bab in /opt/spar/repo/venv-main/bin/python3)
+frame #9: <unknown function> + 0x199030 (0x596cfd82d030 in /opt/spar/repo/venv-main/bin/python3)
+frame #10: _PyEval_EvalFrameDefault + 0x28e9 (0x596cfd80bee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #11: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #12: _PyEval_EvalFrameDefault + 0x807 (0x596cfd809e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #13: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #14: _PyEval_EvalFrameDefault + 0x807 (0x596cfd809e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #15: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #16: _PyEval_EvalFrameDefault + 0x807 (0x596cfd809e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #17: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #18: _PyEval_EvalFrameDefault + 0x807 (0x596cfd809e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #19: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #20: _PyEval_EvalFrameDefault + 0x807 (0x596cfd809e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #21: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #22: _PyEval_EvalFrameDefault + 0x807 (0x596cfd809e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #23: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #24: _PyEval_EvalFrameDefault + 0x6c0 (0x596cfd809cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #25: _PyObject_FastCallDictTstate + 0xc4 (0x596cfd814d84 in /opt/spar/repo/venv-main/bin/python3)
+frame #26: _PyObject_Call_Prepend + 0xc1 (0x596cfd829dc1 in /opt/spar/repo/venv-main/bin/python3)
+frame #27: <unknown function> + 0x29dea4 (0x596cfd931ea4 in /opt/spar/repo/venv-main/bin/python3)
+frame #28: PyObject_Call + 0xbb (0x596cfd82d83b in /opt/spar/repo/venv-main/bin/python3)
+frame #29: _PyEval_EvalFrameDefault + 0x28e9 (0x596cfd80bee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #30: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #31: _PyEval_EvalFrameDefault + 0x6c0 (0x596cfd809cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #32: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #33: _PyEval_EvalFrameDefault + 0x28e9 (0x596cfd80bee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #34: _PyFunction_Vectorcall + 0x7c (0x596cfd81faec in /opt/spar/repo/venv-main/bin/python3)
+frame #35: _PyEval_EvalFrameDefault + 0x6c0 (0x596cfd809cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #36: <unknown function> + 0x25b036 (0x596cfd8ef036 in /opt/spar/repo/venv-main/bin/python3)
+frame #37: PyEval_EvalCode + 0x86 (0x596cfd8eef06 in /opt/spar/repo/venv-main/bin/python3)
+frame #38: <unknown function> + 0x281a88 (0x596cfd915a88 in /opt/spar/repo/venv-main/bin/python3)
+frame #39: <unknown function> + 0x27c0df (0x596cfd9100df in /opt/spar/repo/venv-main/bin/python3)
+frame #40: <unknown function> + 0x281825 (0x596cfd915825 in /opt/spar/repo/venv-main/bin/python3)
+frame #41: _PyRun_SimpleFileObject + 0x1a8 (0x596cfd914d68 in /opt/spar/repo/venv-main/bin/python3)
+frame #42: _PyRun_AnyFileObject + 0x47 (0x596cfd914a47 in /opt/spar/repo/venv-main/bin/python3)
+frame #43: Py_RunMain + 0x2be (0x596cfd908eae in /opt/spar/repo/venv-main/bin/python3)
+frame #44: Py_BytesMain + 0x2d (0x596cfd8e2f4d in /opt/spar/repo/venv-main/bin/python3)
+frame #45: <unknown function> + 0x29d90 (0x7b9afb029d90 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #46: __libc_start_main + 0x80 (0x7b9afb029e40 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #47: _start + 0x25 (0x596cfd8e2e45 in /opt/spar/repo/venv-main/bin/python3)
+
+W0930 02:27:43.791000 52292 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1282] The node 'spar-hpc-1.c.focus-surfer-494820-g0.internal_52292_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+2026-09-30 02:27:44,259 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-30 02:27:46,261 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,290 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu0_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,295 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_flatarena_node1_gpu0_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,295 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,303 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu1_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,307 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_flatarena_node1_gpu1_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,307 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,315 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu2_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,318 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_flatarena_node1_gpu2_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,319 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,326 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu3_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,330 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_flatarena_node1_gpu3_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,330 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,337 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu4_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,341 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_flatarena_node1_gpu4_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,341 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,349 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu5_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,352 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_flatarena_node1_gpu5_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,353 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,360 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu6_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,363 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_flatarena_node1_gpu6_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,364 [spar.telemetry] INFO: Telemetry stopped. 623 samples collected.
+2026-09-30 02:27:46,371 [spar.telemetry] INFO: Saved 623 rows to data/s16_advtrain_flatarena_node1_gpu7_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet
+2026-09-30 02:27:46,375 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_flatarena_node1_gpu7_NVIDIA_A100_SXM4_40GB_ff4564f7cd56.parquet (623 rows)
+2026-09-30 02:27:46,376 [spar.multi_gpu] INFO: Multi-GPU run complete: ff4564f7cd56 (rc=0)
