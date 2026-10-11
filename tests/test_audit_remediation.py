@@ -1,4 +1,5 @@
 """Regressions for ground truth, physical identity, and paired generalization."""
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -231,20 +232,31 @@ class MultinodeFeatureTests(unittest.TestCase):
 
     def test_cache_workers_write_real_chunks(self):
         from scripts import build_mn_window_cache as mn, build_window_cache as per_stream
+        from classifier.window_labels import save_work_events
         d = assign_stream_and_job_ids(self.frame())
+        # The job trains for its first 20 s, then runs filler: two 20 s windows.
+        slots = pd.DataFrame(dict(start=np.arange(0., 40., 2.), end=np.arange(2., 42., 2.),
+                                  work=["ml_training"] * 10 + ["other"] * 10, node=0, rank=0))
         with tempfile.TemporaryDirectory() as tmp:
-            raw = str(Path(tmp) / "raw.parquet")
+            raw, events = str(Path(tmp) / "raw.parquet"), str(Path(tmp) / "events.parquet")
             d.to_parquet(raw, index=False)
+            save_work_events({str(d.job_id.iloc[0]): slots}, events)
             with patch.object(mn, "WORK", tmp), patch.object(mn, "RAW", raw):
-                _, _, count, path = mn.job_chunk((1, d.job_id.unique(), 20., 20.))
+                _, _, count, path = mn.job_chunk((1, d.job_id.unique(), 20., 20., events))
                 self.assertEqual(count, 2)
-                self.assertEqual(len(pd.read_parquet(path)), 2)
+                pooled = pd.read_parquet(path).sort_values("window_start")
+                self.assertEqual(list(pooled.threeway_label), ["ml_training", "other"])
+                self.assertEqual(set(pooled.label_source), {"steps"})
+                self.assertEqual(set(pooled.job_label), {"ml_training"})
             d["run_id"] = d.stream_id
             d.to_parquet(raw, index=False)
             with patch.object(per_stream, "WORK", tmp), patch.object(per_stream, "RAW", raw):
-                _, _, count, path = per_stream.window_chunk((1, d.run_id.unique(), 20., 20.))
+                _, _, count, path = per_stream.window_chunk((1, d.run_id.unique(), 20., 20., events))
                 self.assertEqual(count, 6)
-                self.assertEqual(pd.read_parquet(path).run_id.nunique(), 3)
+                streams = pd.read_parquet(path)
+                self.assertEqual(streams.run_id.nunique(), 3)
+                self.assertEqual(streams.threeway_label.value_counts().to_dict(),
+                                 {"ml_training": 3, "other": 3})
 
     def test_expected_width_and_duration_enforced(self):
         d = self.frame()
@@ -273,6 +285,99 @@ class MultinodeFeatureTests(unittest.TestCase):
         spectral = features.extract_enhanced_features(no_power)
         self.assertTrue(np.isnan(spectral["power_draw_w_mean"]))
         self.assertTrue(np.isfinite(spectral["gpu_util_fft_peak_power"]))
+
+
+class WorkLabelTests(unittest.TestCase):
+    """Windows are labeled by the work done inside them, read from launcher logs."""
+
+    @staticmethod
+    def write_log(root, name, lines):
+        path = Path(root) / "logs" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(lines) + "\n")
+        return path
+
+    def test_a_step_line_reports_the_work_since_the_previous_line(self):
+        from classifier.window_labels import work_intervals, label_windows
+        # 2 s steps, then a 10-minute parameter sync that ends in a training
+        # step (local SGD over a shaped link), then filler slots.
+        ts = [100., 102., 104., 704., 706., 708.]
+        work = ["ml_training"] * 4 + ["other"] * 2
+        iv = work_intervals(pd.DataFrame(dict(ts=ts, work=work, node=0, rank=0, log="a.log")))
+        lab = label_windows([60., 98., 400., 704.5], [90., 128., 430., 734.5], iv)
+        self.assertEqual(list(lab["label"]), ["other", "ml_training", "ml_training", "other"])
+        self.assertEqual(lab["train_s"][0], 0)                 # launch and load are not work
+
+    def test_filler_logged_as_infer_is_not_inference(self):
+        from classifier.window_labels import parse_work_log
+        with tempfile.TemporaryDirectory() as tmp:
+            body = ["Run ID: abcdef123456", "STEP ts=10.0 kind=train batch_idx=1",
+                    "STEP ts=11.0 kind=infer batch_idx=2"]
+            mni = self.write_log(tmp, "s__h0__mni_node0_abcdef123456.log",
+                                 ["INFO:   Launching: python workloads/adversarial_multinode.py "
+                                  "--strategy MN-I --train-frac 0.05"] + body)
+            mno = self.write_log(tmp, "s__h0__mno_node0_abcdef123456.log",
+                                 ["INFO:   Launching: python workloads/adversarial_multinode.py "
+                                  "--strategy MN-O"] + body)
+            self.assertEqual(list(parse_work_log(mni)["events"].work), ["ml_training", "other"])
+            self.assertEqual(list(parse_work_log(mno)["events"].work), ["ml_training", "ml_inference"])
+
+    def test_jobs_take_their_own_logs_and_never_bridge_executions(self):
+        from classifier.window_labels import build_work_index, default_log_paths, job_work_intervals
+        rid = "abcdef123456"
+        with tempfile.TemporaryDirectory() as tmp:
+            # An s8 cell: each node runs its own execution under one run_id.
+            self.write_log(tmp, f"s__host-a__s8_train_x_node0_{rid}.log",
+                           [f"Run ID: {rid}"] + [f"STEP ts={t}.0 kind=train" for t in (100, 101, 102)])
+            with gzip.open(Path(tmp) / f"logs/s__host-b__s8_train_x_node1_{rid}.log.gz", "wt") as f:
+                f.write(f"Run ID: {rid}\n" + "\n".join(f"STEP ts={t}.0 kind=infer" for t in (100, 101, 102)))
+            index = build_work_index(default_log_paths(tmp))
+            frame = pd.DataFrame(dict(job_id=["j0", "j1"], run_id=rid, hostname=["host-a", "host-b"],
+                                      workload_label="s8_train_x",
+                                      source_path=[f"data/s8_train_x_node0_gpu0_NVIDIA_T_{rid}.parquet",
+                                                   f"data/s8_train_x_node1_gpu0_NVIDIA_T_{rid}.parquet"]))
+            events = job_work_intervals(frame, index)
+            self.assertEqual(set(events["j0"].work), {"ml_training"})
+            self.assertEqual(set(events["j1"].work), {"ml_inference"})
+            # A smoke run reusing the run_id hours later starts its own timeline.
+            self.write_log(tmp, f"s__host-a__smoke_s8_train_x_node0_{rid}.log",
+                           [f"Run ID: {rid}"] + [f"STEP ts={t}.0 kind=train" for t in (9000, 9001)])
+            events = job_work_intervals(frame, build_work_index(default_log_paths(tmp)))
+            self.assertLess((events["j0"].end - events["j0"].start).max(), 10)
+
+    def test_each_gpu_shows_its_own_rank_when_ranks_log(self):
+        from classifier.window_labels import own_intervals, work_intervals
+        lines = [dict(ts=t + 0.1 * r, work="ml_training" if r == 0 else "ml_inference",
+                      node=0, rank=r, log="a.log") for r in range(4) for t in range(100, 130)]
+        iv = work_intervals(pd.DataFrame(lines))
+        learner = own_intervals(iv, "data/s16_train_impala_node0_gpu0_NVIDIA_T_abcdef123456.parquet")
+        actor = own_intervals(iv, "data/s16_train_impala_node0_gpu2_NVIDIA_T_abcdef123456.parquet")
+        self.assertEqual(set(learner.work), {"ml_training"})
+        self.assertEqual(set(actor.work), {"ml_inference"})
+        rank0_only = iv[iv["rank"] == 0]
+        self.assertIsNone(own_intervals(rank0_only, "data/x_node0_gpu3_NVIDIA_T_abcdef123456.parquet"))
+
+    def test_without_logs_only_single_kind_programs_get_labels(self):
+        from classifier.window_labels import assign_work_labels
+        for label, want, source in (("s16_inferserve_poisson_7b", "ml_inference", "program"),
+                                    ("s16_nonml_hpc", "other", "program"),
+                                    ("s16_stalled_train_fsdp1b", "other", "program"),
+                                    ("s16_train_fsdp7b", "ml_training", "program"),
+                                    ("dilution_sweep_N1", "ml_training", "program"),
+                                    ("dilution_sweep_N10", "unresolved", "unresolved"),
+                                    ("s16_advtrain_interleave_f05", "unresolved", "unresolved"),
+                                    ("s16_train_impala_a15", "unresolved", "unresolved")):
+            rows = [dict(window_start=0., window_end=30.)]
+            assign_work_labels(rows, None, label, threeway_label(label))
+            self.assertEqual((rows[0]["threeway_label"], rows[0]["label_source"]), (want, source), label)
+
+    def test_label_columns_never_become_features(self):
+        d = MultinodeFeatureTests().frame()
+        slots = pd.DataFrame(dict(start=[-2.], end=[40.], work=["ml_training"], node=0, rank=0))
+        w = sliding_windows_multinode(d, 20, 20, work_events={str(assign_stream_and_job_ids(d).job_id.iloc[0]): slots})
+        cols = features.get_feature_cols(w)
+        self.assertTrue({"label_train_s", "label_infer_s", "label_other_s"} <= set(w))
+        self.assertFalse([c for c in cols if "label" in c])
 
 
 class EvaluationTests(unittest.TestCase):
@@ -308,6 +413,21 @@ class EvaluationTests(unittest.TestCase):
             p = pred[(pred.family == fam) & pred.paired_test]
             self.assertEqual(set(p[p.arm == "full"].row_id), set(p[p.arm == "baseline"].row_id))
             self.assertFalse(set(full["test_ids"]) & set(full["train_ids"]))
+
+    def test_unresolved_windows_are_neither_fitted_nor_scored(self):
+        from classifier.rebuttal_analysis.multinode_family_holdout import load_multinode
+        d = self.frame().assign(grp=lambda f: "s16_" + f.grp, workload_label=lambda f: "s16_" + f.workload_label,
+                                label_source="program", job_label=lambda f: f.threeway_label)
+        d.loc[d.grp.eq("s16_train_c"), ["label_source", "threeway_label"]] = "unresolved"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "windows.parquet"
+            d.to_parquet(path, index=False)
+            w = load_multinode(path)
+        self.assertNotIn("unresolved", set(w.label_source) | set(w.threeway_label))
+        self.assertEqual(w.attrs["unresolved"]["windows"], int(d.grp.eq("s16_train_c").sum()))
+        result, pred, _ = evaluate(w, trees=2)
+        self.assertEqual(set(result["by_label_source"]), {"program"})
+        self.assertEqual(set(pred.job_label), {"ml_training", "ml_inference", "other"})
 
     def test_absent_ablation_jobs_and_single_class_folds_fail(self):
         with self.assertRaises(ValueError):

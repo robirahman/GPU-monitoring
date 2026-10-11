@@ -612,8 +612,10 @@ def main():
                     fsdp_model(input_ids)
                 attributed_tokens += tokens_per_step
             if rank == 0:
-                emit_step("infer", step, tokens=0, passes=1,
-                          node=node_rank, rank=rank)
+                # A filler slot is non-ML compute, not inference; window labels
+                # read the kind (TPU MN-I writes "filler" the same way).
+                emit_step("filler" if filler is not None else "infer", step,
+                          tokens=0, passes=1, node=node_rank, rank=rank)
 
         step += 1
 

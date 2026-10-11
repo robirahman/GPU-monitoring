@@ -32,6 +32,7 @@ evasion runs collected without a STEP log keep their run-level label.
 from __future__ import annotations
 
 import glob
+import gzip
 import re
 from pathlib import Path
 
@@ -201,3 +202,251 @@ def window_activity(window_starts, window_ends, train_ts, infer_ts=None) -> dict
         result["n_infer_steps"] = np.array(
             [int(((infer_ts >= s) & (infer_ts < e)).sum()) for s, e in zip(ws, we)])
     return result
+
+
+# ── Per-window work labels ───────────────────────────────────────────────────
+#
+# A window is labeled by the work its job actually did during it, read from the
+# launcher logs, never by the job's name: a gradient step makes it training,
+# otherwise a forward pass makes it inference, otherwise (filler, non-ML
+# compute, a stall, or nothing logged) it is other. Every emitter writes one
+# STEP line per slot of work, so a line reports the work done since the previous
+# line from the same emitter in the same log. Using that interval rather than
+# the instant keeps a long or accumulated step training for its whole duration
+# (a 10-minute parameter sync over a shaped link included), while a filler slot
+# between two training steps stays filler.
+
+WORK_OF_KIND = {"train": "ml_training", "infer": "ml_inference"}   # any other kind: other
+STEP_ANY_RE = re.compile(r"STEP\s+ts=(?P<ts>[\d.]+)\s+kind=(?P<kind>\w+)(?P<rest>[^\n]*)")
+NODE_RE = re.compile(r"\bnode=(-?\d+)")
+RANK_RE = re.compile(r"\brank=(-?\d+)")
+# Programs that logged their non-ML filler slots as kind=infer, recognised from
+# their own output: GPU MN-I (cuFFT/hash filler; the TPU port writes
+# kind=filler) and the single-GPU interleaving strategies F and I (mining,
+# cuFFT and sleep slots).
+FILLER_LOGGED_AS_INFER = re.compile(r"--strategy MN-I\b|^Strategy [FI]: \w+ Interleaving", re.M)
+# logs/<SESSION>__<host>__<stage>.log[.gz]; the host is where the log was written.
+LOG_NAME_RE = re.compile(r"^[^_]+__(?P<host>.+?)__")
+# The launcher's node rank: its header, else run_stage's <stage>_node<N>_<rid>.log.
+LOG_NODE_RE = re.compile(r"(?:Multi-GPU run|Telemetry-only): .*?\bnode=(\d+)")
+LOG_NAME_NODE_RE = re.compile(r"_node(\d+)_[0-9a-f]{8,}\.log")
+STREAM_NODE_RE = r"_node(\d+)_gpu\d+"
+STREAM_RANK_RE = re.compile(r"_node(\d+)_gpu(\d+)")
+HEX_ID_RE = re.compile(r"[0-9a-f]{8,}")
+WORK_LABELS = ("ml_training", "ml_inference", "other")
+
+
+def read_log_text(path) -> str:
+    opener = gzip.open if str(path).endswith(".gz") else open
+    with opener(path, "rt", encoding="utf-8", errors="replace") as f:
+        return f.read()
+
+
+def parse_work_log(path) -> dict:
+    """One launcher log: run_id, host, node rank, and events[ts, work, node, rank]."""
+    text = read_log_text(path)
+    name = Path(path).name
+    run_id = RUNID_RE.search(text)
+    host = LOG_NAME_RE.match(name)
+    node = LOG_NODE_RE.search(text) or LOG_NAME_NODE_RE.search(name)
+    filler_as_infer = bool(FILLER_LOGGED_AS_INFER.search(text))
+    rows = []
+    for m in STEP_ANY_RE.finditer(text):
+        try:
+            ts = float(m["ts"])
+        except ValueError:
+            continue              # two ranks' output interleaved mid-number
+        kind = "filler" if filler_as_infer and m["kind"] == "infer" else m["kind"]
+        step_node, rank = NODE_RE.search(m["rest"]), RANK_RE.search(m["rest"])
+        rows.append((ts, WORK_OF_KIND.get(kind, "other"),
+                     int(step_node[1]) if step_node else -1, int(rank[1]) if rank else -1))
+    return dict(run_id=run_id["run_id"] if run_id else None, log=name,
+                host=host["host"] if host else None, node=int(node[1]) if node else None,
+                events=pd.DataFrame(rows, columns=["ts", "work", "node", "rank"]))
+
+
+def default_log_paths(root) -> list:
+    logs = Path(root) / "logs"
+    if not logs.is_dir():
+        return []
+    return sorted(p for pattern in ("*.log", "*.log.gz") for p in logs.rglob(pattern)
+                  if ".nic." not in p.name and ".ray." not in p.name)
+
+
+def build_work_index(paths) -> dict:
+    """``{run_id: [parsed log, ...]}``, accumulated over every node's log."""
+    index = {}
+    for path in paths:
+        parsed = parse_work_log(path)
+        run_id = parsed["run_id"]
+        if run_id and HEX_ID_RE.fullmatch(run_id) and not parsed["events"].empty:
+            index.setdefault(run_id, []).append(parsed)
+    return index
+
+
+def work_intervals(events) -> pd.DataFrame:
+    """Slots of work ``(start, end, work)``.
+
+    One timeline per emitter per log: separate logs are separate executions (a
+    smoke run can share its cell's run_id), so no slot ever spans two of them.
+    The first line of a timeline reports one typical slot; the time before it
+    (launch, model load) is not work.
+    """
+    keys = [c for c in ("log", "node", "rank") if c in events]
+    parts = []
+    for _, s in (events.groupby(keys, dropna=False, sort=False) if keys else [(None, events)]):
+        order = np.argsort(s["ts"].to_numpy(float), kind="stable")
+        ts, work = s["ts"].to_numpy(float)[order], s["work"].to_numpy()[order]
+        gaps = np.diff(ts)
+        typical = float(np.median(gaps[gaps > 0])) if (gaps > 0).any() else 1.0
+        start = np.concatenate([[ts[0] - typical], ts[:-1]])
+        parts.append(pd.DataFrame({"start": start, "end": ts, "work": work,
+                                   "node": int(s["node"].iloc[0]) if "node" in s else -1,
+                                   "rank": int(s["rank"].iloc[0]) if "rank" in s else -1}))
+    if not parts:
+        return pd.DataFrame(columns=["start", "end", "work", "node", "rank"])
+    return pd.concat(parts, ignore_index=True)
+
+
+def own_intervals(intervals, source_path):
+    """A GPU stream's own rank's slots, when its job logs work rank by rank.
+
+    Distributed RL logs every rank (the learner trains while actors serve
+    rollouts), so a GPU's windows should show that GPU's work. The node's
+    logging ranks, in order, map onto its local GPU indices. None when the
+    stream's rank did not log (rank-0-only jobs): its job's timeline applies.
+    """
+    m = STREAM_RANK_RE.search(str(source_path))
+    if m is None or intervals is None or "rank" not in intervals:
+        return None
+    node, gpu = int(m[1]), int(m[2])
+    ranks = sorted(r for r in intervals.loc[intervals["node"] == node, "rank"].unique() if r >= 0)
+    if gpu >= len(ranks) or len(ranks) < 2:
+        return None
+    own = intervals[(intervals["node"] == node) & (intervals["rank"] == ranks[gpu])]
+    return own.reset_index(drop=True)
+
+
+def job_work_intervals(frame, index) -> dict:
+    """``{job_id: intervals}`` for every job whose run_ids have STEP lines.
+
+    An s1/s8 cell runs an independent execution on each node under one run_id,
+    so only the job's own node's log counts (node rank from the telemetry file
+    name, else the host); a multi-node job takes every node's lines, because
+    rank 0 alone often speaks for all of them.
+    """
+    from classifier.multinode_features import _scope_of
+    cols = [c for c in ("job_id", "run_id", "hostname", "workload_label", "source_path") if c in frame]
+    ids = frame[cols].drop_duplicates()
+    out = {}
+    for job, g in ids.groupby("job_id", sort=False, observed=True):
+        rids = [r for r in g["run_id"].astype(str).unique() if HEX_ID_RE.fullmatch(r)]
+        if not rids:
+            continue
+        per_node = _scope_of(g["workload_label"].iloc[0]) in ("s1", "s8")
+        nodes = (set(g["source_path"].astype(str).str.extract(STREAM_NODE_RE)[0].dropna().astype(int))
+                 if "source_path" in g else set())
+        hosts = set(g["hostname"].dropna().astype(str)) if "hostname" in g else set()
+
+        def own(log):
+            if not per_node:
+                return True
+            if nodes and log["node"] is not None:
+                return log["node"] in nodes
+            return log["host"] in hosts
+
+        parts = [log["events"].assign(log=log["log"])
+                 for key, logs in index.items()
+                 if any(key.startswith(r) or r.startswith(key) for r in rids)
+                 for log in logs if own(log)]
+        if parts:
+            out[str(job)] = work_intervals(pd.concat(parts, ignore_index=True))
+    return out
+
+
+def _covered(starts, ends, x):
+    """Total length of disjoint sorted intervals lying left of each x."""
+    k = np.searchsorted(starts, x, side="right")
+    cum = np.concatenate([[0.0], np.cumsum(ends - starts)])
+    last_end = np.where(k > 0, ends[np.maximum(k - 1, 0)], -np.inf)
+    return cum[k] - np.where(k > 0, np.maximum(0.0, last_end - x), 0.0)
+
+
+def _union(s, e):
+    """Merge overlapping intervals (ranks working at the same time)."""
+    if not len(s):
+        return s, e
+    order = np.argsort(s, kind="stable")
+    s, e = s[order], e[order]
+    reach = np.maximum.accumulate(e)
+    first = np.concatenate([[True], s[1:] > reach[:-1]])
+    return s[first], np.maximum.reduceat(e, np.flatnonzero(first))
+
+
+def label_windows(window_starts, window_ends, intervals) -> dict:
+    """Seconds of each kind of work inside each window, and the window's label.
+
+    Any training makes a window training: the question a window answers is
+    whether weights were updated while it was recorded. Otherwise any inference
+    makes it inference, and a window with neither is other.
+    """
+    ws = np.asarray(window_starts, float)
+    we = np.asarray(window_ends, float)
+    seconds = {}
+    for work in WORK_LABELS:
+        iv = intervals[intervals["work"] == work]
+        s, e = _union(iv["start"].to_numpy(float), iv["end"].to_numpy(float))
+        seconds[work] = (_covered(s, e, we) - _covered(s, e, ws)) if len(s) else np.zeros(len(ws))
+    label = np.where(seconds["ml_training"] > 0, "ml_training",
+                     np.where(seconds["ml_inference"] > 0, "ml_inference", "other"))
+    return dict(label=label, train_s=seconds["ml_training"],
+                infer_s=seconds["ml_inference"], other_s=seconds["other"])
+
+
+def assign_work_labels(rows, intervals, workload_label, objective):
+    """Relabel window rows in place by the work done inside each window.
+
+    With STEP evidence the label is observed work. Without it, a program that
+    only ever does one kind of work keeps that kind; a mixed program's windows
+    are "unresolved" and must not be fitted or scored. ``job_label`` keeps the
+    job's objective for reference; it is never a target or a feature.
+    """
+    if not rows:
+        return
+    from classifier.workload_labels import program_work
+    starts = [r["window_start"] for r in rows]
+    ends = [r["window_end"] for r in rows]
+    if intervals is not None:
+        lab = label_windows(starts, ends, intervals)
+        cols = dict(threeway_label=lab["label"], label_source=["steps"] * len(rows),
+                    label_train_s=lab["train_s"], label_infer_s=lab["infer_s"],
+                    label_other_s=lab["other_s"])
+    else:
+        work = program_work(workload_label)
+        nan = [np.nan] * len(rows)
+        cols = dict(threeway_label=[work or "unresolved"] * len(rows),
+                    label_source=["program" if work else "unresolved"] * len(rows),
+                    label_train_s=nan, label_infer_s=nan, label_other_s=nan)
+    for i, row in enumerate(rows):
+        row["job_label"] = objective
+        for key, values in cols.items():
+            row[key] = values[i]
+
+
+def save_work_events(events, path):
+    """Persist ``{job_id: intervals}`` for cache workers."""
+    frames = [iv.assign(job_id=str(job)) for job, iv in events.items() if len(iv)]
+    table = (pd.concat(frames, ignore_index=True) if frames
+             else pd.DataFrame(columns=["start", "end", "work", "node", "rank", "job_id"]))
+    table.astype({"start": float, "end": float, "work": str, "node": int, "rank": int,
+                  "job_id": str}).to_parquet(path, index=False)
+
+
+def load_work_events(path, jobs) -> dict:
+    """The saved intervals of ``jobs``; a job absent from the file has no STEP lines."""
+    jobs = [str(j) for j in jobs]
+    if not jobs:
+        return {}
+    table = pd.read_parquet(path, filters=[("job_id", "in", jobs)])
+    return {job: g[["start", "end", "work", "node", "rank"]].reset_index(drop=True)
+            for job, g in table.groupby("job_id", sort=False)}

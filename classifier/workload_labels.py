@@ -2,7 +2,7 @@
 import re
 from functools import lru_cache
 
-LABEL_SCHEMA_VERSION = "2026-10-11.2"
+LABEL_SCHEMA_VERSION = "2026-10-11.3"
 
 TRAINING_LABELS = {
     # Core training workloads
@@ -343,6 +343,28 @@ def workload_kind(label):
     if lc in PHYSICAL_TRAINING or ADV.search(lc) or lc.startswith("stealth"):
         return "adversarial"
     return "honest"
+
+
+# Honest programs whose work switches kind from slot to slot: the distributed RL
+# jobs (actors serve rollouts while the learner trains) and single-GPU PPO.
+MIXED_WORK_FAMILIES = {"train_impala", "train_apexrl", "train_ppodist", "ppo_rlhf"}
+
+
+def program_work(label):
+    """The only kind of work a program ever does, or None when it mixes kinds.
+
+    Only for windows with no STEP evidence. An inference server, a non-ML
+    benchmark or a plain trainer can only do its one kind of work. A disguise,
+    an RL job or a diluted sweep changes kind between slots, so its windows
+    cannot be labeled without the launcher log.
+    """
+    lc = SCOPE.sub("", canonical_workload(label)).lower()
+    if workload_kind(label) == "adversarial" or workload_family(label) in MIXED_WORK_FAMILIES:
+        return None
+    sweep = re.fullmatch(r"dilution_sweep_n(\d+)", lc)
+    if sweep and int(sweep[1]) > 1:
+        return None
+    return threeway_label(label)
 
 
 FAMILY_SCHEMA_VERSION = "2026-10-11.1"

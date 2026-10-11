@@ -20,7 +20,12 @@ import time
 
 
 def emit_step(kind, batch_idx, *, tokens=0, passes=1, node=0, rank=0, **kv):
-    """Print one STEP line in the superset dialect. `kind` is 'train' or 'infer'."""
+    """Print one STEP line in the superset dialect.
+
+    `kind` names the work the slot did, and labels its telemetry windows:
+    'train' is a gradient step, 'infer' a forward pass, and any other kind
+    ('filler', 'nonml', 'stall', ...) is non-ML work.
+    """
     line = (f"STEP ts={time.time():.3f} kind={kind} batch_idx={batch_idx} "
             f"tokens={tokens} passes={passes} node={node} rank={rank}")
     for k, v in kv.items():

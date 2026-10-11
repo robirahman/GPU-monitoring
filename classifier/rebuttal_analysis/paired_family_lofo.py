@@ -5,6 +5,8 @@ No model/threshold selection uses outer test data. Both ablation arms use the
 same old-job test rows, feature vocabulary, estimator settings, and random seed.
 New jobs receive separate full-model LOFO predictions, never enter the paired
 effect estimate. Invalid folds are errors rather than silently skipped families.
+Targets are per-window work labels (classifier/window_labels.py): what the job
+did inside each window, never what the job was named.
 """
 import argparse
 import hashlib
@@ -107,6 +109,7 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
         rep = frame.merge(first[["grp", "job_id", "rep"]], on=["grp", "job_id"], how="left")["rep"].to_numpy()
     predictions, splits, scores = [], [], []
     paired = bool(new_jobs)
+    new_jobs = set(new_jobs)
     for fold in folds:
         fam = fold["family"]
         te = fold["test"]
@@ -136,9 +139,11 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
                                         job_id=frame.job_id.iloc[i], run_id=frame.run_id.iloc[i],
                                         window_start=float(frame.window_start.iloc[i]),
                                         truth=y[i], prediction=p, p_training=float(pr),
-                                        paired_test=frame.job_id.iloc[i] not in set(new_jobs),
+                                        paired_test=frame.job_id.iloc[i] not in new_jobs,
                                         hardware=frame.gpu_name.iloc[i] if "gpu_name" in frame else "",
-                                        kind=frame.kind.iloc[i] if "kind" in frame else ""))
+                                        kind=frame.kind.iloc[i] if "kind" in frame else "",
+                                        job_label=frame.job_label.iloc[i] if "job_label" in frame else "",
+                                        label_source=frame.label_source.iloc[i] if "label_source" in frame else ""))
             scores.append(dict(family=fam, arm=arm, test_population="all" if arm == "full" else "old_jobs",
                                **metrics(y[eval_idx], pred, probability, frame.job_id.iloc[eval_idx], threshold)))
         if "baseline" in arm_predictions:
@@ -155,7 +160,9 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
     assert set(full.row_id) == set(ids) and len(full) == len(ids)
     result = dict(protocol="exhaustive_leave_one_family_out", family_level=family_level,
                   label_schema=LABEL_SCHEMA_VERSION, family_schema=FAMILY_SCHEMA_VERSION,
-                  target="training_vs_rest" if binary else "threeway_job_objective",
+                  target="training_vs_rest" if binary else "threeway_window_work",
+                  label_rule="window labeled by logged work: training if any gradient step, "
+                             "else inference if any forward pass, else other",
                   threshold=threshold, threshold_selection="fixed before outer tests",
                   job_rule="any positive window; not majority rank vote",
                   model=dict(type="RandomForestClassifier", trees=trees, seed=seed,
@@ -167,7 +174,7 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
                              ("new_jobs", full[~full.paired_test])):
         if len(part):
             result[population] = metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id, threshold)
-    for axis in ("hardware", "kind"):
+    for axis in ("hardware", "kind", "label_source"):
         result["by_" + axis] = {
             str(key): metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id, threshold)
             for key, part in full.groupby(axis, dropna=False)
@@ -201,11 +208,16 @@ def main():
     ap.add_argument("--honest-only", action="store_true")
     ap.add_argument("--max-reps", type=int, default=0)
     ap.add_argument("--threshold", type=float, default=0.5)
+    ap.add_argument("--steps-only", action="store_true",
+                    help="Fit and score only windows labeled from STEP evidence")
     a = ap.parse_args()
     if not 0 <= a.threshold <= 1:
         ap.error("threshold must be between 0 and 1")
     cache = validate_window_cache(a.windows)
     w = load_multinode(a.windows, a.inventory)
+    unresolved = w.attrs.get("unresolved")
+    if a.steps_only:
+        w = w[w.label_source.eq("steps")].reset_index(drop=True)
     if a.honest_only:
         w = w[w.kind == "honest"].reset_index(drop=True)
     new_jobs = set(json.loads(Path(a.new_jobs).read_text())) if a.new_jobs else set()
@@ -220,6 +232,8 @@ def main():
     result, predictions, splits = evaluate(w, new_jobs, trees=a.trees, seed=a.seed,
                                            shape=a.shape, family_level=a.family_level,
                                            threshold=a.threshold, binary=a.binary, max_reps=a.max_reps)
+    result["unresolved_excluded"] = unresolved
+    result["steps_only"] = a.steps_only
     result["windows_sha256"] = sha256(a.windows)
     result["cache_fingerprint"] = cache["fingerprint"]
     result["code"] = cache["code"]

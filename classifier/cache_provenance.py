@@ -5,6 +5,7 @@ from importlib.metadata import version
 from pathlib import Path
 
 from classifier.data_sources import ROOT, accelerator_files, pointer, resolve_payload, sha256, quarantined
+from classifier.window_labels import default_log_paths
 from classifier.workload_labels import LABEL_SCHEMA_VERSION, FAMILY_SCHEMA_VERSION
 
 
@@ -15,6 +16,8 @@ def provenance(root=ROOT, **config):
     paths += sorted((root / "week4/results/edge_cases").glob("*_telemetry.json"))
     if (root / "data/quality_exclusions.json").is_file():
         paths.append(root / "data/quality_exclusions.json")
+    # Window labels are read from the launcher logs, so a log is an input too.
+    paths += default_log_paths(root)
     inputs = []
     for p in paths:
         payload = resolve_payload(p)  # completeness required even for cache reuse

@@ -45,13 +45,21 @@ def main():
     for fam in arms["all"][0]["families"]:
         p = arms["all"][1].query("family == @fam")
         shape = arms["shape"][1].query("family == @fam")
-        row = dict(family=fam, side="TRAIN" if p.truth.eq("ml_training").all() else "not-train",
+        # A family's side is its jobs' objective; its windows' truths are the
+        # work done in each, so a training family has non-training windows too.
+        row = dict(family=fam, side="TRAIN" if p.job_label.eq("ml_training").mean() > 0.5 else "not-train",
                    n_win=len(p), n_jobs=p.job_id.nunique(), win_all=float((p.truth == p.prediction).mean()),
                    win_shape=float((shape.truth == shape.prediction).mean()), p_train_median=float(p.p_training.median()))
+        trained = p.truth.eq("ml_training")
+        row.update(n_train_win=int(trained.sum()), n_other_win=int((~trained).sum()))
         for tau in map(float, a.taus.split(",")):
             if not 0 <= tau <= 1:
                 raise ValueError("Threshold outside [0,1]")
-            row[f"flag@{tau}"] = float((p.p_training >= tau).mean())
+            flagged = p.p_training >= tau
+            # Folds are no longer single-class, so recall and false alarms are
+            # read off their own windows rather than off the whole family.
+            row[f"recall@{tau}"] = float(flagged[trained].mean()) if trained.any() else np.nan
+            row[f"fpr@{tau}"] = float(flagged[~trained].mean()) if (~trained).any() else np.nan
         rows.append(row)
     pd.DataFrame(rows).to_csv(out, index=False)
 

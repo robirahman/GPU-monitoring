@@ -119,6 +119,9 @@ def main():
                          "multi-worker cell (see module docstring)")
     if "grp" not in w.columns:
         w["grp"] = workload_group(w.workload_label.values)
+    if "label_source" in w.columns:
+        # Work-labeled cache: a mixed program without a launcher log has no label.
+        w = w[w.label_source != "unresolved"].reset_index(drop=True)
 
     n_all = len(w)
     w = w[~w.workload_label.str.contains(ADV, na=False)].reset_index(drop=True)

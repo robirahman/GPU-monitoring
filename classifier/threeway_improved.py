@@ -41,6 +41,7 @@ from classifier.workload_labels import (  # shared by software and physical sens
     TRAINING_LABELS, INFERENCE_LABELS, OTHER_LABELS, threeway_label, canonical_workload,
 )
 from classifier.data_sources import accelerator_files, read_parquet, resolve_payload, filename_workload_label, pointer, sha256
+from classifier.window_labels import assign_work_labels, own_intervals
 
 
 # ── Raw signal columns ───────────────────────────────────────────────────────
@@ -582,8 +583,14 @@ def sliding_windows(
     stride_sec: float,
     run_level_mode: str = "causal",
     step_log_map: dict | None = None,
+    work_events: dict | None = None,
 ) -> pd.DataFrame:
     """Extract sliding-window feature vectors per run.
+
+    ``work_events`` (``{job_id: intervals}`` from window_labels) labels every
+    window by the work its job did inside it rather than by the job's name;
+    ``job_label`` then keeps the objective. Without it, windows carry the job
+    objective as before.
 
     ``run_level_mode`` controls the whole-run "pre-allocation" features
     (``first_30s_mem_*``, ``time_to_mem_plateau_samples``):
@@ -658,6 +665,7 @@ def sliding_windows(
                     feats["window_train_active"] = np.nan
             results.append(feats)
 
+        first = len(results)
         if duration < window_sec:
             emit(run_df, t_start, t_end)
         else:
@@ -666,6 +674,13 @@ def sliding_windows(
                 chunk = run_df[(run_df["ts"] >= wstart) & (run_df["ts"] < wstart + window_sec)]
                 emit(chunk, wstart, wstart + window_sec)
                 wstart += stride_sec
+        if work_events is not None:
+            intervals = work_events.get(str(job_id if job_id is not None else run_id))
+            if "source_path" in run_df:
+                # A GPU's windows show that GPU's work when its job logs per rank.
+                own = own_intervals(intervals, run_df["source_path"].iloc[0])
+                intervals = own if own is not None else intervals
+            assign_work_labels(results[first:], intervals, wl_label, label)
 
     if not results:
         return pd.DataFrame()

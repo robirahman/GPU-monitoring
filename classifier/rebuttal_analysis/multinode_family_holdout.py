@@ -79,6 +79,18 @@ def load_multinode(win_path, inv_path=None):
     mn = w[eligible].copy().reset_index(drop=True)
     mn["family"] = mn.grp.map(family)
     mn["kind"] = mn.workload_label.map(workload_kind)
+    if "label_source" in mn:
+        # Windows are labeled by the work done in them. A mixed-work program
+        # without a launcher log has no such label, so it is neither fitted nor
+        # scored -- never relabeled by its name.
+        unresolved = mn.label_source.eq("unresolved")
+        info = dict(windows=int(unresolved.sum()),
+                    jobs=int(mn.loc[unresolved, "job_id"].nunique()),
+                    by_source=mn.label_source.value_counts().to_dict())
+        print(f"window labels by source {info['by_source']}; excluding {info['windows']} "
+              f"unresolved windows from {info['jobs']} jobs", flush=True)
+        mn = mn[~unresolved].reset_index(drop=True)
+        mn.attrs["unresolved"] = info
     return mn
 
 
@@ -246,6 +258,7 @@ def main():
                        n_workloads=int(mn.grp.nunique()), n_families=len(fams),
                        families={f: dom[f] for f in fams},
                        untested_families=sorted(set(fams) - set(fa.family)),
+                       unresolved_windows_excluded=mn.attrs.get("unresolved"),
                        grid=list(models().keys()),
                        per_seed=ps.to_dict("records"),
                        per_family=fa.to_dict("records"),

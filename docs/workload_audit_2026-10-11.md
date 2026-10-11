@@ -54,7 +54,8 @@ over embedded model names such as GPT, BERT, or DDP. A job that never takes a
 gradient step is not training: `advtrain_filler_only` and
 `advtrain_satfiller_only` (MN-I at F=0) and every `stalled_*` cell (model and
 optimizer resident, optimizer never steps) route to `other` and carry a control
-tag. Per-window STEP truth remains a separate field.
+tag. That is the job's objective (`job_label`); window targets are the work
+observed in each window (below).
 
 Physical hardening no longer patches only some labels locally or drops correctly
 labeled probes to conceal inconsistent routing. Older physical scores need
@@ -112,9 +113,62 @@ family evaluators. Metadata and numeric targets are excluded from features.
 Hardware and attack/control strata are reported separately; this does not replace
 a dedicated hardware-transfer experiment or remove every possible platform cue.
 
+## Per-window labels
+
+Window targets describe the work done inside each window, not the job's name.
+Every workload writes one `STEP ts=… kind=…` line per slot of work into its
+launcher log, and a line reports the work done since the previous line from the
+same process in the same log (one execution). A window is training if any part
+of it overlaps a gradient step (`kind=train`); otherwise inference if it overlaps
+a forward pass (`kind=infer`); otherwise other (filler, non-ML compute, a stall,
+launch and model load, or nothing logged). A long step stays training for its
+whole duration, including local SGD's 9–12-minute parameter syncs over a shaped
+link, which end in a logged training step.
+
+- `classifier/window_labels.py` reads `logs/**/*.log[.gz]` and joins lines to
+  jobs by run_id. An s1/s8 job takes only its own node's log; a multi-node job
+  takes every node's lines, since rank 0 alone often logs for all of them. Log
+  files are never bridged: a smoke run can reuse its cell's run_id hours later.
+- Pooled multinode windows use the whole job: training if any rank trained.
+  Per-GPU windows use the GPU's own rank when the job logs rank by rank
+  (distributed RL: the learner trains while actors serve rollouts), and the
+  job's timeline otherwise.
+- Three programs logged non-ML filler slots as `kind=infer`: GPU MN-I and the
+  single-GPU interleaving strategies F and I. Their own log output identifies
+  them, and those slots count as other. GPU MN-I now writes `kind=filler`, as
+  its TPU port already did.
+- Without STEP evidence, a program that can only do one kind of work (an
+  inference server, a non-ML benchmark, a plain trainer, a stall or filler
+  control) labels its windows with that kind (`label_source=program`; its launch
+  and load windows are not separated). A mixed program (every disguise,
+  distributed RL, single-GPU PPO, dilution sweeps above N=1) is `unresolved`:
+  kept in the caches, never fitted or scored.
+- Coverage in the tracked logs, by multi-node job: 114 jobs have STEP evidence
+  (all on 16-GPU clusters), 936 take a program label and 119 are unresolved
+  (104 of them TPU disguises: TPU launcher logs stay in GCS). No multi-node
+  inference job has STEP evidence: the vLLM workloads emit none, and the
+  HF-sharded and recommender cells that do left no committed logs. Committing
+  the TPU logs, or adding STEP lines to the vLLM workloads, would extend
+  evidence-based labels.
+- Cache columns: `threeway_label` (window work), `job_label` (job objective),
+  `label_source` (steps, program, unresolved) and `label_train_s`,
+  `label_infer_s`, `label_other_s` (seconds of logged work in the window). None
+  of them is a feature. The cache fingerprint covers the logs.
+
+Checked against the tracked logs, per execution: every honest trainer's
+windows are 100% training between its first and last step; every non-ML,
+stalled and F=0 filler cell is 100% other; MN-I interleaves are 57% training.
+End to end on job `1871ed7bad7a` (s16 MN-I, F=0.2, 16 GPUs on two hosts), 38 of
+40 pooled windows hold some training (0.6–12.9 s of 30) and 2 are pure filler:
+"any gradient step" labels most windows of a spread-out disguise training.
+`label_train_s` keeps the seconds if a minimum-fraction rule is wanted later.
+
 ## Evaluation
 
 `classifier/rebuttal_analysis/paired_family_lofo.py` holds out every family once.
+Targets are the per-window work labels above. Unresolved windows are excluded
+and counted, metrics are reported per label source, and `--steps-only`
+restricts fitting and scoring to windows labeled from STEP evidence.
 Each eligible window receives exactly one full-model outer prediction. Missing
 classes or ambiguous identities fail visibly. Estimator settings and threshold
 are fixed before outer testing; no test fold selects either.

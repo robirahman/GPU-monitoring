@@ -39,6 +39,8 @@ sys.path.insert(0, PROJECT_ROOT)
 
 WORK = os.environ.get("SPAR_WORK", "/var/tmp/spar_analysis")
 RAW = os.path.join(WORK, "raw_downcast.parquet")
+# Per-job slots of logged work, read once from logs/ so workers never parse logs.
+EVENTS = os.path.join(WORK, "work_events.parquet")
 
 # /var/tmp is wiped on every VM restart -- three times so far, twice destroying a
 # 25-minute build and once taking the only copy of an analysis script with it.
@@ -80,10 +82,12 @@ def rss():
 
 
 def window_chunk(args):
-    idx, streams, win, stride = args
+    idx, streams, win, stride, events_path = args
     from classifier.threeway_improved import sliding_windows
+    from classifier.window_labels import load_work_events
     t = pq.read_table(RAW, filters=[("run_id", "in", list(streams))]).to_pandas()
-    w = sliding_windows(t, win, stride)
+    events = load_work_events(events_path, t["job_id"].astype(str).unique())
+    w = sliding_windows(t, win, stride, work_events=events)
     out = os.path.join(WORK, f"part_{idx:03d}.parquet")
     w.to_parquet(out, index=False)
     return idx, len(streams), len(w), out
@@ -102,13 +106,21 @@ def main():
         print(f"validated cache {out}", flush=True)
         return
 
-    if not cache_matches(RAW, manifest):
+    if not (cache_matches(RAW, manifest) and cache_matches(EVENTS, manifest)):
         from classifier.threeway_improved import load_all_data
         from classifier.multinode_features import assign_stream_and_job_ids
+        from classifier.window_labels import (build_work_index, default_log_paths,
+                                              job_work_intervals, save_work_events)
         df = load_all_data()
         print(f"[{time.time()-t0:.0f}s] raw rows {len(df):,}  peakRSS {rss():.2f} GB",
               flush=True)
         df = assign_stream_and_job_ids(df)
+        # Windows are labeled by the work each job logged, joined on the run_ids
+        # it recorded -- so this must happen before run_id becomes stream_id.
+        events = job_work_intervals(df, build_work_index(default_log_paths(PROJECT_ROOT)))
+        save_work_events(events, EVENTS)
+        print(f"[{time.time()-t0:.0f}s] STEP evidence for {len(events):,} of "
+              f"{df.job_id.nunique():,} jobs", flush=True)
         mapping = df[["stream_id", "job_id", "node_id"]].drop_duplicates()
         hosts = mapping.groupby("job_id").node_id.nunique()
         mapping["meta_n_hosts"] = mapping.job_id.map(hosts)
@@ -128,13 +140,14 @@ def main():
         df["run_id"] = df["run_id"].astype(str)    # categorical breaks pq filters
         df.to_parquet(RAW, index=False)
         stamp_cache(RAW, manifest)
+        stamp_cache(EVENTS, manifest)
         print(f"[{time.time()-t0:.0f}s] spilled {os.path.getsize(RAW)/1e9:.2f} GB", flush=True)
         del df
         gc.collect()
 
     streams = pq.read_table(RAW, columns=["run_id"]).to_pandas().run_id.astype(str).unique()
     np.random.default_rng(0).shuffle(streams)      # even chunk cost
-    chunks = [(i, list(c), win, stride)
+    chunks = [(i, list(c), win, stride, EVENTS)
               for i, c in enumerate(np.array_split(streams, nproc * 3), 1)]
     print(f"[{time.time()-t0:.0f}s] {len(streams):,} streams in {len(chunks)} chunks "
           f"across {nproc} workers", flush=True)
@@ -162,7 +175,7 @@ def main():
     print(f"[{time.time()-t0:.0f}s] windows {len(w):,} -> {out}", flush=True)
     print(f"  streams {w.run_id.nunique():,}  jobs {w.job_id.nunique():,}  "
           f"groups {w.grp.nunique():,}  peakRSS {rss():.2f} GB", flush=True)
-    print(w.threeway_label.value_counts().to_string(), flush=True)
+    print(pd.crosstab(w.threeway_label, w.label_source).to_string(), flush=True)
     gcs_push(out, out + ".provenance.json", os.path.join(WORK, "stream_to_job.parquet"))
 
 
