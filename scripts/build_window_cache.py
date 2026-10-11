@@ -47,7 +47,7 @@ RAW = os.path.join(WORK, "raw_downcast.parquet")
 # 25-minute rebuild by two orders of magnitude.
 CACHE_GCS = os.environ.get(
     "SPAR_CACHE_GCS",
-    "gs://focus-surfer-494820-g0-telemetry/analysis_cache")
+    "")
 
 
 def gcs_pull(out):
@@ -91,24 +91,28 @@ def window_chunk(args):
 
 def main():
     out = sys.argv[1]
-    if os.environ.get("SPAR_NO_CACHE_PULL") != "1" and gcs_pull(out):
-        print("cache already built; delete it or set SPAR_NO_CACHE_PULL=1 to rebuild",
-              flush=True)
-        return
     win = float(sys.argv[2]) if len(sys.argv) > 2 else 30.0
     stride = float(sys.argv[3]) if len(sys.argv) > 3 else 15.0
     nproc = int(sys.argv[4]) if len(sys.argv) > 4 else 3
     os.makedirs(WORK, exist_ok=True)
     t0 = time.time()
+    from classifier.cache_provenance import provenance, cache_matches, stamp_cache
+    manifest = provenance(window_sec=win, stride_sec=stride, granularity="per_stream")
+    if cache_matches(out, manifest):
+        print(f"validated cache {out}", flush=True)
+        return
 
-    if not os.path.exists(RAW):
+    if not cache_matches(RAW, manifest):
         from classifier.threeway_improved import load_all_data
         from classifier.multinode_features import assign_stream_and_job_ids
         df = load_all_data()
         print(f"[{time.time()-t0:.0f}s] raw rows {len(df):,}  peakRSS {rss():.2f} GB",
               flush=True)
         df = assign_stream_and_job_ids(df)
-        df[["stream_id", "job_id"]].drop_duplicates().to_parquet(
+        mapping = df[["stream_id", "job_id", "node_id"]].drop_duplicates()
+        hosts = mapping.groupby("job_id").node_id.nunique()
+        mapping["meta_n_hosts"] = mapping.job_id.map(hosts)
+        mapping.drop(columns="node_id").to_parquet(
             os.path.join(WORK, "stream_to_job.parquet"), index=False)
         df["run_id"] = df["stream_id"]
         before = df.memory_usage(deep=True).sum() / 1e9
@@ -123,6 +127,7 @@ def main():
               f"streams {df.run_id.nunique():,}", flush=True)
         df["run_id"] = df["run_id"].astype(str)    # categorical breaks pq filters
         df.to_parquet(RAW, index=False)
+        stamp_cache(RAW, manifest)
         print(f"[{time.time()-t0:.0f}s] spilled {os.path.getsize(RAW)/1e9:.2f} GB", flush=True)
         del df
         gc.collect()
@@ -143,28 +148,22 @@ def main():
 
     from classifier.threeway_improved import workload_group
     s2j = pd.read_parquet(os.path.join(WORK, "stream_to_job.parquet"))
-    # A stream that maps to several jobs has an ambiguous identity and cannot be
-    # scored. The AMD sampling-rate ablation cells (rate0p5hz_rep1 and friends)
-    # ran FOUR workloads -- idle, llm_infer_phi3_mini, adversarial_K_online_learning,
-    # pytorch_resnet_cifar10_amp -- sequentially on ONE card under ONE run_id, so
-    # (run_id, gpu_uuid) collapses them into a single "stream" and sliding_windows
-    # labels every window of it with whichever ran first. Drop them.
-    dups = set(s2j.loc[s2j.stream_id.duplicated(keep=False), "stream_id"])
-    m = s2j[~s2j.stream_id.isin(dups)].set_index("stream_id")["job_id"]
+    if s2j.stream_id.duplicated().any():
+        raise ValueError("Ambiguous stream/job map; rebuild identities")
+    m = s2j.set_index("stream_id")["job_id"]
     w = pd.concat([pd.read_parquet(p) for p in sorted(parts)], ignore_index=True)
-    bad = w.run_id.isin(dups)
-    if bad.any():
-        print(f"  dropping {int(bad.sum()):,} windows from {len(dups)} streams with "
-              f"ambiguous identity ({100*bad.mean():.2f}%)", flush=True)
-        w = w[~bad].reset_index(drop=True)
     w["job_id"] = w.run_id.map(m).fillna(w.run_id)
+    # Keep measured topology with the cache, avoiding a second inventory whose
+    # fallback stream identities can differ on legacy missing-host/device rows.
+    w["meta_n_hosts"] = w.run_id.map(s2j.set_index("stream_id").meta_n_hosts)
     w["grp"] = workload_group(w.workload_label.values)
     w.to_parquet(out, index=False)
+    stamp_cache(out, manifest)
     print(f"[{time.time()-t0:.0f}s] windows {len(w):,} -> {out}", flush=True)
     print(f"  streams {w.run_id.nunique():,}  jobs {w.job_id.nunique():,}  "
           f"groups {w.grp.nunique():,}  peakRSS {rss():.2f} GB", flush=True)
     print(w.threeway_label.value_counts().to_string(), flush=True)
-    gcs_push(out, os.path.join(WORK, "stream_to_job.parquet"))
+    gcs_push(out, out + ".provenance.json", os.path.join(WORK, "stream_to_job.parquet"))
 
 
 if __name__ == "__main__":

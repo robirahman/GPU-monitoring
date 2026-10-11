@@ -26,14 +26,12 @@ from sklearn.ensemble import RandomForestClassifier
 WIN, STR = 30, 15
 chans = physical_channels("GPU0"); temporal = ["GPU0_rms_mv", "mic_rms"]
 
-ATTACK_RE = re.compile(r"stealth|dil_v|ev2b_cofill|ev2b_combo|evasion2_combo", re.I)
-df = load_sensor_data(os.path.join(os.path.dirname(__file__), "..", "sensor_logs"))
+from classifier.workload_labels import workload_kind
 
-df["is_attack"] = df.workload_label.str.contains(ATTACK_RE)
-# attacks are real training -> override label
-df.loc[df.is_attack, "threeway_label"] = "ml_training"
-# drop the caught full-throughput ev2b probes (redundant normal training) to keep the base clean
-df = df[~df.workload_label.str.contains(r"ev2b_(baseline|gradaccum|aperiodic|gapfill)", regex=True)]
+df = load_sensor_data(os.path.join(os.path.dirname(__file__), "..", "sensor_logs"))
+# Ground truth comes from the shared taxonomy. Attack membership is a separate
+# axis; controls remain in the baseline pool, with their correct objective.
+df["is_attack"] = df.workload_label.map(workload_kind).eq("adversarial")
 
 _len = df.groupby("run_id").size()
 def longest_run(sub):

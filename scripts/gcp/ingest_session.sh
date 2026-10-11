@@ -29,54 +29,41 @@ mkdir -p "$DEST_DATA" "$DEST_LOGS"
 PY="${VENV_MAIN}/bin/python"; [[ -x "$PY" ]] || PY="$(command -v python3)"
 
 # --- 1. completed parquets ---------------------------------------------------
-# QUARANTINE IDLE STREAMS. The telemetry collector starts before the workload
-# and records for the full duration whether or not the workload ever runs, so a
-# multi-node cell whose PEER died still produces full-length, correctly-named
-# parquets full of zeros. Measured on 2026-09-08: spar-a100-1 was preempted 13
-# minutes into a run and spar-a100-0 went on to write 64 parquets labelled
-# s16_advtrain_pipe1b_mb{1,4,16} with util_med=0.0 and mem_med=519 MB -- a bare
-# CUDA context. Copying those in would have put idle windows into the corpus
-# under an ADVERSARIAL training label, which is precisely the contamination the
-# TPU ingest already screens for with --min-util-med.
-#
-# MIN_UTIL_MED=0 disables the screen; `idle`-labelled cells are exempt because
-# being idle is the point of them.
-spar_say "copying completed parquets -> ${DEST_DATA}/ (idle screen: median util > ${MIN_UTIL_MED:-1}%)"
-"$PY" - "$SRC" "$DEST_DATA" "${MIN_UTIL_MED:-1}" <<'PYEOF'
-import os, shutil, sys, glob
+# Completion/progress evidence takes precedence over duty cycle. A quiet rank
+# may be an actor or a sparse learner, not a failed launch. Preserve uncertain
+# captures in their own quarantine for review; never relabel them as idle.
+spar_say "copying completed parquets with progress-aware quality screening"
+PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}" "$PY" - "$SRC" "$DEST_DATA" "${MIN_UTIL_MED:-1}" <<'PYEOF'
+import csv, glob, os, re, shutil, sys
+from pathlib import Path
 import pandas as pd
-
-src, dest, thresh = sys.argv[1], sys.argv[2], float(sys.argv[3])
-quar = os.path.join(dest, "_quarantine_idle")
-kept = dropped = 0
-for f in sorted(glob.glob(os.path.join(src, "**", "*.parquet"), recursive=True)):
-    base = os.path.basename(f)
-    if base.endswith(".partial"):
-        continue
-    # `idle` cells are exempt because being idle is the point of them -- and so
-    # are the deliberate stall controls, for exactly the same reason. On
-    # 2026-09-30 the screen quarantined all 32 streams of
-    # s16_stalled_train_fsdp1b, a cell that ran to completion and reported
-    # STALLED_CONTROL_DATA ... train_steps=0: 0% utilisation IS its measurement.
-    # The identical cell in 20260822ctl sits in the corpus unscreened, so the
-    # screen was also splitting one family across two treatments.
-    exempt = base.startswith(("idle", "nic_")) or "stalled" in base
-    if thresh > 0 and not exempt:
-        try:
-            u = pd.read_parquet(f, columns=["gpu_utilization_pct"])
-            med = float(u["gpu_utilization_pct"].median())
-        except Exception:
-            med = None
-        if med is not None and med <= thresh:
-            os.makedirs(quar, exist_ok=True)
-            shutil.copyfile(f, os.path.join(quar, base))
-            print(f"  QUARANTINE {base[:70]} (median util {med:.1f}% <= {thresh}%)")
-            dropped += 1
-            continue
-    shutil.copyfile(f, os.path.join(dest, base))
-    kept += 1
-print(f"  copied {kept} completed parquet(s); "
-      f"quarantined {dropped} idle stream(s) -> {quar if dropped else '(none)'}")
+from classifier.collection_quality import assess_collection
+from classifier.data_sources import data_role
+src, dest, threshold = sys.argv[1], sys.argv[2], float(sys.argv[3])
+records = []
+for f in sorted(Path(src).rglob("*.parquet")):
+    base = f.name
+    status, reason = "accepted", "sidecar"
+    if data_role(f) == "accelerator":
+        d = pd.read_parquet(f)
+        median = float(d.gpu_utilization_pct.median()) if "gpu_utilization_pct" in d else None
+        ids = d.run_id.dropna().astype(str).unique() if "run_id" in d else []
+        # Match within the same staged host, never borrow a peer's completion.
+        host_root = f.parent.parent
+        logs = []
+        for log in (host_root / "logs").glob("*.log"):
+            if ".nic." in log.name or not any(rid in log.name for rid in ids):
+                continue
+            logs.append(log.read_text(errors="replace"))
+        status, reason = assess_collection(base, median, "\n".join(logs), threshold)
+    target = Path(dest) if status == "accepted" else Path(dest) / ("_quarantine_" + status)
+    target.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(f, target / base)
+    records.append(dict(file=base, disposition=status, evidence=reason))
+with open(Path(dest) / "collection_quality.csv", "w", newline="") as out:
+    writer = csv.DictWriter(out, ["file", "disposition", "evidence"])
+    writer.writeheader(); writer.writerows(records)
+print(pd.Series([r["disposition"] for r in records]).value_counts().to_string())
 PYEOF
 
 # --- 2. STEP logs ------------------------------------------------------------
@@ -113,7 +100,9 @@ for p in glob.glob(os.path.join(src, "**", "*.parquet.partial"), recursive=True)
         continue
     if nrows >= 600:
         base = os.path.basename(p)[:-len(".parquet.partial")]  # strip suffix
-        out = os.path.join(dest, base + "_truncated.parquet")
+        partial_dir = os.path.join(dest, "_quarantine_partial")
+        os.makedirs(partial_dir, exist_ok=True)
+        out = os.path.join(partial_dir, base + "_truncated.parquet")
         shutil.copyfile(p, out)
         print(f"  KEPT {os.path.basename(p)} ({nrows} rows) -> {os.path.basename(out)}")
         kept += 1

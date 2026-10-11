@@ -74,16 +74,8 @@ def honest_mask(win: pd.DataFrame) -> np.ndarray:
     result rests on: a detector that had already seen the attack would make the
     experiment circular.
     """
-    wl = win["workload_label"].astype(str)
-    bad = np.zeros(len(win), dtype=bool)
-    for fam in DISGUISED_FAMILIES:
-        bad |= wl.str.startswith(fam).values
-        # the multinode cells are s16_advtrain_..., so the family token appears
-        # after the scope prefix rather than at the start
-        bad |= wl.str.contains(f"_{fam}", regex=False).values
-    for mark in DISGUISED_MARKERS:
-        bad |= wl.str.contains(mark, regex=False).values
-    return ~bad
+    from classifier.workload_labels import workload_kind
+    return win["workload_label"].map(workload_kind).eq("honest").to_numpy()
 
 
 def save(clf, path=DEFAULT_MODEL_PATH, meta: dict | None = None) -> Path:

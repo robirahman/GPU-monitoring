@@ -44,47 +44,41 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(
 from classifier.threeway_improved import get_feature_cols  # noqa: E402
 from sklearn.ensemble import (  # noqa: E402
     RandomForestClassifier, ExtraTreesClassifier, HistGradientBoostingClassifier)
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import make_pipeline
 from sklearn.metrics import (  # noqa: E402
     accuracy_score, f1_score, confusion_matrix, classification_report)
 
-SCOPE = re.compile(r"^(?:smoke_)?(s16|s8|s1|tpuT4|tpuT8|tpuT16|tpuTMS4|tpuTMS)_")
-ADV = re.compile(r"(advtrain|adversarial|whitebox|symgemm|typeconf|stalled)", re.I)
+from classifier.workload_labels import SCOPE, ADV, workload_family, workload_kind
 
-# Variants of one experiment that the token rule below would otherwise split.
-MERGE = {
-    "ddpkaccum": "ddp", "ddpstagger": "ddp",   # DDP with accumulation / stagger
-    "lp": "lowpower",                          # nonml_lp_d50 is nonml_lowpower
-    "filler": "satfiller",                     # filler_only / satfiller_only
-    "vllm": "qwen",                            # infershard_vllm_tp8pp2 is qwen
-    "flatbubble": "flatarena",                 # flat arena + bubble filler
-}
+family = workload_family
 
 
-def family(grp):
-    """Workload family: class + experiment stem, scope and parameters removed."""
-    s = SCOPE.sub("", str(grp))
-    parts = s.split("_")
-    cls = parts[0]
-    base = parts[1] if len(parts) > 1 else ""
-    base = re.sub(r"\d+(_\d+)?[bkmg]?$", "", base)     # fsdp1b -> fsdp, qwen72b -> qwen
-    base = MERGE.get(base, base)
-    return f"{cls}_{base}" if base else cls
-
-
-def load_multinode(win_path, inv_path):
+def load_multinode(win_path, inv_path=None):
+    """Use measured hosts, including topology embedded in the pooled cache."""
     w = pd.read_parquet(win_path)
-    inv = pd.read_parquet(inv_path, columns=["stream", "host"])
-    w["scope"] = w.grp.map(lambda l: (SCOPE.match(str(l)).group(1)
-                                      if SCOPE.match(str(l)) else "legacy"))
-    w = w.merge(inv.drop_duplicates("stream").rename(columns={"stream": "run_id"}),
-                on="run_id", how="left")
-    hosts = w.groupby("job_id")["host"].nunique()
-    w["hosts"] = w.job_id.map(hosts).fillna(1)
-    mn = w[np.where(w.scope.isin(["s1", "s8"]), False,
-                    (w.hosts > 1) | (w.scope == "s16"))].reset_index(drop=True)
+    if "grp" not in w:
+        from classifier.threeway_improved import workload_group
+        w["grp"] = workload_group(w.workload_label)
+    w["scope"] = w.grp.map(lambda l: SCOPE.match(str(l)).group(1).lower()
+                           if SCOPE.match(str(l)) else "legacy")
+    if "meta_n_hosts" in w:
+        w["hosts"] = pd.to_numeric(w.meta_n_hosts, errors="raise")
+    elif inv_path:
+        inv = pd.read_parquet(inv_path)
+        hosts_by_stream = inv.groupby("stream").host.agg(lambda v: next(iter(v.dropna()), None))
+        w["host"] = w.run_id.map(hosts_by_stream)
+        w["hosts"] = w.groupby("job_id").host.transform("nunique")
+        if w.host.isna().any():
+            raise ValueError("Inventory does not map all window streams; rebuild the cache with topology")
+    else:
+        raise ValueError("Cache has no measured topology; supply an inventory or rebuild")
+    eligible = ~w.scope.isin(["s1", "s8"]) & (w.hosts > 1)
+    if "meta_degraded" in w:
+        eligible &= ~w.meta_degraded.astype(str).str.lower().eq("true")
+    mn = w[eligible].copy().reset_index(drop=True)
     mn["family"] = mn.grp.map(family)
-    mn["kind"] = np.where(mn.workload_label.str.contains(ADV, na=False),
-                          "adversarial", "honest")
+    mn["kind"] = mn.workload_label.map(workload_kind)
     return mn
 
 
@@ -104,7 +98,7 @@ def split_families(fams, dom, rng, frac=(0.6, 0.2, 0.2)):
 
 
 def models():
-    return {
+    grid = {
         "rf200": RandomForestClassifier(n_estimators=200, n_jobs=-1, random_state=0),
         "rf200_leaf5": RandomForestClassifier(n_estimators=200, min_samples_leaf=5,
                                               n_jobs=-1, random_state=0),
@@ -119,6 +113,9 @@ def models():
         "hgb": HistGradientBoostingClassifier(max_iter=300, learning_rate=0.1,
                                               random_state=0),
     }
+
+    return {name: make_pipeline(SimpleImputer(strategy="median", keep_empty_features=True), model)
+            for name, model in grid.items()}
 
 
 def job_accuracy(df, pred):
@@ -141,9 +138,11 @@ def main():
                     default="classifier/rebuttal_analysis/results/multinode_family_holdout.json")
     a = ap.parse_args()
 
+    from classifier.rebuttal_analysis.paired_family_lofo import validate_window_cache
+    validate_window_cache(a.windows)
     mn = load_multinode(a.windows, a.inventory)
     cols = get_feature_cols(mn)
-    X = np.nan_to_num(mn[cols].to_numpy(np.float32), nan=0.0, posinf=0.0, neginf=0.0)
+    X = mn[cols].replace([np.inf, -np.inf], np.nan).to_numpy(np.float32)
     y = mn.threeway_label.values
     fam = mn.family.values
     dom = mn.groupby("family").threeway_label.agg(lambda s: s.mode().iat[0]).to_dict()
@@ -246,6 +245,7 @@ def main():
                        n_windows=int(len(mn)), n_jobs=int(mn.job_id.nunique()),
                        n_workloads=int(mn.grp.nunique()), n_families=len(fams),
                        families={f: dom[f] for f in fams},
+                       untested_families=sorted(set(fams) - set(fa.family)),
                        grid=list(models().keys()),
                        per_seed=ps.to_dict("records"),
                        per_family=fa.to_dict("records"),

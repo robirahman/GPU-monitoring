@@ -112,18 +112,21 @@ def load_sensor_data(sensor_dir):
     frames = []
     for p in sorted(glob.glob(os.path.join(sensor_dir, "*_sensors.parquet"))):
         try:
-            df = pd.read_parquet(p)
+            from classifier.data_sources import read_parquet
+            df = read_parquet(p)
             if "workload_label" not in df.columns:
                 df["workload_label"] = Path(p).stem.split("_NVIDIA_")[0]
             if "run_id" not in df.columns:
                 df["run_id"] = Path(p).stem
             frames.append(df)
         except Exception as e:
-            log.debug(f"skip {p}: {e}")
+            raise RuntimeError(f"Cannot read physical sensor input {p}") from e
     if not frames:
         raise RuntimeError(f"No *_sensors.parquet in {sensor_dir}")
     df = pd.concat(frames, ignore_index=True)
     df = augment_aggregates(df)
+    from classifier.workload_labels import validate_labels
+    validate_labels(df.workload_label.unique())
     df["threeway_label"] = df["workload_label"].apply(threeway_label)
     return df
 

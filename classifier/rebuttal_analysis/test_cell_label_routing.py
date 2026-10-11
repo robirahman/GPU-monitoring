@@ -3,9 +3,8 @@
 
 Why this is a test and not a comment
 ------------------------------------
-`threeway_label()` (classifier/threeway_improved.py:211) is a chain of plain
-SUBSTRING tests, and the training keywords are checked BEFORE `infer`. So a cell
-named for what it does can land in the wrong class with no warning at all:
+`threeway_label()` previously checked training substrings before inference
+intent. These historical examples motivated the explicit-intent regression tests:
 
     s16_infer_gpt2serve   -> ml_training   ("gpt")
     s16_inferbert_embed   -> ml_training   ("bert")
@@ -108,13 +107,13 @@ CELLS = [
     ("s16_nonml_sat", "other"),
 ]
 
-# Names we must NOT use. Each is a plausible thing someone would type, and each
-# is silently wrong. Kept as a test so the trap stays documented and detected.
+# Former routing traps. Explicit collection intent now takes precedence over
+# model-name substrings; these are regressions for the corrected behavior.
 TRAPS = [
-    ("s16_infer_gpt2serve", "ml_training", "'gpt' beats 'infer'"),
-    ("s16_inferbert_embed", "ml_training", "'bert' beats 'infer'"),
-    ("s16_nonml_ddp_bench", "ml_training", "'ddp_' matches in a non-ML label"),
-    ("s16_nonml_traincomp", "ml_training", "'train' matches anywhere"),
+    ("s16_infer_gpt2serve", "ml_inference", "explicit inference intent beats model name"),
+    ("s16_inferbert_embed", "ml_inference", "explicit inference intent beats model name"),
+    ("s16_nonml_ddp_bench", "other", "explicit non-ML intent beats a benchmark name"),
+    ("s16_nonml_traincomp", "other", "explicit non-ML intent beats a benchmark name"),
     ("s16_hpcfft_shard", "other", "no keyword at all -> silent 'other'"),
 ]
 
@@ -163,7 +162,7 @@ def main():
             print(f"  {f}")
         return 1
     print(f"\nOK: {len(CELLS)} cells route correctly, all stay in the honest pool, "
-          f"{len(TRAPS)} traps still behave as documented.")
+          f"{len(TRAPS)} former traps route correctly.")
     return 0
 
 

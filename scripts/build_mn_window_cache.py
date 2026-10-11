@@ -41,7 +41,7 @@ and wiring them in is the only way to measure which.
 
 Granularity
 -----------
-`sliding_windows_multinode` emits ONE row per (job, window) with rank-0's
+`sliding_windows_multinode` emits ONE row per (job, window) with pooled per-rank
 single-stream features plus the cross-rank block, where `sliding_windows` emits
 one row per (stream, window). Fewer, wider rows. This writes a SEPARATE cache
 rather than replacing win_full.parquet, because the per-stream cache is what
@@ -94,8 +94,13 @@ def main():
     nproc = int(sys.argv[4]) if len(sys.argv) > 4 else 4
     os.makedirs(WORK, exist_ok=True)
     t0 = time.time()
+    from classifier.cache_provenance import provenance, cache_matches, stamp_cache
+    manifest = provenance(window_sec=win, stride_sec=stride, granularity="pooled_job")
+    if cache_matches(out, manifest):
+        print(f"validated cache {out}", flush=True)
+        return
 
-    if not os.path.exists(RAW):
+    if not cache_matches(RAW, manifest):
         from classifier.threeway_improved import load_all_data
         from classifier.multinode_features import (
             attach_nic_sidecar, normalize_comm_columns, assign_stream_and_job_ids,
@@ -130,6 +135,7 @@ def main():
                 df[c] = df[c].astype(np.float32)
         df["job_id"] = df["job_id"].astype(str)
         df.to_parquet(RAW, index=False)
+        stamp_cache(RAW, manifest)
         print(f"[{time.time()-t0:.0f}s] spilled {os.path.getsize(RAW)/1e9:.2f} GB", flush=True)
         del df
         gc.collect()
@@ -159,6 +165,7 @@ def main():
     w["job_id"] = w["run_id"]
     w["grp"] = workload_group(w.workload_label.values)
     w.to_parquet(out, index=False)
+    stamp_cache(out, manifest)
 
     xr = [c for c in w.columns if c.startswith("xr_")]
     xrg = [c for c in w.columns if c.startswith("xragg_")]
