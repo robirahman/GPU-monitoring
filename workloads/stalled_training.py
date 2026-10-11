@@ -21,14 +21,11 @@ cadence, and NO compute at all.
                   dummy alloc + filler compute + deadline comm -> ?
   corpus cufft/ethash          filler-like compute only    -> ~0.0006
 
-LABELLING: the label carries "train", so threeway_label() routes this to
-ml_training -- which is CORRECT and deliberate. A stalled or data-starved
-training job is still a training job, and it is a real production state (loader
-starvation, checkpoint stalls, long eval phases). It is emphatically NOT labelled
-`other`: teaching the detector that "apparatus present + no optimizer step =
-benign" would hand an evader the exact gap it wants, since it could then keep the
-apparatus resident permanently and train in short bursts. This file is also not
-in DISGUISED_FAMILIES, so it legitimately joins the honest corpus.
+LABELLING: `other`, despite the "train" in its name. Ground truth is whether
+weights are updated, and this job never takes a gradient step, so none of its
+windows is training (classifier/workload_labels.py routes every stalled_* cell
+this way). It is tagged as a control, which keeps it out of the honest
+detector's training pool along with the zero-update filler cells.
 
     torchrun --nnodes=2 --nproc-per-node=8 workloads/stalled_training.py \
         --size 1b --duration 600

@@ -32,36 +32,40 @@ PY="${VENV_MAIN}/bin/python"; [[ -x "$PY" ]] || PY="$(command -v python3)"
 # Completion/progress evidence takes precedence over duty cycle. A quiet rank
 # may be an actor or a sparse learner, not a failed launch. Preserve uncertain
 # captures in their own quarantine for review; never relabel them as idle.
+# Evidence is matched per file in every launcher mode: a --parallel replica by
+# its own status line, a telemetry-only stream by its job head's exit code.
 spar_say "copying completed parquets with progress-aware quality screening"
 PYTHONPATH="$REPO_ROOT${PYTHONPATH:+:$PYTHONPATH}" "$PY" - "$SRC" "$DEST_DATA" "${MIN_UTIL_MED:-1}" <<'PYEOF'
-import csv, glob, os, re, shutil, sys
+import csv, shutil, sys
 from pathlib import Path
 import pandas as pd
-from classifier.collection_quality import assess_collection
+import pyarrow.parquet as pq
+from classifier.collection_quality import assess_collection, evidence_logs, launcher_logs
 from classifier.data_sources import data_role
-src, dest, threshold = sys.argv[1], sys.argv[2], float(sys.argv[3])
+src, dest, threshold = Path(sys.argv[1]), Path(sys.argv[2]), float(sys.argv[3])
+logs = launcher_logs(src)
 records = []
-for f in sorted(Path(src).rglob("*.parquet")):
+for f in sorted(src.rglob("*.parquet")):
     base = f.name
-    status, reason = "accepted", "sidecar"
+    status, reason, used = "accepted", "sidecar", []
     if data_role(f) == "accelerator":
-        d = pd.read_parquet(f)
+        cols = [c for c in ("gpu_utilization_pct", "run_id") if c in pq.ParquetFile(f).schema.names]
+        d = pd.read_parquet(f, columns=cols)
         median = float(d.gpu_utilization_pct.median()) if "gpu_utilization_pct" in d else None
         ids = d.run_id.dropna().astype(str).unique() if "run_id" in d else []
-        # Match within the same staged host, never borrow a peer's completion.
-        host_root = f.parent.parent
-        logs = []
-        for log in (host_root / "logs").glob("*.log"):
-            if ".nic." in log.name or not any(rid in log.name for rid in ids):
-                continue
-            logs.append(log.read_text(errors="replace"))
-        status, reason = assess_collection(base, median, "\n".join(logs), threshold)
-    target = Path(dest) if status == "accepted" else Path(dest) / ("_quarantine_" + status)
+        # Staged as <SRC>/<host>/...; a peer's completion never vouches for a
+        # rank, except the head's exit for a telemetry-only stream.
+        host = src / f.relative_to(src).parts[0]
+        used = evidence_logs(logs, host, base, ids)
+        status, reason = assess_collection(base, median, "\n".join(log["text"] for log in used),
+                                           threshold, filename=base)
+    target = dest if status == "accepted" else dest / ("_quarantine_" + status)
     target.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(f, target / base)
-    records.append(dict(file=base, disposition=status, evidence=reason))
-with open(Path(dest) / "collection_quality.csv", "w", newline="") as out:
-    writer = csv.DictWriter(out, ["file", "disposition", "evidence"])
+    records.append(dict(file=base, disposition=status, evidence=reason,
+                        logs=";".join(str(log["path"].relative_to(src)) for log in used)))
+with open(dest / "collection_quality.csv", "w", newline="") as out:
+    writer = csv.DictWriter(out, ["file", "disposition", "evidence", "logs"])
     writer.writeheader(); writer.writerows(records)
 print(pd.Series([r["disposition"] for r in records]).value_counts().to_string())
 PYEOF

@@ -50,10 +50,11 @@ physical-sensor classifiers. It preserves raw names and supplies objective,
 control/attack membership, and routing evidence separately. The 21 collected
 physical-training aliases (`dil_v*`, `ev2b_*`, `evasion2_*`, `s2_*`, `s3_*`) now
 route to training. Explicit inference/non-ML collection intent takes precedence
-over embedded model names such as GPT, BERT, or DDP. Zero-update
-`advtrain_filler_only` and `advtrain_satfiller_only` are non-training controls.
-`stalled_train` retains a training-job objective and a control tag: it is not
-evidence of an active update. Per-window STEP truth remains a separate field.
+over embedded model names such as GPT, BERT, or DDP. A job that never takes a
+gradient step is not training: `advtrain_filler_only` and
+`advtrain_satfiller_only` (MN-I at F=0) and every `stalled_*` cell (model and
+optimizer resident, optimizer never steps) route to `other` and carry a control
+tag. Per-window STEP truth remains a separate field.
 
 Physical hardening no longer patches only some labels locally or drops correctly
 labeled probes to conceal inconsistent routing. Older physical scores need
@@ -75,12 +76,25 @@ utilization screen. Quiet successful sparse learners stay eligible. Quiet runs
 without supporting evidence are quarantined as uncertain; explicit failures and
 partial files remain separate. Low utilization alone is not a negative label.
 Completed actor/non-root workers do not need their own STEP lines; their lack of
-local progress logging is recorded without discarding the collection.
+local progress logging is recorded without discarding the collection. Evidence
+is matched per file in every launcher mode: a `--parallel` replica by its own
+status line (its recorded run_id never appears in the stage log), and a
+telemetry-only stream by its job head's exit code, since the collector exits 0
+whether or not the remote workload ran.
+
+The inventory's log scan reads plain `.log` launcher output in multi-GPU mode
+only; gzipped logs and parallel/telemetry-only stages are not parsed. Checked
+against the tracked logs: no failed job outside the 21 exclusions has an
+accepted accelerator stream that can be windowed. The only failed parallel
+replicas in the corpus (20260820 `inferrep_qwen7b`, vLLM import errors) left
+3-row stubs, which `sliding_windows` drops.
 
 ## Identity, observation, and features
 
 Streams include host, device, and workload segment. Different workloads sharing
-one run/device are no longer stitched together. Versioned identities survive
+one run/device are no longer stitched together. Per-stream windows keep the
+run-level `run_id` and add `stream_id` and `job_id`; the three-way CV folds by
+`job_id`, so the ranks of one execution never straddle a train/test split. Versioned identities survive
 chunking, and independent S1/S8 executions remain separated by host. Legacy job
 reconstruction still uses a 20-second bucket; these identities are provisional.
 

@@ -604,13 +604,18 @@ def sliding_windows(
             f"run_level_mode must be 'orig', 'none', or 'causal', got {run_level_mode!r}")
 
     results = []
-    group_cols = [c for c in ("run_id", "gpu_uuid", "workload_label") if c in df]
-    distinct = df[group_cols].drop_duplicates().groupby("run_id", dropna=False).size()
+    # One series per physical stream. A shared run_id spans every GPU and host of
+    # a multi-GPU job, and interleaving their samples corrupts every feature.
+    group_cols = [c for c in ("run_id", "gpu_uuid", "hostname", "workload_label") if c in df]
     for identity, run_df in df.groupby(group_cols, dropna=False, observed=True):
-        run_id = identity[0] if isinstance(identity, tuple) else identity
+        identity = identity if isinstance(identity, tuple) else (identity,)
+        run_id = identity[0]
         run_df = run_df.sort_values("ts").reset_index(drop=True)
         if len(run_df) < 5:
             continue
+        stream_id = (run_df["stream_id"].iloc[0] if "stream_id" in run_df
+                     else "|".join(map(str, identity)))
+        job_id = run_df["job_id"].iloc[0] if "job_id" in run_df else None
 
         t_start = run_df["ts"].iloc[0]
         t_end = run_df["ts"].iloc[-1]
@@ -632,8 +637,12 @@ def sliding_windows(
             elif run_level_mode == "causal":
                 # Only samples observable by the window's end — no look-ahead.
                 feats.update(run_level_features(run_df[run_df["ts"] < wend]))
-            feats["run_id"] = ("|".join(map(str, identity))
-                               if distinct.loc[run_id] > 1 else run_id)
+            # run_id stays the run-level key. Callers group CV folds by it, and
+            # the sibling GPUs of one run must never straddle a train/test split.
+            feats["run_id"] = run_id
+            feats["stream_id"] = stream_id
+            if job_id is not None:
+                feats["job_id"] = job_id
             feats["threeway_label"] = label
             feats["workload_label"] = wl_label
             feats["gpu_name"] = gpu_name
@@ -862,7 +871,10 @@ def train_and_evaluate():
         feature_cols = get_feature_cols(df_win)
         X = df_win[feature_cols].fillna(0).values.astype(np.float32)
         y = df_win["threeway_label"].values
-        groups = df_win["run_id"].values
+        # Fold by physical job: every rank of one execution, including legacy
+        # per-collector siblings, lands on the same side of each split.
+        group_key = "job_id" if "job_id" in df_win else "run_id"
+        groups = df_win[group_key].values
 
         log.info(f"Windows: {len(df_win)} | Features: {len(feature_cols)}")
         log.info(f"Class distribution: {pd.Series(y).value_counts().to_dict()}")
@@ -874,7 +886,7 @@ def train_and_evaluate():
             continue
 
         # Check minimum samples per class per run for cross-validation
-        run_class_counts = df_win.groupby("run_id")["threeway_label"].first().value_counts()
+        run_class_counts = df_win.groupby(group_key)["threeway_label"].first().value_counts()
         min_runs = run_class_counts.min()
         n_splits = min(5, min_runs)
         if n_splits < 2:

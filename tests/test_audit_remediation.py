@@ -30,7 +30,13 @@ class LabelTests(unittest.TestCase):
         for label in ("s16_advtrain_filler_only", "tpuTMS4_advtrain_satfiller_only_rep2_w0c0"):
             self.assertEqual(threeway_label(label), "other")
             self.assertEqual(workload_kind(label), "control")
-        self.assertEqual(threeway_label("s16_stalled_train_fsdp1b"), "ml_training")
+        # No gradient step ever happens in these jobs, so none of their windows
+        # is training, whatever is resident or however the job is named.
+        for label in ("s16_stalled_train_fsdp1b", "s8_stalled_train_fsdp1b_node1_gpu3",
+                      "s1_stalled_train_fsdp1b", "smoke_s16_stalled_train_fsdp1b_rep2",
+                      "s16_advtrain_filler_only", "s8_advtrain_satfiller_only_node0_gpu2"):
+            self.assertEqual(threeway_label(label), "other")
+            self.assertEqual(workload_kind(label), "control")
         self.assertEqual(workload_kind("ev2b_baseline"), "control")
         with self.assertRaises(ValueError):
             validate_labels(["completely_unregistered_workload"])
@@ -102,8 +108,29 @@ class InputTests(unittest.TestCase):
             self.assertEqual(set(again.job_id), {job})
             self.assertEqual(set(again.stream_id), set(sub.stream_id))
         w = features.sliding_windows(d, 5, 5)
-        self.assertEqual(w.run_id.nunique(), 2)
+        self.assertEqual(w.stream_id.nunique(), 2)
+        self.assertEqual(set(w.run_id), {"same"})
+        self.assertEqual(w.groupby("stream_id").threeway_label.nunique().max(), 1)
         self.assertEqual(set(w.threeway_label), {"other", "ml_training"})
+
+    def test_sibling_ranks_share_a_cv_group(self):
+        frames = []
+        for host, gpu in (("host0", "gpu0"), ("host0", "gpu1"), ("host1", "gpu0"), ("host1", "gpu1")):
+            frames.append(features._normalize_columns(pd.DataFrame(dict(
+                run_id="job42", gpu_uuid=gpu, hostname=host, gpu_name="test",
+                workload_label="s16_train_fsdp1b", threeway_label="ml_training",
+                ts=np.arange(40, dtype=float) + 1000, gpu_utilization_pct=50.))))
+        d = pd.concat(frames, ignore_index=True)
+        w = features.sliding_windows(d, 20, 20)
+        # Per-GPU features, never stitched across hosts with the same device name...
+        self.assertEqual(w.stream_id.nunique(), 4)
+        # ...but one run-level fold key, so ranks of one job share a CV fold.
+        self.assertEqual(set(w.run_id), {"job42"})
+        ided = features.sliding_windows(assign_stream_and_job_ids(d), 20, 20)
+        self.assertEqual(ided.job_id.nunique(), 1)
+        self.assertEqual(ided.stream_id.nunique(), 4)
+        for col in ("run_id", "stream_id", "job_id"):
+            self.assertNotIn(col, features.get_feature_cols(ided))
 
     def test_low_utilization_is_not_failure(self):
         log = "STEP ts=123.4 kind=train batch_idx=1\nMulti-GPU run complete: abc (rc=0)"
@@ -111,6 +138,45 @@ class InputTests(unittest.TestCase):
         self.assertEqual(assess_collection("train_actor", 0.0, "Multi-GPU run complete: abc (rc=0)")[0], "accepted")
         self.assertEqual(assess_collection("train_sparse", 0.0)[0], "uncertain")
         self.assertEqual(assess_collection("train_sparse", 90.0, "Multi-GPU run complete: abc (rc=1)")[0], "failed")
+
+    def test_parallel_replicas_are_judged_by_their_own_status(self):
+        log = ("GPU 0: llm_infer_x FAIL(1) -> s16_inferrep_x_node0_gpu0_NVIDIA_T_aaaaaaaaaaaa.parquet\n"
+               "GPU 1: llm_infer_x OK -> s16_inferrep_x_node0_gpu1_NVIDIA_T_bbbbbbbbbbbb.parquet\n"
+               "Parallel run complete: [('llm_infer_x', 'FAIL(1)'), ('llm_infer_x', 'OK')]\n"
+               "1/2 replica(s) failed")
+        failed = assess_collection("s16_inferrep_x", 95.0, log,
+                                   filename="s16_inferrep_x_node0_gpu0_NVIDIA_T_aaaaaaaaaaaa.parquet")
+        ok = assess_collection("s16_inferrep_x", 0.0, log,
+                               filename="s16_inferrep_x_node0_gpu1_NVIDIA_T_bbbbbbbbbbbb.parquet")
+        self.assertEqual(failed[0], "failed")
+        self.assertEqual(ok[0], "accepted")
+
+    def test_telemetry_only_streams_take_the_heads_exit(self):
+        from classifier.collection_quality import evidence_logs, launcher_logs
+        rid = "abcdef123456"
+        tel = (f"Telemetry-only: s16_infershard_x, 8 GPUs, node=1, run_id={rid}, dur=600s\n"
+               f"GPU 0: saved s16_infershard_x_node1_gpu0_NVIDIA_T_{rid}.parquet\n"
+               f"Telemetry-only run complete: {rid} (rc=0)")
+        # The collector's own exit 0 is not evidence the remote workload ran.
+        self.assertEqual(assess_collection("s16_infershard_x", 0.0, tel)[0], "uncertain")
+        name = f"s16_infershard_x_node1_gpu0_NVIDIA_T_{rid}.parquet"
+        for rc, want in ((0, "accepted"), (1, "failed")):
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for host, stage, text in (
+                        ("head", f"s16_infershard_x_node0_{rid}", f"Multi-GPU run: s16_infershard_x, 8 GPUs, "
+                                                                  f"node=0, run_id={rid}\nMulti-GPU run complete: {rid} (rc={rc})"),
+                        ("peer", f"s16_infershard_x_node1_{rid}", tel),
+                        ("peer", f"s16_infershard_x_node1_{rid}.nic", "unrelated"),
+                        # The master log names files too, next to other cells' failures.
+                        ("peer", "queue_20261011", f"GPU 0: saved {name}\n"
+                                                   "Multi-GPU run complete: 999999999999 (rc=1)")):
+                    (root / host / "logs").mkdir(parents=True, exist_ok=True)
+                    (root / host / "logs" / f"{stage}.log").write_text(text)
+                used = evidence_logs(launcher_logs(root), root / "peer", name, [rid])
+                self.assertEqual([log["host"].name for log in used], ["head"])
+                text = "\n".join(log["text"] for log in used)
+                self.assertEqual(assess_collection("s16_infershard_x", 0.0, text, filename=name)[0], want)
 
     def test_quality_exclusion_does_not_drop_independent_peer_job(self):
         frame = pd.DataFrame(dict(run_id=["shared", "shared"], gpu_uuid=["gpu0", "gpu1"],

@@ -2,7 +2,7 @@
 import re
 from functools import lru_cache
 
-LABEL_SCHEMA_VERSION = "2026-10-11.1"
+LABEL_SCHEMA_VERSION = "2026-10-11.2"
 
 TRAINING_LABELS = {
     # Core training workloads
@@ -259,6 +259,11 @@ PHYSICAL_TRAINING = {
     "stealth_dilution", "ev2_combo",
 }
 PHYSICAL_CONTROLS = {"ev2b_baseline", "evasion2_baseline"}
+# Jobs that never take a gradient step are not training, whatever apparatus they
+# keep resident: none of their windows contains a weight update. The MN-I filler
+# at train fraction 0 is listed by name; every stalled_* cell (stalled_training.py
+# holds a model and optimizer but never steps it) is matched by prefix.
+ZERO_UPDATE_CONTROLS = {"advtrain_filler_only", "advtrain_satfiller_only"}
 OTHER_LABELS.update({"ffmpeg_amf_av1", "ffmpeg_amf_h264", "ffmpeg_amf_hevc_4k",
                      "ffmpeg_vaapi", "scientific_fft", "scientific_nbody", "symgemm_idle",
                      "cufft_hpc", "mining_proxy", "rendering"})
@@ -277,7 +282,12 @@ def canonical_workload(label):
 
 @lru_cache(maxsize=16384)
 def label_evidence(label):
-    """Return objective and routing provenance; objective is NOT per-window activity."""
+    """Return objective and routing provenance; objective is NOT per-window activity.
+
+    Training means the job performs gradient updates. A job that never updates
+    weights is not training, even when it is named, built or shaped like a
+    training job.
+    """
     cell = canonical_workload(label)
     lc = SCOPE.sub("", cell).lower()
     # Week 7 uses descriptive EC names; unlike model-name substrings these
@@ -288,13 +298,14 @@ def label_evidence(label):
         return ("ml_inference" if n in (1, 4) else "other" if n == 8 else "ml_training"), "week7_edge_case"
     if lc in PHYSICAL_TRAINING:
         return "ml_training", "physical_optimizer_steps"
-    if lc in {"advtrain_filler_only", "advtrain_satfiller_only"}:
+    if lc in ZERO_UPDATE_CONTROLS:
         return "other", "zero_training_filler_control"
+    if lc.startswith("stalled_"):
+        return "other", "zero_update_stall_control"
     # Explicit collection intent precedes model-name substrings (infer_gpt,
-    # nonml_ddp, etc.). A stalled training control retains its job objective.
+    # nonml_ddp, etc.).
     for prefix, target in (("nonml_", "other"), ("infer", "ml_inference"),
-                           ("train_", "ml_training"), ("advtrain_", "ml_training"),
-                           ("stalled_train_", "ml_training")):
+                           ("train_", "ml_training"), ("advtrain_", "ml_training")):
         if lc.startswith(prefix):
             return target, "collection_intent"
     for labels, target in ((TRAINING_LABELS, "ml_training"),
@@ -327,7 +338,7 @@ def validate_labels(labels):
 
 def workload_kind(label):
     lc = SCOPE.sub("", canonical_workload(label)).lower()
-    if lc.startswith("stalled_") or lc in PHYSICAL_CONTROLS or lc in {"advtrain_filler_only", "advtrain_satfiller_only"}:
+    if lc.startswith("stalled_") or lc in PHYSICAL_CONTROLS or lc in ZERO_UPDATE_CONTROLS:
         return "control"
     if lc in PHYSICAL_TRAINING or ADV.search(lc) or lc.startswith("stealth"):
         return "adversarial"
