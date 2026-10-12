@@ -1,0 +1,19 @@
+{
+  "configurations": 25,
+  "launches": 125,
+  "day_slots": 3,
+  "seconds_per_launch": 1800,
+  "nominal_pair_hours": 62.5,
+  "nominal_accelerator_hours": 1000.0,
+  "schedule_seed": 20261012,
+  "inventory_sha256": "1aa183e42c676734c139aea83f5d0a1e13ea421d52eb08f3ffc5835feb6807e9",
+  "status": "planned_not_launched",
+  "constraints": [
+    "Both nodes must use the identical plan and run stamps.",
+    "Smoke each implementation; verify idle dedicated nodes before the legacy queue, which reaps compute processes.",
+    "Run each day slot on a distinct collection date; validate all-worker completion/progress before counting a repetition.",
+    "Uniform workload seed support is pending; schedule randomization is not a model/data seed.",
+    "Hours exclude load, compile, sync, teardown and failed attempts. No dollar estimate without current pricing.",
+    "Do not launch the whole plan automatically; select bounded batches and use durable synchronization plus peer-gated shutdown."
+  ]
+}

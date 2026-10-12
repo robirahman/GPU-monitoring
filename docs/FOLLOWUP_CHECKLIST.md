@@ -16,11 +16,11 @@ not useful training time. Historical job identities remain provisional.
 
 - [x] Reconcile the main inventory with the completed four host TPU recovery and
   recovered NIC sidecars. Evidence: [recovery decisions](workload_review_2026-10-12/recovery/README.md).
-- [ ] Publish the updated inventory snapshot and this checklist together with
-  their accounting and provenance.
-- [ ] Run the existing label, identity, ingestion, recovery and evaluation CPU
+- [x] Publish the [updated inventory snapshot](workload_review_2026-10-12/current/summary.json)
+  and this checklist with their accounting and provenance.
+- [x] Run the existing label, identity, ingestion, recovery and evaluation CPU
   regressions; record failures and fixes before rebuilding caches.
-- [ ] Check analysis input availability without hydrating the home filesystem;
+- [x] Check analysis input availability without hydrating the home filesystem;
   produce an exact missing object manifest for accelerator telemetry, NICs and logs.
 - [ ] Restore the required analysis objects to durable external storage and verify
   their hashes. Do not require 20 GB of scope/waveform data for an NVML/NIC experiment.
@@ -30,6 +30,10 @@ not useful training time. Historical job identities remain provisional.
   Keep identical old job test windows in the full and ablated arms.
 - [ ] Repeat the most weakly sampled existing families before interpreting their
   apparent generalization. Start with the campaign specified below.
+- [x] Implement and test observed job hour false alert accounting and bounded
+  onset-to-alert delay in the exhaustive evaluator. Real corpus results remain pending.
+- [x] Generate the deterministic [repetition plan](followup_execution_2026-10-12/repetition_plan/summary.json):
+  25 configurations, five fresh launches each, three day slots. No VMs launched.
 
 ## Corpus accounting and recovery
 
@@ -178,3 +182,9 @@ the local LFS cache, recovered files available. GCloud VM discovery reports no
 active account. Shell GitHub DNS is unavailable; the connected GitHub API can
 read the repository. Implementation and CPU validation can proceed locally.
 Cloud authentication has been requested; do not paste credentials into this file.
+
+Initial implementation and attempted execution are recorded in
+[the execution report](followup_execution_2026-10-12/README.md). The full evaluation
+stopped at input preflight: 10,048 missing LFS objects / 420,089,953 bytes.
+The checklist remains open for collection, useful-learning validation, calibrated
+operating points and real corpus results; passing CPU fixtures does not complete them.

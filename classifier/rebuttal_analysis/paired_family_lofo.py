@@ -21,6 +21,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from sklearn.pipeline import make_pipeline
 
 from classifier.data_sources import sha256
+from classifier.operational_metrics import operational_metrics
 from classifier.threeway_improved import get_feature_cols
 from classifier.multinode_features import stage2_mask_multinode
 from classifier.workload_labels import LABEL_SCHEMA_VERSION, FAMILY_SCHEMA_VERSION, workload_family
@@ -102,7 +103,8 @@ def metrics(y, pred, probability, jobs, threshold, train_frac=None):
 
 
 def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
-             family_level="mechanism", threshold=0.5, binary=False, max_reps=0):
+             family_level="mechanism", threshold=0.5, binary=False, max_reps=0,
+             stride_sec=15.0):
     frame, folds = fold_plan(frame.reset_index(drop=True), new_jobs, family_level)
     ids = row_ids(frame)
     tf = (frame.label_train_frac.to_numpy(float) if "label_train_frac" in frame
@@ -154,6 +156,7 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
                 predictions.append(dict(row_id=ids.iloc[i], family=fam, arm=arm,
                                         job_id=frame.job_id.iloc[i], run_id=frame.run_id.iloc[i],
                                         window_start=float(frame.window_start.iloc[i]),
+                                        window_end=float(frame.window_end.iloc[i]),
                                         truth=y[i], prediction=p, p_training=float(pr), train_frac=float(tf[i]),
                                         paired_test=frame.job_id.iloc[i] not in new_jobs,
                                         hardware=frame.gpu_name.iloc[i] if "gpu_name" in frame else "",
@@ -188,6 +191,9 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
                   features=cols, families=sorted(frame.family.unique()),
                   n_windows=len(frame), n_jobs=frame.job_id.nunique(),
                   ablated_jobs=sorted(new_jobs), per_fold=scores)
+    result['operational'] = operational_metrics(full, threshold, stride_sec)
+    result['operational_by_family'] = {
+        str(f): operational_metrics(g, threshold, stride_sec) for f, g in full.groupby('family')}
     for population, part in (("all", full), ("paired_old_jobs", full[full.paired_test]),
                              ("new_jobs", full[~full.paired_test])):
         if len(part):
@@ -216,6 +222,8 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
             for b, g in per_job.groupby(train_share_bin(per_job.share))}
     if paired:
         base = predictions[predictions.arm == "baseline"]
+        result['operational_baseline_old_jobs'] = operational_metrics(base, threshold, stride_sec)
+        result['operational_full_old_jobs'] = operational_metrics(full[full.paired_test], threshold, stride_sec)
         result["baseline_old_jobs"] = metrics(base.truth, base.prediction, base.p_training.to_numpy(), base.job_id, threshold)
         full_old = [s["accuracy"] for s in scores if s["arm"] == "full" and s["test_population"] == "old_jobs"]
         base_old = [s["accuracy"] for s in scores if s["arm"] == "baseline"]
@@ -266,7 +274,8 @@ def main():
         raise ValueError("Ablation removes zero jobs")
     result, predictions, splits = evaluate(w, new_jobs, trees=a.trees, seed=a.seed,
                                            shape=a.shape, family_level=a.family_level,
-                                           threshold=a.threshold, binary=a.binary, max_reps=a.max_reps)
+                                           threshold=a.threshold, binary=a.binary, max_reps=a.max_reps,
+                                           stride_sec=float(cache['config']['stride_sec']))
     result["unresolved_excluded"] = unresolved
     result["steps_only"] = a.steps_only
     result["windows_sha256"] = sha256(a.windows)

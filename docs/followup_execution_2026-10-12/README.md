@@ -1,0 +1,91 @@
+# Follow up execution record
+
+The first implementation adds exact analysis input auditing, a reproducible
+evaluation runner, a repetition planner, and operational metrics in the corrected
+exhaustive family evaluator. No new classification accuracy is claimed.
+
+## Implemented and exercised
+
+- `scripts/check_analysis_inputs.py` shares the cache input selection policy,
+  hashes available payloads and emits all-input and missing-object CSVs. It excludes
+  scope waveforms, quarantine and unrelated sensor files. Missing/corrupt payloads
+  stop evaluation before a feature cache is built.
+- `scripts/run_followup_evaluation.py` runs preflight, pooled 30-second/15-second
+  windows, paired mechanism-family evaluation, backbone holdout and STEP-only
+  evaluation. It pins the initial threshold at 0.5, records each phase and stops
+  on failure. This is not a calibrated deployment operating point.
+- `classifier/operational_metrics.py` reports benign observed job hours, false
+  alert episodes per job hour, jobs alerted and onset-to-alert delay bounds.
+  Overlapping windows count once toward exposure; unobserved gaps count zero.
+  Decisions occur at window end, excluding computation/transport delay. Delay
+  requires a STEP-backed negative followed by a STEP-backed training window;
+  program-only onsets are excluded and left/gap-censored onsets are counted.
+  Misses are separate from detected-only delay quantiles. Threshold selection,
+  deployment calibration and other alert rules remain open checklist items.
+- `scripts/plan_followup_repetitions.py` generated 125 planned launches for 25
+  H100 configurations, five fresh launches each, over three day slots. Each is
+  30 minutes on two eight-GPU hosts: 62.5 nominal pair-hours / 1,000 GPU-hours.
+  The plan includes no startup/failure overhead or dollar estimate. Uniform
+  workload seed support remains pending; a schedule seed is not a training seed.
+
+## Actual execution outcome
+
+The evaluation runner was invoked with `--run`. It stopped at preflight with
+exit code 2: **10,048 unique LFS objects / 420,089,953 bytes** are missing,
+affecting 12,340 selected paths. The complete selected inputs contain 14,716
+paths / 667,994,709 unique bytes including logs. The 21 GB full LFS archive is
+not required for this telemetry/NIC evaluation.
+
+[Input summary](input_summary.json) and [execution state](evaluation_attempt.json)
+record the attempt. Exact path/object manifests were generated in
+`/tmp/spar-followup-20261012/inputs/`; regenerate them with the command below
+if this temporary directory disappears. No classifier fitting or GPU collection
+was performed by this blocked attempt.
+
+The existing audit remediation, multinode review, telemetry recovery and work-log
+collection suites, plus the new follow-up suite, pass **66 tests**. These cover
+actual cache chunking on fixtures, exhaustive/paired model fitting on fixtures,
+input corruption/missing data, overlap/gap accounting, censored onset and
+repetition identity. [Validation record](validation.json).
+
+GCloud VM discovery failed because no account was active. GitHub shell DNS is
+also unavailable in this sandbox; commits are published through the connected
+GitHub API. Local `.git` is read-only, so remote commits do not advance the local
+branch reference in this session. The local edited files match the published files.
+
+## Resume on a prepared analysis VM
+
+Use a current checkout with the historical telemetry available in an external
+LFS object cache. Choose durable paths sized for raw/feature caches and results;
+do not materialize the corpus in the Cloud Shell home filesystem.
+
+```sh
+python3 scripts/check_analysis_inputs.py \
+  --objects /durable/lfs/objects --out /durable/followup/inputs
+
+python3 scripts/run_followup_evaluation.py \
+  --objects /durable/lfs/objects --work /durable/followup/analysis --workers 2 --run
+```
+
+The runner rechecks inputs itself and records commands/status in `execution.json`.
+Run it in a persistent terminal/service on the analysis VM and sync results to
+durable object storage. Existing local files are used directly; the objects path
+is only needed for unresolved pointers. Restore missing payloads using the emitted
+OID/path manifest before retrying. Do not bypass preflight to score a partial corpus.
+
+## Collection plan status
+
+The [CSV](repetition_plan/repetitions.csv) is a plan, not an automatic scheduler.
+Every `day_slot` must map to a distinct actual date and both nodes must use the
+same ordered plan. Before running a bounded batch: select dedicated idle nodes,
+smoke the workloads, wire/record independent seeds, preserve per-worker completion
+and progress, and use durable sync plus peer-gated shutdown. The legacy queue
+reaps existing compute processes, so it must not be launched on shared busy nodes.
+Multi-day scheduling and uniform seed control remain incomplete.
+
+Regenerate the plan from the inventory:
+
+```sh
+python3 scripts/plan_followup_repetitions.py \
+  --out /durable/followup/repetition_plan --launches 5 --days 3 --duration 1800
+```

@@ -468,6 +468,12 @@ class EvaluationTests(unittest.TestCase):
         self.assertNotIn("expected_ranks", result["features"])
         self.assertEqual(result["new_jobs"]["jobs"], len(new_jobs))
         self.assertEqual(result["paired_old_jobs"]["windows"], result["baseline_old_jobs"]["windows"])
+        self.assertIn('window_end', pred)
+        # Twelve benign jobs each have two overlapping 30-second windows:
+        # 45 seconds of exposure per job, not 60 seconds.
+        self.assertAlmostEqual(result['operational']['benign_job_hours'], 12 * 45 / 3600)
+        self.assertEqual(result['operational_full_old_jobs']['benign_job_hours'],
+                         result['operational_baseline_old_jobs']['benign_job_hours'])
         self.assertEqual(result["all"]["windows"],
                          result["paired_old_jobs"]["windows"] + result["new_jobs"]["windows"])
         for fam in result["families"]:

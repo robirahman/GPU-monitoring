@@ -1,0 +1,80 @@
+{
+  "started_utc": "2026-10-12T22:14:28.030069+00:00",
+  "requested_run": true,
+  "status": "blocked_inputs",
+  "threshold_policy": "fixed 0.5, not a calibrated deployment operating point",
+  "plan": [
+    {
+      "name": "cache",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/build_mn_window_cache.py",
+        "/tmp/spar-followup-20261012/windows_30_15.parquet",
+        "30",
+        "15",
+        "2"
+      ]
+    },
+    {
+      "name": "mechanism_paired",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/tmp/spar-followup-20261012/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--exclude-campaigns",
+        "20261001,20261003",
+        "--out",
+        "/tmp/spar-followup-20261012/mechanism_paired.json"
+      ]
+    },
+    {
+      "name": "backbone",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/tmp/spar-followup-20261012/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--family-level",
+        "backbone",
+        "--out",
+        "/tmp/spar-followup-20261012/backbone.json"
+      ]
+    },
+    {
+      "name": "steps_only",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/tmp/spar-followup-20261012/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--steps-only",
+        "--out",
+        "/tmp/spar-followup-20261012/steps_only.json"
+      ]
+    }
+  ],
+  "completed": [],
+  "returncode": 2
+}

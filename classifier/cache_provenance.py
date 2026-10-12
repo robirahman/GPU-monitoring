@@ -9,7 +9,8 @@ from classifier.window_labels import default_log_paths
 from classifier.workload_labels import LABEL_SCHEMA_VERSION, FAMILY_SCHEMA_VERSION
 
 
-def provenance(root=ROOT, **config):
+def input_paths(root=ROOT):
+    """Exact analysis input policy shared with the availability audit."""
     root = Path(root)
     paths = accelerator_files(root)
     paths += sorted(p for p in (root / "data").rglob("nic_*.parquet") if not quarantined(p))
@@ -18,8 +19,13 @@ def provenance(root=ROOT, **config):
         paths.append(root / "data/quality_exclusions.json")
     # Window labels are read from the launcher logs, so a log is an input too.
     paths += default_log_paths(root)
+    return sorted(set(paths))
+
+
+def provenance(root=ROOT, **config):
+    root = Path(root)
     inputs = []
-    for p in paths:
+    for p in input_paths(root):
         payload = resolve_payload(p)  # completeness required even for cache reuse
         ptr = pointer(p)
         oid = ptr[0] if ptr else sha256(payload)

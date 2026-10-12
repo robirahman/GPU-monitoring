@@ -35,7 +35,8 @@ def main():
     arms = {}
     for tag, shape in (("all", False), ("shape", True)):
         result, pred, splits = evaluate(w, trees=a.trees, shape=shape, binary=True,
-                                        max_reps=a.max_reps, family_level=a.family_level)
+                                        max_reps=a.max_reps, family_level=a.family_level,
+                                        stride_sec=float(cache['config']['stride_sec']))
         result["cache_fingerprint"] = cache["fingerprint"]
         out.with_suffix(f".{tag}.json").write_text(json.dumps(result, indent=2))
         out.with_suffix(f".{tag}.splits.json").write_text(json.dumps(splits, indent=2))
