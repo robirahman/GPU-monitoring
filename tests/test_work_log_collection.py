@@ -114,6 +114,33 @@ class WorkLogCollectionTests(unittest.TestCase):
             path.write_text("Run ID: abcdef123456\nSTEP ts=100.0 kind=infer\n")
             self.assertEqual(parse_work_log(path)["host"], "host-b")
 
+    def test_headerless_launcher_joins_by_exact_filename_run_id(self):
+        import pandas as pd
+        from classifier.window_labels import build_work_index, job_work_intervals
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bucket/runs/20261001/host-b/logs/s16_inferhf_qwen7b_node1_abcdef123456.log.gz"
+            path.parent.mkdir(parents=True)
+            with gzip.open(path, "wt") as f:
+                f.write("STEP ts=110 kind=infer node=1 rank=8\nSTEP ts=120 kind=infer node=1 rank=8\n")
+            parsed = parse_work_log(path)
+            self.assertEqual(parsed["run_id_source"], "filename")
+            frame = pd.DataFrame(dict(job_id=["j", "j"], run_id="abcdef123456",
+                                      workload_label="s16_inferhf_qwen7b", hostname="host-b",
+                                      source_path="cell_node1_gpu0.parquet", ts=[100., 130.]))
+            intervals = job_work_intervals(frame, build_work_index([path]))
+            self.assertEqual(list(label_windows([100., 120.], [120., 130.], intervals["j"])["label"]),
+                             ["ml_inference", "other"])
+            with gzip.open(path, "wt") as f:
+                f.write("Run ID: 999999999999\nSTEP ts=110 kind=infer\n")
+            with self.assertRaisesRegex(ValueError, "Conflicting header/filename"):
+                parse_work_log(path)
+
+    def test_unstructured_filename_does_not_supply_a_run_id(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "debug_abcdef123456.log"
+            path.write_text("STEP ts=110 kind=infer\n")
+            self.assertIsNone(parse_work_log(path)["run_id"])
+
     def test_reused_run_id_outside_telemetry_is_not_label_evidence(self):
         import pandas as pd
         from classifier.window_labels import job_work_intervals

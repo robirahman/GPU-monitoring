@@ -47,9 +47,11 @@ def audit(streams_path, root, out, window=30., stride=15.):
             lab = label_windows(starts, starts + window, iv)
             labels, train, infer = lab["label"], lab["train_s"], lab["infer_s"]
         counts = pd.Series(labels, dtype=str).value_counts().to_dict()
+        workers = sorted(int(n) for n in iv.node.unique() if n >= 0) if iv is not None else []
         rows.append(dict(job_id=job, run_id=g.run_id.iloc[0], workload_label=g.workload_label.iloc[0],
                          observed_hosts=g.hostname.nunique(), observed_streams=g.stream_id.nunique(),
                          first_telemetry=lo, last_telemetry=hi, matched_temporal_evidence=iv is not None,
+                         logged_worker_indices=json.dumps(workers),
                          probe_windows=len(starts), **{k+"_windows": int(counts.get(k, 0))
                                                      for k in ("ml_training", "ml_inference", "other", "unresolved")}))
         windows.extend(dict(job_id=job, window_start=float(s), window_end=float(s+window),
@@ -60,9 +62,15 @@ def audit(streams_path, root, out, window=30., stride=15.):
     jobs.to_csv(out / "tpu_jobs.csv", index=False)
     pd.DataFrame(windows).to_csv(out / "tpu_span_windows.csv", index=False)
     summary = dict(commit=subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip(),
+                   code_sha256={p: sha256(root / p) for p in (
+                       "scripts/audit_work_log_coverage.py", "scripts/gcp/fetch_work_logs.py",
+                       "classifier/window_labels.py", "classifier/multinode_features.py",
+                       "classifier/workload_labels.py")},
                    inventory_sha256=sha256(streams_path), logs={str(p.relative_to(root)): sha256(p) for p in logs},
                    target_jobs=len(jobs), jobs_with_temporally_matched_steps=int(jobs.matched_temporal_evidence.sum()),
                    jobs_without_temporally_matched_steps=int((~jobs.matched_temporal_evidence).sum()),
+                   probe_window_counts={k: int(jobs[k+"_windows"].sum())
+                                        for k in ("ml_training", "ml_inference", "other", "unresolved")},
                    window_seconds=window, stride_seconds=stride,
                    note="Span probes check time joins; actual cache windows additionally require sample/rank coverage.")
     (out / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")

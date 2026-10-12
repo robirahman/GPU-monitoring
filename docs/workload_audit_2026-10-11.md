@@ -146,13 +146,12 @@ link, which end in a logged training step.
   and load windows are not separated). A mixed program (every disguise,
   distributed RL, single-GPU PPO, dilution sweeps above N=1) is `unresolved`:
   kept in the caches, never fitted or scored.
-- Coverage in the tracked logs, by multi-node job: 114 jobs have STEP evidence
-  (all on 16-GPU clusters), 936 take a program label and 119 are unresolved
-  (104 of them TPU disguises: TPU launcher logs stay in GCS). No multi-node
-  inference job has STEP evidence: the vLLM workloads emit none, and the
-  HF-sharded and recommender cells that do left no committed logs. Committing
-  the TPU logs, or adding STEP lines to the vLLM workloads, would extend
-  evidence-based labels.
+- Before the October 12 log import, coverage in the tracked logs, by multi-node job: 114 jobs had STEP evidence
+  (all on 16-GPU clusters), 936 took a program label and 119 were unresolved
+  (the earlier count included 104 TPU disguises whose launcher logs were in GCS).
+  No multi-node inference job had committed STEP evidence. The October 12
+  recovery below supersedes these log-coverage counts; the saved inventory
+  identifies 75 multi-host and 29 single-host jobs within the 104 TPU targets.
 - Cache columns: `threeway_label` (window work), `job_label` (job objective),
   `label_source` (steps, program, unresolved), `label_train_s`,
   `label_infer_s`, `label_other_s` (seconds of logged work in the window) and
@@ -172,10 +171,26 @@ Their `label_train_frac` records how thin the training was.
 
 The saved stream inventory independently identifies 104 mixed-work TPU campaign
 jobs whose launcher IDs occur in tracked `data/tpu` paths. Before the GCS export,
-none has a temporally matching committed worker log. A separate older TPU trace
-uses a non-campaign run ID and is outside this set. Log coverage must be measured
-after import; a matching run ID alone is insufficient if the epochs do not
-overlap the recorded telemetry.
+none had a temporally matching committed worker log. The completed export has
+950 logs and no download failures. Import verified every original and compressed
+SHA-256 and retained 642 STEP logs (6,074,373 compressed bytes): 618 TPU worker
+logs with 720,773 STEP records and 24 Hugging Face inference logs with 5,900
+records. The manifest records the other 308 GPU logs as having no STEP evidence.
+
+**All 104 TPU disguise jobs now have STEP intervals overlapping their recorded
+telemetry.** The logging worker indices cover every observed host for each job:
+29 jobs have one host, 63 have two and 12 have four. Across 4,293 span-probe
+windows (30 seconds, 15-second stride), 3,920 contain training and 373 are other;
+none is unresolved. These probes include startup/filler spans and do not certify
+the sample/rank eligibility of a rebuilt feature cache. A separate older TPU
+trace uses a non-campaign run ID and remains outside this set.
+
+The [per-job results](work_log_coverage_2026-10-12/tpu_jobs.csv),
+[window probes](work_log_coverage_2026-10-12/tpu_span_windows.csv) and
+[provenance](work_log_coverage_2026-10-12/summary.json) record worker indices,
+labels, inventory hash, log hashes and the exact analysis-code hashes. The
+recorded `commit` is the checkout parent at analysis time; `code_sha256` captures
+the additional parser/audit changes included with these results.
 
 Recover the logs from an authenticated Cloud Shell:
 
@@ -196,6 +211,16 @@ truth. Session/run/worker paths prevent different captures from overwriting one
 another. The coverage report probes 30-second windows at 15-second stride over
 recorded spans; actual feature windows additionally require sample/rank coverage.
 Rebuild caches after importing: log content is part of their fingerprint.
+
+Recovered GPU launcher logs can start after the `Run ID:` header. The parser now
+uses the canonical `_node<N>_<hex-run-id>.log[.gz]` filename when that header is
+absent and rejects a conflicting header. This preserves the original log bytes
+while making recovered HF STEP evidence available to both feature caches.
+The 24 HF logs cover 12 run IDs; six of those identify jobs in the accepted
+saved inventory, and all six have temporally overlapping STEP intervals. The
+remaining logs are retained as evidence without asserting a telemetry match.
+All 71 relevant CPU tests pass, including headerless-log joins and conflicting
+identity rejection; scanning the existing launcher logs found no conflicts.
 
 Both vLLM programs now emit pending and completed STEP events. Offline
 `llm.generate()` reports batch start/end epochs and output-token counts; async

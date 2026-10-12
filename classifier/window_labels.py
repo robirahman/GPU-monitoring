@@ -230,6 +230,7 @@ LOG_NAME_RE = re.compile(r"^[^_]+__(?P<host>.+?)__")
 # The launcher's node rank: its header, else run_stage's <stage>_node<N>_<rid>.log.
 LOG_NODE_RE = re.compile(r"(?:Multi-GPU run|Telemetry-only): .*?\bnode=(\d+)")
 LOG_NAME_NODE_RE = re.compile(r"_node(\d+)_[0-9a-f]{8,}\.log")
+LOG_NAME_RUN_RE = re.compile(r"_node\d+_(?P<run_id>[0-9a-f]{8,})\.log(?:\.gz)?$")
 STREAM_NODE_RE = r"_node(\d+)_gpu\d+"
 STREAM_RANK_RE = re.compile(r"_node(\d+)_gpu(\d+)")
 HEX_ID_RE = re.compile(r"[0-9a-f]{8,}")
@@ -247,6 +248,14 @@ def parse_work_log(path) -> dict:
     text = read_log_text(path)
     name = Path(path).name
     run_id = RUNID_RE.search(text)
+    # Some launcher captures start at the workload subprocess, after the run
+    # header was printed. Their canonical stage/node/run filename still names
+    # the execution. Keep source bytes intact and use only this anchored form.
+    filename_run = LOG_NAME_RUN_RE.search(name)
+    if run_id and filename_run and run_id["run_id"] != filename_run["run_id"]:
+        raise ValueError(f"Conflicting header/filename run IDs: {path}")
+    run_source = "header" if run_id else ("filename" if filename_run else None)
+    run_id = run_id or filename_run
     host = LOG_NAME_RE.match(name)
     gcs_host = re.search(r"/runs/[^/]+/([^/]+)/logs/", str(path).replace("\\", "/"))
     node = LOG_NODE_RE.search(text) or LOG_NAME_NODE_RE.search(name)
@@ -278,7 +287,7 @@ def parse_work_log(path) -> dict:
     # unknown through the telemetry tail, rather than becoming idle negatives.
     rows.extend((np.inf, "unresolved", nd, rk, start)
                 for (nd, rk, _), start in pending.items())
-    return dict(run_id=run_id["run_id"] if run_id else None, log=str(path),
+    return dict(run_id=run_id["run_id"] if run_id else None, run_id_source=run_source, log=str(path),
                 host=host["host"] if host else (gcs_host[1] if gcs_host else None),
                 node=int(node[1]) if node else None,
                 events=pd.DataFrame(rows, columns=["ts", "work", "node", "rank", "start_ts"]))
