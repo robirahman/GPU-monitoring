@@ -686,7 +686,7 @@ for rep in $(seq 1 "$REPS"); do
   # confounds three things: a resident sharded model, the filler's compute, and
   # the deadline's collectives. These three cells separate them. Resident
   # footprint measured from the pilot: 1.4 GB at s16.
-  #   stalled_train  model  + idle    + deadline comm   (labelled ml_training)
+  #   stalled_train  model  + idle    + deadline comm   (labelled other: never steps)
   #   nonml_hpc      dummy  + filler  + deadline comm   (labelled other)
   #   nonml_comm     none   + heavy all_reduce          (labelled other)
   # nonml_hpc is the decisive one: identical to filler_only except the model is a
@@ -1107,7 +1107,7 @@ for rep in $(seq 1 "$REPS"); do
   # confounds three things: a resident sharded model, the filler's compute, and
   # the deadline's collectives. These three cells separate them. Resident
   # footprint measured from the pilot: 1.8 GB at s8.
-  #   stalled_train  model  + idle    + deadline comm   (labelled ml_training)
+  #   stalled_train  model  + idle    + deadline comm   (labelled other: never steps)
   #   nonml_hpc      dummy  + filler  + deadline comm   (labelled other)
   #   nonml_comm     none   + heavy all_reduce          (labelled other)
   # nonml_hpc is the decisive one: identical to filler_only except the model is a
@@ -1194,7 +1194,7 @@ for rep in $(seq 1 "$REPS"); do
   # confounds three things: a resident sharded model, the filler's compute, and
   # the deadline's collectives. These three cells separate them. Resident
   # footprint measured from the pilot: 10.7 GB at s1.
-  #   stalled_train  model  + idle    + deadline comm   (labelled ml_training)
+  #   stalled_train  model  + idle    + deadline comm   (labelled other: never steps)
   #   nonml_hpc      dummy  + filler  + deadline comm   (labelled other)
   #   nonml_comm     none   + heavy all_reduce          (labelled other)
   # nonml_hpc is the decisive one: identical to filler_only except the model is a

@@ -41,23 +41,13 @@ ACCEL = ("_Google_TPU_", "_NVIDIA_", "_AMD_")
 # w0c0..w0c7 (ONE host, 8 chips) -- the two ran on differently-shaped v5e slices,
 # which is exactly why host count is measured here rather than inferred from the
 # chip count in the label.
-SCOPE = re.compile(r"^(?:smoke_)?(s16|s8|s1|tpuT4|tpuT8|tpuT16|tpuTMS4|tpuTMS)_")
-ADV = re.compile(r"(advtrain|adversarial|whitebox|symgemm|typeconf|stalled|diluted)", re.I)
+from classifier.workload_labels import SCOPE, ADV, canonical_workload, workload_kind
+from classifier.data_sources import accelerator_files, resolve_payload
+from scripts.audit_data_inventory import timestamp_series, filename_identity
 
 
 def corpus_files():
-    files = []
-    for p in sorted((PROJECT_ROOT / "data").rglob("*.parquet")):
-        if p.name.startswith("nic_"):
-            continue                       # host-NIC sidecars, not GPU streams
-        if any("_quarantine" in part for part in p.parts):
-            continue                       # idle-screened streams are not corpus
-        files.append(p)
-    for sub in ("week4/data", "week4/results/ddp", "week4/results/dataset_scale"):
-        d = PROJECT_ROOT / sub
-        if d.exists():
-            files += sorted(d.rglob("*.parquet"))
-    return files
+    return accelerator_files(PROJECT_ROOT)
 
 
 def hw_from_stem(stem):
@@ -88,43 +78,32 @@ def family(g):
 def scan(files):
     rows, bad = [], 0
     for i, p in enumerate(files):
-        try:
-            names = set(pq.ParquetFile(p).schema.names)
-            tcol = "ts" if "ts" in names else (
-                "timestamp_epoch" if "timestamp_epoch" in names else None)
-            if tcol is None:
-                bad += 1
-                continue
-            want = [c for c in (tcol, "gpu_name", "workload_label", "run_id",
-                                "gpu_uuid", "hostname") if c in names]
-            d = pq.read_table(p, columns=want).to_pandas()
-        except Exception:
+        payload = resolve_payload(p)
+        pf = pq.ParquetFile(payload)
+        names = set(pf.schema.names)
+        want = [c for c in ("ts", "timestamp_epoch", "timestamp", "timestamp_utc", "gpu_name",
+                            "workload_label", "run_id", "gpu_uuid", "hostname") if c in names]
+        d = pf.read(columns=want).to_pandas()
+        d["t"] = timestamp_series(d)
+        d = d[np.isfinite(d.t) & d.t.between(1e8, 4e9)].copy()
+        if len(d) < 2:
             bad += 1
             continue
-        t = pd.to_numeric(d[tcol], errors="coerce").dropna()
-        t = t[(t > 1e8) & (t < 4e9)]           # plausible epoch seconds only
-        if len(t) < 2:
-            bad += 1
-            continue
-        gpu = str(d["gpu_name"].iloc[0]) if "gpu_name" in d.columns else ""
-        if not gpu or gpu in ("nan", "None"):
-            gpu = hw_from_stem(p.stem)
-        lab = str(d["workload_label"].iloc[0]) if "workload_label" in d.columns else p.stem
-        rid = str(d["run_id"].iloc[0]) if "run_id" in d.columns else p.stem
-        uid = str(d["gpu_uuid"].iloc[0]) if "gpu_uuid" in d.columns else p.stem
-        host = str(d["hostname"].iloc[0]) if "hostname" in d.columns else ""
-        if not host or host in ("nan", "None"):
-            # TPU parquets name the worker in the stem (_w<W>c<C>); NVIDIA
-            # multi-node ones carry a real hostname. Either identifies the
-            # MACHINE, which is what the multi-node question turns on.
-            m = re.search(r"_w(\d+)c\d+", p.stem)
-            host = f"w{m.group(1)}" if m else ""
-        span = float(t.max() - t.min())
-        rows.append(dict(file=p.stem, gpu=gpu, hw=family(gpu), label=lab,
-                         base=RANK.sub("", lab), run_id=rid, host=host,
-                         stream=f"{rid}|{uid}", rows=len(t), span_s=span,
-                         hz=(len(t) - 1) / span if span > 0 else np.nan,
-                         t0=float(t.min()), t1=float(t.max())))
+        label, hw, rid, host, device = filename_identity(p)
+        for col, fallback in (("workload_label", label), ("gpu_name", hw), ("run_id", rid),
+                              ("gpu_uuid", device or p.stem), ("hostname", host)):
+            if col not in d:
+                d[col] = fallback
+            d[col] = d[col].fillna(fallback)
+        for (rid, uid, host, lab, gpu), g in d.groupby(
+                ["run_id", "gpu_uuid", "hostname", "workload_label", "gpu_name"], dropna=False):
+            span = float(g.t.max() - g.t.min())
+            base = RANK.sub("", lab)
+            rows.append(dict(file=p.stem, gpu=gpu, hw=family(gpu), label=lab,
+                             base=canonical_workload(lab), run_id=rid, host=host,
+                             stream=f"{rid}|{uid}|{host}|{base}", rows=len(g), span_s=span,
+                             hz=(len(g)-1)/span if span else np.nan,
+                             t0=float(g.t.min()), t1=float(g.t.max())))
         if (i + 1) % 2000 == 0:
             print(f"  {i + 1:,}/{len(files):,}", flush=True)
     return pd.DataFrame(rows), bad
@@ -148,7 +127,7 @@ def topology(dd):
     dd["hosts"] = dd.run_id.map(hosts).fillna(1).astype(int)
     per_node = dd.scope.isin(["s1", "s8"])
     dd["multinode"] = np.where(per_node, False,
-                               (dd.hosts > 1) | (dd.scope == "s16"))
+                               dd.hosts > 1)
     return dd
 
 
@@ -158,7 +137,7 @@ def report(d):
     d["min"] = d.span_s / 60
     d["scope"] = d.base.map(lambda l: (SCOPE.match(str(l)).group(1)
                                        if SCOPE.match(str(l)) else "single-GPU (legacy)"))
-    d["kind"] = np.where(d.base.str.contains(ADV, na=False), "adversarial", "honest")
+    d["kind"] = d.base.map(workload_kind)
 
     def block(title, frame):
         g = frame.groupby("hw").agg(
@@ -177,7 +156,7 @@ def report(d):
 
     block("file level (what is on disk)", d)
     dd = d.sort_values("span_s", ascending=False).drop_duplicates("stream", keep="first")
-    block("deduplicated (the corpus, as load_all_data sees it)", dd)
+    block("longest copy per stream (use audit_data_inventory.py for timestamp unions)", dd)
 
     for name, frame in (("class", "cls"), ("scope", "scope"), ("kind", "kind")):
         g = dd.groupby(frame).agg(wkl=("base", "nunique"), runs=("run_id", "nunique"),

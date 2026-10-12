@@ -41,7 +41,7 @@ and wiring them in is the only way to measure which.
 
 Granularity
 -----------
-`sliding_windows_multinode` emits ONE row per (job, window) with rank-0's
+`sliding_windows_multinode` emits ONE row per (job, window) with pooled per-rank
 single-stream features plus the cross-rank block, where `sliding_windows` emits
 one row per (stream, window). Fewer, wider rows. This writes a SEPARATE cache
 rather than replacing win_full.parquet, because the per-stream cache is what
@@ -68,6 +68,8 @@ import pyarrow.parquet as pq
 
 WORK = os.environ.get("SPAR_WORK", "/var/tmp/spar_analysis")
 RAW = os.path.join(WORK, "raw_mn.parquet")
+# Per-job slots of logged work, read once from logs/ so workers never parse logs.
+EVENTS = os.path.join(WORK, "work_events_mn.parquet")
 
 
 def rss():
@@ -76,10 +78,12 @@ def rss():
 
 
 def job_chunk(args):
-    idx, jobs, win, stride = args
+    idx, jobs, win, stride, events_path = args
     from classifier.multinode_features import sliding_windows_multinode
+    from classifier.window_labels import load_work_events
     t = pq.read_table(RAW, filters=[("job_id", "in", list(jobs))]).to_pandas()
-    w = sliding_windows_multinode(t, win, stride)
+    w = sliding_windows_multinode(t, win, stride,
+                                  work_events=load_work_events(events_path, jobs))
     out = os.path.join(WORK, f"mnpart_{idx:03d}.parquet")
     if w.empty:
         return idx, len(jobs), 0, None
@@ -94,12 +98,19 @@ def main():
     nproc = int(sys.argv[4]) if len(sys.argv) > 4 else 4
     os.makedirs(WORK, exist_ok=True)
     t0 = time.time()
+    from classifier.cache_provenance import provenance, cache_matches, stamp_cache
+    manifest = provenance(window_sec=win, stride_sec=stride, granularity="pooled_job")
+    if cache_matches(out, manifest):
+        print(f"validated cache {out}", flush=True)
+        return
 
-    if not os.path.exists(RAW):
+    if not (cache_matches(RAW, manifest) and cache_matches(EVENTS, manifest)):
         from classifier.threeway_improved import load_all_data
         from classifier.multinode_features import (
             attach_nic_sidecar, normalize_comm_columns, assign_stream_and_job_ids,
         )
+        from classifier.window_labels import (build_work_index, default_log_paths,
+                                              job_work_intervals, save_work_events)
         df = load_all_data()
         print(f"[{time.time()-t0:.0f}s] raw rows {len(df):,}  peakRSS {rss():.2f} GB", flush=True)
 
@@ -120,6 +131,12 @@ def main():
         print(f"  comm channels present: {comm}", flush=True)
 
         df = assign_stream_and_job_ids(df)
+        # Each window is labeled by the work its job logged (any rank), not by
+        # the job's name; see classifier/window_labels.py.
+        events = job_work_intervals(df, build_work_index(
+            default_log_paths(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+        save_work_events(events, EVENTS)
+        print(f"  STEP evidence for {len(events):,} of {df.job_id.nunique():,} jobs", flush=True)
         nz = float((df["nic_total_mbps"] > 0).mean()) if "nic_total_mbps" in df else 0.0
         print(f"  rows with nic_total_mbps > 0: {nz:.1%}", flush=True)
 
@@ -130,13 +147,15 @@ def main():
                 df[c] = df[c].astype(np.float32)
         df["job_id"] = df["job_id"].astype(str)
         df.to_parquet(RAW, index=False)
+        stamp_cache(RAW, manifest)
+        stamp_cache(EVENTS, manifest)
         print(f"[{time.time()-t0:.0f}s] spilled {os.path.getsize(RAW)/1e9:.2f} GB", flush=True)
         del df
         gc.collect()
 
     jobs = pq.read_table(RAW, columns=["job_id"]).to_pandas().job_id.astype(str).unique()
     np.random.default_rng(0).shuffle(jobs)
-    chunks = [(i, list(c), win, stride)
+    chunks = [(i, list(c), win, stride, EVENTS)
               for i, c in enumerate(np.array_split(jobs, nproc * 3), 1)]
     print(f"[{time.time()-t0:.0f}s] {len(jobs):,} jobs in {len(chunks)} chunks "
           f"across {nproc} workers", flush=True)
@@ -159,6 +178,7 @@ def main():
     w["job_id"] = w["run_id"]
     w["grp"] = workload_group(w.workload_label.values)
     w.to_parquet(out, index=False)
+    stamp_cache(out, manifest)
 
     xr = [c for c in w.columns if c.startswith("xr_")]
     xrg = [c for c in w.columns if c.startswith("xragg_")]
@@ -166,7 +186,7 @@ def main():
     print(f"  jobs {w.job_id.nunique():,}  groups {w.grp.nunique():,}  "
           f"xr_ features {len(xr)}  xragg_ features {len(xrg)}  peakRSS {rss():.2f} GB",
           flush=True)
-    print(w.threeway_label.value_counts().to_string(), flush=True)
+    print(pd.crosstab(w.threeway_label, w.label_source).to_string(), flush=True)
     if not xr:
         raise SystemExit("REFUSING: no xr_ features in the output -- the cross-rank "
                          "join produced nothing, which is the bug this script fixes")

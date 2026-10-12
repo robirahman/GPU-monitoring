@@ -24,6 +24,11 @@ import argparse
 import os
 import time
 
+try:
+    from workloads._step import emit_step
+except ModuleNotFoundError:
+    from _step import emit_step
+
 
 # Registry: short-name -> (HF id, dtype, required_min_gpus, default TP).
 # All entries are non-gated (Qwen, Mistral, DeepSeek) to avoid HF access gates.
@@ -178,10 +183,25 @@ def run_vllm(args) -> None:
         if args.prompt_tokens > 0:
             batch_prompts = [_pad_prompt(llm, p, args.prompt_tokens)
                              for p in batch_prompts]
-        outputs = llm.generate(batch_prompts, sampling_params)
+        step_start = time.time()
+        emit_step("pending", iterations, ts=step_start, node=-1, rank=-1,
+                  event_id=iterations, phase="start", evidence="generate_call")
+        try:
+            outputs = llm.generate(batch_prompts, sampling_params)
+        except BaseException:
+            emit_step("unknown", iterations, node=-1, rank=-1,
+                      start_ts=f"{step_start:.6f}", event_id=iterations,
+                      phase="end", evidence="failed_generate_call")
+            raise
+        step_end = time.time()
+        batch_tokens = 0
         for out in outputs:
             for comp in out.outputs:
-                total_tokens += len(comp.token_ids)
+                batch_tokens += len(comp.token_ids)
+        total_tokens += batch_tokens
+        emit_step("infer", iterations, ts=step_end, tokens=batch_tokens, node=-1, rank=-1,
+                  start_ts=f"{step_start:.6f}", event_id=iterations,
+                  phase="end", evidence="completed_generate_call")
         iterations += 1
 
         elapsed = time.time() - start

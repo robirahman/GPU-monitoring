@@ -11,8 +11,8 @@ exec > >(tee -a /var/log/spar-lofo.log) 2>&1
 REPO=/opt/spar/repo
 WORK=/var/tmp/spar_analysis
 BUCKET=gs://focus-surfer-494820-g0-telemetry
-OUTDIR="$BUCKET/analysis/20261005"
-BRANCH=multinode-tpu-experiments
+OUTDIR="$BUCKET/analysis/$(date -u +%Y%m%d)-paired-lofo"
+BRANCH=${BRANCH:-main}
 say() { echo "[$(date -u +%H:%M:%SZ)] [lofo] $*"; }
 die() { say "FATAL: $*"; echo "FAILED" > "$WORK/STATUS"; exit 1; }
 mkdir -p "$WORK"
@@ -71,7 +71,7 @@ fi
 say "  using $PY ($("$PY" -c 'import pandas,sklearn;print("pandas",pandas.__version__,"sklearn",sklearn.__version__)'))"
 
 say "=== phase 4: corpus inventory ==="
-PYTHONPATH="$REPO" "$PY" scripts/corpus_inventory.py --out "$WORK/inv4.parquet" 2>&1 | tail -6
+PYTHONPATH="$REPO" "$PY" scripts/corpus_inventory.py --out "$WORK/inv4.parquet" 2>&1 | tail -6 || die "inventory failed"
 [ -f "$WORK/inv4_dedup.parquet" ] || die "inventory did not produce inv4_dedup.parquet"
 
 say "=== phase 5: multi-node window cache (30 s window, 15 s stride) ==="
@@ -88,72 +88,19 @@ if [ "${SPAR_REUSE_RAW:-0}" != "1" ]; then
   done
 fi
 PYTHONPATH="$REPO" SPAR_WORK="$WORK" "$PY" scripts/build_mn_window_cache.py \
-  "$WORK/win_stream_30_15.parquet" 30 15 4 2>&1 | tail -20
+  "$WORK/win_stream_30_15.parquet" 30 15 4 2>&1 | tail -20 || die "cache build failed"
 [ -f "$WORK/win_stream_30_15.parquet" ] || die "window cache not produced"
 say "  cache $(du -h "$WORK/win_stream_30_15.parquet" | cut -f1)"
 
-say "=== phase 6: ablation cache (same windows minus the new rounds) ==="
-# Separates "the rounds changed the corpus" from "the rounds changed the
-# answer" -- the control used on 2026-09-30, after I once reported a recall
-# drop as caused by a round when the baseline was a different cache.
-PYTHONPATH="$REPO" "$PY" - "$WORK" "$REPO" <<'PYEOF'
-import sys, os, re, glob
-import pandas as pd
-work, repo = sys.argv[1], sys.argv[2]
-w = pd.read_parquet(os.path.join(work, "win_stream_30_15.parquet"))
-print("  cache columns:", [c for c in w.columns if not c.startswith(("x_", "xr_"))][:14])
+say "=== phase 6: exhaustive LOFO and paired campaign ablation ==="
+PYTHONPATH="$REPO" "$PY" -m classifier.rebuttal_analysis.paired_family_lofo \
+  --windows "$WORK/win_stream_30_15.parquet" \
+  --exclude-campaigns 20261001,20261003 --out "$WORK/paired_lofo.json" \
+  || die "paired LOFO failed"
 
-new_cells = set()
-for s in ("20261001", "20261003"):
-    for p in glob.glob(os.path.join(repo, "data/gcp", s, "*.parquet")):
-        b = os.path.basename(p)
-        b = re.sub(r"^nic_", "", b)
-        b = re.sub(r"_node[01]_gpu[0-9]+.*", "", b)
-        b = re.sub(r"_node[01]_[0-9a-f]{12}.*", "", b)
-        if b.startswith("s16_"):
-            new_cells.add(b)
-print(f"  new-round cells: {len(new_cells)}")
-
-# Match on the workload label, not the run_id: the 12-hex rid in the FILENAME
-# is not what lands in the cache's run_id column, which is how the first
-# attempt dropped nothing at all and still reported a clean ablation.
-lab = "grp" if "grp" in w.columns else "workload_label"
-hit = w[lab].astype(str).isin(new_cells)
-print(f"  windows {len(w):,} -> {int((~hit).sum()):,} ({int(hit.sum()):,} dropped, on '{lab}')")
-if int(hit.sum()) == 0:
-    sys.exit("  FATAL: ablation dropped 0 windows -- it is not an ablation. "
-             "Refusing to emit a 'control' identical to the full run.")
-w[~hit].to_parquet(os.path.join(work, "win_noNEW.parquet"), index=False)
-PYEOF
-[ -f "$WORK/win_noNEW.parquet" ] || die "ablation cache not produced"
-
-say "=== phase 7: LOFO, full corpus ==="
-PYTHONPATH="$REPO" "$PY" classifier/rebuttal_analysis/multinode_family_holdout.py \
-  --windows "$WORK/win_stream_30_15.parquet" --inventory "$WORK/inv4_dedup.parquet" \
-  --out "$WORK/lofo_full_20261005.json" 2>&1 | tail -45
-
-PYTHONPATH="$REPO" "$PY" - "$WORK" <<'PYEOF'
-import json, sys, os
-d = json.load(open(os.path.join(sys.argv[1], "lofo_full_20261005.json")))
-fams = set(d["families"])
-want = {"train_streamdiloco","train_decoupdiloco","train_swarm",
-        "train_impala","train_apexrl","train_ppodist"}
-missing = sorted(want - fams)
-print(f"  families in run: {len(fams)}; six new present: {sorted(want & fams)}")
-if missing:
-    sys.exit(f"  FATAL: new families absent from the LOFO: {missing}. "
-             f"The cache did not include the new sessions.")
-PYEOF
-[ $? -eq 0 ] || die "the new families never reached the LOFO"
-
-say "=== phase 8: LOFO, ablation (minus 20261001+20261003) ==="
-PYTHONPATH="$REPO" "$PY" classifier/rebuttal_analysis/multinode_family_holdout.py \
-  --windows "$WORK/win_noNEW.parquet" --inventory "$WORK/inv4_dedup.parquet" \
-  --out "$WORK/lofo_ablation_20261005.json" 2>&1 | tail -30
-
-say "=== phase 9: publish ==="
-gcloud storage cp "$WORK"/lofo_*_20261005.json "$OUTDIR/" >/dev/null 2>&1 \
-  && say "  results -> $OUTDIR/" || say "  WARN: could not upload results"
-gcloud storage cp /var/log/spar-lofo.log "$OUTDIR/spar-lofo.log" >/dev/null 2>&1 || true
+say "=== phase 7: publish ==="
+gcloud storage cp "$WORK"/paired_lofo* "$WORK/win_stream_30_15.parquet.provenance.json" "$OUTDIR/" \
+  && say "  results -> $OUTDIR/" || die "could not upload results"
+gcloud storage cp /var/log/spar-lofo.log "$OUTDIR/spar-lofo.log" || true
 echo "DONE" > "$WORK/STATUS"
 say "=== COMPLETE ==="

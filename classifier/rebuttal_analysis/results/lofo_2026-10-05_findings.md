@@ -1,4 +1,13 @@
-# 2026-10-05 LOFO: the distributed-training round, measured
+# 2026-10-05 random family holdout: historical results
+
+> Audit correction (2026-10-11): these are repeated 60/20/20 family holdouts,
+> **not exhaustive leave-one-family-out**. Eight families never entered a test
+> fold. The full/ablation arms changed test families and selected models, so
+> their difference does not estimate the effect of adding the new rounds.
+> Label routing and family grouping have also changed since this run. The JSON
+> files are retained as historical artifacts; do not reuse these values as
+> corrected LOFO or paired-ablation evidence. Use `paired_family_lofo.py` with
+> rebuilt, provenance-checked caches. The original narrative follows for context.
 
 ## What was measured
 

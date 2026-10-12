@@ -1,3 +1,9 @@
+> Audit correction (2026-10-11): the shared taxonomy previously mislabeled
+> 21 physical-training aliases as `other`; the hardening script only patched a
+> subset locally. All current consumers now share the corrected mapping and
+> keep attack/control membership separate from objective. The scores below are
+> historical and require rerunning with corrected labels before publication.
+
 # Physical-Sensor Workload Detection & Adversarial Red-Teaming
 
 **Hardware:** SAIGE testbed `node1` — 3× NVIDIA GeForce RTX 3090 (Ampere), AMD EPYC 7702, driver 595.71.05.

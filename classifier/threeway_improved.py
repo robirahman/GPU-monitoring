@@ -32,244 +32,16 @@ warnings.filterwarnings("ignore")
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 # ── Label taxonomy ───────────────────────────────────────────────────────────
 
-TRAINING_LABELS = {
-    # Core training workloads
-    "pytorch_resnet_cifar10", "pytorch_resnet_cifar10_amp",
-    "pytorch_mlp_cifar10",
-    "gpt2_wikitext2", "gpt2_wikitext2_amp",
-    "bert_sst2", "bert_sst2_amp",
-    # Edge cases that are still training
-    "training_dual_gpu_dp", "training_single_gpu",
-    "resnet18_small_batch_batch8", "resnet18_large_batch_batch2048",
-    "resnet18_short_run_short",
-    "mlp_small_batch_batch16", "mlp_large_batch_batch4096",
-    # Week 4 edge case labels
-    "BASELINE_TRAIN", "EC2", "EC3", "EC5", "EC6",
-    # Adversarial strategies (still training, just disguised)
-    "adversarial_A_util_modulation",
-    "adversarial_B_low_util",
-    "adversarial_D_temporal_disruption",
-    # Composite adversarial at all idle fractions
-    "adversarial_composite_00", "adversarial_composite_10",
-    "adversarial_composite_20", "adversarial_composite_30",
-    "adversarial_composite_40", "adversarial_composite_50",
-    "adversarial_composite_60", "adversarial_composite_70",
-    "adversarial_composite_80", "adversarial_composite_90",
-    "adversarial_composite_95",
-    # Advanced evasion strategies (still training, just better disguised)
-    "adversarial_E_memory_minimal",
-    "adversarial_F_interleave_30", "adversarial_F_interleave_50",
-    "adversarial_G_clock_throttled",
-    # Round 2 adversarial (counter-hardened classifier)
-    "adversarial_H_mimicry_mining", "adversarial_H_mimicry_cufft",
-    "adversarial_I_stochastic_30",
-    "adversarial_J_pid_75",
-    # Round 3 adversarial (training-as-inference)
-    "adversarial_K_online_learning",
-    "adversarial_L_diluted_2", "adversarial_L_diluted_5",
-    "adversarial_L_diluted_10", "adversarial_L_diluted_20",
-    # Controlled dilution sweep (consistent batch size = 128)
-    "dilution_sweep_N1", "dilution_sweep_N2", "dilution_sweep_N3",
-    "dilution_sweep_N5", "dilution_sweep_N10", "dilution_sweep_N20",
-    # Round 4: composite + memory minimal
-    "adversarial_M_composite_memmin_10", "adversarial_M_composite_memmin_20",
-    "adversarial_M_composite_memmin_30", "adversarial_M_composite_memmin_40",
-    # Round 4: gradient accumulation dilution
-    "adversarial_N_grad_accum_4", "adversarial_N_grad_accum_8",
-    "adversarial_N_grad_accum_16",
-    # DDP baseline training (datacenter multi-GPU runs)
-    "ddp_resnet18_cifar10", "ddp_resnet18_cifar10_amp", "ddp_resnet50_cifar10",
-    # FSDP training (datacenter multi-GPU runs)
-    "fsdp_7b_nvlink", "fsdp_13b_nvlink", "fsdp_30b_nvlink", "fsdp_30b_adamw_nvlink",
-    "fsdp_70b_nvlink", "fsdp_70b_seq512_nvlink", "fsdp_70b_seqlen512",
-    "fsdp_70b_adamw", "fsdp_70b_sgd_momentum",
-    # DDP adversarial (datacenter multi-GPU evasion)
-    "adversarial_K_ddp", "adversarial_K_ddp_accum_4", "adversarial_K_ddp_accum_8",
-    "adversarial_L_ddp_5", "adversarial_L_ddp_10", "adversarial_L_ddp_stagger_5",
-    # Round 5: White-box evasion at relevant model scale (full fine-tuning)
-    "whitebox_diluted_N5", "whitebox_diluted_N10", "whitebox_diluted_N20", "whitebox_diluted_N50",
-    "whitebox_diluted_N5_ckpt", "whitebox_diluted_N10_ckpt", "whitebox_diluted_N20_ckpt",
-    "whitebox_oracle",
-    # Round 5: White-box LoRA fine-tuning
-    "whitebox_lora_N5", "whitebox_lora_N10", "whitebox_lora_N20",
-    # Round 5 — AMD registry names (Tier 3 collection)
-    "whitebox_WB-D_diluted", "whitebox_WB-L_lora", "whitebox_WB-O_oracle",
-    # Tier 4 LoRA fine-tunes (AMD registry)
-    "lora_finetune_qwen25_0p5b", "lora_finetune_smollm2_135m",
-    # YOLO training (object detection)
-    "yolo_train_coco128",
-    # Generic training labels seen in datacenter runs
-    "adversarial_training",
-    "adversarial_training_2gpu_gpu0", "adversarial_training_2gpu_gpu1",
-    "bert_finetune",
-    "bert_finetune_2gpu_gpu0", "bert_finetune_2gpu_gpu1",
-    "gpt2_finetune",
-    "gpt2_finetune_2gpu_gpu0", "gpt2_finetune_2gpu_gpu1",
-    "pytorch_training",
-    "pytorch_training_2gpu_gpu0", "pytorch_training_2gpu_gpu1",
-    # Round 5b (phase 4): matched-pair LoRA training on consumer tier
-    "llm_train_qwen25_1p5b_lora",
-    "llm_train_smollm2_1p7b_lora",
-    "llm_train_qwen25_3b_lora",
-    "llm_train_phi3_mini_lora",
-    "llm_train_mistral_7b_lora",
-    # Round 6: symmetric-GEMM backprop disguise. Weights genuinely change in
-    # these, so they are training regardless of how the compute is shaped.
-    # L3 is deliberately NOT here: it runs the dW GEMM but discards the result,
-    # so no learning occurs and it belongs in INFERENCE_LABELS as a probe.
-    "symgemm_L4_sgdfused", "symgemm_L4_sgdfused_m8192",
-    "symgemm_L4_sgdfused_7b", "symgemm_L4_triton",
-    "symgemm_L5_adam",
-    # Round 6 evasion: DISGUISED PPO (fused-SGD policy update) -- stacks
-    # temporal dilution on write minimisation.
-    "symgemm_ppo_fused_r8", "symgemm_ppo_fused_r32",
-    # BASELINE corpus: undisguised PPO (ordinary autograd + AdamW). A real RLHF
-    # training regime, added so the corpus covers RL; not an evasion.
-    "ppo_rlhf_r8", "ppo_rlhf_r32",
-}
-
-INFERENCE_LABELS = {
-    "resnet50_inference",
-    "resnet50_inference_standalone",
-    "resnet50_inference_large_bs1024", "resnet50_inference_small_bs32",
-    "resnet50_concurrent_concurrent",
-    "resnet50_inference_2gpu_gpu0", "resnet50_inference_2gpu_gpu1",
-    "BASELINE_INFER", "EC1", "EC4",
-    # Modern inference models
-    "deepseek_r1_inference",
-    "qwen25_inference",
-    "whisper_inference",
-    "modern_inference",
-    "modern_inference_2gpu_gpu0", "modern_inference_2gpu_gpu1",
-    # Controlled dilution sweep: pure inference baseline
-    "dilution_sweep_inference",
-    # Round 5: White-box inference baseline (control)
-    "whitebox_inference",
-    "whitebox_WB-I_inference",
-    # Round 6 negatives. L1 runs three forward passes per iteration so it is
-    # FLOP- and throughput-matched to a training step; L3 additionally runs the
-    # dW GEMM but discards the output, so it has identical compulsory DRAM
-    # traffic to L1 with no weight ever changing. Both are genuinely
-    # not-training: L1 vs L4 is the decisive comparison, L1 vs L3 the null pair.
-    "symgemm_L0_fwd1", "symgemm_L1_fwd3", "symgemm_L1_fwd3_m8192",
-    "symgemm_L1_fwd3_7b", "symgemm_L1_triton",
-    "symgemm_L3_graddiscard",
-    # Tier 4 image-generation inference (SDXL)
-    "sdxl_inference",
-    # Round 5b: new large-LLM inference anchors (single-GPU, open-license)
-    "llm_infer_phi3_mini", "llm_infer_qwen25_1p5b", "llm_infer_qwen25_3b",
-    "llm_infer_smollm2_1p7b", "llm_infer_mistral_7b_q4",
-    "llm_infer_tinyllama_bs1", "llm_infer_tinyllama_bs2", "llm_infer_tinyllama_bs4",
-    "llm_infer_tinyllama_bs8", "llm_infer_tinyllama_seq1024",
-    "llm_infer_tinyllama_synthetic_bs1",
-    "llm_infer_qwen25_3b_bs4", "llm_infer_qwen25_1p5b_streaming",
-    "llm_infer_sdxl", "llm_infer_clip_embed_batched",
-    # Round 5b phase 3: long-context, large-batch, encoder-only inference
-    "llm_infer_phi3_mini_seq2048",
-    "llm_infer_tinyllama_seq2048", "llm_infer_tinyllama_seq4096",
-    "llm_infer_qwen25_1p5b_seq4096",
-    "llm_infer_qwen25_3b_bs16",
-    "llm_infer_clip_embed_bs256", "llm_infer_bge_embed_bs128",
-    "llm_infer_vit_l_bs64",
-    # Round 5b phase 5: matched-pair dense inference at FSDP sizes
-    "llm_infer_qwen25_7b_fp16", "llm_infer_qwen25_14b_fp16",
-    "llm_infer_qwen25_32b_fp16",
-    # Round 5b: datacenter-only large-LLM inference (>80 GB, open-license)
-    "llm_infer_qwen25_72b_fp16", "llm_infer_mixtral_8x7b",
-    "llm_infer_qwen25_72b_fp8",
-}
-
-# Multi-GPU TP inference emits per-GPU parquets with _NgpuN suffix;
-# enumerate them explicitly so the label sets cover every file.
-for _n in (0, 1):
-    INFERENCE_LABELS.add(f"llm_infer_qwen25_72b_tp2_2gpu_gpu{_n}")
-for _n in range(8):
-    INFERENCE_LABELS.add(f"llm_infer_deepseek_v3_tp8_8gpu_gpu{_n}")
-
-OTHER_LABELS = {
-    "idle", "idle_h100",
-    "idle_2gpu_gpu0", "idle_2gpu_gpu1",
-    "cufft_benchmark", "cufft_benchmark_standalone",
-    "cufft_short_dur120", "cufft_concurrent_concurrent",
-    "cufft_benchmark_2gpu_gpu0", "cufft_benchmark_2gpu_gpu1",
-    "nbody_sim", "nbody_sim_standalone", "nbody_short_dur120",
-    "nbody_sim_2gpu_gpu0", "nbody_sim_2gpu_gpu1",
-    "mining_ethash_proxy", "ethash_cuda",
-    "rendering_proxy", "blender_bmw",
-    "ffmpeg_nvenc",
-    "gromacs_adh",
-    "nvlink_bandwidth", "nvlink_latency",
-    "nvlink_p2p", "nvlink_p2p_2gpu_gpu0", "nvlink_p2p_2gpu_gpu1",
-    "scientific_hpc",
-    "scientific_hpc_2gpu_gpu0", "scientific_hpc_2gpu_gpu1",
-}
-
-
-def threeway_label(label: str) -> str:
-    """Map workload label to three-way category."""
-    if label in TRAINING_LABELS:
-        return "ml_training"
-    if label in INFERENCE_LABELS:
-        return "ml_inference"
-    if label in OTHER_LABELS:
-        return "other"
-    # Heuristic fallback. Strip the per-stream rank token first so a multi-node
-    # filename label (e.g. s16_train_fsdp7b_node1_gpu3, or a TPU s16 analogue
-    # ..._w2c1) routes on its base label exactly as the single-stream label
-    # would -- otherwise the trailing token defeats the endswith/keyword checks.
-    lc = re.sub(r"_node\d+_gpu\d+$", "", label.lower())
-    lc = re.sub(r"_w\d+c\d+$", "", lc)
-    lc = re.sub(r"_gpu\d+$", "", lc)
-    # White-box variants carry a model/duration suffix (whitebox_lora_7b_long,
-    # whitebox_diluted_7b_N10_1h, ...) that the explicit lists above do not
-    # enumerate, and none of them contain "train"/"adversarial_". Without these
-    # keys they fall through to "other", which silently puts LoRA/full-FT
-    # training runs into the negative class — both polluting the corpus and, if
-    # they are left in a classifier's training set, teaching it that this
-    # telemetry is NOT training. Checked before the "infer" rule so that only
-    # whitebox_inference_* is treated as inference.
-    if any(k in lc for k in ("whitebox_lora", "whitebox_diluted", "whitebox_oracle",
-                             "wb-l", "wb-d", "wb-o")):
-        return "ml_training"
-    # Round 6 symmetric-GEMM ladder. Collection appends a _rep<N> suffix, and
-    # cells carry scale/backend suffixes (_m8192, _7b, _triton), so the
-    # explicit sets above cannot enumerate every run label. Classify by mode
-    # instead: L4/L5 change weights (training), L0/L1/L3 never do. Without
-    # this, a suffixed label falls through to "other" and the corpus quietly
-    # learns that disguised training is not training -- the same failure the
-    # whitebox rule above exists to prevent.
-    # Undisguised PPO (mode P0: rollout + ordinary autograd/AdamW update). This
-    # is a legitimate RL *training regime* for the baseline corpus, not an
-    # evasion, so it is deliberately NOT symgemm_*-prefixed (that prefix is held
-    # out of the clean training pool). Without this rule "ppo_rlhf_*" matches
-    # none of the keywords below and would land in "other" -- teaching the
-    # corpus that RL training is not training.
-    if lc.startswith("ppo_"):
-        return "ml_training"
-    if lc.startswith("symgemm_"):
-        # PPO shape: the rollout is generation, but the policy update is an
-        # ordinary gradient step that changes every trained weight, so the run
-        # as a whole is training at a duty cycle set by rollout:update.
-        # (symgemm_ppo_fused_* = the DISGUISED variant, an evasion cell.)
-        if "_ppo" in lc:
-            return "ml_training"
-        # Pure autoregressive decode -- no weight ever changes.
-        if "_decode" in lc:
-            return "ml_inference"
-        if "_l4" in lc or "_l5" in lc:
-            return "ml_training"
-        if "_l0" in lc or "_l1" in lc or "_l3" in lc:
-            return "ml_inference"
-        return "other"        # symgemm_idle
-    if any(k in lc for k in ("train", "bert", "gpt", "resnet_cifar", "mlp_cifar",
-                              "fsdp_", "ddp_", "adversarial_")):
-        return "ml_training"
-    if any(k in lc for k in ("infer",)):
-        return "ml_inference"
-    return "other"
+from classifier.workload_labels import (  # shared by software and physical sensors
+    TRAINING_LABELS, INFERENCE_LABELS, OTHER_LABELS, threeway_label, canonical_workload,
+)
+from classifier.data_sources import accelerator_files, read_parquet, resolve_payload, filename_workload_label, pointer, sha256
+from classifier.window_labels import assign_work_labels, own_intervals
 
 
 # ── Raw signal columns ───────────────────────────────────────────────────────
@@ -308,22 +80,43 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     rename = {
         "timestamp_epoch": "ts",
         "timestamp":       "ts",
+        "t":               "ts",
         "gpu_util":        "gpu_utilization_pct",
         "mem_util":        "mem_utilization_pct",
         "power_w":         "power_draw_w",
         "temp_c":          "temperature_c",
+        "sm_mhz":          "sm_clock_mhz",
     }
-    df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
+    for old, new in rename.items():
+        if old in df and new not in df:
+            df = df.rename(columns={old: new})
 
     if "ts" not in df.columns and "timestamp_utc" in df.columns:
-        df["ts"] = pd.to_datetime(df["timestamp_utc"]).astype("int64") / 1e9
+        parsed = pd.to_datetime(df["timestamp_utc"], utc=True, errors="coerce")
+        df["ts"] = (parsed.dt.as_unit("ns").astype("int64") / 1e9).where(parsed.notna())
+
+    if "ts" in df and pd.api.types.is_datetime64_any_dtype(df["ts"]):
+        parsed = pd.to_datetime(df["ts"], utc=True)
+        df["ts"] = (parsed.dt.as_unit("ns").astype("int64") / 1e9).where(parsed.notna())
+    elif "ts" in df and not pd.api.types.is_numeric_dtype(df["ts"]):
+        numeric = pd.to_numeric(df["ts"], errors="coerce")
+        if numeric.notna().any():
+            df["ts"] = numeric
+        else:
+            parsed = pd.to_datetime(df["ts"], utc=True, errors="coerce")
+            df["ts"] = (parsed.dt.as_unit("ns").astype("int64") / 1e9).where(parsed.notna())
 
     if "mem_used_gb" in df.columns and "mem_used_mb" not in df.columns:
         df["mem_used_mb"] = df["mem_used_gb"] * 1024
+    if "gpu_uuid" not in df:
+        for device_col in ("gpu", "gpu_index"):
+            if device_col in df:
+                df["gpu_uuid"] = "gpu" + df[device_col].astype(str)
+                break
 
     for sig in RAW_SIGNALS:
         if sig not in df.columns:
-            df[sig] = 0.0
+            df[sig] = np.nan
 
     if "gpu_name" in df.columns:
         df["gpu_name"] = df["gpu_name"].map(_normalize_gpu_name)
@@ -335,126 +128,35 @@ def load_all_data() -> pd.DataFrame:
     """Load telemetry from all data sources."""
     frames = []
 
-    # 1. Main data/ directory
-    _skipped: list[tuple[str, str]] = []
-    for p in sorted((PROJECT_ROOT / "data").rglob("*.parquet")):
-        # nic_*.parquet are host-NIC sidecar series, not per-GPU telemetry
-        # streams. multinode_features.attach_nic_sidecar joins them on
-        # (node_id, epoch second) from this same tree; loading them here as well
-        # injects rows with no `ts`/`gpu_name`, and the NaN run_start that
-        # follows crashes assign_stream_and_job_ids with IntCastingNaNError.
-        if p.name.startswith("nic_"):
-            continue
-        # Quarantined streams are NOT corpus. ingest_session.sh moves idle
-        # streams (median utilisation <= 1%) into a _quarantine_idle/ directory
-        # so a multi-node cell whose peer died cannot enter as labelled
-        # workload data -- but that directory sits under data/, and this loader
-        # rglobs data/**, so the quarantine was cosmetic: all 78 streams it
-        # caught on 2026-09-08 were being loaded anyway, including into a
-        # retrain. Excluding by PATH here is the invariant that actually holds,
-        # wherever a future quarantine directory ends up.
-        if any("_quarantine" in part for part in p.parts):
-            continue
-        # Skip physical-sensor sidecar files (scope envelope / DCGM logger output).
-        # These are not NVML telemetry — they lack the raw signals and would load
-        # as garbage all-zero "runs" labelled by their sidecar filename.
-        if "_scope_" in p.name or "_dcgm_" in p.name:
-            continue
-        try:
-            df = pd.read_parquet(p)
-            df = _normalize_columns(df)
-            if "workload_label" not in df.columns:
-                # Parse from filename
-                stem = p.stem
-                # TPU parquets end `..._w<W>c<C>_Google_TPU_<gen>_<run_id>`, and the
-                # generic rsplit("_", 3) fallback strips only the last three fields,
-                # leaving a label of `tpuTMS_nonml_duty30_rep2_w0c0_Google` -- a
-                # truncated device name glued to the chip token. That label then
-                # defeats workload_group(), whose `_rep\d+$` anchor no longer
-                # matches, so every rep and every chip of every TPU cell becomes its
-                # own "workload" and held-out-by-workload CV silently degenerates
-                # into run-grouped CV -- exactly the leak that criterion exists to
-                # remove. Split on the accelerator name as the NVIDIA path does.
-                if "_NVIDIA_" in stem:
-                    parts = stem.split("_NVIDIA_")[0]
-                elif "_Google_TPU_" in stem:
-                    parts = stem.split("_Google_TPU_")[0]
-                else:
-                    parts = stem.rsplit("_", 3)[0]
-                df["workload_label"] = parts
-            if "run_id" not in df.columns:
-                df["run_id"] = p.stem
+    for p in accelerator_files(PROJECT_ROOT):
+        # Resolve before reading. Missing objects and bad schemas are fatal,
+        # so this function can never silently train on a partial LFS checkout.
+        df = _normalize_columns(read_parquet(p))
+        rel = str(p.relative_to(PROJECT_ROOT))
+        if "ts" not in df:
+            raise ValueError(f"No timestamp in accelerator input {rel}")
+        label = filename_workload_label(p)
+        if "workload_label" not in df:
+            df["workload_label"] = label
+        else:
+            df["workload_label"] = df.workload_label.fillna(label)
+        if "run_id" not in df or df.run_id.isna().any():
+            ptr = pointer(p)
+            fallback_run = "source:" + (ptr[0] if ptr else sha256(p))
+            df["run_id"] = df.run_id.fillna(fallback_run) if "run_id" in df else fallback_run
+        df["source_path"] = rel
+        frames.append(df)
+
+    ec_dir = PROJECT_ROOT / "week4/results/edge_cases"
+    for p in sorted(ec_dir.glob("*_telemetry.json")):
+        records = json.loads(resolve_payload(p).read_text())
+        if records:
+            df = _normalize_columns(pd.DataFrame(records))
+            name = p.stem.removesuffix("_telemetry")
+            df["workload_label"] = name
+            df["run_id"] = f"ec_{name}"
+            df["source_path"] = str(p.relative_to(PROJECT_ROOT))
             frames.append(df)
-        except Exception as e:
-            # Counted and reported at WARNING below. Six of nine legacy *tpu*
-            # parquets were being dropped here without a single visible line,
-            # and a schema the loader does not expect will do the same to real
-            # TPU telemetry.
-            _skipped.append((p.name, str(e)[:120]))
-            log.debug(f"skip {p.name}: {e}")
-
-    # 2. Week 4 data
-    week4_data = PROJECT_ROOT / "week4" / "data"
-    if week4_data.exists():
-        for p in sorted(week4_data.glob("*.parquet")):
-            try:
-                df = pd.read_parquet(p)
-                df = _normalize_columns(df)
-                if "workload_label" not in df.columns:
-                    df["workload_label"] = p.stem.split("_NVIDIA_")[0] if "_NVIDIA_" in p.stem else p.stem
-                if "run_id" not in df.columns:
-                    df["run_id"] = f"w4_{p.stem}"
-                frames.append(df)
-            except Exception as e:
-                log.debug(f"skip {p.name}: {e}")
-
-    # 3. Week 4 edge cases (JSON)
-    ec_dir = PROJECT_ROOT / "week4" / "results" / "edge_cases"
-    if ec_dir.exists():
-        for p in sorted(ec_dir.glob("*_telemetry.json")):
-            try:
-                with open(p) as f:
-                    records = json.load(f)
-                if not records:
-                    continue
-                df = pd.DataFrame(records)
-                df = _normalize_columns(df)
-                case_name = p.stem.replace("_telemetry", "")
-                df["workload_label"] = case_name
-                df["run_id"] = f"ec_{case_name}"
-                frames.append(df)
-            except Exception as e:
-                log.debug(f"skip {p.name}: {e}")
-
-    # 4. Week 4 DDP traces
-    ddp_dir = PROJECT_ROOT / "week4" / "results" / "ddp"
-    if ddp_dir.exists():
-        for p in sorted(ddp_dir.glob("*.parquet")):
-            try:
-                df = pd.read_parquet(p)
-                df = _normalize_columns(df)
-                if "workload_label" not in df.columns:
-                    df["workload_label"] = "training_dual_gpu_dp"
-                if "run_id" not in df.columns:
-                    df["run_id"] = f"ddp_{p.stem}"
-                frames.append(df)
-            except Exception as e:
-                log.debug(f"skip {p.name}: {e}")
-
-    # 5. Week 4 dataset-scale traces
-    dscale_dir = PROJECT_ROOT / "week4" / "results" / "dataset_scale"
-    if dscale_dir.exists():
-        for p in sorted(dscale_dir.rglob("telemetry.parquet")):
-            try:
-                df = pd.read_parquet(p)
-                df = _normalize_columns(df)
-                if "workload_label" not in df.columns:
-                    df["workload_label"] = "training_dual_gpu_dp"
-                if "run_id" not in df.columns:
-                    df["run_id"] = f"dscale_{p.parent.name}"
-                frames.append(df)
-            except Exception as e:
-                log.debug(f"skip {p.name}: {e}")
 
     if not frames:
         raise RuntimeError("No telemetry data found")
@@ -490,7 +192,7 @@ def load_all_data() -> pd.DataFrame:
     # chip. Adding the per-chip uuid keeps the original intent (identical rows
     # from duplicated files still dedup, since a copy shares all three keys).
     if "ts" in combined.columns and "run_id" in combined.columns:
-        _key = ["ts", "run_id"]
+        _key = ["ts", "run_id", "workload_label"]
         if "gpu_uuid" in combined.columns:
             _key.append("gpu_uuid")
         _before = len(combined)
@@ -499,19 +201,16 @@ def load_all_data() -> pd.DataFrame:
         combined = combined.sort_values(["run_id", "ts"]).reset_index(drop=True)
 
     # Add three-way labels
+    from classifier.workload_labels import validate_labels
+    validate_labels(combined.workload_label.unique())
     combined["threeway_label"] = combined["workload_label"].apply(threeway_label)
 
     label_dist = combined.groupby("threeway_label")["run_id"].nunique()
-    if _skipped:
-        log.warning(f"skipped {len(_skipped)} unreadable/incompatible parquet(s) "
-                    f"under data/: " + ", ".join(n for n, _ in _skipped[:5])
-                    + (" ..." if len(_skipped) > 5 else ""))
-        for _n, _e in _skipped[:5]:
-            log.warning(f"  {_n}: {_e}")
     log.info(f"Total rows: {len(combined):,} | runs: {combined['run_id'].nunique()}")
     log.info(f"Three-way distribution (runs):\n{label_dist.to_string()}")
 
-    return combined
+    from classifier.data_sources import apply_quality_exclusions
+    return apply_quality_exclusions(combined, PROJECT_ROOT)
 
 
 # ── Enhanced feature extraction ──────────────────────────────────────────────
@@ -560,6 +259,42 @@ def fft_peak_power(x: np.ndarray) -> float:
 
 
 def extract_enhanced_features(chunk: pd.DataFrame) -> dict:
+    """Preserve unavailable channels as NaN, distinct from measured zero.
+
+    Small within-window holes are interpolated; channels below 80% availability
+    are excluded with all their dependent features. Imputation is fit per fold.
+    """
+    chunk = chunk.copy()
+    missing = set()
+    signals = list(dict.fromkeys(RAW_SIGNALS + [c for c in chunk if c.startswith(("dcgm_", "encoder_", "decoder_"))]))
+    for sig in signals:
+        v = pd.to_numeric(chunk[sig], errors="coerce") if sig in chunk else pd.Series(np.nan, index=chunk.index)
+        v = v.where(np.isfinite(v) & (v >= 0))
+        if v.notna().mean() < 0.8:
+            missing.add(sig)
+        chunk[sig] = v.interpolate().ffill().bfill().fillna(0)
+    feats = _extract_enhanced_features_complete(chunk)
+    deps = {
+        "gpu_utilization_pct": ("gpu_util", "duty_cycle", "idle_frac", "util_transitions", "util_burstiness", "util_per_sm", "power_per_util", "mem_util_per_gpu", "mem_util_minus_gpu", "mem_util_at_high", "mem_util_burst"),
+        "power_draw_w": ("power",),
+        "mem_used_mb": ("mem_used", "mem_slope", "mem_second_half"),
+        "mem_utilization_pct": ("mem_util", "power_per_mem_util"),
+        "sm_clock_mhz": ("sm_clock", "util_per_sm"),
+        "pcie_tx_mbps": ("pcie",), "pcie_rx_mbps": ("pcie",),
+    }
+    for sig in missing:
+        needles = deps.get(sig, (sig,))
+        for key in feats:
+            depends = key.startswith(sig) or any(n in key for n in needles)
+            if sig == "power_draw_w":
+                # "FFT peak power" is spectral energy, not electrical power.
+                depends = key.startswith((sig, "power_")) or bool(re.fullmatch(r"acf\d+_power", key))
+            if depends:
+                feats[key] = np.nan
+    return feats
+
+
+def _extract_enhanced_features_complete(chunk: pd.DataFrame) -> dict:
     """Extract ~155 features per window, including training-specific temporals."""
     feats = {}
 
@@ -848,8 +583,14 @@ def sliding_windows(
     stride_sec: float,
     run_level_mode: str = "causal",
     step_log_map: dict | None = None,
+    work_events: dict | None = None,
 ) -> pd.DataFrame:
     """Extract sliding-window feature vectors per run.
+
+    ``work_events`` (``{job_id: intervals}`` from window_labels) labels every
+    window by the work its job did inside it rather than by the job's name;
+    ``job_label`` then keeps the objective. Without it, windows carry the job
+    objective as before.
 
     ``run_level_mode`` controls the whole-run "pre-allocation" features
     (``first_30s_mem_*``, ``time_to_mem_plateau_samples``):
@@ -870,10 +611,18 @@ def sliding_windows(
             f"run_level_mode must be 'orig', 'none', or 'causal', got {run_level_mode!r}")
 
     results = []
-    for run_id, run_df in df.groupby("run_id"):
+    # One series per physical stream. A shared run_id spans every GPU and host of
+    # a multi-GPU job, and interleaving their samples corrupts every feature.
+    group_cols = [c for c in ("run_id", "gpu_uuid", "hostname", "workload_label") if c in df]
+    for identity, run_df in df.groupby(group_cols, dropna=False, observed=True):
+        identity = identity if isinstance(identity, tuple) else (identity,)
+        run_id = identity[0]
         run_df = run_df.sort_values("ts").reset_index(drop=True)
         if len(run_df) < 5:
             continue
+        stream_id = (run_df["stream_id"].iloc[0] if "stream_id" in run_df
+                     else "|".join(map(str, identity)))
+        job_id = run_df["job_id"].iloc[0] if "job_id" in run_df else None
 
         t_start = run_df["ts"].iloc[0]
         t_end = run_df["ts"].iloc[-1]
@@ -895,7 +644,12 @@ def sliding_windows(
             elif run_level_mode == "causal":
                 # Only samples observable by the window's end — no look-ahead.
                 feats.update(run_level_features(run_df[run_df["ts"] < wend]))
+            # run_id stays the run-level key. Callers group CV folds by it, and
+            # the sibling GPUs of one run must never straddle a train/test split.
             feats["run_id"] = run_id
+            feats["stream_id"] = stream_id
+            if job_id is not None:
+                feats["job_id"] = job_id
             feats["threeway_label"] = label
             feats["workload_label"] = wl_label
             feats["gpu_name"] = gpu_name
@@ -911,6 +665,7 @@ def sliding_windows(
                     feats["window_train_active"] = np.nan
             results.append(feats)
 
+        first = len(results)
         if duration < window_sec:
             emit(run_df, t_start, t_end)
         else:
@@ -919,6 +674,13 @@ def sliding_windows(
                 chunk = run_df[(run_df["ts"] >= wstart) & (run_df["ts"] < wstart + window_sec)]
                 emit(chunk, wstart, wstart + window_sec)
                 wstart += stride_sec
+        if work_events is not None:
+            intervals = work_events.get(str(job_id if job_id is not None else run_id))
+            if "source_path" in run_df:
+                # A GPU's windows show that GPU's work when its job logs per rank.
+                own = own_intervals(intervals, run_df["source_path"].iloc[0])
+                intervals = own if own is not None else intervals
+            assign_work_labels(results[first:], intervals, wl_label, label)
 
     if not results:
         return pd.DataFrame()
@@ -940,23 +702,21 @@ def workload_group(labels) -> np.ndarray:
     The deployment question is whether an HPC job the detector has never seen
     trips it, so validation must hold out whole workloads.
     """
-    s = pd.Series(labels).astype(str)
-    s = s.str.replace(r"_node\d+_gpu\d+$", "", regex=True)
-    # TPU per-chip rank token, e.g. `..._rep2_w0c0` (worker 0 chip 0; the worker
-    # index is slice*1000 + host index on a multislice group). It sits AFTER the
-    # rep token, so it must be stripped first or the `_rep\d+$` anchor below never
-    # matches and each chip stream is treated as a separate workload.
-    s = s.str.replace(r"_w\d+c\d+$", "", regex=True)
-    s = s.str.replace(r"_rep\d+$", "", regex=True)
-    return s.values
+    return np.array([canonical_workload(label) for label in labels])
 
 
 def get_feature_cols(df: pd.DataFrame) -> list:
     """Return all numeric feature columns (exclude metadata)."""
-    exclude = {"run_id", "threeway_label", "binary_label", "workload_label", "gpu_name",
-               "window_start", "window_end", "window_sec", "n_samples",
-               "window_train_active"}   # per-window ground truth, never a feature
-    return [c for c in df.columns if c not in exclude and df[c].dtype in (np.float64, np.float32, np.int64, np.int32, float, int)]
+    exclude = {"run_id", "job_id", "stream_id", "threeway_label", "binary_label", "y",
+               "workload_label", "gpu_name", "gpu_uuid", "hostname", "node_id", "rank",
+               "window_start", "window_end", "window_sec", "n_samples", "window_train_active",
+               "host", "hosts", "scope", "family", "kind", "grp", "rep", "source_path",
+               "expected_ranks", "world_size", "node_rank", "is_attack", "label", "target",
+               "xr_n_ranks", "n_ranks", "ts", "timestamp_epoch", "observed_devices", "hosts"}
+    return [c for c in df.columns if c not in exclude
+            and not c.startswith(("meta_", "target_", "label_", "ground_truth"))
+            and not c.endswith(("_label", "_id"))
+            and pd.api.types.is_numeric_dtype(df[c])]
 
 
 def compute_sample_weights(y, groups=None, beta=None, per_run=None):
@@ -1126,7 +886,10 @@ def train_and_evaluate():
         feature_cols = get_feature_cols(df_win)
         X = df_win[feature_cols].fillna(0).values.astype(np.float32)
         y = df_win["threeway_label"].values
-        groups = df_win["run_id"].values
+        # Fold by physical job: every rank of one execution, including legacy
+        # per-collector siblings, lands on the same side of each split.
+        group_key = "job_id" if "job_id" in df_win else "run_id"
+        groups = df_win[group_key].values
 
         log.info(f"Windows: {len(df_win)} | Features: {len(feature_cols)}")
         log.info(f"Class distribution: {pd.Series(y).value_counts().to_dict()}")
@@ -1138,7 +901,7 @@ def train_and_evaluate():
             continue
 
         # Check minimum samples per class per run for cross-validation
-        run_class_counts = df_win.groupby("run_id")["threeway_label"].first().value_counts()
+        run_class_counts = df_win.groupby(group_key)["threeway_label"].first().value_counts()
         min_runs = run_class_counts.min()
         n_splits = min(5, min_runs)
         if n_splits < 2:

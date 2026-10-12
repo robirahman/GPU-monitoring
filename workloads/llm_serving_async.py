@@ -56,6 +56,7 @@ import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from workloads.llm_inference_vllm import VLLM_MODELS, PROMPTS  # noqa: E402
+from workloads._step import emit_step  # noqa: E402
 
 MODES = ("poisson", "saturate", "bursty", "prefill", "decode")
 
@@ -118,8 +119,18 @@ class Stats:
     def __init__(self):
         self.lock = threading.Lock()
         self.done = self.err = self.ptok = self.otok = 0
+        self.started = 0
 
-    def add(self, ptok, otok, err=False):
+    def begin(self):
+        with self.lock:
+            request_id = self.started
+            self.started += 1
+            start = time.time()
+            emit_step("pending", request_id, ts=start, node=-1, rank=-1,
+                      event_id=request_id, phase="start", evidence="client_request")
+            return request_id, start
+
+    def finish(self, request_id, start, end, ptok, otok, err=False):
         with self.lock:
             if err:
                 self.err += 1
@@ -127,6 +138,13 @@ class Stats:
                 self.done += 1
                 self.ptok += ptok
                 self.otok += otok
+            # This is the successful request's wall-time envelope, including
+            # queue/network time, not a claim of continuous GPU kernel activity.
+            # A failed request may have done partial inference: keep it unknown.
+            emit_step("unknown" if err else "infer", request_id, ts=end,
+                      tokens=otok, prompt_tokens=ptok, node=-1, rank=-1,
+                      start_ts=f"{start:.6f}", event_id=request_id, phase="end",
+                      evidence="failed_client_request" if err else "completed_client_request")
 
 
 def fire(base, model_id, prompt, max_tokens, stats, timeout):
@@ -135,13 +153,15 @@ def fire(base, model_id, prompt, max_tokens, stats, timeout):
                        "top_p": 0.9}).encode()
     req = urllib.request.Request(f"{base}/v1/completions", data=body,
                                  headers={"Content-Type": "application/json"})
+    request_id, start = stats.begin()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             d = json.loads(r.read().decode())
         u = d.get("usage", {})
-        stats.add(u.get("prompt_tokens", 0), u.get("completion_tokens", 0))
     except Exception:
-        stats.add(0, 0, err=True)
+        stats.finish(request_id, start, time.time(), 0, 0, err=True)
+    else:
+        stats.finish(request_id, start, time.time(), u.get("prompt_tokens", 0), u.get("completion_tokens", 0))
 
 
 def main():

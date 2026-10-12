@@ -49,6 +49,8 @@ from classifier.threeway_improved import (
 # Job-identity bucket, matching check_job_grouping.BUCKET: sibling ranks start
 # within a couple of seconds, repeated runs of a cell are minutes apart.
 BUCKET = 20.0
+# Bumped whenever job_id reconstruction changes, so persisted ids are rebuilt.
+IDENTITY_SCHEMA = "2026-10-12.1"
 
 # Extra per-stream comm channels, if present after normalize_comm_columns /
 # attach_nic_sidecar. Featurised per stream like a RAW_SIGNAL.
@@ -137,19 +139,24 @@ def normalize_comm_columns(df: pd.DataFrame) -> pd.DataFrame:
         raw = f"dcgm_nvlink_{d}_bytes"
         col = f"dcgm_nvlink_{d}_mbps"
         if raw in df.columns and col not in df.columns:
-            df[col] = pd.to_numeric(df[raw], errors="coerce").fillna(0.0) / mib
+            df[col] = pd.to_numeric(df[raw], errors="coerce").where(df[raw] >= 0) / mib
 
     if {"dcgm_nvlink_tx_mbps", "dcgm_nvlink_rx_mbps"} <= set(df.columns):
-        df["nvlink_total_mbps"] = (df["dcgm_nvlink_tx_mbps"].clip(lower=0)
-                                   + df["dcgm_nvlink_rx_mbps"].clip(lower=0))
+        df["nvlink_total_mbps"] = (df["dcgm_nvlink_tx_mbps"].where(df["dcgm_nvlink_tx_mbps"] >= 0)
+                                   + df["dcgm_nvlink_rx_mbps"].where(df["dcgm_nvlink_rx_mbps"] >= 0))
     if {"pcie_tx_mbps", "pcie_rx_mbps"} <= set(df.columns):
         # -1 sentinels (fanless/absent) must not pollute the sum.
-        tx = df["pcie_tx_mbps"].where(df["pcie_tx_mbps"] >= 0, 0.0)
-        rx = df["pcie_rx_mbps"].where(df["pcie_rx_mbps"] >= 0, 0.0)
+        tx = df["pcie_tx_mbps"].where(df["pcie_tx_mbps"] >= 0)
+        rx = df["pcie_rx_mbps"].where(df["pcie_rx_mbps"] >= 0)
         df["pcie_total_mbps"] = tx + rx
-    if {"nic_tx_mbps", "nic_rx_mbps"} <= set(df.columns) and "nic_total_mbps" not in df.columns:
-        df["nic_total_mbps"] = (df["nic_tx_mbps"].clip(lower=0)
-                                + df["nic_rx_mbps"].clip(lower=0))
+    # Prefer all-interface totals: the default-route NIC can miss the RDMA/
+    # GPUDirect interfaces that carry the workload's communication.
+    for tx_name, rx_name in (("nic_total_tx_mbps", "nic_total_rx_mbps"),
+                            ("nic_tx_mbps", "nic_rx_mbps")):
+        if {tx_name, rx_name} <= set(df) and "nic_total_mbps" not in df:
+            tx = pd.to_numeric(df[tx_name], errors="coerce")
+            rx = pd.to_numeric(df[rx_name], errors="coerce")
+            df["nic_total_mbps"] = tx.where(tx >= 0) + rx.where(rx >= 0)
     return df
 
 
@@ -164,15 +171,13 @@ def attach_nic_sidecar(df: pd.DataFrame, nic_glob: str = "data/**/nic_*.parquet"
     from pathlib import Path
     from glob import glob
 
-    paths = sorted(glob(str(Path(nic_glob)), recursive=True))
+    from classifier.data_sources import read_parquet, quarantined
+    paths = [p for p in sorted(glob(str(Path(nic_glob)), recursive=True)) if not quarantined(p)]
     if not paths:
         return df
     sides = []
     for p in paths:
-        try:
-            s = pd.read_parquet(p)
-        except Exception:
-            continue
+        s = read_parquet(p)
         if "timestamp_epoch" in s.columns:
             s = s.rename(columns={"timestamp_epoch": "ts"})
         sides.append(s)
@@ -183,8 +188,12 @@ def attach_nic_sidecar(df: pd.DataFrame, nic_glob: str = "data/**/nic_*.parquet"
                         "nic_rx_mbps", "nic_total_rx_mbps", "nic_total_tx_mbps",
                         "cpu_util_pct") if c in nic.columns]
     nic = nic[keep].copy()
+    nic = nic[np.isfinite(pd.to_numeric(nic["ts"], errors="coerce"))].copy()
     nic["_sec"] = nic["ts"].round().astype("int64")
     join_host = "hostname" in df.columns and "hostname" in nic.columns
+    if not join_host:
+        raise ValueError("NIC joins require hostname on both inputs; refusing a cross-host join")
+    nic = nic[nic.hostname.notna() & nic.hostname.astype(str).ne("")].copy()
     df = df.copy()
     df["_sec"] = df["ts"].round().astype("int64")
     on = ["run_id", "_sec"] + (["hostname"] if join_host else [])
@@ -203,9 +212,18 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     job_id = one physical execution (all its ranks). If a run_id already spans
     several streams (the shared-run_id case), that run_id *is* the job. If not
     (legacy), reconstruct the job the check_job_grouping way so sibling files of
-    one 8-GPU run collapse together.
+    one 8-GPU run collapse together: streams of one cell on one GPU type whose
+    starts follow within ``bucket_sec`` of each other.
     """
     df = df.copy()
+    # Chunking can remove sibling labels from a shared run. Reconstructing IDs
+    # from that subset would collapse job|label back to job. Persist the versioned
+    # assignment through the spill and keep it when processing subsets.
+    if {"meta_identity_schema", "stream_id", "job_id", "node_id", "rank"} <= set(df):
+        if df.meta_identity_schema.eq(IDENTITY_SCHEMA).all():
+            if (df.groupby("stream_id").job_id.nunique() > 1).any():
+                raise ValueError("Ambiguous persisted stream identity")
+            return df
 
     def _idcol(name, default=""):
         """NA-free string column for identity concatenation.
@@ -227,20 +245,34 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
         return s.where(df[name].notna(), default).astype(str)
 
     uuid_col = _idcol("gpu_uuid")
-    df["stream_id"] = _idcol("run_id") + "|" + uuid_col
+    base = df["workload_label"].map(_base_label)
+    df["stream_id"] = (_idcol("run_id") + "|" + uuid_col + "|"
+                       + _idcol("hostname") + "|" + base)
     df["node_id"] = _idcol("hostname", "node0") if "hostname" in df.columns else "node0"
 
     # Which run_ids span more than one stream? Those are shared-run_id jobs.
-    streams_per_run = df.groupby("run_id")["stream_id"].transform("nunique")
+    segments = pd.DataFrame({"run_id": _idcol("run_id"), "base": base})
+    segment_key = _idcol("run_id")
+    mixed = segments.groupby("run_id")["base"].transform("nunique") > 1
+    segment_key = segment_key.where(~mixed, segment_key + "|" + base)
+    streams_per_run = df.groupby(segment_key)["stream_id"].transform("nunique")
     run_start = df.groupby("stream_id")["ts"].transform("min")
     # A stream whose ts are all NULL still yields NaN here; it cannot be windowed
     # anyway, so bucket it at 0 rather than failing the cast for the whole frame.
-    run_start = run_start.astype("float64").fillna(0.0)
+    run_start = run_start.astype("float64").replace([np.inf, -np.inf], np.nan).fillna(0.0)
     base = df["workload_label"].map(_base_label)
     gpu = _idcol("gpu_name")
-    legacy_job = (base + "|" + gpu + "|"
-                  + (run_start / bucket_sec).round().astype("int64").astype(str))
-    df["job_id"] = np.where(streams_per_run > 1, _idcol("run_id"), legacy_job)
+    # Chain legacy starts rather than rounding them to a fixed bucket. The nodes
+    # of a replicated s16 cell start ~10 s apart, and a bucket edge between them
+    # split one 16-replica execution into two single-host halves.
+    starts = (pd.DataFrame({"stream_id": df["stream_id"], "cell": base + "|" + gpu,
+                            "start": run_start})[streams_per_run <= 1]
+              .drop_duplicates("stream_id").sort_values(["cell", "start"]))
+    first = starts["cell"].ne(starts["cell"].shift()) | starts["start"].diff().gt(bucket_sec)
+    starts["chain"] = starts["start"].where(first).ffill()
+    chain = df["stream_id"].map(starts.set_index("stream_id")["chain"]).fillna(run_start)
+    legacy_job = base + "|" + gpu + "|" + chain.round().astype("int64").astype(str)
+    df["job_id"] = np.where(streams_per_run > 1, segment_key, legacy_job)
 
     # A shared run_id does NOT always mean a shared JOB. multinode_queue.sh derives
     # the run_id from (stamp, cell, rep) with no node component, so on a
@@ -253,10 +285,13 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     # biasing DeltaAUC(s8-s1) down / DeltaAUC(s16-s8) up -- flattering the
     # hypothesis. Scope tells us the truth: s1/s8 are per-node by construction,
     # s16 (and the TPU tpuT* cells) genuinely span hosts.
-    _per_node_scope = df["workload_label"].map(lambda l: _scope_of(l) in ("s1", "s8"))
-    df["job_id"] = np.where(_per_node_scope,
+    scope = df["workload_label"].map(_scope_of)
+    df["job_id"] = np.where(scope.isin(["s1", "s8"]),
                             df["job_id"].astype(str) + "|" + df["node_id"].astype(str),
                             df["job_id"].astype(str))
+    # An s1 cell is single-GPU by construction: a replicated s1 cell runs one
+    # independent replica per GPU, and each replica is its own one-rank job.
+    df["job_id"] = np.where(scope.eq("s1"), df["stream_id"], df["job_id"])
 
     # Ordinal rank within a job: a stable distinct integer per stream. Ranks of
     # a distributed job start simultaneously, so ordering by start time would
@@ -273,6 +308,7 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     # which assigns them again. Drop first so re-entry is a no-op.
     df = df.drop(columns=["rank"], errors="ignore")
     df = df.merge(uniq, on=["job_id", "stream_id"], how="left")
+    df["meta_identity_schema"] = IDENTITY_SCHEMA
     return df
 
 
@@ -325,7 +361,8 @@ def _best_lag(x: np.ndarray, y: np.ndarray, max_lag: int = 5) -> int:
     x = (x - x.mean()) / (x.std() + 1e-12)
     y = (y - y.mean()) / (y.std() + 1e-12)
     best, best_lag = -np.inf, 0
-    for lag in range(-max_lag, max_lag + 1):
+    max_lag = min(max_lag, len(x) - 1)
+    for lag in sorted(range(-max_lag, max_lag + 1), key=abs):
         if lag < 0:
             c = np.dot(x[-lag:], y[:len(y) + lag]) / (len(x) + lag)
         elif lag > 0:
@@ -368,10 +405,8 @@ def cross_rank_features(job_win: pd.DataFrame) -> dict:
             feats[f"xr_corr_intranode_mean_{sig}"] = am
             feats[f"xr_corr_inter_minus_intra_{sig}"] = im - am
 
-        # rank lag structure vs a reference rank (min rank present).
-        ref = mat.columns[0]
-        xref = mat[ref].values
-        lags = [abs(_best_lag(xref, mat[c].values)) for c in mat.columns[1:]]
+        # Every unordered pair: no arbitrary reference rank or learner placement.
+        lags = [abs(_best_lag(mat[i].values, mat[j].values)) for i, j, _ in pairs]
         if lags:
             feats[f"xr_lag_median_{sig}"] = float(np.median(lags))
             feats[f"xr_lag_iqr_{sig}"] = float(np.subtract(*np.percentile(lags, [75, 25])))
@@ -396,87 +431,103 @@ def cross_rank_features(job_win: pd.DataFrame) -> dict:
     return feats
 
 
-def sliding_windows_multinode(
-    df: pd.DataFrame,
-    window_sec: float = 30.0,
-    stride_sec: float = 15.0,
-    min_rank_coverage: float = 0.8,
-) -> pd.DataFrame:
-    """Job-level, epoch-aligned windows carrying rank-0 features + cross-rank
-    features. One row per (job_id, window). ``run_id`` is set to ``job_id`` so
-    downstream run-level detection groups by physical job automatically.
+def expected_rank_count(job_df):
+    """Declared width, never inferred from the number of received streams."""
+    for col in ("expected_ranks", "world_size"):
+        if col in job_df:
+            values = pd.to_numeric(job_df[col], errors="coerce").dropna().unique()
+            if len(values) > 1:
+                raise ValueError(f"Conflicting {col} within one job: {values}")
+            if len(values) and values[0] > 0:
+                return int(values[0])
+    scope = _scope_of(job_df["workload_label"].iloc[0])
+    match = re.fullmatch(r"(?:s|tput)(\d+)", scope)
+    return int(match[1]) if match else None
 
-    Rank-0 features reuse extract_enhanced_features VERBATIM (names unchanged),
-    so twostage's level-feature drop keeps working on this block.
+
+def sliding_windows_multinode(df, window_sec=30.0, stride_sec=15.0,
+                              min_rank_coverage=0.8, keep_degraded=False, work_events=None):
+    """One aligned row per job/window, with permutation-invariant rank pooling.
+
+    Default drops windows below the declared width/time coverage. Unknown legacy
+    widths remain explicitly unknown, and cannot substantiate complete topology.
+    keep_degraded is for diagnostics, not the primary evaluation. ``work_events``
+    (``{job_id: intervals}``) labels each window by the work any rank of the job
+    did inside it, as in ``sliding_windows``.
     """
+    from classifier.window_labels import assign_work_labels
+    if window_sec <= 0 or stride_sec <= 0 or not 0 < min_rank_coverage <= 1:
+        raise ValueError("Invalid window, stride, or rank coverage")
     df = assign_stream_and_job_ids(df)
     rows = []
     for job_id, job_df in df.groupby("job_id"):
+        first = len(rows)
         job_df = job_df.sort_values("ts")
-        n_ranks = job_df["rank"].nunique()
-        t0 = job_df["ts"].min()
-        t_end = job_df["ts"].max()
-        # Epoch-aligned grid so every rank shares exact window boundaries.
-        wstart = np.ceil(t0 / stride_sec) * stride_sec
-        label = job_df["threeway_label"].iloc[0]
-        wl = _base_label(job_df["workload_label"].iloc[0])
-        gpu = job_df["gpu_name"].iloc[0] if "gpu_name" in job_df.columns else ""
-        scope = _scope_of(job_df["workload_label"].iloc[0])
-        # canonical stream for the single-stream feature block = lowest rank
-        ref_rank = job_df["rank"].min()
-
+        if job_df.threeway_label.nunique() != 1:
+            raise ValueError(f"Conflicting objective labels in job {job_id}")
+        observed = job_df["rank"].nunique()
+        cadence = job_df.groupby("rank").ts.agg(lambda t: t.drop_duplicates().sort_values().diff().median())
+        expected = expected_rank_count(job_df)
+        width = expected or observed
+        wstart = np.ceil(job_df.ts.min() / stride_sec) * stride_sec
+        t_end = job_df.ts.max()
         while wstart + window_sec <= t_end + 1:
             wend = wstart + window_sec
-            win = job_df[(job_df["ts"] >= wstart) & (job_df["ts"] < wend)]
-            ranks_here = win["rank"].nunique()
-            if ranks_here == 0:
-                wstart += stride_sec
-                continue
-            ref = win[win["rank"] == ref_rank]
-            if len(ref) < 5:
-                wstart += stride_sec
-                continue
-            feats = extract_enhanced_features(ref)
-            feats.update(cross_rank_features(win))
-            # per-rank comm-channel aggregates (mean over ranks of window means)
-            for sig in EXTRA_SIGNALS:
-                if sig in win.columns:
-                    v = win[sig].where(win[sig] != -1, np.nan)
-                    feats[f"xragg_{sig}_mean"] = float(v.mean()) if v.notna().any() else 0.0
-                    feats[f"xragg_{sig}_max"] = float(v.max()) if v.notna().any() else 0.0
-            feats["run_id"] = job_id           # group-by key for detection
-            feats["threeway_label"] = label
-            feats["workload_label"] = wl
-            feats["gpu_name"] = gpu
-            feats["window_start"] = wstart
-            feats["window_end"] = wend
-            # meta columns as STRINGS so get_feature_cols never treats them as
-            # features (they would otherwise leak scope/rank identity).
-            feats["meta_scope"] = scope
-            feats["meta_n_ranks"] = str(n_ranks)
-            feats["meta_rank_coverage"] = f"{ranks_here / max(n_ranks, 1):.3f}"
-            feats["meta_degraded"] = str(ranks_here < min_rank_coverage * n_ranks)
-            # Whether the host-NIC sidecar actually covered this window, as
-            # opposed to being absent. The xragg_/xr_ NIC features fall back to
-            # 0.0 when the channel has no non-null sample, which makes "no
-            # sidecar was collected" identical to "measured, and quiet" -- and 25
-            # of the 76 s16 cells in the corpus predate the sidecar entirely.
-            # Left implicit, a model learns WHEN a cell was collected: FSDP shows
-            # 65% zeros while its own sidecars measure 16,077 Mbps. meta_ prefix
-            # keeps this out of get_feature_cols; it is for filtering, not fitting.
-            feats["meta_nic_present"] = str(bool(
-                "nic_total_mbps" in win.columns and win["nic_total_mbps"].notna().any()))
-            rows.append(feats)
+            win = job_df[(job_df.ts >= wstart) & (job_df.ts < wend)]
+            # A rank contributes only if it has enough samples over most of the
+            # interval; a five-sample fragment is not a complete 30-second rank.
+            qualified = []
+            for rank, rank_df in win.groupby("rank"):
+                dt = cadence.loc[rank]
+                if (dt > 0 and rank_df.ts.nunique() >= max(5, min_rank_coverage * window_sec / dt)
+                        and rank_df.ts.max() - rank_df.ts.min() + dt >= min_rank_coverage * window_sec):
+                    qualified.append(rank_df)
             wstart += stride_sec
-
-    return pd.DataFrame(rows) if rows else pd.DataFrame()
+            if not qualified:
+                continue
+            win = pd.concat(qualified)
+            ranks_here = len(qualified)
+            degraded = ranks_here < min_rank_coverage * width or observed > width
+            if degraded and not keep_degraded:
+                continue
+            rank_features = pd.DataFrame([extract_enhanced_features(r) for r in qualified])
+            feats = rank_features.mean().to_dict()
+            feats.update({f"rankmax_{k}": v for k, v in rank_features.max().items()})
+            feats.update({f"rankstd_{k}": v for k, v in rank_features.std(ddof=0).items()})
+            feats.update(cross_rank_features(win))
+            for sig in EXTRA_SIGNALS:
+                v = win[sig].where(win[sig] >= 0) if sig in win else pd.Series(dtype=float)
+                feats[f"xragg_{sig}_mean"] = float(v.mean())
+                feats[f"xragg_{sig}_max"] = float(v.max())
+            sources = sorted(job_df.source_path.dropna().unique()) if "source_path" in job_df else []
+            campaigns = sorted({p.split("/")[2] for p in sources if p.startswith("data/gcp/")})
+            feats.update(run_id=job_id, job_id=job_id,
+                         threeway_label=job_df.threeway_label.iloc[0],
+                         workload_label=_base_label(job_df.workload_label.iloc[0]),
+                         gpu_name=job_df.gpu_name.iloc[0] if "gpu_name" in job_df else "",
+                         window_start=wend - window_sec, window_end=wend,
+                         meta_scope=_scope_of(job_df.workload_label.iloc[0]),
+                         meta_n_ranks=observed, meta_expected_ranks=expected,
+                         meta_n_hosts=job_df.node_id.nunique(),
+                         meta_rank_coverage=ranks_here / expected if expected else np.nan,
+                         meta_observed_rank_coverage=ranks_here / observed,
+                         meta_degraded=degraded,
+                         meta_topology_known=expected is not None,
+                         meta_campaign="|".join(campaigns),
+                         meta_source_paths="|".join(sources),
+                         meta_nic_present=bool("nic_total_mbps" in win and win.nic_total_mbps.notna().any()))
+            rows.append(feats)
+        if work_events is not None:
+            assign_work_labels(rows[first:], work_events.get(str(job_id)),
+                               job_df.workload_label.iloc[0], job_df.threeway_label.iloc[0])
+    return pd.DataFrame(rows)
 
 
 # tpuTMS\d* covers the multislice ladder rungs (tpuTMS = 2 slices, tpuTMS4,
 # tpuTMS8). Without the \d* the 4- and 8-slice cells match nothing here and are
 # dropped from the multinode features silently, which is the same failure mode
 # that once discarded "Google TPU v6e" rows without a count.
-_SCOPE_RE = re.compile(r"^(s1|s8|s16|tpuT\d+|tpuTMS\d*)_", re.IGNORECASE)
+_SCOPE_RE = re.compile(r"^(?:smoke_)?(s1|s8|s16|tpuT\d+|tpuTMS\d*)_", re.IGNORECASE)
 
 
 def _scope_of(label: str) -> str:
