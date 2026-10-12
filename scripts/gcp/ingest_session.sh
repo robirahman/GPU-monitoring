@@ -104,7 +104,10 @@ for p in glob.glob(os.path.join(src, "**", "*.parquet.partial"), recursive=True)
         continue
     if nrows >= 600:
         base = os.path.basename(p)[:-len(".parquet.partial")]  # strip suffix
-        partial_dir = os.path.join(dest, "_quarantine_partial")
+        # The NIC sidecar is stopped with SIGTERM and never writes a final
+        # file, so its partial IS its data: it joins the corpus as before. A
+        # GPU stream whose collector never finished stays out of it.
+        partial_dir = dest if base.startswith("nic_") else os.path.join(dest, "_quarantine_partial")
         os.makedirs(partial_dir, exist_ok=True)
         out = os.path.join(partial_dir, base + "_truncated.parquet")
         shutil.copyfile(p, out)

@@ -312,18 +312,20 @@ def own_intervals(intervals, source_path):
     """A GPU stream's own rank's slots, when its job logs work rank by rank.
 
     Distributed RL logs every rank (the learner trains while actors serve
-    rollouts), so a GPU's windows should show that GPU's work. The node's
-    logging ranks, in order, map onto its local GPU indices. None when the
-    stream's rank did not log (rank-0-only jobs): its job's timeline applies.
+    rollouts), so a GPU's windows should show that GPU's work. Only a node whose
+    k logging ranks are exactly node*k .. node*k+k-1 maps GPU g to rank node*k+g;
+    with any rank missing the mapping is unknown. None then, and for rank-0-only
+    jobs: the job's timeline applies.
     """
     m = STREAM_RANK_RE.search(str(source_path))
     if m is None or intervals is None or "rank" not in intervals:
         return None
     node, gpu = int(m[1]), int(m[2])
-    ranks = sorted(r for r in intervals.loc[intervals["node"] == node, "rank"].unique() if r >= 0)
-    if gpu >= len(ranks) or len(ranks) < 2:
+    ranks = sorted(int(r) for r in intervals.loc[intervals["node"] == node, "rank"].unique() if r >= 0)
+    k = len(ranks)
+    if k < 2 or gpu >= k or ranks != list(range(node * k, node * k + k)):
         return None
-    own = intervals[(intervals["node"] == node) & (intervals["rank"] == ranks[gpu])]
+    own = intervals[(intervals["node"] == node) & (intervals["rank"] == node * k + gpu)]
     return own.reset_index(drop=True)
 
 
@@ -439,13 +441,20 @@ def assign_work_labels(rows, intervals, workload_label, objective):
             row[key] = values[i]
 
 
+WORK_EVENTS_SCHEMA = {"start": "float64", "end": "float64", "work": "string",
+                      "node": "int64", "rank": "int64", "job_id": "string"}
+
+
 def save_work_events(events, path):
-    """Persist ``{job_id: intervals}`` for cache workers."""
+    """Persist ``{job_id: intervals}`` for cache workers.
+
+    Typed columns even when no job has STEP lines: an empty untyped job_id is
+    written as null, and every filtered read of it then fails.
+    """
     frames = [iv.assign(job_id=str(job)) for job, iv in events.items() if len(iv)]
     table = (pd.concat(frames, ignore_index=True) if frames
-             else pd.DataFrame(columns=["start", "end", "work", "node", "rank", "job_id"]))
-    table.astype({"start": float, "end": float, "work": str, "node": int, "rank": int,
-                  "job_id": str}).to_parquet(path, index=False)
+             else pd.DataFrame(columns=list(WORK_EVENTS_SCHEMA)))
+    table[list(WORK_EVENTS_SCHEMA)].astype(WORK_EVENTS_SCHEMA).to_parquet(path, index=False)
 
 
 def load_work_events(path, jobs) -> dict:
@@ -454,5 +463,6 @@ def load_work_events(path, jobs) -> dict:
     if not jobs:
         return {}
     table = pd.read_parquet(path, filters=[("job_id", "in", jobs)])
+    table["work"] = table["work"].astype(object)
     return {job: g[["start", "end", "work", "node", "rank"]].reset_index(drop=True)
             for job, g in table.groupby("job_id", sort=False)}

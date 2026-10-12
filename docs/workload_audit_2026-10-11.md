@@ -96,8 +96,11 @@ Streams include host, device, and workload segment. Different workloads sharing
 one run/device are no longer stitched together. Per-stream windows keep the
 run-level `run_id` and add `stream_id` and `job_id`; the three-way CV folds by
 `job_id`, so the ranks of one execution never straddle a train/test split. Versioned identities survive
-chunking, and independent S1/S8 executions remain separated by host. Legacy job
-reconstruction still uses a 20-second bucket; these identities are provisional.
+chunking, and independent S1/S8 executions remain separated by host; each
+replica of a replicated S1 cell is its own one-rank job. Legacy jobs (one
+run_id per collector) chain streams of one cell and GPU type whose starts follow
+within 20 s, so a replicated S16 rep whose nodes started either side of a fixed
+bucket edge stays one two-host job. These identities remain provisional.
 
 Multinode windows pool per-rank features using mean, maximum and dispersion.
 Pairwise lag summaries use all rank pairs. Neither block chooses an arbitrary

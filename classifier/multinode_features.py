@@ -49,6 +49,8 @@ from classifier.threeway_improved import (
 # Job-identity bucket, matching check_job_grouping.BUCKET: sibling ranks start
 # within a couple of seconds, repeated runs of a cell are minutes apart.
 BUCKET = 20.0
+# Bumped whenever job_id reconstruction changes, so persisted ids are rebuilt.
+IDENTITY_SCHEMA = "2026-10-12.1"
 
 # Extra per-stream comm channels, if present after normalize_comm_columns /
 # attach_nic_sidecar. Featurised per stream like a RAW_SIGNAL.
@@ -210,14 +212,15 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     job_id = one physical execution (all its ranks). If a run_id already spans
     several streams (the shared-run_id case), that run_id *is* the job. If not
     (legacy), reconstruct the job the check_job_grouping way so sibling files of
-    one 8-GPU run collapse together.
+    one 8-GPU run collapse together: streams of one cell on one GPU type whose
+    starts follow within ``bucket_sec`` of each other.
     """
     df = df.copy()
     # Chunking can remove sibling labels from a shared run. Reconstructing IDs
     # from that subset would collapse job|label back to job. Persist the versioned
     # assignment through the spill and keep it when processing subsets.
     if {"meta_identity_schema", "stream_id", "job_id", "node_id", "rank"} <= set(df):
-        if df.meta_identity_schema.eq("2026-10-11.1").all():
+        if df.meta_identity_schema.eq(IDENTITY_SCHEMA).all():
             if (df.groupby("stream_id").job_id.nunique() > 1).any():
                 raise ValueError("Ambiguous persisted stream identity")
             return df
@@ -259,8 +262,16 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     run_start = run_start.astype("float64").replace([np.inf, -np.inf], np.nan).fillna(0.0)
     base = df["workload_label"].map(_base_label)
     gpu = _idcol("gpu_name")
-    legacy_job = (base + "|" + gpu + "|"
-                  + (run_start / bucket_sec).round().astype("int64").astype(str))
+    # Chain legacy starts rather than rounding them to a fixed bucket. The nodes
+    # of a replicated s16 cell start ~10 s apart, and a bucket edge between them
+    # split one 16-replica execution into two single-host halves.
+    starts = (pd.DataFrame({"stream_id": df["stream_id"], "cell": base + "|" + gpu,
+                            "start": run_start})[streams_per_run <= 1]
+              .drop_duplicates("stream_id").sort_values(["cell", "start"]))
+    first = starts["cell"].ne(starts["cell"].shift()) | starts["start"].diff().gt(bucket_sec)
+    starts["chain"] = starts["start"].where(first).ffill()
+    chain = df["stream_id"].map(starts.set_index("stream_id")["chain"]).fillna(run_start)
+    legacy_job = base + "|" + gpu + "|" + chain.round().astype("int64").astype(str)
     df["job_id"] = np.where(streams_per_run > 1, segment_key, legacy_job)
 
     # A shared run_id does NOT always mean a shared JOB. multinode_queue.sh derives
@@ -274,10 +285,13 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     # biasing DeltaAUC(s8-s1) down / DeltaAUC(s16-s8) up -- flattering the
     # hypothesis. Scope tells us the truth: s1/s8 are per-node by construction,
     # s16 (and the TPU tpuT* cells) genuinely span hosts.
-    _per_node_scope = df["workload_label"].map(lambda l: _scope_of(l) in ("s1", "s8"))
-    df["job_id"] = np.where(_per_node_scope,
+    scope = df["workload_label"].map(_scope_of)
+    df["job_id"] = np.where(scope.isin(["s1", "s8"]),
                             df["job_id"].astype(str) + "|" + df["node_id"].astype(str),
                             df["job_id"].astype(str))
+    # An s1 cell is single-GPU by construction: a replicated s1 cell runs one
+    # independent replica per GPU, and each replica is its own one-rank job.
+    df["job_id"] = np.where(scope.eq("s1"), df["stream_id"], df["job_id"])
 
     # Ordinal rank within a job: a stable distinct integer per stream. Ranks of
     # a distributed job start simultaneously, so ordering by start time would
@@ -294,7 +308,7 @@ def assign_stream_and_job_ids(df: pd.DataFrame, bucket_sec: float = BUCKET) -> p
     # which assigns them again. Drop first so re-entry is a no-op.
     df = df.drop(columns=["rank"], errors="ignore")
     df = df.merge(uniq, on=["job_id", "stream_id"], how="left")
-    df["meta_identity_schema"] = "2026-10-11.1"
+    df["meta_identity_schema"] = IDENTITY_SCHEMA
     return df
 
 

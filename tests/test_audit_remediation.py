@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import subprocess
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -259,6 +260,25 @@ class MultinodeFeatureTests(unittest.TestCase):
                 self.assertEqual(streams.threeway_label.value_counts().to_dict(),
                                  {"ml_training": 3, "other": 3})
 
+    def test_replicated_cells_keep_their_windows(self):
+        rng = np.random.default_rng(0)
+
+        def cell(label, starts):
+            return pd.concat([features._normalize_columns(pd.DataFrame(dict(
+                run_id=rng.bytes(6).hex(), gpu_uuid=f"GPU-{node}-{g}", hostname=f"host{node}",
+                gpu_name="test", workload_label=label, threeway_label="ml_inference",
+                ts=t0 + np.arange(120, dtype=float), gpu_utilization_pct=60 + rng.normal(0, 5, 120))))
+                for node, t0 in enumerate(starts) for g in range(8)], ignore_index=True)
+        # s1: one independent replica per GPU, each its own one-rank job.
+        s1 = assign_stream_and_job_ids(cell("s1_inferrep_x", [1790436000., 1790436000.4]))
+        self.assertEqual(s1.job_id.nunique(), 16)
+        self.assertGreater(len(sliding_windows_multinode(s1, 30, 15)), 0)
+        # s16: nodes started 10 s apart, either side of a 20 s bucket edge.
+        s16 = assign_stream_and_job_ids(cell("s16_infercnn_x", [1790436527.8, 1790436538.0]))
+        self.assertEqual(s16.job_id.nunique(), 1)
+        self.assertEqual(s16.hostname.nunique(), 2)
+        self.assertGreater(len(sliding_windows_multinode(s16, 30, 15)), 0)
+
     def test_expected_width_and_duration_enforced(self):
         d = self.frame()
         self.assertGreater(len(sliding_windows_multinode(d, 20, 20)), 0)
@@ -371,6 +391,19 @@ class WorkLabelTests(unittest.TestCase):
         self.assertEqual(set(actor.work), {"ml_inference"})
         rank0_only = iv[iv["rank"] == 0]
         self.assertIsNone(own_intervals(rank0_only, "data/x_node0_gpu3_NVIDIA_T_abcdef123456.parquet"))
+        # With a rank missing, GPU 1 must not inherit rank 2's timeline.
+        gap = iv[iv["rank"] != 1]
+        self.assertIsNone(own_intervals(gap, "data/x_node0_gpu1_NVIDIA_T_abcdef123456.parquet"))
+        node1 = iv.assign(node=1, rank=iv["rank"] + 4)
+        actor = own_intervals(node1, "data/x_node1_gpu2_NVIDIA_T_abcdef123456.parquet")
+        self.assertEqual(set(actor["rank"]), {6})
+
+    def test_no_step_evidence_at_all_still_loads(self):
+        from classifier.window_labels import load_work_events, save_work_events
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "events.parquet"
+            save_work_events({}, path)
+            self.assertEqual(load_work_events(path, ["any-job"]), {})
 
     def test_without_logs_only_single_kind_programs_get_labels(self):
         from classifier.window_labels import assign_work_labels
@@ -393,6 +426,21 @@ class WorkLabelTests(unittest.TestCase):
         cols = features.get_feature_cols(w)
         self.assertTrue({"label_train_s", "label_infer_s", "label_other_s"} <= set(w))
         self.assertFalse([c for c in cols if "label" in c])
+
+
+class IngestTests(unittest.TestCase):
+    def test_nic_sidecar_partials_join_the_corpus(self):
+        script = (Path(__file__).resolve().parents[1] / "scripts/gcp/ingest_session.sh").read_text()
+        step = script.split("--- 3. orphaned", 1)[1].split("<<'PY'\n", 1)[1].split("\nPY\n", 1)[0]
+        with tempfile.TemporaryDirectory() as tmp:
+            src, dest = Path(tmp) / "src/host0/data", Path(tmp) / "dest"
+            src.mkdir(parents=True); dest.mkdir()
+            for name in ("nic_cell_node0_abcdef123456", "cell_node0_gpu0_NVIDIA_T_abcdef123456"):
+                pd.DataFrame(dict(ts=np.arange(700.))).to_parquet(src / f"{name}.parquet.partial")
+            subprocess.run([sys.executable, "-c", step, str(Path(tmp) / "src"), str(dest)],
+                           check=True, capture_output=True)
+            self.assertTrue((dest / "nic_cell_node0_abcdef123456_truncated.parquet").is_file())
+            self.assertTrue((dest / "_quarantine_partial/cell_node0_gpu0_NVIDIA_T_abcdef123456_truncated.parquet").is_file())
 
 
 class EvaluationTests(unittest.TestCase):

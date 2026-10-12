@@ -378,7 +378,7 @@ def inventory(root, objects, out, allow_incomplete=False):
                    jobs=len(jobs), cells=acc.cell.nunique(), label_corrected_streams=int((acc.threeway_label != acc.previous_routing).sum()),
                    notes=["Accepted means outside quarantine, not verified useful compute.",
                           "Durations are timestamp spans and gap-capped coverage, not active optimizer time.",
-                          "Legacy job identities use 20-second buckets and are provisional.",
+                          "Legacy job identities chain starts within 20 seconds and are provisional.",
                           "Completion is evidenced only for available logged hosts; inspect log_hosts against topology.",
                           "Raw waveforms and sidecars are counted separately from accelerator-hours.",
                           "Telemetry covers tracked files plus current code fixes; log evidence includes marked untracked local logs."])
