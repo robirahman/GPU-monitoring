@@ -112,7 +112,11 @@ def run_multi_gpu(args, workload_cmd):
             workload_label=args.workload,
             run_id=run_id,
             enable_dcgm=not args.no_dcgm,
+            checkpoint_sec=args.checkpoint_sec,
         )
+        if args.checkpoint_sec > 0:
+            c.checkpoint_path = str(output_dir / generate_filename(
+                args.workload, c.metadata.gpu_name, i, run_id, args.node_rank)) + ".partial"
         c.start()
         collectors.append(c)
         log.info(f"  GPU {i}: telemetry started ({c.metadata.gpu_name})")
@@ -175,7 +179,11 @@ def run_telemetry_only(args):
             workload_label=args.workload,
             run_id=run_id,
             enable_dcgm=not args.no_dcgm,
+            checkpoint_sec=args.checkpoint_sec,
         )
+        if args.checkpoint_sec > 0:
+            c.checkpoint_path = str(output_dir / generate_filename(
+                args.workload, c.metadata.gpu_name, i, run_id, args.node_rank)) + ".partial"
         c.start()
         collectors.append(c)
 
@@ -295,6 +303,8 @@ def main():
     parser.add_argument("--num-gpus", type=int, default=8)
     parser.add_argument("--output-dir", type=str, default="data/")
     parser.add_argument("--interval", type=float, default=1.0)
+    parser.add_argument("--checkpoint-sec", type=float, default=60.0,
+                        help="Rolling crash snapshot interval for distributed/telemetry-only mode; 0 disables")
     parser.add_argument("--no-dcgm", action="store_true")
     parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--parallel", action="store_true",

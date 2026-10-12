@@ -52,10 +52,12 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads._seed import add_seed_argument, record_seed, record_progress
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
     from workloads import fsdp_training as _fsdp
 except ImportError:  # launched as `torchrun workloads/train_localsgd.py`
     from _step import emit_step
+    from _seed import add_seed_argument, record_seed, record_progress
     from dist_deadline import CollectiveDeadline, sync_teardown
     import fsdp_training as _fsdp
 
@@ -133,6 +135,7 @@ def parse_args():
     p.add_argument("--outer-opt", default="nesterov", choices=("nesterov", "avg"),
                    help="'avg' is plain parameter averaging with no outer state, "
                         "for when GPU/CPU memory is the binding constraint")
+    add_seed_argument(p)
     return p.parse_args()
 
 
@@ -192,6 +195,7 @@ def local_sgd_sync(model, outer, args, world_size, codec=None, ef=None):
 
 def main():
     args = parse_args()
+    record_seed(args.seed)
     dist.init_process_group(backend="nccl")
     rank = dist.get_rank()
     world_size = dist.get_world_size()
@@ -209,11 +213,11 @@ def main():
     # rank its own DATA stream. Identical data would make the replicas identical
     # and the sync a no-op, which would quietly turn this into a workload that
     # transfers a large tensor for no reason.
-    torch.manual_seed(1234)
+    torch.manual_seed(args.seed)
     model = RandomTransformerLM(args.size).to(device)
     for p in model.parameters():
         dist.broadcast(p.data, src=0)
-    torch.manual_seed(1234 + rank)
+    torch.manual_seed(args.seed + rank)
 
     codec = make_codec(args.compress) if args.compress != "none" else None
     ef = EFState() if (codec is not None and getattr(codec, "uses_error_feedback",
@@ -278,6 +282,7 @@ def main():
             emit_step("train", step, tokens=tokens, node=node_rank, rank=rank, sync=0)
 
     elapsed = time.time() - wall_start
+    record_progress(args.seed, step, tokens, elapsed)
     if rank == 0:
         quiet = 100.0 * (step - syncs) / max(step, 1)
         print(f"\nLocal SGD complete: {step} steps, {syncs} syncs in {elapsed:.1f}s",

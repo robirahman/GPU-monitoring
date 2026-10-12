@@ -34,6 +34,13 @@ not useful training time. Historical job identities remain provisional.
   onset-to-alert delay in the exhaustive evaluator. Real corpus results remain pending.
 - [x] Generate the deterministic [repetition plan](followup_execution_2026-10-12/repetition_plan/summary.json):
   25 configurations, five fresh launches each, three day slots. No VMs launched.
+- [x] Add recorded base seeds to all six implementations behind that plan;
+  preserve rank/shard offsets and regenerate per-launch seeds.
+- [x] Implement a bounded pilot launcher, per-rank progress checks, rolling GPU
+  snapshots and verified cloud receipts. [Runbook](followup_execution_2026-10-12/collection_runbook.md).
+- [ ] Execute a live two-node smoke, inspect both hosts' receipts and telemetry,
+  then launch the first 30-minute repetition. Authentication is active; this
+  agent session currently cannot resolve the Google Cloud API hostname.
 
 ## Corpus accounting and recovery
 

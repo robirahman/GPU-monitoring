@@ -45,9 +45,11 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads._seed import add_seed_argument, record_seed, record_progress
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
 except ImportError:  # launched as `torchrun workloads/train_tp.py`
     from _step import emit_step
+    from _seed import add_seed_argument, record_seed, record_progress
     from dist_deadline import CollectiveDeadline, sync_teardown
 
 import torch
@@ -228,11 +230,13 @@ def parse_args():
                         "world. Anything smaller leaves the remaining ranks as "
                         "data-parallel replicas.")
     p.add_argument("--lr", type=float, default=1e-4)
+    add_seed_argument(p)
     return p.parse_args()
 
 
 def main():
     args = parse_args()
+    record_seed(args.seed)
     dist.init_process_group(backend="nccl")
     rank = dist.get_rank()
     world_size = dist.get_world_size()
@@ -270,7 +274,7 @@ def main():
     # global rank) gives each shard different values while keeping the two DP
     # replicas of a given tp_rank identical, which is what data parallelism
     # requires.
-    torch.manual_seed(1234 + tp_rank)
+    torch.manual_seed(args.seed + tp_rank)
     model = TPTransformerLM(args.hidden, args.layers, args.heads, args.ffn,
                             args.vocab, tp_size, tp_rank, tp_group).to(device)
     # Replicated parameters (embeddings, norms) must AGREE across the TP group,
@@ -280,7 +284,7 @@ def main():
             continue
         for p in mod.parameters(recurse=False):
             dist.broadcast(p.data, src=dp_rank * tp_size, group=tp_group)
-    torch.manual_seed(1234 + rank)
+    torch.manual_seed(args.seed + rank)
 
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
 
@@ -326,6 +330,7 @@ def main():
                       tp_mb=round(tp_bytes() / 2**20, 1))
 
     elapsed = time.time() - wall_start
+    record_progress(args.seed, step, tokens, elapsed)
     # TP traffic leaves the node only when the TP group spans nodes.
     inter_node = tp_bytes() if tp_size > local_world else 0
     if rank == 0:

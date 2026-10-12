@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Produce a bounded, deterministic repetition plan; does not launch VMs/jobs.
 
-Day slots require distinct actual collection dates. Independent seeds are a
-separate pending requirement: the legacy queue does not uniformly expose them.
+Day slots require distinct actual collection dates. Each fresh launch gets a
+recorded base model/data seed, separate from execution-order randomization.
 """
 import argparse
 import csv
@@ -37,10 +37,14 @@ def make_plan(jobs, launches=5, days=3, duration=1800, seed=20261012):
                 raise ValueError(f'Invalid distributed cell: {cell}')
             history = [j for j in selected if j['cell'] == cell]
             stamp = f'followup_d{day}_launch{launch+1}_{cell}'
-            env = dict(RUN_STAMP=stamp, REPS='1', DUR=str(duration),
+            workload_seed = int.from_bytes(hashlib.sha256(
+                f'{seed}:{launch}:{cell}'.encode()).digest()[:4], 'big') % 2**31
+            env = dict(RUN_STAMP=stamp, SPAR_WORKLOAD_SEED=str(workload_seed),
+                       REPS='1', DUR=str(duration),
                        TIMEOUT=str(duration+1200), TIMEOUT_BIG=str(duration+1500),
                        TIMEOUT_SERVE=str(duration+2400),
-                       ONLY_CELLS='^' + cell + '$', SMOKE='0')
+                       ONLY_CELLS='^' + cell + '$', SMOKE='0',
+                       SPAR_REFUSE_BUSY_GPU='1', SPAR_STRICT_BARRIER='1')
             command = 'env ' + ' '.join(f'{k}={shlex.quote(v)}' for k,v in env.items())
             command += ' bash scripts/rebuttal_collection/multinode_queue.sh'
             rows.append(dict(cell=cell, family=history[0]['family'], day_slot=day,
@@ -49,7 +53,8 @@ def make_plan(jobs, launches=5, days=3, duration=1800, seed=20261012):
                 recorded_prior_jobs=len(history),
                 prior_nonexcluded_jobs=sum(str(j['excluded_failed_job']).lower() != 'true' for j in history),
                 run_stamp=stamp, queue_command=command,
-                status='planned_not_launched', seed_control='pending_uniform_workload_seed_support'))
+                status='planned_not_launched', workload_seed=workload_seed,
+                seed_control='recorded_base_with_workload_rank_offsets'))
     return rows
 
 
@@ -77,7 +82,7 @@ def main():
         constraints=['Both nodes must use the identical plan and run stamps.',
             'Smoke each implementation; verify idle dedicated nodes before the legacy queue, which reaps compute processes.',
             'Run each day slot on a distinct collection date; validate all-worker completion/progress before counting a repetition.',
-            'Uniform workload seed support is pending; schedule randomization is not a model/data seed.',
+            'Workload seeds cover model/data and auxiliary generators; asynchronous timing remains nondeterministic.',
             'Hours exclude load, compile, sync, teardown and failed attempts. No dollar estimate without current pricing.',
             'Do not launch the whole plan automatically; select bounded batches and use durable synchronization plus peer-gated shutdown.'])
     (a.out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

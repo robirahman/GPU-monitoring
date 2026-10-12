@@ -61,12 +61,14 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads._seed import add_seed_argument, record_seed, record_progress
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
     from workloads.dist_control import (
         ControlPlane, P2PChannel, Transfer, assert_plan_agreed, plan_digest)
     from workloads import fsdp_training as _fsdp
 except ImportError:  # launched as `torchrun workloads/train_rl_dist.py`
     from _step import emit_step
+    from _seed import add_seed_argument, record_seed, record_progress
     from dist_deadline import CollectiveDeadline, sync_teardown
     from dist_control import (
         ControlPlane, P2PChannel, Transfer, assert_plan_agreed, plan_digest)
@@ -233,12 +235,14 @@ def parse_args():
     p.add_argument("--lr", type=float, default=1e-5)
     p.add_argument("--pg-timeout-min", type=int,
                    default=int(os.environ.get("SPAR_PG_TIMEOUT_MIN", "45")))
+    add_seed_argument(p)
     return p.parse_args()
 
 
 def main():
     from datetime import timedelta
     args = parse_args()
+    record_seed(args.seed)
     # Explicit timeout: the default ProcessGroupNCCL timeout is 10 minutes, and
     # a shaped 100 Mbps link turns collectives that took milliseconds into
     # minutes. A cell that blows it dies with a misleading watchdog message.
@@ -262,11 +266,11 @@ def main():
     B, G = args.batch_size, args.gen_tokens
     traj_numel = TRAJ_FIELDS * B * G
 
-    torch.manual_seed(1234)
+    torch.manual_seed(args.seed)
     policy = Policy(args.size).to(device)
     for p in policy.parameters():
         dist.broadcast(p.data, src=0)
-    torch.manual_seed(1234 + rank)
+    torch.manual_seed(args.seed + rank)
     opt = torch.optim.AdamW(policy.parameters(), lr=args.lr) if is_learner else None
 
     cp = ControlPlane(device, width=4)
@@ -375,6 +379,7 @@ def main():
                 dist.broadcast(p.data, src=lead)
 
     elapsed = time.time() - t0
+    record_progress(args.seed, n_train, tokens_train, elapsed, infer_steps=n_infer)
     tot_infer = torch.tensor([float(n_infer), float(n_train), float(wire)],
                              device=device)
     dist.all_reduce(tot_infer)

@@ -55,12 +55,14 @@ from datetime import timedelta
 
 try:
     from workloads._step import emit_step
+    from workloads._seed import add_seed_argument, record_seed
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
     from workloads.dist_control import (
         ControlPlane, P2PChannel, Transfer, assert_plan_agreed)
     from workloads.gradcompress import Int8Codec
 except ImportError:  # launched as `torchrun workloads/train_swarm.py`
     from _step import emit_step
+    from _seed import add_seed_argument, record_seed
     from dist_deadline import CollectiveDeadline, sync_teardown
     from dist_control import (
         ControlPlane, P2PChannel, Transfer, assert_plan_agreed)
@@ -261,11 +263,13 @@ def parse_args():
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--pg-timeout-min", type=int,
                    default=int(os.environ.get("SPAR_PG_TIMEOUT_MIN", "45")))
+    add_seed_argument(p)
     return p.parse_args()
 
 
 def main():
     args = parse_args()
+    record_seed(args.seed)
     dist.init_process_group(
         backend="nccl" if torch.cuda.is_available() else "gloo",
         timeout=timedelta(minutes=args.pg_timeout_min))
@@ -284,7 +288,7 @@ def main():
     routers = {s: SwarmRouter(smap.peers(s)) for s in range(args.stages)}
     stragglers = {int(x) for x in args.straggler_ranks.split(",") if x.strip()}
 
-    torch.manual_seed(1234 + smap.stage_of(rank))
+    torch.manual_seed(args.seed + smap.stage_of(rank))
     model = StageModule(args.hidden, args.layers_per_stage, args.heads,
                         args.ffn, args.vocab, smap.stage_of(rank),
                         args.stages).to(device)
@@ -420,7 +424,7 @@ def main():
                     wire += moved
                     if rank == mover:
                         flat = next(iter(got.values()))
-                        torch.manual_seed(1234 + to_stage)
+                        torch.manual_seed(args.seed + to_stage)
                         model = StageModule(args.hidden, args.layers_per_stage,
                                             args.heads, args.ffn, args.vocab,
                                             to_stage, args.stages).to(device)

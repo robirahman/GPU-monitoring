@@ -158,7 +158,7 @@ cell_enabled() {  # cell_enabled <stage>
 # --- host-NIC sidecar: captures the inter-server channel NVML cannot see. ----
 SIDE_PID=""
 start_sidecar() {  # start_sidecar <label> <run_id>
-  $PY scripts/collect_host_telemetry.py --duration $((DUR + 120)) \
+  $PY scripts/collect_host_telemetry.py --duration "${SIDECAR_DURATION:-$((DUR + 120))}" \
       --output "$OUTDIR/nic_${1}_node${NODE_RANK}_${2}.parquet" \
       --run-id "$2" --label "$1" --node-rank "$NODE_RANK" \
       --checkpoint-sec 60 >> "logs/${1}_node${NODE_RANK}_${2}.nic.log" 2>&1 &
@@ -186,6 +186,50 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
   # per REP. Keyed on cell alone, rep 2 and rep 3 saw rep 1's marker and skipped
   # every cell -- REPS=3 silently collected a single rep.
   #
+  local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
+  local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
+  if [ -f "$marker" ]; then say "SKIP  $stage ($(cat "$marker"))"; return 0; fi
+
+  # Realign with the peer before a cell that has to rendezvous. Placed after
+  # the filter and marker checks so a skipped cell costs no GCS round-trip and
+  # a node that already holds this cell's marker never blocks on its peer.
+  cell_barrier "$stage" "$rid" || return 1
+
+  # Reap strays before starting. Nothing else should be holding a GPU between
+  # cells, and a leftover process is not benign: a timed-out vLLM cell used to
+  # orphan 8 processes pinning 73 GB each, after which every later cell on the
+  # node died of CUDA OOM while asking for ~7 GB. Warning about it was not
+  # enough -- the queue has to clear it, since the run is unattended.
+  local nproc gpu_pids
+  if ! gpu_pids=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); then
+    if [ "${SPAR_REFUSE_BUSY_GPU:-0}" = 1 ]; then
+      say "FAIL  $stage: cannot establish GPU process state"
+      return 1
+    fi
+  fi
+  nproc=$(printf '%s\n' "$gpu_pids" | grep -c '[0-9]' || true)
+  if [ "$nproc" -ne 0 ]; then
+    if [ "${SPAR_REFUSE_BUSY_GPU:-0}" = 1 ]; then
+      say "FAIL  $stage: GPUs occupied; refusing to terminate compute processes"
+      return 1
+    fi
+    say "WARN  $stage: $nproc stray compute process(es) resident -- reaping"
+    for spid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do
+      kill -TERM "$spid" 2>/dev/null || true
+    done
+    sleep 10
+    for spid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do
+      kill -KILL "$spid" 2>/dev/null || true
+    done
+    sleep 5
+    nproc=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
+    if [ "$nproc" -ne 0 ]; then
+      say "WARN  $stage: $nproc process(es) STILL resident after reap -- cell may OOM"
+    else
+      say "      reaped clean; GPUs free"
+    fi
+  fi
+
   # Clear any bandwidth shaping before EVERY cell, shaped or not. A cell that
   # died mid-run with a qdisc installed would silently cap every later cell in
   # the queue, and an unshaped cell recorded under a shaped name is worse than a
@@ -203,39 +247,6 @@ run_stage() {  # run_stage <stage> <run_id> -- <command...>
     say "      (shaping owned by this cell -- not clearing it)"
   else
     bash "${GCPDIR:-/opt/spar/gcp}/netshape.sh" down >/dev/null 2>&1 || true
-  fi
-
-  local marker="${MARKER_DIR}/${PREFIX}${stage}_node${NODE_RANK}_${rid}.done"
-  local logf="logs/${PREFIX}${stage}_node${NODE_RANK}_${rid}.log"
-  if [ -f "$marker" ]; then say "SKIP  $stage ($(cat "$marker"))"; return 0; fi
-
-  # Realign with the peer before a cell that has to rendezvous. Placed after
-  # the filter and marker checks so a skipped cell costs no GCS round-trip and
-  # a node that already holds this cell's marker never blocks on its peer.
-  cell_barrier "$stage" "$rid"
-
-  # Reap strays before starting. Nothing else should be holding a GPU between
-  # cells, and a leftover process is not benign: a timed-out vLLM cell used to
-  # orphan 8 processes pinning 73 GB each, after which every later cell on the
-  # node died of CUDA OOM while asking for ~7 GB. Warning about it was not
-  # enough -- the queue has to clear it, since the run is unattended.
-  local nproc; nproc=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
-  if [ "$nproc" -ne 0 ]; then
-    say "WARN  $stage: $nproc stray compute process(es) resident -- reaping"
-    for spid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do
-      kill -TERM "$spid" 2>/dev/null || true
-    done
-    sleep 10
-    for spid in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do
-      kill -KILL "$spid" 2>/dev/null || true
-    done
-    sleep 5
-    nproc=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null | wc -l)
-    if [ "$nproc" -ne 0 ]; then
-      say "WARN  $stage: $nproc process(es) STILL resident after reap -- cell may OOM"
-    else
-      say "      reaped clean; GPUs free"
-    fi
   fi
 
   say "START $stage (rid=$rid) -> $logf"
@@ -276,7 +287,7 @@ cell_barrier() {  # cell_barrier <stage> <rid>
   # has ever appeared in any queue log. Fall back to the hostname, which is what
   # node_env's NODE_NAME is derived from anyway.
   local stage="$1" rid="$2" me="${NODE_NAME:-$(hostname -s)}" peer="" ctrl
-  [ -n "$me" ] || { say "  barrier $stage: WARNING cannot determine this node's name -- NOT waiting"; return 0; }
+  [ -n "$me" ] || { say "  barrier $stage: WARNING cannot determine this node's name"; [ "${SPAR_STRICT_BARRIER:-0}" != 1 ]; return $?; }
   # PEER FIRST. Deriving the peer from NODE0/NODE1 in node_env is wrong whenever
   # the pair is not named spar-gpu-0/1: env.sh exports NODE0/NODE1 with those
   # defaults and bootstrap writes them into node_env verbatim, so on the
@@ -295,7 +306,7 @@ cell_barrier() {  # cell_barrier <stage> <rid>
   fi
   # Loud, because a silently-unresolved peer is exactly how the nodes drifted.
   [ -n "$peer" ] || { say "  barrier $stage: WARNING no peer resolved (PEER unset and "\
-"NODE_NAME=$me matches neither NODE0=${NODE0:-} nor NODE1=${NODE1:-}) -- NOT waiting"; return 0; }
+"NODE_NAME=$me matches neither NODE0=${NODE0:-} nor NODE1=${NODE1:-})"; [ "${SPAR_STRICT_BARRIER:-0}" != 1 ]; return $?; }
   # BUCKET and SESSION live in /etc/spar/node_env, which launch_queue.sh SOURCES
   # but does not export -- so this child queue inherits neither. Under `set -u`
   # that made the FIRST barrier call that ever got as far as this line abort the
@@ -311,12 +322,14 @@ cell_barrier() {  # cell_barrier <stage> <rid>
     [ -r /etc/spar/node_env ] && . /etc/spar/node_env
   fi
   if [ -z "${BUCKET:-}" ] || [ -z "${SESSION:-}" ]; then
-    say "  barrier $stage: WARNING BUCKET/SESSION unresolved -- NOT waiting"; return 0
+    say "  barrier $stage: WARNING BUCKET/SESSION unresolved"; [ "${SPAR_STRICT_BARRIER:-0}" != 1 ]; return $?
   fi
   ctrl="${BUCKET}/runs/${SESSION}/control/barrier"
   echo "$(stamp)" > "/tmp/barrier.${rid}"
   gcloud storage cp "/tmp/barrier.${rid}" \
-    "${ctrl}/${stage}_${rid}_${me}.ready" >/dev/null 2>&1 || true
+    "${ctrl}/${stage}_${rid}_${me}.ready" >/dev/null 2>&1 || {
+      if [ "${SPAR_STRICT_BARRIER:-0}" = 1 ]; then return 1; fi
+    }
   local t0=$SECONDS
   while [ $((SECONDS - t0)) -lt "${BARRIER_WAIT:-900}" ]; do
     if gcloud storage ls "${ctrl}/${stage}_${rid}_${peer}.ready" >/dev/null 2>&1; then
@@ -324,6 +337,10 @@ cell_barrier() {  # cell_barrier <stage> <rid>
     fi
     sleep 10
   done
+  if [ "${SPAR_STRICT_BARRIER:-0}" = 1 ]; then
+    say "  barrier $stage: TIMED OUT waiting for $peer -- refusing launch"
+    return 1
+  fi
   say "  barrier $stage: TIMED OUT after ${BARRIER_WAIT:-900}s waiting for $peer -- proceeding"
 }
 
@@ -351,6 +368,7 @@ mn_torchrun() {  # mn_torchrun <stage> <run_id> <timeout> -- <workload.py args..
 # of the round still runs and returns its value.
 mn_torchrun_bw() {
   local stage="$1" rid="$2" to="$3"; shift 3; [ "$1" = "--" ] && shift
+  cell_enabled "$stage" || { say "SKIP  $stage (ONLY_CELLS filter)"; return 0; }
   # A shaped cell needs a cap set by the SHAPED link, not the unshaped one.
   # s16_train_localsgd_h50_bw100, 2026-10-03: shaping confirmed at 3,646,367
   # overlimits and 9.2 GB through the class, and the cell was still killed at
@@ -365,6 +383,13 @@ mn_torchrun_bw() {
   #
   # The cap is not a duration -- a cell that finishes early still exits early --
   # so one generous value covers the shaped cells whose payloads are tiny too.
+  if [ "${SPAR_REFUSE_BUSY_GPU:-0}" = 1 ]; then
+    local busy
+    if ! busy=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null) || [ -n "$busy" ]; then
+      say "FAIL  $stage: GPUs occupied or status unavailable; refusing network shaping"
+      return 1
+    fi
+  fi
   to="${TIMEOUT_BW:-3600}"
   say "      shaped cell: timeout raised to ${to}s (the link is 100x slower)"
   if ! NETSHAPE_CELL="$stage" NETSHAPE_RID="$rid" \

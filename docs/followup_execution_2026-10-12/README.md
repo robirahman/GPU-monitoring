@@ -89,3 +89,12 @@ Regenerate the plan from the inventory:
 python3 scripts/plan_followup_repetitions.py \
   --out /durable/followup/repetition_plan --launches 5 --days 3 --duration 1800
 ```
+
+## Authenticated collection follow-up
+
+Google Cloud login is now active. Cloud API access from this restricted agent
+session fails DNS resolution, so no VM was started. The [collection runbook](collection_runbook.md)
+documents the implemented seeded pilot, runtime caps, checkpoint fixes and
+verified-output protocol. The repetition plan now includes workload seeds.
+Live smoke and collection remain pending; earlier input/evaluation records above
+are unchanged.

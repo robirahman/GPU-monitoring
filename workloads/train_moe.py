@@ -41,9 +41,11 @@ import time
 
 try:
     from workloads._step import emit_step
+    from workloads._seed import add_seed_argument, record_seed, record_progress
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
 except ImportError:  # launched as `torchrun workloads/train_moe.py`
     from _step import emit_step
+    from _seed import add_seed_argument, record_seed, record_progress
     from dist_deadline import CollectiveDeadline, sync_teardown
 
 import torch
@@ -231,11 +233,13 @@ def parse_args():
                    help="logit bias toward low-numbered experts; >0 induces the "
                         "collapsed, rank-imbalanced regime on purpose")
     p.add_argument("--lr", type=float, default=1e-4)
+    add_seed_argument(p)
     return p.parse_args()
 
 
 def main():
     args = parse_args()
+    record_seed(args.seed)
     dist.init_process_group(backend="nccl")
     rank = dist.get_rank()
     world_size = dist.get_world_size()
@@ -245,7 +249,7 @@ def main():
     torch.cuda.set_device(local_rank)
     device = torch.device(f"cuda:{local_rank}")
 
-    torch.manual_seed(1234)
+    torch.manual_seed(args.seed)
     model = MoELM(args.hidden, args.layers, args.heads, args.ffn, args.vocab,
                   args.experts_per_rank, world_size, args.top_k,
                   args.capacity_factor, args.router_skew).to(device)
@@ -255,7 +259,7 @@ def main():
     # their own gradients is the standard arrangement.
     for p in model.parameters():
         dist.broadcast(p.data, src=0)
-    torch.manual_seed(1234 + rank)
+    torch.manual_seed(args.seed + rank)
 
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
 
@@ -293,6 +297,7 @@ def main():
                       a2a_mb=round(moved * 2 / 2**20, 1))
 
     elapsed = time.time() - wall_start
+    record_progress(args.seed, step, tokens, elapsed)
     # Only the share of the all-to-all that crosses the node boundary is
     # inter-node: each rank talks to world_size-1 peers, local_world-1 of them
     # on this host.

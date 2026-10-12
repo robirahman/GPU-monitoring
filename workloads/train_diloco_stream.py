@@ -52,11 +52,13 @@ from datetime import timedelta
 
 try:
     from workloads._step import emit_step
+    from workloads._seed import add_seed_argument, record_seed
     from workloads.dist_deadline import CollectiveDeadline, sync_teardown
     from workloads.gradcompress import make_codec, ring_allgather_bytes
     from workloads import fsdp_training as _fsdp
 except ImportError:  # launched as `torchrun workloads/train_diloco_stream.py`
     from _step import emit_step
+    from _seed import add_seed_argument, record_seed
     from dist_deadline import CollectiveDeadline, sync_teardown
     from gradcompress import make_codec, ring_allgather_bytes
     import fsdp_training as _fsdp
@@ -314,11 +316,13 @@ def parse_args():
                    help="decoupled: fraction of extra work on odd replicas")
     p.add_argument("--pg-timeout-min", type=int,
                    default=int(os.environ.get("SPAR_PG_TIMEOUT_MIN", "45")))
+    add_seed_argument(p)
     return p.parse_args()
 
 
 def main():
     args = parse_args()
+    record_seed(args.seed)
     dist.init_process_group(
         backend="nccl" if torch.cuda.is_available() else "gloo",
         timeout=timedelta(minutes=args.pg_timeout_min))
@@ -348,11 +352,11 @@ def main():
     leader_group = dist.new_group(ranks=[i * rr for i in range(n_replicas)])
 
     vocab = _fsdp.MODEL_CONFIGS[args.size][4]
-    torch.manual_seed(1234)
+    torch.manual_seed(args.seed)
     model = RandomTransformerLM(args.size).to(device)
     for p in model.parameters():
         dist.broadcast(p.data, src=0)
-    torch.manual_seed(1234 + replica)          # replicas differ, ranks within do not
+    torch.manual_seed(args.seed + replica)          # replicas differ, ranks within do not
 
     inner = torch.optim.AdamW(model.parameters(), lr=args.inner_lr)
     outer = {n: p.data.detach().float().cpu().clone()
