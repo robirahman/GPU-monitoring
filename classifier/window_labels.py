@@ -24,9 +24,9 @@ and a rollout/decode step is ``kind=infer`` (``phase=rollout``), so no ``phase``
 parsing is needed here.
 
 Coverage note: only the runs whose launcher output was teed to ``logs/*.log``
-have recoverable window labels (the recent evasion runs). Benign single-class
-runs need none — their run-level label is correct for every window. Older
-evasion runs collected without a STEP log keep their run-level label.
+have recoverable window labels. Without a STEP log, single-kind programs keep
+an explicitly marked program label, including startup/load windows; mixed
+programs remain unresolved. They are never relabeled by their objective alone.
 """
 
 from __future__ import annotations
@@ -216,7 +216,7 @@ def window_activity(window_starts, window_ends, train_ts, infer_ts=None) -> dict
 # (a 10-minute parameter sync over a shaped link included), while a filler slot
 # between two training steps stays filler.
 
-WORK_OF_KIND = {"train": "ml_training", "infer": "ml_inference"}   # any other kind: other
+WORK_OF_KIND = {"train": "ml_training", "infer": "ml_inference", "unknown": "unresolved"}
 STEP_ANY_RE = re.compile(r"STEP\s+ts=(?P<ts>[\d.]+)\s+kind=(?P<kind>\w+)(?P<rest>[^\n]*)")
 NODE_RE = re.compile(r"\bnode=(-?\d+)")
 RANK_RE = re.compile(r"\brank=(-?\d+)")
@@ -248,9 +248,10 @@ def parse_work_log(path) -> dict:
     name = Path(path).name
     run_id = RUNID_RE.search(text)
     host = LOG_NAME_RE.match(name)
+    gcs_host = re.search(r"/runs/[^/]+/([^/]+)/logs/", str(path).replace("\\", "/"))
     node = LOG_NODE_RE.search(text) or LOG_NAME_NODE_RE.search(name)
     filler_as_infer = bool(FILLER_LOGGED_AS_INFER.search(text))
-    rows = []
+    rows, pending = [], {}
     for m in STEP_ANY_RE.finditer(text):
         try:
             ts = float(m["ts"])
@@ -258,11 +259,29 @@ def parse_work_log(path) -> dict:
             continue              # two ranks' output interleaved mid-number
         kind = "filler" if filler_as_infer and m["kind"] == "infer" else m["kind"]
         step_node, rank = NODE_RE.search(m["rest"]), RANK_RE.search(m["rest"])
+        fields = dict(FIELD_RE.findall(m["rest"]))
+        nd, rk = int(step_node[1]) if step_node else -1, int(rank[1]) if rank else -1
+        key = (nd, rk, fields.get("event_id"))
+        if kind == "pending":
+            if key[2] is None:
+                raise ValueError(f"Pending STEP lacks event_id: {path}")
+            pending[key] = ts
+            continue
+        explicit_start = float(fields["start_ts"]) if "start_ts" in fields else np.nan
+        if "start_ts" in fields:
+            if not np.isfinite(explicit_start) or explicit_start > ts:
+                raise ValueError(f"Invalid STEP start/end: {path}")
+            pending.pop(key, None)
         rows.append((ts, WORK_OF_KIND.get(kind, "other"),
-                     int(step_node[1]) if step_node else -1, int(rank[1]) if rank else -1))
-    return dict(run_id=run_id["run_id"] if run_id else None, log=name,
-                host=host["host"] if host else None, node=int(node[1]) if node else None,
-                events=pd.DataFrame(rows, columns=["ts", "work", "node", "rank"]))
+                     nd, rk, explicit_start))
+    # A killed process cannot print a completion. Its outstanding requests stay
+    # unknown through the telemetry tail, rather than becoming idle negatives.
+    rows.extend((np.inf, "unresolved", nd, rk, start)
+                for (nd, rk, _), start in pending.items())
+    return dict(run_id=run_id["run_id"] if run_id else None, log=str(path),
+                host=host["host"] if host else (gcs_host[1] if gcs_host else None),
+                node=int(node[1]) if node else None,
+                events=pd.DataFrame(rows, columns=["ts", "work", "node", "rank", "start_ts"]))
 
 
 def default_log_paths(root) -> list:
@@ -292,9 +311,18 @@ def work_intervals(events) -> pd.DataFrame:
     The first line of a timeline reports one typical slot; the time before it
     (launch, model load) is not work.
     """
+    # Explicit request/generation bounds support overlapping asynchronous
+    # requests and exclude idle gaps. Keep legacy adjacent STEP-slot semantics.
+    explicit = events["start_ts"].notna() if "start_ts" in events else pd.Series(False, index=events.index)
+    bounded = events.loc[explicit].rename(columns={"start_ts": "start", "ts": "end"})
+    events = events.loc[~explicit]
     keys = [c for c in ("log", "node", "rank") if c in events]
     parts = []
+    if len(bounded):
+        parts.append(bounded[["start", "end", "work", "node", "rank"]].copy())
     for _, s in (events.groupby(keys, dropna=False, sort=False) if keys else [(None, events)]):
+        if s.empty:
+            continue
         order = np.argsort(s["ts"].to_numpy(float), kind="stable")
         ts, work = s["ts"].to_numpy(float)[order], s["work"].to_numpy()[order]
         gaps = np.diff(ts)
@@ -340,6 +368,7 @@ def job_work_intervals(frame, index) -> dict:
     from classifier.multinode_features import _scope_of
     cols = [c for c in ("job_id", "run_id", "hostname", "workload_label", "source_path") if c in frame]
     ids = frame[cols].drop_duplicates()
+    bounds = frame.groupby("job_id")["ts"].agg(["min", "max"]) if "ts" in frame else None
     out = {}
     for job, g in ids.groupby("job_id", sort=False, observed=True):
         rids = [r for r in g["run_id"].astype(str).unique() if HEX_ID_RE.fullmatch(r)]
@@ -362,7 +391,14 @@ def job_work_intervals(frame, index) -> dict:
                  if any(key.startswith(r) or r.startswith(key) for r in rids)
                  for log in logs if own(log)]
         if parts:
-            out[str(job)] = work_intervals(pd.concat(parts, ignore_index=True))
+            intervals = work_intervals(pd.concat(parts, ignore_index=True))
+            if bounds is not None:
+                lo, hi = bounds.loc[job, ["min", "max"]]
+                intervals = intervals[(intervals.end >= lo) & (intervals.start <= hi)]
+            # A reused run ID from another collection is not evidence for this
+            # recording. Preserve the unresolved/program fallback in that case.
+            if len(intervals):
+                out[str(job)] = intervals.reset_index(drop=True)
     return out
 
 
@@ -394,15 +430,24 @@ def label_windows(window_starts, window_ends, intervals) -> dict:
     """
     ws = np.asarray(window_starts, float)
     we = np.asarray(window_ends, float)
+    if not len(ws):
+        return dict(label=np.array([], dtype=object), train_s=ws.copy(),
+                    infer_s=ws.copy(), other_s=ws.copy(), unknown_s=ws.copy())
     seconds = {}
-    for work in WORK_LABELS:
+    for work in (*WORK_LABELS, "unresolved"):
         iv = intervals[intervals["work"] == work]
-        s, e = _union(iv["start"].to_numpy(float), iv["end"].to_numpy(float))
+        # Pending intervals end at infinity; clip before prefix sums to avoid
+        # inf-inf while preserving uncertainty at every subsequent window.
+        s = np.maximum(iv["start"].to_numpy(float), ws.min())
+        e = np.minimum(iv["end"].to_numpy(float), we.max())
+        s, e = _union(s[e > s], e[e > s])
         seconds[work] = (_covered(s, e, we) - _covered(s, e, ws)) if len(s) else np.zeros(len(ws))
     label = np.where(seconds["ml_training"] > 0, "ml_training",
-                     np.where(seconds["ml_inference"] > 0, "ml_inference", "other"))
+                     np.where(seconds["unresolved"] > 0, "unresolved",
+                              np.where(seconds["ml_inference"] > 0, "ml_inference", "other")))
     return dict(label=label, train_s=seconds["ml_training"],
-                infer_s=seconds["ml_inference"], other_s=seconds["other"])
+                infer_s=seconds["ml_inference"], other_s=seconds["other"],
+                unknown_s=seconds["unresolved"])
 
 
 def assign_work_labels(rows, intervals, workload_label, objective):
@@ -425,16 +470,17 @@ def assign_work_labels(rows, intervals, workload_label, objective):
         lab = label_windows(starts, ends, intervals)
         length = ends - starts
         frac = np.clip(lab["train_s"] / np.where(length > 0, length, np.nan), 0.0, 1.0)
-        cols = dict(threeway_label=lab["label"], label_source=["steps"] * len(rows),
+        frac = np.where(lab["unknown_s"] > 0, np.nan, frac)
+        cols = dict(threeway_label=lab["label"], label_source=np.where(lab["label"] == "unresolved", "unresolved", "steps"),
                     label_train_s=lab["train_s"], label_infer_s=lab["infer_s"],
-                    label_other_s=lab["other_s"], label_train_frac=frac)
+                    label_other_s=lab["other_s"], label_unknown_s=lab["unknown_s"], label_train_frac=frac)
     else:
         work = program_work(workload_label)
         nan = [np.nan] * len(rows)
         cols = dict(threeway_label=[work or "unresolved"] * len(rows),
                     label_source=["program" if work else "unresolved"] * len(rows),
                     label_train_s=nan, label_infer_s=nan, label_other_s=nan,
-                    label_train_frac=nan)
+                    label_unknown_s=nan, label_train_frac=nan)
     for i, row in enumerate(rows):
         row["job_label"] = objective
         for key, values in cols.items():

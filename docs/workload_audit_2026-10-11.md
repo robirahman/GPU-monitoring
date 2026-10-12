@@ -168,6 +168,51 @@ End to end on job `1871ed7bad7a` (s16 MN-I, F=0.2, 16 GPUs on two hosts), 38 of
 "any gradient step" labels most windows of a spread-out disguise training.
 Their `label_train_frac` records how thin the training was.
 
+### Launcher-log recovery and vLLM timing — October 12
+
+The saved stream inventory independently identifies 104 mixed-work TPU campaign
+jobs whose launcher IDs occur in tracked `data/tpu` paths. Before the GCS export,
+none has a temporally matching committed worker log. A separate older TPU trace
+uses a non-campaign run ID and is outside this set. Log coverage must be measured
+after import; a matching run ID alone is insufficient if the epochs do not
+overlap the recorded telemetry.
+
+Recover the logs from an authenticated Cloud Shell:
+
+```bash
+python3 scripts/gcp/fetch_work_logs.py --out /tmp/gpu-step-logs
+python3 scripts/gcp/import_work_logs.py --export /tmp/gpu-step-logs
+python3 scripts/audit_work_log_coverage.py \
+  --streams /home/robi/workload-audit-2026-10-11/streams.csv \
+  --out /tmp/gpu-step-logs/coverage
+```
+
+The resumable export downloads TPU worker logs for tracked run IDs and GPU
+inference launcher logs. It records source URIs, hashes, lengths, run IDs, STEP
+kinds and epoch bounds. Import verifies the original bytes and compressed bytes
+before adding logs under `logs/gcs/<bucket>/<original-object-path>.gz`. The
+manifest lists logs without STEP evidence without converting them into ground
+truth. Session/run/worker paths prevent different captures from overwriting one
+another. The coverage report probes 30-second windows at 15-second stride over
+recorded spans; actual feature windows additionally require sample/rank coverage.
+Rebuild caches after importing: log content is part of their fingerprint.
+
+Both vLLM programs now emit pending and completed STEP events. Offline
+`llm.generate()` reports batch start/end epochs and output-token counts; async
+serving reports each request's start/end, prompt/output tokens and completion
+status. Explicit `start_ts` avoids filling startup and idle gaps or serializing
+overlapping requests. These are generation-call/request wall-time envelopes,
+including scheduling, queue and transport time, not per-kernel activity. The
+controller leaves device/rank attribution unspecified.
+
+Failed or unfinished requests contribute unresolved intervals. A window with a
+confirmed training step remains training, while unresolved activity prevents an
+otherwise inference/idle window from becoming a definite negative; its training
+fraction remains unknown. Legacy STEP logs retain their adjacent-slot semantics.
+These events apply to new collections: historical vLLM logs cannot supply STEP
+lines that were never emitted, and no events are synthesized from aggregate
+throughput prints.
+
 ## Evaluation
 
 `classifier/rebuttal_analysis/paired_family_lofo.py` holds out every family once.
