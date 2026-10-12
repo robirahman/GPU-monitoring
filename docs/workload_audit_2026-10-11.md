@@ -35,8 +35,8 @@ header), but the stored file contains only 7,572,480 bytes. Restoring it needs
 the original capture; downloading the same LFS object cannot repair it. The
 inventory records the error and preserves the original bytes.
 
-Validation passed 43 CPU regression tests and all 51 collection-cell routing
-checks. An end-to-end feature check on job `f554104816ef` read all 16 GPUs on
+Validation passes the 75 CPU tests under `tests/` that need no network access
+and all 51 collection-cell routing checks. An end-to-end feature check on job `f554104816ef` read all 16 GPUs on
 two hosts, joined NIC telemetry, and produced three windows with full expected
 rank coverage. The physical loader read 7,912 samples across 65 runs, including
 all 21 corrected aliases. Full-corpus model training, exhaustive LOFO and the
@@ -151,9 +151,11 @@ link, which end in a logged training step.
   the TPU logs, or adding STEP lines to the vLLM workloads, would extend
   evidence-based labels.
 - Cache columns: `threeway_label` (window work), `job_label` (job objective),
-  `label_source` (steps, program, unresolved) and `label_train_s`,
-  `label_infer_s`, `label_other_s` (seconds of logged work in the window). None
-  of them is a feature. The cache fingerprint covers the logs.
+  `label_source` (steps, program, unresolved), `label_train_s`,
+  `label_infer_s`, `label_other_s` (seconds of logged work in the window) and
+  `label_train_frac`, the share of the window's wall time spent training. One
+  minus that share is the evasion tax the window paid. None of them is a
+  feature. The cache fingerprint covers the logs.
 
 Checked against the tracked logs, per execution: every honest trainer's
 windows are 100% training between its first and last step; every non-ML,
@@ -161,14 +163,19 @@ stalled and F=0 filler cell is 100% other; MN-I interleaves are 57% training.
 End to end on job `1871ed7bad7a` (s16 MN-I, F=0.2, 16 GPUs on two hosts), 38 of
 40 pooled windows hold some training (0.6–12.9 s of 30) and 2 are pure filler:
 "any gradient step" labels most windows of a spread-out disguise training.
-`label_train_s` keeps the seconds if a minimum-fraction rule is wanted later.
+Their `label_train_frac` records how thin the training was.
 
 ## Evaluation
 
 `classifier/rebuttal_analysis/paired_family_lofo.py` holds out every family once.
 Targets are the per-window work labels above. Unresolved windows are excluded
 and counted, metrics are reported per label source, and `--steps-only`
-restricts fitting and scoring to windows labeled from STEP evidence.
+restricts fitting and scoring to windows labeled from STEP evidence. To measure
+the evasion tax, every prediction carries its window's training share, each
+fold reports the mean share of its training windows, `by_train_fraction`
+reports window-level detection by training share (0%, 0–5%, 5–20%, 20–50%,
+50–100%), and `by_job_train_share` reports job-level detection by each job's
+overall training share.
 Each eligible window receives exactly one full-model outer prediction. Missing
 classes or ambiguous identities fail visibly. Estimator settings and threshold
 are fixed before outer testing; no test fold selects either.

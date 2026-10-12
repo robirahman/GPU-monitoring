@@ -410,23 +410,29 @@ def assign_work_labels(rows, intervals, workload_label, objective):
     only ever does one kind of work keeps that kind; a mixed program's windows
     are "unresolved" and must not be fitted or scored. ``job_label`` keeps the
     job's objective for reference; it is never a target or a feature.
+
+    ``label_train_frac`` is the share of the window's wall time spent in
+    training slots; one minus it is the evasion tax the window paid.
     """
     if not rows:
         return
     from classifier.workload_labels import program_work
-    starts = [r["window_start"] for r in rows]
-    ends = [r["window_end"] for r in rows]
+    starts = np.asarray([r["window_start"] for r in rows], float)
+    ends = np.asarray([r["window_end"] for r in rows], float)
     if intervals is not None:
         lab = label_windows(starts, ends, intervals)
+        length = ends - starts
+        frac = np.clip(lab["train_s"] / np.where(length > 0, length, np.nan), 0.0, 1.0)
         cols = dict(threeway_label=lab["label"], label_source=["steps"] * len(rows),
                     label_train_s=lab["train_s"], label_infer_s=lab["infer_s"],
-                    label_other_s=lab["other_s"])
+                    label_other_s=lab["other_s"], label_train_frac=frac)
     else:
         work = program_work(workload_label)
         nan = [np.nan] * len(rows)
         cols = dict(threeway_label=[work or "unresolved"] * len(rows),
                     label_source=["program" if work else "unresolved"] * len(rows),
-                    label_train_s=nan, label_infer_s=nan, label_other_s=nan)
+                    label_train_s=nan, label_infer_s=nan, label_other_s=nan,
+                    label_train_frac=nan)
     for i, row in enumerate(rows):
         row["job_label"] = objective
         for key, values in cols.items():

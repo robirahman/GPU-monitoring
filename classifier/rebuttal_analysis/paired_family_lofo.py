@@ -71,26 +71,42 @@ def fold_plan(frame, new_jobs=(), family_level="mechanism"):
     return frame, folds
 
 
-def metrics(y, pred, probability, jobs, threshold):
+def train_share_bin(frac):
+    """Bin a share of time spent training; NaN means the window has no STEP evidence."""
+    frac = np.asarray(frac, float)
+    return np.select([np.isnan(frac), frac <= 0, frac <= 0.05, frac <= 0.2, frac <= 0.5],
+                     ["unknown", "0%", "0-5%", "5-20%", "20-50%"], "50-100%")
+
+
+def metrics(y, pred, probability, jobs, threshold, train_frac=None):
     truth = np.asarray(y) == "ml_training"
     flag = probability >= threshold
     pos, neg = int(truth.sum()), int((~truth).sum())
     j = pd.DataFrame(dict(job=jobs, truth=truth, flag=flag)).groupby("job").max()
     # Existential alert rule is explicit: any positive window in a job. Its
     # false-positive rate is reported separately from window-level rates.
-    return dict(windows=len(y), jobs=len(j), accuracy=float(accuracy_score(y, pred)),
-                macro_f1=float(f1_score(y, pred, average="macro", zero_division=0)),
-                training_recall=float(flag[truth].mean()) if pos else None,
-                false_positive_rate=float(flag[~truth].mean()) if neg else None,
-                job_any_recall=float(j.loc[j.truth, "flag"].mean()) if j.truth.any() else None,
-                job_any_fpr=float(j.loc[~j.truth, "flag"].mean()) if (~j.truth).any() else None,
-                confusion=confusion_matrix(y, pred, labels=["ml_training", "ml_inference", "other"]).tolist())
+    out = dict(windows=len(y), jobs=len(j), accuracy=float(accuracy_score(y, pred)),
+               macro_f1=float(f1_score(y, pred, average="macro", zero_division=0)),
+               training_recall=float(flag[truth].mean()) if pos else None,
+               false_positive_rate=float(flag[~truth].mean()) if neg else None,
+               job_any_recall=float(j.loc[j.truth, "flag"].mean()) if j.truth.any() else None,
+               job_any_fpr=float(j.loc[~j.truth, "flag"].mean()) if (~j.truth).any() else None,
+               confusion=confusion_matrix(y, pred, labels=["ml_training", "ml_inference", "other"]).tolist())
+    if train_frac is not None:
+        # Mean share of a training window's time spent training; one minus it
+        # is the evasion tax those windows paid.
+        tf = np.asarray(train_frac, float)[truth]
+        tf = tf[np.isfinite(tf)]
+        out["train_frac_mean"] = float(tf.mean()) if len(tf) else None
+    return out
 
 
 def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
              family_level="mechanism", threshold=0.5, binary=False, max_reps=0):
     frame, folds = fold_plan(frame.reset_index(drop=True), new_jobs, family_level)
     ids = row_ids(frame)
+    tf = (frame.label_train_frac.to_numpy(float) if "label_train_frac" in frame
+          else np.full(len(frame), np.nan))
     cols = get_feature_cols(frame)
     if shape:
         cols = list(np.asarray(cols)[stage2_mask_multinode(cols)])
@@ -138,14 +154,15 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
                 predictions.append(dict(row_id=ids.iloc[i], family=fam, arm=arm,
                                         job_id=frame.job_id.iloc[i], run_id=frame.run_id.iloc[i],
                                         window_start=float(frame.window_start.iloc[i]),
-                                        truth=y[i], prediction=p, p_training=float(pr),
+                                        truth=y[i], prediction=p, p_training=float(pr), train_frac=float(tf[i]),
                                         paired_test=frame.job_id.iloc[i] not in new_jobs,
                                         hardware=frame.gpu_name.iloc[i] if "gpu_name" in frame else "",
                                         kind=frame.kind.iloc[i] if "kind" in frame else "",
                                         job_label=frame.job_label.iloc[i] if "job_label" in frame else "",
                                         label_source=frame.label_source.iloc[i] if "label_source" in frame else ""))
             scores.append(dict(family=fam, arm=arm, test_population="all" if arm == "full" else "old_jobs",
-                               **metrics(y[eval_idx], pred, probability, frame.job_id.iloc[eval_idx], threshold)))
+                               **metrics(y[eval_idx], pred, probability, frame.job_id.iloc[eval_idx], threshold,
+                                         train_frac=tf[eval_idx])))
         if "baseline" in arm_predictions:
             ix, p, pr = arm_predictions["full"]
             mask = np.isin(ix, fold["paired_test"])
@@ -153,7 +170,8 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
             if set(splits[-2]["train_ids"]) == set(splits[-1]["train_ids"]):
                 raise ValueError(f"{fam}: ablation removes no training windows")
             scores.append(dict(family=fam, arm="full", test_population="old_jobs",
-                               **metrics(y[ix[mask]], p[mask], pr[mask], frame.job_id.iloc[ix[mask]], threshold)))
+                               **metrics(y[ix[mask]], p[mask], pr[mask], frame.job_id.iloc[ix[mask]], threshold,
+                                         train_frac=tf[ix[mask]])))
         print(f"{fam}: tested {len(te)} windows", flush=True)
     predictions = pd.DataFrame(predictions)
     full = predictions[predictions.arm == "full"]
@@ -173,12 +191,29 @@ def evaluate(frame, new_jobs=(), *, trees=300, seed=0, shape=False,
     for population, part in (("all", full), ("paired_old_jobs", full[full.paired_test]),
                              ("new_jobs", full[~full.paired_test])):
         if len(part):
-            result[population] = metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id, threshold)
+            result[population] = metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id,
+                                         threshold, train_frac=part.train_frac.to_numpy())
     for axis in ("hardware", "kind", "label_source"):
         result["by_" + axis] = {
-            str(key): metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id, threshold)
+            str(key): metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id, threshold,
+                              train_frac=part.train_frac.to_numpy())
             for key, part in full.groupby(axis, dropna=False)
         }
+    known = full[full.train_frac.notna()]
+    if len(known):
+        # The evasion tax: detection against the share of time spent training,
+        # per window and per job (a job's share is the mean over its windows).
+        result["by_train_fraction"] = {
+            str(b): metrics(part.truth, part.prediction, part.p_training.to_numpy(), part.job_id, threshold)
+            for b, part in known.groupby(train_share_bin(known.train_frac))}
+        per_job = known.groupby("job_id").agg(share=("train_frac", "mean"),
+                                              trained=("truth", lambda t: t.eq("ml_training").any()),
+                                              flagged=("p_training", lambda p: bool((p >= threshold).any())))
+        result["by_job_train_share"] = {
+            str(b): dict(jobs=len(g), training_jobs=int(g.trained.sum()),
+                         detected=float(g.loc[g.trained, "flagged"].mean()) if g.trained.any() else None,
+                         false_alarms=float(g.loc[~g.trained, "flagged"].mean()) if (~g.trained).any() else None)
+            for b, g in per_job.groupby(train_share_bin(per_job.share))}
     if paired:
         base = predictions[predictions.arm == "baseline"]
         result["baseline_old_jobs"] = metrics(base.truth, base.prediction, base.p_training.to_numpy(), base.job_id, threshold)

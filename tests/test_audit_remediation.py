@@ -246,6 +246,7 @@ class MultinodeFeatureTests(unittest.TestCase):
                 self.assertEqual(count, 2)
                 pooled = pd.read_parquet(path).sort_values("window_start")
                 self.assertEqual(list(pooled.threeway_label), ["ml_training", "other"])
+                self.assertEqual(list(pooled.label_train_frac), [1.0, 0.0])
                 self.assertEqual(set(pooled.label_source), {"steps"})
                 self.assertEqual(set(pooled.job_label), {"ml_training"})
             d["run_id"] = d.stream_id
@@ -307,6 +308,20 @@ class WorkLabelTests(unittest.TestCase):
         lab = label_windows([60., 98., 400., 704.5], [90., 128., 430., 734.5], iv)
         self.assertEqual(list(lab["label"]), ["other", "ml_training", "ml_training", "other"])
         self.assertEqual(lab["train_s"][0], 0)                 # launch and load are not work
+
+    def test_windows_record_the_share_of_time_spent_training(self):
+        from classifier.window_labels import assign_work_labels
+        # One 6 s training slot inside a 30 s window of filler: training, at 20%.
+        slots = pd.DataFrame(dict(start=[0., 10., 16.], end=[10., 16., 30.],
+                                  work=["other", "ml_training", "other"], node=0, rank=0))
+        rows = [dict(window_start=0., window_end=30.), dict(window_start=16., window_end=46.)]
+        assign_work_labels(rows, slots, "s16_advtrain_interleave_f20", "ml_training")
+        self.assertEqual([r["threeway_label"] for r in rows], ["ml_training", "other"])
+        self.assertAlmostEqual(rows[0]["label_train_frac"], 0.2)
+        self.assertEqual(rows[1]["label_train_frac"], 0.0)
+        program = [dict(window_start=0., window_end=30.)]
+        assign_work_labels(program, None, "s16_train_fsdp7b", "ml_training")
+        self.assertTrue(np.isnan(program[0]["label_train_frac"]))
 
     def test_filler_logged_as_infer_is_not_inference(self):
         from classifier.window_labels import parse_work_log
@@ -413,6 +428,20 @@ class EvaluationTests(unittest.TestCase):
             p = pred[(pred.family == fam) & pred.paired_test]
             self.assertEqual(set(p[p.arm == "full"].row_id), set(p[p.arm == "baseline"].row_id))
             self.assertFalse(set(full["test_ids"]) & set(full["train_ids"]))
+
+    def test_detection_is_reported_against_the_share_of_time_training(self):
+        d = self.frame()
+        share = {"old": 0.03, "new": 0.6}
+        d["label_train_frac"] = np.where(d.threeway_label.eq("ml_training"),
+                                         d.job_id.str[-3:].map(share), 0.0)
+        result, pred, _ = evaluate(d, trees=2)
+        self.assertEqual(set(result["by_train_fraction"]), {"0%", "0-5%", "50-100%"})
+        self.assertEqual(result["by_train_fraction"]["0-5%"]["windows"], 6)
+        self.assertEqual(set(result["by_job_train_share"]), {"0%", "0-5%", "50-100%"})
+        self.assertEqual(result["by_job_train_share"]["0-5%"]["training_jobs"], 3)
+        self.assertAlmostEqual(result["all"]["train_frac_mean"], (0.03 + 0.6) / 2)
+        self.assertTrue(all("train_frac_mean" in s for s in result["per_fold"]))
+        self.assertIn("train_frac", pred)
 
     def test_unresolved_windows_are_neither_fitted_nor_scored(self):
         from classifier.rebuttal_analysis.multinode_family_holdout import load_multinode

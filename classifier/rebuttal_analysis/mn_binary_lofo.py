@@ -51,7 +51,8 @@ def main():
                    n_win=len(p), n_jobs=p.job_id.nunique(), win_all=float((p.truth == p.prediction).mean()),
                    win_shape=float((shape.truth == shape.prediction).mean()), p_train_median=float(p.p_training.median()))
         trained = p.truth.eq("ml_training")
-        row.update(n_train_win=int(trained.sum()), n_other_win=int((~trained).sum()))
+        row.update(n_train_win=int(trained.sum()), n_other_win=int((~trained).sum()),
+                   train_frac_mean=float(p.loc[trained, "train_frac"].mean()) if trained.any() else np.nan)
         for tau in map(float, a.taus.split(",")):
             if not 0 <= tau <= 1:
                 raise ValueError("Threshold outside [0,1]")
