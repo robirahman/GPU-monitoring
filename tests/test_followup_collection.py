@@ -84,14 +84,14 @@ class PairStartupTests(unittest.TestCase):
             driver.validate_hardware([good,other],'A100')
 
     def test_startup_failure_stops_only_explicitly_owned_pair(self):
-        with patch.object(driver,'cloud',side_effect=[self.stopped(),self.stopped(),'', '']) as cloud, \
+        with patch.object(driver,'cloud',side_effect=[self.stopped(),self.stopped(),'', '',self.stopped(),self.stopped()]) as cloud, \
              patch.object(driver,'remote_command',return_value=''):
             def fail():
                 raise RuntimeError('preflight failed')
             with self.assertRaisesRegex(RuntimeError,'preflight failed'):
                 driver.with_started_pair(self.args(),fail)
-            self.assertEqual(cloud.call_args_list[-1].args[0][:5],
-                             ['compute','instances','stop','spar-a100-0','spar-a100-1'])
+            self.assertIn(['compute','instances','stop','spar-a100-0','spar-a100-1'],
+                          [call.args[0][:5] for call in cloud.call_args_list])
 
     def test_existing_running_instance_is_never_started_or_stopped(self):
         with patch.object(driver,'cloud',return_value=json.dumps({'status':'RUNNING'})) as cloud:
@@ -104,6 +104,41 @@ class PairStartupTests(unittest.TestCase):
              patch.object(driver,'remote_command',return_value=''):
             self.assertEqual(driver.with_started_pair(self.args(),lambda:'launched'),'launched')
             self.assertFalse(any(c.args[0][2]=='stop' for c in cloud.call_args_list))
+
+    def test_capacity_only_retry_confirms_stopped_before_backoff(self):
+        args=self.args();args.capacity_attempts=2;args.capacity_delay=600
+        failure=subprocess.CalledProcessError(1,['gcloud'],stderr='code: ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS\n')
+        with patch.object(driver,'cloud',side_effect=[failure,'',self.stopped(),self.stopped(),'']) as cloud, \
+             patch.object(driver.time,'sleep') as sleep:
+            driver.start_pair_with_retry(args)
+            self.assertEqual([c.args[0][2] for c in cloud.call_args_list],
+                             ['start','stop','describe','describe','start'])
+            sleep.assert_called_once_with(600)
+
+    def test_quota_auth_and_unconfirmed_cleanup_do_not_retry(self):
+        args=self.args();args.capacity_attempts=3;args.capacity_delay=600
+        for message in ['code: QUOTA_EXCEEDED\n', 'Permission denied',
+                        'code: ZONE_RESOURCE_POOL_EXHAUSTED\ncode: QUOTA_EXCEEDED\n']:
+            failure=subprocess.CalledProcessError(1,['gcloud'],stderr=message)
+            with patch.object(driver,'cloud',side_effect=failure) as cloud, patch.object(driver.time,'sleep') as sleep:
+                with self.assertRaises(subprocess.CalledProcessError):
+                    driver.start_pair_with_retry(args)
+                self.assertEqual(cloud.call_count,1);sleep.assert_not_called()
+        failure=subprocess.CalledProcessError(1,['gcloud'],stderr='code: ZONE_RESOURCE_POOL_EXHAUSTED\n')
+        with patch.object(driver,'cloud',side_effect=[failure,'',self.stopped(),json.dumps({'status':'RUNNING'})]), \
+             patch.object(driver.time,'sleep') as sleep:
+            with self.assertRaisesRegex(RuntimeError,'both nodes stopped'):
+                driver.start_pair_with_retry(args)
+            sleep.assert_not_called()
+
+    def test_capacity_retry_limit_is_enforced(self):
+        args=self.args();args.capacity_attempts=2;args.capacity_delay=600
+        failure=subprocess.CalledProcessError(1,['gcloud'],stderr='code: ZONE_RESOURCE_POOL_EXHAUSTED\n')
+        with patch.object(driver,'cloud',side_effect=[failure,'',self.stopped(),self.stopped(),failure]) as cloud, \
+             patch.object(driver.time,'sleep'):
+            with self.assertRaises(subprocess.CalledProcessError):
+                driver.start_pair_with_retry(args)
+            self.assertEqual(sum(c.args[0][2]=='start' for c in cloud.call_args_list),2)
 
 
 class ReceiptTests(unittest.TestCase):
@@ -293,6 +328,46 @@ class CampaignDownloadTests(unittest.TestCase):
                 receipts[0]['local_result']['progress']={}
                 with self.assertRaisesRegex(RuntimeError,'worker evidence'):
                     campaign.validate_downloads(receipts,root/'no_progress',60)
+
+
+class CampaignSourceTests(unittest.TestCase):
+    def test_analysis_probe_and_both_stages_use_frozen_source(self):
+        from scripts.gcp import run_a100_followup_pilot as campaign
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'repo';(root/'logs').mkdir(parents=True)
+            snapshot=Path(tmp)/'frozen';snapshot.mkdir()
+            def receipt(uri):
+                return {'status':'local_complete','run_stamp':uri.split('/')[-2]}
+            def cloud(args):
+                if args[:2]==['compute','ssh']:
+                    return json.dumps({'repo_exists':True})
+                if args[:3]==['compute','instances','describe']:
+                    return json.dumps({'status':'TERMINATED'})
+                return ''
+            with patch('sys.argv',['campaign','--launch','--inspect-analysis','--capacity-attempts','2','--work-root',tmp]), \
+                 patch.object(driver,'ROOT',root), patch.object(driver,'cloud',side_effect=cloud), \
+                 patch.object(campaign,'freeze_source',return_value=(snapshot,{'files':{}})), \
+                 patch.object(campaign,'read_receipt',side_effect=receipt), \
+                 patch.object(campaign,'validate_downloads',return_value=[]), \
+                 patch.object(campaign,'wait_stopped'), patch.object(campaign.subprocess,'run') as run, \
+                 redirect_stdout(io.StringIO()):
+                campaign.main()
+            self.assertTrue((root/'logs/followup_analysis_probe.local.json').exists())
+            self.assertEqual(run.call_count,2)
+            for call in run.call_args_list:
+                self.assertEqual(call.args[0][1],str(snapshot/'scripts/gcp/launch_followup_pilot.py'))
+                self.assertIn('--capacity-attempts',call.args[0])
+
+    def test_frozen_campaign_source_survives_later_working_edits(self):
+        from scripts.gcp.run_a100_followup_pilot import freeze_source
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'repo';(root/'workloads').mkdir(parents=True)
+            code=root/'workloads/train.py';code.write_text('first version')
+            work=Path(tmp)/'work';work.mkdir()
+            snapshot,manifest=freeze_source(root,work,'test')
+            code.write_text('second version')
+            self.assertEqual((snapshot/'workloads/train.py').read_text(),'first version')
+            self.assertEqual(manifest['files']['workloads/train.py'],driver.sha256(snapshot/'workloads/train.py'))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,29 @@
+{
+  "campaign": "followup_a100_20261012T231116Z",
+  "status": "failed_before_workload_launch",
+  "phase": "instances.start",
+  "zone": "us-central1-c",
+  "nodes": [
+    "spar-a100-0",
+    "spar-a100-1"
+  ],
+  "requested_shape": "a2-highgpu-8g",
+  "requested_accelerators_per_node": 8,
+  "error_code": "ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS",
+  "reason": "stockout",
+  "error_count": 2,
+  "smoke_jobs_started": 0,
+  "collection_jobs_started": 0,
+  "telemetry_samples_collected": 0,
+  "cleanup": "Both driver layers issued checked stop requests without a reported cleanup error; final VM state was not separately recorded by that version.",
+  "controller_pid": 19227,
+  "controller_running": false,
+  "log_evidence": {
+    "path": "logs/followup_a100_collection.log",
+    "prefix_bytes": 6830,
+    "prefix_sha256": "8745a3dda4376f237e09cdb3962d09a36cddc2c7054de529b1e27bd770d5d430"
+  },
+  "interpretation": "Resource capacity failure; no auth or quota failure was reported in this attempt.",
+  "next_action": "Bounded stockout retries with confirmed stopped state before backoff; read-only analysis VM inspection.",
+  "reference": "https://docs.cloud.google.com/compute/docs/troubleshooting/troubleshooting-resource-availability"
+}

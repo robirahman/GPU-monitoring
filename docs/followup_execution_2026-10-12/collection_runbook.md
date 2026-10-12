@@ -1,7 +1,9 @@
 # Seeded collection pilot
 
-Implementation is ready for a live smoke, but **no new VM or collection job was
-started in this execution**. `gcloud auth list` confirms an active account;
+The [first live startup attempt](first_cloud_attempt.json), at 23:11 UTC on
+October 12, failed for both A100 nodes with `ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS`
+(`stockout`). **No smoke or collection workload ran.** The controller exited after
+checked stop requests; that version did not separately record final VM state. `gcloud auth list` confirms an active account;
 `gcloud compute instances list` fails here because the restricted agent session
 cannot resolve `compute.googleapis.com`. No further login is currently indicated.
 The operator supplied the live listing in `gcloud-instances.local.json`. It
@@ -49,23 +51,31 @@ Cloud API hostname). No additional login is indicated:
 
 ```bash
 cd /home/robi/GPU-monitoring
-nohup python3 -u scripts/gcp/run_a100_followup_pilot.py --launch \
-  > /tmp/followup-a100-pilot.log 2>&1 < /dev/null &
+nohup python3 -u scripts/gcp/run_a100_followup_pilot.py --launch --inspect-analysis \
+  >> logs/followup_a100_collection.log 2>&1 < /dev/null &
 ```
 
 This uses the two named A100 nodes and does the following:
 
-1. Require both instances to be stopped before taking ownership; start the pair.
-2. Wait for SSH and check actual GPU model, memory and idle state. The Python
+1. Optionally inspect `spar-analysis-0` without changing its repo or starting/
+   stopping jobs; save readiness to `logs/followup_analysis_probe.local.json`.
+   Freeze the campaign source in external storage so ongoing code edits cannot
+   change the smoke/collection comparison.
+2. Require both instances to be stopped before taking ownership; start the pair.
+   Retry only the exact capacity error, at most six attempts per stage with
+   ten-minute pauses. Stop any partial allocation and confirm both hosts are
+   `TERMINATED` before each pause. Authentication, quota, and unconfirmed-cleanup
+   failures stop immediately.
+3. Wait for SSH and check actual GPU model, memory and idle state. The Python
    process probe matches executable/script arguments rather than its own source.
-3. Stage a fresh source bundle and run a 60-second TP8 smoke with seed 20261012.
-4. Wait for both durable success receipts. Download every final artifact, verify
+4. Stage a fresh source bundle and run a 60-second TP8 smoke with seed 20261012.
+5. Wait for both durable success receipts. Download every final artifact, verify
    its SHA256, read the parquet files, and check sample counts, timestamp order,
    recording spans and per-rank completed work. Require 8 GPU and 1 NIC file per
    node and positive optimizer progress on all 16 TP workers.
-5. Confirm both hosts stopped. Restart them and collect TP8 for 1800 seconds with
+6. Confirm both hosts stopped. Restart them and collect TP8 for 1800 seconds with
    seed 8123401, gated on the exact smoke source hashes and receipts.
-6. Repeat the download checks, confirm both hosts stopped, and upload the campaign
+7. Repeat the download checks, confirm both hosts stopped, and upload the campaign
    summary. Any failed gate aborts and requests shutdown of the owned pair.
 
 The script prints a concrete plan without `--launch`. Campaign identifiers are
@@ -84,11 +94,13 @@ The full 125-launch campaign is not launched.
 Follow progress with:
 
 ```bash
-tail -n 60 /tmp/followup-a100-pilot.log
+tail -n 60 logs/followup_a100_collection.log
 ```
 
-This workflow has passed CPU failure-path tests and a CLI dry run; live execution
-is still pending. A successful run establishes recorded synthetic TP work and
+The updated workflow passes 23 focused CPU tests and a CLI dry run; a successful
+live smoke remains pending. Google identifies this error as transient resource
+availability, separate from quota, and recommends trying later as the first
+option. [Google Cloud guidance](https://docs.cloud.google.com/compute/docs/troubleshooting/troubleshooting-resource-availability). A successful run establishes recorded synthetic TP work and
 basic telemetry integrity. Further clock/phase-label review and scientific corpus
 admission are still required, and task learning has not been measured.
 

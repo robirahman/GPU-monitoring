@@ -86,6 +86,43 @@ def validate_hardware(probes, gpu_model):
         raise RuntimeError('Pilot requires matching GPUs and at least 38,000 MiB each')
 
 
+def capacity_error(exc):
+    """Only retry the capacity code observed from instances.start, not auth/quota."""
+    codes = re.findall(r'^\s*code:\s*([A-Z_]+)', exc.stderr or '', re.MULTILINE)
+    return bool(codes) and all(c in ('ZONE_RESOURCE_POOL_EXHAUSTED',
+                                     'ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS') for c in codes)
+
+
+def stop_owned_pair(a):
+    cloud(['compute', 'instances', 'stop', a.node0, a.node1,
+           '--project', a.project, '--zone', a.zone, '--quiet'])
+    states = [json.loads(cloud(['compute', 'instances', 'describe', n,
+              '--project', a.project, '--zone', a.zone, '--format=json']))['status']
+              for n in (a.node0, a.node1)]
+    if states != ['TERMINATED', 'TERMINATED']:
+        raise RuntimeError(f'Cleanup did not confirm both nodes stopped: {states}')
+    print('Confirmed both owned nodes are TERMINATED.', flush=True)
+
+
+def start_pair_with_retry(a):
+    attempts = getattr(a, 'capacity_attempts', 1)
+    delay = getattr(a, 'capacity_delay', 600)
+    for attempt in range(1, attempts + 1):
+        print(f'Capacity/start attempt {attempt}/{attempts}', flush=True)
+        try:
+            cloud(['compute', 'instances', 'start', a.node0, a.node1,
+                   '--project', a.project, '--zone', a.zone, '--quiet'])
+            return
+        except subprocess.CalledProcessError as exc:
+            if not capacity_error(exc) or attempt == attempts:
+                raise
+            # One node may start while its peer fails. Never leave it running
+            # through backoff, and never retry if cleanup cannot be confirmed.
+            stop_owned_pair(a)
+            print(f'Zone capacity exhausted; retrying in {delay}s.', flush=True)
+            time.sleep(delay)
+
+
 def with_started_pair(a, launch):
     """Own only the explicitly requested pair, initially stopped on both nodes."""
     nodes = (a.node0, a.node1)
@@ -97,8 +134,7 @@ def with_started_pair(a, launch):
                 or info.get('scheduling', {}).get('instanceTerminationAction') != 'STOP'):
             raise RuntimeError('--start-stopped requires two stopped SPAR GPU instances retaining their disks')
     try:
-        cloud(['compute', 'instances', 'start', *nodes, '--project', a.project,
-               '--zone', a.zone, '--quiet'])
+        start_pair_with_retry(a)
         # Wait for SSH transport only. Preflight failures then abort promptly;
         # an occupied GPU is not something this driver waits for or terminates.
         deadline = time.monotonic() + 600
@@ -115,9 +151,8 @@ def with_started_pair(a, launch):
     except BaseException:
         print('Startup/launch failed; stopping the pair started by this invocation.', flush=True)
         try:
-            cloud(['compute', 'instances', 'stop', *nodes, '--project', a.project,
-                   '--zone', a.zone, '--quiet'])
-        except (subprocess.SubprocessError, OSError) as exc:
+            stop_owned_pair(a)
+        except (subprocess.SubprocessError, OSError, RuntimeError) as exc:
             print(f'AUTOMATIC CLEANUP FAILED; stop {nodes} in {a.zone}: {exc}', flush=True)
         raise
 
@@ -179,6 +214,8 @@ def main():
     ap.add_argument('--smoke-stamp', help='Prior successful smoke of this cell, source and pair')
     ap.add_argument('--gpu-model', choices=('H100', 'A100'), default='H100')
     ap.add_argument('--start-stopped', action='store_true', help='Start the dedicated pair; stop on startup/launch failure')
+    ap.add_argument('--capacity-attempts', type=int, default=1)
+    ap.add_argument('--capacity-delay', type=int, default=600, help='Seconds between verified capacity failures')
     ap.add_argument('--launch', action='store_true')
     a = ap.parse_args()
     a.duration = a.duration if a.duration is not None else (60 if a.smoke else 1800)
@@ -191,11 +228,14 @@ def main():
         ap.error('Duration must be 30..3600 seconds; smoke is at most 120 seconds')
     if not a.smoke and not a.smoke_stamp:
         ap.error('Collection requires --smoke-stamp from a successful smoke')
+    if not 1 <= a.capacity_attempts <= 6 or not 60 <= a.capacity_delay <= 1800:
+        ap.error('Require 1..6 capacity attempts and a 60..1800 second delay')
     deploy = f'/opt/spar/followup/{a.run_stamp}'
     plan = dict(status='planned_not_launched', run_stamp=a.run_stamp,
                 run_id=run_id(a.run_stamp, a.cell), cell=a.cell, seed=a.seed,
                 smoke=a.smoke, nodes=[a.node0, a.node1], duration_s=a.duration,
                 gpu_model=a.gpu_model, start_stopped=a.start_stopped,
+                capacity_attempts=a.capacity_attempts, capacity_delay_s=a.capacity_delay,
                 hard_runtime_s=a.duration+1800, stop_grace_s=300, shutdown_delay_s=120,
                 deployment=deploy, output=f'{a.bucket}/runs/{a.session}',
                 commands=[shlex.join(service_command(a, r, deploy)) for r in (0, 1)])

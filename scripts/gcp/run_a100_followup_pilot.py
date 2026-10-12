@@ -13,6 +13,7 @@ from pathlib import Path
 import signal
 import subprocess
 import sys
+import tarfile
 import time
 
 try:
@@ -25,6 +26,26 @@ ZONE='us-central1-c'
 NODES=('spar-a100-0','spar-a100-1')
 BUCKET='gs://focus-surfer-494820-g0-telemetry'
 CELL='s16_train_tp8'
+
+
+def freeze_source(root, work, campaign):
+    """Keep smoke and collection on one exact source snapshot during backoff."""
+    archive=work/'source.tar.gz'
+    manifest=driver.bundle(root,archive,campaign)
+    target=work/'source'
+    target.mkdir()
+    with tarfile.open(archive) as tar:
+        for member in tar.getmembers():
+            path=Path(member.name)
+            if not member.isfile() or path.is_absolute() or '..' in path.parts:
+                raise RuntimeError('Unexpected entry in local source archive')
+            dest=target/path
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            dest.write_bytes(tar.extractfile(member).read())
+    for path,digest in manifest['files'].items():
+        if driver.sha256(target/path)!=digest:
+            raise RuntimeError('Source changed while creating campaign snapshot')
+    return target,manifest
 
 
 def read_receipt(uri):
@@ -94,24 +115,47 @@ def validate_downloads(receipts, work, duration):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--capacity-attempts',type=int,default=6)
+    ap.add_argument('--capacity-delay',type=int,default=600)
+    ap.add_argument('--inspect-analysis',action='store_true',help='Read-only readiness check of spar-analysis-0')
+    ap.add_argument('--work-root',type=Path,default=Path('/tmp'),help='External storage for immutable source and downloaded results')
     ap.add_argument('--launch',action='store_true')
     a=ap.parse_args()
+    if not 1 <= a.capacity_attempts <= 6 or not 60 <= a.capacity_delay <= 1800:
+        ap.error('Require 1..6 capacity attempts and a 60..1800 second delay')
     campaign=datetime.now(timezone.utc).strftime('followup_a100_%Y%m%dT%H%M%SZ')
-    work=Path('/tmp')/campaign
+    work=a.work_root/campaign
     stages=[dict(name='smoke',duration=60,seed=20261012),
             dict(name='collect',duration=1800,seed=8123401)]
     plan=dict(campaign=campaign,zone=ZONE,nodes=NODES,gpu_model='A100',cell=CELL,
               output=f'{BUCKET}/runs/{campaign}',local_results=str(work),stages=stages,
-              status='planned_not_launched',admission='pending_scientific_review')
+              status='planned_not_launched',admission='pending_scientific_review',
+              capacity_attempts_per_stage=a.capacity_attempts,capacity_delay_s=a.capacity_delay,
+              inspect_analysis=a.inspect_analysis)
     print(json.dumps(plan,indent=2),flush=True)
     if not a.launch:
         return
     # Fail before starting instances if the local result checker cannot run.
     import pandas, pyarrow, numpy  # noqa: F401
     work.mkdir()
+    source,manifest=freeze_source(driver.ROOT,work,campaign)
+    plan['source_files']=manifest['files']
     def save():
         (work/'campaign.json').write_text(json.dumps(plan,indent=2)+'\n')
     save()
+    if a.inspect_analysis:
+        import shlex
+        probe_source=Path(__file__).with_name('probe_followup_analysis.py').read_text()
+        try:
+            output=driver.cloud(['compute','ssh','spar-analysis-0','--project',PROJECT,
+                '--zone','us-central1-a','--quiet','--command',
+                shlex.join(['sudo','/usr/bin/python3','-c',probe_source])])
+            parsed=json.loads(output)
+            path=driver.ROOT/'logs/followup_analysis_probe.local.json'
+            path.write_text(json.dumps(parsed,indent=2)+'\n')
+            print(f'Analysis readiness saved: {path}',flush=True)
+        except (subprocess.SubprocessError,OSError,ValueError) as exc:
+            print(f'Analysis readiness probe failed: {exc}',flush=True)
     def interrupted(signum, frame):
         raise KeyboardInterrupt(f'Interrupted by signal {signum}')
     signal.signal(signal.SIGTERM,interrupted)
@@ -127,16 +171,17 @@ def main():
         for stage in stages:
             stamp=f'{campaign}_{stage["name"]}'
             plan.update(status='launching',stage=stage['name']);save()
-            cmd=[sys.executable,str(Path(driver.__file__)), '--project',PROJECT,'--zone',ZONE,
+            cmd=[sys.executable,str(source/'scripts/gcp/launch_followup_pilot.py'), '--project',PROJECT,'--zone',ZONE,
                  '--node0',NODES[0],'--node1',NODES[1],'--gpu-model','A100',
                  '--cell',CELL,'--run-stamp',stamp,'--session',campaign,'--bucket',BUCKET,
                  '--seed',str(stage['seed']),'--duration',str(stage['duration']),
-                 '--start-stopped','--launch']
+                 '--start-stopped','--capacity-attempts',str(a.capacity_attempts),
+                 '--capacity-delay',str(a.capacity_delay),'--launch']
             if stage['name']=='smoke':
                 cmd+=['--smoke']
             else:
                 cmd+=['--smoke-stamp',f'{campaign}_smoke']
-            subprocess.run(cmd,check=True,timeout=1500)
+            subprocess.run(cmd,check=True,timeout=1500+(a.capacity_attempts-1)*(a.capacity_delay+720))
             deadline=time.monotonic()+stage['duration']+2400
             plan['status']='collecting';save()
             while time.monotonic() < deadline:
@@ -160,8 +205,9 @@ def main():
         if owned:
             print('Stopping the pair owned by this campaign after failure.',flush=True)
             try:
-                driver.cloud(['compute','instances','stop',*NODES,'--project',PROJECT,'--zone',ZONE,'--quiet'])
-            except (subprocess.SubprocessError,OSError) as stop_exc:
+                from types import SimpleNamespace
+                driver.stop_owned_pair(SimpleNamespace(node0=NODES[0],node1=NODES[1],project=PROJECT,zone=ZONE))
+            except (subprocess.SubprocessError,OSError,RuntimeError) as stop_exc:
                 print(f'AUTOMATIC CLEANUP FAILED: {stop_exc}',flush=True)
         raise
 

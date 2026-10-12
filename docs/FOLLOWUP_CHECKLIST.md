@@ -42,6 +42,10 @@ not useful training time. Historical job identities remain provisional.
   inventory and prepare a one-command smoke-to-collection campaign with explicit
   hardware checks, failure cleanup and downloaded parquet validation. A100 data
   remains separate from the planned H100 repetitions.
+- [x] Record the [first cloud startup attempt](followup_execution_2026-10-12/first_cloud_attempt.json):
+  both A100 allocations failed with a zone capacity shortage; no workload ran.
+  Add bounded capacity-only retries, verified cleanup, immutable campaign source
+  and a read-only analysis-host readiness probe.
 - [ ] Execute a live two-node smoke, inspect both hosts' receipts and telemetry,
   then launch the first 30-minute repetition. Authentication is active; this
   agent session currently cannot resolve the Google Cloud API hostname.
