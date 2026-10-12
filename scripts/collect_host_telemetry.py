@@ -26,6 +26,7 @@ As a library / sidecar (started by the multinode queue alongside the GPU run):
 import argparse
 import logging
 import os
+import signal
 import socket
 import threading
 import time
@@ -343,9 +344,19 @@ def main():
         iface=args.iface, interval_sec=args.interval,
         checkpoint_sec=args.checkpoint_sec, checkpoint_path=ckpt,
     )
+    stopping = threading.Event()
+
+    def request_stop(signum, frame):
+        log.info("Received signal %s; saving final host telemetry", signum)
+        stopping.set()
+
+    # The queue stops this background process with SIGTERM. Its default action
+    # bypasses Python's finally block, leaving only a .partial checkpoint.
+    signal.signal(signal.SIGTERM, request_stop)
+    signal.signal(signal.SIGINT, request_stop)
     c.start()
     try:
-        time.sleep(args.duration)
+        stopping.wait(args.duration)
     except KeyboardInterrupt:
         log.warning("interrupted -- saving what we have")
     finally:

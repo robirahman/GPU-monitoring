@@ -9,8 +9,10 @@ from pathlib import Path
 import random
 import shlex
 import subprocess
+import sys
 import tarfile
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -24,6 +26,37 @@ from scripts.gcp.probe_followup_node import busy_command
 from scripts.plan_followup_repetitions import make_plan
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class HostShutdownTests(unittest.TestCase):
+    def test_sigterm_writes_final_parquet_and_removes_partial(self):
+        import pandas as pd
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / 'nic.parquet'
+            partial = output.with_suffix('.parquet.partial')
+            process = subprocess.Popen([
+                sys.executable, str(ROOT / 'scripts/collect_host_telemetry.py'),
+                '--duration', '60', '--interval', '0.05', '--checkpoint-sec', '0.1',
+                '--output', str(output), '--run-id', 'shutdown-test', '--node-rank', '1',
+            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                deadline = time.monotonic() + 10
+                while not partial.exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(0.05)
+                self.assertTrue(partial.exists(), 'Recorder never reached its first checkpoint')
+                process.terminate()  # The queue uses SIGTERM, not a Python exception.
+                _, stderr = process.communicate(timeout=10)
+                self.assertEqual(process.returncode, 0, stderr)
+                frame = pd.read_parquet(output)
+                self.assertGreaterEqual(len(frame), 2)
+                self.assertEqual(set(frame.run_id), {'shutdown-test'})
+                self.assertEqual(set(frame.node_rank), {1})
+                self.assertTrue(frame.timestamp_epoch.is_monotonic_increasing)
+                self.assertFalse(partial.exists())
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                process.communicate()
 
 
 class SeedTests(unittest.TestCase):
