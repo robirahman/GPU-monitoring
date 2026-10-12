@@ -4,9 +4,12 @@ Implementation is ready for a live smoke, but **no new VM or collection job was
 started in this execution**. `gcloud auth list` confirms an active account;
 `gcloud compute instances list` fails here because the restricted agent session
 cannot resolve `compute.googleapis.com`. No further login is currently indicated.
-The operator was asked to save a live instance listing to the ignored local file
-`gcloud-instances.local.json` from regular Cloud Shell. VM identity, availability
-and current workloads have therefore not yet been established.
+The operator supplied the live listing in `gcloud-instances.local.json`. It
+contains `spar-a100-0` and `spar-a100-1` in `us-central1-c`, both stopped,
+`a2-highgpu-8g` with eight A100 accelerators each. No H100 instances are listed.
+The pilot now explicitly supports a matching A100 pair. This is an A100 hardware
+stratum and does not satisfy the H100 repetition counts in the original plan.
+The running `spar-analysis-0` remains available for the separate evaluation.
 
 ## Changes prepared
 
@@ -28,9 +31,10 @@ and current workloads have therefore not yet been established.
 - `launch_followup_pilot.py` deploys a source-only working-tree bundle with hashes
   to a fresh directory on both nodes. It neither archives stale local HEAD nor
   copies the corpus or Git credentials. The old repo/venvs remain available.
-- The driver requires two already-running idle H100 hosts, eight GPUs each. It
+- The driver requires two idle hosts with eight matching A100 or H100 GPUs each. It
   starts one cell under detached systemd services with a runtime cap and shutdown
-  after completion/failure. It does not provision or implicitly restart machines.
+  after completion/failure. It does not provision machines. `--start-stopped`
+  explicitly starts a stopped SPAR pair and stops that pair on launch failure.
 - The node runner uploads partial outputs every 120 seconds. Final artifacts are
   downloaded again and SHA256 checked. Receipts require eight GPU filenames, a
   NIC file, a success marker, correct seeds and progress from every local rank.
@@ -38,63 +42,60 @@ and current workloads have therefore not yet been established.
   parquet contents, duration, clock alignment, all-worker completion and peer
   results before admitting the data. Failed prefixes remain separate.
 
-## Cloud Shell execution
+## One-command A100 campaign
 
-First establish the pair's current state; do not substitute remembered names:
-
-```bash
-gcloud compute instances list --project=focus-surfer-494820-g0 --format=json \
-  > /home/robi/GPU-monitoring/gcloud-instances.local.json
-```
-
-After identifying a dedicated idle pair, set `ZONE`, `NODE0`, and `NODE1` to its
-actual values. A normal invocation prints the concrete plan. `--launch` performs
-it. Both hosts will shut down afterwards, including on a failed launch. Each
-service allows `duration + 1800` seconds, followed by at most 300 seconds of stop
-grace and a 120-second shutdown delay. The 125-launch plan is not started.
+Run this in regular Cloud Shell (the agent session still cannot resolve the
+Cloud API hostname). No additional login is indicated:
 
 ```bash
 cd /home/robi/GPU-monitoring
-python3 scripts/gcp/launch_followup_pilot.py \
-  --zone "$ZONE" --node0 "$NODE0" --node1 "$NODE1" \
-  --run-stamp followup_tp8_smoke_01 --cell s16_train_tp8 --smoke --launch
+nohup python3 -u scripts/gcp/run_a100_followup_pilot.py --launch \
+  > /tmp/followup-a100-pilot.log 2>&1 < /dev/null &
 ```
 
-Fresh stamps are mandatory. If a deployment directory already exists, the driver
-fails rather than overwriting it. The pilot choices are TP8, local SGD H=1,
-balanced MoE and IMPALA with learner rank 0. These are synthetic mechanism probes;
-production training and benign matched controls remain open checklist items.
+This uses the two named A100 nodes and does the following:
 
-Inspect the detached service on either host while running:
+1. Require both instances to be stopped before taking ownership; start the pair.
+2. Wait for SSH and check actual GPU model, memory and idle state. The Python
+   process probe matches executable/script arguments rather than its own source.
+3. Stage a fresh source bundle and run a 60-second TP8 smoke with seed 20261012.
+4. Wait for both durable success receipts. Download every final artifact, verify
+   its SHA256, read the parquet files, and check sample counts, timestamp order,
+   recording spans and per-rank completed work. Require 8 GPU and 1 NIC file per
+   node and positive optimizer progress on all 16 TP workers.
+5. Confirm both hosts stopped. Restart them and collect TP8 for 1800 seconds with
+   seed 8123401, gated on the exact smoke source hashes and receipts.
+6. Repeat the download checks, confirm both hosts stopped, and upload the campaign
+   summary. Any failed gate aborts and requests shutdown of the owned pair.
+
+The script prints a concrete plan without `--launch`. Campaign identifiers are
+UTC-stamped. Remote artifacts go under
+`gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_<timestamp>/`, and checked
+local downloads and `campaign.json` go under `/tmp/followup_a100_<timestamp>/`.
+The cloud copy is durable; `/tmp` is only a local inspection cache.
+
+The 30-minute collection is a nominal eight accelerator hours (16 × 0.5 h), plus
+smoke/startup/teardown. Each node service has a `duration + 1800` second cap,
+300-second stop grace and 120-second shutdown delay. SSH startup waits are bounded
+and failed startup requests are followed by stop requests. Logs explicitly report
+any failed cleanup. No success claim is made without checking cloud stop state.
+The full 125-launch campaign is not launched.
+
+Follow progress with:
 
 ```bash
-gcloud compute ssh "$NODE0" --project=focus-surfer-494820-g0 --zone="$ZONE" \
-  --command='sudo journalctl -u spar-followup-followup_tp8_smoke_01 --no-pager -n 60'
+tail -n 60 /tmp/followup-a100-pilot.log
 ```
 
-Receipts are stored at:
-`gs://focus-surfer-494820-g0-telemetry/runs/followup_20261012/control/<stamp>/<node>.complete.json`.
-Telemetry, partial snapshots, per-rank work logs and source manifests are under
-`runs/followup_20261012/<node>/`. A missing receipt must be investigated; absence
-is never interpreted as successful completion.
+This workflow has passed CPU failure-path tests and a CLI dry run; live execution
+is still pending. A successful run establishes recorded synthetic TP work and
+basic telemetry integrity. Further clock/phase-label review and scientific corpus
+admission are still required, and task learning has not been measured.
 
-Only after successful smoke receipts from both hosts and confirmation they have
-stopped, explicitly restart the intended pair. Then collect the same cell:
-
-```bash
-gcloud compute instances start "$NODE0" "$NODE1" \
-  --project=focus-surfer-494820-g0 --zone="$ZONE"
-python3 scripts/gcp/launch_followup_pilot.py \
-  --zone "$ZONE" --node0 "$NODE0" --node1 "$NODE1" \
-  --run-stamp followup_tp8_collect_01 --cell s16_train_tp8 \
-  --smoke-stamp followup_tp8_smoke_01 --seed 8123401 --duration 1800 --launch
-```
-
-The collection gate compares the smoke's exact source hashes against the current
-working tree and checks both receipts. Any code change requires another smoke.
-Confirm the instances are stopped after every bounded batch; an OS shutdown
-request cannot itself prove the cloud instance's final state. These commands have
-been dry-run/CPU-tested here, not validated on the live pair.
+For another dedicated pair, `launch_followup_pilot.py` exposes explicit node,
+zone, GPU-model and startup arguments. It supports TP8, local SGD H=1, balanced
+MoE and IMPALA with learner rank 0. Production workloads and benign matched
+controls remain open checklist items.
 
 ## Remaining execution
 

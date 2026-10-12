@@ -20,6 +20,7 @@ import numpy as np
 from workloads._seed import add_seed_argument, record_seed
 from scripts.gcp import run_followup_node as node
 from scripts.gcp import launch_followup_pilot as driver
+from scripts.gcp.probe_followup_node import busy_command
 from scripts.plan_followup_repetitions import make_plan
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,6 +56,54 @@ class SeedTests(unittest.TestCase):
         self.assertEqual(rows, make_plan(jobs))
         self.assertNotEqual(rows, make_plan(jobs, seed=37))
         self.assertTrue(all(f'SPAR_WORKLOAD_SEED={r["workload_seed"]}' in r['queue_command'] for r in rows))
+
+
+class PairStartupTests(unittest.TestCase):
+    def args(self):
+        return SimpleNamespace(node0='spar-a100-0', node1='spar-a100-1',
+                               project='project', zone='zone')
+
+    def stopped(self):
+        return json.dumps(dict(status='TERMINATED', labels={'spar-role':'gpu'},
+                               scheduling={'instanceTerminationAction':'STOP'}))
+
+    def test_preflight_matches_scripts_without_matching_its_own_source(self):
+        self.assertFalse(busy_command(['python3','-c',driver.PROBE]))
+        self.assertTrue(busy_command(['/opt/spar/repo/venv-main/bin/python',
+                                      '/opt/spar/repo/venv-main/bin/torchrun','--nnodes=2']))
+        self.assertTrue(busy_command(['bash','scripts/rebuttal_collection/multinode_queue.sh']))
+        self.assertFalse(busy_command(['python3','scripts/run_followup_evaluation.py']))
+
+    def test_a100_requires_homogeneous_pair_and_sufficient_memory(self):
+        good={'gpus':[dict(name='NVIDIA A100-SXM4-40GB',memory_mib=40960) for _ in range(8)]}
+        driver.validate_hardware([good,good],'A100')
+        with self.assertRaises(RuntimeError):
+            driver.validate_hardware([good,good],'H100')
+        other={'gpus':[dict(name='NVIDIA A100-SXM4-80GB',memory_mib=81920) for _ in range(8)]}
+        with self.assertRaises(RuntimeError):
+            driver.validate_hardware([good,other],'A100')
+
+    def test_startup_failure_stops_only_explicitly_owned_pair(self):
+        with patch.object(driver,'cloud',side_effect=[self.stopped(),self.stopped(),'', '']) as cloud, \
+             patch.object(driver,'remote_command',return_value=''):
+            def fail():
+                raise RuntimeError('preflight failed')
+            with self.assertRaisesRegex(RuntimeError,'preflight failed'):
+                driver.with_started_pair(self.args(),fail)
+            self.assertEqual(cloud.call_args_list[-1].args[0][:5],
+                             ['compute','instances','stop','spar-a100-0','spar-a100-1'])
+
+    def test_existing_running_instance_is_never_started_or_stopped(self):
+        with patch.object(driver,'cloud',return_value=json.dumps({'status':'RUNNING'})) as cloud:
+            with self.assertRaises(RuntimeError):
+                driver.with_started_pair(self.args(),lambda: self.fail('launched'))
+            self.assertEqual(cloud.call_count,1)
+
+    def test_success_hands_runtime_limit_and_shutdown_to_node_services(self):
+        with patch.object(driver,'cloud',side_effect=[self.stopped(),self.stopped(),'']) as cloud, \
+             patch.object(driver,'remote_command',return_value=''):
+            self.assertEqual(driver.with_started_pair(self.args(),lambda:'launched'),'launched')
+            self.assertFalse(any(c.args[0][2]=='stop' for c in cloud.call_args_list))
 
 
 class ReceiptTests(unittest.TestCase):
@@ -208,6 +257,42 @@ class CheckpointTests(unittest.TestCase):
         for c in collectors:
             self.assertEqual(c.path_at_start,c.saved+'.partial')
             self.assertEqual(c.kw['checkpoint_sec'],60)
+
+
+class CampaignDownloadTests(unittest.TestCase):
+    def test_real_parquet_validation_rejects_corruption_and_short_recordings(self):
+        import pandas as pd
+        import shutil
+        from scripts.gcp import run_a100_followup_pilot as campaign
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); src=root/'source.parquet'
+            pd.DataFrame({'timestamp_epoch':range(60)}).to_parquet(src)
+            digest=driver.sha256(src)
+            receipts=[]
+            for rank,name in enumerate(campaign.NODES):
+                prefix=f'{campaign.BUCKET}/runs/campaign/{name}/'
+                uploads=[dict(uri=prefix+f'data/gpu_{i}.parquet',sha256=digest,verified=True) for i in range(9)]
+                receipts.append(dict(rank=rank,node=name,run_stamp='campaign_smoke',uploads=uploads,
+                    local_result=dict(complete=True,progress={str(r):dict(optimizer_updates=3,elapsed_s=60)
+                                      for r in range(rank*8,(rank+1)*8)})))
+            def copy(args):
+                shutil.copyfile(src,args[-1]);return ''
+            with patch.object(driver,'cloud',side_effect=copy):
+                rows=campaign.validate_downloads(receipts,root/'good',60)
+                self.assertEqual(len(rows),18)
+                self.assertEqual(sum(r['samples'] for r in rows),1080)
+                receipts[0]['uploads'][0]['sha256']='wrong'
+                with self.assertRaisesRegex(RuntimeError,'checksum mismatch'):
+                    campaign.validate_downloads(receipts,root/'bad_hash',60)
+                receipts[0]['uploads'][0]['sha256']=digest
+                for receipt in receipts:
+                    for entry in receipt['local_result']['progress'].values():
+                        entry['elapsed_s']=600
+                with self.assertRaisesRegex(RuntimeError,'short, incomplete'):
+                    campaign.validate_downloads(receipts,root/'short',600)
+                receipts[0]['local_result']['progress']={}
+                with self.assertRaisesRegex(RuntimeError,'worker evidence'):
+                    campaign.validate_downloads(receipts,root/'no_progress',60)
 
 
 if __name__ == '__main__':

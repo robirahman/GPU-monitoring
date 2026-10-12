@@ -38,6 +38,10 @@ not useful training time. Historical job identities remain provisional.
   preserve rank/shard offsets and regenerate per-launch seeds.
 - [x] Implement a bounded pilot launcher, per-rank progress checks, rolling GPU
   snapshots and verified cloud receipts. [Runbook](followup_execution_2026-10-12/collection_runbook.md).
+- [x] Identify the existing stopped A100 pair from the operator's live VM
+  inventory and prepare a one-command smoke-to-collection campaign with explicit
+  hardware checks, failure cleanup and downloaded parquet validation. A100 data
+  remains separate from the planned H100 repetitions.
 - [ ] Execute a live two-node smoke, inspect both hosts' receipts and telemetry,
   then launch the first 30-minute repetition. Authentication is active; this
   agent session currently cannot resolve the Google Cloud API hostname.

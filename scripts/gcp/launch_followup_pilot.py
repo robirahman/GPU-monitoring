@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Stage and launch one bounded pilot on an existing idle H100 pair.
+"""Stage and launch one bounded pilot on an existing idle eight-GPU pair.
 
 Run in an authenticated Cloud Shell with network access. Default prints the
-plan. --launch requires both instances already RUNNING, checks both for idle
-GPUs/queues, stages a hashed source bundle without Git credentials or data, and
+plan. --launch checks both instances for idle GPUs/queues, stages a hashed
+source bundle without Git credentials or data, and
 starts detached systemd services. Both dedicated nodes power off afterwards.
-A 60 second smoke is required before a 30 minute collection of the same cell.
+--start-stopped explicitly starts a stopped collection pair and stops it again
+if startup, preflight or deployment fails. A 60 second smoke is required before
+a 30 minute collection of the same cell.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-import hashlib
 import json
 from pathlib import Path
 import re
@@ -18,6 +19,8 @@ import shlex
 import subprocess
 import tarfile
 import tempfile
+import time
+import signal
 
 try:
     from scripts.gcp.run_followup_node import PILOT_CELLS, run_id, sha256
@@ -28,8 +31,12 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def cloud(args):
-    return subprocess.run(['gcloud', *args], check=True, capture_output=True,
-                          text=True, timeout=180).stdout
+    try:
+        return subprocess.run(['gcloud', *args], check=True, capture_output=True,
+                              text=True, timeout=180).stdout
+    except subprocess.CalledProcessError as exc:
+        print((exc.stderr or exc.stdout or str(exc))[-6000:], flush=True)
+        raise
 
 
 def source_files(root):
@@ -65,16 +72,55 @@ def remote_command(a, node, args):
                   '--quiet', '--command', shlex.join(args)])
 
 
-PROBE = '''set -eu
-[ ! -e /run/systemd/shutdown/scheduled ]
-[ -x /opt/spar/repo/venv-main/bin/python ]
-[ -x /opt/spar/repo/venv-vllm/bin/ray ]
-[ -x /opt/spar/repo/venv-main/bin/torchrun ]
-[ -z "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]
-! pgrep -f '[m]ultinode_queue.sh|[r]un_followup_node.py' >/dev/null
-! pgrep -f '[t]orchrun|[v]llm|[r]aylet' >/dev/null
-nvidia-smi --query-gpu=name --format=csv,noheader
-'''
+PROBE = Path(__file__).with_name('probe_followup_node.py').read_text()
+
+
+def validate_hardware(probes, gpu_model):
+    groups = [p['gpus'] for p in probes]
+    if len(groups) != 2 or any(len(g) != 8 for g in groups):
+        raise RuntimeError('Pilot requires exactly eight GPUs on each host')
+    if any(gpu_model not in gpu['name'] for g in groups for gpu in g):
+        raise RuntimeError(f'Pilot requested {gpu_model}; observed a different GPU model')
+    shapes = {(gpu['name'], gpu['memory_mib']) for g in groups for gpu in g}
+    if len(shapes) != 1 or min(gpu['memory_mib'] for g in groups for gpu in g) < 38000:
+        raise RuntimeError('Pilot requires matching GPUs and at least 38,000 MiB each')
+
+
+def with_started_pair(a, launch):
+    """Own only the explicitly requested pair, initially stopped on both nodes."""
+    nodes = (a.node0, a.node1)
+    for name in nodes:
+        info = json.loads(cloud(['compute', 'instances', 'describe', name,
+                                '--project', a.project, '--zone', a.zone, '--format=json']))
+        if (info['status'] != 'TERMINATED'
+                or info.get('labels', {}).get('spar-role') != 'gpu'
+                or info.get('scheduling', {}).get('instanceTerminationAction') != 'STOP'):
+            raise RuntimeError('--start-stopped requires two stopped SPAR GPU instances retaining their disks')
+    try:
+        cloud(['compute', 'instances', 'start', *nodes, '--project', a.project,
+               '--zone', a.zone, '--quiet'])
+        # Wait for SSH transport only. Preflight failures then abort promptly;
+        # an occupied GPU is not something this driver waits for or terminates.
+        deadline = time.monotonic() + 600
+        for name in nodes:
+            while True:
+                try:
+                    remote_command(a, name, ['true'])
+                    break
+                except (subprocess.SubprocessError, OSError):
+                    if time.monotonic() >= deadline:
+                        raise RuntimeError(f'SSH unavailable on {name} after startup')
+                    time.sleep(10)
+        return launch()
+    except BaseException:
+        print('Startup/launch failed; stopping the pair started by this invocation.', flush=True)
+        try:
+            cloud(['compute', 'instances', 'stop', *nodes, '--project', a.project,
+                   '--zone', a.zone, '--quiet'])
+        except (subprocess.SubprocessError, OSError) as exc:
+            print(f'AUTOMATIC CLEANUP FAILED; stop {nodes} in {a.zone}: {exc}', flush=True)
+        raise
+
 
 
 def check_smoke(a):
@@ -131,6 +177,8 @@ def main():
     ap.add_argument('--duration', type=int)
     ap.add_argument('--smoke', action='store_true')
     ap.add_argument('--smoke-stamp', help='Prior successful smoke of this cell, source and pair')
+    ap.add_argument('--gpu-model', choices=('H100', 'A100'), default='H100')
+    ap.add_argument('--start-stopped', action='store_true', help='Start the dedicated pair; stop on startup/launch failure')
     ap.add_argument('--launch', action='store_true')
     a = ap.parse_args()
     a.duration = a.duration if a.duration is not None else (60 if a.smoke else 1800)
@@ -147,22 +195,32 @@ def main():
     plan = dict(status='planned_not_launched', run_stamp=a.run_stamp,
                 run_id=run_id(a.run_stamp, a.cell), cell=a.cell, seed=a.seed,
                 smoke=a.smoke, nodes=[a.node0, a.node1], duration_s=a.duration,
+                gpu_model=a.gpu_model, start_stopped=a.start_stopped,
                 hard_runtime_s=a.duration+1800, stop_grace_s=300, shutdown_delay_s=120,
                 deployment=deploy, output=f'{a.bucket}/runs/{a.session}',
                 commands=[shlex.join(service_command(a, r, deploy)) for r in (0, 1)])
     print(json.dumps(plan, indent=2), flush=True)
     if not a.launch:
         return
-    # Do not start, recreate or repurpose any instances implicitly.
+    def interrupted(signum, frame):
+        raise KeyboardInterrupt(f'Interrupted by signal {signum}')
+    signal.signal(signal.SIGTERM, interrupted)
+    if a.start_stopped:
+        with_started_pair(a, lambda: launch_pair(a, plan, deploy))
+    else:
+        launch_pair(a, plan, deploy)
+
+
+def launch_pair(a, plan, deploy):
+    # Check actual live state again after any requested startup.
     for node in (a.node0, a.node1):
         info = json.loads(cloud(['compute', 'instances', 'describe', node,
                                 '--project', a.project, '--zone', a.zone, '--format=json']))
         if info['status'] != 'RUNNING':
             raise RuntimeError(f'{node} is {info["status"]}; explicitly start the intended pair first')
     with ThreadPoolExecutor(max_workers=2) as pool:
-        probes = list(pool.map(lambda n: remote_command(a, n, ['bash', '-c', PROBE]), (a.node0, a.node1)))
-    if any(len(p.strip().splitlines()) != 8 or any('H100' not in g for g in p.strip().splitlines()) for p in probes):
-        raise RuntimeError('This pilot requires exactly eight H100 GPUs on each idle host')
+        probes = list(pool.map(lambda n: remote_command(a, n, ['sudo', '/usr/bin/python3', '-c', PROBE]), (a.node0, a.node1)))
+    validate_hardware([json.loads(p) for p in probes], a.gpu_model)
     if not a.smoke:
         check_smoke(a)
     with tempfile.TemporaryDirectory(prefix='spar-deploy-') as tmp:

@@ -31,5 +31,24 @@
     "CPU tests use mocked GPU and cloud boundaries; no live CUDA or GCS claim",
     "Per-rank progress reports local counts, not measured task learning",
     "Local Git refs remain unchanged under read-only .git permissions; remote commits are pushed via GitHub connector"
-  ]
+  ],
+  "a100_inventory_followup": {
+    "inventory_sha256": "ebd0727bf24c8573a081c0f0ea4a8301f44079a74e19c64a39b19a7cc0bb37f4",
+    "selected_nodes": [
+      "spar-a100-0",
+      "spar-a100-1"
+    ],
+    "zone": "us-central1-c",
+    "status_in_inventory": "TERMINATED",
+    "machine_type": "a2-highgpu-8g",
+    "accelerators_per_host": 8,
+    "accelerator_type": "nvidia-tesla-a100",
+    "h100_instances_in_listing": 0,
+    "campaign": "60 second TP8 smoke followed by 1800 second TP8 collection if validation passes",
+    "cpu_collection_tests_passed": 18,
+    "cli_dry_run": "passed",
+    "live_execution": "pending_operator_launch",
+    "network_probe": "compute.googleapis.com DNS still unavailable",
+    "new_vms_created": 0
+  }
 }
