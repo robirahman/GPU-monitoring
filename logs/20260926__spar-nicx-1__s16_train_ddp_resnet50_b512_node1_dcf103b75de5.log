@@ -1,0 +1,65 @@
+2026-09-26 15:16:57,585 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_ddp_resnet50_b512, 8 GPUs, node=1, run_id=dcf103b75de5
+Run ID: dcf103b75de5
+2026-09-26 15:16:57,615 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,615 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,615 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,633 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,633 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,633 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,649 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,649 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,649 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,664 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,664 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,664 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,678 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,678 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,678 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,692 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,692 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,692 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,712 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,712 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,712 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:57,726 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:16:57,727 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:16:57,727 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:16:59,729 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-nicx-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/pytorch_training_ddp.py --model resnet50 --batch-size 512 --amp --duration 600
+W0926 15:17:01.403000 21791 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0926 15:17:01.403000 21791 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0926 15:17:01.403000 21791 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0926 15:17:01.403000 21791 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+[rank14]:[W926 15:17:20.863156217 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 14]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank8]:[W926 15:17:20.915517658 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 8]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank10]:[W926 15:17:20.147211825 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 10]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank12]:[W926 15:17:20.209556547 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 12]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank9]:[W926 15:17:20.226374019 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 9]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank11]:[W926 15:17:21.334618062 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 11]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank13]:[W926 15:17:21.375443084 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 13]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank15]:[W926 15:17:21.375925232 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 15]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+2026-09-26 15:27:30,768 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-26 15:27:32,771 [spar.telemetry] INFO: Telemetry stopped. 636 samples collected.
+2026-09-26 15:27:32,815 [spar.telemetry] INFO: Saved 636 rows to data/s16_train_ddp_resnet50_b512_node1_gpu0_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,819 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_ddp_resnet50_b512_node1_gpu0_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (636 rows)
+2026-09-26 15:27:32,820 [spar.telemetry] INFO: Telemetry stopped. 636 samples collected.
+2026-09-26 15:27:32,828 [spar.telemetry] INFO: Saved 636 rows to data/s16_train_ddp_resnet50_b512_node1_gpu1_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,832 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_ddp_resnet50_b512_node1_gpu1_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (636 rows)
+2026-09-26 15:27:32,832 [spar.telemetry] INFO: Telemetry stopped. 636 samples collected.
+2026-09-26 15:27:32,839 [spar.telemetry] INFO: Saved 636 rows to data/s16_train_ddp_resnet50_b512_node1_gpu2_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,843 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_ddp_resnet50_b512_node1_gpu2_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (636 rows)
+2026-09-26 15:27:32,843 [spar.telemetry] INFO: Telemetry stopped. 635 samples collected.
+2026-09-26 15:27:32,851 [spar.telemetry] INFO: Saved 635 rows to data/s16_train_ddp_resnet50_b512_node1_gpu3_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,855 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_ddp_resnet50_b512_node1_gpu3_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (635 rows)
+2026-09-26 15:27:32,855 [spar.telemetry] INFO: Telemetry stopped. 635 samples collected.
+2026-09-26 15:27:32,862 [spar.telemetry] INFO: Saved 635 rows to data/s16_train_ddp_resnet50_b512_node1_gpu4_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,866 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_ddp_resnet50_b512_node1_gpu4_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (635 rows)
+2026-09-26 15:27:32,866 [spar.telemetry] INFO: Telemetry stopped. 635 samples collected.
+2026-09-26 15:27:32,874 [spar.telemetry] INFO: Saved 635 rows to data/s16_train_ddp_resnet50_b512_node1_gpu5_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,877 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_ddp_resnet50_b512_node1_gpu5_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (635 rows)
+2026-09-26 15:27:32,877 [spar.telemetry] INFO: Telemetry stopped. 635 samples collected.
+2026-09-26 15:27:32,885 [spar.telemetry] INFO: Saved 635 rows to data/s16_train_ddp_resnet50_b512_node1_gpu6_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,889 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_ddp_resnet50_b512_node1_gpu6_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (635 rows)
+2026-09-26 15:27:32,889 [spar.telemetry] INFO: Telemetry stopped. 635 samples collected.
+2026-09-26 15:27:32,896 [spar.telemetry] INFO: Saved 635 rows to data/s16_train_ddp_resnet50_b512_node1_gpu7_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,900 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_ddp_resnet50_b512_node1_gpu7_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (635 rows)
+2026-09-26 15:27:32,901 [spar.multi_gpu] INFO: Multi-GPU run complete: dcf103b75de5 (rc=0)

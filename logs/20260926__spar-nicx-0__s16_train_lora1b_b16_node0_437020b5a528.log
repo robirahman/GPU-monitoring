@@ -1,0 +1,153 @@
+2026-09-26 17:39:03,028 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_lora1b_b16, 8 GPUs, node=0, run_id=437020b5a528
+Run ID: 437020b5a528
+2026-09-26 17:39:07,002 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,003 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,003 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,016 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,017 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,017 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,030 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,031 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,031 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,044 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,045 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,045 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,058 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,059 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,059 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,072 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,072 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,072 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,086 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,086 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,086 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:07,101 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 17:39:07,102 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_lora1b_b16, run=437020b5a528)
+2026-09-26 17:39:07,102 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 17:39:09,104 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-nicx-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/train_lora.py --size 1b --rank 16 --batch-size 16 --seq-len 1024 --duration 600
+W0926 17:39:10.777000 73446 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0926 17:39:10.777000 73446 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0926 17:39:10.777000 73446 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0926 17:39:10.777000 73446 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+LoRA fine-tune (HONEST training): 1b, 16 ranks
+  trainable 7.86M of 1.35B params (0.582%) -- that ratio IS the gradient all-reduce volume relative to a full fine-tune
+  rank=16 alpha=32 batch=16 seq=1024 duration=600s
+STEP ts=1790444385.747 kind=train batch_idx=1 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444391.191 kind=train batch_idx=2 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444399.394 kind=train batch_idx=3 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444407.641 kind=train batch_idx=4 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=    32s  step=4  loss=10.539  32354 tok/s (global)
+STEP ts=1790444415.892 kind=train batch_idx=5 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444424.171 kind=train batch_idx=6 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444432.472 kind=train batch_idx=7 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444440.780 kind=train batch_idx=8 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=    66s  step=8  loss=10.544  31994 tok/s (global)
+STEP ts=1790444449.093 kind=train batch_idx=9 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444457.405 kind=train batch_idx=10 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444465.696 kind=train batch_idx=11 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444474.021 kind=train batch_idx=12 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=    99s  step=12  loss=10.524  31843 tok/s (global)
+STEP ts=1790444482.351 kind=train batch_idx=13 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444490.686 kind=train batch_idx=14 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444499.030 kind=train batch_idx=15 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444507.383 kind=train batch_idx=16 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   132s  step=16  loss=10.531  31739 tok/s (global)
+STEP ts=1790444515.734 kind=train batch_idx=17 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444524.087 kind=train batch_idx=18 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444532.445 kind=train batch_idx=19 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444540.807 kind=train batch_idx=20 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   166s  step=20  loss=10.515  31665 tok/s (global)
+STEP ts=1790444549.163 kind=train batch_idx=21 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444557.521 kind=train batch_idx=22 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444565.884 kind=train batch_idx=23 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444574.251 kind=train batch_idx=24 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   199s  step=24  loss=10.510  31612 tok/s (global)
+STEP ts=1790444582.619 kind=train batch_idx=25 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444591.002 kind=train batch_idx=26 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444599.382 kind=train batch_idx=27 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444607.766 kind=train batch_idx=28 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   233s  step=28  loss=10.500  31565 tok/s (global)
+STEP ts=1790444616.143 kind=train batch_idx=29 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444624.526 kind=train batch_idx=30 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444632.912 kind=train batch_idx=31 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444641.300 kind=train batch_idx=32 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   266s  step=32  loss=10.487  31528 tok/s (global)
+STEP ts=1790444649.683 kind=train batch_idx=33 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444658.061 kind=train batch_idx=34 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444666.443 kind=train batch_idx=35 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444674.825 kind=train batch_idx=36 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   300s  step=36  loss=10.481  31500 tok/s (global)
+STEP ts=1790444683.207 kind=train batch_idx=37 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444691.588 kind=train batch_idx=38 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444699.968 kind=train batch_idx=39 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444708.355 kind=train batch_idx=40 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   333s  step=40  loss=10.482  31477 tok/s (global)
+STEP ts=1790444716.739 kind=train batch_idx=41 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444725.123 kind=train batch_idx=42 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444733.502 kind=train batch_idx=43 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444741.884 kind=train batch_idx=44 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   367s  step=44  loss=10.480  31458 tok/s (global)
+STEP ts=1790444750.263 kind=train batch_idx=45 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444758.646 kind=train batch_idx=46 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444767.027 kind=train batch_idx=47 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444775.413 kind=train batch_idx=48 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   400s  step=48  loss=10.473  31443 tok/s (global)
+STEP ts=1790444783.794 kind=train batch_idx=49 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444792.177 kind=train batch_idx=50 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444800.565 kind=train batch_idx=51 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444808.949 kind=train batch_idx=52 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   434s  step=52  loss=10.473  31429 tok/s (global)
+STEP ts=1790444817.327 kind=train batch_idx=53 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444825.711 kind=train batch_idx=54 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444834.094 kind=train batch_idx=55 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444842.478 kind=train batch_idx=56 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   467s  step=56  loss=10.475  31418 tok/s (global)
+STEP ts=1790444850.861 kind=train batch_idx=57 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444859.240 kind=train batch_idx=58 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444867.622 kind=train batch_idx=59 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444876.002 kind=train batch_idx=60 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   501s  step=60  loss=10.474  31409 tok/s (global)
+STEP ts=1790444884.379 kind=train batch_idx=61 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444892.759 kind=train batch_idx=62 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444901.143 kind=train batch_idx=63 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444909.523 kind=train batch_idx=64 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   534s  step=64  loss=10.477  31401 tok/s (global)
+STEP ts=1790444917.902 kind=train batch_idx=65 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444926.285 kind=train batch_idx=66 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444934.663 kind=train batch_idx=67 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444943.041 kind=train batch_idx=68 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   568s  step=68  loss=10.477  31394 tok/s (global)
+STEP ts=1790444951.423 kind=train batch_idx=69 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444959.799 kind=train batch_idx=70 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444968.184 kind=train batch_idx=71 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444976.561 kind=train batch_idx=72 tokens=16384 passes=1 node=0 rank=0 method=lora
+  t=   601s  step=72  loss=10.482  31388 tok/s (global)
+STEP ts=1790444984.941 kind=train batch_idx=73 tokens=16384 passes=1 node=0 rank=0 method=lora
+STEP ts=1790444993.317 kind=train batch_idx=74 tokens=16384 passes=1 node=0 rank=0 method=lora
+LoRA done: 74 steps, 19398656 tokens, 621s
+2026-09-26 17:49:59,439 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-26 17:50:01,442 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,475 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu0_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,479 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_lora1b_b16_node0_gpu0_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,479 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,487 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu1_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,491 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_lora1b_b16_node0_gpu1_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,491 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,498 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu2_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,502 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_lora1b_b16_node0_gpu2_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,502 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,510 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu3_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,514 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_lora1b_b16_node0_gpu3_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,514 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,521 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu4_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,525 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_lora1b_b16_node0_gpu4_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,525 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,532 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu5_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,536 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_lora1b_b16_node0_gpu5_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,536 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,543 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu6_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,547 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_lora1b_b16_node0_gpu6_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,547 [spar.telemetry] INFO: Telemetry stopped. 655 samples collected.
+2026-09-26 17:50:01,554 [spar.telemetry] INFO: Saved 655 rows to data/s16_train_lora1b_b16_node0_gpu7_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet
+2026-09-26 17:50:01,558 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_lora1b_b16_node0_gpu7_NVIDIA_A100_SXM4_80GB_437020b5a528.parquet (655 rows)
+2026-09-26 17:50:01,559 [spar.multi_gpu] INFO: Multi-GPU run complete: 437020b5a528 (rc=0)

@@ -1,0 +1,155 @@
+2026-09-26 02:45:52,019 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_ddp_resnet50_b512, 8 GPUs, node=0, run_id=c40f5573fc2e
+Run ID: c40f5573fc2e
+2026-09-26 02:45:52,049 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,049 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,049 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,063 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,063 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,063 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,080 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,080 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,080 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,095 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,095 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,095 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,110 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,110 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,110 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,123 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,124 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,124 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,138 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,138 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,138 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:52,155 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 02:45:52,155 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=c40f5573fc2e)
+2026-09-26 02:45:52,155 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-26 02:45:54,157 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-nic-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/pytorch_training_ddp.py --model resnet50 --batch-size 512 --amp --duration 600
+W0926 02:45:55.801000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0926 02:45:55.801000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0926 02:45:55.801000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0926 02:45:55.801000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+DDP Training: resnet50 on 16 GPUs
+  Per-GPU batch: 512, Global batch: 8192
+  AMP: True
+  Duration: 600s
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank7]:     main()
+[rank7]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank7]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank7]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank7]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank7]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank1]:     main()
+[rank1]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank1]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank1]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank1]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank1]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank4]:     main()
+[rank4]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank4]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank4]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank4]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank4]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank2]:     main()
+[rank2]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank2]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank2]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank2]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank2]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank5]:     main()
+[rank5]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank5]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank5]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank5]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank5]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank3]:     main()
+[rank3]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank3]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank3]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank3]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank3]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 200, in <module>
+[rank6]:     main()
+[rank6]:   File "/opt/spar/repo/workloads/pytorch_training_ddp.py", line 115, in main
+[rank6]:     train_dataset = torchvision.datasets.CIFAR10(
+[rank6]:   File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torchvision/datasets/cifar.py", line 69, in __init__
+[rank6]:     raise RuntimeError("Dataset not found or corrupted. You can use download=True to download it")
+[rank6]: RuntimeError: Dataset not found or corrupted. You can use download=True to download it
+Downloading https://cave.cs.toronto.edu/kriz/cifar-10-python.tar.gz to ./data/cifar10/cifar-10-python.tar.gz
+  0%|          | 0.00/170M [00:00<?, ?B/s]W0926 02:46:05.882000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34434 closing signal SIGTERM
+W0926 02:46:05.882000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34435 closing signal SIGTERM
+W0926 02:46:05.882000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34436 closing signal SIGTERM
+W0926 02:46:05.882000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34437 closing signal SIGTERM
+W0926 02:46:05.883000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34438 closing signal SIGTERM
+W0926 02:46:05.883000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34439 closing signal SIGTERM
+W0926 02:46:05.883000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 34440 closing signal SIGTERM
+E0926 02:46:06.738000 34368 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 7 (pid: 34441) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/pytorch_training_ddp.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-26_02:46:05
+  host      : spar-nic-0.c.focus-surfer-494820-g0.internal
+  rank      : 7 (local_rank: 7)
+  exitcode  : 1 (pid: 34441)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-09-26 02:46:07,143 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-26 02:46:09,146 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,167 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu0_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,168 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_ddp_resnet50_b512_node0_gpu0_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,169 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,173 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu1_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,175 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_ddp_resnet50_b512_node0_gpu1_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,175 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,179 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu2_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,181 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_ddp_resnet50_b512_node0_gpu2_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,181 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,185 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu3_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,187 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_ddp_resnet50_b512_node0_gpu3_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,187 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,191 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu4_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,193 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_ddp_resnet50_b512_node0_gpu4_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,193 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,197 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu5_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,199 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_ddp_resnet50_b512_node0_gpu5_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,199 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,203 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu6_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,205 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_ddp_resnet50_b512_node0_gpu6_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,205 [spar.telemetry] INFO: Telemetry stopped. 18 samples collected.
+2026-09-26 02:46:09,209 [spar.telemetry] INFO: Saved 18 rows to data/s16_train_ddp_resnet50_b512_node0_gpu7_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet
+2026-09-26 02:46:09,211 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_ddp_resnet50_b512_node0_gpu7_NVIDIA_A100_SXM4_40GB_c40f5573fc2e.parquet (18 rows)
+2026-09-26 02:46:09,211 [spar.multi_gpu] INFO: Multi-GPU run complete: c40f5573fc2e (rc=1)

@@ -1,0 +1,1106 @@
+2026-09-26 15:17:01,989 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_ddp_resnet50_b512, 8 GPUs, node=0, run_id=dcf103b75de5
+Run ID: dcf103b75de5
+2026-09-26 15:17:07,146 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,147 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,147 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,158 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,158 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,158 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,172 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,172 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,172 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,186 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,186 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,186 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,200 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,200 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,200 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,214 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,214 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,214 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,227 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,228 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,228 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:07,241 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-26 15:17:07,242 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50_b512, run=dcf103b75de5)
+2026-09-26 15:17:07,242 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-09-26 15:17:09,244 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-nicx-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/pytorch_training_ddp.py --model resnet50 --batch-size 512 --amp --duration 600
+W0926 15:17:10.907000 16613 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0926 15:17:10.907000 16613 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0926 15:17:10.907000 16613 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0926 15:17:10.907000 16613 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+DDP Training: resnet50 on 16 GPUs
+  Per-GPU batch: 512, Global batch: 8192
+  AMP: True
+  Duration: 600s
+Files already downloaded and verified
+[rank3]:[W926 15:17:20.530584777 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank2]:[W926 15:17:20.621218907 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank4]:[W926 15:17:20.809781172 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 4]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank7]:[W926 15:17:20.834918297 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 7]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank6]:[W926 15:17:20.874038463 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 6]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank1]:[W926 15:17:20.874174139 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank5]:[W926 15:17:20.888588586 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 5]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank0]:[W926 15:17:20.927236836 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+STEP ts=1790435846.367 kind=train batch_idx=1 tokens=8192 passes=1 node=0 rank=0 loss=2.4451
+STEP ts=1790435846.791 kind=train batch_idx=2 tokens=8192 passes=1 node=0 rank=0 loss=2.4172
+STEP ts=1790435847.177 kind=train batch_idx=3 tokens=8192 passes=1 node=0 rank=0 loss=2.3963
+STEP ts=1790435847.599 kind=train batch_idx=4 tokens=8192 passes=1 node=0 rank=0 loss=2.4196
+STEP ts=1790435847.993 kind=train batch_idx=5 tokens=8192 passes=1 node=0 rank=0 loss=2.3779
+STEP ts=1790435848.377 kind=train batch_idx=6 tokens=8192 passes=1 node=0 rank=0 loss=2.4802
+STEP ts=1790435848.566 kind=train batch_idx=7 tokens=8192 passes=1 node=0 rank=0 loss=2.4779
+  Epoch 1: loss=2.4306, acc=9.6%, time=6.4s
+STEP ts=1790435850.476 kind=train batch_idx=8 tokens=8192 passes=1 node=0 rank=0 loss=2.5453
+STEP ts=1790435850.864 kind=train batch_idx=9 tokens=8192 passes=1 node=0 rank=0 loss=2.4528
+STEP ts=1790435851.651 kind=train batch_idx=10 tokens=8192 passes=1 node=0 rank=0 loss=2.3810
+STEP ts=1790435852.037 kind=train batch_idx=11 tokens=8192 passes=1 node=0 rank=0 loss=2.4708
+STEP ts=1790435852.805 kind=train batch_idx=12 tokens=8192 passes=1 node=0 rank=0 loss=2.3915
+STEP ts=1790435853.186 kind=train batch_idx=13 tokens=8192 passes=1 node=0 rank=0 loss=2.3092
+STEP ts=1790435853.267 kind=train batch_idx=14 tokens=8192 passes=1 node=0 rank=0 loss=2.2920
+  Epoch 2: loss=2.4061, acc=11.1%, time=4.7s
+STEP ts=1790435855.174 kind=train batch_idx=15 tokens=8192 passes=1 node=0 rank=0 loss=2.3302
+STEP ts=1790435855.561 kind=train batch_idx=16 tokens=8192 passes=1 node=0 rank=0 loss=2.4098
+STEP ts=1790435856.285 kind=train batch_idx=17 tokens=8192 passes=1 node=0 rank=0 loss=2.4007
+STEP ts=1790435856.672 kind=train batch_idx=18 tokens=8192 passes=1 node=0 rank=0 loss=2.4243
+STEP ts=1790435857.430 kind=train batch_idx=19 tokens=8192 passes=1 node=0 rank=0 loss=2.3022
+STEP ts=1790435857.813 kind=train batch_idx=20 tokens=8192 passes=1 node=0 rank=0 loss=2.3138
+STEP ts=1790435857.892 kind=train batch_idx=21 tokens=8192 passes=1 node=0 rank=0 loss=2.3678
+  Epoch 3: loss=2.3641, acc=14.9%, time=4.6s
+STEP ts=1790435859.889 kind=train batch_idx=22 tokens=8192 passes=1 node=0 rank=0 loss=2.2824
+STEP ts=1790435860.279 kind=train batch_idx=23 tokens=8192 passes=1 node=0 rank=0 loss=2.5159
+STEP ts=1790435860.903 kind=train batch_idx=24 tokens=8192 passes=1 node=0 rank=0 loss=2.3772
+STEP ts=1790435861.290 kind=train batch_idx=25 tokens=8192 passes=1 node=0 rank=0 loss=2.1897
+STEP ts=1790435862.095 kind=train batch_idx=26 tokens=8192 passes=1 node=0 rank=0 loss=2.4404
+STEP ts=1790435862.481 kind=train batch_idx=27 tokens=8192 passes=1 node=0 rank=0 loss=2.5594
+STEP ts=1790435862.561 kind=train batch_idx=28 tokens=8192 passes=1 node=0 rank=0 loss=2.9550
+  Epoch 4: loss=2.4743, acc=17.7%, time=4.7s
+STEP ts=1790435864.570 kind=train batch_idx=29 tokens=8192 passes=1 node=0 rank=0 loss=2.5262
+STEP ts=1790435864.958 kind=train batch_idx=30 tokens=8192 passes=1 node=0 rank=0 loss=2.4284
+STEP ts=1790435865.577 kind=train batch_idx=31 tokens=8192 passes=1 node=0 rank=0 loss=2.2227
+STEP ts=1790435865.965 kind=train batch_idx=32 tokens=8192 passes=1 node=0 rank=0 loss=2.4369
+STEP ts=1790435866.731 kind=train batch_idx=33 tokens=8192 passes=1 node=0 rank=0 loss=2.3550
+STEP ts=1790435867.117 kind=train batch_idx=34 tokens=8192 passes=1 node=0 rank=0 loss=2.1563
+STEP ts=1790435867.201 kind=train batch_idx=35 tokens=8192 passes=1 node=0 rank=0 loss=2.3446
+  Epoch 5: loss=2.3529, acc=17.0%, time=4.6s
+STEP ts=1790435869.271 kind=train batch_idx=36 tokens=8192 passes=1 node=0 rank=0 loss=2.1960
+STEP ts=1790435869.660 kind=train batch_idx=37 tokens=8192 passes=1 node=0 rank=0 loss=2.0707
+STEP ts=1790435870.254 kind=train batch_idx=38 tokens=8192 passes=1 node=0 rank=0 loss=2.2937
+STEP ts=1790435870.641 kind=train batch_idx=39 tokens=8192 passes=1 node=0 rank=0 loss=2.0712
+STEP ts=1790435871.406 kind=train batch_idx=40 tokens=8192 passes=1 node=0 rank=0 loss=2.2637
+STEP ts=1790435871.792 kind=train batch_idx=41 tokens=8192 passes=1 node=0 rank=0 loss=2.2021
+STEP ts=1790435871.872 kind=train batch_idx=42 tokens=8192 passes=1 node=0 rank=0 loss=2.0715
+  Epoch 6: loss=2.1670, acc=21.6%, time=4.6s
+STEP ts=1790435873.912 kind=train batch_idx=43 tokens=8192 passes=1 node=0 rank=0 loss=2.1092
+STEP ts=1790435874.305 kind=train batch_idx=44 tokens=8192 passes=1 node=0 rank=0 loss=2.0871
+STEP ts=1790435874.951 kind=train batch_idx=45 tokens=8192 passes=1 node=0 rank=0 loss=2.1877
+STEP ts=1790435875.338 kind=train batch_idx=46 tokens=8192 passes=1 node=0 rank=0 loss=2.0532
+STEP ts=1790435876.026 kind=train batch_idx=47 tokens=8192 passes=1 node=0 rank=0 loss=2.1319
+STEP ts=1790435876.410 kind=train batch_idx=48 tokens=8192 passes=1 node=0 rank=0 loss=2.0095
+STEP ts=1790435876.490 kind=train batch_idx=49 tokens=8192 passes=1 node=0 rank=0 loss=2.3034
+  Epoch 7: loss=2.1260, acc=22.8%, time=4.6s
+STEP ts=1790435878.516 kind=train batch_idx=50 tokens=8192 passes=1 node=0 rank=0 loss=2.1484
+STEP ts=1790435878.905 kind=train batch_idx=51 tokens=8192 passes=1 node=0 rank=0 loss=1.9720
+STEP ts=1790435879.528 kind=train batch_idx=52 tokens=8192 passes=1 node=0 rank=0 loss=2.0515
+STEP ts=1790435879.916 kind=train batch_idx=53 tokens=8192 passes=1 node=0 rank=0 loss=1.9611
+STEP ts=1790435880.627 kind=train batch_idx=54 tokens=8192 passes=1 node=0 rank=0 loss=1.9297
+STEP ts=1790435881.013 kind=train batch_idx=55 tokens=8192 passes=1 node=0 rank=0 loss=1.9811
+STEP ts=1790435881.102 kind=train batch_idx=56 tokens=8192 passes=1 node=0 rank=0 loss=2.2516
+  Epoch 8: loss=2.0422, acc=25.1%, time=4.6s
+STEP ts=1790435883.142 kind=train batch_idx=57 tokens=8192 passes=1 node=0 rank=0 loss=1.9095
+STEP ts=1790435883.531 kind=train batch_idx=58 tokens=8192 passes=1 node=0 rank=0 loss=1.9125
+STEP ts=1790435884.127 kind=train batch_idx=59 tokens=8192 passes=1 node=0 rank=0 loss=1.9246
+STEP ts=1790435884.514 kind=train batch_idx=60 tokens=8192 passes=1 node=0 rank=0 loss=1.9038
+STEP ts=1790435885.258 kind=train batch_idx=61 tokens=8192 passes=1 node=0 rank=0 loss=1.8620
+STEP ts=1790435885.643 kind=train batch_idx=62 tokens=8192 passes=1 node=0 rank=0 loss=1.8993
+STEP ts=1790435885.724 kind=train batch_idx=63 tokens=8192 passes=1 node=0 rank=0 loss=2.1032
+  Epoch 9: loss=1.9307, acc=28.9%, time=4.6s
+STEP ts=1790435887.751 kind=train batch_idx=64 tokens=8192 passes=1 node=0 rank=0 loss=1.8371
+STEP ts=1790435888.139 kind=train batch_idx=65 tokens=8192 passes=1 node=0 rank=0 loss=1.9104
+STEP ts=1790435888.742 kind=train batch_idx=66 tokens=8192 passes=1 node=0 rank=0 loss=1.8095
+STEP ts=1790435889.129 kind=train batch_idx=67 tokens=8192 passes=1 node=0 rank=0 loss=1.9837
+STEP ts=1790435889.919 kind=train batch_idx=68 tokens=8192 passes=1 node=0 rank=0 loss=1.8696
+STEP ts=1790435890.304 kind=train batch_idx=69 tokens=8192 passes=1 node=0 rank=0 loss=1.7775
+STEP ts=1790435890.385 kind=train batch_idx=70 tokens=8192 passes=1 node=0 rank=0 loss=1.8362
+  Epoch 10: loss=1.8605, acc=28.7%, time=4.7s
+STEP ts=1790435892.402 kind=train batch_idx=71 tokens=8192 passes=1 node=0 rank=0 loss=1.8210
+STEP ts=1790435892.790 kind=train batch_idx=72 tokens=8192 passes=1 node=0 rank=0 loss=1.8677
+STEP ts=1790435893.421 kind=train batch_idx=73 tokens=8192 passes=1 node=0 rank=0 loss=1.7631
+STEP ts=1790435893.811 kind=train batch_idx=74 tokens=8192 passes=1 node=0 rank=0 loss=1.7851
+STEP ts=1790435894.622 kind=train batch_idx=75 tokens=8192 passes=1 node=0 rank=0 loss=1.7234
+STEP ts=1790435895.006 kind=train batch_idx=76 tokens=8192 passes=1 node=0 rank=0 loss=1.7847
+STEP ts=1790435895.095 kind=train batch_idx=77 tokens=8192 passes=1 node=0 rank=0 loss=1.8056
+  Epoch 11: loss=1.7929, acc=33.8%, time=4.6s
+STEP ts=1790435897.070 kind=train batch_idx=78 tokens=8192 passes=1 node=0 rank=0 loss=1.7602
+STEP ts=1790435897.460 kind=train batch_idx=79 tokens=8192 passes=1 node=0 rank=0 loss=1.7365
+STEP ts=1790435898.034 kind=train batch_idx=80 tokens=8192 passes=1 node=0 rank=0 loss=1.7558
+STEP ts=1790435898.420 kind=train batch_idx=81 tokens=8192 passes=1 node=0 rank=0 loss=1.7075
+STEP ts=1790435899.343 kind=train batch_idx=82 tokens=8192 passes=1 node=0 rank=0 loss=1.7314
+STEP ts=1790435899.727 kind=train batch_idx=83 tokens=8192 passes=1 node=0 rank=0 loss=1.7238
+STEP ts=1790435899.814 kind=train batch_idx=84 tokens=8192 passes=1 node=0 rank=0 loss=1.7213
+  Epoch 12: loss=1.7338, acc=33.8%, time=4.7s
+STEP ts=1790435901.821 kind=train batch_idx=85 tokens=8192 passes=1 node=0 rank=0 loss=1.7283
+STEP ts=1790435902.210 kind=train batch_idx=86 tokens=8192 passes=1 node=0 rank=0 loss=1.7083
+STEP ts=1790435902.807 kind=train batch_idx=87 tokens=8192 passes=1 node=0 rank=0 loss=1.7551
+STEP ts=1790435903.195 kind=train batch_idx=88 tokens=8192 passes=1 node=0 rank=0 loss=1.6555
+STEP ts=1790435904.101 kind=train batch_idx=89 tokens=8192 passes=1 node=0 rank=0 loss=1.6789
+STEP ts=1790435904.485 kind=train batch_idx=90 tokens=8192 passes=1 node=0 rank=0 loss=1.7399
+STEP ts=1790435904.561 kind=train batch_idx=91 tokens=8192 passes=1 node=0 rank=0 loss=1.8184
+  Epoch 13: loss=1.7263, acc=34.6%, time=4.8s
+STEP ts=1790435906.579 kind=train batch_idx=92 tokens=8192 passes=1 node=0 rank=0 loss=1.7525
+STEP ts=1790435906.967 kind=train batch_idx=93 tokens=8192 passes=1 node=0 rank=0 loss=1.5801
+STEP ts=1790435907.504 kind=train batch_idx=94 tokens=8192 passes=1 node=0 rank=0 loss=1.6174
+STEP ts=1790435907.890 kind=train batch_idx=95 tokens=8192 passes=1 node=0 rank=0 loss=1.6728
+STEP ts=1790435908.696 kind=train batch_idx=96 tokens=8192 passes=1 node=0 rank=0 loss=1.6870
+STEP ts=1790435909.080 kind=train batch_idx=97 tokens=8192 passes=1 node=0 rank=0 loss=1.7460
+STEP ts=1790435909.157 kind=train batch_idx=98 tokens=8192 passes=1 node=0 rank=0 loss=1.7332
+  Epoch 14: loss=1.6841, acc=36.1%, time=4.6s
+STEP ts=1790435911.132 kind=train batch_idx=99 tokens=8192 passes=1 node=0 rank=0 loss=1.6234
+STEP ts=1790435911.519 kind=train batch_idx=100 tokens=8192 passes=1 node=0 rank=0 loss=1.6366
+STEP ts=1790435912.199 kind=train batch_idx=101 tokens=8192 passes=1 node=0 rank=0 loss=1.6294
+STEP ts=1790435912.585 kind=train batch_idx=102 tokens=8192 passes=1 node=0 rank=0 loss=1.6331
+STEP ts=1790435913.392 kind=train batch_idx=103 tokens=8192 passes=1 node=0 rank=0 loss=1.6618
+STEP ts=1790435913.777 kind=train batch_idx=104 tokens=8192 passes=1 node=0 rank=0 loss=1.6918
+STEP ts=1790435913.855 kind=train batch_idx=105 tokens=8192 passes=1 node=0 rank=0 loss=1.6627
+  Epoch 15: loss=1.6484, acc=38.0%, time=4.6s
+STEP ts=1790435915.876 kind=train batch_idx=106 tokens=8192 passes=1 node=0 rank=0 loss=1.6750
+STEP ts=1790435916.265 kind=train batch_idx=107 tokens=8192 passes=1 node=0 rank=0 loss=1.6926
+STEP ts=1790435916.858 kind=train batch_idx=108 tokens=8192 passes=1 node=0 rank=0 loss=1.5768
+STEP ts=1790435917.246 kind=train batch_idx=109 tokens=8192 passes=1 node=0 rank=0 loss=1.5739
+STEP ts=1790435918.184 kind=train batch_idx=110 tokens=8192 passes=1 node=0 rank=0 loss=1.6684
+STEP ts=1790435918.570 kind=train batch_idx=111 tokens=8192 passes=1 node=0 rank=0 loss=1.5669
+STEP ts=1790435918.668 kind=train batch_idx=112 tokens=8192 passes=1 node=0 rank=0 loss=1.6217
+  Epoch 16: loss=1.6250, acc=37.7%, time=4.8s
+STEP ts=1790435920.665 kind=train batch_idx=113 tokens=8192 passes=1 node=0 rank=0 loss=1.6254
+STEP ts=1790435921.055 kind=train batch_idx=114 tokens=8192 passes=1 node=0 rank=0 loss=1.6579
+STEP ts=1790435921.626 kind=train batch_idx=115 tokens=8192 passes=1 node=0 rank=0 loss=1.6503
+STEP ts=1790435922.012 kind=train batch_idx=116 tokens=8192 passes=1 node=0 rank=0 loss=1.6016
+STEP ts=1790435922.717 kind=train batch_idx=117 tokens=8192 passes=1 node=0 rank=0 loss=1.6246
+STEP ts=1790435923.101 kind=train batch_idx=118 tokens=8192 passes=1 node=0 rank=0 loss=1.5026
+STEP ts=1790435923.179 kind=train batch_idx=119 tokens=8192 passes=1 node=0 rank=0 loss=1.4310
+  Epoch 17: loss=1.5847, acc=39.6%, time=4.5s
+STEP ts=1790435925.199 kind=train batch_idx=120 tokens=8192 passes=1 node=0 rank=0 loss=1.6156
+STEP ts=1790435925.587 kind=train batch_idx=121 tokens=8192 passes=1 node=0 rank=0 loss=1.5818
+STEP ts=1790435926.238 kind=train batch_idx=122 tokens=8192 passes=1 node=0 rank=0 loss=1.6374
+STEP ts=1790435926.626 kind=train batch_idx=123 tokens=8192 passes=1 node=0 rank=0 loss=1.6409
+STEP ts=1790435927.499 kind=train batch_idx=124 tokens=8192 passes=1 node=0 rank=0 loss=1.5206
+STEP ts=1790435927.883 kind=train batch_idx=125 tokens=8192 passes=1 node=0 rank=0 loss=1.6268
+STEP ts=1790435927.959 kind=train batch_idx=126 tokens=8192 passes=1 node=0 rank=0 loss=1.6730
+  Epoch 18: loss=1.6137, acc=39.6%, time=4.8s
+STEP ts=1790435929.921 kind=train batch_idx=127 tokens=8192 passes=1 node=0 rank=0 loss=1.6038
+STEP ts=1790435930.310 kind=train batch_idx=128 tokens=8192 passes=1 node=0 rank=0 loss=1.5022
+STEP ts=1790435930.930 kind=train batch_idx=129 tokens=8192 passes=1 node=0 rank=0 loss=1.5573
+STEP ts=1790435931.319 kind=train batch_idx=130 tokens=8192 passes=1 node=0 rank=0 loss=1.6322
+STEP ts=1790435932.124 kind=train batch_idx=131 tokens=8192 passes=1 node=0 rank=0 loss=1.5966
+STEP ts=1790435932.511 kind=train batch_idx=132 tokens=8192 passes=1 node=0 rank=0 loss=1.5262
+STEP ts=1790435932.597 kind=train batch_idx=133 tokens=8192 passes=1 node=0 rank=0 loss=1.5563
+  Epoch 19: loss=1.5678, acc=42.0%, time=4.6s
+STEP ts=1790435934.634 kind=train batch_idx=134 tokens=8192 passes=1 node=0 rank=0 loss=1.5936
+STEP ts=1790435935.023 kind=train batch_idx=135 tokens=8192 passes=1 node=0 rank=0 loss=1.6132
+STEP ts=1790435935.611 kind=train batch_idx=136 tokens=8192 passes=1 node=0 rank=0 loss=1.5682
+STEP ts=1790435935.998 kind=train batch_idx=137 tokens=8192 passes=1 node=0 rank=0 loss=1.4775
+STEP ts=1790435936.634 kind=train batch_idx=138 tokens=8192 passes=1 node=0 rank=0 loss=1.5715
+STEP ts=1790435937.018 kind=train batch_idx=139 tokens=8192 passes=1 node=0 rank=0 loss=1.5690
+STEP ts=1790435937.094 kind=train batch_idx=140 tokens=8192 passes=1 node=0 rank=0 loss=1.5079
+  Epoch 20: loss=1.5573, acc=41.5%, time=4.5s
+STEP ts=1790435939.120 kind=train batch_idx=141 tokens=8192 passes=1 node=0 rank=0 loss=1.5729
+STEP ts=1790435939.508 kind=train batch_idx=142 tokens=8192 passes=1 node=0 rank=0 loss=1.5638
+STEP ts=1790435940.061 kind=train batch_idx=143 tokens=8192 passes=1 node=0 rank=0 loss=1.5427
+STEP ts=1790435940.448 kind=train batch_idx=144 tokens=8192 passes=1 node=0 rank=0 loss=1.5071
+STEP ts=1790435941.211 kind=train batch_idx=145 tokens=8192 passes=1 node=0 rank=0 loss=1.5002
+STEP ts=1790435941.596 kind=train batch_idx=146 tokens=8192 passes=1 node=0 rank=0 loss=1.4522
+STEP ts=1790435941.683 kind=train batch_idx=147 tokens=8192 passes=1 node=0 rank=0 loss=1.5512
+  Epoch 21: loss=1.5272, acc=41.9%, time=4.5s
+STEP ts=1790435943.695 kind=train batch_idx=148 tokens=8192 passes=1 node=0 rank=0 loss=1.4655
+STEP ts=1790435944.088 kind=train batch_idx=149 tokens=8192 passes=1 node=0 rank=0 loss=1.4634
+STEP ts=1790435944.664 kind=train batch_idx=150 tokens=8192 passes=1 node=0 rank=0 loss=1.4436
+STEP ts=1790435945.050 kind=train batch_idx=151 tokens=8192 passes=1 node=0 rank=0 loss=1.5069
+STEP ts=1790435945.707 kind=train batch_idx=152 tokens=8192 passes=1 node=0 rank=0 loss=1.4861
+STEP ts=1790435946.093 kind=train batch_idx=153 tokens=8192 passes=1 node=0 rank=0 loss=1.4383
+STEP ts=1790435946.194 kind=train batch_idx=154 tokens=8192 passes=1 node=0 rank=0 loss=1.4437
+  Epoch 22: loss=1.4639, acc=44.5%, time=4.6s
+STEP ts=1790435948.213 kind=train batch_idx=155 tokens=8192 passes=1 node=0 rank=0 loss=1.4727
+STEP ts=1790435948.603 kind=train batch_idx=156 tokens=8192 passes=1 node=0 rank=0 loss=1.4459
+STEP ts=1790435949.187 kind=train batch_idx=157 tokens=8192 passes=1 node=0 rank=0 loss=1.4585
+STEP ts=1790435949.577 kind=train batch_idx=158 tokens=8192 passes=1 node=0 rank=0 loss=1.4503
+STEP ts=1790435950.474 kind=train batch_idx=159 tokens=8192 passes=1 node=0 rank=0 loss=1.4980
+STEP ts=1790435950.860 kind=train batch_idx=160 tokens=8192 passes=1 node=0 rank=0 loss=1.3880
+STEP ts=1790435950.959 kind=train batch_idx=161 tokens=8192 passes=1 node=0 rank=0 loss=1.5425
+  Epoch 23: loss=1.4651, acc=46.2%, time=4.8s
+STEP ts=1790435952.970 kind=train batch_idx=162 tokens=8192 passes=1 node=0 rank=0 loss=1.4439
+STEP ts=1790435953.360 kind=train batch_idx=163 tokens=8192 passes=1 node=0 rank=0 loss=1.4856
+STEP ts=1790435954.032 kind=train batch_idx=164 tokens=8192 passes=1 node=0 rank=0 loss=1.4614
+STEP ts=1790435954.420 kind=train batch_idx=165 tokens=8192 passes=1 node=0 rank=0 loss=1.4198
+STEP ts=1790435955.289 kind=train batch_idx=166 tokens=8192 passes=1 node=0 rank=0 loss=1.4414
+STEP ts=1790435955.676 kind=train batch_idx=167 tokens=8192 passes=1 node=0 rank=0 loss=1.4373
+STEP ts=1790435955.772 kind=train batch_idx=168 tokens=8192 passes=1 node=0 rank=0 loss=1.7536
+  Epoch 24: loss=1.4919, acc=46.0%, time=4.7s
+STEP ts=1790435957.781 kind=train batch_idx=169 tokens=8192 passes=1 node=0 rank=0 loss=1.4371
+STEP ts=1790435958.170 kind=train batch_idx=170 tokens=8192 passes=1 node=0 rank=0 loss=1.4526
+STEP ts=1790435958.770 kind=train batch_idx=171 tokens=8192 passes=1 node=0 rank=0 loss=1.3872
+STEP ts=1790435959.157 kind=train batch_idx=172 tokens=8192 passes=1 node=0 rank=0 loss=1.3393
+STEP ts=1790435959.922 kind=train batch_idx=173 tokens=8192 passes=1 node=0 rank=0 loss=1.3937
+STEP ts=1790435960.308 kind=train batch_idx=174 tokens=8192 passes=1 node=0 rank=0 loss=1.3982
+STEP ts=1790435960.399 kind=train batch_idx=175 tokens=8192 passes=1 node=0 rank=0 loss=1.4557
+  Epoch 25: loss=1.4091, acc=48.5%, time=4.6s
+STEP ts=1790435962.405 kind=train batch_idx=176 tokens=8192 passes=1 node=0 rank=0 loss=1.3763
+STEP ts=1790435962.796 kind=train batch_idx=177 tokens=8192 passes=1 node=0 rank=0 loss=1.3923
+STEP ts=1790435963.501 kind=train batch_idx=178 tokens=8192 passes=1 node=0 rank=0 loss=1.4616
+STEP ts=1790435963.890 kind=train batch_idx=179 tokens=8192 passes=1 node=0 rank=0 loss=1.3905
+STEP ts=1790435964.664 kind=train batch_idx=180 tokens=8192 passes=1 node=0 rank=0 loss=1.3538
+STEP ts=1790435965.050 kind=train batch_idx=181 tokens=8192 passes=1 node=0 rank=0 loss=1.5045
+STEP ts=1790435965.149 kind=train batch_idx=182 tokens=8192 passes=1 node=0 rank=0 loss=1.4493
+  Epoch 26: loss=1.4183, acc=48.0%, time=4.7s
+STEP ts=1790435967.163 kind=train batch_idx=183 tokens=8192 passes=1 node=0 rank=0 loss=1.4403
+STEP ts=1790435967.553 kind=train batch_idx=184 tokens=8192 passes=1 node=0 rank=0 loss=1.4115
+STEP ts=1790435968.145 kind=train batch_idx=185 tokens=8192 passes=1 node=0 rank=0 loss=1.4054
+STEP ts=1790435968.533 kind=train batch_idx=186 tokens=8192 passes=1 node=0 rank=0 loss=1.3534
+STEP ts=1790435969.303 kind=train batch_idx=187 tokens=8192 passes=1 node=0 rank=0 loss=1.3966
+STEP ts=1790435969.690 kind=train batch_idx=188 tokens=8192 passes=1 node=0 rank=0 loss=1.3815
+STEP ts=1790435969.790 kind=train batch_idx=189 tokens=8192 passes=1 node=0 rank=0 loss=1.5145
+  Epoch 27: loss=1.4147, acc=47.8%, time=4.6s
+STEP ts=1790435971.767 kind=train batch_idx=190 tokens=8192 passes=1 node=0 rank=0 loss=1.3265
+STEP ts=1790435972.156 kind=train batch_idx=191 tokens=8192 passes=1 node=0 rank=0 loss=1.4366
+STEP ts=1790435972.733 kind=train batch_idx=192 tokens=8192 passes=1 node=0 rank=0 loss=1.3619
+STEP ts=1790435973.121 kind=train batch_idx=193 tokens=8192 passes=1 node=0 rank=0 loss=1.3449
+STEP ts=1790435973.897 kind=train batch_idx=194 tokens=8192 passes=1 node=0 rank=0 loss=1.3533
+STEP ts=1790435974.283 kind=train batch_idx=195 tokens=8192 passes=1 node=0 rank=0 loss=1.4027
+STEP ts=1790435974.369 kind=train batch_idx=196 tokens=8192 passes=1 node=0 rank=0 loss=1.3341
+  Epoch 28: loss=1.3657, acc=49.7%, time=4.6s
+STEP ts=1790435976.414 kind=train batch_idx=197 tokens=8192 passes=1 node=0 rank=0 loss=1.4312
+STEP ts=1790435976.801 kind=train batch_idx=198 tokens=8192 passes=1 node=0 rank=0 loss=1.3726
+STEP ts=1790435977.383 kind=train batch_idx=199 tokens=8192 passes=1 node=0 rank=0 loss=1.3635
+STEP ts=1790435977.770 kind=train batch_idx=200 tokens=8192 passes=1 node=0 rank=0 loss=1.3451
+STEP ts=1790435978.571 kind=train batch_idx=201 tokens=8192 passes=1 node=0 rank=0 loss=1.3997
+STEP ts=1790435978.957 kind=train batch_idx=202 tokens=8192 passes=1 node=0 rank=0 loss=1.4369
+STEP ts=1790435979.047 kind=train batch_idx=203 tokens=8192 passes=1 node=0 rank=0 loss=1.1835
+  Epoch 29: loss=1.3618, acc=47.8%, time=4.7s
+STEP ts=1790435981.099 kind=train batch_idx=204 tokens=8192 passes=1 node=0 rank=0 loss=1.4863
+STEP ts=1790435981.487 kind=train batch_idx=205 tokens=8192 passes=1 node=0 rank=0 loss=1.3242
+STEP ts=1790435982.060 kind=train batch_idx=206 tokens=8192 passes=1 node=0 rank=0 loss=1.5122
+STEP ts=1790435982.446 kind=train batch_idx=207 tokens=8192 passes=1 node=0 rank=0 loss=1.3884
+STEP ts=1790435983.029 kind=train batch_idx=208 tokens=8192 passes=1 node=0 rank=0 loss=1.4846
+STEP ts=1790435983.414 kind=train batch_idx=209 tokens=8192 passes=1 node=0 rank=0 loss=1.3410
+STEP ts=1790435983.500 kind=train batch_idx=210 tokens=8192 passes=1 node=0 rank=0 loss=1.5100
+  Epoch 30: loss=1.4352, acc=47.1%, time=4.5s
+STEP ts=1790435985.505 kind=train batch_idx=211 tokens=8192 passes=1 node=0 rank=0 loss=1.2679
+STEP ts=1790435985.895 kind=train batch_idx=212 tokens=8192 passes=1 node=0 rank=0 loss=1.3846
+STEP ts=1790435986.544 kind=train batch_idx=213 tokens=8192 passes=1 node=0 rank=0 loss=1.2834
+STEP ts=1790435986.934 kind=train batch_idx=214 tokens=8192 passes=1 node=0 rank=0 loss=1.2836
+STEP ts=1790435987.520 kind=train batch_idx=215 tokens=8192 passes=1 node=0 rank=0 loss=1.2814
+STEP ts=1790435987.905 kind=train batch_idx=216 tokens=8192 passes=1 node=0 rank=0 loss=1.3665
+STEP ts=1790435987.993 kind=train batch_idx=217 tokens=8192 passes=1 node=0 rank=0 loss=1.5310
+  Epoch 31: loss=1.3426, acc=51.3%, time=4.5s
+STEP ts=1790435989.998 kind=train batch_idx=218 tokens=8192 passes=1 node=0 rank=0 loss=1.3924
+STEP ts=1790435990.387 kind=train batch_idx=219 tokens=8192 passes=1 node=0 rank=0 loss=1.3108
+STEP ts=1790435991.020 kind=train batch_idx=220 tokens=8192 passes=1 node=0 rank=0 loss=1.2695
+STEP ts=1790435991.408 kind=train batch_idx=221 tokens=8192 passes=1 node=0 rank=0 loss=1.2366
+STEP ts=1790435992.237 kind=train batch_idx=222 tokens=8192 passes=1 node=0 rank=0 loss=1.3467
+STEP ts=1790435992.622 kind=train batch_idx=223 tokens=8192 passes=1 node=0 rank=0 loss=1.2601
+STEP ts=1790435992.708 kind=train batch_idx=224 tokens=8192 passes=1 node=0 rank=0 loss=1.5395
+  Epoch 32: loss=1.3365, acc=53.2%, time=4.7s
+STEP ts=1790435994.759 kind=train batch_idx=225 tokens=8192 passes=1 node=0 rank=0 loss=1.4092
+STEP ts=1790435995.148 kind=train batch_idx=226 tokens=8192 passes=1 node=0 rank=0 loss=1.3180
+STEP ts=1790435995.706 kind=train batch_idx=227 tokens=8192 passes=1 node=0 rank=0 loss=1.3027
+STEP ts=1790435996.096 kind=train batch_idx=228 tokens=8192 passes=1 node=0 rank=0 loss=1.2220
+STEP ts=1790435996.910 kind=train batch_idx=229 tokens=8192 passes=1 node=0 rank=0 loss=1.2884
+STEP ts=1790435997.295 kind=train batch_idx=230 tokens=8192 passes=1 node=0 rank=0 loss=1.2422
+STEP ts=1790435997.380 kind=train batch_idx=231 tokens=8192 passes=1 node=0 rank=0 loss=1.5914
+  Epoch 33: loss=1.3392, acc=53.1%, time=4.7s
+STEP ts=1790435999.405 kind=train batch_idx=232 tokens=8192 passes=1 node=0 rank=0 loss=1.2473
+STEP ts=1790435999.795 kind=train batch_idx=233 tokens=8192 passes=1 node=0 rank=0 loss=1.2954
+STEP ts=1790436000.365 kind=train batch_idx=234 tokens=8192 passes=1 node=0 rank=0 loss=1.3042
+STEP ts=1790436000.753 kind=train batch_idx=235 tokens=8192 passes=1 node=0 rank=0 loss=1.2364
+STEP ts=1790436001.606 kind=train batch_idx=236 tokens=8192 passes=1 node=0 rank=0 loss=1.2629
+STEP ts=1790436001.991 kind=train batch_idx=237 tokens=8192 passes=1 node=0 rank=0 loss=1.2438
+STEP ts=1790436002.071 kind=train batch_idx=238 tokens=8192 passes=1 node=0 rank=0 loss=1.4540
+  Epoch 34: loss=1.2920, acc=53.9%, time=4.7s
+STEP ts=1790436004.082 kind=train batch_idx=239 tokens=8192 passes=1 node=0 rank=0 loss=1.2548
+STEP ts=1790436004.468 kind=train batch_idx=240 tokens=8192 passes=1 node=0 rank=0 loss=1.2681
+STEP ts=1790436005.105 kind=train batch_idx=241 tokens=8192 passes=1 node=0 rank=0 loss=1.2268
+STEP ts=1790436005.490 kind=train batch_idx=242 tokens=8192 passes=1 node=0 rank=0 loss=1.1642
+STEP ts=1790436006.282 kind=train batch_idx=243 tokens=8192 passes=1 node=0 rank=0 loss=1.3323
+STEP ts=1790436006.665 kind=train batch_idx=244 tokens=8192 passes=1 node=0 rank=0 loss=1.1894
+STEP ts=1790436006.745 kind=train batch_idx=245 tokens=8192 passes=1 node=0 rank=0 loss=1.4280
+  Epoch 35: loss=1.2662, acc=55.2%, time=4.7s
+STEP ts=1790436008.749 kind=train batch_idx=246 tokens=8192 passes=1 node=0 rank=0 loss=1.1600
+STEP ts=1790436009.136 kind=train batch_idx=247 tokens=8192 passes=1 node=0 rank=0 loss=1.2252
+STEP ts=1790436009.722 kind=train batch_idx=248 tokens=8192 passes=1 node=0 rank=0 loss=1.2180
+STEP ts=1790436010.110 kind=train batch_idx=249 tokens=8192 passes=1 node=0 rank=0 loss=1.2704
+STEP ts=1790436010.854 kind=train batch_idx=250 tokens=8192 passes=1 node=0 rank=0 loss=1.2173
+STEP ts=1790436011.239 kind=train batch_idx=251 tokens=8192 passes=1 node=0 rank=0 loss=1.2350
+STEP ts=1790436011.317 kind=train batch_idx=252 tokens=8192 passes=1 node=0 rank=0 loss=1.1983
+  Epoch 36: loss=1.2177, acc=56.3%, time=4.5s
+STEP ts=1790436013.314 kind=train batch_idx=253 tokens=8192 passes=1 node=0 rank=0 loss=1.2058
+STEP ts=1790436013.713 kind=train batch_idx=254 tokens=8192 passes=1 node=0 rank=0 loss=1.1686
+STEP ts=1790436014.339 kind=train batch_idx=255 tokens=8192 passes=1 node=0 rank=0 loss=1.2429
+STEP ts=1790436014.727 kind=train batch_idx=256 tokens=8192 passes=1 node=0 rank=0 loss=1.1717
+STEP ts=1790436015.529 kind=train batch_idx=257 tokens=8192 passes=1 node=0 rank=0 loss=1.2984
+STEP ts=1790436015.915 kind=train batch_idx=258 tokens=8192 passes=1 node=0 rank=0 loss=1.1880
+STEP ts=1790436016.003 kind=train batch_idx=259 tokens=8192 passes=1 node=0 rank=0 loss=1.0246
+  Epoch 37: loss=1.1857, acc=54.9%, time=4.6s
+STEP ts=1790436018.006 kind=train batch_idx=260 tokens=8192 passes=1 node=0 rank=0 loss=1.2318
+STEP ts=1790436018.394 kind=train batch_idx=261 tokens=8192 passes=1 node=0 rank=0 loss=1.2276
+STEP ts=1790436018.973 kind=train batch_idx=262 tokens=8192 passes=1 node=0 rank=0 loss=1.1435
+STEP ts=1790436019.360 kind=train batch_idx=263 tokens=8192 passes=1 node=0 rank=0 loss=1.2319
+STEP ts=1790436019.983 kind=train batch_idx=264 tokens=8192 passes=1 node=0 rank=0 loss=1.2181
+STEP ts=1790436020.368 kind=train batch_idx=265 tokens=8192 passes=1 node=0 rank=0 loss=1.1608
+STEP ts=1790436020.447 kind=train batch_idx=266 tokens=8192 passes=1 node=0 rank=0 loss=1.4800
+  Epoch 38: loss=1.2420, acc=55.8%, time=4.4s
+STEP ts=1790436022.502 kind=train batch_idx=267 tokens=8192 passes=1 node=0 rank=0 loss=1.2223
+STEP ts=1790436022.890 kind=train batch_idx=268 tokens=8192 passes=1 node=0 rank=0 loss=1.1935
+STEP ts=1790436023.440 kind=train batch_idx=269 tokens=8192 passes=1 node=0 rank=0 loss=1.1247
+STEP ts=1790436023.826 kind=train batch_idx=270 tokens=8192 passes=1 node=0 rank=0 loss=1.2310
+STEP ts=1790436024.564 kind=train batch_idx=271 tokens=8192 passes=1 node=0 rank=0 loss=1.2016
+STEP ts=1790436024.951 kind=train batch_idx=272 tokens=8192 passes=1 node=0 rank=0 loss=1.2091
+STEP ts=1790436025.029 kind=train batch_idx=273 tokens=8192 passes=1 node=0 rank=0 loss=1.0247
+  Epoch 39: loss=1.1724, acc=57.1%, time=4.6s
+STEP ts=1790436027.047 kind=train batch_idx=274 tokens=8192 passes=1 node=0 rank=0 loss=1.1760
+STEP ts=1790436027.434 kind=train batch_idx=275 tokens=8192 passes=1 node=0 rank=0 loss=1.2241
+STEP ts=1790436028.000 kind=train batch_idx=276 tokens=8192 passes=1 node=0 rank=0 loss=1.1817
+STEP ts=1790436028.388 kind=train batch_idx=277 tokens=8192 passes=1 node=0 rank=0 loss=1.1155
+STEP ts=1790436029.032 kind=train batch_idx=278 tokens=8192 passes=1 node=0 rank=0 loss=1.1832
+STEP ts=1790436029.415 kind=train batch_idx=279 tokens=8192 passes=1 node=0 rank=0 loss=1.1023
+STEP ts=1790436029.494 kind=train batch_idx=280 tokens=8192 passes=1 node=0 rank=0 loss=1.2435
+  Epoch 40: loss=1.1752, acc=57.0%, time=4.5s
+STEP ts=1790436031.522 kind=train batch_idx=281 tokens=8192 passes=1 node=0 rank=0 loss=1.1483
+STEP ts=1790436031.909 kind=train batch_idx=282 tokens=8192 passes=1 node=0 rank=0 loss=1.0665
+STEP ts=1790436032.502 kind=train batch_idx=283 tokens=8192 passes=1 node=0 rank=0 loss=1.1002
+STEP ts=1790436032.888 kind=train batch_idx=284 tokens=8192 passes=1 node=0 rank=0 loss=1.1309
+STEP ts=1790436033.652 kind=train batch_idx=285 tokens=8192 passes=1 node=0 rank=0 loss=1.1944
+STEP ts=1790436034.037 kind=train batch_idx=286 tokens=8192 passes=1 node=0 rank=0 loss=1.1064
+STEP ts=1790436034.118 kind=train batch_idx=287 tokens=8192 passes=1 node=0 rank=0 loss=1.2721
+  Epoch 41: loss=1.1455, acc=60.2%, time=4.6s
+STEP ts=1790436036.160 kind=train batch_idx=288 tokens=8192 passes=1 node=0 rank=0 loss=1.0804
+STEP ts=1790436036.549 kind=train batch_idx=289 tokens=8192 passes=1 node=0 rank=0 loss=1.1595
+STEP ts=1790436037.194 kind=train batch_idx=290 tokens=8192 passes=1 node=0 rank=0 loss=1.0929
+STEP ts=1790436037.582 kind=train batch_idx=291 tokens=8192 passes=1 node=0 rank=0 loss=1.1094
+STEP ts=1790436038.320 kind=train batch_idx=292 tokens=8192 passes=1 node=0 rank=0 loss=1.1857
+STEP ts=1790436038.706 kind=train batch_idx=293 tokens=8192 passes=1 node=0 rank=0 loss=1.1916
+STEP ts=1790436038.791 kind=train batch_idx=294 tokens=8192 passes=1 node=0 rank=0 loss=1.1299
+  Epoch 42: loss=1.1356, acc=59.4%, time=4.6s
+STEP ts=1790436040.796 kind=train batch_idx=295 tokens=8192 passes=1 node=0 rank=0 loss=1.1636
+STEP ts=1790436041.184 kind=train batch_idx=296 tokens=8192 passes=1 node=0 rank=0 loss=1.1717
+STEP ts=1790436041.789 kind=train batch_idx=297 tokens=8192 passes=1 node=0 rank=0 loss=1.1097
+STEP ts=1790436042.176 kind=train batch_idx=298 tokens=8192 passes=1 node=0 rank=0 loss=1.1670
+STEP ts=1790436042.785 kind=train batch_idx=299 tokens=8192 passes=1 node=0 rank=0 loss=1.1337
+STEP ts=1790436043.171 kind=train batch_idx=300 tokens=8192 passes=1 node=0 rank=0 loss=1.1344
+STEP ts=1790436043.261 kind=train batch_idx=301 tokens=8192 passes=1 node=0 rank=0 loss=1.0195
+  Epoch 43: loss=1.1285, acc=59.1%, time=4.5s
+STEP ts=1790436045.324 kind=train batch_idx=302 tokens=8192 passes=1 node=0 rank=0 loss=1.0374
+STEP ts=1790436045.713 kind=train batch_idx=303 tokens=8192 passes=1 node=0 rank=0 loss=1.0692
+STEP ts=1790436046.270 kind=train batch_idx=304 tokens=8192 passes=1 node=0 rank=0 loss=1.1511
+STEP ts=1790436046.656 kind=train batch_idx=305 tokens=8192 passes=1 node=0 rank=0 loss=1.0490
+STEP ts=1790436047.474 kind=train batch_idx=306 tokens=8192 passes=1 node=0 rank=0 loss=1.1158
+STEP ts=1790436047.859 kind=train batch_idx=307 tokens=8192 passes=1 node=0 rank=0 loss=1.1165
+STEP ts=1790436047.950 kind=train batch_idx=308 tokens=8192 passes=1 node=0 rank=0 loss=1.2494
+  Epoch 44: loss=1.1126, acc=61.1%, time=4.7s
+STEP ts=1790436050.016 kind=train batch_idx=309 tokens=8192 passes=1 node=0 rank=0 loss=1.1131
+STEP ts=1790436050.408 kind=train batch_idx=310 tokens=8192 passes=1 node=0 rank=0 loss=1.1139
+STEP ts=1790436051.036 kind=train batch_idx=311 tokens=8192 passes=1 node=0 rank=0 loss=1.1036
+STEP ts=1790436051.423 kind=train batch_idx=312 tokens=8192 passes=1 node=0 rank=0 loss=0.9882
+STEP ts=1790436052.166 kind=train batch_idx=313 tokens=8192 passes=1 node=0 rank=0 loss=1.1053
+STEP ts=1790436052.550 kind=train batch_idx=314 tokens=8192 passes=1 node=0 rank=0 loss=1.0564
+STEP ts=1790436052.627 kind=train batch_idx=315 tokens=8192 passes=1 node=0 rank=0 loss=1.2800
+  Epoch 45: loss=1.1086, acc=61.0%, time=4.6s
+STEP ts=1790436054.649 kind=train batch_idx=316 tokens=8192 passes=1 node=0 rank=0 loss=1.0808
+STEP ts=1790436055.035 kind=train batch_idx=317 tokens=8192 passes=1 node=0 rank=0 loss=1.1062
+STEP ts=1790436055.706 kind=train batch_idx=318 tokens=8192 passes=1 node=0 rank=0 loss=1.1103
+STEP ts=1790436056.093 kind=train batch_idx=319 tokens=8192 passes=1 node=0 rank=0 loss=1.1416
+STEP ts=1790436056.913 kind=train batch_idx=320 tokens=8192 passes=1 node=0 rank=0 loss=1.0132
+STEP ts=1790436057.298 kind=train batch_idx=321 tokens=8192 passes=1 node=0 rank=0 loss=0.9587
+STEP ts=1790436057.384 kind=train batch_idx=322 tokens=8192 passes=1 node=0 rank=0 loss=1.0061
+  Epoch 46: loss=1.0596, acc=61.0%, time=4.7s
+STEP ts=1790436059.382 kind=train batch_idx=323 tokens=8192 passes=1 node=0 rank=0 loss=1.0983
+STEP ts=1790436059.773 kind=train batch_idx=324 tokens=8192 passes=1 node=0 rank=0 loss=1.0385
+STEP ts=1790436060.435 kind=train batch_idx=325 tokens=8192 passes=1 node=0 rank=0 loss=1.0255
+STEP ts=1790436060.823 kind=train batch_idx=326 tokens=8192 passes=1 node=0 rank=0 loss=1.0133
+STEP ts=1790436061.644 kind=train batch_idx=327 tokens=8192 passes=1 node=0 rank=0 loss=1.0203
+STEP ts=1790436062.030 kind=train batch_idx=328 tokens=8192 passes=1 node=0 rank=0 loss=1.0718
+STEP ts=1790436062.117 kind=train batch_idx=329 tokens=8192 passes=1 node=0 rank=0 loss=1.4361
+  Epoch 47: loss=1.1005, acc=62.3%, time=4.7s
+STEP ts=1790436064.144 kind=train batch_idx=330 tokens=8192 passes=1 node=0 rank=0 loss=1.0408
+STEP ts=1790436064.532 kind=train batch_idx=331 tokens=8192 passes=1 node=0 rank=0 loss=1.0100
+STEP ts=1790436065.132 kind=train batch_idx=332 tokens=8192 passes=1 node=0 rank=0 loss=0.9680
+STEP ts=1790436065.519 kind=train batch_idx=333 tokens=8192 passes=1 node=0 rank=0 loss=1.0397
+STEP ts=1790436066.442 kind=train batch_idx=334 tokens=8192 passes=1 node=0 rank=0 loss=1.0392
+STEP ts=1790436066.827 kind=train batch_idx=335 tokens=8192 passes=1 node=0 rank=0 loss=1.0489
+STEP ts=1790436066.914 kind=train batch_idx=336 tokens=8192 passes=1 node=0 rank=0 loss=1.0340
+  Epoch 48: loss=1.0258, acc=63.3%, time=4.8s
+STEP ts=1790436068.960 kind=train batch_idx=337 tokens=8192 passes=1 node=0 rank=0 loss=1.0129
+STEP ts=1790436069.348 kind=train batch_idx=338 tokens=8192 passes=1 node=0 rank=0 loss=0.9849
+STEP ts=1790436069.900 kind=train batch_idx=339 tokens=8192 passes=1 node=0 rank=0 loss=1.0165
+STEP ts=1790436070.288 kind=train batch_idx=340 tokens=8192 passes=1 node=0 rank=0 loss=1.0320
+STEP ts=1790436071.117 kind=train batch_idx=341 tokens=8192 passes=1 node=0 rank=0 loss=1.0071
+STEP ts=1790436071.502 kind=train batch_idx=342 tokens=8192 passes=1 node=0 rank=0 loss=1.0547
+STEP ts=1790436071.580 kind=train batch_idx=343 tokens=8192 passes=1 node=0 rank=0 loss=0.9717
+  Epoch 49: loss=1.0114, acc=62.6%, time=4.7s
+STEP ts=1790436073.565 kind=train batch_idx=344 tokens=8192 passes=1 node=0 rank=0 loss=1.0245
+STEP ts=1790436073.952 kind=train batch_idx=345 tokens=8192 passes=1 node=0 rank=0 loss=0.8591
+STEP ts=1790436074.631 kind=train batch_idx=346 tokens=8192 passes=1 node=0 rank=0 loss=0.9056
+STEP ts=1790436075.018 kind=train batch_idx=347 tokens=8192 passes=1 node=0 rank=0 loss=0.9997
+STEP ts=1790436075.882 kind=train batch_idx=348 tokens=8192 passes=1 node=0 rank=0 loss=0.9746
+STEP ts=1790436076.267 kind=train batch_idx=349 tokens=8192 passes=1 node=0 rank=0 loss=0.9383
+STEP ts=1790436076.354 kind=train batch_idx=350 tokens=8192 passes=1 node=0 rank=0 loss=1.0059
+  Epoch 50: loss=0.9582, acc=65.6%, time=4.7s
+STEP ts=1790436078.369 kind=train batch_idx=351 tokens=8192 passes=1 node=0 rank=0 loss=0.9371
+STEP ts=1790436078.758 kind=train batch_idx=352 tokens=8192 passes=1 node=0 rank=0 loss=0.9653
+STEP ts=1790436079.417 kind=train batch_idx=353 tokens=8192 passes=1 node=0 rank=0 loss=0.9877
+STEP ts=1790436079.805 kind=train batch_idx=354 tokens=8192 passes=1 node=0 rank=0 loss=0.9444
+STEP ts=1790436080.704 kind=train batch_idx=355 tokens=8192 passes=1 node=0 rank=0 loss=0.9847
+STEP ts=1790436081.089 kind=train batch_idx=356 tokens=8192 passes=1 node=0 rank=0 loss=0.9672
+STEP ts=1790436081.167 kind=train batch_idx=357 tokens=8192 passes=1 node=0 rank=0 loss=1.0311
+  Epoch 51: loss=0.9739, acc=64.8%, time=4.7s
+STEP ts=1790436083.168 kind=train batch_idx=358 tokens=8192 passes=1 node=0 rank=0 loss=0.9718
+STEP ts=1790436083.556 kind=train batch_idx=359 tokens=8192 passes=1 node=0 rank=0 loss=1.0091
+STEP ts=1790436084.112 kind=train batch_idx=360 tokens=8192 passes=1 node=0 rank=0 loss=0.9725
+STEP ts=1790436084.499 kind=train batch_idx=361 tokens=8192 passes=1 node=0 rank=0 loss=0.8681
+STEP ts=1790436085.472 kind=train batch_idx=362 tokens=8192 passes=1 node=0 rank=0 loss=0.9950
+STEP ts=1790436085.856 kind=train batch_idx=363 tokens=8192 passes=1 node=0 rank=0 loss=0.9561
+STEP ts=1790436085.936 kind=train batch_idx=364 tokens=8192 passes=1 node=0 rank=0 loss=1.0962
+  Epoch 52: loss=0.9813, acc=65.2%, time=4.8s
+STEP ts=1790436087.947 kind=train batch_idx=365 tokens=8192 passes=1 node=0 rank=0 loss=0.9698
+STEP ts=1790436088.335 kind=train batch_idx=366 tokens=8192 passes=1 node=0 rank=0 loss=0.8956
+STEP ts=1790436088.889 kind=train batch_idx=367 tokens=8192 passes=1 node=0 rank=0 loss=0.8580
+STEP ts=1790436089.277 kind=train batch_idx=368 tokens=8192 passes=1 node=0 rank=0 loss=0.9425
+STEP ts=1790436090.112 kind=train batch_idx=369 tokens=8192 passes=1 node=0 rank=0 loss=0.9367
+STEP ts=1790436090.498 kind=train batch_idx=370 tokens=8192 passes=1 node=0 rank=0 loss=0.8930
+STEP ts=1790436090.581 kind=train batch_idx=371 tokens=8192 passes=1 node=0 rank=0 loss=0.9992
+  Epoch 53: loss=0.9278, acc=68.4%, time=4.7s
+STEP ts=1790436092.625 kind=train batch_idx=372 tokens=8192 passes=1 node=0 rank=0 loss=0.7999
+STEP ts=1790436093.015 kind=train batch_idx=373 tokens=8192 passes=1 node=0 rank=0 loss=0.9564
+STEP ts=1790436093.564 kind=train batch_idx=374 tokens=8192 passes=1 node=0 rank=0 loss=0.9470
+STEP ts=1790436093.952 kind=train batch_idx=375 tokens=8192 passes=1 node=0 rank=0 loss=0.8217
+STEP ts=1790436094.731 kind=train batch_idx=376 tokens=8192 passes=1 node=0 rank=0 loss=0.8291
+STEP ts=1790436095.118 kind=train batch_idx=377 tokens=8192 passes=1 node=0 rank=0 loss=0.8940
+STEP ts=1790436095.216 kind=train batch_idx=378 tokens=8192 passes=1 node=0 rank=0 loss=1.0947
+  Epoch 54: loss=0.9061, acc=68.6%, time=4.7s
+STEP ts=1790436097.207 kind=train batch_idx=379 tokens=8192 passes=1 node=0 rank=0 loss=0.8516
+STEP ts=1790436097.598 kind=train batch_idx=380 tokens=8192 passes=1 node=0 rank=0 loss=0.9089
+STEP ts=1790436098.248 kind=train batch_idx=381 tokens=8192 passes=1 node=0 rank=0 loss=0.8548
+STEP ts=1790436098.637 kind=train batch_idx=382 tokens=8192 passes=1 node=0 rank=0 loss=0.8752
+STEP ts=1790436099.255 kind=train batch_idx=383 tokens=8192 passes=1 node=0 rank=0 loss=0.8076
+STEP ts=1790436099.639 kind=train batch_idx=384 tokens=8192 passes=1 node=0 rank=0 loss=0.8053
+STEP ts=1790436099.716 kind=train batch_idx=385 tokens=8192 passes=1 node=0 rank=0 loss=0.7926
+  Epoch 55: loss=0.8423, acc=69.9%, time=4.5s
+STEP ts=1790436101.733 kind=train batch_idx=386 tokens=8192 passes=1 node=0 rank=0 loss=0.8668
+STEP ts=1790436102.122 kind=train batch_idx=387 tokens=8192 passes=1 node=0 rank=0 loss=0.8500
+STEP ts=1790436102.709 kind=train batch_idx=388 tokens=8192 passes=1 node=0 rank=0 loss=0.8677
+STEP ts=1790436103.100 kind=train batch_idx=389 tokens=8192 passes=1 node=0 rank=0 loss=0.8695
+STEP ts=1790436103.738 kind=train batch_idx=390 tokens=8192 passes=1 node=0 rank=0 loss=0.8662
+STEP ts=1790436104.122 kind=train batch_idx=391 tokens=8192 passes=1 node=0 rank=0 loss=0.8073
+STEP ts=1790436104.199 kind=train batch_idx=392 tokens=8192 passes=1 node=0 rank=0 loss=0.9215
+  Epoch 56: loss=0.8641, acc=69.8%, time=4.5s
+STEP ts=1790436106.218 kind=train batch_idx=393 tokens=8192 passes=1 node=0 rank=0 loss=0.8055
+STEP ts=1790436106.609 kind=train batch_idx=394 tokens=8192 passes=1 node=0 rank=0 loss=0.8817
+STEP ts=1790436107.191 kind=train batch_idx=395 tokens=8192 passes=1 node=0 rank=0 loss=0.8460
+STEP ts=1790436107.579 kind=train batch_idx=396 tokens=8192 passes=1 node=0 rank=0 loss=0.7905
+STEP ts=1790436108.292 kind=train batch_idx=397 tokens=8192 passes=1 node=0 rank=0 loss=0.8459
+STEP ts=1790436108.676 kind=train batch_idx=398 tokens=8192 passes=1 node=0 rank=0 loss=0.8310
+STEP ts=1790436108.757 kind=train batch_idx=399 tokens=8192 passes=1 node=0 rank=0 loss=0.8732
+  Epoch 57: loss=0.8391, acc=70.3%, time=4.6s
+STEP ts=1790436110.801 kind=train batch_idx=400 tokens=8192 passes=1 node=0 rank=0 loss=0.7938
+STEP ts=1790436111.189 kind=train batch_idx=401 tokens=8192 passes=1 node=0 rank=0 loss=0.8591
+STEP ts=1790436111.808 kind=train batch_idx=402 tokens=8192 passes=1 node=0 rank=0 loss=0.8163
+STEP ts=1790436112.196 kind=train batch_idx=403 tokens=8192 passes=1 node=0 rank=0 loss=0.8112
+STEP ts=1790436112.828 kind=train batch_idx=404 tokens=8192 passes=1 node=0 rank=0 loss=0.8297
+STEP ts=1790436113.214 kind=train batch_idx=405 tokens=8192 passes=1 node=0 rank=0 loss=0.7335
+STEP ts=1790436113.308 kind=train batch_idx=406 tokens=8192 passes=1 node=0 rank=0 loss=0.8641
+  Epoch 58: loss=0.8154, acc=71.6%, time=4.5s
+STEP ts=1790436115.323 kind=train batch_idx=407 tokens=8192 passes=1 node=0 rank=0 loss=0.8731
+STEP ts=1790436115.715 kind=train batch_idx=408 tokens=8192 passes=1 node=0 rank=0 loss=0.8129
+STEP ts=1790436116.276 kind=train batch_idx=409 tokens=8192 passes=1 node=0 rank=0 loss=0.7640
+STEP ts=1790436116.665 kind=train batch_idx=410 tokens=8192 passes=1 node=0 rank=0 loss=0.6983
+STEP ts=1790436117.347 kind=train batch_idx=411 tokens=8192 passes=1 node=0 rank=0 loss=0.7662
+STEP ts=1790436117.735 kind=train batch_idx=412 tokens=8192 passes=1 node=0 rank=0 loss=0.7964
+STEP ts=1790436117.826 kind=train batch_idx=413 tokens=8192 passes=1 node=0 rank=0 loss=1.1728
+  Epoch 59: loss=0.8405, acc=72.3%, time=4.5s
+STEP ts=1790436119.875 kind=train batch_idx=414 tokens=8192 passes=1 node=0 rank=0 loss=0.7792
+STEP ts=1790436120.264 kind=train batch_idx=415 tokens=8192 passes=1 node=0 rank=0 loss=0.6932
+STEP ts=1790436120.834 kind=train batch_idx=416 tokens=8192 passes=1 node=0 rank=0 loss=0.7453
+STEP ts=1790436121.224 kind=train batch_idx=417 tokens=8192 passes=1 node=0 rank=0 loss=0.7948
+STEP ts=1790436121.949 kind=train batch_idx=418 tokens=8192 passes=1 node=0 rank=0 loss=0.7259
+STEP ts=1790436122.336 kind=train batch_idx=419 tokens=8192 passes=1 node=0 rank=0 loss=0.8152
+STEP ts=1790436122.428 kind=train batch_idx=420 tokens=8192 passes=1 node=0 rank=0 loss=1.1039
+  Epoch 60: loss=0.8082, acc=73.0%, time=4.7s
+STEP ts=1790436124.461 kind=train batch_idx=421 tokens=8192 passes=1 node=0 rank=0 loss=0.8100
+STEP ts=1790436124.850 kind=train batch_idx=422 tokens=8192 passes=1 node=0 rank=0 loss=0.7146
+STEP ts=1790436125.512 kind=train batch_idx=423 tokens=8192 passes=1 node=0 rank=0 loss=0.7666
+STEP ts=1790436125.899 kind=train batch_idx=424 tokens=8192 passes=1 node=0 rank=0 loss=0.7932
+STEP ts=1790436126.629 kind=train batch_idx=425 tokens=8192 passes=1 node=0 rank=0 loss=0.8044
+STEP ts=1790436127.014 kind=train batch_idx=426 tokens=8192 passes=1 node=0 rank=0 loss=0.7587
+STEP ts=1790436127.092 kind=train batch_idx=427 tokens=8192 passes=1 node=0 rank=0 loss=0.7726
+  Epoch 61: loss=0.7743, acc=72.6%, time=4.6s
+STEP ts=1790436129.090 kind=train batch_idx=428 tokens=8192 passes=1 node=0 rank=0 loss=0.7621
+STEP ts=1790436129.481 kind=train batch_idx=429 tokens=8192 passes=1 node=0 rank=0 loss=0.7014
+STEP ts=1790436130.088 kind=train batch_idx=430 tokens=8192 passes=1 node=0 rank=0 loss=0.7318
+STEP ts=1790436130.477 kind=train batch_idx=431 tokens=8192 passes=1 node=0 rank=0 loss=0.6755
+STEP ts=1790436131.205 kind=train batch_idx=432 tokens=8192 passes=1 node=0 rank=0 loss=0.6777
+STEP ts=1790436131.590 kind=train batch_idx=433 tokens=8192 passes=1 node=0 rank=0 loss=0.6770
+STEP ts=1790436131.685 kind=train batch_idx=434 tokens=8192 passes=1 node=0 rank=0 loss=0.8569
+  Epoch 62: loss=0.7261, acc=74.7%, time=4.6s
+STEP ts=1790436133.698 kind=train batch_idx=435 tokens=8192 passes=1 node=0 rank=0 loss=0.7024
+STEP ts=1790436134.088 kind=train batch_idx=436 tokens=8192 passes=1 node=0 rank=0 loss=0.6839
+STEP ts=1790436134.665 kind=train batch_idx=437 tokens=8192 passes=1 node=0 rank=0 loss=0.7076
+STEP ts=1790436135.056 kind=train batch_idx=438 tokens=8192 passes=1 node=0 rank=0 loss=0.7433
+STEP ts=1790436135.862 kind=train batch_idx=439 tokens=8192 passes=1 node=0 rank=0 loss=0.6552
+STEP ts=1790436136.248 kind=train batch_idx=440 tokens=8192 passes=1 node=0 rank=0 loss=0.6544
+STEP ts=1790436136.341 kind=train batch_idx=441 tokens=8192 passes=1 node=0 rank=0 loss=0.9161
+  Epoch 63: loss=0.7233, acc=75.7%, time=4.7s
+STEP ts=1790436138.361 kind=train batch_idx=442 tokens=8192 passes=1 node=0 rank=0 loss=0.7012
+STEP ts=1790436138.751 kind=train batch_idx=443 tokens=8192 passes=1 node=0 rank=0 loss=0.7932
+STEP ts=1790436139.315 kind=train batch_idx=444 tokens=8192 passes=1 node=0 rank=0 loss=0.7322
+STEP ts=1790436139.703 kind=train batch_idx=445 tokens=8192 passes=1 node=0 rank=0 loss=0.7287
+STEP ts=1790436140.640 kind=train batch_idx=446 tokens=8192 passes=1 node=0 rank=0 loss=0.7831
+STEP ts=1790436141.026 kind=train batch_idx=447 tokens=8192 passes=1 node=0 rank=0 loss=0.6362
+STEP ts=1790436141.115 kind=train batch_idx=448 tokens=8192 passes=1 node=0 rank=0 loss=0.8612
+  Epoch 64: loss=0.7480, acc=73.7%, time=4.7s
+STEP ts=1790436143.123 kind=train batch_idx=449 tokens=8192 passes=1 node=0 rank=0 loss=0.7697
+STEP ts=1790436143.514 kind=train batch_idx=450 tokens=8192 passes=1 node=0 rank=0 loss=0.6941
+STEP ts=1790436144.096 kind=train batch_idx=451 tokens=8192 passes=1 node=0 rank=0 loss=0.6879
+STEP ts=1790436144.487 kind=train batch_idx=452 tokens=8192 passes=1 node=0 rank=0 loss=0.7076
+STEP ts=1790436145.440 kind=train batch_idx=453 tokens=8192 passes=1 node=0 rank=0 loss=0.6433
+STEP ts=1790436145.828 kind=train batch_idx=454 tokens=8192 passes=1 node=0 rank=0 loss=0.7175
+STEP ts=1790436145.916 kind=train batch_idx=455 tokens=8192 passes=1 node=0 rank=0 loss=1.1441
+  Epoch 65: loss=0.7663, acc=74.9%, time=4.9s
+STEP ts=1790436147.923 kind=train batch_idx=456 tokens=8192 passes=1 node=0 rank=0 loss=0.6850
+STEP ts=1790436148.313 kind=train batch_idx=457 tokens=8192 passes=1 node=0 rank=0 loss=0.6940
+STEP ts=1790436148.928 kind=train batch_idx=458 tokens=8192 passes=1 node=0 rank=0 loss=0.6916
+STEP ts=1790436149.317 kind=train batch_idx=459 tokens=8192 passes=1 node=0 rank=0 loss=0.6565
+STEP ts=1790436150.208 kind=train batch_idx=460 tokens=8192 passes=1 node=0 rank=0 loss=0.6910
+STEP ts=1790436150.594 kind=train batch_idx=461 tokens=8192 passes=1 node=0 rank=0 loss=0.6609
+STEP ts=1790436150.682 kind=train batch_idx=462 tokens=8192 passes=1 node=0 rank=0 loss=1.2589
+  Epoch 66: loss=0.7625, acc=76.2%, time=4.8s
+STEP ts=1790436152.698 kind=train batch_idx=463 tokens=8192 passes=1 node=0 rank=0 loss=0.6615
+STEP ts=1790436153.087 kind=train batch_idx=464 tokens=8192 passes=1 node=0 rank=0 loss=0.6698
+STEP ts=1790436153.673 kind=train batch_idx=465 tokens=8192 passes=1 node=0 rank=0 loss=0.8214
+STEP ts=1790436154.062 kind=train batch_idx=466 tokens=8192 passes=1 node=0 rank=0 loss=0.5670
+STEP ts=1790436154.712 kind=train batch_idx=467 tokens=8192 passes=1 node=0 rank=0 loss=0.6293
+STEP ts=1790436155.097 kind=train batch_idx=468 tokens=8192 passes=1 node=0 rank=0 loss=0.6229
+STEP ts=1790436155.189 kind=train batch_idx=469 tokens=8192 passes=1 node=0 rank=0 loss=0.5987
+  Epoch 67: loss=0.6530, acc=76.3%, time=4.5s
+STEP ts=1790436157.197 kind=train batch_idx=470 tokens=8192 passes=1 node=0 rank=0 loss=0.5968
+STEP ts=1790436157.586 kind=train batch_idx=471 tokens=8192 passes=1 node=0 rank=0 loss=0.6472
+STEP ts=1790436158.200 kind=train batch_idx=472 tokens=8192 passes=1 node=0 rank=0 loss=0.5614
+STEP ts=1790436158.590 kind=train batch_idx=473 tokens=8192 passes=1 node=0 rank=0 loss=0.6658
+STEP ts=1790436159.352 kind=train batch_idx=474 tokens=8192 passes=1 node=0 rank=0 loss=0.6316
+STEP ts=1790436159.736 kind=train batch_idx=475 tokens=8192 passes=1 node=0 rank=0 loss=0.6568
+STEP ts=1790436159.827 kind=train batch_idx=476 tokens=8192 passes=1 node=0 rank=0 loss=1.1001
+  Epoch 68: loss=0.6942, acc=77.6%, time=4.6s
+STEP ts=1790436161.906 kind=train batch_idx=477 tokens=8192 passes=1 node=0 rank=0 loss=0.6165
+STEP ts=1790436162.296 kind=train batch_idx=478 tokens=8192 passes=1 node=0 rank=0 loss=0.7267
+STEP ts=1790436162.869 kind=train batch_idx=479 tokens=8192 passes=1 node=0 rank=0 loss=0.6899
+STEP ts=1790436163.258 kind=train batch_idx=480 tokens=8192 passes=1 node=0 rank=0 loss=0.6492
+STEP ts=1790436164.024 kind=train batch_idx=481 tokens=8192 passes=1 node=0 rank=0 loss=0.6028
+STEP ts=1790436164.409 kind=train batch_idx=482 tokens=8192 passes=1 node=0 rank=0 loss=0.6659
+STEP ts=1790436164.499 kind=train batch_idx=483 tokens=8192 passes=1 node=0 rank=0 loss=0.7709
+  Epoch 69: loss=0.6745, acc=76.3%, time=4.6s
+STEP ts=1790436166.524 kind=train batch_idx=484 tokens=8192 passes=1 node=0 rank=0 loss=0.6103
+STEP ts=1790436166.913 kind=train batch_idx=485 tokens=8192 passes=1 node=0 rank=0 loss=0.6013
+STEP ts=1790436167.522 kind=train batch_idx=486 tokens=8192 passes=1 node=0 rank=0 loss=0.5773
+STEP ts=1790436167.910 kind=train batch_idx=487 tokens=8192 passes=1 node=0 rank=0 loss=0.6226
+STEP ts=1790436168.599 kind=train batch_idx=488 tokens=8192 passes=1 node=0 rank=0 loss=0.5775
+STEP ts=1790436168.986 kind=train batch_idx=489 tokens=8192 passes=1 node=0 rank=0 loss=0.6487
+STEP ts=1790436169.076 kind=train batch_idx=490 tokens=8192 passes=1 node=0 rank=0 loss=0.5582
+  Epoch 70: loss=0.5994, acc=78.8%, time=4.6s
+STEP ts=1790436171.143 kind=train batch_idx=491 tokens=8192 passes=1 node=0 rank=0 loss=0.5266
+STEP ts=1790436171.531 kind=train batch_idx=492 tokens=8192 passes=1 node=0 rank=0 loss=0.6481
+STEP ts=1790436172.100 kind=train batch_idx=493 tokens=8192 passes=1 node=0 rank=0 loss=0.5391
+STEP ts=1790436172.487 kind=train batch_idx=494 tokens=8192 passes=1 node=0 rank=0 loss=0.4940
+STEP ts=1790436173.143 kind=train batch_idx=495 tokens=8192 passes=1 node=0 rank=0 loss=0.6050
+STEP ts=1790436173.528 kind=train batch_idx=496 tokens=8192 passes=1 node=0 rank=0 loss=0.5461
+STEP ts=1790436173.617 kind=train batch_idx=497 tokens=8192 passes=1 node=0 rank=0 loss=0.6343
+  Epoch 71: loss=0.5705, acc=80.2%, time=4.5s
+STEP ts=1790436175.646 kind=train batch_idx=498 tokens=8192 passes=1 node=0 rank=0 loss=0.5329
+STEP ts=1790436176.043 kind=train batch_idx=499 tokens=8192 passes=1 node=0 rank=0 loss=0.5451
+STEP ts=1790436176.571 kind=train batch_idx=500 tokens=8192 passes=1 node=0 rank=0 loss=0.5519
+STEP ts=1790436176.960 kind=train batch_idx=501 tokens=8192 passes=1 node=0 rank=0 loss=0.5121
+STEP ts=1790436177.573 kind=train batch_idx=502 tokens=8192 passes=1 node=0 rank=0 loss=0.5687
+STEP ts=1790436177.959 kind=train batch_idx=503 tokens=8192 passes=1 node=0 rank=0 loss=0.5330
+STEP ts=1790436178.051 kind=train batch_idx=504 tokens=8192 passes=1 node=0 rank=0 loss=0.7699
+  Epoch 72: loss=0.5734, acc=81.3%, time=4.4s
+STEP ts=1790436180.076 kind=train batch_idx=505 tokens=8192 passes=1 node=0 rank=0 loss=0.5273
+STEP ts=1790436180.464 kind=train batch_idx=506 tokens=8192 passes=1 node=0 rank=0 loss=0.5651
+STEP ts=1790436181.029 kind=train batch_idx=507 tokens=8192 passes=1 node=0 rank=0 loss=0.5703
+STEP ts=1790436181.417 kind=train batch_idx=508 tokens=8192 passes=1 node=0 rank=0 loss=0.5074
+STEP ts=1790436182.389 kind=train batch_idx=509 tokens=8192 passes=1 node=0 rank=0 loss=0.5253
+STEP ts=1790436182.774 kind=train batch_idx=510 tokens=8192 passes=1 node=0 rank=0 loss=0.5553
+STEP ts=1790436182.864 kind=train batch_idx=511 tokens=8192 passes=1 node=0 rank=0 loss=0.9094
+  Epoch 73: loss=0.5943, acc=80.9%, time=4.8s
+STEP ts=1790436184.930 kind=train batch_idx=512 tokens=8192 passes=1 node=0 rank=0 loss=0.5171
+STEP ts=1790436185.319 kind=train batch_idx=513 tokens=8192 passes=1 node=0 rank=0 loss=0.4899
+STEP ts=1790436185.815 kind=train batch_idx=514 tokens=8192 passes=1 node=0 rank=0 loss=0.5566
+STEP ts=1790436186.206 kind=train batch_idx=515 tokens=8192 passes=1 node=0 rank=0 loss=0.5029
+STEP ts=1790436187.084 kind=train batch_idx=516 tokens=8192 passes=1 node=0 rank=0 loss=0.5152
+STEP ts=1790436187.471 kind=train batch_idx=517 tokens=8192 passes=1 node=0 rank=0 loss=0.5426
+STEP ts=1790436187.560 kind=train batch_idx=518 tokens=8192 passes=1 node=0 rank=0 loss=0.5530
+  Epoch 74: loss=0.5253, acc=81.3%, time=4.7s
+STEP ts=1790436189.572 kind=train batch_idx=519 tokens=8192 passes=1 node=0 rank=0 loss=0.4482
+STEP ts=1790436189.961 kind=train batch_idx=520 tokens=8192 passes=1 node=0 rank=0 loss=0.5063
+STEP ts=1790436190.608 kind=train batch_idx=521 tokens=8192 passes=1 node=0 rank=0 loss=0.4761
+STEP ts=1790436190.996 kind=train batch_idx=522 tokens=8192 passes=1 node=0 rank=0 loss=0.5060
+STEP ts=1790436191.737 kind=train batch_idx=523 tokens=8192 passes=1 node=0 rank=0 loss=0.4921
+STEP ts=1790436192.122 kind=train batch_idx=524 tokens=8192 passes=1 node=0 rank=0 loss=0.4795
+STEP ts=1790436192.213 kind=train batch_idx=525 tokens=8192 passes=1 node=0 rank=0 loss=0.8491
+  Epoch 75: loss=0.5368, acc=82.2%, time=4.6s
+STEP ts=1790436194.252 kind=train batch_idx=526 tokens=8192 passes=1 node=0 rank=0 loss=0.4461
+STEP ts=1790436194.643 kind=train batch_idx=527 tokens=8192 passes=1 node=0 rank=0 loss=0.4719
+STEP ts=1790436195.248 kind=train batch_idx=528 tokens=8192 passes=1 node=0 rank=0 loss=0.5473
+STEP ts=1790436195.637 kind=train batch_idx=529 tokens=8192 passes=1 node=0 rank=0 loss=0.6107
+STEP ts=1790436196.587 kind=train batch_idx=530 tokens=8192 passes=1 node=0 rank=0 loss=0.4730
+STEP ts=1790436196.973 kind=train batch_idx=531 tokens=8192 passes=1 node=0 rank=0 loss=0.4450
+STEP ts=1790436197.062 kind=train batch_idx=532 tokens=8192 passes=1 node=0 rank=0 loss=0.4489
+  Epoch 76: loss=0.4918, acc=83.1%, time=4.8s
+STEP ts=1790436199.096 kind=train batch_idx=533 tokens=8192 passes=1 node=0 rank=0 loss=0.5114
+STEP ts=1790436199.486 kind=train batch_idx=534 tokens=8192 passes=1 node=0 rank=0 loss=0.3926
+STEP ts=1790436200.046 kind=train batch_idx=535 tokens=8192 passes=1 node=0 rank=0 loss=0.4916
+STEP ts=1790436200.435 kind=train batch_idx=536 tokens=8192 passes=1 node=0 rank=0 loss=0.5165
+STEP ts=1790436201.360 kind=train batch_idx=537 tokens=8192 passes=1 node=0 rank=0 loss=0.5147
+STEP ts=1790436201.745 kind=train batch_idx=538 tokens=8192 passes=1 node=0 rank=0 loss=0.4415
+STEP ts=1790436201.836 kind=train batch_idx=539 tokens=8192 passes=1 node=0 rank=0 loss=1.0085
+  Epoch 77: loss=0.5538, acc=82.9%, time=4.8s
+STEP ts=1790436203.831 kind=train batch_idx=540 tokens=8192 passes=1 node=0 rank=0 loss=0.4909
+STEP ts=1790436204.220 kind=train batch_idx=541 tokens=8192 passes=1 node=0 rank=0 loss=0.5380
+STEP ts=1790436204.832 kind=train batch_idx=542 tokens=8192 passes=1 node=0 rank=0 loss=0.4776
+STEP ts=1790436205.221 kind=train batch_idx=543 tokens=8192 passes=1 node=0 rank=0 loss=0.3640
+STEP ts=1790436206.081 kind=train batch_idx=544 tokens=8192 passes=1 node=0 rank=0 loss=0.4611
+STEP ts=1790436206.466 kind=train batch_idx=545 tokens=8192 passes=1 node=0 rank=0 loss=0.4658
+STEP ts=1790436206.553 kind=train batch_idx=546 tokens=8192 passes=1 node=0 rank=0 loss=0.3534
+  Epoch 78: loss=0.4501, acc=83.7%, time=4.7s
+STEP ts=1790436208.619 kind=train batch_idx=547 tokens=8192 passes=1 node=0 rank=0 loss=0.4103
+STEP ts=1790436209.008 kind=train batch_idx=548 tokens=8192 passes=1 node=0 rank=0 loss=0.4301
+STEP ts=1790436209.634 kind=train batch_idx=549 tokens=8192 passes=1 node=0 rank=0 loss=0.4897
+STEP ts=1790436210.021 kind=train batch_idx=550 tokens=8192 passes=1 node=0 rank=0 loss=0.4808
+STEP ts=1790436210.696 kind=train batch_idx=551 tokens=8192 passes=1 node=0 rank=0 loss=0.4012
+STEP ts=1790436211.082 kind=train batch_idx=552 tokens=8192 passes=1 node=0 rank=0 loss=0.4215
+STEP ts=1790436211.173 kind=train batch_idx=553 tokens=8192 passes=1 node=0 rank=0 loss=0.4712
+  Epoch 79: loss=0.4435, acc=84.4%, time=4.7s
+STEP ts=1790436213.174 kind=train batch_idx=554 tokens=8192 passes=1 node=0 rank=0 loss=0.4129
+STEP ts=1790436213.564 kind=train batch_idx=555 tokens=8192 passes=1 node=0 rank=0 loss=0.4162
+STEP ts=1790436214.170 kind=train batch_idx=556 tokens=8192 passes=1 node=0 rank=0 loss=0.5042
+STEP ts=1790436214.558 kind=train batch_idx=557 tokens=8192 passes=1 node=0 rank=0 loss=0.4777
+STEP ts=1790436215.382 kind=train batch_idx=558 tokens=8192 passes=1 node=0 rank=0 loss=0.4177
+STEP ts=1790436215.767 kind=train batch_idx=559 tokens=8192 passes=1 node=0 rank=0 loss=0.4856
+STEP ts=1790436215.855 kind=train batch_idx=560 tokens=8192 passes=1 node=0 rank=0 loss=0.7369
+  Epoch 80: loss=0.4930, acc=84.5%, time=4.7s
+STEP ts=1790436217.914 kind=train batch_idx=561 tokens=8192 passes=1 node=0 rank=0 loss=0.3570
+STEP ts=1790436218.304 kind=train batch_idx=562 tokens=8192 passes=1 node=0 rank=0 loss=0.4935
+STEP ts=1790436218.875 kind=train batch_idx=563 tokens=8192 passes=1 node=0 rank=0 loss=0.3873
+STEP ts=1790436219.262 kind=train batch_idx=564 tokens=8192 passes=1 node=0 rank=0 loss=0.4144
+STEP ts=1790436220.181 kind=train batch_idx=565 tokens=8192 passes=1 node=0 rank=0 loss=0.4110
+STEP ts=1790436220.567 kind=train batch_idx=566 tokens=8192 passes=1 node=0 rank=0 loss=0.3730
+STEP ts=1790436220.653 kind=train batch_idx=567 tokens=8192 passes=1 node=0 rank=0 loss=0.3801
+  Epoch 81: loss=0.4023, acc=85.9%, time=4.7s
+STEP ts=1790436222.716 kind=train batch_idx=568 tokens=8192 passes=1 node=0 rank=0 loss=0.3962
+STEP ts=1790436223.107 kind=train batch_idx=569 tokens=8192 passes=1 node=0 rank=0 loss=0.4438
+STEP ts=1790436223.682 kind=train batch_idx=570 tokens=8192 passes=1 node=0 rank=0 loss=0.3842
+STEP ts=1790436224.070 kind=train batch_idx=571 tokens=8192 passes=1 node=0 rank=0 loss=0.3938
+STEP ts=1790436224.584 kind=train batch_idx=572 tokens=8192 passes=1 node=0 rank=0 loss=0.3599
+STEP ts=1790436224.970 kind=train batch_idx=573 tokens=8192 passes=1 node=0 rank=0 loss=0.3710
+STEP ts=1790436225.059 kind=train batch_idx=574 tokens=8192 passes=1 node=0 rank=0 loss=0.5793
+  Epoch 82: loss=0.4183, acc=86.6%, time=4.4s
+STEP ts=1790436227.107 kind=train batch_idx=575 tokens=8192 passes=1 node=0 rank=0 loss=0.3584
+STEP ts=1790436227.495 kind=train batch_idx=576 tokens=8192 passes=1 node=0 rank=0 loss=0.3602
+STEP ts=1790436228.092 kind=train batch_idx=577 tokens=8192 passes=1 node=0 rank=0 loss=0.3753
+STEP ts=1790436228.481 kind=train batch_idx=578 tokens=8192 passes=1 node=0 rank=0 loss=0.4452
+STEP ts=1790436229.327 kind=train batch_idx=579 tokens=8192 passes=1 node=0 rank=0 loss=0.3319
+STEP ts=1790436229.713 kind=train batch_idx=580 tokens=8192 passes=1 node=0 rank=0 loss=0.3396
+STEP ts=1790436229.803 kind=train batch_idx=581 tokens=8192 passes=1 node=0 rank=0 loss=0.3611
+  Epoch 83: loss=0.3674, acc=87.7%, time=4.7s
+STEP ts=1790436231.852 kind=train batch_idx=582 tokens=8192 passes=1 node=0 rank=0 loss=0.3586
+STEP ts=1790436232.241 kind=train batch_idx=583 tokens=8192 passes=1 node=0 rank=0 loss=0.3903
+STEP ts=1790436232.806 kind=train batch_idx=584 tokens=8192 passes=1 node=0 rank=0 loss=0.3481
+STEP ts=1790436233.193 kind=train batch_idx=585 tokens=8192 passes=1 node=0 rank=0 loss=0.3220
+STEP ts=1790436233.827 kind=train batch_idx=586 tokens=8192 passes=1 node=0 rank=0 loss=0.3293
+STEP ts=1790436234.214 kind=train batch_idx=587 tokens=8192 passes=1 node=0 rank=0 loss=0.3978
+STEP ts=1790436234.304 kind=train batch_idx=588 tokens=8192 passes=1 node=0 rank=0 loss=0.4922
+  Epoch 84: loss=0.3769, acc=87.0%, time=4.5s
+STEP ts=1790436236.354 kind=train batch_idx=589 tokens=8192 passes=1 node=0 rank=0 loss=0.3270
+STEP ts=1790436236.743 kind=train batch_idx=590 tokens=8192 passes=1 node=0 rank=0 loss=0.3654
+STEP ts=1790436237.327 kind=train batch_idx=591 tokens=8192 passes=1 node=0 rank=0 loss=0.3530
+STEP ts=1790436237.715 kind=train batch_idx=592 tokens=8192 passes=1 node=0 rank=0 loss=0.3965
+STEP ts=1790436238.560 kind=train batch_idx=593 tokens=8192 passes=1 node=0 rank=0 loss=0.3555
+STEP ts=1790436238.945 kind=train batch_idx=594 tokens=8192 passes=1 node=0 rank=0 loss=0.3424
+STEP ts=1790436239.034 kind=train batch_idx=595 tokens=8192 passes=1 node=0 rank=0 loss=0.3378
+  Epoch 85: loss=0.3540, acc=87.8%, time=4.7s
+STEP ts=1790436241.052 kind=train batch_idx=596 tokens=8192 passes=1 node=0 rank=0 loss=0.3789
+STEP ts=1790436241.442 kind=train batch_idx=597 tokens=8192 passes=1 node=0 rank=0 loss=0.3448
+STEP ts=1790436242.043 kind=train batch_idx=598 tokens=8192 passes=1 node=0 rank=0 loss=0.3598
+STEP ts=1790436242.431 kind=train batch_idx=599 tokens=8192 passes=1 node=0 rank=0 loss=0.3056
+STEP ts=1790436243.143 kind=train batch_idx=600 tokens=8192 passes=1 node=0 rank=0 loss=0.3668
+STEP ts=1790436243.528 kind=train batch_idx=601 tokens=8192 passes=1 node=0 rank=0 loss=0.3095
+STEP ts=1790436243.607 kind=train batch_idx=602 tokens=8192 passes=1 node=0 rank=0 loss=0.3878
+  Epoch 86: loss=0.3505, acc=87.5%, time=4.5s
+STEP ts=1790436245.612 kind=train batch_idx=603 tokens=8192 passes=1 node=0 rank=0 loss=0.3380
+STEP ts=1790436246.000 kind=train batch_idx=604 tokens=8192 passes=1 node=0 rank=0 loss=0.3252
+STEP ts=1790436246.640 kind=train batch_idx=605 tokens=8192 passes=1 node=0 rank=0 loss=0.4041
+STEP ts=1790436247.026 kind=train batch_idx=606 tokens=8192 passes=1 node=0 rank=0 loss=0.3380
+STEP ts=1790436247.578 kind=train batch_idx=607 tokens=8192 passes=1 node=0 rank=0 loss=0.3332
+STEP ts=1790436247.962 kind=train batch_idx=608 tokens=8192 passes=1 node=0 rank=0 loss=0.3304
+STEP ts=1790436248.044 kind=train batch_idx=609 tokens=8192 passes=1 node=0 rank=0 loss=0.4286
+  Epoch 87: loss=0.3568, acc=87.8%, time=4.4s
+STEP ts=1790436250.068 kind=train batch_idx=610 tokens=8192 passes=1 node=0 rank=0 loss=0.3043
+STEP ts=1790436250.455 kind=train batch_idx=611 tokens=8192 passes=1 node=0 rank=0 loss=0.3101
+STEP ts=1790436251.095 kind=train batch_idx=612 tokens=8192 passes=1 node=0 rank=0 loss=0.3293
+STEP ts=1790436251.482 kind=train batch_idx=613 tokens=8192 passes=1 node=0 rank=0 loss=0.2592
+STEP ts=1790436252.293 kind=train batch_idx=614 tokens=8192 passes=1 node=0 rank=0 loss=0.3362
+STEP ts=1790436252.677 kind=train batch_idx=615 tokens=8192 passes=1 node=0 rank=0 loss=0.2939
+STEP ts=1790436252.755 kind=train batch_idx=616 tokens=8192 passes=1 node=0 rank=0 loss=0.4545
+  Epoch 88: loss=0.3268, acc=89.3%, time=4.7s
+STEP ts=1790436254.848 kind=train batch_idx=617 tokens=8192 passes=1 node=0 rank=0 loss=0.3632
+STEP ts=1790436255.236 kind=train batch_idx=618 tokens=8192 passes=1 node=0 rank=0 loss=0.2975
+STEP ts=1790436255.757 kind=train batch_idx=619 tokens=8192 passes=1 node=0 rank=0 loss=0.3095
+STEP ts=1790436256.143 kind=train batch_idx=620 tokens=8192 passes=1 node=0 rank=0 loss=0.2877
+STEP ts=1790436257.043 kind=train batch_idx=621 tokens=8192 passes=1 node=0 rank=0 loss=0.3095
+STEP ts=1790436257.428 kind=train batch_idx=622 tokens=8192 passes=1 node=0 rank=0 loss=0.3093
+STEP ts=1790436257.507 kind=train batch_idx=623 tokens=8192 passes=1 node=0 rank=0 loss=0.9319
+  Epoch 89: loss=0.4012, acc=88.6%, time=4.7s
+STEP ts=1790436259.569 kind=train batch_idx=624 tokens=8192 passes=1 node=0 rank=0 loss=0.3852
+STEP ts=1790436259.958 kind=train batch_idx=625 tokens=8192 passes=1 node=0 rank=0 loss=0.3218
+STEP ts=1790436260.522 kind=train batch_idx=626 tokens=8192 passes=1 node=0 rank=0 loss=0.2892
+STEP ts=1790436260.910 kind=train batch_idx=627 tokens=8192 passes=1 node=0 rank=0 loss=0.3429
+STEP ts=1790436261.485 kind=train batch_idx=628 tokens=8192 passes=1 node=0 rank=0 loss=0.2764
+STEP ts=1790436261.869 kind=train batch_idx=629 tokens=8192 passes=1 node=0 rank=0 loss=0.3449
+STEP ts=1790436261.959 kind=train batch_idx=630 tokens=8192 passes=1 node=0 rank=0 loss=0.5908
+  Epoch 90: loss=0.3645, acc=88.5%, time=4.5s
+STEP ts=1790436263.955 kind=train batch_idx=631 tokens=8192 passes=1 node=0 rank=0 loss=0.3356
+STEP ts=1790436264.344 kind=train batch_idx=632 tokens=8192 passes=1 node=0 rank=0 loss=0.3018
+STEP ts=1790436265.045 kind=train batch_idx=633 tokens=8192 passes=1 node=0 rank=0 loss=0.4091
+STEP ts=1790436265.432 kind=train batch_idx=634 tokens=8192 passes=1 node=0 rank=0 loss=0.2820
+STEP ts=1790436266.210 kind=train batch_idx=635 tokens=8192 passes=1 node=0 rank=0 loss=0.3127
+STEP ts=1790436266.595 kind=train batch_idx=636 tokens=8192 passes=1 node=0 rank=0 loss=0.2490
+STEP ts=1790436266.673 kind=train batch_idx=637 tokens=8192 passes=1 node=0 rank=0 loss=0.7870
+  Epoch 91: loss=0.3825, acc=88.3%, time=4.6s
+STEP ts=1790436268.702 kind=train batch_idx=638 tokens=8192 passes=1 node=0 rank=0 loss=0.3275
+STEP ts=1790436269.091 kind=train batch_idx=639 tokens=8192 passes=1 node=0 rank=0 loss=0.3671
+STEP ts=1790436269.634 kind=train batch_idx=640 tokens=8192 passes=1 node=0 rank=0 loss=0.3006
+STEP ts=1790436270.022 kind=train batch_idx=641 tokens=8192 passes=1 node=0 rank=0 loss=0.2643
+STEP ts=1790436270.600 kind=train batch_idx=642 tokens=8192 passes=1 node=0 rank=0 loss=0.3042
+STEP ts=1790436270.985 kind=train batch_idx=643 tokens=8192 passes=1 node=0 rank=0 loss=0.2659
+STEP ts=1790436271.069 kind=train batch_idx=644 tokens=8192 passes=1 node=0 rank=0 loss=0.5811
+  Epoch 92: loss=0.3444, acc=89.2%, time=4.5s
+STEP ts=1790436273.102 kind=train batch_idx=645 tokens=8192 passes=1 node=0 rank=0 loss=0.3341
+STEP ts=1790436273.489 kind=train batch_idx=646 tokens=8192 passes=1 node=0 rank=0 loss=0.2792
+STEP ts=1790436274.065 kind=train batch_idx=647 tokens=8192 passes=1 node=0 rank=0 loss=0.3162
+STEP ts=1790436274.454 kind=train batch_idx=648 tokens=8192 passes=1 node=0 rank=0 loss=0.2901
+STEP ts=1790436275.236 kind=train batch_idx=649 tokens=8192 passes=1 node=0 rank=0 loss=0.2517
+STEP ts=1790436275.621 kind=train batch_idx=650 tokens=8192 passes=1 node=0 rank=0 loss=0.2397
+STEP ts=1790436275.699 kind=train batch_idx=651 tokens=8192 passes=1 node=0 rank=0 loss=0.3803
+  Epoch 93: loss=0.2987, acc=90.2%, time=4.6s
+STEP ts=1790436277.685 kind=train batch_idx=652 tokens=8192 passes=1 node=0 rank=0 loss=0.3506
+STEP ts=1790436278.073 kind=train batch_idx=653 tokens=8192 passes=1 node=0 rank=0 loss=0.2553
+STEP ts=1790436278.663 kind=train batch_idx=654 tokens=8192 passes=1 node=0 rank=0 loss=0.2678
+STEP ts=1790436279.049 kind=train batch_idx=655 tokens=8192 passes=1 node=0 rank=0 loss=0.2478
+STEP ts=1790436279.875 kind=train batch_idx=656 tokens=8192 passes=1 node=0 rank=0 loss=0.2465
+STEP ts=1790436280.260 kind=train batch_idx=657 tokens=8192 passes=1 node=0 rank=0 loss=0.2241
+STEP ts=1790436280.344 kind=train batch_idx=658 tokens=8192 passes=1 node=0 rank=0 loss=0.1659
+  Epoch 94: loss=0.2511, acc=91.2%, time=4.6s
+STEP ts=1790436282.356 kind=train batch_idx=659 tokens=8192 passes=1 node=0 rank=0 loss=0.2469
+STEP ts=1790436282.743 kind=train batch_idx=660 tokens=8192 passes=1 node=0 rank=0 loss=0.2021
+STEP ts=1790436283.425 kind=train batch_idx=661 tokens=8192 passes=1 node=0 rank=0 loss=0.2587
+STEP ts=1790436283.812 kind=train batch_idx=662 tokens=8192 passes=1 node=0 rank=0 loss=0.2126
+STEP ts=1790436284.417 kind=train batch_idx=663 tokens=8192 passes=1 node=0 rank=0 loss=0.2762
+STEP ts=1790436284.802 kind=train batch_idx=664 tokens=8192 passes=1 node=0 rank=0 loss=0.2015
+STEP ts=1790436284.882 kind=train batch_idx=665 tokens=8192 passes=1 node=0 rank=0 loss=0.3405
+  Epoch 95: loss=0.2483, acc=92.0%, time=4.5s
+STEP ts=1790436286.889 kind=train batch_idx=666 tokens=8192 passes=1 node=0 rank=0 loss=0.2224
+STEP ts=1790436287.276 kind=train batch_idx=667 tokens=8192 passes=1 node=0 rank=0 loss=0.2501
+STEP ts=1790436287.928 kind=train batch_idx=668 tokens=8192 passes=1 node=0 rank=0 loss=0.2487
+STEP ts=1790436288.314 kind=train batch_idx=669 tokens=8192 passes=1 node=0 rank=0 loss=0.2212
+STEP ts=1790436288.948 kind=train batch_idx=670 tokens=8192 passes=1 node=0 rank=0 loss=0.2373
+STEP ts=1790436289.333 kind=train batch_idx=671 tokens=8192 passes=1 node=0 rank=0 loss=0.2329
+STEP ts=1790436289.414 kind=train batch_idx=672 tokens=8192 passes=1 node=0 rank=0 loss=0.3848
+  Epoch 96: loss=0.2568, acc=91.9%, time=4.5s
+STEP ts=1790436291.394 kind=train batch_idx=673 tokens=8192 passes=1 node=0 rank=0 loss=0.3033
+STEP ts=1790436291.785 kind=train batch_idx=674 tokens=8192 passes=1 node=0 rank=0 loss=0.2606
+STEP ts=1790436292.385 kind=train batch_idx=675 tokens=8192 passes=1 node=0 rank=0 loss=0.2001
+STEP ts=1790436292.772 kind=train batch_idx=676 tokens=8192 passes=1 node=0 rank=0 loss=0.2974
+STEP ts=1790436293.582 kind=train batch_idx=677 tokens=8192 passes=1 node=0 rank=0 loss=0.2887
+STEP ts=1790436293.967 kind=train batch_idx=678 tokens=8192 passes=1 node=0 rank=0 loss=0.2295
+STEP ts=1790436294.048 kind=train batch_idx=679 tokens=8192 passes=1 node=0 rank=0 loss=0.5913
+  Epoch 97: loss=0.3101, acc=91.4%, time=4.6s
+STEP ts=1790436296.055 kind=train batch_idx=680 tokens=8192 passes=1 node=0 rank=0 loss=0.2902
+STEP ts=1790436296.442 kind=train batch_idx=681 tokens=8192 passes=1 node=0 rank=0 loss=0.2062
+STEP ts=1790436297.023 kind=train batch_idx=682 tokens=8192 passes=1 node=0 rank=0 loss=0.2251
+STEP ts=1790436297.409 kind=train batch_idx=683 tokens=8192 passes=1 node=0 rank=0 loss=0.1991
+STEP ts=1790436298.111 kind=train batch_idx=684 tokens=8192 passes=1 node=0 rank=0 loss=0.2395
+STEP ts=1790436298.495 kind=train batch_idx=685 tokens=8192 passes=1 node=0 rank=0 loss=0.2026
+STEP ts=1790436298.573 kind=train batch_idx=686 tokens=8192 passes=1 node=0 rank=0 loss=0.5644
+  Epoch 98: loss=0.2753, acc=91.6%, time=4.5s
+STEP ts=1790436300.608 kind=train batch_idx=687 tokens=8192 passes=1 node=0 rank=0 loss=0.2512
+STEP ts=1790436300.995 kind=train batch_idx=688 tokens=8192 passes=1 node=0 rank=0 loss=0.2169
+STEP ts=1790436301.567 kind=train batch_idx=689 tokens=8192 passes=1 node=0 rank=0 loss=0.2105
+STEP ts=1790436301.954 kind=train batch_idx=690 tokens=8192 passes=1 node=0 rank=0 loss=0.2523
+STEP ts=1790436302.564 kind=train batch_idx=691 tokens=8192 passes=1 node=0 rank=0 loss=0.1878
+STEP ts=1790436302.949 kind=train batch_idx=692 tokens=8192 passes=1 node=0 rank=0 loss=0.2236
+STEP ts=1790436303.028 kind=train batch_idx=693 tokens=8192 passes=1 node=0 rank=0 loss=0.2343
+  Epoch 99: loss=0.2252, acc=92.6%, time=4.5s
+STEP ts=1790436305.120 kind=train batch_idx=694 tokens=8192 passes=1 node=0 rank=0 loss=0.2795
+STEP ts=1790436305.509 kind=train batch_idx=695 tokens=8192 passes=1 node=0 rank=0 loss=0.2414
+STEP ts=1790436306.045 kind=train batch_idx=696 tokens=8192 passes=1 node=0 rank=0 loss=0.2455
+STEP ts=1790436306.433 kind=train batch_idx=697 tokens=8192 passes=1 node=0 rank=0 loss=0.2641
+STEP ts=1790436307.274 kind=train batch_idx=698 tokens=8192 passes=1 node=0 rank=0 loss=0.2178
+STEP ts=1790436307.658 kind=train batch_idx=699 tokens=8192 passes=1 node=0 rank=0 loss=0.2195
+STEP ts=1790436307.737 kind=train batch_idx=700 tokens=8192 passes=1 node=0 rank=0 loss=0.2235
+  Epoch 100: loss=0.2416, acc=92.1%, time=4.6s
+STEP ts=1790436309.765 kind=train batch_idx=701 tokens=8192 passes=1 node=0 rank=0 loss=0.1905
+STEP ts=1790436310.152 kind=train batch_idx=702 tokens=8192 passes=1 node=0 rank=0 loss=0.2390
+STEP ts=1790436310.837 kind=train batch_idx=703 tokens=8192 passes=1 node=0 rank=0 loss=0.1765
+STEP ts=1790436311.223 kind=train batch_idx=704 tokens=8192 passes=1 node=0 rank=0 loss=0.2252
+STEP ts=1790436312.025 kind=train batch_idx=705 tokens=8192 passes=1 node=0 rank=0 loss=0.1962
+STEP ts=1790436312.409 kind=train batch_idx=706 tokens=8192 passes=1 node=0 rank=0 loss=0.1940
+STEP ts=1790436312.487 kind=train batch_idx=707 tokens=8192 passes=1 node=0 rank=0 loss=0.5847
+  Epoch 101: loss=0.2580, acc=93.1%, time=4.7s
+STEP ts=1790436314.512 kind=train batch_idx=708 tokens=8192 passes=1 node=0 rank=0 loss=0.1957
+STEP ts=1790436314.903 kind=train batch_idx=709 tokens=8192 passes=1 node=0 rank=0 loss=0.2077
+STEP ts=1790436315.476 kind=train batch_idx=710 tokens=8192 passes=1 node=0 rank=0 loss=0.2489
+STEP ts=1790436315.865 kind=train batch_idx=711 tokens=8192 passes=1 node=0 rank=0 loss=0.1992
+STEP ts=1790436316.753 kind=train batch_idx=712 tokens=8192 passes=1 node=0 rank=0 loss=0.2052
+STEP ts=1790436317.138 kind=train batch_idx=713 tokens=8192 passes=1 node=0 rank=0 loss=0.2049
+STEP ts=1790436317.218 kind=train batch_idx=714 tokens=8192 passes=1 node=0 rank=0 loss=0.4365
+  Epoch 102: loss=0.2426, acc=92.5%, time=4.8s
+STEP ts=1790436319.198 kind=train batch_idx=715 tokens=8192 passes=1 node=0 rank=0 loss=0.2831
+STEP ts=1790436319.586 kind=train batch_idx=716 tokens=8192 passes=1 node=0 rank=0 loss=0.1809
+STEP ts=1790436320.268 kind=train batch_idx=717 tokens=8192 passes=1 node=0 rank=0 loss=0.2806
+STEP ts=1790436320.655 kind=train batch_idx=718 tokens=8192 passes=1 node=0 rank=0 loss=0.2433
+STEP ts=1790436321.522 kind=train batch_idx=719 tokens=8192 passes=1 node=0 rank=0 loss=0.2287
+STEP ts=1790436321.907 kind=train batch_idx=720 tokens=8192 passes=1 node=0 rank=0 loss=0.1798
+STEP ts=1790436321.986 kind=train batch_idx=721 tokens=8192 passes=1 node=0 rank=0 loss=0.2331
+  Epoch 103: loss=0.2328, acc=91.6%, time=4.7s
+STEP ts=1790436324.034 kind=train batch_idx=722 tokens=8192 passes=1 node=0 rank=0 loss=0.2192
+STEP ts=1790436324.422 kind=train batch_idx=723 tokens=8192 passes=1 node=0 rank=0 loss=0.2081
+STEP ts=1790436325.021 kind=train batch_idx=724 tokens=8192 passes=1 node=0 rank=0 loss=0.1815
+STEP ts=1790436325.407 kind=train batch_idx=725 tokens=8192 passes=1 node=0 rank=0 loss=0.2488
+STEP ts=1790436326.276 kind=train batch_idx=726 tokens=8192 passes=1 node=0 rank=0 loss=0.2418
+STEP ts=1790436326.661 kind=train batch_idx=727 tokens=8192 passes=1 node=0 rank=0 loss=0.2293
+STEP ts=1790436326.740 kind=train batch_idx=728 tokens=8192 passes=1 node=0 rank=0 loss=0.3199
+  Epoch 104: loss=0.2355, acc=92.7%, time=4.8s
+STEP ts=1790436328.696 kind=train batch_idx=729 tokens=8192 passes=1 node=0 rank=0 loss=0.2219
+STEP ts=1790436329.087 kind=train batch_idx=730 tokens=8192 passes=1 node=0 rank=0 loss=0.2396
+STEP ts=1790436329.798 kind=train batch_idx=731 tokens=8192 passes=1 node=0 rank=0 loss=0.3157
+STEP ts=1790436330.187 kind=train batch_idx=732 tokens=8192 passes=1 node=0 rank=0 loss=0.1749
+STEP ts=1790436331.061 kind=train batch_idx=733 tokens=8192 passes=1 node=0 rank=0 loss=0.2297
+STEP ts=1790436331.445 kind=train batch_idx=734 tokens=8192 passes=1 node=0 rank=0 loss=0.1433
+STEP ts=1790436331.525 kind=train batch_idx=735 tokens=8192 passes=1 node=0 rank=0 loss=0.3462
+  Epoch 105: loss=0.2387, acc=92.1%, time=4.7s
+STEP ts=1790436333.579 kind=train batch_idx=736 tokens=8192 passes=1 node=0 rank=0 loss=0.2184
+STEP ts=1790436333.967 kind=train batch_idx=737 tokens=8192 passes=1 node=0 rank=0 loss=0.2283
+STEP ts=1790436334.548 kind=train batch_idx=738 tokens=8192 passes=1 node=0 rank=0 loss=0.2022
+STEP ts=1790436334.935 kind=train batch_idx=739 tokens=8192 passes=1 node=0 rank=0 loss=0.2236
+STEP ts=1790436335.974 kind=train batch_idx=740 tokens=8192 passes=1 node=0 rank=0 loss=0.1667
+STEP ts=1790436336.358 kind=train batch_idx=741 tokens=8192 passes=1 node=0 rank=0 loss=0.2220
+STEP ts=1790436336.438 kind=train batch_idx=742 tokens=8192 passes=1 node=0 rank=0 loss=0.3914
+  Epoch 106: loss=0.2361, acc=92.9%, time=4.8s
+STEP ts=1790436338.405 kind=train batch_idx=743 tokens=8192 passes=1 node=0 rank=0 loss=0.2737
+STEP ts=1790436338.797 kind=train batch_idx=744 tokens=8192 passes=1 node=0 rank=0 loss=0.2371
+STEP ts=1790436339.365 kind=train batch_idx=745 tokens=8192 passes=1 node=0 rank=0 loss=0.1302
+STEP ts=1790436339.751 kind=train batch_idx=746 tokens=8192 passes=1 node=0 rank=0 loss=0.1601
+STEP ts=1790436340.411 kind=train batch_idx=747 tokens=8192 passes=1 node=0 rank=0 loss=0.1782
+STEP ts=1790436340.795 kind=train batch_idx=748 tokens=8192 passes=1 node=0 rank=0 loss=0.1840
+STEP ts=1790436340.875 kind=train batch_idx=749 tokens=8192 passes=1 node=0 rank=0 loss=0.3386
+  Epoch 107: loss=0.2146, acc=93.4%, time=4.5s
+STEP ts=1790436342.884 kind=train batch_idx=750 tokens=8192 passes=1 node=0 rank=0 loss=0.1666
+STEP ts=1790436343.272 kind=train batch_idx=751 tokens=8192 passes=1 node=0 rank=0 loss=0.1981
+STEP ts=1790436343.842 kind=train batch_idx=752 tokens=8192 passes=1 node=0 rank=0 loss=0.1571
+STEP ts=1790436344.230 kind=train batch_idx=753 tokens=8192 passes=1 node=0 rank=0 loss=0.1870
+STEP ts=1790436344.890 kind=train batch_idx=754 tokens=8192 passes=1 node=0 rank=0 loss=0.1648
+STEP ts=1790436345.275 kind=train batch_idx=755 tokens=8192 passes=1 node=0 rank=0 loss=0.1750
+STEP ts=1790436345.365 kind=train batch_idx=756 tokens=8192 passes=1 node=0 rank=0 loss=0.3214
+  Epoch 108: loss=0.1957, acc=94.3%, time=4.5s
+STEP ts=1790436347.366 kind=train batch_idx=757 tokens=8192 passes=1 node=0 rank=0 loss=0.1760
+STEP ts=1790436347.755 kind=train batch_idx=758 tokens=8192 passes=1 node=0 rank=0 loss=0.2198
+STEP ts=1790436348.332 kind=train batch_idx=759 tokens=8192 passes=1 node=0 rank=0 loss=0.1774
+STEP ts=1790436348.721 kind=train batch_idx=760 tokens=8192 passes=1 node=0 rank=0 loss=0.1531
+STEP ts=1790436349.565 kind=train batch_idx=761 tokens=8192 passes=1 node=0 rank=0 loss=0.1756
+STEP ts=1790436349.953 kind=train batch_idx=762 tokens=8192 passes=1 node=0 rank=0 loss=0.1850
+STEP ts=1790436350.043 kind=train batch_idx=763 tokens=8192 passes=1 node=0 rank=0 loss=0.5762
+  Epoch 109: loss=0.2376, acc=93.9%, time=4.6s
+STEP ts=1790436352.048 kind=train batch_idx=764 tokens=8192 passes=1 node=0 rank=0 loss=0.1453
+STEP ts=1790436352.436 kind=train batch_idx=765 tokens=8192 passes=1 node=0 rank=0 loss=0.1705
+STEP ts=1790436353.037 kind=train batch_idx=766 tokens=8192 passes=1 node=0 rank=0 loss=0.2362
+STEP ts=1790436353.425 kind=train batch_idx=767 tokens=8192 passes=1 node=0 rank=0 loss=0.1587
+STEP ts=1790436354.131 kind=train batch_idx=768 tokens=8192 passes=1 node=0 rank=0 loss=0.2183
+STEP ts=1790436354.516 kind=train batch_idx=769 tokens=8192 passes=1 node=0 rank=0 loss=0.1335
+STEP ts=1790436354.594 kind=train batch_idx=770 tokens=8192 passes=1 node=0 rank=0 loss=0.2097
+  Epoch 110: loss=0.1818, acc=94.6%, time=4.6s
+STEP ts=1790436356.654 kind=train batch_idx=771 tokens=8192 passes=1 node=0 rank=0 loss=0.1751
+STEP ts=1790436357.042 kind=train batch_idx=772 tokens=8192 passes=1 node=0 rank=0 loss=0.1930
+STEP ts=1790436357.633 kind=train batch_idx=773 tokens=8192 passes=1 node=0 rank=0 loss=0.1463
+STEP ts=1790436358.020 kind=train batch_idx=774 tokens=8192 passes=1 node=0 rank=0 loss=0.1758
+STEP ts=1790436358.663 kind=train batch_idx=775 tokens=8192 passes=1 node=0 rank=0 loss=0.1571
+STEP ts=1790436359.048 kind=train batch_idx=776 tokens=8192 passes=1 node=0 rank=0 loss=0.1936
+STEP ts=1790436359.127 kind=train batch_idx=777 tokens=8192 passes=1 node=0 rank=0 loss=0.2659
+  Epoch 111: loss=0.1867, acc=94.0%, time=4.5s
+STEP ts=1790436361.128 kind=train batch_idx=778 tokens=8192 passes=1 node=0 rank=0 loss=0.1936
+STEP ts=1790436361.515 kind=train batch_idx=779 tokens=8192 passes=1 node=0 rank=0 loss=0.2033
+STEP ts=1790436362.089 kind=train batch_idx=780 tokens=8192 passes=1 node=0 rank=0 loss=0.2355
+STEP ts=1790436362.476 kind=train batch_idx=781 tokens=8192 passes=1 node=0 rank=0 loss=0.1715
+STEP ts=1790436363.310 kind=train batch_idx=782 tokens=8192 passes=1 node=0 rank=0 loss=0.1872
+STEP ts=1790436363.694 kind=train batch_idx=783 tokens=8192 passes=1 node=0 rank=0 loss=0.1384
+STEP ts=1790436363.776 kind=train batch_idx=784 tokens=8192 passes=1 node=0 rank=0 loss=0.3283
+  Epoch 112: loss=0.2083, acc=93.6%, time=4.7s
+STEP ts=1790436365.784 kind=train batch_idx=785 tokens=8192 passes=1 node=0 rank=0 loss=0.1971
+STEP ts=1790436366.171 kind=train batch_idx=786 tokens=8192 passes=1 node=0 rank=0 loss=0.1645
+STEP ts=1790436366.730 kind=train batch_idx=787 tokens=8192 passes=1 node=0 rank=0 loss=0.1603
+STEP ts=1790436367.118 kind=train batch_idx=788 tokens=8192 passes=1 node=0 rank=0 loss=0.1371
+STEP ts=1790436367.839 kind=train batch_idx=789 tokens=8192 passes=1 node=0 rank=0 loss=0.1370
+STEP ts=1790436368.224 kind=train batch_idx=790 tokens=8192 passes=1 node=0 rank=0 loss=0.1225
+STEP ts=1790436368.304 kind=train batch_idx=791 tokens=8192 passes=1 node=0 rank=0 loss=0.2605
+  Epoch 113: loss=0.1684, acc=95.0%, time=4.5s
+STEP ts=1790436370.364 kind=train batch_idx=792 tokens=8192 passes=1 node=0 rank=0 loss=0.1874
+STEP ts=1790436370.752 kind=train batch_idx=793 tokens=8192 passes=1 node=0 rank=0 loss=0.1583
+STEP ts=1790436371.417 kind=train batch_idx=794 tokens=8192 passes=1 node=0 rank=0 loss=0.1763
+STEP ts=1790436371.805 kind=train batch_idx=795 tokens=8192 passes=1 node=0 rank=0 loss=0.1572
+STEP ts=1790436372.598 kind=train batch_idx=796 tokens=8192 passes=1 node=0 rank=0 loss=0.1452
+STEP ts=1790436372.983 kind=train batch_idx=797 tokens=8192 passes=1 node=0 rank=0 loss=0.1307
+STEP ts=1790436373.061 kind=train batch_idx=798 tokens=8192 passes=1 node=0 rank=0 loss=0.2642
+  Epoch 114: loss=0.1742, acc=95.3%, time=4.8s
+STEP ts=1790436375.085 kind=train batch_idx=799 tokens=8192 passes=1 node=0 rank=0 loss=0.1402
+STEP ts=1790436375.472 kind=train batch_idx=800 tokens=8192 passes=1 node=0 rank=0 loss=0.1539
+STEP ts=1790436376.063 kind=train batch_idx=801 tokens=8192 passes=1 node=0 rank=0 loss=0.1475
+STEP ts=1790436376.449 kind=train batch_idx=802 tokens=8192 passes=1 node=0 rank=0 loss=0.1350
+STEP ts=1790436377.247 kind=train batch_idx=803 tokens=8192 passes=1 node=0 rank=0 loss=0.1090
+STEP ts=1790436377.631 kind=train batch_idx=804 tokens=8192 passes=1 node=0 rank=0 loss=0.0942
+STEP ts=1790436377.709 kind=train batch_idx=805 tokens=8192 passes=1 node=0 rank=0 loss=0.1424
+  Epoch 115: loss=0.1318, acc=95.6%, time=4.6s
+STEP ts=1790436379.698 kind=train batch_idx=806 tokens=8192 passes=1 node=0 rank=0 loss=0.1482
+STEP ts=1790436380.086 kind=train batch_idx=807 tokens=8192 passes=1 node=0 rank=0 loss=0.1599
+STEP ts=1790436380.677 kind=train batch_idx=808 tokens=8192 passes=1 node=0 rank=0 loss=0.1579
+STEP ts=1790436381.064 kind=train batch_idx=809 tokens=8192 passes=1 node=0 rank=0 loss=0.1311
+STEP ts=1790436381.875 kind=train batch_idx=810 tokens=8192 passes=1 node=0 rank=0 loss=0.1306
+STEP ts=1790436382.260 kind=train batch_idx=811 tokens=8192 passes=1 node=0 rank=0 loss=0.0863
+STEP ts=1790436382.346 kind=train batch_idx=812 tokens=8192 passes=1 node=0 rank=0 loss=0.3697
+  Epoch 116: loss=0.1691, acc=95.1%, time=4.6s
+STEP ts=1790436384.348 kind=train batch_idx=813 tokens=8192 passes=1 node=0 rank=0 loss=0.1060
+STEP ts=1790436384.737 kind=train batch_idx=814 tokens=8192 passes=1 node=0 rank=0 loss=0.1885
+STEP ts=1790436385.364 kind=train batch_idx=815 tokens=8192 passes=1 node=0 rank=0 loss=0.1104
+STEP ts=1790436385.751 kind=train batch_idx=816 tokens=8192 passes=1 node=0 rank=0 loss=0.1035
+STEP ts=1790436386.477 kind=train batch_idx=817 tokens=8192 passes=1 node=0 rank=0 loss=0.1032
+STEP ts=1790436386.861 kind=train batch_idx=818 tokens=8192 passes=1 node=0 rank=0 loss=0.1168
+STEP ts=1790436386.940 kind=train batch_idx=819 tokens=8192 passes=1 node=0 rank=0 loss=0.2444
+  Epoch 117: loss=0.1390, acc=96.0%, time=4.6s
+STEP ts=1790436388.939 kind=train batch_idx=820 tokens=8192 passes=1 node=0 rank=0 loss=0.0855
+STEP ts=1790436389.327 kind=train batch_idx=821 tokens=8192 passes=1 node=0 rank=0 loss=0.1264
+STEP ts=1790436389.891 kind=train batch_idx=822 tokens=8192 passes=1 node=0 rank=0 loss=0.0926
+STEP ts=1790436390.278 kind=train batch_idx=823 tokens=8192 passes=1 node=0 rank=0 loss=0.1411
+STEP ts=1790436391.093 kind=train batch_idx=824 tokens=8192 passes=1 node=0 rank=0 loss=0.1249
+STEP ts=1790436391.477 kind=train batch_idx=825 tokens=8192 passes=1 node=0 rank=0 loss=0.1258
+STEP ts=1790436391.555 kind=train batch_idx=826 tokens=8192 passes=1 node=0 rank=0 loss=0.2516
+  Epoch 118: loss=0.1354, acc=96.5%, time=4.7s
+STEP ts=1790436393.572 kind=train batch_idx=827 tokens=8192 passes=1 node=0 rank=0 loss=0.1106
+STEP ts=1790436393.960 kind=train batch_idx=828 tokens=8192 passes=1 node=0 rank=0 loss=0.1530
+STEP ts=1790436394.521 kind=train batch_idx=829 tokens=8192 passes=1 node=0 rank=0 loss=0.1805
+STEP ts=1790436394.910 kind=train batch_idx=830 tokens=8192 passes=1 node=0 rank=0 loss=0.1186
+STEP ts=1790436395.615 kind=train batch_idx=831 tokens=8192 passes=1 node=0 rank=0 loss=0.1182
+STEP ts=1790436396.000 kind=train batch_idx=832 tokens=8192 passes=1 node=0 rank=0 loss=0.1294
+STEP ts=1790436396.080 kind=train batch_idx=833 tokens=8192 passes=1 node=0 rank=0 loss=0.1916
+  Epoch 119: loss=0.1431, acc=95.6%, time=4.5s
+STEP ts=1790436398.075 kind=train batch_idx=834 tokens=8192 passes=1 node=0 rank=0 loss=0.0879
+STEP ts=1790436398.465 kind=train batch_idx=835 tokens=8192 passes=1 node=0 rank=0 loss=0.1102
+STEP ts=1790436399.088 kind=train batch_idx=836 tokens=8192 passes=1 node=0 rank=0 loss=0.1387
+STEP ts=1790436399.475 kind=train batch_idx=837 tokens=8192 passes=1 node=0 rank=0 loss=0.1001
+STEP ts=1790436400.300 kind=train batch_idx=838 tokens=8192 passes=1 node=0 rank=0 loss=0.1115
+STEP ts=1790436400.683 kind=train batch_idx=839 tokens=8192 passes=1 node=0 rank=0 loss=0.1199
+STEP ts=1790436400.761 kind=train batch_idx=840 tokens=8192 passes=1 node=0 rank=0 loss=0.3252
+  Epoch 120: loss=0.1419, acc=96.4%, time=4.7s
+STEP ts=1790436402.756 kind=train batch_idx=841 tokens=8192 passes=1 node=0 rank=0 loss=0.1008
+STEP ts=1790436403.147 kind=train batch_idx=842 tokens=8192 passes=1 node=0 rank=0 loss=0.1618
+STEP ts=1790436403.807 kind=train batch_idx=843 tokens=8192 passes=1 node=0 rank=0 loss=0.1134
+STEP ts=1790436404.196 kind=train batch_idx=844 tokens=8192 passes=1 node=0 rank=0 loss=0.1151
+STEP ts=1790436404.978 kind=train batch_idx=845 tokens=8192 passes=1 node=0 rank=0 loss=0.1392
+STEP ts=1790436405.363 kind=train batch_idx=846 tokens=8192 passes=1 node=0 rank=0 loss=0.1150
+STEP ts=1790436405.445 kind=train batch_idx=847 tokens=8192 passes=1 node=0 rank=0 loss=0.1594
+  Epoch 121: loss=0.1293, acc=96.4%, time=4.7s
+STEP ts=1790436407.455 kind=train batch_idx=848 tokens=8192 passes=1 node=0 rank=0 loss=0.1306
+STEP ts=1790436407.844 kind=train batch_idx=849 tokens=8192 passes=1 node=0 rank=0 loss=0.1192
+STEP ts=1790436408.412 kind=train batch_idx=850 tokens=8192 passes=1 node=0 rank=0 loss=0.1737
+STEP ts=1790436408.800 kind=train batch_idx=851 tokens=8192 passes=1 node=0 rank=0 loss=0.1781
+STEP ts=1790436409.417 kind=train batch_idx=852 tokens=8192 passes=1 node=0 rank=0 loss=0.1288
+STEP ts=1790436409.801 kind=train batch_idx=853 tokens=8192 passes=1 node=0 rank=0 loss=0.0985
+STEP ts=1790436409.883 kind=train batch_idx=854 tokens=8192 passes=1 node=0 rank=0 loss=0.4184
+  Epoch 122: loss=0.1782, acc=95.1%, time=4.5s
+STEP ts=1790436411.856 kind=train batch_idx=855 tokens=8192 passes=1 node=0 rank=0 loss=0.1303
+STEP ts=1790436412.245 kind=train batch_idx=856 tokens=8192 passes=1 node=0 rank=0 loss=0.1091
+STEP ts=1790436412.869 kind=train batch_idx=857 tokens=8192 passes=1 node=0 rank=0 loss=0.1420
+STEP ts=1790436413.257 kind=train batch_idx=858 tokens=8192 passes=1 node=0 rank=0 loss=0.1521
+STEP ts=1790436414.107 kind=train batch_idx=859 tokens=8192 passes=1 node=0 rank=0 loss=0.1267
+STEP ts=1790436414.492 kind=train batch_idx=860 tokens=8192 passes=1 node=0 rank=0 loss=0.1365
+STEP ts=1790436414.572 kind=train batch_idx=861 tokens=8192 passes=1 node=0 rank=0 loss=0.4074
+  Epoch 123: loss=0.1720, acc=95.3%, time=4.7s
+STEP ts=1790436416.604 kind=train batch_idx=862 tokens=8192 passes=1 node=0 rank=0 loss=0.0946
+STEP ts=1790436416.991 kind=train batch_idx=863 tokens=8192 passes=1 node=0 rank=0 loss=0.1172
+STEP ts=1790436417.552 kind=train batch_idx=864 tokens=8192 passes=1 node=0 rank=0 loss=0.1195
+STEP ts=1790436417.942 kind=train batch_idx=865 tokens=8192 passes=1 node=0 rank=0 loss=0.1480
+STEP ts=1790436418.676 kind=train batch_idx=866 tokens=8192 passes=1 node=0 rank=0 loss=0.1027
+STEP ts=1790436419.061 kind=train batch_idx=867 tokens=8192 passes=1 node=0 rank=0 loss=0.1080
+STEP ts=1790436419.141 kind=train batch_idx=868 tokens=8192 passes=1 node=0 rank=0 loss=0.1798
+  Epoch 124: loss=0.1243, acc=96.2%, time=4.6s
+STEP ts=1790436421.148 kind=train batch_idx=869 tokens=8192 passes=1 node=0 rank=0 loss=0.1035
+STEP ts=1790436421.535 kind=train batch_idx=870 tokens=8192 passes=1 node=0 rank=0 loss=0.1256
+STEP ts=1790436422.132 kind=train batch_idx=871 tokens=8192 passes=1 node=0 rank=0 loss=0.1249
+STEP ts=1790436422.518 kind=train batch_idx=872 tokens=8192 passes=1 node=0 rank=0 loss=0.0989
+STEP ts=1790436423.256 kind=train batch_idx=873 tokens=8192 passes=1 node=0 rank=0 loss=0.0974
+STEP ts=1790436423.640 kind=train batch_idx=874 tokens=8192 passes=1 node=0 rank=0 loss=0.0818
+STEP ts=1790436423.720 kind=train batch_idx=875 tokens=8192 passes=1 node=0 rank=0 loss=0.2279
+  Epoch 125: loss=0.1228, acc=96.4%, time=4.6s
+STEP ts=1790436425.763 kind=train batch_idx=876 tokens=8192 passes=1 node=0 rank=0 loss=0.1242
+STEP ts=1790436426.150 kind=train batch_idx=877 tokens=8192 passes=1 node=0 rank=0 loss=0.1624
+STEP ts=1790436426.724 kind=train batch_idx=878 tokens=8192 passes=1 node=0 rank=0 loss=0.0941
+STEP ts=1790436427.114 kind=train batch_idx=879 tokens=8192 passes=1 node=0 rank=0 loss=0.1246
+STEP ts=1790436427.992 kind=train batch_idx=880 tokens=8192 passes=1 node=0 rank=0 loss=0.0688
+STEP ts=1790436428.377 kind=train batch_idx=881 tokens=8192 passes=1 node=0 rank=0 loss=0.0672
+STEP ts=1790436428.457 kind=train batch_idx=882 tokens=8192 passes=1 node=0 rank=0 loss=0.4042
+  Epoch 126: loss=0.1494, acc=96.5%, time=4.7s
+STEP ts=1790436430.531 kind=train batch_idx=883 tokens=8192 passes=1 node=0 rank=0 loss=0.0797
+STEP ts=1790436430.920 kind=train batch_idx=884 tokens=8192 passes=1 node=0 rank=0 loss=0.0806
+STEP ts=1790436431.510 kind=train batch_idx=885 tokens=8192 passes=1 node=0 rank=0 loss=0.1210
+STEP ts=1790436431.899 kind=train batch_idx=886 tokens=8192 passes=1 node=0 rank=0 loss=0.1037
+STEP ts=1790436432.640 kind=train batch_idx=887 tokens=8192 passes=1 node=0 rank=0 loss=0.1020
+STEP ts=1790436433.026 kind=train batch_idx=888 tokens=8192 passes=1 node=0 rank=0 loss=0.0817
+STEP ts=1790436433.115 kind=train batch_idx=889 tokens=8192 passes=1 node=0 rank=0 loss=0.2797
+  Epoch 127: loss=0.1212, acc=96.9%, time=4.6s
+STEP ts=1790436435.124 kind=train batch_idx=890 tokens=8192 passes=1 node=0 rank=0 loss=0.0582
+STEP ts=1790436435.511 kind=train batch_idx=891 tokens=8192 passes=1 node=0 rank=0 loss=0.0858
+STEP ts=1790436436.050 kind=train batch_idx=892 tokens=8192 passes=1 node=0 rank=0 loss=0.1021
+STEP ts=1790436436.438 kind=train batch_idx=893 tokens=8192 passes=1 node=0 rank=0 loss=0.0748
+STEP ts=1790436437.276 kind=train batch_idx=894 tokens=8192 passes=1 node=0 rank=0 loss=0.0957
+STEP ts=1790436437.664 kind=train batch_idx=895 tokens=8192 passes=1 node=0 rank=0 loss=0.0800
+STEP ts=1790436437.751 kind=train batch_idx=896 tokens=8192 passes=1 node=0 rank=0 loss=0.1313
+  Epoch 128: loss=0.0897, acc=97.4%, time=4.7s
+STEP ts=1790436439.771 kind=train batch_idx=897 tokens=8192 passes=1 node=0 rank=0 loss=0.0826
+STEP ts=1790436440.159 kind=train batch_idx=898 tokens=8192 passes=1 node=0 rank=0 loss=0.0789
+STEP ts=1790436440.823 kind=train batch_idx=899 tokens=8192 passes=1 node=0 rank=0 loss=0.0854
+STEP ts=1790436441.210 kind=train batch_idx=900 tokens=8192 passes=1 node=0 rank=0 loss=0.1114
+STEP ts=1790436441.857 kind=train batch_idx=901 tokens=8192 passes=1 node=0 rank=0 loss=0.0625
+STEP ts=1790436442.242 kind=train batch_idx=902 tokens=8192 passes=1 node=0 rank=0 loss=0.0809
+STEP ts=1790436442.327 kind=train batch_idx=903 tokens=8192 passes=1 node=0 rank=0 loss=0.4667
+  Epoch 129: loss=0.1384, acc=97.3%, time=4.6s
+STEP ts=1790436444.365 kind=train batch_idx=904 tokens=8192 passes=1 node=0 rank=0 loss=0.0593
+STEP ts=1790436444.753 kind=train batch_idx=905 tokens=8192 passes=1 node=0 rank=0 loss=0.0697
+  Epoch 130: loss=0.0184, acc=98.4%, time=3.7s
+DDP training complete. 130 epochs, 603.8s wall time
+2026-09-26 15:27:30,735 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-26 15:27:32,738 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,775 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu0_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,779 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_ddp_resnet50_b512_node0_gpu0_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,780 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,787 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu1_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,791 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_ddp_resnet50_b512_node0_gpu1_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,791 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,799 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu2_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,803 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_ddp_resnet50_b512_node0_gpu2_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,803 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,810 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu3_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,814 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_ddp_resnet50_b512_node0_gpu3_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,814 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,821 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu4_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,825 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_ddp_resnet50_b512_node0_gpu4_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,825 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,832 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu5_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,836 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_ddp_resnet50_b512_node0_gpu5_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,836 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,843 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu6_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,847 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_ddp_resnet50_b512_node0_gpu6_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,847 [spar.telemetry] INFO: Telemetry stopped. 626 samples collected.
+2026-09-26 15:27:32,855 [spar.telemetry] INFO: Saved 626 rows to data/s16_train_ddp_resnet50_b512_node0_gpu7_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet
+2026-09-26 15:27:32,858 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_ddp_resnet50_b512_node0_gpu7_NVIDIA_A100_SXM4_80GB_dcf103b75de5.parquet (626 rows)
+2026-09-26 15:27:32,860 [spar.multi_gpu] INFO: Multi-GPU run complete: dcf103b75de5 (rc=0)

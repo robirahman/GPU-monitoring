@@ -1,0 +1,101 @@
+{
+  "review_date": "2026-10-12",
+  "checkout": "ef544078f0ae6981b66e6351ac9687902033698e",
+  "source_directory": "/home/robi/workload-audit-2026-10-11",
+  "source_hashes": {
+    "workloads.csv": "fbc174af5ae2c79276995fa9acdc91757bbef937caba2fb9a2f06555761925fb",
+    "log_evidence.csv": "21b482edb6478d98aa99e5dc45bf7e953bab0da25076f19450347874483aacf9",
+    "waveforms.csv": "4ba85cf09e43ac5f49d73770bfba5aea78b550cde952029ba83460c00e7d2511",
+    "read_errors.csv": "a587a5eb1812dcd1ba29ec7cb0fc2fbddd8eb52da6b3d00533e6bffbeb906fe7",
+    "files.csv": "3bddb28389151ff42efa1b237c88e030be467bd8488b7d9cb7047650658b07a8",
+    "collection_quality.csv": "044dd44709f6f2c83b25bb7f3ed44fb8cbb9da0f1ae7aa21d56c05095f2b367d",
+    "hardware.csv": "29e0806b114c0c53a914548003faf3d82f5ac4af0b4e2a561c80a7b441486e10",
+    "role_coverage.csv": "279dd9389dbf08a4267a05fdd1915aaa7c41e92090f2ec0b44b89ea5d7ef814c",
+    "labels_for_review.csv": "7f5210383d1399b1161d7d6d4eb620ce3c4179c0a2f17a2adf838674b0399dc5",
+    "label_corrections.csv": "8345baca7d2e431cfc21e3aaa72b264e1a0d0bcba1871988a65b56320dae1861",
+    "missing_objects.csv": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "streams.csv": "1a5d147094f7c37978dccbf43454a00a9110a8745a8e69aad729932953028a67",
+    "jobs.csv": "580f5a1c399218acee832a455967c1b2b67f97fac6eeb1858a513f99b5d68fae"
+  },
+  "original_summary": {
+    "generated_utc": "2026-10-11T17:58:22.527231+00:00",
+    "commit": "3d46f414ef3818268224ca546b19c48b1d631eeb",
+    "code_sha256": {
+      "scripts/audit_data_inventory.py": "04daa458b10ae790fe4b7db8de6688b0566b66293a0547cacd3fa60399410cb5",
+      "classifier/workload_labels.py": "c3cdd399d5e4631251d1c560d91f7ea6d04a23c8c57905836a313802219a2431",
+      "classifier/data_sources.py": "67f03157b018d51d6e63835d2637ae9eab3ee73a8166b85e09aa8dc0083ea028",
+      "classifier/workload_descriptions.py": "b5bc2fa7c36fb5c9d26d89bae39bd9429ea3fe00068b16b1f0d29a6b998ac471",
+      "classifier/multinode_features.py": "700376534f357502ecf2420d49024142d5fe92c5ba6c39142a4bba53826ecf73"
+    },
+    "labels": "2026-10-11.1",
+    "families": "2026-10-11.1",
+    "completion": {
+      "unique_lfs_objects": 13675,
+      "lfs_bytes": 21121462961,
+      "missing_paths": 0,
+      "complete": true,
+      "verified_sha256": true,
+      "verified_objects": 13675
+    },
+    "parquet_paths": 16208,
+    "telemetry_json_paths": 8,
+    "unique_parquet_objects": 13709,
+    "quarantine_paths": 2213,
+    "read_errors": 1,
+    "accepted_accelerator_streams": 9913,
+    "accelerator_samples": 5590675,
+    "accelerator_stream_hours": 1538.298071907494,
+    "accelerator_covered_stream_hours": 1538.2845946189432,
+    "jobs": 2888,
+    "cells": 529,
+    "label_corrected_streams": 237,
+    "notes": [
+      "Accepted means outside quarantine, not verified useful compute.",
+      "Durations are timestamp spans and gap-capped coverage, not active optimizer time.",
+      "Legacy job identities use 20-second buckets and are provisional.",
+      "Completion is evidenced only for available logged hosts; inspect log_hosts against topology.",
+      "Raw waveforms and sidecars are counted separately from accelerator-hours.",
+      "Telemetry covers tracked files plus current code fixes; log evidence includes marked untracked local logs.",
+      "Device and host counts describe recorded telemetry; they do not prove every device participated in computation."
+    ],
+    "report_code_sha256": "6e2e9672cee2185ed70c2a8ef1e7a63daba9949dae1384dc8b289686e0ceb36d",
+    "label_comparison_code_sha256": "d3f0175f593f8730eeabdb4116cbf6b1162ea226fc2648bde72bc4737659d722",
+    "failed_jobs_excluded_from_training": 21,
+    "failed_job_stream_hours": 47.972966486679184,
+    "description_code_sha256": "2fdd7375fc2079428889e0b5e5f58da855a05d6f275302d9c0a692c145044545"
+  },
+  "label_schema": "2026-10-11.3",
+  "changed_objective_jobs": 7,
+  "checkout_verification": {
+    "pointer_paths": 16066,
+    "nonpointer_paths": 572,
+    "missing_paths": [],
+    "changed_paths": []
+  },
+  "external_objects_path_present": false,
+  "local_objects_path_present": false,
+  "supplemental_samples": 474,
+  "supplemental_accelerator_hours": 0.02638911379708184,
+  "caveats": [
+    "Main totals derive from the October 11 hash-verified scan, not a new raw-payload scan.",
+    "All saved data paths and their pointer identities or local bytes match this checkout.",
+    "Job objective labels are refreshed from current code; per-window labels are not calculated here.",
+    "October 11 job identities, completion metadata and expected widths remain provisional and dated.",
+    "Nonexcluded does not mean validated successful or eligible for classifier evaluation.",
+    "Accelerator-hours are summed per-device timestamp spans, not optimizer time.",
+    "Elapsed job hours sum reconstructed job durations; concurrent independent jobs may overlap.",
+    "Host count zero means unknown. Observed device counts include collector artifacts or incomplete collections.",
+    "Supplemental Week 7 JSONs are reported separately, not added to the saved-corpus totals.",
+    "This does not establish completeness of remote GCS buckets."
+  ],
+  "generator_sha256": "407715dde382dc1b5e975380f11c610639170ad73208f6c2baea290d12a6a959",
+  "output_sha256": {
+    "workloads.csv": "ddd33a9c2539f45718203b827af44107145c077e94b2b0b28331cf3b86a93c6c",
+    "supplemental_traces.csv": "2b48edaaf94892d84b063b19f1894844c5bf92f7ffce28b3a1eb832a5d183ee0",
+    "inventory.html": "b1195af70e750b8812f0d10427995dab2aff81da25c50ae0b3179df984d7ab84",
+    "hardware.csv": "2bf4cc3008e26423f00db8f596e0ae2f0691fcec3f25b8d7d7e2a86f5d8a5920",
+    "families.csv": "6bbe3364725ad15d46a7f12cc14326e0b0e4bba860997d193d7368f5a106de5d",
+    "categories.csv": "463ec4645f01a0d77a38efb5e946d194269cce13df1dc4964fd8a7626fac5b2c",
+    "jobs.csv": "8f6f5803e65fba85144f36bbcc3c122ade8d6cd32209310e973ecd652843d752"
+  }
+}
