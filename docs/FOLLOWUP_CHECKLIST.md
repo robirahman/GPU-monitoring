@@ -22,8 +22,10 @@ not useful training time. Historical job identities remain provisional.
   regressions; record failures and fixes before rebuilding caches.
 - [x] Check analysis input availability without hydrating the home filesystem;
   produce an exact missing object manifest for accelerator telemetry, NICs and logs.
-- [ ] Restore the required analysis objects to durable external storage and verify
-  their hashes. Do not require 20 GB of scope/waveform data for an NVML/NIC experiment.
+- [x] Restore the required analysis objects to durable external storage and verify
+  their hashes. All 14,716 selected paths / 667,994,709 unique bytes pass on
+  `spar-analysis-0`; [input verification](followup_execution_2026-10-12/verified_analysis_inputs.json).
+  The corrected evaluation is running in an isolated directory; results remain pending.
 - [ ] Rebuild content bound per stream and pooled job caches with the recovered
   logs and NIC sidecars. Record unresolved labels and sample/rank eligibility.
 - [ ] Run the corrected exhaustive family holdouts and paired campaign ablation.
@@ -46,9 +48,12 @@ not useful training time. Historical job identities remain provisional.
   both A100 allocations failed with a zone capacity shortage; no workload ran.
   Add bounded capacity-only retries, verified cleanup, immutable campaign source
   and a read-only analysis-host readiness probe.
+- [x] Repair NIC recorder shutdown after the first executed smoke exposed missing
+  final sidecars. All 16 workers completed 24 optimizer updates, but the admission
+  gate rejected the run. A real SIGTERM/parquet regression and 23 other tests pass.
 - [ ] Execute a live two-node smoke, inspect both hosts' receipts and telemetry,
-  then launch the first 30-minute repetition. Authentication is active; this
-  agent session currently cannot resolve the Google Cloud API hostname.
+  then launch the first 30-minute repetition. Cloud access is now available;
+  [live execution](followup_execution_2026-10-12/live_execution.json) records progress.
 
 ## Corpus accounting and recovery
 

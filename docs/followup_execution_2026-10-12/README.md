@@ -98,3 +98,15 @@ documents the implemented seeded pilot, runtime caps, checkpoint fixes and
 verified-output protocol. The repetition plan now includes workload seeds.
 Live smoke and collection remain pending; earlier input/evaluation records above
 are unchanged.
+
+## Live execution after network access was enabled
+
+Cloud API, SSH and object storage access now work. All 14,716 selected inputs
+(667,994,709 unique bytes) are restored and SHA256-verified on `spar-analysis-0`.
+The first cache build hit its 24 GiB memory limit; avoidable dataframe copies
+were removed and the evaluation relaunched in a separate directory.
+The first executed A100 smoke completed TP8 on all 16 workers but was rejected
+for missing final NIC files; a SIGTERM handling fix is pushed and a fresh
+campaign is running. [Live execution record](live_execution.json) and
+[verified input summary](verified_analysis_inputs.json) supersede the earlier
+access/input-blocked status above. No new classifier results are claimed.

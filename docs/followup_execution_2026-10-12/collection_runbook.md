@@ -2,10 +2,12 @@
 
 The [first live startup attempt](first_cloud_attempt.json), at 23:11 UTC on
 October 12, failed for both A100 nodes with `ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS`
-(`stockout`). **No smoke or collection workload ran.** The controller exited after
-checked stop requests; that version did not separately record final VM state. `gcloud auth list` confirms an active account;
-`gcloud compute instances list` fails here because the restricted agent session
-cannot resolve `compute.googleapis.com`. No further login is currently indicated.
+(`stockout`). **No smoke or collection workload ran in that first attempt.**
+Cloud API and SSH access were restored at 23:24 UTC. Both nodes then started,
+and TP8 completed on all 16 workers. The gate rejected that smoke because the
+NIC recorder did not flush final parquet on SIGTERM. This is now fixed and
+covered by a real subprocess regression. [Live execution](live_execution.json)
+records the fresh campaign and separate analysis run.
 The operator supplied the live listing in `gcloud-instances.local.json`. It
 contains `spar-a100-0` and `spar-a100-1` in `us-central1-c`, both stopped,
 `a2-highgpu-8g` with eight A100 accelerators each. No H100 instances are listed.
@@ -46,8 +48,8 @@ The running `spar-analysis-0` remains available for the separate evaluation.
 
 ## One-command A100 campaign
 
-Run this in regular Cloud Shell (the agent session still cannot resolve the
-Cloud API hostname). No additional login is indicated:
+Run this in an authenticated shell. Cloud API access now works directly from
+the agent session; do not start a duplicate controller while a campaign is active:
 
 ```bash
 cd /home/robi/GPU-monitoring
@@ -97,8 +99,9 @@ Follow progress with:
 tail -n 60 logs/followup_a100_collection.log
 ```
 
-The updated workflow passes 23 focused CPU tests and a CLI dry run; a successful
-live smoke remains pending. Google identifies this error as transient resource
+The updated workflow passes 24 focused CPU tests, including final NIC parquet
+saving after a real SIGTERM, and a CLI dry run. See the live execution record for
+the current smoke and collection status. Google identifies this error as transient resource
 availability, separate from quota, and recommends trying later as the first
 option. [Google Cloud guidance](https://docs.cloud.google.com/compute/docs/troubleshooting/troubleshooting-resource-availability). A successful run establishes recorded synthetic TP work and
 basic telemetry integrity. Further clock/phase-label review and scientific corpus
@@ -111,8 +114,12 @@ controls remain open checklist items.
 
 ## Remaining execution
 
-The full evaluation still needs the 420 MB of missing selected LFS objects
-identified in `input_summary.json`, restored to external storage. The new pilot
-launcher does not fetch or hydrate the historical corpus. GPU smoke, collection,
-GCS hash receipts, real evaluation results and useful-learning validation remain
-pending, and must not be marked complete from unit-test success.
+All historical evaluation inputs are now restored and hash-verified in
+`/var/tmp/spar_followup/20261012T232425Z/repo` on `spar-analysis-0`. Most missing
+payloads came from the VM's existing checkout; the remaining 633 objects
+(17,121,923 bytes) were fetched using the existing Cloud Shell GitHub login.
+No credentials were copied to the VM. The first cache build reached its 24 GiB memory cap. The retry removes
+redundant full-dataframe copies and runs in `memory_retry/` with two cache
+workers, a four-vCPU quota and the same memory cap. The shared analysis
+VM remains running after this job. Real results and useful-learning validation
+remain pending and must not be inferred from unit-test success.

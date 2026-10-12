@@ -1,0 +1,91 @@
+{
+  "updated_utc": "2026-10-12T23:40:24.721538+00:00",
+  "cloud_access": "API, SSH and GCS available; existing Google Cloud and GitHub authentication sufficient",
+  "failed_smoke": {
+    "campaign": "followup_a100_20261012T232425Z",
+    "run_id": "fc81b900ef98",
+    "nodes": [
+      "spar-a100-0",
+      "spar-a100-1"
+    ],
+    "gpu": "16 NVIDIA A100 SXM4 40GB across two hosts",
+    "workload": "s16_train_tp8",
+    "duration_requested_s": 60,
+    "queue_returncodes": [
+      0,
+      0
+    ],
+    "workers_completed": 16,
+    "optimizer_updates_per_worker": 24,
+    "worker_elapsed_s_range": [
+      63.911,
+      64.219
+    ],
+    "gpu_streams_per_node": 8,
+    "final_nic_files_per_node": 0,
+    "reason": "Default SIGTERM action bypassed the NIC recorder finally block; partial NIC checkpoints were preserved. Completion gate refused admission.",
+    "cleanup": "Controller interrupted after both durable failure records were inspected; cloud stop confirmed both TERMINATED before the next launch.",
+    "admitted_to_corpus": false,
+    "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T232425Z/"
+  },
+  "nic_fix": {
+    "commit": "f41745e886b9fc7ce34132d60f8afbf03bf33afb",
+    "behavior": "SIGTERM/SIGINT set an event; final NIC parquet is saved and partial checkpoint removed.",
+    "focused_tests_passed": 24,
+    "includes_real_sigterm_and_parquet_test": true
+  },
+  "current_gpu_campaign": {
+    "campaign": "followup_a100_20261012T233445Z",
+    "controller_pid": 23583,
+    "status": "smoke_services_started",
+    "collection_duration_s": 1800,
+    "collection_started": false,
+    "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/",
+    "log": "logs/followup_a100_collection.log"
+  },
+  "analysis": {
+    "host": "spar-analysis-0",
+    "zone": "us-central1-a",
+    "machine_type": "e2-standard-8",
+    "input_paths": 14716,
+    "unique_input_bytes": 667994709,
+    "missing_or_corrupt_paths": 0,
+    "verification": "verified_analysis_inputs.json",
+    "reused_hydrated_pointer_paths": 11707,
+    "downloaded_pointer_paths": 633,
+    "downloaded_bytes": 17121923,
+    "credentials_copied_to_vm": false,
+    "base_deployment_sha256": "d0231549aa5182de2cbea4379da10f79fd60e313f93ac887619ff0278ff783b8",
+    "base_source_commit": "157bcb0e588bac09ba3d734ea930268bad16af17",
+    "first_attempt": {
+      "started_utc": "2026-10-12T23:32:51Z",
+      "status": "oom-kill",
+      "phase": "cache",
+      "memory_cap_gib": 24,
+      "ended_utc": "2026-10-12T23:36:25Z",
+      "retained_at": "/var/tmp/spar_followup/20261012T232425Z/results"
+    },
+    "memory_fix": {
+      "description": "Release input frames after concatenation and reset filtered/sorted indices in place to avoid redundant full-corpus copies. Scientific selection and numeric precision unchanged.",
+      "files": {
+        "classifier/threeway_improved.py": "4dbe36d5f8236ec6d1edec0f6229e305e8a65e47e358c1dd170590d09c7a300f",
+        "classifier/data_sources.py": "2f529108e1b534b5ba2ae48ba2c7d69f7600b2e6b2493dd50bc66bbc851852cc"
+      },
+      "audit_tests_passed": 32,
+      "multinode_review_tests_passed": 6
+    },
+    "retry": {
+      "status": "running",
+      "systemd_unit": "spar-followup-analysis-20261012T232425Z-memory1",
+      "work": "/var/tmp/spar_followup/20261012T232425Z/memory_retry/results",
+      "workers": 2,
+      "cpu_quota_vcpus": 4,
+      "memory_limit_gib": 24,
+      "runtime_limit_s": 14400,
+      "stops_vm": false,
+      "started_utc": "2026-10-12T23:39:39Z"
+    },
+    "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/",
+    "classification_results": "pending; no new accuracy or robustness claim"
+  }
+}

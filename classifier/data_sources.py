@@ -108,4 +108,7 @@ def apply_quality_exclusions(frame, root=ROOT):
         import logging
         logging.getLogger(__name__).warning("Excluded %d rows / %d jobs with failed completion evidence (%s)",
                                             hit.sum(), identified.loc[hit, "job_id"].nunique(), manifest)
-    return identified.loc[~hit].reset_index(drop=True)
+    kept = identified.loc[~hit]
+    # Resetting the index must not allocate another full telemetry-frame copy.
+    kept.reset_index(drop=True, inplace=True)
+    return kept

@@ -162,6 +162,9 @@ def load_all_data() -> pd.DataFrame:
         raise RuntimeError("No telemetry data found")
 
     combined = pd.concat(frames, ignore_index=True)
+    # Concat has materialized the combined frame. Keeping every input frame
+    # alive through identity assignment and filtering doubles corpus residency.
+    del frames
 
     # Drop rows with no timestamp. A few parquets carry an all-null padding row
     # (every metric NaN, including ts/gpu_name/hostname) -- most likely a
@@ -198,7 +201,8 @@ def load_all_data() -> pd.DataFrame:
         _before = len(combined)
         combined = combined.drop_duplicates(subset=_key, keep="first")
         log.info(f"dedup on {_key}: {_before:,} -> {len(combined):,} rows")
-        combined = combined.sort_values(["run_id", "ts"]).reset_index(drop=True)
+        combined = combined.sort_values(["run_id", "ts"])
+        combined.reset_index(drop=True, inplace=True)
 
     # Add three-way labels
     from classifier.workload_labels import validate_labels
