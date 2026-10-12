@@ -118,6 +118,17 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
         if sig not in df.columns:
             df[sig] = np.nan
 
+    # Older NVML exports use text such as "N/A" for unavailable readings.
+    # Normalize before concatenation so a mixed numeric/text column remains
+    # serializable in the pooled raw cache. Missing readings are not zeros.
+    for sig in RAW_SIGNALS + ["encoder_util_pct", "decoder_util_pct"]:
+        if sig in df and not pd.api.types.is_numeric_dtype(df[sig]):
+            df[sig] = pd.to_numeric(df[sig], errors="coerce")
+    if "throttle_status" in df:
+        # This is categorical status metadata, not a numeric model feature.
+        df["throttle_status"] = df["throttle_status"].astype("string").replace(
+            {"N/A": pd.NA, "[N/A]": pd.NA})
+
     if "gpu_name" in df.columns:
         df["gpu_name"] = df["gpu_name"].map(_normalize_gpu_name)
 

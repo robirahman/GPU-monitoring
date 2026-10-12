@@ -13,6 +13,26 @@ from classifier.run_alerts import run_alert_rate
 
 
 class MultinodeReviewTests(unittest.TestCase):
+    def test_legacy_unavailable_sensors_round_trip_without_becoming_zero(self):
+        numeric = features._normalize_columns(pd.DataFrame({
+            "encoder_util_pct": [12], "decoder_util_pct": [3.5],
+            "throttle_status": [False], "gpu_utilization_pct": [42],
+        }))
+        legacy = features._normalize_columns(pd.DataFrame({
+            "encoder_util_pct": ["N/A"], "decoder_util_pct": ["N/A"],
+            "throttle_status": ["N/A"], "gpu_utilization_pct": ["N/A"],
+        }))
+        frame = pd.concat([numeric, legacy], ignore_index=True)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "mixed.parquet"
+            frame.to_parquet(path, index=False)
+            restored = pd.read_parquet(path)
+        self.assertEqual(restored.encoder_util_pct.iloc[0], 12)
+        self.assertEqual(restored.decoder_util_pct.iloc[0], 3.5)
+        self.assertEqual(restored.throttle_status.iloc[0], "False")
+        self.assertTrue(restored.loc[1, ["encoder_util_pct", "decoder_util_pct",
+                                        "gpu_utilization_pct", "throttle_status"]].isna().all())
+
     def test_single_node_cells_with_shared_run_id_remain_separate_jobs(self):
         paths = [Path(f"s8_train_fsdp1b_node{n}_gpu0_NVIDIA_H100.parquet")
                  for n in range(2)]

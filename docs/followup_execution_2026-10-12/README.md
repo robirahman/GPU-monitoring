@@ -110,3 +110,11 @@ for missing final NIC files; a SIGTERM handling fix is pushed and a fresh
 campaign is running. [Live execution record](live_execution.json) and
 [verified input summary](verified_analysis_inputs.json) supersede the earlier
 access/input-blocked status above. No new classifier results are claimed.
+
+The repaired A100 smoke is now [verified](verified_a100_smoke.json): 1,776 GPU
+samples and 222 NIC samples across 18 streams, with all 16 workers reporting
+progress. These smoke samples stay out of the scientific corpus. The 30-minute
+collection started at 23:48 UTC. The analysis retry passed the memory failure
+point, then found mixed numeric/`N/A` sensor values at parquet serialization;
+normalization is covered by a new round-trip regression and a third isolated
+analysis attempt is running. Current paths and status are in the live record.

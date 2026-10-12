@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-12T23:40:24.721538+00:00",
+  "updated_utc": "2026-10-12T23:49:05.590223+00:00",
   "cloud_access": "API, SSH and GCS available; existing Google Cloud and GitHub authentication sufficient",
   "failed_smoke": {
     "campaign": "followup_a100_20261012T232425Z",
@@ -37,11 +37,28 @@
   "current_gpu_campaign": {
     "campaign": "followup_a100_20261012T233445Z",
     "controller_pid": 23583,
-    "status": "smoke_services_started",
+    "status": "collecting",
     "collection_duration_s": 1800,
-    "collection_started": false,
+    "collection_started": true,
     "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/",
-    "log": "logs/followup_a100_collection.log"
+    "log": "logs/followup_a100_collection.log",
+    "smoke_status": "recorded_and_checked",
+    "smoke_gpu_streams": 16,
+    "smoke_nic_streams": 2,
+    "smoke_uploaded_artifacts_verified": 26,
+    "smoke_gpu_samples": 1776,
+    "smoke_nic_samples": 222,
+    "smoke_duration_s_range": [
+      106.01490092277527,
+      114.02530002593994
+    ],
+    "smoke_workers_with_progress": 16,
+    "smoke_admitted_to_corpus": false,
+    "smoke_summary": "verified_a100_smoke.json",
+    "between_stage_cleanup": "After validated downloads, both hosts were cloud-stopped and confirmed TERMINATED; controller resumed the collection stage.",
+    "collection_run_id": "4c6fe5ccea7a",
+    "collection_launch_utc": "2026-10-12T23:48:01Z",
+    "collection_seed": 8123401
   },
   "analysis": {
     "host": "spar-analysis-0",
@@ -72,10 +89,11 @@
         "classifier/data_sources.py": "2f529108e1b534b5ba2ae48ba2c7d69f7600b2e6b2493dd50bc66bbc851852cc"
       },
       "audit_tests_passed": 32,
-      "multinode_review_tests_passed": 6
+      "multinode_review_tests_passed": 6,
+      "commit": "c41862bb2fe2f26d3fd7bbd28cbb000f1df3184c"
     },
     "retry": {
-      "status": "running",
+      "status": "failed",
       "systemd_unit": "spar-followup-analysis-20261012T232425Z-memory1",
       "work": "/var/tmp/spar_followup/20261012T232425Z/memory_retry/results",
       "workers": 2,
@@ -83,9 +101,36 @@
       "memory_limit_gib": 24,
       "runtime_limit_s": 14400,
       "stops_vm": false,
-      "started_utc": "2026-10-12T23:39:39Z"
+      "started_utc": "2026-10-12T23:39:37Z",
+      "phase": "cache_spill",
+      "retained_telemetry_rows": 5419644,
+      "excluded_failed_job_rows": 172984,
+      "raw_loader_peak_rss_gb": 21.24,
+      "nic_sidecar_attached": true,
+      "failure": "ArrowInvalid: encoder_util_pct mixed numeric values and N/A text during raw parquet write"
     },
     "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/",
-    "classification_results": "pending; no new accuracy or robustness claim"
+    "classification_results": "pending; no new accuracy or robustness claim",
+    "schema_fix": {
+      "files": {
+        "classifier/threeway_improved.py": "40ea7b1d02b532161eeaa91f58250569c24be5fb453d2126a5131f8a41e5c059",
+        "classifier/data_sources.py": "2f529108e1b534b5ba2ae48ba2c7d69f7600b2e6b2493dd50bc66bbc851852cc"
+      },
+      "behavior": "Coerce unavailable numeric sensor readings to missing; preserve throttle status as categorical text. No missing reading is replaced with zero.",
+      "audit_tests_passed": 32,
+      "multinode_review_tests_passed": 7,
+      "includes_mixed_schema_parquet_roundtrip": true
+    },
+    "current_attempt": {
+      "status": "running",
+      "systemd_unit": "spar-followup-analysis-20261012T232425Z-schema1",
+      "work": "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results",
+      "phase": "cache",
+      "workers": 2,
+      "cpu_quota_vcpus": 4,
+      "memory_limit_gib": 24,
+      "runtime_limit_s": 14400,
+      "stops_vm": false
+    }
   }
 }

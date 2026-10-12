@@ -51,9 +51,12 @@ not useful training time. Historical job identities remain provisional.
 - [x] Repair NIC recorder shutdown after the first executed smoke exposed missing
   final sidecars. All 16 workers completed 24 optimizer updates, but the admission
   gate rejected the run. A real SIGTERM/parquet regression and 23 other tests pass.
-- [ ] Execute a live two-node smoke, inspect both hosts' receipts and telemetry,
-  then launch the first 30-minute repetition. Cloud access is now available;
-  [live execution](followup_execution_2026-10-12/live_execution.json) records progress.
+- [x] Execute a live two-node smoke and validate downloaded receipts and telemetry.
+  [Verified smoke](followup_execution_2026-10-12/verified_a100_smoke.json): 16 GPU
+  streams, two NIC streams, all 16 workers with progress, and 26 verified uploads.
+- [ ] Complete and validate the first 30-minute repetition, started at 23:48 UTC
+  on October 12; [live execution](followup_execution_2026-10-12/live_execution.json)
+  records progress. Scientific corpus admission remains separate.
 
 ## Corpus accounting and recovery
 
