@@ -1,0 +1,156 @@
+test_absent_ablation_jobs_and_single_class_folds_fail (test_audit_remediation.EvaluationTests.test_absent_ablation_jobs_and_single_class_folds_fail) ... infer_a: tested 4 windows
+infer_b: tested 4 windows
+infer_c: tested 4 windows
+nonml_a: tested 4 windows
+nonml_b: tested 4 windows
+nonml_c: tested 4 windows
+ok
+test_detection_is_reported_against_the_share_of_time_training (test_audit_remediation.EvaluationTests.test_detection_is_reported_against_the_share_of_time_training) ... infer_a: tested 4 windows
+infer_b: tested 4 windows
+infer_c: tested 4 windows
+nonml_a: tested 4 windows
+nonml_b: tested 4 windows
+nonml_c: tested 4 windows
+train_a: tested 4 windows
+train_b: tested 4 windows
+train_c: tested 4 windows
+ok
+test_exhaustive_and_paired_training_only_ablation (test_audit_remediation.EvaluationTests.test_exhaustive_and_paired_training_only_ablation) ... infer_a: tested 4 windows
+infer_b: tested 4 windows
+infer_c: tested 4 windows
+nonml_a: tested 4 windows
+nonml_b: tested 4 windows
+nonml_c: tested 4 windows
+train_a: tested 4 windows
+train_b: tested 4 windows
+train_c: tested 4 windows
+ok
+test_unresolved_windows_are_neither_fitted_nor_scored (test_audit_remediation.EvaluationTests.test_unresolved_windows_are_neither_fitted_nor_scored) ... window labels by source {'program': 32, 'unresolved': 4}; excluding 4 unresolved windows from 2 jobs
+infer_a: tested 4 windows
+infer_b: tested 4 windows
+infer_c: tested 4 windows
+nonml_a: tested 4 windows
+nonml_b: tested 4 windows
+nonml_c: tested 4 windows
+train_a: tested 4 windows
+train_b: tested 4 windows
+ok
+test_nic_sidecar_partials_join_the_corpus (test_audit_remediation.IngestTests.test_nic_sidecar_partials_join_the_corpus) ... ok
+test_cache_invalidation_by_data_code_config (test_audit_remediation.InputTests.test_cache_invalidation_by_data_code_config) ... ok
+test_external_payload_missing_incomplete_and_complete (test_audit_remediation.InputTests.test_external_payload_missing_incomplete_and_complete) ... ok
+test_low_utilization_is_not_failure (test_audit_remediation.InputTests.test_low_utilization_is_not_failure) ... ok
+test_mixed_label_and_device_streams_are_not_stitched (test_audit_remediation.InputTests.test_mixed_label_and_device_streams_are_not_stitched) ... ok
+test_parallel_replicas_are_judged_by_their_own_status (test_audit_remediation.InputTests.test_parallel_replicas_are_judged_by_their_own_status) ... ok
+test_policy_excludes_all_quarantine_and_sensor_roles (test_audit_remediation.InputTests.test_policy_excludes_all_quarantine_and_sensor_roles) ... ok
+test_quality_exclusion_does_not_drop_independent_peer_job (test_audit_remediation.InputTests.test_quality_exclusion_does_not_drop_independent_peer_job) ... 03:43:12 Excluded 1 rows / 1 jobs with failed completion evidence (/tmp/tmpr2j6c1ml/data/quality_exclusions.json)
+ok
+test_sibling_ranks_share_a_cv_group (test_audit_remediation.InputTests.test_sibling_ranks_share_a_cv_group) ... ok
+test_telemetry_only_streams_take_the_heads_exit (test_audit_remediation.InputTests.test_telemetry_only_streams_take_the_heads_exit) ... ok
+test_duplicates_gaps_and_iso_timestamps (test_audit_remediation.InventoryTests.test_duplicates_gaps_and_iso_timestamps) ... ok
+test_inventory_includes_legacy_json_without_double_counting_copies (test_audit_remediation.InventoryTests.test_inventory_includes_legacy_json_without_double_counting_copies) ... Checking paths 0/4
+{
+  "generated_utc": "2026-10-13T03:43:12.869805+00:00",
+  "commit": "b28c26b4872b9cfa78fad5b6230e60d37aea28ad",
+  "code_sha256": {
+    "scripts/audit_data_inventory.py": "db0befb2c8d2f65128b2f8aaf20ba9b5b78e478ded59e56e5713293c18651368",
+    "classifier/workload_labels.py": "5bbd2cb8b099a2395805de6a7c784cd2ddfd25c968e185f1f25b33a262882a21",
+    "classifier/data_sources.py": "2f529108e1b534b5ba2ae48ba2c7d69f7600b2e6b2493dd50bc66bbc851852cc",
+    "classifier/workload_descriptions.py": "2fdd7375fc2079428889e0b5e5f58da855a05d6f275302d9c0a692c145044545",
+    "classifier/multinode_features.py": "966d0182c38eb262117df335726c47a9efbe715cfb37fd5fd11d4290407556b0"
+  },
+  "labels": "2026-10-11.3",
+  "families": "2026-10-11.1",
+  "completion": {
+    "unique_lfs_objects": 0,
+    "lfs_bytes": 0,
+    "missing_paths": 0,
+    "complete": true,
+    "verified_sha256": true,
+    "verified_objects": 0
+  },
+  "parquet_paths": 2,
+  "telemetry_json_paths": 1,
+  "unique_parquet_objects": 1,
+  "quarantine_paths": 0,
+  "read_errors": 0,
+  "accepted_accelerator_streams": 3,
+  "accelerator_samples": 12,
+  "accelerator_stream_hours": 0.0025,
+  "accelerator_covered_stream_hours": 0.0025,
+  "jobs": 2,
+  "cells": 2,
+  "label_corrected_streams": 1,
+  "notes": [
+    "Accepted means outside quarantine, not verified useful compute.",
+    "Durations are timestamp spans and gap-capped coverage, not active optimizer time.",
+    "Legacy job identities chain starts within 20 seconds and are provisional.",
+    "Completion is evidenced only for available logged hosts; inspect log_hosts against topology.",
+    "Raw waveforms and sidecars are counted separately from accelerator-hours.",
+    "Telemetry covers tracked files plus current code fixes; log evidence includes marked untracked local logs.",
+    "Device and host counts describe recorded telemetry; they do not prove every device participated in computation."
+  ],
+  "report_code_sha256": "db0befb2c8d2f65128b2f8aaf20ba9b5b78e478ded59e56e5713293c18651368",
+  "label_comparison_code_sha256": "5bbd2cb8b099a2395805de6a7c784cd2ddfd25c968e185f1f25b33a262882a21",
+  "description_code_sha256": "2fdd7375fc2079428889e0b5e5f58da855a05d6f275302d9c0a692c145044545",
+  "failed_jobs_excluded_from_training": 0,
+  "failed_job_stream_hours": 0.0
+}
+ok
+test_implementation_siblings_and_scopes (test_audit_remediation.LabelTests.test_implementation_siblings_and_scopes) ... ok
+test_physical_truth_and_negative_controls (test_audit_remediation.LabelTests.test_physical_truth_and_negative_controls) ... ok
+test_semantics_win_over_model_name (test_audit_remediation.LabelTests.test_semantics_win_over_model_name) ... ok
+test_cache_workers_write_real_chunks (test_audit_remediation.MultinodeFeatureTests.test_cache_workers_write_real_chunks) ... ok
+test_expected_width_and_duration_enforced (test_audit_remediation.MultinodeFeatureTests.test_expected_width_and_duration_enforced) ... ok
+test_missing_sensor_is_not_measured_zero (test_audit_remediation.MultinodeFeatureTests.test_missing_sensor_is_not_measured_zero) ... ok
+test_rank_permutation_invariance (test_audit_remediation.MultinodeFeatureTests.test_rank_permutation_invariance) ... ok
+test_replicated_cells_keep_their_windows (test_audit_remediation.MultinodeFeatureTests.test_replicated_cells_keep_their_windows) ... ok
+test_a_step_line_reports_the_work_since_the_previous_line (test_audit_remediation.WorkLabelTests.test_a_step_line_reports_the_work_since_the_previous_line) ... ok
+test_each_gpu_shows_its_own_rank_when_ranks_log (test_audit_remediation.WorkLabelTests.test_each_gpu_shows_its_own_rank_when_ranks_log) ... ok
+test_filler_logged_as_infer_is_not_inference (test_audit_remediation.WorkLabelTests.test_filler_logged_as_infer_is_not_inference) ... ok
+test_jobs_take_their_own_logs_and_never_bridge_executions (test_audit_remediation.WorkLabelTests.test_jobs_take_their_own_logs_and_never_bridge_executions) ... ok
+test_label_columns_never_become_features (test_audit_remediation.WorkLabelTests.test_label_columns_never_become_features) ... ok
+test_no_step_evidence_at_all_still_loads (test_audit_remediation.WorkLabelTests.test_no_step_evidence_at_all_still_loads) ... ok
+test_windows_record_the_share_of_time_spent_training (test_audit_remediation.WorkLabelTests.test_windows_record_the_share_of_time_spent_training) ... ok
+test_without_logs_only_single_kind_programs_get_labels (test_audit_remediation.WorkLabelTests.test_without_logs_only_single_kind_programs_get_labels) ... ok
+test_baseline_ignores_quarantine_and_sidecars (test_multinode_review.MultinodeReviewTests.test_baseline_ignores_quarantine_and_sidecars) ... ok
+test_empty_and_invalid_alert_inputs (test_multinode_review.MultinodeReviewTests.test_empty_and_invalid_alert_inputs) ... ok
+test_job_alerts_do_not_stitch_together_independent_streams (test_multinode_review.MultinodeReviewTests.test_job_alerts_do_not_stitch_together_independent_streams) ... ok
+test_legacy_unavailable_sensors_round_trip_without_becoming_zero (test_multinode_review.MultinodeReviewTests.test_legacy_unavailable_sensors_round_trip_without_becoming_zero) ... ok
+test_loader_keeps_all_ranks_and_excludes_both_kinds_of_sidecar (test_multinode_review.MultinodeReviewTests.test_loader_keeps_all_ranks_and_excludes_both_kinds_of_sidecar) ... 03:43:22 dedup on ['ts', 'run_id', 'workload_label', 'gpu_uuid']: 8 -> 4 rows
+03:43:22 Total rows: 4 | runs: 1
+03:43:22 Three-way distribution (runs):
+threeway_label
+ml_training    1
+ok
+test_single_node_cells_with_shared_run_id_remain_separate_jobs (test_multinode_review.MultinodeReviewTests.test_single_node_cells_with_shared_run_id_remain_separate_jobs) ... ok
+test_stream_time_order_and_any_stream_job_aggregation (test_multinode_review.MultinodeReviewTests.test_stream_time_order_and_any_stream_job_aggregation) ... ok
+test_empty_inputs_are_not_ready (test_followup_execution.InputAvailabilityTests.test_empty_inputs_are_not_ready) ... ok
+test_exact_policy_missing_and_corrupt_external_objects (test_followup_execution.InputAvailabilityTests.test_exact_policy_missing_and_corrupt_external_objects) ... ok
+test_decision_at_window_end_and_early_alert_is_not_detection (test_followup_execution.OperationalTests.test_decision_at_window_end_and_early_alert_is_not_detection) ... ok
+test_independent_job_exposure_and_empty_denominators (test_followup_execution.OperationalTests.test_independent_job_exposure_and_empty_denominators) ... ok
+test_invalid_predictions_and_duplicate_arms_fail (test_followup_execution.OperationalTests.test_invalid_predictions_and_duplicate_arms_fail) ... ok
+test_overlaps_and_gaps_do_not_inflate_benign_exposure (test_followup_execution.OperationalTests.test_overlaps_and_gaps_do_not_inflate_benign_exposure) ... ok
+test_program_labels_and_censored_onset_do_not_claim_delay (test_followup_execution.OperationalTests.test_program_labels_and_censored_onset_do_not_claim_delay) ... ok
+test_evaluation_plan_pins_protocol_and_does_not_fetch_or_provision (test_followup_execution.PlanTests.test_evaluation_plan_pins_protocol_and_does_not_fetch_or_provision) ... ok
+test_repeats_are_unique_and_shared_between_nodes (test_followup_execution.PlanTests.test_repeats_are_unique_and_shared_between_nodes) ... ok
+infer_a: tested 4 windows
+infer_b: tested 4 windows
+nonml_a: tested 4 windows
+nonml_b: tested 4 windows
+train_a: tested 4 windows
+train_b: tested 4 windows
+test_early_false_alert_is_not_training_phase_detection (test_followup_result_review.ResultReviewTests.test_early_false_alert_is_not_training_phase_detection) ... ok
+test_rejects_changed_accuracy (test_followup_result_review.ResultReviewTests.test_rejects_changed_accuracy) ... ok
+test_rejects_changed_baseline_population (test_followup_result_review.ResultReviewTests.test_rejects_changed_baseline_population) ... ok
+test_rejects_changed_target (test_followup_result_review.ResultReviewTests.test_rejects_changed_target) ... ok
+test_rejects_invalid_probability (test_followup_result_review.ResultReviewTests.test_rejects_invalid_probability) ... ok
+test_rejects_leaked_training_id (test_followup_result_review.ResultReviewTests.test_rejects_leaked_training_id) ... ok
+test_rejects_missing_fold_score (test_followup_result_review.ResultReviewTests.test_rejects_missing_fold_score) ... ok
+test_rejects_missing_test_window (test_followup_result_review.ResultReviewTests.test_rejects_missing_test_window) ... ok
+test_rejects_wrong_campaign_ablation (test_followup_result_review.ResultReviewTests.test_rejects_wrong_campaign_ablation) ... ok
+test_valid_exhaustive_bundle (test_followup_result_review.ResultReviewTests.test_valid_exhaustive_bundle) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 15.992s
+
+OK

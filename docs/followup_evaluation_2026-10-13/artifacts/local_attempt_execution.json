@@ -1,0 +1,35 @@
+{
+  "started_utc": "2026-10-13T03:29:14.005241+00:00",
+  "status": "failed",
+  "executor": "existing workspace CPU",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.6.157+-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "completed": [],
+  "stages": [
+    {
+      "name": "backbone",
+      "command": [
+        "/tmp/followup_review_env/bin/python",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/tmp/followup_frozen/results/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--family-level",
+        "backbone",
+        "--out",
+        "/tmp/followup_frozen/results/backbone.json"
+      ],
+      "started_utc": "2026-10-13T03:29:14.008620+00:00",
+      "returncode": -15,
+      "finished_utc": "2026-10-13T03:42:25.978975+00:00"
+    }
+  ],
+  "phase": "backbone"
+}

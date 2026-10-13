@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-13T02:58:13.679660+00:00",
+  "updated_utc": "2026-10-13T04:29:17.762460+00:00",
   "cloud_access": "API, SSH and GCS available; existing Google Cloud and GitHub authentication sufficient",
   "failed_smoke": {
     "campaign": "followup_a100_20261012T232425Z",
@@ -84,7 +84,7 @@
       "failure": "ArrowInvalid: encoder_util_pct mixed numeric values and N/A text during raw parquet write"
     },
     "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/",
-    "classification_results": "pending; no new accuracy or robustness claim",
+    "classification_results": "complete and reviewed; ../followup_evaluation_2026-10-13/README.md",
     "schema_fix": {
       "files": {
         "classifier/threeway_improved.py": "40ea7b1d02b532161eeaa91f58250569c24be5fb453d2126a5131f8a41e5c059",
@@ -96,16 +96,16 @@
       "includes_mixed_schema_parquet_roundtrip": true
     },
     "current_attempt": {
-      "status": "running",
+      "status": "complete_via_primary_and_dedicated_worker",
       "systemd_unit": "spar-followup-analysis-20261012T232425Z-schema1",
       "work": "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results",
-      "phase": "mechanism_paired",
+      "phase": "reviewed",
       "workers": 2,
-      "cpu_quota_vcpus": 4,
+      "cpu_quota_vcpus": 6,
       "memory_limit_gib": 24,
-      "runtime_limit_s": 14400,
+      "runtime_limit_s": 43200,
       "stops_vm": false,
-      "checked_utc": "2026-10-13T02:58:13.679660+00:00",
+      "checked_utc": "2026-10-13T04:29:17.762460+00:00",
       "started_utc": "2026-10-12T23:48:20.996728Z",
       "retained_telemetry_rows": 5419644,
       "total_jobs": 2850,
@@ -113,9 +113,13 @@
       "feature_chunks_complete": 6,
       "feature_windows_so_far": 75841,
       "completed_evaluation_phases": [
-        "cache"
+        "cache",
+        "mechanism_paired",
+        "backbone",
+        "steps_only",
+        "result_audit"
       ],
-      "model_metrics_available": false,
+      "model_metrics_available": true,
       "feature_chunks": [
         {
           "chunk": 1,
@@ -148,10 +152,44 @@
           "windows": 14703
         }
       ],
-      "systemd_active_state": "active",
-      "systemd_sub_state": "running",
-      "memory_current_bytes": 8202436608,
-      "window_cache_jobs": 2561
+      "systemd_active_state": "inactive",
+      "systemd_sub_state": "dead",
+      "window_cache_jobs": 2561,
+      "completion_note": "Main results saved and uploaded before the original unit was stopped; duplicate sensitivity stages replaced by the completed dedicated worker. See mechanism_handoff.json."
+    },
+    "sensitivity_worker": {
+      "name": "spar-followup-eval-20261013",
+      "status": "deleted",
+      "creationTimestamp": "2026-10-12T20:37:53.744-07:00",
+      "lastStartTimestamp": "2026-10-12T20:38:05.100-07:00",
+      "lastStopTimestamp": "2026-10-12T20:54:50.208-07:00",
+      "machineType": "https://www.googleapis.com/compute/v1/projects/focus-surfer-494820-g0/zones/us-central1-a/machineTypes/e2-highcpu-32",
+      "cpuPlatform": "Unknown CPU Platform",
+      "scheduling": {
+        "automaticRestart": false,
+        "instanceTerminationAction": "STOP",
+        "maxRunDuration": {
+          "nanos": 0,
+          "seconds": "10800"
+        },
+        "onHostMaintenance": "MIGRATE",
+        "preemptible": false,
+        "provisioningModel": "STANDARD"
+      },
+      "outputs_sha256_verified": 8,
+      "sensitivity_audits": "backbone and STEP-only passed",
+      "cleanup_checked_utc": "2026-10-13T04:09:02.245481+00:00",
+      "boot_disk_deleted": true,
+      "cleanup_log": "Deleted [https://www.googleapis.com/compute/v1/projects/focus-surfer-494820-g0/zones/us-central1-a/instances/spar-followup-eval-20261013]."
+    },
+    "reviewed_results": {
+      "report": "../followup_evaluation_2026-10-13/README.md",
+      "manifest": "../followup_evaluation_2026-10-13/artifacts/manifest.json",
+      "branch": "results/corrected-multinode-evaluation-2026-10-13",
+      "audit": "passed",
+      "frozen_snapshot_excludes_later_preempted_admission": true,
+      "durable_cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/reviewed_20261013/",
+      "persistent_disk_directory": "/var/tmp/spar_followup/20261012T232425Z/review_publication"
     }
   },
   "previous_gpu_campaign": {
@@ -235,7 +273,7 @@
     "completed_repetitions": 0,
     "manifest": "data/preempted_recovery_20261013/manifest.json",
     "readme": "preempted_recovery.md",
-    "classification_results": "These are additional corpus inputs; the in-flight analysis uses its original frozen input snapshot."
+    "classification_results": "Additional corpus inputs retained; the completed October 13 evaluation uses its original frozen October 12 snapshot and excludes these later admissions."
   },
   "duration_capacity_review": "duration_capacity_review.json"
 }

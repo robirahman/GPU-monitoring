@@ -1,5 +1,10 @@
 # Follow up execution record
 
+**Current status (October 13):** corrected classifier evaluations are complete and
+reviewed. See the [results](../followup_evaluation_2026-10-13/README.md) and
+[interpretation](../followup_evaluation_2026-10-13/REVIEW.md). The earlier attempts
+below are historical; [live_execution.json](live_execution.json) records completion.
+
 The first implementation adds exact analysis input auditing, a reproducible
 evaluation runner, a repetition planner, and operational metrics in the corrected
 exhaustive family evaluator. No new classification accuracy is claimed.

@@ -1,0 +1,118 @@
+window labels by source {'steps': 12954, 'program': 6344, 'unresolved': 705}; excluding 705 unresolved windows from 15 jobs
+{
+  "mechanism_paired": {
+    "status": "passed",
+    "families": 43,
+    "windows": 19298,
+    "jobs": 479,
+    "split_records": 77,
+    "prediction_rows": 37429,
+    "adversarial_families": [
+      "advtrain_bubble",
+      "advtrain_flatarena",
+      "advtrain_typeconf",
+      "multinode_interleave"
+    ],
+    "single_job_families": [
+      "train_apexrl",
+      "train_ppodist"
+    ],
+    "training_phase_job_detection": {
+      "all": {
+        "training_jobs": 206,
+        "detected_during_training_jobs": 184,
+        "recall": 0.8932038834951457
+      },
+      "adversarial": {
+        "training_jobs": 91,
+        "detected_during_training_jobs": 90,
+        "recall": 0.989010989010989
+      }
+    },
+    "checks": [
+      "cache targets and identities",
+      "exhaustive window coverage",
+      "family and job separation",
+      "exact train/test manifests",
+      "campaign ablation",
+      "paired test identity",
+      "classification metric recomputation",
+      "operational metric consistency"
+    ]
+  },
+  "backbone": {
+    "status": "passed",
+    "families": 31,
+    "windows": 19298,
+    "jobs": 479,
+    "split_records": 31,
+    "prediction_rows": 19298,
+    "adversarial_families": [
+      "advtrain_typeconf",
+      "random_transformer_lm"
+    ],
+    "single_job_families": [],
+    "training_phase_job_detection": {
+      "all": {
+        "training_jobs": 206,
+        "detected_during_training_jobs": 165,
+        "recall": 0.8009708737864077
+      },
+      "adversarial": {
+        "training_jobs": 91,
+        "detected_during_training_jobs": 73,
+        "recall": 0.8021978021978022
+      }
+    },
+    "checks": [
+      "cache targets and identities",
+      "exhaustive window coverage",
+      "family and job separation",
+      "exact train/test manifests",
+      "campaign ablation",
+      "paired test identity",
+      "classification metric recomputation",
+      "operational metric consistency"
+    ]
+  },
+  "steps_only": {
+    "status": "passed",
+    "families": 26,
+    "windows": 12954,
+    "jobs": 315,
+    "split_records": 26,
+    "prediction_rows": 12954,
+    "adversarial_families": [
+      "advtrain_bubble",
+      "advtrain_flatarena",
+      "advtrain_typeconf",
+      "multinode_interleave"
+    ],
+    "single_job_families": [
+      "train_apexrl",
+      "train_ppodist"
+    ],
+    "training_phase_job_detection": {
+      "all": {
+        "training_jobs": 170,
+        "detected_during_training_jobs": 160,
+        "recall": 0.9411764705882353
+      },
+      "adversarial": {
+        "training_jobs": 91,
+        "detected_during_training_jobs": 91,
+        "recall": 1.0
+      }
+    },
+    "checks": [
+      "cache targets and identities",
+      "exhaustive window coverage",
+      "family and job separation",
+      "exact train/test manifests",
+      "campaign ablation",
+      "paired test identity",
+      "classification metric recomputation",
+      "operational metric consistency"
+    ]
+  }
+}

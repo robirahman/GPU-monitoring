@@ -1,0 +1,6177 @@
+{
+  "protocol": "exhaustive_leave_one_family_out",
+  "family_level": "mechanism",
+  "label_schema": "2026-10-11.3",
+  "family_schema": "2026-10-11.1",
+  "target": "threeway_window_work",
+  "label_rule": "window labeled by logged work: training if any gradient step, else inference if any forward pass, else other",
+  "threshold": 0.5,
+  "threshold_selection": "fixed before outer tests",
+  "job_rule": "any positive window; not majority rank vote",
+  "model": {
+    "type": "RandomForestClassifier",
+    "trees": 300,
+    "seed": 0,
+    "max_features": 0.3,
+    "min_samples_leaf": 2,
+    "imputation": "training-fold median"
+  },
+  "features": [
+    "gpu_utilization_pct_mean",
+    "gpu_utilization_pct_std",
+    "gpu_utilization_pct_min",
+    "gpu_utilization_pct_max",
+    "gpu_utilization_pct_p25",
+    "gpu_utilization_pct_p50",
+    "gpu_utilization_pct_p75",
+    "gpu_utilization_pct_p95",
+    "gpu_utilization_pct_iqr",
+    "gpu_utilization_pct_range",
+    "gpu_utilization_pct_cv",
+    "gpu_utilization_pct_skew",
+    "gpu_utilization_pct_kurt",
+    "mem_utilization_pct_mean",
+    "mem_utilization_pct_std",
+    "mem_utilization_pct_min",
+    "mem_utilization_pct_max",
+    "mem_utilization_pct_p25",
+    "mem_utilization_pct_p50",
+    "mem_utilization_pct_p75",
+    "mem_utilization_pct_p95",
+    "mem_utilization_pct_iqr",
+    "mem_utilization_pct_range",
+    "mem_utilization_pct_cv",
+    "mem_utilization_pct_skew",
+    "mem_utilization_pct_kurt",
+    "mem_used_mb_mean",
+    "mem_used_mb_std",
+    "mem_used_mb_min",
+    "mem_used_mb_max",
+    "mem_used_mb_p25",
+    "mem_used_mb_p50",
+    "mem_used_mb_p75",
+    "mem_used_mb_p95",
+    "mem_used_mb_iqr",
+    "mem_used_mb_range",
+    "mem_used_mb_cv",
+    "mem_used_mb_skew",
+    "mem_used_mb_kurt",
+    "power_draw_w_mean",
+    "power_draw_w_std",
+    "power_draw_w_min",
+    "power_draw_w_max",
+    "power_draw_w_p25",
+    "power_draw_w_p50",
+    "power_draw_w_p75",
+    "power_draw_w_p95",
+    "power_draw_w_iqr",
+    "power_draw_w_range",
+    "power_draw_w_cv",
+    "power_draw_w_skew",
+    "power_draw_w_kurt",
+    "temperature_c_mean",
+    "temperature_c_std",
+    "temperature_c_min",
+    "temperature_c_max",
+    "temperature_c_p25",
+    "temperature_c_p50",
+    "temperature_c_p75",
+    "temperature_c_p95",
+    "temperature_c_iqr",
+    "temperature_c_range",
+    "temperature_c_cv",
+    "temperature_c_skew",
+    "temperature_c_kurt",
+    "sm_clock_mhz_mean",
+    "sm_clock_mhz_std",
+    "sm_clock_mhz_min",
+    "sm_clock_mhz_max",
+    "sm_clock_mhz_p25",
+    "sm_clock_mhz_p50",
+    "sm_clock_mhz_p75",
+    "sm_clock_mhz_p95",
+    "sm_clock_mhz_iqr",
+    "sm_clock_mhz_range",
+    "sm_clock_mhz_cv",
+    "sm_clock_mhz_skew",
+    "sm_clock_mhz_kurt",
+    "mem_clock_mhz_mean",
+    "mem_clock_mhz_std",
+    "mem_clock_mhz_min",
+    "mem_clock_mhz_max",
+    "mem_clock_mhz_p25",
+    "mem_clock_mhz_p50",
+    "mem_clock_mhz_p75",
+    "mem_clock_mhz_p95",
+    "mem_clock_mhz_iqr",
+    "mem_clock_mhz_range",
+    "mem_clock_mhz_cv",
+    "mem_clock_mhz_skew",
+    "mem_clock_mhz_kurt",
+    "pcie_tx_mbps_mean",
+    "pcie_tx_mbps_std",
+    "pcie_tx_mbps_min",
+    "pcie_tx_mbps_max",
+    "pcie_tx_mbps_p25",
+    "pcie_tx_mbps_p50",
+    "pcie_tx_mbps_p75",
+    "pcie_tx_mbps_p95",
+    "pcie_tx_mbps_iqr",
+    "pcie_tx_mbps_range",
+    "pcie_tx_mbps_cv",
+    "pcie_tx_mbps_skew",
+    "pcie_tx_mbps_kurt",
+    "pcie_rx_mbps_mean",
+    "pcie_rx_mbps_std",
+    "pcie_rx_mbps_min",
+    "pcie_rx_mbps_max",
+    "pcie_rx_mbps_p25",
+    "pcie_rx_mbps_p50",
+    "pcie_rx_mbps_p75",
+    "pcie_rx_mbps_p95",
+    "pcie_rx_mbps_iqr",
+    "pcie_rx_mbps_range",
+    "pcie_rx_mbps_cv",
+    "pcie_rx_mbps_skew",
+    "pcie_rx_mbps_kurt",
+    "power_per_util",
+    "pcie_total_mean",
+    "util_per_sm_pct",
+    "mem_util_per_gpu_util",
+    "mem_util_minus_gpu_util",
+    "mem_util_per_gpu_util_p95",
+    "power_per_mem_util",
+    "mem_util_at_high_util",
+    "mem_util_spike",
+    "mem_util_burst_ratio",
+    "mem_util_fft_peak_power",
+    "acf1_gpu_util",
+    "acf1_power",
+    "acf1_mem_used",
+    "acf2_gpu_util",
+    "acf2_power",
+    "acf2_mem_used",
+    "acf5_gpu_util",
+    "acf5_power",
+    "acf5_mem_used",
+    "acf10_gpu_util",
+    "acf10_power",
+    "acf10_mem_used",
+    "acf20_gpu_util",
+    "acf20_power",
+    "acf20_mem_used",
+    "mem_slope",
+    "mem_slope_first_half",
+    "mem_slope_second_half",
+    "mem_slope_ratio",
+    "mem_second_half_cv",
+    "gpu_util_fft_period",
+    "gpu_util_fft_peak_power",
+    "power_fft_period",
+    "power_fft_peak_power",
+    "mem_used_fft_peak_power",
+    "duty_cycle_80",
+    "idle_frac",
+    "util_transitions_per_sec",
+    "util_burstiness",
+    "power_cv",
+    "power_rolling_var",
+    "power_range_frac",
+    "pcie_cv",
+    "pcie_fft_peak_power",
+    "pcie_nonzero_frac",
+    "encoder_util_pct_mean",
+    "encoder_util_pct_nonzero_frac",
+    "decoder_util_pct_mean",
+    "decoder_util_pct_nonzero_frac",
+    "dcgm_tensor_active_mean",
+    "dcgm_tensor_active_max",
+    "dcgm_fp16_ratio",
+    "dcgm_dram_active_mean",
+    "dcgm_dram_active_max",
+    "dcgm_dram_active_p95",
+    "dcgm_dram_active_active_frac",
+    "dcgm_sm_active_mean",
+    "dcgm_sm_active_max",
+    "dcgm_sm_active_p95",
+    "dcgm_sm_active_active_frac",
+    "rankmax_gpu_utilization_pct_mean",
+    "rankmax_gpu_utilization_pct_std",
+    "rankmax_gpu_utilization_pct_min",
+    "rankmax_gpu_utilization_pct_max",
+    "rankmax_gpu_utilization_pct_p25",
+    "rankmax_gpu_utilization_pct_p50",
+    "rankmax_gpu_utilization_pct_p75",
+    "rankmax_gpu_utilization_pct_p95",
+    "rankmax_gpu_utilization_pct_iqr",
+    "rankmax_gpu_utilization_pct_range",
+    "rankmax_gpu_utilization_pct_cv",
+    "rankmax_gpu_utilization_pct_skew",
+    "rankmax_gpu_utilization_pct_kurt",
+    "rankmax_mem_utilization_pct_mean",
+    "rankmax_mem_utilization_pct_std",
+    "rankmax_mem_utilization_pct_min",
+    "rankmax_mem_utilization_pct_max",
+    "rankmax_mem_utilization_pct_p25",
+    "rankmax_mem_utilization_pct_p50",
+    "rankmax_mem_utilization_pct_p75",
+    "rankmax_mem_utilization_pct_p95",
+    "rankmax_mem_utilization_pct_iqr",
+    "rankmax_mem_utilization_pct_range",
+    "rankmax_mem_utilization_pct_cv",
+    "rankmax_mem_utilization_pct_skew",
+    "rankmax_mem_utilization_pct_kurt",
+    "rankmax_mem_used_mb_mean",
+    "rankmax_mem_used_mb_std",
+    "rankmax_mem_used_mb_min",
+    "rankmax_mem_used_mb_max",
+    "rankmax_mem_used_mb_p25",
+    "rankmax_mem_used_mb_p50",
+    "rankmax_mem_used_mb_p75",
+    "rankmax_mem_used_mb_p95",
+    "rankmax_mem_used_mb_iqr",
+    "rankmax_mem_used_mb_range",
+    "rankmax_mem_used_mb_cv",
+    "rankmax_mem_used_mb_skew",
+    "rankmax_mem_used_mb_kurt",
+    "rankmax_power_draw_w_mean",
+    "rankmax_power_draw_w_std",
+    "rankmax_power_draw_w_min",
+    "rankmax_power_draw_w_max",
+    "rankmax_power_draw_w_p25",
+    "rankmax_power_draw_w_p50",
+    "rankmax_power_draw_w_p75",
+    "rankmax_power_draw_w_p95",
+    "rankmax_power_draw_w_iqr",
+    "rankmax_power_draw_w_range",
+    "rankmax_power_draw_w_cv",
+    "rankmax_power_draw_w_skew",
+    "rankmax_power_draw_w_kurt",
+    "rankmax_temperature_c_mean",
+    "rankmax_temperature_c_std",
+    "rankmax_temperature_c_min",
+    "rankmax_temperature_c_max",
+    "rankmax_temperature_c_p25",
+    "rankmax_temperature_c_p50",
+    "rankmax_temperature_c_p75",
+    "rankmax_temperature_c_p95",
+    "rankmax_temperature_c_iqr",
+    "rankmax_temperature_c_range",
+    "rankmax_temperature_c_cv",
+    "rankmax_temperature_c_skew",
+    "rankmax_temperature_c_kurt",
+    "rankmax_sm_clock_mhz_mean",
+    "rankmax_sm_clock_mhz_std",
+    "rankmax_sm_clock_mhz_min",
+    "rankmax_sm_clock_mhz_max",
+    "rankmax_sm_clock_mhz_p25",
+    "rankmax_sm_clock_mhz_p50",
+    "rankmax_sm_clock_mhz_p75",
+    "rankmax_sm_clock_mhz_p95",
+    "rankmax_sm_clock_mhz_iqr",
+    "rankmax_sm_clock_mhz_range",
+    "rankmax_sm_clock_mhz_cv",
+    "rankmax_sm_clock_mhz_skew",
+    "rankmax_sm_clock_mhz_kurt",
+    "rankmax_mem_clock_mhz_mean",
+    "rankmax_mem_clock_mhz_std",
+    "rankmax_mem_clock_mhz_min",
+    "rankmax_mem_clock_mhz_max",
+    "rankmax_mem_clock_mhz_p25",
+    "rankmax_mem_clock_mhz_p50",
+    "rankmax_mem_clock_mhz_p75",
+    "rankmax_mem_clock_mhz_p95",
+    "rankmax_mem_clock_mhz_iqr",
+    "rankmax_mem_clock_mhz_range",
+    "rankmax_mem_clock_mhz_cv",
+    "rankmax_mem_clock_mhz_skew",
+    "rankmax_mem_clock_mhz_kurt",
+    "rankmax_pcie_tx_mbps_mean",
+    "rankmax_pcie_tx_mbps_std",
+    "rankmax_pcie_tx_mbps_min",
+    "rankmax_pcie_tx_mbps_max",
+    "rankmax_pcie_tx_mbps_p25",
+    "rankmax_pcie_tx_mbps_p50",
+    "rankmax_pcie_tx_mbps_p75",
+    "rankmax_pcie_tx_mbps_p95",
+    "rankmax_pcie_tx_mbps_iqr",
+    "rankmax_pcie_tx_mbps_range",
+    "rankmax_pcie_tx_mbps_cv",
+    "rankmax_pcie_tx_mbps_skew",
+    "rankmax_pcie_tx_mbps_kurt",
+    "rankmax_pcie_rx_mbps_mean",
+    "rankmax_pcie_rx_mbps_std",
+    "rankmax_pcie_rx_mbps_min",
+    "rankmax_pcie_rx_mbps_max",
+    "rankmax_pcie_rx_mbps_p25",
+    "rankmax_pcie_rx_mbps_p50",
+    "rankmax_pcie_rx_mbps_p75",
+    "rankmax_pcie_rx_mbps_p95",
+    "rankmax_pcie_rx_mbps_iqr",
+    "rankmax_pcie_rx_mbps_range",
+    "rankmax_pcie_rx_mbps_cv",
+    "rankmax_pcie_rx_mbps_skew",
+    "rankmax_pcie_rx_mbps_kurt",
+    "rankmax_power_per_util",
+    "rankmax_pcie_total_mean",
+    "rankmax_util_per_sm_pct",
+    "rankmax_mem_util_per_gpu_util",
+    "rankmax_mem_util_minus_gpu_util",
+    "rankmax_mem_util_per_gpu_util_p95",
+    "rankmax_power_per_mem_util",
+    "rankmax_mem_util_at_high_util",
+    "rankmax_mem_util_spike",
+    "rankmax_mem_util_burst_ratio",
+    "rankmax_mem_util_fft_peak_power",
+    "rankmax_acf1_gpu_util",
+    "rankmax_acf1_power",
+    "rankmax_acf1_mem_used",
+    "rankmax_acf2_gpu_util",
+    "rankmax_acf2_power",
+    "rankmax_acf2_mem_used",
+    "rankmax_acf5_gpu_util",
+    "rankmax_acf5_power",
+    "rankmax_acf5_mem_used",
+    "rankmax_acf10_gpu_util",
+    "rankmax_acf10_power",
+    "rankmax_acf10_mem_used",
+    "rankmax_acf20_gpu_util",
+    "rankmax_acf20_power",
+    "rankmax_acf20_mem_used",
+    "rankmax_mem_slope",
+    "rankmax_mem_slope_first_half",
+    "rankmax_mem_slope_second_half",
+    "rankmax_mem_slope_ratio",
+    "rankmax_mem_second_half_cv",
+    "rankmax_gpu_util_fft_period",
+    "rankmax_gpu_util_fft_peak_power",
+    "rankmax_power_fft_period",
+    "rankmax_power_fft_peak_power",
+    "rankmax_mem_used_fft_peak_power",
+    "rankmax_duty_cycle_80",
+    "rankmax_idle_frac",
+    "rankmax_util_transitions_per_sec",
+    "rankmax_util_burstiness",
+    "rankmax_power_cv",
+    "rankmax_power_rolling_var",
+    "rankmax_power_range_frac",
+    "rankmax_pcie_cv",
+    "rankmax_pcie_fft_peak_power",
+    "rankmax_pcie_nonzero_frac",
+    "rankmax_encoder_util_pct_mean",
+    "rankmax_encoder_util_pct_nonzero_frac",
+    "rankmax_decoder_util_pct_mean",
+    "rankmax_decoder_util_pct_nonzero_frac",
+    "rankmax_dcgm_tensor_active_mean",
+    "rankmax_dcgm_tensor_active_max",
+    "rankmax_dcgm_fp16_ratio",
+    "rankmax_dcgm_dram_active_mean",
+    "rankmax_dcgm_dram_active_max",
+    "rankmax_dcgm_dram_active_p95",
+    "rankmax_dcgm_dram_active_active_frac",
+    "rankmax_dcgm_sm_active_mean",
+    "rankmax_dcgm_sm_active_max",
+    "rankmax_dcgm_sm_active_p95",
+    "rankmax_dcgm_sm_active_active_frac",
+    "rankstd_gpu_utilization_pct_mean",
+    "rankstd_gpu_utilization_pct_std",
+    "rankstd_gpu_utilization_pct_min",
+    "rankstd_gpu_utilization_pct_max",
+    "rankstd_gpu_utilization_pct_p25",
+    "rankstd_gpu_utilization_pct_p50",
+    "rankstd_gpu_utilization_pct_p75",
+    "rankstd_gpu_utilization_pct_p95",
+    "rankstd_gpu_utilization_pct_iqr",
+    "rankstd_gpu_utilization_pct_range",
+    "rankstd_gpu_utilization_pct_cv",
+    "rankstd_gpu_utilization_pct_skew",
+    "rankstd_gpu_utilization_pct_kurt",
+    "rankstd_mem_utilization_pct_mean",
+    "rankstd_mem_utilization_pct_std",
+    "rankstd_mem_utilization_pct_min",
+    "rankstd_mem_utilization_pct_max",
+    "rankstd_mem_utilization_pct_p25",
+    "rankstd_mem_utilization_pct_p50",
+    "rankstd_mem_utilization_pct_p75",
+    "rankstd_mem_utilization_pct_p95",
+    "rankstd_mem_utilization_pct_iqr",
+    "rankstd_mem_utilization_pct_range",
+    "rankstd_mem_utilization_pct_cv",
+    "rankstd_mem_utilization_pct_skew",
+    "rankstd_mem_utilization_pct_kurt",
+    "rankstd_mem_used_mb_mean",
+    "rankstd_mem_used_mb_std",
+    "rankstd_mem_used_mb_min",
+    "rankstd_mem_used_mb_max",
+    "rankstd_mem_used_mb_p25",
+    "rankstd_mem_used_mb_p50",
+    "rankstd_mem_used_mb_p75",
+    "rankstd_mem_used_mb_p95",
+    "rankstd_mem_used_mb_iqr",
+    "rankstd_mem_used_mb_range",
+    "rankstd_mem_used_mb_cv",
+    "rankstd_mem_used_mb_skew",
+    "rankstd_mem_used_mb_kurt",
+    "rankstd_power_draw_w_mean",
+    "rankstd_power_draw_w_std",
+    "rankstd_power_draw_w_min",
+    "rankstd_power_draw_w_max",
+    "rankstd_power_draw_w_p25",
+    "rankstd_power_draw_w_p50",
+    "rankstd_power_draw_w_p75",
+    "rankstd_power_draw_w_p95",
+    "rankstd_power_draw_w_iqr",
+    "rankstd_power_draw_w_range",
+    "rankstd_power_draw_w_cv",
+    "rankstd_power_draw_w_skew",
+    "rankstd_power_draw_w_kurt",
+    "rankstd_temperature_c_mean",
+    "rankstd_temperature_c_std",
+    "rankstd_temperature_c_min",
+    "rankstd_temperature_c_max",
+    "rankstd_temperature_c_p25",
+    "rankstd_temperature_c_p50",
+    "rankstd_temperature_c_p75",
+    "rankstd_temperature_c_p95",
+    "rankstd_temperature_c_iqr",
+    "rankstd_temperature_c_range",
+    "rankstd_temperature_c_cv",
+    "rankstd_temperature_c_skew",
+    "rankstd_temperature_c_kurt",
+    "rankstd_sm_clock_mhz_mean",
+    "rankstd_sm_clock_mhz_std",
+    "rankstd_sm_clock_mhz_min",
+    "rankstd_sm_clock_mhz_max",
+    "rankstd_sm_clock_mhz_p25",
+    "rankstd_sm_clock_mhz_p50",
+    "rankstd_sm_clock_mhz_p75",
+    "rankstd_sm_clock_mhz_p95",
+    "rankstd_sm_clock_mhz_iqr",
+    "rankstd_sm_clock_mhz_range",
+    "rankstd_sm_clock_mhz_cv",
+    "rankstd_sm_clock_mhz_skew",
+    "rankstd_sm_clock_mhz_kurt",
+    "rankstd_mem_clock_mhz_mean",
+    "rankstd_mem_clock_mhz_std",
+    "rankstd_mem_clock_mhz_min",
+    "rankstd_mem_clock_mhz_max",
+    "rankstd_mem_clock_mhz_p25",
+    "rankstd_mem_clock_mhz_p50",
+    "rankstd_mem_clock_mhz_p75",
+    "rankstd_mem_clock_mhz_p95",
+    "rankstd_mem_clock_mhz_iqr",
+    "rankstd_mem_clock_mhz_range",
+    "rankstd_mem_clock_mhz_cv",
+    "rankstd_mem_clock_mhz_skew",
+    "rankstd_mem_clock_mhz_kurt",
+    "rankstd_pcie_tx_mbps_mean",
+    "rankstd_pcie_tx_mbps_std",
+    "rankstd_pcie_tx_mbps_min",
+    "rankstd_pcie_tx_mbps_max",
+    "rankstd_pcie_tx_mbps_p25",
+    "rankstd_pcie_tx_mbps_p50",
+    "rankstd_pcie_tx_mbps_p75",
+    "rankstd_pcie_tx_mbps_p95",
+    "rankstd_pcie_tx_mbps_iqr",
+    "rankstd_pcie_tx_mbps_range",
+    "rankstd_pcie_tx_mbps_cv",
+    "rankstd_pcie_tx_mbps_skew",
+    "rankstd_pcie_tx_mbps_kurt",
+    "rankstd_pcie_rx_mbps_mean",
+    "rankstd_pcie_rx_mbps_std",
+    "rankstd_pcie_rx_mbps_min",
+    "rankstd_pcie_rx_mbps_max",
+    "rankstd_pcie_rx_mbps_p25",
+    "rankstd_pcie_rx_mbps_p50",
+    "rankstd_pcie_rx_mbps_p75",
+    "rankstd_pcie_rx_mbps_p95",
+    "rankstd_pcie_rx_mbps_iqr",
+    "rankstd_pcie_rx_mbps_range",
+    "rankstd_pcie_rx_mbps_cv",
+    "rankstd_pcie_rx_mbps_skew",
+    "rankstd_pcie_rx_mbps_kurt",
+    "rankstd_power_per_util",
+    "rankstd_pcie_total_mean",
+    "rankstd_util_per_sm_pct",
+    "rankstd_mem_util_per_gpu_util",
+    "rankstd_mem_util_minus_gpu_util",
+    "rankstd_mem_util_per_gpu_util_p95",
+    "rankstd_power_per_mem_util",
+    "rankstd_mem_util_at_high_util",
+    "rankstd_mem_util_spike",
+    "rankstd_mem_util_burst_ratio",
+    "rankstd_mem_util_fft_peak_power",
+    "rankstd_acf1_gpu_util",
+    "rankstd_acf1_power",
+    "rankstd_acf1_mem_used",
+    "rankstd_acf2_gpu_util",
+    "rankstd_acf2_power",
+    "rankstd_acf2_mem_used",
+    "rankstd_acf5_gpu_util",
+    "rankstd_acf5_power",
+    "rankstd_acf5_mem_used",
+    "rankstd_acf10_gpu_util",
+    "rankstd_acf10_power",
+    "rankstd_acf10_mem_used",
+    "rankstd_acf20_gpu_util",
+    "rankstd_acf20_power",
+    "rankstd_acf20_mem_used",
+    "rankstd_mem_slope",
+    "rankstd_mem_slope_first_half",
+    "rankstd_mem_slope_second_half",
+    "rankstd_mem_slope_ratio",
+    "rankstd_mem_second_half_cv",
+    "rankstd_gpu_util_fft_period",
+    "rankstd_gpu_util_fft_peak_power",
+    "rankstd_power_fft_period",
+    "rankstd_power_fft_peak_power",
+    "rankstd_mem_used_fft_peak_power",
+    "rankstd_duty_cycle_80",
+    "rankstd_idle_frac",
+    "rankstd_util_transitions_per_sec",
+    "rankstd_util_burstiness",
+    "rankstd_power_cv",
+    "rankstd_power_rolling_var",
+    "rankstd_power_range_frac",
+    "rankstd_pcie_cv",
+    "rankstd_pcie_fft_peak_power",
+    "rankstd_pcie_nonzero_frac",
+    "rankstd_encoder_util_pct_mean",
+    "rankstd_encoder_util_pct_nonzero_frac",
+    "rankstd_decoder_util_pct_mean",
+    "rankstd_decoder_util_pct_nonzero_frac",
+    "rankstd_dcgm_tensor_active_mean",
+    "rankstd_dcgm_tensor_active_max",
+    "rankstd_dcgm_fp16_ratio",
+    "rankstd_dcgm_dram_active_mean",
+    "rankstd_dcgm_dram_active_max",
+    "rankstd_dcgm_dram_active_p95",
+    "rankstd_dcgm_dram_active_active_frac",
+    "rankstd_dcgm_sm_active_mean",
+    "rankstd_dcgm_sm_active_max",
+    "rankstd_dcgm_sm_active_p95",
+    "rankstd_dcgm_sm_active_active_frac",
+    "xr_active_ranks_frac",
+    "xr_corr_mean_gpu_utilization_pct",
+    "xr_corr_min_gpu_utilization_pct",
+    "xr_corr_frachi_gpu_utilization_pct",
+    "xr_corr_internode_mean_gpu_utilization_pct",
+    "xr_corr_intranode_mean_gpu_utilization_pct",
+    "xr_corr_inter_minus_intra_gpu_utilization_pct",
+    "xr_lag_median_gpu_utilization_pct",
+    "xr_lag_iqr_gpu_utilization_pct",
+    "xr_fft_period_disp_gpu_utilization_pct",
+    "xr_fft_peakpow_min_gpu_utilization_pct",
+    "xr_dip_coalign_gpu_utilization_pct",
+    "xr_level_spread_gpu_utilization_pct",
+    "xr_corr_mean_power_draw_w",
+    "xr_corr_min_power_draw_w",
+    "xr_corr_frachi_power_draw_w",
+    "xr_corr_internode_mean_power_draw_w",
+    "xr_corr_intranode_mean_power_draw_w",
+    "xr_corr_inter_minus_intra_power_draw_w",
+    "xr_lag_median_power_draw_w",
+    "xr_lag_iqr_power_draw_w",
+    "xr_fft_period_disp_power_draw_w",
+    "xr_fft_peakpow_min_power_draw_w",
+    "xr_dip_coalign_power_draw_w",
+    "xr_level_spread_power_draw_w",
+    "xr_corr_mean_mem_utilization_pct",
+    "xr_corr_min_mem_utilization_pct",
+    "xr_corr_frachi_mem_utilization_pct",
+    "xr_corr_internode_mean_mem_utilization_pct",
+    "xr_corr_intranode_mean_mem_utilization_pct",
+    "xr_corr_inter_minus_intra_mem_utilization_pct",
+    "xr_lag_median_mem_utilization_pct",
+    "xr_lag_iqr_mem_utilization_pct",
+    "xr_fft_period_disp_mem_utilization_pct",
+    "xr_fft_peakpow_min_mem_utilization_pct",
+    "xr_dip_coalign_mem_utilization_pct",
+    "xr_level_spread_mem_utilization_pct",
+    "xr_corr_mean_pcie_total_mbps",
+    "xr_corr_min_pcie_total_mbps",
+    "xr_corr_frachi_pcie_total_mbps",
+    "xr_corr_internode_mean_pcie_total_mbps",
+    "xr_corr_intranode_mean_pcie_total_mbps",
+    "xr_corr_inter_minus_intra_pcie_total_mbps",
+    "xr_lag_median_pcie_total_mbps",
+    "xr_lag_iqr_pcie_total_mbps",
+    "xr_fft_period_disp_pcie_total_mbps",
+    "xr_fft_peakpow_min_pcie_total_mbps",
+    "xr_dip_coalign_pcie_total_mbps",
+    "xr_level_spread_pcie_total_mbps",
+    "xr_corr_mean_nic_total_mbps",
+    "xr_corr_min_nic_total_mbps",
+    "xr_corr_frachi_nic_total_mbps",
+    "xr_corr_internode_mean_nic_total_mbps",
+    "xr_corr_intranode_mean_nic_total_mbps",
+    "xr_corr_inter_minus_intra_nic_total_mbps",
+    "xr_lag_median_nic_total_mbps",
+    "xr_lag_iqr_nic_total_mbps",
+    "xr_fft_period_disp_nic_total_mbps",
+    "xr_fft_peakpow_min_nic_total_mbps",
+    "xr_dip_coalign_nic_total_mbps",
+    "xr_level_spread_nic_total_mbps",
+    "xragg_nvlink_total_mbps_mean",
+    "xragg_nvlink_total_mbps_max",
+    "xragg_dcgm_nvlink_tx_mbps_mean",
+    "xragg_dcgm_nvlink_tx_mbps_max",
+    "xragg_dcgm_nvlink_rx_mbps_mean",
+    "xragg_dcgm_nvlink_rx_mbps_max",
+    "xragg_nic_total_mbps_mean",
+    "xragg_nic_total_mbps_max",
+    "xragg_nic_tx_mbps_mean",
+    "xragg_nic_tx_mbps_max",
+    "xragg_nic_rx_mbps_mean",
+    "xragg_nic_rx_mbps_max",
+    "xragg_hlo_exec_us_p50_mean",
+    "xragg_hlo_exec_us_p50_max",
+    "xragg_hlo_exec_us_p90_mean",
+    "xragg_hlo_exec_us_p90_max",
+    "xragg_hlo_exec_us_p99_mean",
+    "xragg_hlo_exec_us_p99_max",
+    "xragg_hlo_queue_size_mean",
+    "xragg_hlo_queue_size_max",
+    "xragg_dcn_collective_lat_us_p50_mean",
+    "xragg_dcn_collective_lat_us_p50_max",
+    "xragg_dcn_collective_lat_us_p90_mean",
+    "xragg_dcn_collective_lat_us_p90_max",
+    "xragg_dcn_collective_lat_us_p99_mean",
+    "xragg_dcn_collective_lat_us_p99_max",
+    "xragg_buffer_xfer_lat_us_p90_mean",
+    "xragg_buffer_xfer_lat_us_p90_max",
+    "xragg_tensorcore_util_pct_mean",
+    "xragg_tensorcore_util_pct_max",
+    "xragg_h2d_transfer_lat_us_p50_mean",
+    "xragg_h2d_transfer_lat_us_p50_max",
+    "xragg_h2d_transfer_lat_us_p90_mean",
+    "xragg_h2d_transfer_lat_us_p90_max",
+    "xragg_d2h_transfer_lat_us_p50_mean",
+    "xragg_d2h_transfer_lat_us_p50_max",
+    "xragg_d2h_transfer_lat_us_p90_mean",
+    "xragg_d2h_transfer_lat_us_p90_max",
+    "xr_corr_mean_hlo_exec_us_p90",
+    "xr_corr_min_hlo_exec_us_p90",
+    "xr_corr_frachi_hlo_exec_us_p90",
+    "xr_lag_median_hlo_exec_us_p90",
+    "xr_lag_iqr_hlo_exec_us_p90",
+    "xr_fft_period_disp_hlo_exec_us_p90",
+    "xr_fft_peakpow_min_hlo_exec_us_p90",
+    "xr_dip_coalign_hlo_exec_us_p90",
+    "xr_level_spread_hlo_exec_us_p90",
+    "xr_corr_mean_dcn_collective_lat_us_p90",
+    "xr_corr_min_dcn_collective_lat_us_p90",
+    "xr_corr_frachi_dcn_collective_lat_us_p90",
+    "xr_lag_median_dcn_collective_lat_us_p90",
+    "xr_lag_iqr_dcn_collective_lat_us_p90",
+    "xr_fft_period_disp_dcn_collective_lat_us_p90",
+    "xr_fft_peakpow_min_dcn_collective_lat_us_p90",
+    "xr_dip_coalign_dcn_collective_lat_us_p90",
+    "xr_level_spread_dcn_collective_lat_us_p90",
+    "xr_corr_mean_tensorcore_util_pct",
+    "xr_corr_min_tensorcore_util_pct",
+    "xr_corr_frachi_tensorcore_util_pct",
+    "xr_lag_median_tensorcore_util_pct",
+    "xr_lag_iqr_tensorcore_util_pct",
+    "xr_fft_period_disp_tensorcore_util_pct",
+    "xr_fft_peakpow_min_tensorcore_util_pct",
+    "xr_dip_coalign_tensorcore_util_pct",
+    "xr_level_spread_tensorcore_util_pct",
+    "xr_corr_mean_nvlink_total_mbps",
+    "xr_corr_min_nvlink_total_mbps",
+    "xr_corr_frachi_nvlink_total_mbps",
+    "xr_lag_median_nvlink_total_mbps",
+    "xr_lag_iqr_nvlink_total_mbps",
+    "xr_fft_period_disp_nvlink_total_mbps",
+    "xr_fft_peakpow_min_nvlink_total_mbps",
+    "xr_dip_coalign_nvlink_total_mbps",
+    "xr_level_spread_nvlink_total_mbps",
+    "xr_corr_internode_mean_hlo_exec_us_p90",
+    "xr_corr_intranode_mean_hlo_exec_us_p90",
+    "xr_corr_inter_minus_intra_hlo_exec_us_p90",
+    "xr_corr_internode_mean_tensorcore_util_pct",
+    "xr_corr_intranode_mean_tensorcore_util_pct",
+    "xr_corr_inter_minus_intra_tensorcore_util_pct"
+  ],
+  "families": [
+    "advtrain_bubble",
+    "advtrain_flatarena",
+    "advtrain_typeconf",
+    "inferasr_whisper",
+    "infercnn_rn",
+    "inferdiff_sdxl",
+    "inferembed_bge",
+    "inferembed_clip",
+    "inferhf_qwen",
+    "inferhf_shard",
+    "inferrec_dlrm",
+    "inferrep",
+    "inferrep_qwen",
+    "inferserve_async",
+    "infershard",
+    "infershard_qwen",
+    "infervis_vitl",
+    "multinode_interleave",
+    "nonml_comm",
+    "nonml_duty",
+    "nonml_fftshard",
+    "nonml_himem",
+    "nonml_hpc",
+    "nonml_lowpower",
+    "nonml_nccl",
+    "nonml_sat",
+    "nonml_stencil",
+    "stalled_train",
+    "train_apexrl",
+    "train_contrastive",
+    "train_ddp",
+    "train_decoupdiloco",
+    "train_diffusion",
+    "train_fsdp",
+    "train_impala",
+    "train_localsgd",
+    "train_lora",
+    "train_moe",
+    "train_pipe",
+    "train_ppodist",
+    "train_streamdiloco",
+    "train_swarm",
+    "train_tp"
+  ],
+  "n_windows": 19298,
+  "n_jobs": 479,
+  "ablated_jobs": [
+    "0ea8f432d8d0",
+    "1cd11d10771b",
+    "446f8e075297",
+    "4a6ac77308e1",
+    "4bc3b5ea8487",
+    "536766beddc2",
+    "5fc38dc199d4",
+    "7411fc4abd0e",
+    "78f07ad18157",
+    "7a794ea42725",
+    "8016c231999c",
+    "862039fd119d",
+    "8a85aeea7c8b",
+    "8ff4eeccdfc9",
+    "9a7b6020cd96",
+    "ac8b7542bced",
+    "cdbae259fdc0",
+    "db5fb1ee5574",
+    "e7aa8e144f94",
+    "e7f12cca6f5a",
+    "ec9607601eb4",
+    "f01ba98f8722",
+    "f554104816ef",
+    "f929213bfb44",
+    "f9822edc9e65",
+    "fd8cd3c1f32d"
+  ],
+  "per_fold": [
+    {
+      "family": "advtrain_bubble",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 80,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          80,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9960047917564709
+    },
+    {
+      "family": "advtrain_bubble",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 80,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          80,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9960047917564709
+    },
+    {
+      "family": "advtrain_bubble",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 80,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          80,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9960047917564709
+    },
+    {
+      "family": "advtrain_flatarena",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 161,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          161,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9949255693526494
+    },
+    {
+      "family": "advtrain_flatarena",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 161,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          161,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9949255693526494
+    },
+    {
+      "family": "advtrain_flatarena",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 161,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          161,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9949255693526494
+    },
+    {
+      "family": "advtrain_typeconf",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 1623,
+      "jobs": 41,
+      "accuracy": 0.5113986444855206,
+      "macro_f1": 0.38490790386119894,
+      "training_recall": 0.49744572158365263,
+      "false_positive_rate": 0.17543859649122806,
+      "job_any_recall": 0.975609756097561,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          783,
+          0,
+          783
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          0,
+          47
+        ]
+      ],
+      "train_frac_mean": 0.9749002766944134
+    },
+    {
+      "family": "advtrain_typeconf",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 1623,
+      "jobs": 41,
+      "accuracy": 0.7911275415896488,
+      "macro_f1": 0.5482890801450541,
+      "training_recall": 0.7777777777777778,
+      "false_positive_rate": 0.17543859649122806,
+      "job_any_recall": 0.975609756097561,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          1237,
+          0,
+          329
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          0,
+          47
+        ]
+      ],
+      "train_frac_mean": 0.9749002766944134
+    },
+    {
+      "family": "advtrain_typeconf",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 1623,
+      "jobs": 41,
+      "accuracy": 0.5113986444855206,
+      "macro_f1": 0.38490790386119894,
+      "training_recall": 0.49744572158365263,
+      "false_positive_rate": 0.17543859649122806,
+      "job_any_recall": 0.975609756097561,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          783,
+          0,
+          783
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          0,
+          47
+        ]
+      ],
+      "train_frac_mean": 0.9749002766944134
+    },
+    {
+      "family": "inferasr_whisper",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 160,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          160,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferasr_whisper",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 160,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          160,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferasr_whisper",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 160,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          160,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infercnn_rn",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          78
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infercnn_rn",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          78
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infercnn_rn",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          78
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferdiff_sdxl",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 167,
+      "jobs": 4,
+      "accuracy": 0.05389221556886228,
+      "macro_f1": 0.05113636363636364,
+      "training_recall": null,
+      "false_positive_rate": 0.9341317365269461,
+      "job_any_recall": null,
+      "job_any_fpr": 1.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          158,
+          9,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferdiff_sdxl",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 167,
+      "jobs": 4,
+      "accuracy": 0.059880239520958084,
+      "macro_f1": 0.05649717514124294,
+      "training_recall": null,
+      "false_positive_rate": 0.9341317365269461,
+      "job_any_recall": null,
+      "job_any_fpr": 1.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          157,
+          10,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferdiff_sdxl",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 167,
+      "jobs": 4,
+      "accuracy": 0.05389221556886228,
+      "macro_f1": 0.05113636363636364,
+      "training_recall": null,
+      "false_positive_rate": 0.9341317365269461,
+      "job_any_recall": null,
+      "job_any_fpr": 1.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          158,
+          9,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferembed_bge",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 157,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          157,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferembed_bge",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 157,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          157,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferembed_bge",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 157,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          157,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferembed_clip",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          158,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferembed_clip",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          158,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferembed_clip",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          158,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferhf_qwen",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 120,
+      "jobs": 3,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          120,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferhf_qwen",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 120,
+      "jobs": 3,
+      "accuracy": 0.875,
+      "macro_f1": 0.4666666666666667,
+      "training_recall": null,
+      "false_positive_rate": 0.125,
+      "job_any_recall": null,
+      "job_any_fpr": 1.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          15,
+          105,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferhf_qwen",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 120,
+      "jobs": 3,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          120,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferhf_shard",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 254,
+      "jobs": 6,
+      "accuracy": 0.9606299212598425,
+      "macro_f1": 0.4899598393574297,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          244,
+          2
+        ],
+        [
+          0,
+          8,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferhf_shard",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 254,
+      "jobs": 6,
+      "accuracy": 0.968503937007874,
+      "macro_f1": 0.492,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          246,
+          0
+        ],
+        [
+          0,
+          8,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferhf_shard",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 254,
+      "jobs": 6,
+      "accuracy": 0.9606299212598425,
+      "macro_f1": 0.4899598393574297,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          244,
+          2
+        ],
+        [
+          0,
+          8,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrec_dlrm",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 315,
+      "jobs": 8,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "training_recall": null,
+      "false_positive_rate": 0.4984126984126984,
+      "job_any_recall": null,
+      "job_any_fpr": 0.5,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          158,
+          0,
+          157
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrec_dlrm",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 315,
+      "jobs": 8,
+      "accuracy": 0.012698412698412698,
+      "macro_f1": 0.008359456635318703,
+      "training_recall": null,
+      "false_positive_rate": 0.41904761904761906,
+      "job_any_recall": null,
+      "job_any_fpr": 0.5,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          154,
+          4,
+          157
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrec_dlrm",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 315,
+      "jobs": 8,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "training_recall": null,
+      "false_positive_rate": 0.4984126984126984,
+      "job_any_recall": null,
+      "job_any_fpr": 0.5,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          158,
+          0,
+          157
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrep",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 512,
+      "jobs": 13,
+      "accuracy": 0.6015625,
+      "macro_f1": 0.2564724919093851,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          306,
+          202
+        ],
+        [
+          0,
+          0,
+          2
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrep",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 512,
+      "jobs": 13,
+      "accuracy": 0.6015625,
+      "macro_f1": 0.2564724919093851,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          306,
+          202
+        ],
+        [
+          0,
+          0,
+          2
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrep",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 512,
+      "jobs": 13,
+      "accuracy": 0.6015625,
+      "macro_f1": 0.2564724919093851,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          306,
+          202
+        ],
+        [
+          0,
+          0,
+          2
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrep_qwen",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 155,
+      "jobs": 7,
+      "accuracy": 0.9935483870967742,
+      "macro_f1": 0.49838187702265374,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          154,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrep_qwen",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 155,
+      "jobs": 7,
+      "accuracy": 0.9225806451612903,
+      "macro_f1": 0.4798657718120805,
+      "training_recall": null,
+      "false_positive_rate": 0.04516129032258064,
+      "job_any_recall": null,
+      "job_any_fpr": 0.42857142857142855,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          143,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferrep_qwen",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 155,
+      "jobs": 7,
+      "accuracy": 0.9935483870967742,
+      "macro_f1": 0.49838187702265374,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          154,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferserve_async",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 1011,
+      "jobs": 26,
+      "accuracy": 0.6923837784371909,
+      "macro_f1": 0.27274498344048315,
+      "training_recall": null,
+      "false_positive_rate": 0.29673590504451036,
+      "job_any_recall": null,
+      "job_any_fpr": 0.5,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          302,
+          700,
+          9
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferserve_async",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 1011,
+      "jobs": 26,
+      "accuracy": 0.8031651829871415,
+      "macro_f1": 0.29694642530627174,
+      "training_recall": null,
+      "false_positive_rate": 0.18397626112759644,
+      "job_any_recall": null,
+      "job_any_fpr": 0.3076923076923077,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          190,
+          812,
+          9
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "inferserve_async",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 1011,
+      "jobs": 26,
+      "accuracy": 0.6923837784371909,
+      "macro_f1": 0.27274498344048315,
+      "training_recall": null,
+      "false_positive_rate": 0.29673590504451036,
+      "job_any_recall": null,
+      "job_any_fpr": 0.5,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          302,
+          700,
+          9
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infershard",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 509,
+      "jobs": 13,
+      "accuracy": 0.009823182711198428,
+      "macro_f1": 0.00665335994677312,
+      "training_recall": null,
+      "false_positive_rate": 0.0019646365422396855,
+      "job_any_recall": null,
+      "job_any_fpr": 0.07692307692307693,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          13,
+          0,
+          491
+        ],
+        [
+          0,
+          0,
+          5
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infershard",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 509,
+      "jobs": 13,
+      "accuracy": 0.009823182711198428,
+      "macro_f1": 0.006640106241699867,
+      "training_recall": null,
+      "false_positive_rate": 0.005893909626719057,
+      "job_any_recall": null,
+      "job_any_fpr": 0.15384615384615385,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          492
+        ],
+        [
+          0,
+          0,
+          5
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infershard",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 509,
+      "jobs": 13,
+      "accuracy": 0.009823182711198428,
+      "macro_f1": 0.00665335994677312,
+      "training_recall": null,
+      "false_positive_rate": 0.0019646365422396855,
+      "job_any_recall": null,
+      "job_any_fpr": 0.07692307692307693,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          13,
+          0,
+          491
+        ],
+        [
+          0,
+          0,
+          5
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infershard_qwen",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 1110,
+      "jobs": 30,
+      "accuracy": 0.8783783783783784,
+      "macro_f1": 0.3117505995203837,
+      "training_recall": null,
+      "false_positive_rate": 0.04144144144144144,
+      "job_any_recall": null,
+      "job_any_fpr": 0.2,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          120,
+          975,
+          15
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infershard_qwen",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 1110,
+      "jobs": 30,
+      "accuracy": 0.9297297297297298,
+      "macro_f1": 0.3211951447245565,
+      "training_recall": null,
+      "false_positive_rate": 0.0045045045045045045,
+      "job_any_recall": null,
+      "job_any_fpr": 0.1,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          67,
+          1032,
+          11
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infershard_qwen",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 1110,
+      "jobs": 30,
+      "accuracy": 0.8783783783783784,
+      "macro_f1": 0.3117505995203837,
+      "training_recall": null,
+      "false_positive_rate": 0.04144144144144144,
+      "job_any_recall": null,
+      "job_any_fpr": 0.2,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          120,
+          975,
+          15
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infervis_vitl",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          78,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infervis_vitl",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          78,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "infervis_vitl",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          78,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "multinode_interleave",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 2579,
+      "jobs": 61,
+      "accuracy": 0.9278790228770841,
+      "macro_f1": 0.6270043662130297,
+      "training_recall": 0.9483910139647844,
+      "false_positive_rate": 0.012875536480686695,
+      "job_any_recall": 1.0,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          1564,
+          23,
+          60
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          91,
+          829
+        ]
+      ],
+      "train_frac_mean": 0.6075005465300791
+    },
+    {
+      "family": "multinode_interleave",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 2579,
+      "jobs": 61,
+      "accuracy": 0.9243892981775882,
+      "macro_f1": 0.6253671284851614,
+      "training_recall": 0.9477838494231937,
+      "false_positive_rate": 0.012875536480686695,
+      "job_any_recall": 1.0,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          1564,
+          24,
+          59
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          100,
+          820
+        ]
+      ],
+      "train_frac_mean": 0.6075005465300791
+    },
+    {
+      "family": "multinode_interleave",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 2579,
+      "jobs": 61,
+      "accuracy": 0.9278790228770841,
+      "macro_f1": 0.6270043662130297,
+      "training_recall": 0.9483910139647844,
+      "false_positive_rate": 0.012875536480686695,
+      "job_any_recall": 1.0,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          1564,
+          23,
+          60
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          91,
+          829
+        ]
+      ],
+      "train_frac_mean": 0.6075005465300791
+    },
+    {
+      "family": "nonml_comm",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 647,
+      "jobs": 16,
+      "accuracy": 0.8129829984544049,
+      "macro_f1": 0.4484228473998295,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          121,
+          526
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_comm",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 647,
+      "jobs": 16,
+      "accuracy": 0.8207109737248841,
+      "macro_f1": 0.45076400679117146,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          116,
+          531
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_comm",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 647,
+      "jobs": 16,
+      "accuracy": 0.8129829984544049,
+      "macro_f1": 0.4484228473998295,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          121,
+          526
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_duty",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 1213,
+      "jobs": 28,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1213
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_duty",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 1213,
+      "jobs": 28,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1213
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_duty",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 1213,
+      "jobs": 28,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1213
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_fftshard",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 313,
+      "jobs": 8,
+      "accuracy": 0.9201277955271565,
+      "macro_f1": 0.47920133111480867,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          25,
+          288
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_fftshard",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 313,
+      "jobs": 8,
+      "accuracy": 0.7603833865814696,
+      "macro_f1": 0.4319419237749546,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          75,
+          238
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_fftshard",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 313,
+      "jobs": 8,
+      "accuracy": 0.9201277955271565,
+      "macro_f1": 0.47920133111480867,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          25,
+          288
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_himem",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 327,
+      "jobs": 8,
+      "accuracy": 0.981651376146789,
+      "macro_f1": 0.3302469135802469,
+      "training_recall": null,
+      "false_positive_rate": 0.0030581039755351682,
+      "job_any_recall": null,
+      "job_any_fpr": 0.125,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          4,
+          321
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_himem",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 327,
+      "jobs": 8,
+      "accuracy": 0.981651376146789,
+      "macro_f1": 0.3302469135802469,
+      "training_recall": null,
+      "false_positive_rate": 0.0030581039755351682,
+      "job_any_recall": null,
+      "job_any_fpr": 0.125,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          4,
+          321
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_himem",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 327,
+      "jobs": 8,
+      "accuracy": 0.981651376146789,
+      "macro_f1": 0.3302469135802469,
+      "training_recall": null,
+      "false_positive_rate": 0.0030581039755351682,
+      "job_any_recall": null,
+      "job_any_fpr": 0.125,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          4,
+          321
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_hpc",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 319,
+      "jobs": 8,
+      "accuracy": 0.9937304075235109,
+      "macro_f1": 0.49842767295597484,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          317
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_hpc",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 319,
+      "jobs": 8,
+      "accuracy": 0.9937304075235109,
+      "macro_f1": 0.49842767295597484,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          317
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_hpc",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 319,
+      "jobs": 8,
+      "accuracy": 0.9937304075235109,
+      "macro_f1": 0.49842767295597484,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          317
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_lowpower",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 825,
+      "jobs": 21,
+      "accuracy": 0.27151515151515154,
+      "macro_f1": 0.14235780108039403,
+      "training_recall": null,
+      "false_positive_rate": 0.36848484848484847,
+      "job_any_recall": null,
+      "job_any_fpr": 0.6190476190476191,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          569,
+          32,
+          224
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_lowpower",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 825,
+      "jobs": 21,
+      "accuracy": 0.76,
+      "macro_f1": 0.2878787878787879,
+      "training_recall": null,
+      "false_positive_rate": 0.0012121212121212121,
+      "job_any_recall": null,
+      "job_any_fpr": 0.047619047619047616,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          11,
+          187,
+          627
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_lowpower",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 825,
+      "jobs": 21,
+      "accuracy": 0.27151515151515154,
+      "macro_f1": 0.14235780108039403,
+      "training_recall": null,
+      "false_positive_rate": 0.36848484848484847,
+      "job_any_recall": null,
+      "job_any_fpr": 0.6190476190476191,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          569,
+          32,
+          224
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_nccl",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 157,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          157
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_nccl",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 157,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          157
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_nccl",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 157,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          157
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_sat",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 1237,
+      "jobs": 30,
+      "accuracy": 0.8051738075990299,
+      "macro_f1": 0.44603672189879084,
+      "training_recall": null,
+      "false_positive_rate": 0.1948261924009701,
+      "job_any_recall": null,
+      "job_any_fpr": 0.23333333333333334,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          241,
+          0,
+          996
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_sat",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 1237,
+      "jobs": 30,
+      "accuracy": 0.8051738075990299,
+      "macro_f1": 0.44603672189879084,
+      "training_recall": null,
+      "false_positive_rate": 0.1948261924009701,
+      "job_any_recall": null,
+      "job_any_fpr": 0.23333333333333334,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          241,
+          0,
+          996
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_sat",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 1237,
+      "jobs": 30,
+      "accuracy": 0.8051738075990299,
+      "macro_f1": 0.44603672189879084,
+      "training_recall": null,
+      "false_positive_rate": 0.1948261924009701,
+      "job_any_recall": null,
+      "job_any_fpr": 0.23333333333333334,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          241,
+          0,
+          996
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_stencil",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 0.03164556962025317,
+      "macro_f1": 0.02044989775051125,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          19,
+          134,
+          5
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_stencil",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 0.0379746835443038,
+      "macro_f1": 0.036585365853658534,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          152,
+          6
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "nonml_stencil",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 0.03164556962025317,
+      "macro_f1": 0.02044989775051125,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          19,
+          134,
+          5
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "stalled_train",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 119,
+      "jobs": 3,
+      "accuracy": 0.3277310924369748,
+      "macro_f1": 0.16455696202531647,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          70,
+          39
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "stalled_train",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 119,
+      "jobs": 3,
+      "accuracy": 0.3277310924369748,
+      "macro_f1": 0.16455696202531647,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          79,
+          39
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "stalled_train",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 119,
+      "jobs": 3,
+      "accuracy": 0.3277310924369748,
+      "macro_f1": 0.16455696202531647,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          70,
+          39
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_apexrl",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 40,
+      "jobs": 1,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          40,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9838533333937327
+    },
+    {
+      "family": "train_contrastive",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          158,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_contrastive",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          158,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_contrastive",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 158,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          158,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_ddp",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 607,
+      "jobs": 15,
+      "accuracy": 0.8517298187808896,
+      "macro_f1": 0.308288610614192,
+      "training_recall": 0.8402662229617305,
+      "false_positive_rate": 0.0,
+      "job_any_recall": 0.8666666666666667,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          517,
+          84,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9799722916384539
+    },
+    {
+      "family": "train_ddp",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 607,
+      "jobs": 15,
+      "accuracy": 0.45304777594728174,
+      "macro_f1": 0.20928462709284626,
+      "training_recall": 0.259567387687188,
+      "false_positive_rate": 0.0,
+      "job_any_recall": 0.7333333333333333,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          275,
+          326,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9799722916384539
+    },
+    {
+      "family": "train_ddp",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 607,
+      "jobs": 15,
+      "accuracy": 0.8517298187808896,
+      "macro_f1": 0.308288610614192,
+      "training_recall": 0.8402662229617305,
+      "false_positive_rate": 0.0,
+      "job_any_recall": 0.8666666666666667,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          517,
+          84,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9799722916384539
+    },
+    {
+      "family": "train_decoupdiloco",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 88,
+      "jobs": 2,
+      "accuracy": 0.9772727272727273,
+      "macro_f1": 0.93125,
+      "training_recall": 1.0,
+      "false_positive_rate": 0.1111111111111111,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          79,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          7
+        ]
+      ],
+      "train_frac_mean": 0.9824746833068912
+    },
+    {
+      "family": "train_diffusion",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 159,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          159,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_diffusion",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 159,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          159,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_diffusion",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 159,
+      "jobs": 4,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          159,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_fsdp",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 2151,
+      "jobs": 54,
+      "accuracy": 0.5527661552766155,
+      "macro_f1": 0.31097916097916095,
+      "training_recall": 0.5457578646329838,
+      "false_positive_rate": 0.05660377358490566,
+      "job_any_recall": 0.7037037037037037,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          1148,
+          684,
+          266
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          2,
+          41
+        ]
+      ],
+      "train_frac_mean": 0.9842570073601665
+    },
+    {
+      "family": "train_fsdp",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 2151,
+      "jobs": 54,
+      "accuracy": 0.6192468619246861,
+      "macro_f1": 0.33477849556996614,
+      "training_recall": 0.6120114394661582,
+      "false_positive_rate": 0.0,
+      "job_any_recall": 0.7592592592592593,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          1288,
+          548,
+          262
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          7,
+          2,
+          44
+        ]
+      ],
+      "train_frac_mean": 0.9842570073601665
+    },
+    {
+      "family": "train_fsdp",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 2151,
+      "jobs": 54,
+      "accuracy": 0.5527661552766155,
+      "macro_f1": 0.31097916097916095,
+      "training_recall": 0.5457578646329838,
+      "false_positive_rate": 0.05660377358490566,
+      "job_any_recall": 0.7037037037037037,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          1148,
+          684,
+          266
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          2,
+          41
+        ]
+      ],
+      "train_frac_mean": 0.9842570073601665
+    },
+    {
+      "family": "train_impala",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 125,
+      "jobs": 3,
+      "accuracy": 0.72,
+      "macro_f1": 0.2898550724637681,
+      "training_recall": 0.7435897435897436,
+      "false_positive_rate": 0.0,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          90,
+          0,
+          27
+        ],
+        [
+          0,
+          0,
+          8
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9831396013243584
+    },
+    {
+      "family": "train_localsgd",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 430,
+      "jobs": 8,
+      "accuracy": 0.8813953488372093,
+      "macro_f1": 0.5265218580414849,
+      "training_recall": 0.9291553133514986,
+      "false_positive_rate": 0.47619047619047616,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          349,
+          18,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          31,
+          2,
+          30
+        ]
+      ],
+      "train_frac_mean": 0.9752632152157193
+    },
+    {
+      "family": "train_lora",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 334,
+      "jobs": 8,
+      "accuracy": 0.1377245508982036,
+      "macro_f1": 0.08070175438596491,
+      "training_recall": 0.12874251497005987,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          46,
+          158,
+          130
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9679503968783788
+    },
+    {
+      "family": "train_lora",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 334,
+      "jobs": 8,
+      "accuracy": 0.05089820359281437,
+      "macro_f1": 0.03228869895536562,
+      "training_recall": 0.05089820359281437,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          17,
+          161,
+          156
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9679503968783788
+    },
+    {
+      "family": "train_lora",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 334,
+      "jobs": 8,
+      "accuracy": 0.1377245508982036,
+      "macro_f1": 0.08070175438596491,
+      "training_recall": 0.12874251497005987,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          46,
+          158,
+          130
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9679503968783788
+    },
+    {
+      "family": "train_moe",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 119,
+      "jobs": 3,
+      "accuracy": 0.03361344537815126,
+      "macro_f1": 0.032520325203252036,
+      "training_recall": 0.025210084033613446,
+      "false_positive_rate": null,
+      "job_any_recall": 0.6666666666666666,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          4,
+          115,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9903834735645967
+    },
+    {
+      "family": "train_pipe",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 180,
+      "jobs": 4,
+      "accuracy": 0.9166666666666666,
+      "macro_f1": 0.31884057971014496,
+      "training_recall": 0.9111111111111111,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          165,
+          12,
+          3
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_pipe",
+      "arm": "baseline",
+      "test_population": "old_jobs",
+      "windows": 180,
+      "jobs": 4,
+      "accuracy": 0.9166666666666666,
+      "macro_f1": 0.31884057971014496,
+      "training_recall": 0.9055555555555556,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          165,
+          4,
+          11
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_pipe",
+      "arm": "full",
+      "test_population": "old_jobs",
+      "windows": 180,
+      "jobs": 4,
+      "accuracy": 0.9166666666666666,
+      "macro_f1": 0.31884057971014496,
+      "training_recall": 0.9111111111111111,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          165,
+          12,
+          3
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    {
+      "family": "train_ppodist",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 40,
+      "jobs": 1,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          40,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.23886083483695986
+    },
+    {
+      "family": "train_streamdiloco",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 167,
+      "jobs": 4,
+      "accuracy": 0.9461077844311377,
+      "macro_f1": 0.46349206349206346,
+      "training_recall": 0.9811320754716981,
+      "false_positive_rate": 0.0,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          156,
+          3,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          2
+        ]
+      ],
+      "train_frac_mean": 0.9791647798110356
+    },
+    {
+      "family": "train_swarm",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 78,
+      "jobs": 2,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "training_recall": 0.0,
+      "false_positive_rate": null,
+      "job_any_recall": 0.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          0,
+          0,
+          78
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.992437179475768
+    },
+    {
+      "family": "train_tp",
+      "arm": "full",
+      "test_population": "all",
+      "windows": 80,
+      "jobs": 2,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "training_recall": 1.0,
+      "false_positive_rate": null,
+      "job_any_recall": 1.0,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          80,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "train_frac_mean": 0.9875033332904181
+    }
+  ],
+  "operational": {
+    "threshold": 0.5,
+    "stride_sec": 15.0,
+    "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+    "exposure": "union of observed windows in jobs with no training-labeled windows",
+    "decision_time": "window_end; computation/transport delay not included",
+    "benign_jobs": 273,
+    "benign_job_hours": 46.17499999999992,
+    "false_alert_jobs": 49,
+    "false_alert_episodes": 175,
+    "job_false_positive_rate": 0.1794871794871795,
+    "false_alert_episodes_per_job_hour": 3.78992961559286,
+    "training_jobs": 206,
+    "pretraining_alert_jobs": 10,
+    "timing_eligible_jobs": 100,
+    "timing_missed_jobs": 3,
+    "timing_censored_jobs": 70,
+    "timing_detected_jobs": 97,
+    "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+    "detected_delay_lower_median_s": 0.0,
+    "detected_delay_upper_median_s": 30.0,
+    "detected_delay_lower_p90_s": 45.0,
+    "detected_delay_upper_p90_s": 75.0
+  },
+  "operational_by_family": {
+    "advtrain_bubble": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 2,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 2,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "advtrain_flatarena": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 4,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 4,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "advtrain_typeconf": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 41,
+      "pretraining_alert_jobs": 5,
+      "timing_eligible_jobs": 40,
+      "timing_missed_jobs": 1,
+      "timing_censored_jobs": 1,
+      "timing_detected_jobs": 39,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 0.0,
+      "detected_delay_upper_median_s": 30.0,
+      "detected_delay_lower_p90_s": 15.0,
+      "detected_delay_upper_p90_s": 45.0
+    },
+    "inferasr_whisper": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 4,
+      "benign_job_hours": 0.6833333333333333,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "infercnn_rn": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 2,
+      "benign_job_hours": 0.3333333333333333,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferdiff_sdxl": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 4,
+      "benign_job_hours": 0.7125,
+      "false_alert_jobs": 4,
+      "false_alert_episodes": 4,
+      "job_false_positive_rate": 1.0,
+      "false_alert_episodes_per_job_hour": 5.614035087719298,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferembed_bge": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 4,
+      "benign_job_hours": 0.6708333333333333,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferembed_clip": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 4,
+      "benign_job_hours": 0.6749999999999999,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferhf_qwen": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 3,
+      "benign_job_hours": 0.5125,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferhf_shard": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 6,
+      "benign_job_hours": 1.0833333333333333,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferrec_dlrm": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 8,
+      "benign_job_hours": 1.3458333333333337,
+      "false_alert_jobs": 4,
+      "false_alert_episodes": 4,
+      "job_false_positive_rate": 0.5,
+      "false_alert_episodes_per_job_hour": 2.972136222910216,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferrep": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 13,
+      "benign_job_hours": 2.1875,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferrep_qwen": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 7,
+      "benign_job_hours": 0.6749999999999999,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "inferserve_async": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 26,
+      "benign_job_hours": 4.320833333333332,
+      "false_alert_jobs": 13,
+      "false_alert_episodes": 54,
+      "job_false_positive_rate": 0.5,
+      "false_alert_episodes_per_job_hour": 12.497589199614277,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "infershard": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 13,
+      "benign_job_hours": 2.1750000000000003,
+      "false_alert_jobs": 1,
+      "false_alert_episodes": 1,
+      "job_false_positive_rate": 0.07692307692307693,
+      "false_alert_episodes_per_job_hour": 0.4597701149425287,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "infershard_qwen": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 30,
+      "benign_job_hours": 4.750000000000001,
+      "false_alert_jobs": 6,
+      "false_alert_episodes": 26,
+      "job_false_positive_rate": 0.2,
+      "false_alert_episodes_per_job_hour": 5.473684210526315,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "infervis_vitl": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 2,
+      "benign_job_hours": 0.3333333333333333,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "multinode_interleave": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 17,
+      "benign_job_hours": 3.0291666666666663,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 44,
+      "pretraining_alert_jobs": 1,
+      "timing_eligible_jobs": 35,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 9,
+      "timing_detected_jobs": 35,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 45.0,
+      "detected_delay_upper_median_s": 75.0,
+      "detected_delay_lower_p90_s": 60.0,
+      "detected_delay_upper_p90_s": 90.0
+    },
+    "nonml_comm": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 16,
+      "benign_job_hours": 2.7625,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_duty": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 28,
+      "benign_job_hours": 5.170833333333332,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_fftshard": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 8,
+      "benign_job_hours": 1.3375000000000001,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_himem": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 8,
+      "benign_job_hours": 1.3958333333333335,
+      "false_alert_jobs": 1,
+      "false_alert_episodes": 1,
+      "job_false_positive_rate": 0.125,
+      "false_alert_episodes_per_job_hour": 0.7164179104477612,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_hpc": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 8,
+      "benign_job_hours": 1.3625,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_lowpower": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 21,
+      "benign_job_hours": 3.5249999999999995,
+      "false_alert_jobs": 13,
+      "false_alert_episodes": 78,
+      "job_false_positive_rate": 0.6190476190476191,
+      "false_alert_episodes_per_job_hour": 22.127659574468087,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_nccl": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 4,
+      "benign_job_hours": 0.6708333333333334,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_sat": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 30,
+      "benign_job_hours": 5.279166666666666,
+      "false_alert_jobs": 7,
+      "false_alert_episodes": 7,
+      "job_false_positive_rate": 0.23333333333333334,
+      "false_alert_episodes_per_job_hour": 1.3259668508287294,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "nonml_stencil": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 4,
+      "benign_job_hours": 0.6749999999999999,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "stalled_train": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 3,
+      "benign_job_hours": 0.5083333333333333,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": 0.0,
+      "false_alert_episodes_per_job_hour": 0.0,
+      "training_jobs": 0,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_apexrl": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 1,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 1,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_contrastive": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 4,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_ddp": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 15,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 3,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 5,
+      "timing_detected_jobs": 3,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 0.0,
+      "detected_delay_upper_median_s": 30.0,
+      "detected_delay_lower_p90_s": 12.0,
+      "detected_delay_upper_p90_s": 42.0
+    },
+    "train_decoupdiloco": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 2,
+      "pretraining_alert_jobs": 1,
+      "timing_eligible_jobs": 1,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 1,
+      "timing_detected_jobs": 1,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 0.0,
+      "detected_delay_upper_median_s": 30.0,
+      "detected_delay_lower_p90_s": 0.0,
+      "detected_delay_upper_p90_s": 30.0
+    },
+    "train_diffusion": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 4,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_fsdp": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 54,
+      "pretraining_alert_jobs": 2,
+      "timing_eligible_jobs": 16,
+      "timing_missed_jobs": 2,
+      "timing_censored_jobs": 27,
+      "timing_detected_jobs": 14,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 0.0,
+      "detected_delay_upper_median_s": 30.0,
+      "detected_delay_lower_p90_s": 10.500000000000016,
+      "detected_delay_upper_p90_s": 40.500000000000014
+    },
+    "train_impala": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 3,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 1,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 2,
+      "timing_detected_jobs": 1,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 15.0,
+      "detected_delay_upper_median_s": 45.0,
+      "detected_delay_lower_p90_s": 15.0,
+      "detected_delay_upper_p90_s": 45.0
+    },
+    "train_localsgd": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 8,
+      "pretraining_alert_jobs": 1,
+      "timing_eligible_jobs": 3,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 5,
+      "timing_detected_jobs": 3,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 0.0,
+      "detected_delay_upper_median_s": 30.0,
+      "detected_delay_lower_p90_s": 12.0,
+      "detected_delay_upper_p90_s": 42.0
+    },
+    "train_lora": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 8,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 2,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_moe": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 3,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 3,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_pipe": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 4,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 0,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_ppodist": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 1,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 1,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_streamdiloco": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 4,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 1,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 3,
+      "timing_detected_jobs": 1,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": 0.0,
+      "detected_delay_upper_median_s": 30.0,
+      "detected_delay_lower_p90_s": 0.0,
+      "detected_delay_upper_p90_s": 30.0
+    },
+    "train_swarm": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 2,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 2,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    },
+    "train_tp": {
+      "threshold": 0.5,
+      "stride_sec": 15.0,
+      "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+      "exposure": "union of observed windows in jobs with no training-labeled windows",
+      "decision_time": "window_end; computation/transport delay not included",
+      "benign_jobs": 0,
+      "benign_job_hours": 0.0,
+      "false_alert_jobs": 0,
+      "false_alert_episodes": 0,
+      "job_false_positive_rate": null,
+      "false_alert_episodes_per_job_hour": null,
+      "training_jobs": 2,
+      "pretraining_alert_jobs": 0,
+      "timing_eligible_jobs": 0,
+      "timing_missed_jobs": 0,
+      "timing_censored_jobs": 2,
+      "timing_detected_jobs": 0,
+      "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+      "detected_delay_lower_median_s": null,
+      "detected_delay_upper_median_s": null,
+      "detected_delay_lower_p90_s": null,
+      "detected_delay_upper_p90_s": null
+    }
+  },
+  "all": {
+    "windows": 19298,
+    "jobs": 479,
+    "accuracy": 0.711420872629288,
+    "macro_f1": 0.7040150393213581,
+    "training_recall": 0.6922981520525859,
+    "false_positive_rate": 0.11232754784156654,
+    "job_any_recall": 0.8932038834951457,
+    "job_any_fpr": 0.1794871794871795,
+    "confusion": [
+      [
+        5619,
+        1097,
+        1347
+      ],
+      [
+        754,
+        3061,
+        962
+      ],
+      [
+        906,
+        503,
+        5049
+      ]
+    ],
+    "train_frac_mean": 0.8826223938806061
+  },
+  "paired_old_jobs": {
+    "windows": 18131,
+    "jobs": 453,
+    "accuracy": 0.7088412111852628,
+    "macro_f1": 0.7036376314783815,
+    "training_recall": 0.6809851088201604,
+    "false_positive_rate": 0.11043330043958016,
+    "job_any_recall": 0.8944444444444445,
+    "job_any_fpr": 0.1794871794871795,
+    "confusion": [
+      [
+        4781,
+        961,
+        1242
+      ],
+      [
+        754,
+        3061,
+        954
+      ],
+      [
+        873,
+        495,
+        5010
+      ]
+    ],
+    "train_frac_mean": 0.868588046273377
+  },
+  "new_jobs": {
+    "windows": 1167,
+    "jobs": 26,
+    "accuracy": 0.7514995715509855,
+    "macro_f1": 0.3985646920129679,
+    "training_recall": 0.7655236329935126,
+    "false_positive_rate": 0.3522727272727273,
+    "job_any_recall": 0.8846153846153846,
+    "job_any_fpr": null,
+    "confusion": [
+      [
+        838,
+        136,
+        105
+      ],
+      [
+        0,
+        0,
+        8
+      ],
+      [
+        33,
+        8,
+        39
+      ]
+    ],
+    "train_frac_mean": 0.9540557924523412
+  },
+  "by_hardware": {
+    "Google TPU v5e": {
+      "windows": 3799,
+      "jobs": 92,
+      "accuracy": 0.6988681231903132,
+      "macro_f1": 0.6754181329242314,
+      "training_recall": 0.5615696887686062,
+      "false_positive_rate": 0.052132701421800945,
+      "job_any_recall": 0.9210526315789473,
+      "job_any_fpr": 0.05555555555555555,
+      "confusion": [
+        [
+          837,
+          5,
+          636
+        ],
+        [
+          9,
+          306,
+          311
+        ],
+        [
+          124,
+          59,
+          1512
+        ]
+      ],
+      "train_frac_mean": 0.8895655390696855
+    },
+    "Google TPU v6e": {
+      "windows": 4444,
+      "jobs": 108,
+      "accuracy": 0.8046804680468047,
+      "macro_f1": 0.5664189113070696,
+      "training_recall": 0.8563698967043778,
+      "false_positive_rate": 0.06055578598092078,
+      "job_any_recall": 1.0,
+      "job_any_fpr": 0.09259259259259259,
+      "confusion": [
+        [
+          1741,
+          18,
+          274
+        ],
+        [
+          6,
+          0,
+          382
+        ],
+        [
+          149,
+          39,
+          1835
+        ]
+      ],
+      "train_frac_mean": 0.8270649942497208
+    },
+    "NVIDIA A100-SXM4-40GB": {
+      "windows": 5475,
+      "jobs": 139,
+      "accuracy": 0.6663013698630137,
+      "macro_f1": 0.6665262510369807,
+      "training_recall": 0.7044117647058824,
+      "false_positive_rate": 0.18253275109170305,
+      "job_any_recall": 0.8301886792452831,
+      "job_any_fpr": 0.29069767441860467,
+      "confusion": [
+        [
+          1450,
+          296,
+          294
+        ],
+        [
+          499,
+          1113,
+          126
+        ],
+        [
+          364,
+          248,
+          1085
+        ]
+      ],
+      "train_frac_mean": 0.8711251294062846
+    },
+    "NVIDIA A100-SXM4-80GB": {
+      "windows": 1964,
+      "jobs": 49,
+      "accuracy": 0.6720977596741344,
+      "macro_f1": 0.5926532613665585,
+      "training_recall": 0.38209982788296043,
+      "false_positive_rate": 0.08459869848156182,
+      "job_any_recall": 1.0,
+      "job_any_fpr": 0.08571428571428572,
+      "confusion": [
+        [
+          223,
+          320,
+          38
+        ],
+        [
+          119,
+          979,
+          124
+        ],
+        [
+          19,
+          24,
+          118
+        ]
+      ],
+      "train_frac_mean": 0.9770162601781085
+    },
+    "NVIDIA H100 80GB HBM3": {
+      "windows": 3616,
+      "jobs": 91,
+      "accuracy": 0.6996681415929203,
+      "macro_f1": 0.684418369985018,
+      "training_recall": 0.7001553599171414,
+      "false_positive_rate": 0.14896142433234422,
+      "job_any_recall": 0.7872340425531915,
+      "job_any_fpr": 0.29545454545454547,
+      "confusion": [
+        [
+          1368,
+          458,
+          105
+        ],
+        [
+          121,
+          663,
+          19
+        ],
+        [
+          250,
+          133,
+          499
+        ]
+      ],
+      "train_frac_mean": 0.9580859753239885
+    }
+  },
+  "by_kind": {
+    "adversarial": {
+      "windows": 3733,
+      "jobs": 91,
+      "accuracy": 0.7607822126975623,
+      "macro_f1": 0.40679141078376024,
+      "training_recall": 0.7475390851187029,
+      "false_positive_rate": 0.07885304659498207,
+      "job_any_recall": 0.989010989010989,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          2588,
+          23,
+          843
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          22,
+          5,
+          252
+        ]
+      ],
+      "train_frac_mean": 0.8011322042399496
+    },
+    "control": {
+      "windows": 829,
+      "jobs": 20,
+      "accuracy": 0.7997587454764777,
+      "macro_f1": 0.2962466487935657,
+      "training_recall": null,
+      "false_positive_rate": 0.0,
+      "job_any_recall": null,
+      "job_any_fpr": 0.0,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          10,
+          156,
+          663
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    "honest": {
+      "windows": 14736,
+      "jobs": 368,
+      "accuracy": 0.6939467969598263,
+      "macro_f1": 0.6902329348000343,
+      "training_recall": 0.6509004122369277,
+      "false_positive_rate": 0.12244494914584773,
+      "job_any_recall": 0.8173913043478261,
+      "job_any_fpr": 0.19367588932806323,
+      "confusion": [
+        [
+          3031,
+          1074,
+          504
+        ],
+        [
+          754,
+          3061,
+          962
+        ],
+        [
+          874,
+          342,
+          4134
+        ]
+      ],
+      "train_frac_mean": 0.972923040341571
+    }
+  },
+  "by_label_source": {
+    "program": {
+      "windows": 6344,
+      "jobs": 164,
+      "accuracy": 0.6781210592686002,
+      "macro_f1": 0.6537061002187298,
+      "training_recall": 0.6119302949061662,
+      "false_positive_rate": 0.171681780708986,
+      "job_any_recall": 0.8055555555555556,
+      "job_any_fpr": 0.265625,
+      "confusion": [
+        [
+          929,
+          430,
+          133
+        ],
+        [
+          739,
+          2511,
+          259
+        ],
+        [
+          235,
+          246,
+          862
+        ]
+      ],
+      "train_frac_mean": null
+    },
+    "steps": {
+      "windows": 12954,
+      "jobs": 315,
+      "accuracy": 0.7277288868303227,
+      "macro_f1": 0.6442379036430373,
+      "training_recall": 0.7105463399786942,
+      "false_positive_rate": 0.06720977596741344,
+      "job_any_recall": 0.9117647058823529,
+      "job_any_fpr": 0.10344827586206896,
+      "confusion": [
+        [
+          4690,
+          667,
+          1214
+        ],
+        [
+          15,
+          550,
+          703
+        ],
+        [
+          671,
+          257,
+          4187
+        ]
+      ],
+      "train_frac_mean": 0.8826223938806061
+    }
+  },
+  "by_train_fraction": {
+    "0%": {
+      "windows": 6383,
+      "jobs": 250,
+      "accuracy": 0.7421275262415792,
+      "macro_f1": 0.45570066372436274,
+      "training_recall": null,
+      "false_positive_rate": 0.06720977596741344,
+      "job_any_recall": null,
+      "job_any_fpr": 0.132,
+      "confusion": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          15,
+          550,
+          703
+        ],
+        [
+          671,
+          257,
+          4187
+        ]
+      ]
+    },
+    "0-5%": {
+      "windows": 26,
+      "jobs": 24,
+      "accuracy": 0.6538461538461539,
+      "macro_f1": 0.3953488372093023,
+      "training_recall": 0.6153846153846154,
+      "false_positive_rate": null,
+      "job_any_recall": 0.5833333333333334,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          17,
+          0,
+          9
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "20-50%": {
+      "windows": 527,
+      "jobs": 98,
+      "accuracy": 0.969639468690702,
+      "macro_f1": 0.3281952472703918,
+      "training_recall": 0.9639468690702088,
+      "false_positive_rate": null,
+      "job_any_recall": 0.8979591836734694,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          511,
+          7,
+          9
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "5-20%": {
+      "windows": 170,
+      "jobs": 45,
+      "accuracy": 0.9117647058823529,
+      "macro_f1": 0.317948717948718,
+      "training_recall": 0.8941176470588236,
+      "false_positive_rate": null,
+      "job_any_recall": 0.6888888888888889,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          155,
+          3,
+          12
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "50-100%": {
+      "windows": 5848,
+      "jobs": 163,
+      "accuracy": 0.6851915184678523,
+      "macro_f1": 0.2710637578217487,
+      "training_recall": 0.6827975376196991,
+      "false_positive_rate": null,
+      "job_any_recall": 0.8404907975460123,
+      "job_any_fpr": null,
+      "confusion": [
+        [
+          4007,
+          657,
+          1184
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "by_job_train_share": {
+    "0%": {
+      "jobs": 145,
+      "training_jobs": 0,
+      "detected": null,
+      "false_alarms": 0.10344827586206896
+    },
+    "0-5%": {
+      "jobs": 1,
+      "training_jobs": 1,
+      "detected": 1.0,
+      "false_alarms": null
+    },
+    "20-50%": {
+      "jobs": 17,
+      "training_jobs": 17,
+      "detected": 1.0,
+      "false_alarms": null
+    },
+    "5-20%": {
+      "jobs": 3,
+      "training_jobs": 3,
+      "detected": 1.0,
+      "false_alarms": null
+    },
+    "50-100%": {
+      "jobs": 149,
+      "training_jobs": 149,
+      "detected": 0.8993288590604027,
+      "false_alarms": null
+    }
+  },
+  "operational_baseline_old_jobs": {
+    "threshold": 0.5,
+    "stride_sec": 15.0,
+    "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+    "exposure": "union of observed windows in jobs with no training-labeled windows",
+    "decision_time": "window_end; computation/transport delay not included",
+    "benign_jobs": 273,
+    "benign_job_hours": 46.17499999999992,
+    "false_alert_jobs": 36,
+    "false_alert_episodes": 76,
+    "job_false_positive_rate": 0.13186813186813187,
+    "false_alert_episodes_per_job_hour": 1.6459122902003278,
+    "training_jobs": 180,
+    "pretraining_alert_jobs": 6,
+    "timing_eligible_jobs": 94,
+    "timing_missed_jobs": 3,
+    "timing_censored_jobs": 50,
+    "timing_detected_jobs": 91,
+    "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+    "detected_delay_lower_median_s": 0.0,
+    "detected_delay_upper_median_s": 30.0,
+    "detected_delay_lower_p90_s": 45.0,
+    "detected_delay_upper_p90_s": 75.0
+  },
+  "operational_full_old_jobs": {
+    "threshold": 0.5,
+    "stride_sec": 15.0,
+    "rule": "any positive window; episodes rearm after a negative or >1.5-stride gap",
+    "exposure": "union of observed windows in jobs with no training-labeled windows",
+    "decision_time": "window_end; computation/transport delay not included",
+    "benign_jobs": 273,
+    "benign_job_hours": 46.17499999999992,
+    "false_alert_jobs": 49,
+    "false_alert_episodes": 175,
+    "job_false_positive_rate": 0.1794871794871795,
+    "false_alert_episodes_per_job_hour": 3.78992961559286,
+    "training_jobs": 180,
+    "pretraining_alert_jobs": 8,
+    "timing_eligible_jobs": 94,
+    "timing_missed_jobs": 3,
+    "timing_censored_jobs": 50,
+    "timing_detected_jobs": 91,
+    "detection_delay_bounds_note": "Onset bounded by first STEP-labeled training window, requiring an adjacent STEP-backed negative. Already-training first observations and gaps are censored. Quantiles are detected jobs only; program-only onsets excluded. Misses reported separately.",
+    "detected_delay_lower_median_s": 0.0,
+    "detected_delay_upper_median_s": 30.0,
+    "detected_delay_lower_p90_s": 45.0,
+    "detected_delay_upper_p90_s": 75.0
+  },
+  "baseline_old_jobs": {
+    "windows": 18131,
+    "jobs": 453,
+    "accuracy": 0.7543985439302852,
+    "macro_f1": 0.7458453893164837,
+    "training_recall": 0.7097651775486827,
+    "false_positive_rate": 0.06898717143626087,
+    "job_any_recall": 0.9,
+    "job_any_fpr": 0.13186813186813187,
+    "confusion": [
+      [
+        5104,
+        1063,
+        817
+      ],
+      [
+        609,
+        3211,
+        949
+      ],
+      [
+        284,
+        731,
+        5363
+      ]
+    ]
+  },
+  "paired_family_accuracy_delta": -0.005668661294463386,
+  "paired_family_accuracy_delta_bootstrap95": [
+    -0.051117591458593174,
+    0.03624906239080727
+  ],
+  "paired_family_count": 34,
+  "unresolved_excluded": {
+    "windows": 705,
+    "jobs": 15,
+    "by_source": {
+      "steps": 12954,
+      "program": 6344,
+      "unresolved": 705
+    }
+  },
+  "steps_only": false,
+  "windows_sha256": "046664cd164e3be5d415816e889ef4d8e8a126333526b0ef90740a4bd881ab14",
+  "cache_fingerprint": "515f8d34268457568774df73700b78fac067300ed29da22094421fd14ce1db01",
+  "code": [
+    [
+      "classifier/__init__.py",
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    ],
+    [
+      "classifier/adversary_defender_iteration.py",
+      "b37fc698ab4c2c795bd96bfe4fb15c1efa712cd7ee9d66798e5571eda42e6803"
+    ],
+    [
+      "classifier/analyze_long_run.py",
+      "1a7850be0b50f9afb7168b718c00c1b50481874f7d937d65ebfc19fea3a1dd88"
+    ],
+    [
+      "classifier/cache_provenance.py",
+      "765ef2e581c0589ac4586f5a665e0ed01d98123d64412539ff0d0e416df8303e"
+    ],
+    [
+      "classifier/check_job_grouping.py",
+      "3130412ab9e086901f756a043a78ccfd335460ef89f52ae2ac42f1ed7300eb77"
+    ],
+    [
+      "classifier/classifier_oracle.py",
+      "8fbd2d249faf7b3c47ec52491afdcf3b95f1f385b48cd9c03cccdbd37d723505"
+    ],
+    [
+      "classifier/collection_quality.py",
+      "6c45f69afb68c1cfb6f6d1ca11096e5d646d9b00b2bdd4d6736e6262045633dd"
+    ],
+    [
+      "classifier/compare_twostage_backends.py",
+      "0f418f977fd6593e3611dffd53ab4bb449e673c68d14d5f8be4659d1badffc77"
+    ],
+    [
+      "classifier/compare_twostage_vs_threeway.py",
+      "825d4fb24eea9aa5d76d146ced1028d61e8f3a2773937998e8bcf87468371f01"
+    ],
+    [
+      "classifier/data_sources.py",
+      "2f529108e1b534b5ba2ae48ba2c7d69f7600b2e6b2493dd50bc66bbc851852cc"
+    ],
+    [
+      "classifier/dump_window_predictions.py",
+      "aefa410bc7072150d8d60c1383a72048618e163eb60433735f59b1056425a501"
+    ],
+    [
+      "classifier/energy_bound.py",
+      "0e5a8190258e0f73607689359b097a42bdfa1f854d2ceb6f365a668df9e3614c"
+    ],
+    [
+      "classifier/eval_adversarial.py",
+      "ec658e1751d6e6d8acd31dbdff314570ad35a5e5f8375df1bd354640cb5995ce"
+    ],
+    [
+      "classifier/eval_amd_transfer.py",
+      "c01ebf9954b92adb7863c17efda92fd73123823cb8d89f5c8758669016408393"
+    ],
+    [
+      "classifier/eval_catchup.py",
+      "ad8ce8f66be772ce1b69b75d2fe95bfa6893084d9597054a9e4080bd8b3af1fc"
+    ],
+    [
+      "classifier/eval_cross_vendor.py",
+      "ad51441bf649f6f519a454b29b7d79b587bb405a4646833084b04db4f7ccfbf7"
+    ],
+    [
+      "classifier/eval_dilution_sweep.py",
+      "56f5c0c49044ad75893791fadb524b3de62767f87aece3e7c6f88f0738630f20"
+    ],
+    [
+      "classifier/eval_fourtier_evasion.py",
+      "1b0abac599d198aeb23d8585af8c033782ffa45781117daf49b39f61428c19d3"
+    ],
+    [
+      "classifier/eval_mi300x_experiments.py",
+      "c425926c7004e699ed198a5ad940bffc6d7613575d04461230af53db7892763b"
+    ],
+    [
+      "classifier/eval_mi300x_hardevasion.py",
+      "88b88f3691ce1bf856d90d226a9bd0eb842a129e2529c1401b08b33758adf935"
+    ],
+    [
+      "classifier/eval_mi300x_transfer.py",
+      "ad6baa77c6cb8f633635424ba33ac1af018a725005bb38adaeed3e4ad2e92846"
+    ],
+    [
+      "classifier/eval_multigpu_demo.py",
+      "c075ae61b6482b4f6e2aa0152533cc928e47c1b91ccda8e8f8ed27a5b9bb3767"
+    ],
+    [
+      "classifier/eval_shaping_evasion.py",
+      "8fa97955a82110ee8821f8395c088ae3c17248c70da095709e67c259c1df0c5a"
+    ],
+    [
+      "classifier/eval_whitebox_amd.py",
+      "05ba94a033e734ef49c8b80f4f80336da07d8c2d2a81f86db9f25e2b865879dd"
+    ],
+    [
+      "classifier/evasion_bound.py",
+      "d8113fee4ca7c8ef31c7a579fa49214a3c48538dc5ad4b007c7474e16a4a5251"
+    ],
+    [
+      "classifier/harden_physical_classifier.py",
+      "b89dd69cad6acba5d0d0c7d7d804f35984240e2723b89d198a7ecbd451838f93"
+    ],
+    [
+      "classifier/leave_one_strategy_out.py",
+      "b3767bb9fdcfa1f5b174be80b55bdaed546b8aba06ec93c38e9c862ee5dff5a7"
+    ],
+    [
+      "classifier/model_store.py",
+      "2bf837490464c0fbbfe7d3599ca5185da7718f6572141bf4dcec02fe4dc3756b"
+    ],
+    [
+      "classifier/multinode_features.py",
+      "966d0182c38eb262117df335726c47a9efbe715cfb37fd5fd11d4290407556b0"
+    ],
+    [
+      "classifier/operational_metrics.py",
+      "aba3d87c6b906d9720e9ee33a3da6b332907f20a1e31840f74b470c5fda85873"
+    ],
+    [
+      "classifier/physical_sensor_classifier.py",
+      "404751761073ac04183dadee62438e15cffdb8383aa0b08f6225322a67126f65"
+    ],
+    [
+      "classifier/rebuttal_analysis/analyze_correlation.py",
+      "664cb1d218ef9dc6121c8abb1f2da227ee30d18ec21b81d34a3ffca7b47966fa"
+    ],
+    [
+      "classifier/rebuttal_analysis/binary_train_vs_rest.py",
+      "e2e7c79caa782a3f10eb72170f9b02faef628c46caedadb16db98b2cbe518440"
+    ],
+    [
+      "classifier/rebuttal_analysis/check_ptrain.py",
+      "6617df7bd9e11d61439e62593961ec8e5fc143cb6104f569a4c90d1ffd429194"
+    ],
+    [
+      "classifier/rebuttal_analysis/cusum_detect.py",
+      "92258e03bb5fd56ffd508e5a446baa663550e8677d9c309a4ae35a42c69a0a4a"
+    ],
+    [
+      "classifier/rebuttal_analysis/cusum_vs_duration.py",
+      "5981e28a0769210fb64b88e86a2e2b52a0b86e167bd8a4572f35297475432199"
+    ],
+    [
+      "classifier/rebuttal_analysis/evasion_cost_eval.py",
+      "0f0651e8ba2a87632db46ef52fd0639467ae7d3c853ba8cff2a0bbd3f3827ded"
+    ],
+    [
+      "classifier/rebuttal_analysis/lora_in_training.py",
+      "9e856856e26c43adecbd20f02c42bb657de0a634a24720bc54a786b832786d62"
+    ],
+    [
+      "classifier/rebuttal_analysis/mn_binary_lofo.py",
+      "2e301c427acf43f3cc4e17d261d6fa1d3372884e6909bede07a26bc8e88d4128"
+    ],
+    [
+      "classifier/rebuttal_analysis/multinode_baseline.py",
+      "70fdeebadee24b8881792c37236dd3655fe9b09d7c33e42303706401cafb327d"
+    ],
+    [
+      "classifier/rebuttal_analysis/multinode_family_holdout.py",
+      "a077d39b8f07c1987d6605f0d63e0071b1f7107886e8fa30fc04fc721ce00fa6"
+    ],
+    [
+      "classifier/rebuttal_analysis/paired_family_lofo.py",
+      "c1fab19ba24c296b7cc2d1e50c4c524b8f7d5d5d15bfc66e4d52a78f4c38230b"
+    ],
+    [
+      "classifier/rebuttal_analysis/ppo_plain_vs_disguised.py",
+      "dde68605de54028d2b1f7099855a34d6fa68b9bd188d5389daca1ddade7dba26"
+    ],
+    [
+      "classifier/rebuttal_analysis/q2_confusion.py",
+      "67c41f2a511c8bbaacb208d951f6a3f2f31c1da582cf374b6d46a7ec0556fe6e"
+    ],
+    [
+      "classifier/rebuttal_analysis/q3q4.py",
+      "de611d34d4fe13b12b074e99d61c6d3c19acf0b5a29d020f506d724e8ebabdf2"
+    ],
+    [
+      "classifier/rebuttal_analysis/scale_ablation.py",
+      "96160f556e70491d4ff2ea1f0d7259f15dab7417325b1d8d49404f6f08e8c2f6"
+    ],
+    [
+      "classifier/rebuttal_analysis/scope_ladder_eval.py",
+      "78feb36c878d3daa48a7d9e7da1c63b726f8ff85a1e18989151da37d30d4b4d3"
+    ],
+    [
+      "classifier/rebuttal_analysis/select_dilution.py",
+      "dbc2de7cacaceae31db38129b95aed550ebe075a9f936d9fb3b72746e3ae0f8f"
+    ],
+    [
+      "classifier/rebuttal_analysis/symgemm_eval.py",
+      "c7c8a412c3bd45e4155636420a329f4cbace1792e043fc698c548aea6b2ecafd"
+    ],
+    [
+      "classifier/rebuttal_analysis/symgemm_throughput.py",
+      "fd8abfa730489b591d254f4a48f51327affc2aaa6845acd467e7052129fee105"
+    ],
+    [
+      "classifier/rebuttal_analysis/symgemm_traffic.py",
+      "f13e185fcd9da440053b6425552e2cfa0362b13f45b6c61dcf9733e16f02359d"
+    ],
+    [
+      "classifier/rebuttal_analysis/test_cell_label_routing.py",
+      "7dedd7da5005a2086ec1a06d826561db2580ed1daa44f6cd4682bfd28f5630b3"
+    ],
+    [
+      "classifier/rebuttal_analysis/tpu_mnt_size_control.py",
+      "0717dcc706266d800ad7eb8085febc2030d8727be287ea140127f467e3929a0a"
+    ],
+    [
+      "classifier/rebuttal_analysis/tpu_rung_eval.py",
+      "40442b27db8204a3b2cd478867773f6477b8b6b261de77e25702d961f5f524ca"
+    ],
+    [
+      "classifier/run_alerts.py",
+      "5c73ac2e0846bacbe96b11889bdc978e064b9b245fd5480166c8caffd0b77250"
+    ],
+    [
+      "classifier/run_level_detection.py",
+      "7a753dcb9b7cce90a6ad410b589a2aa2ab06419732f63758c1ba75c53ef570cd"
+    ],
+    [
+      "classifier/scope_features.py",
+      "926bc2ffb27f9b9cf1e9b80bc24b4e5e60c9b9cd99127fc4c1f84244a80a8895"
+    ],
+    [
+      "classifier/scope_raw_spectrum.py",
+      "bf08701bc51c3f92f4dea534720e87c0ab9329df7279a5962f4f06e03a3cb56a"
+    ],
+    [
+      "classifier/temporal_classifier.py",
+      "24dbc24c063b2aeb48014027bf86612cc03e8515b7a4de2abc626d2f9da72903"
+    ],
+    [
+      "classifier/threeway_improved.py",
+      "40ea7b1d02b532161eeaa91f58250569c24be5fb453d2126a5131f8a41e5c059"
+    ],
+    [
+      "classifier/twostage.py",
+      "b7d12b7a28154df43d43e359132cc31366604772bca1283e0f40932f7f6de7e6"
+    ],
+    [
+      "classifier/window_labels.py",
+      "807912f638d6b19bba086de153a8dfcc59967a2bd26b7797a2ec288831ecf353"
+    ],
+    [
+      "classifier/workload_descriptions.py",
+      "2fdd7375fc2079428889e0b5e5f58da855a05d6f275302d9c0a692c145044545"
+    ],
+    [
+      "classifier/workload_labels.py",
+      "5bbd2cb8b099a2395805de6a7c784cd2ddfd25c968e185f1f25b33a262882a21"
+    ],
+    [
+      "scripts/build_mn_window_cache.py",
+      "25e448d3443ab1026c988121615f7b970c0a59e4b9c64e60325ac0f61a5c599c"
+    ],
+    [
+      "scripts/build_window_cache.py",
+      "7b652fa8e56cedd34c142514a28ee6ad41986ba011522089fd15b88d97eb0c5e"
+    ]
+  ],
+  "libraries": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.15.3",
+    "pyarrow": "25.0.1",
+    "scikit-learn": "1.7.2"
+  }
+}
