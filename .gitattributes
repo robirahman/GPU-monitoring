@@ -11,3 +11,7 @@ data/*.parquet filter=lfs diff=lfs merge=lfs -text
 data/h200_nvl_scope/run_logs/*.log filter=lfs diff=lfs merge=lfs -text
 data/h200_nvl_scope/shaping/run_logs/*.log filter=lfs diff=lfs merge=lfs -text
 data/h200_nvl_scope/reference/run_logs/*.log filter=lfs diff=lfs merge=lfs -text
+docs/followup_evaluation_2026-10-13/artifacts/*.json.gz filter=lfs diff=lfs merge=lfs -text
+
+# Preserve original whitespace in checksum-verified execution logs.
+docs/followup_evaluation_2026-10-13/artifacts/*.log -whitespace

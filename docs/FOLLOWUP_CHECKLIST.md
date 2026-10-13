@@ -25,15 +25,23 @@ not useful training time. Historical job identities remain provisional.
 - [x] Restore the required analysis objects to durable external storage and verify
   their hashes. All 14,716 selected paths / 667,994,709 unique bytes pass on
   `spar-analysis-0`; [input verification](followup_execution_2026-10-12/verified_analysis_inputs.json).
-  The corrected evaluation is running in an isolated directory; results remain pending.
-- [ ] Rebuild content bound per stream and pooled job caches with the recovered
-  logs and NIC sidecars. Record unresolved labels and sample/rank eligibility.
-- [ ] Run the corrected exhaustive family holdouts and paired campaign ablation.
-  Keep identical old job test windows in the full and ablated arms.
+  The corrected evaluation is complete in an isolated directory; see the
+  [reviewed results](followup_evaluation_2026-10-13/README.md).
+- [x] Rebuild the content-bound pooled job cache with recovered logs and NIC
+  sidecars: 75,841 windows / 2,561 jobs; 19,298 resolved eligible multi-node
+  windows / 479 jobs. Exclude and record 705 unresolved windows / 15 jobs.
+  [Cache and population provenance](followup_evaluation_2026-10-13/artifacts/manifest.json).
+- [ ] Rebuild the corresponding content-bound per-stream cache for the planned
+  per-rank versus pooled detector comparison.
+- [x] Run corrected exhaustive holdouts for all 43 eligible mechanism families
+  and the paired October campaign ablation with identical old-job test windows.
+  [Predictions, split audit and results](followup_evaluation_2026-10-13/README.md).
 - [ ] Repeat the most weakly sampled existing families before interpreting their
   apparent generalization. Start with the campaign specified below.
 - [x] Implement and test observed job hour false alert accounting and bounded
-  onset-to-alert delay in the exhaustive evaluator. Real corpus results remain pending.
+  onset-to-alert delay in the exhaustive evaluator. Real corpus results are now
+  [reported](followup_evaluation_2026-10-13/README.md) at the fixed 0.5 threshold;
+  calibration and long-duration deployment validation remain open.
 - [x] Generate the deterministic [repetition plan](followup_execution_2026-10-12/repetition_plan/summary.json):
   25 configurations, five fresh launches each, three day slots. No VMs launched.
 - [x] Add recorded base seeds to all six implementations behind that plan;
@@ -94,8 +102,11 @@ not useful training time. Historical job identities remain provisional.
   do not count them as complete 30 second windows.
 - [ ] Verify the known truncated waveform against the upstream instrument data;
   quarantine or replace it with documented provenance.
-- [ ] Validate durable backup restoration, including LFS payloads rather than
-  just pointers. Temporary `/tmp` caches are not a backup.
+- [ ] Validate whole-corpus durable backup restoration, including LFS payloads
+  rather than just pointers. The frozen evaluation inputs/results now have verified
+  Cloud Storage copies, a persistent-disk review pipeline, and targeted LFS readback
+  evidence in the [evaluation record](followup_evaluation_2026-10-13/artifacts/validation.json).
+  Temporary `/tmp` caches are not a backup.
 
 ## Repetition and collection design
 
@@ -193,11 +204,15 @@ Reference: [adaptive evaluation](https://arxiv.org/abs/2002.08347).
 
 ## Generalization and operational evaluation
 
-- [ ] Rerun corrected exhaustive mechanism family holdouts. The October 5 random
-  family holdouts are historical; their changing test/model comparison is not a
-  valid data addition effect. [Correction](workload_audit_2026-10-11.md).
-- [ ] Run implementation/backbone holdouts, hardware/site holdouts, and a final
-  chronological campaign holdout with no test based model or threshold selection.
+- [x] Rerun corrected exhaustive mechanism-family holdouts and publish every
+  held-out family, including failures. [October 13 results](followup_evaluation_2026-10-13/README.md).
+  The October 5 random holdouts are historical; their changing test/model
+  comparison is not a valid data-addition effect. [Correction](workload_audit_2026-10-11.md).
+- [x] Run the 31-family shared-backbone sensitivity (merging RandomTransformerLM
+  programs) and the 26-family STEP-only label sensitivity.
+  [Results and limitations](followup_evaluation_2026-10-13/README.md).
+- [ ] Run comprehensive independent-implementation, hardware/site and final
+  chronological campaign holdouts with no test-based model or threshold selection.
 - [ ] Keep every rank/window from a physical job and related attack/control
   siblings in the correct split; group correlated repetitions/campaigns explicitly.
 - [ ] Compare GPU only, GPU plus NIC and richer instrumentation on identical
@@ -228,5 +243,10 @@ Cloud authentication has been requested; do not paste credentials into this file
 Initial implementation and attempted execution are recorded in
 [the execution report](followup_execution_2026-10-12/README.md). The full evaluation
 stopped at input preflight: 10,048 missing LFS objects / 420,089,953 bytes.
-The checklist remains open for collection, useful-learning validation, calibrated
-operating points and real corpus results; passing CPU fixtures does not complete them.
+2026-10-13: corrected mechanism, paired campaign, shared-backbone and STEP-only
+evaluations are complete and reviewed. See the [result report](followup_evaluation_2026-10-13/README.md),
+[interpretation](followup_evaluation_2026-10-13/REVIEW.md), and
+[durability record](followup_evaluation_2026-10-13/DURABILITY.md). The frozen snapshot
+predates the two admitted preempted A100 intervals; these remain usable corpus data.
+Collection repetitions, useful-learning validation, calibrated operating points,
+adaptive attacks and the other unchecked experiments remain open.

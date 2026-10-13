@@ -1,0 +1,3145 @@
+{
+  "status": "passed",
+  "cache_fingerprint": "515f8d34268457568774df73700b78fac067300ed29da22094421fd14ce1db01",
+  "artifacts_sha256": {
+    "windows_30_15.parquet": "046664cd164e3be5d415816e889ef4d8e8a126333526b0ef90740a4bd881ab14",
+    "windows_30_15.parquet.provenance.json": "dd362e0c6c6f8aac848418188b2ee97c90afb341180119b9103f670e576d0a59",
+    "mechanism_paired.json": "183544b31c0e4e2da6b8f3edc2be34df1a221d3b2e4156d30562e87fa976b6b2",
+    "mechanism_paired.predictions.parquet": "17694507891d6af484ea6de89ed95298a07c40c5fd53520d270b95785d6fccbe",
+    "mechanism_paired.splits.json.gz": "faa0da9b790311f42fce37695d16ad23f45cf54b5ed33dd2b22b79f03a629519",
+    "backbone.json": "ed860fe0ca57954a9ca57468a0f08f63df253446711db6dab056982c956315d2",
+    "backbone.predictions.parquet": "f3b52dd30d6475073187e8858c5cff64eb5f822bcf844e4a331783b02eee6fb1",
+    "backbone.splits.json.gz": "76a4d1d7a1182f756c27097d4cd9d0a6221543e8f3976988c64b98ffe87735ed",
+    "steps_only.json": "6d1d75480e2d23e40a39dc32c6bcaeb67ef5ea8cc678d57e794a40cc1a712eac",
+    "steps_only.predictions.parquet": "c1ac8b32423f5f69068ae0f0d97ad04a2e971180230c61f2f2e47d887157c374",
+    "steps_only.splits.json.gz": "756257b1165f2acd539b5b87413702db92b373be8c66d72764badb8f80764e5a"
+  },
+  "evaluations": {
+    "mechanism_paired": {
+      "status": "passed",
+      "families": 43,
+      "windows": 19298,
+      "jobs": 479,
+      "split_records": 77,
+      "prediction_rows": 37429,
+      "adversarial_families": [
+        "advtrain_bubble",
+        "advtrain_flatarena",
+        "advtrain_typeconf",
+        "multinode_interleave"
+      ],
+      "single_job_families": [
+        "train_apexrl",
+        "train_ppodist"
+      ],
+      "training_phase_job_detection": {
+        "all": {
+          "training_jobs": 206,
+          "detected_during_training_jobs": 184,
+          "recall": 0.8932038834951457
+        },
+        "adversarial": {
+          "training_jobs": 91,
+          "detected_during_training_jobs": 90,
+          "recall": 0.989010989010989
+        }
+      },
+      "checks": [
+        "cache targets and identities",
+        "exhaustive window coverage",
+        "family and job separation",
+        "exact train/test manifests",
+        "campaign ablation",
+        "paired test identity",
+        "classification metric recomputation",
+        "operational metric consistency"
+      ],
+      "family_results": [
+        {
+          "family": "advtrain_bubble",
+          "training_windows": 80,
+          "nontraining_windows": 0,
+          "windows": 80,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              80,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "advtrain_flatarena",
+          "training_windows": 161,
+          "nontraining_windows": 0,
+          "windows": 161,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              161,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "advtrain_typeconf",
+          "training_windows": 1566,
+          "nontraining_windows": 57,
+          "windows": 1623,
+          "jobs": 41,
+          "accuracy": 0.5113986444855206,
+          "macro_f1": 0.38490790386119894,
+          "training_recall": 0.49744572158365263,
+          "false_positive_rate": 0.17543859649122806,
+          "job_any_recall": 0.975609756097561,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              783,
+              0,
+              783
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              10,
+              0,
+              47
+            ]
+          ]
+        },
+        {
+          "family": "inferasr_whisper",
+          "training_windows": 0,
+          "nontraining_windows": 160,
+          "windows": 160,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              160,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "infercnn_rn",
+          "training_windows": 0,
+          "nontraining_windows": 78,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              78
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferdiff_sdxl",
+          "training_windows": 0,
+          "nontraining_windows": 167,
+          "windows": 167,
+          "jobs": 4,
+          "accuracy": 0.05389221556886228,
+          "macro_f1": 0.05113636363636364,
+          "training_recall": null,
+          "false_positive_rate": 0.9341317365269461,
+          "job_any_recall": null,
+          "job_any_fpr": 1.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              158,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferembed_bge",
+          "training_windows": 0,
+          "nontraining_windows": 157,
+          "windows": 157,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              157,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferembed_clip",
+          "training_windows": 0,
+          "nontraining_windows": 158,
+          "windows": 158,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              158,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferhf_qwen",
+          "training_windows": 0,
+          "nontraining_windows": 120,
+          "windows": 120,
+          "jobs": 3,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              120,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferhf_shard",
+          "training_windows": 0,
+          "nontraining_windows": 254,
+          "windows": 254,
+          "jobs": 6,
+          "accuracy": 0.9606299212598425,
+          "macro_f1": 0.4899598393574297,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              244,
+              2
+            ],
+            [
+              0,
+              8,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferrec_dlrm",
+          "training_windows": 0,
+          "nontraining_windows": 315,
+          "windows": 315,
+          "jobs": 8,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": null,
+          "false_positive_rate": 0.4984126984126984,
+          "job_any_recall": null,
+          "job_any_fpr": 0.5,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              158,
+              0,
+              157
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferrep",
+          "training_windows": 0,
+          "nontraining_windows": 512,
+          "windows": 512,
+          "jobs": 13,
+          "accuracy": 0.6015625,
+          "macro_f1": 0.2564724919093851,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              306,
+              202
+            ],
+            [
+              0,
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "family": "inferrep_qwen",
+          "training_windows": 0,
+          "nontraining_windows": 155,
+          "windows": 155,
+          "jobs": 7,
+          "accuracy": 0.9935483870967742,
+          "macro_f1": 0.49838187702265374,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              154,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferserve_async",
+          "training_windows": 0,
+          "nontraining_windows": 1011,
+          "windows": 1011,
+          "jobs": 26,
+          "accuracy": 0.6923837784371909,
+          "macro_f1": 0.27274498344048315,
+          "training_recall": null,
+          "false_positive_rate": 0.29673590504451036,
+          "job_any_recall": null,
+          "job_any_fpr": 0.5,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              302,
+              700,
+              9
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "infershard",
+          "training_windows": 0,
+          "nontraining_windows": 509,
+          "windows": 509,
+          "jobs": 13,
+          "accuracy": 0.009823182711198428,
+          "macro_f1": 0.00665335994677312,
+          "training_recall": null,
+          "false_positive_rate": 0.0019646365422396855,
+          "job_any_recall": null,
+          "job_any_fpr": 0.07692307692307693,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              13,
+              0,
+              491
+            ],
+            [
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "family": "infershard_qwen",
+          "training_windows": 0,
+          "nontraining_windows": 1110,
+          "windows": 1110,
+          "jobs": 30,
+          "accuracy": 0.8783783783783784,
+          "macro_f1": 0.3117505995203837,
+          "training_recall": null,
+          "false_positive_rate": 0.04144144144144144,
+          "job_any_recall": null,
+          "job_any_fpr": 0.2,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              120,
+              975,
+              15
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "infervis_vitl",
+          "training_windows": 0,
+          "nontraining_windows": 78,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              78,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "multinode_interleave",
+          "training_windows": 1647,
+          "nontraining_windows": 932,
+          "windows": 2579,
+          "jobs": 61,
+          "accuracy": 0.9278790228770841,
+          "macro_f1": 0.6270043662130297,
+          "training_recall": 0.9483910139647844,
+          "false_positive_rate": 0.012875536480686695,
+          "job_any_recall": 1.0,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              1564,
+              23,
+              60
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              12,
+              91,
+              829
+            ]
+          ]
+        },
+        {
+          "family": "nonml_comm",
+          "training_windows": 0,
+          "nontraining_windows": 647,
+          "windows": 647,
+          "jobs": 16,
+          "accuracy": 0.8129829984544049,
+          "macro_f1": 0.4484228473998295,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              121,
+              526
+            ]
+          ]
+        },
+        {
+          "family": "nonml_duty",
+          "training_windows": 0,
+          "nontraining_windows": 1213,
+          "windows": 1213,
+          "jobs": 28,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1213
+            ]
+          ]
+        },
+        {
+          "family": "nonml_fftshard",
+          "training_windows": 0,
+          "nontraining_windows": 313,
+          "windows": 313,
+          "jobs": 8,
+          "accuracy": 0.9201277955271565,
+          "macro_f1": 0.47920133111480867,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              25,
+              288
+            ]
+          ]
+        },
+        {
+          "family": "nonml_himem",
+          "training_windows": 0,
+          "nontraining_windows": 327,
+          "windows": 327,
+          "jobs": 8,
+          "accuracy": 0.981651376146789,
+          "macro_f1": 0.3302469135802469,
+          "training_recall": null,
+          "false_positive_rate": 0.0030581039755351682,
+          "job_any_recall": null,
+          "job_any_fpr": 0.125,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              4,
+              321
+            ]
+          ]
+        },
+        {
+          "family": "nonml_hpc",
+          "training_windows": 0,
+          "nontraining_windows": 319,
+          "windows": 319,
+          "jobs": 8,
+          "accuracy": 0.9937304075235109,
+          "macro_f1": 0.49842767295597484,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              2,
+              317
+            ]
+          ]
+        },
+        {
+          "family": "nonml_lowpower",
+          "training_windows": 0,
+          "nontraining_windows": 825,
+          "windows": 825,
+          "jobs": 21,
+          "accuracy": 0.27151515151515154,
+          "macro_f1": 0.14235780108039403,
+          "training_recall": null,
+          "false_positive_rate": 0.36848484848484847,
+          "job_any_recall": null,
+          "job_any_fpr": 0.6190476190476191,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              569,
+              32,
+              224
+            ]
+          ]
+        },
+        {
+          "family": "nonml_nccl",
+          "training_windows": 0,
+          "nontraining_windows": 157,
+          "windows": 157,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              157
+            ]
+          ]
+        },
+        {
+          "family": "nonml_sat",
+          "training_windows": 0,
+          "nontraining_windows": 1237,
+          "windows": 1237,
+          "jobs": 30,
+          "accuracy": 0.8051738075990299,
+          "macro_f1": 0.44603672189879084,
+          "training_recall": null,
+          "false_positive_rate": 0.1948261924009701,
+          "job_any_recall": null,
+          "job_any_fpr": 0.23333333333333334,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              241,
+              0,
+              996
+            ]
+          ]
+        },
+        {
+          "family": "nonml_stencil",
+          "training_windows": 0,
+          "nontraining_windows": 158,
+          "windows": 158,
+          "jobs": 4,
+          "accuracy": 0.03164556962025317,
+          "macro_f1": 0.02044989775051125,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              19,
+              134,
+              5
+            ]
+          ]
+        },
+        {
+          "family": "stalled_train",
+          "training_windows": 0,
+          "nontraining_windows": 119,
+          "windows": 119,
+          "jobs": 3,
+          "accuracy": 0.3277310924369748,
+          "macro_f1": 0.16455696202531647,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              10,
+              70,
+              39
+            ]
+          ]
+        },
+        {
+          "family": "train_apexrl",
+          "training_windows": 40,
+          "nontraining_windows": 0,
+          "windows": 40,
+          "jobs": 1,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              40,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_contrastive",
+          "training_windows": 158,
+          "nontraining_windows": 0,
+          "windows": 158,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              158,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_ddp",
+          "training_windows": 601,
+          "nontraining_windows": 6,
+          "windows": 607,
+          "jobs": 15,
+          "accuracy": 0.8517298187808896,
+          "macro_f1": 0.308288610614192,
+          "training_recall": 0.8402662229617305,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 0.8666666666666667,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              517,
+              84,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              6,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_decoupdiloco",
+          "training_windows": 79,
+          "nontraining_windows": 9,
+          "windows": 88,
+          "jobs": 2,
+          "accuracy": 0.9772727272727273,
+          "macro_f1": 0.93125,
+          "training_recall": 1.0,
+          "false_positive_rate": 0.1111111111111111,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              79,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              7
+            ]
+          ]
+        },
+        {
+          "family": "train_diffusion",
+          "training_windows": 159,
+          "nontraining_windows": 0,
+          "windows": 159,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              159,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_fsdp",
+          "training_windows": 2098,
+          "nontraining_windows": 53,
+          "windows": 2151,
+          "jobs": 54,
+          "accuracy": 0.5527661552766155,
+          "macro_f1": 0.31097916097916095,
+          "training_recall": 0.5457578646329838,
+          "false_positive_rate": 0.05660377358490566,
+          "job_any_recall": 0.7037037037037037,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              1148,
+              684,
+              266
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              10,
+              2,
+              41
+            ]
+          ]
+        },
+        {
+          "family": "train_impala",
+          "training_windows": 117,
+          "nontraining_windows": 8,
+          "windows": 125,
+          "jobs": 3,
+          "accuracy": 0.72,
+          "macro_f1": 0.2898550724637681,
+          "training_recall": 0.7435897435897436,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              90,
+              0,
+              27
+            ],
+            [
+              0,
+              0,
+              8
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_localsgd",
+          "training_windows": 367,
+          "nontraining_windows": 63,
+          "windows": 430,
+          "jobs": 8,
+          "accuracy": 0.8813953488372093,
+          "macro_f1": 0.5265218580414849,
+          "training_recall": 0.9291553133514986,
+          "false_positive_rate": 0.47619047619047616,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              349,
+              18,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              31,
+              2,
+              30
+            ]
+          ]
+        },
+        {
+          "family": "train_lora",
+          "training_windows": 334,
+          "nontraining_windows": 0,
+          "windows": 334,
+          "jobs": 8,
+          "accuracy": 0.1377245508982036,
+          "macro_f1": 0.08070175438596491,
+          "training_recall": 0.12874251497005987,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              46,
+              158,
+              130
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_moe",
+          "training_windows": 119,
+          "nontraining_windows": 0,
+          "windows": 119,
+          "jobs": 3,
+          "accuracy": 0.03361344537815126,
+          "macro_f1": 0.032520325203252036,
+          "training_recall": 0.025210084033613446,
+          "false_positive_rate": null,
+          "job_any_recall": 0.6666666666666666,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              4,
+              115,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_pipe",
+          "training_windows": 180,
+          "nontraining_windows": 0,
+          "windows": 180,
+          "jobs": 4,
+          "accuracy": 0.9166666666666666,
+          "macro_f1": 0.31884057971014496,
+          "training_recall": 0.9111111111111111,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              165,
+              12,
+              3
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_ppodist",
+          "training_windows": 40,
+          "nontraining_windows": 0,
+          "windows": 40,
+          "jobs": 1,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              40,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_streamdiloco",
+          "training_windows": 159,
+          "nontraining_windows": 8,
+          "windows": 167,
+          "jobs": 4,
+          "accuracy": 0.9461077844311377,
+          "macro_f1": 0.46349206349206346,
+          "training_recall": 0.9811320754716981,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              156,
+              3,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              6,
+              2
+            ]
+          ]
+        },
+        {
+          "family": "train_swarm",
+          "training_windows": 78,
+          "nontraining_windows": 0,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": 0.0,
+          "false_positive_rate": null,
+          "job_any_recall": 0.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              0,
+              0,
+              78
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_tp",
+          "training_windows": 80,
+          "nontraining_windows": 0,
+          "windows": 80,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              80,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "backbone": {
+      "status": "passed",
+      "families": 31,
+      "windows": 19298,
+      "jobs": 479,
+      "split_records": 31,
+      "prediction_rows": 19298,
+      "adversarial_families": [
+        "advtrain_typeconf",
+        "random_transformer_lm"
+      ],
+      "single_job_families": [],
+      "training_phase_job_detection": {
+        "all": {
+          "training_jobs": 206,
+          "detected_during_training_jobs": 165,
+          "recall": 0.8009708737864077
+        },
+        "adversarial": {
+          "training_jobs": 91,
+          "detected_during_training_jobs": 73,
+          "recall": 0.8021978021978022
+        }
+      },
+      "checks": [
+        "cache targets and identities",
+        "exhaustive window coverage",
+        "family and job separation",
+        "exact train/test manifests",
+        "campaign ablation",
+        "paired test identity",
+        "classification metric recomputation",
+        "operational metric consistency"
+      ],
+      "family_results": [
+        {
+          "family": "advtrain_typeconf",
+          "training_windows": 1566,
+          "nontraining_windows": 57,
+          "windows": 1623,
+          "jobs": 41,
+          "accuracy": 0.5113986444855206,
+          "macro_f1": 0.38490790386119894,
+          "training_recall": 0.49744572158365263,
+          "false_positive_rate": 0.17543859649122806,
+          "job_any_recall": 0.975609756097561,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              783,
+              0,
+              783
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              10,
+              0,
+              47
+            ]
+          ]
+        },
+        {
+          "family": "inferasr_whisper",
+          "training_windows": 0,
+          "nontraining_windows": 160,
+          "windows": 160,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              160,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "infercnn_rn",
+          "training_windows": 0,
+          "nontraining_windows": 78,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              78
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferdiff_sdxl",
+          "training_windows": 0,
+          "nontraining_windows": 167,
+          "windows": 167,
+          "jobs": 4,
+          "accuracy": 0.05389221556886228,
+          "macro_f1": 0.05113636363636364,
+          "training_recall": null,
+          "false_positive_rate": 0.9341317365269461,
+          "job_any_recall": null,
+          "job_any_fpr": 1.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              158,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferembed_bge",
+          "training_windows": 0,
+          "nontraining_windows": 157,
+          "windows": 157,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              157,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferembed_clip",
+          "training_windows": 0,
+          "nontraining_windows": 158,
+          "windows": 158,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              158,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferhf_qwen",
+          "training_windows": 0,
+          "nontraining_windows": 120,
+          "windows": 120,
+          "jobs": 3,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              120,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferhf_shard",
+          "training_windows": 0,
+          "nontraining_windows": 254,
+          "windows": 254,
+          "jobs": 6,
+          "accuracy": 0.9606299212598425,
+          "macro_f1": 0.4899598393574297,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              244,
+              2
+            ],
+            [
+              0,
+              8,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferrec_dlrm",
+          "training_windows": 0,
+          "nontraining_windows": 315,
+          "windows": 315,
+          "jobs": 8,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": null,
+          "false_positive_rate": 0.4984126984126984,
+          "job_any_recall": null,
+          "job_any_fpr": 0.5,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              158,
+              0,
+              157
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferrep",
+          "training_windows": 0,
+          "nontraining_windows": 512,
+          "windows": 512,
+          "jobs": 13,
+          "accuracy": 0.6015625,
+          "macro_f1": 0.2564724919093851,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              306,
+              202
+            ],
+            [
+              0,
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "family": "inferrep_qwen",
+          "training_windows": 0,
+          "nontraining_windows": 155,
+          "windows": 155,
+          "jobs": 7,
+          "accuracy": 0.9935483870967742,
+          "macro_f1": 0.49838187702265374,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              154,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferserve_async",
+          "training_windows": 0,
+          "nontraining_windows": 1011,
+          "windows": 1011,
+          "jobs": 26,
+          "accuracy": 0.6923837784371909,
+          "macro_f1": 0.27274498344048315,
+          "training_recall": null,
+          "false_positive_rate": 0.29673590504451036,
+          "job_any_recall": null,
+          "job_any_fpr": 0.5,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              302,
+              700,
+              9
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "infershard",
+          "training_windows": 0,
+          "nontraining_windows": 509,
+          "windows": 509,
+          "jobs": 13,
+          "accuracy": 0.009823182711198428,
+          "macro_f1": 0.00665335994677312,
+          "training_recall": null,
+          "false_positive_rate": 0.0019646365422396855,
+          "job_any_recall": null,
+          "job_any_fpr": 0.07692307692307693,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              13,
+              0,
+              491
+            ],
+            [
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "family": "infershard_qwen",
+          "training_windows": 0,
+          "nontraining_windows": 1110,
+          "windows": 1110,
+          "jobs": 30,
+          "accuracy": 0.8783783783783784,
+          "macro_f1": 0.3117505995203837,
+          "training_recall": null,
+          "false_positive_rate": 0.04144144144144144,
+          "job_any_recall": null,
+          "job_any_fpr": 0.2,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              120,
+              975,
+              15
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "infervis_vitl",
+          "training_windows": 0,
+          "nontraining_windows": 78,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              78,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "nonml_comm",
+          "training_windows": 0,
+          "nontraining_windows": 647,
+          "windows": 647,
+          "jobs": 16,
+          "accuracy": 0.8129829984544049,
+          "macro_f1": 0.4484228473998295,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              121,
+              526
+            ]
+          ]
+        },
+        {
+          "family": "nonml_duty",
+          "training_windows": 0,
+          "nontraining_windows": 1213,
+          "windows": 1213,
+          "jobs": 28,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1213
+            ]
+          ]
+        },
+        {
+          "family": "nonml_fftshard",
+          "training_windows": 0,
+          "nontraining_windows": 313,
+          "windows": 313,
+          "jobs": 8,
+          "accuracy": 0.9201277955271565,
+          "macro_f1": 0.47920133111480867,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              25,
+              288
+            ]
+          ]
+        },
+        {
+          "family": "nonml_himem",
+          "training_windows": 0,
+          "nontraining_windows": 327,
+          "windows": 327,
+          "jobs": 8,
+          "accuracy": 0.981651376146789,
+          "macro_f1": 0.3302469135802469,
+          "training_recall": null,
+          "false_positive_rate": 0.0030581039755351682,
+          "job_any_recall": null,
+          "job_any_fpr": 0.125,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              4,
+              321
+            ]
+          ]
+        },
+        {
+          "family": "nonml_hpc",
+          "training_windows": 0,
+          "nontraining_windows": 319,
+          "windows": 319,
+          "jobs": 8,
+          "accuracy": 0.9937304075235109,
+          "macro_f1": 0.49842767295597484,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              2,
+              317
+            ]
+          ]
+        },
+        {
+          "family": "nonml_lowpower",
+          "training_windows": 0,
+          "nontraining_windows": 825,
+          "windows": 825,
+          "jobs": 21,
+          "accuracy": 0.27151515151515154,
+          "macro_f1": 0.14235780108039403,
+          "training_recall": null,
+          "false_positive_rate": 0.36848484848484847,
+          "job_any_recall": null,
+          "job_any_fpr": 0.6190476190476191,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              569,
+              32,
+              224
+            ]
+          ]
+        },
+        {
+          "family": "nonml_nccl",
+          "training_windows": 0,
+          "nontraining_windows": 157,
+          "windows": 157,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              157
+            ]
+          ]
+        },
+        {
+          "family": "nonml_sat",
+          "training_windows": 0,
+          "nontraining_windows": 1237,
+          "windows": 1237,
+          "jobs": 30,
+          "accuracy": 0.8051738075990299,
+          "macro_f1": 0.44603672189879084,
+          "training_recall": null,
+          "false_positive_rate": 0.1948261924009701,
+          "job_any_recall": null,
+          "job_any_fpr": 0.23333333333333334,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              241,
+              0,
+              996
+            ]
+          ]
+        },
+        {
+          "family": "nonml_stencil",
+          "training_windows": 0,
+          "nontraining_windows": 158,
+          "windows": 158,
+          "jobs": 4,
+          "accuracy": 0.03164556962025317,
+          "macro_f1": 0.02044989775051125,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              19,
+              134,
+              5
+            ]
+          ]
+        },
+        {
+          "family": "random_transformer_lm",
+          "training_windows": 5302,
+          "nontraining_windows": 1192,
+          "windows": 6494,
+          "jobs": 155,
+          "accuracy": 0.6847859562673236,
+          "macro_f1": 0.4654158090196338,
+          "training_recall": 0.6425877027536778,
+          "false_positive_rate": 0.008389261744966443,
+          "job_any_recall": 0.7407407407407407,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              3452,
+              767,
+              1083
+            ],
+            [
+              1,
+              0,
+              7
+            ],
+            [
+              12,
+              177,
+              995
+            ]
+          ]
+        },
+        {
+          "family": "train_contrastive",
+          "training_windows": 158,
+          "nontraining_windows": 0,
+          "windows": 158,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              158,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_ddp",
+          "training_windows": 601,
+          "nontraining_windows": 6,
+          "windows": 607,
+          "jobs": 15,
+          "accuracy": 0.8517298187808896,
+          "macro_f1": 0.308288610614192,
+          "training_recall": 0.8402662229617305,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 0.8666666666666667,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              517,
+              84,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              6,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_diffusion",
+          "training_windows": 159,
+          "nontraining_windows": 0,
+          "windows": 159,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              159,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_moe",
+          "training_windows": 119,
+          "nontraining_windows": 0,
+          "windows": 119,
+          "jobs": 3,
+          "accuracy": 0.03361344537815126,
+          "macro_f1": 0.032520325203252036,
+          "training_recall": 0.025210084033613446,
+          "false_positive_rate": null,
+          "job_any_recall": 0.6666666666666666,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              4,
+              115,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_swarm",
+          "training_windows": 78,
+          "nontraining_windows": 0,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": 0.0,
+          "false_positive_rate": null,
+          "job_any_recall": 0.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              0,
+              0,
+              78
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_tp",
+          "training_windows": 80,
+          "nontraining_windows": 0,
+          "windows": 80,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              80,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "steps_only": {
+      "status": "passed",
+      "families": 26,
+      "windows": 12954,
+      "jobs": 315,
+      "split_records": 26,
+      "prediction_rows": 12954,
+      "adversarial_families": [
+        "advtrain_bubble",
+        "advtrain_flatarena",
+        "advtrain_typeconf",
+        "multinode_interleave"
+      ],
+      "single_job_families": [
+        "train_apexrl",
+        "train_ppodist"
+      ],
+      "training_phase_job_detection": {
+        "all": {
+          "training_jobs": 170,
+          "detected_during_training_jobs": 160,
+          "recall": 0.9411764705882353
+        },
+        "adversarial": {
+          "training_jobs": 91,
+          "detected_during_training_jobs": 91,
+          "recall": 1.0
+        }
+      },
+      "checks": [
+        "cache targets and identities",
+        "exhaustive window coverage",
+        "family and job separation",
+        "exact train/test manifests",
+        "campaign ablation",
+        "paired test identity",
+        "classification metric recomputation",
+        "operational metric consistency"
+      ],
+      "family_results": [
+        {
+          "family": "advtrain_bubble",
+          "training_windows": 80,
+          "nontraining_windows": 0,
+          "windows": 80,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              80,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "advtrain_flatarena",
+          "training_windows": 161,
+          "nontraining_windows": 0,
+          "windows": 161,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              161,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "advtrain_typeconf",
+          "training_windows": 1566,
+          "nontraining_windows": 57,
+          "windows": 1623,
+          "jobs": 41,
+          "accuracy": 0.49969192852741834,
+          "macro_f1": 0.3783721061866757,
+          "training_recall": 0.4859514687100894,
+          "false_positive_rate": 0.17543859649122806,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              764,
+              0,
+              802
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              10,
+              0,
+              47
+            ]
+          ]
+        },
+        {
+          "family": "inferhf_shard",
+          "training_windows": 0,
+          "nontraining_windows": 254,
+          "windows": 254,
+          "jobs": 6,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": null,
+          "false_positive_rate": 0.5511811023622047,
+          "job_any_recall": null,
+          "job_any_fpr": 1.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              132,
+              0,
+              114
+            ],
+            [
+              8,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "inferrep",
+          "training_windows": 0,
+          "nontraining_windows": 512,
+          "windows": 512,
+          "jobs": 13,
+          "accuracy": 0.59765625,
+          "macro_f1": 0.25538650538650537,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              304,
+              204
+            ],
+            [
+              0,
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "family": "infershard",
+          "training_windows": 0,
+          "nontraining_windows": 509,
+          "windows": 509,
+          "jobs": 13,
+          "accuracy": 0.009823182711198428,
+          "macro_f1": 0.00665335994677312,
+          "training_recall": null,
+          "false_positive_rate": 0.025540275049115914,
+          "job_any_recall": null,
+          "job_any_fpr": 0.8461538461538461,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              13,
+              0,
+              491
+            ],
+            [
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "family": "multinode_interleave",
+          "training_windows": 1647,
+          "nontraining_windows": 893,
+          "windows": 2540,
+          "jobs": 60,
+          "accuracy": 0.8031496062992126,
+          "macro_f1": 0.546116797538752,
+          "training_recall": 0.9435336976320583,
+          "false_positive_rate": 0.013437849944008958,
+          "job_any_recall": 1.0,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              1557,
+              25,
+              65
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              13,
+              397,
+              483
+            ]
+          ]
+        },
+        {
+          "family": "nonml_comm",
+          "training_windows": 0,
+          "nontraining_windows": 569,
+          "windows": 569,
+          "jobs": 14,
+          "accuracy": 0.7680140597539543,
+          "macro_f1": 0.2895957587806494,
+          "training_recall": null,
+          "false_positive_rate": 0.06854130052724078,
+          "job_any_recall": null,
+          "job_any_fpr": 0.07142857142857142,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              39,
+              93,
+              437
+            ]
+          ]
+        },
+        {
+          "family": "nonml_duty",
+          "training_windows": 0,
+          "nontraining_windows": 1213,
+          "windows": 1213,
+          "jobs": 28,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1213
+            ]
+          ]
+        },
+        {
+          "family": "nonml_himem",
+          "training_windows": 0,
+          "nontraining_windows": 162,
+          "windows": 162,
+          "jobs": 4,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              162
+            ]
+          ]
+        },
+        {
+          "family": "nonml_hpc",
+          "training_windows": 0,
+          "nontraining_windows": 199,
+          "windows": 199,
+          "jobs": 5,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              199
+            ]
+          ]
+        },
+        {
+          "family": "nonml_lowpower",
+          "training_windows": 0,
+          "nontraining_windows": 551,
+          "windows": 551,
+          "jobs": 14,
+          "accuracy": 0.4591651542649728,
+          "macro_f1": 0.31467661691542287,
+          "training_recall": null,
+          "false_positive_rate": 0.5263157894736842,
+          "job_any_recall": null,
+          "job_any_fpr": 0.7142857142857143,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              298,
+              0,
+              253
+            ]
+          ]
+        },
+        {
+          "family": "nonml_sat",
+          "training_windows": 0,
+          "nontraining_windows": 1198,
+          "windows": 1198,
+          "jobs": 29,
+          "accuracy": 0.7988313856427379,
+          "macro_f1": 0.4440835266821346,
+          "training_recall": null,
+          "false_positive_rate": 0.2011686143572621,
+          "job_any_recall": null,
+          "job_any_fpr": 0.2413793103448276,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              241,
+              0,
+              957
+            ]
+          ]
+        },
+        {
+          "family": "stalled_train",
+          "training_windows": 0,
+          "nontraining_windows": 119,
+          "windows": 119,
+          "jobs": 3,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": null,
+          "false_positive_rate": 0.0,
+          "job_any_recall": null,
+          "job_any_fpr": 0.0,
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              119
+            ]
+          ]
+        },
+        {
+          "family": "train_apexrl",
+          "training_windows": 40,
+          "nontraining_windows": 0,
+          "windows": 40,
+          "jobs": 1,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              40,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_ddp",
+          "training_windows": 320,
+          "nontraining_windows": 6,
+          "windows": 326,
+          "jobs": 8,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              320,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "family": "train_decoupdiloco",
+          "training_windows": 79,
+          "nontraining_windows": 9,
+          "windows": 88,
+          "jobs": 2,
+          "accuracy": 0.9886363636363636,
+          "macro_f1": 0.9674435812060673,
+          "training_recall": 1.0,
+          "false_positive_rate": 0.1111111111111111,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              79,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              8
+            ]
+          ]
+        },
+        {
+          "family": "train_fsdp",
+          "training_windows": 1634,
+          "nontraining_windows": 53,
+          "windows": 1687,
+          "jobs": 43,
+          "accuracy": 0.8529934795494961,
+          "macro_f1": 0.592292879918298,
+          "training_recall": 0.8323133414932681,
+          "false_positive_rate": 0.09433962264150944,
+          "job_any_recall": 0.813953488372093,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              1394,
+              0,
+              240
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              0,
+              45
+            ]
+          ]
+        },
+        {
+          "family": "train_impala",
+          "training_windows": 117,
+          "nontraining_windows": 8,
+          "windows": 125,
+          "jobs": 3,
+          "accuracy": 0.72,
+          "macro_f1": 0.2898550724637681,
+          "training_recall": 0.7692307692307693,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              90,
+              0,
+              27
+            ],
+            [
+              0,
+              0,
+              8
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_localsgd",
+          "training_windows": 367,
+          "nontraining_windows": 63,
+          "windows": 430,
+          "jobs": 8,
+          "accuracy": 0.6186046511627907,
+          "macro_f1": 0.3373124928432383,
+          "training_recall": 0.7002724795640327,
+          "false_positive_rate": 0.49206349206349204,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              258,
+              109,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              31,
+              24,
+              8
+            ]
+          ]
+        },
+        {
+          "family": "train_lora",
+          "training_windows": 84,
+          "nontraining_windows": 0,
+          "windows": 84,
+          "jobs": 2,
+          "accuracy": 0.9880952380952381,
+          "macro_f1": 0.49700598802395207,
+          "training_recall": 0.9880952380952381,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              83,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_moe",
+          "training_windows": 119,
+          "nontraining_windows": 0,
+          "windows": 119,
+          "jobs": 3,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              119,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_ppodist",
+          "training_windows": 40,
+          "nontraining_windows": 0,
+          "windows": 40,
+          "jobs": 1,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              40,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_streamdiloco",
+          "training_windows": 159,
+          "nontraining_windows": 8,
+          "windows": 167,
+          "jobs": 4,
+          "accuracy": 0.9580838323353293,
+          "macro_f1": 0.40740740740740744,
+          "training_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              159,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              7,
+              1
+            ]
+          ]
+        },
+        {
+          "family": "train_swarm",
+          "training_windows": 78,
+          "nontraining_windows": 0,
+          "windows": 78,
+          "jobs": 2,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "training_recall": 0.0,
+          "false_positive_rate": null,
+          "job_any_recall": 0.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              0,
+              0,
+              78
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "family": "train_tp",
+          "training_windows": 80,
+          "nontraining_windows": 0,
+          "windows": 80,
+          "jobs": 2,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "training_recall": 1.0,
+          "false_positive_rate": null,
+          "job_any_recall": 1.0,
+          "job_any_fpr": null,
+          "confusion": [
+            [
+              80,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Checks saved outputs against the frozen cache; does not refit forests.",
+    "Operational consistency uses the separately regression-tested accounting function.",
+    "Metadata cannot establish unrecorded ground truth or independent repetitions."
+  ]
+}

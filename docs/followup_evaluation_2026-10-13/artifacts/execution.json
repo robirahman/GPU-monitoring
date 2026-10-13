@@ -1,0 +1,83 @@
+{
+  "started_utc": "2026-10-12T23:48:20.996728+00:00",
+  "requested_run": true,
+  "status": "running",
+  "threshold_policy": "fixed 0.5, not a calibrated deployment operating point",
+  "plan": [
+    {
+      "name": "cache",
+      "command": [
+        "/opt/spar/repo/venv-analysis/bin/python",
+        "scripts/build_mn_window_cache.py",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/windows_30_15.parquet",
+        "30",
+        "15",
+        "2"
+      ]
+    },
+    {
+      "name": "mechanism_paired",
+      "command": [
+        "/opt/spar/repo/venv-analysis/bin/python",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--exclude-campaigns",
+        "20261001,20261003",
+        "--out",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/mechanism_paired.json"
+      ]
+    },
+    {
+      "name": "backbone",
+      "command": [
+        "/opt/spar/repo/venv-analysis/bin/python",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--family-level",
+        "backbone",
+        "--out",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/backbone.json"
+      ]
+    },
+    {
+      "name": "steps_only",
+      "command": [
+        "/opt/spar/repo/venv-analysis/bin/python",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--steps-only",
+        "--out",
+        "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results/steps_only.json"
+      ]
+    }
+  ],
+  "completed": [
+    "cache",
+    "mechanism_paired"
+  ],
+  "phase": "backbone"
+}

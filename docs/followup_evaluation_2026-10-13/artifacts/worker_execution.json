@@ -1,0 +1,127 @@
+{
+  "started_utc": "2026-10-13T03:40:00.364208+00:00",
+  "status": "complete",
+  "executor": "spar-followup-eval-20261013",
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-1070-gcp-x86_64-with-glibc2.35",
+  "cpu_count": 32,
+  "completed": [
+    "backbone",
+    "steps_only"
+  ],
+  "stages": [
+    {
+      "name": "backbone",
+      "command": [
+        "/opt/followup/venv/bin/python",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/opt/followup/results/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--family-level",
+        "backbone",
+        "--out",
+        "/opt/followup/results/backbone.json"
+      ],
+      "started_utc": "2026-10-13T03:40:00.464330+00:00",
+      "returncode": 0,
+      "finished_utc": "2026-10-13T03:49:57.040867+00:00"
+    },
+    {
+      "name": "steps_only",
+      "command": [
+        "/opt/followup/venv/bin/python",
+        "-m",
+        "classifier.rebuttal_analysis.paired_family_lofo",
+        "--windows",
+        "/opt/followup/results/windows_30_15.parquet",
+        "--trees",
+        "300",
+        "--seed",
+        "0",
+        "--threshold",
+        "0.5",
+        "--steps-only",
+        "--out",
+        "/opt/followup/results/steps_only.json"
+      ],
+      "started_utc": "2026-10-13T03:50:00.172665+00:00",
+      "returncode": 0,
+      "finished_utc": "2026-10-13T03:54:03.791262+00:00"
+    }
+  ],
+  "uploads": [
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.json",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.json",
+      "generation": "1791863399366168",
+      "bytes": 99604,
+      "sha256": "ed860fe0ca57954a9ca57468a0f08f63df253446711db6dab056982c956315d2",
+      "crc32c": "NVkiBQ=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.predictions.parquet",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.predictions.parquet",
+      "generation": "1791863399564352",
+      "bytes": 1663520,
+      "sha256": "f3b52dd30d6475073187e8858c5cff64eb5f822bcf844e4a331783b02eee6fb1",
+      "crc32c": "0A12cg=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.splits.json.gz",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.splits.json.gz",
+      "generation": "1791863399866835",
+      "bytes": 22716592,
+      "sha256": "76a4d1d7a1182f756c27097d4cd9d0a6221543e8f3976988c64b98ffe87735ed",
+      "crc32c": "fC2LwQ=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.log",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/backbone.log",
+      "generation": "1791863400060220",
+      "bytes": 1167,
+      "sha256": "c08c1b2ba87a1c59527fb44c38a2599a7890a9510974252810c2ccbc0426165c",
+      "crc32c": "aB5jJA=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.json",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.json",
+      "generation": "1791863645133941",
+      "bytes": 89905,
+      "sha256": "6d1d75480e2d23e40a39dc32c6bcaeb67ef5ea8cc678d57e794a40cc1a712eac",
+      "crc32c": "BoAxvQ=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.predictions.parquet",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.predictions.parquet",
+      "generation": "1791863645254207",
+      "bytes": 1137645,
+      "sha256": "c1ac8b32423f5f69068ae0f0d97ad04a2e971180230c61f2f2e47d887157c374",
+      "crc32c": "wl+wug=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.splits.json.gz",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.splits.json.gz",
+      "generation": "1791863645541799",
+      "bytes": 12808969,
+      "sha256": "756257b1165f2acd539b5b87413702db92b373be8c66d72764badb8f80764e5a",
+      "crc32c": "rUTBFA=="
+    },
+    {
+      "name": "followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.log",
+      "uri": "gs://focus-surfer-494820-g0-telemetry/followup_analysis/20261012T232425Z/sensitivity_worker_20261013/steps_only.log",
+      "generation": "1791863645632775",
+      "bytes": 989,
+      "sha256": "580e0425e93432876ca8bd51632a7af77266639d362cb62a87bc49e5e3359c1c",
+      "crc32c": "XqXd/Q=="
+    }
+  ],
+  "phase": "steps_only",
+  "finished_utc": "2026-10-13T03:54:05.745645+00:00"
+}

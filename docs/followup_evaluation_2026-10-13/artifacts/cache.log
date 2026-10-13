@@ -1,0 +1,29 @@
+23:50:40 dedup on ['ts', 'run_id', 'workload_label', 'gpu_uuid']: 6,682,050 -> 5,592,628 rows
+23:50:46 Total rows: 5,592,628 | runs: 3831
+23:50:46 Three-way distribution (runs):
+threeway_label
+ml_inference    1425
+ml_training     1870
+other            556
+23:51:20 Excluded 172984 rows / 21 jobs with failed completion evidence (/var/tmp/spar_followup/20261012T232425Z/schema_retry/repo/data/quality_exclusions.json)
+[179s] raw rows 5,419,644  peakRSS 20.86 GB
+  nic sidecar: 0 -> 4 nic columns ['nic_tx_mbps', 'nic_rx_mbps', 'nic_total_rx_mbps', 'nic_total_tx_mbps']
+  comm channels present: ['nic_total_mbps', 'nvlink_total_mbps', 'pcie_total_mbps']
+  STEP evidence for 580 of 2,850 jobs
+  rows with nic_total_mbps > 0: 53.6%
+[306s] spilled 0.20 GB
+[307s] 2,850 jobs in 6 chunks across 2 workers
+[3090s] chunk 1: 475 jobs -> 10,962 windows
+[3107s] chunk 2: 475 jobs -> 11,429 windows
+[6035s] chunk 4: 475 jobs -> 12,549 windows
+[6404s] chunk 3: 475 jobs -> 13,600 windows
+[8978s] chunk 5: 475 jobs -> 12,598 windows
+[9354s] chunk 6: 475 jobs -> 14,703 windows
+[9360s] windows 75,841 -> /var/tmp/spar_followup/20261012T232425Z/schema_retry/results/windows_30_15.parquet
+  jobs 2,561  groups 469  xr_ features 104  xragg_ features 38  peakRSS 23.18 GB
+label_source    program  steps  unresolved
+threeway_label                            
+ml_inference      14818   6340           0
+ml_training        5682  18952           0
+other             10358   8371           0
+unresolved            0      0       11320
