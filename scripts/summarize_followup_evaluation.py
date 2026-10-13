@@ -183,7 +183,9 @@ def plot_families(review, out):
     fig.text(.5, .012, 'n = physical jobs; overlapping windows are not independent repetitions. '
              'Fixed threshold, not deployment-calibrated.', ha='center', fontsize=8)
     fig.tight_layout(rect=(0, .03, 1, .97))
-    fig.savefig(out / 'mechanism_families.svg')
+    svg = out / 'mechanism_families.svg'
+    fig.savefig(svg)
+    svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines()) + '\n')
     fig.savefig(out / 'mechanism_families.png', dpi=160)
     plt.close(fig)
 
@@ -206,7 +208,7 @@ def main():
     fields = ['evaluation', 'family', 'jobs', 'windows', 'training_windows', 'nontraining_windows', 'accuracy', 'macro_f1', 'training_recall',
               'false_positive_rate', 'job_any_recall', 'job_any_fpr']
     with (args.out / 'family_results.csv').open('w', newline='') as f:
-        writer = csv.DictWriter(f, fields, extrasaction='ignore')
+        writer = csv.DictWriter(f, fields, extrasaction='ignore', lineterminator='\n')
         writer.writeheader()
         for name, r in reviews['evaluations'].items():
             writer.writerows(dict(evaluation=name, **row) for row in r['family_results'])
