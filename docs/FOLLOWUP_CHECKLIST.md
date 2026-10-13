@@ -62,6 +62,10 @@ not useful training time. Historical job identities remain provisional.
   is admitted. [Retry evidence](followup_execution_2026-10-12/failed_a100_retry.json)
   and [live execution](followup_execution_2026-10-12/live_execution.json) record the
   outcome. Scientific corpus admission remains separate.
+  [Duration/capacity review](followup_execution_2026-10-12/duration_capacity_review.json):
+  30 minutes is a nominal target, not a prerequisite for the current 30-second
+  window analysis. No duration-only replacement is queued. This full-length
+  milestone remains incomplete and does not block using the admitted intervals.
 - [x] Recover the valid observed intervals from both Spot-preempted A100 runs
   into the corpus: 23,530 GPU samples, 6.52844 accelerator-hours and 94 complete
   30-second windows with all 16 GPUs and both NICs. Preserve preemption status
@@ -103,6 +107,9 @@ not useful training time. Historical job identities remain provisional.
   This is a starting design, not a guarantee of statistical precision.
 - [ ] Use 30 to 60 minute recordings for priority cells and longer runs where
   needed to observe repeated slow synchronization and learning cycles.
+  Set the required uninterrupted horizon from the experiment. Prefer standard
+  provisioning, with bounded runtime and shutdown, when continuity is required;
+  sufficient quota alone does not establish available hardware capacity.
 - [ ] Add multi hour benign serving/HPC recordings to measure operational false
   alerts; retain startup, model load, warmup, idle and active phase annotations.
 - [ ] Pair training, disguised training, inference and zero update controls on

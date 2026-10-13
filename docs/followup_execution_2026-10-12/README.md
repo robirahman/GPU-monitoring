@@ -130,7 +130,14 @@ Preemption status is retained; run completion is not required for interval admis
 The analysis retry passed the memory failure
 point, then found mixed numeric/`N/A` sensor values at parquet serialization;
 normalization is covered by a new round-trip regression and a third isolated
-analysis attempt is running. At 02:22 UTC on October 13, five of six feature chunks
-had completed, producing 61,138 windows. Model evaluation had not started, so
-accuracy and robustness results remain pending. Current paths and status are in
-the live record.
+analysis attempt is running. At 02:54 UTC on October 13, the feature cache had
+completed with 75,841 windows from 2,561 jobs, and paired mechanism-family
+evaluation was running. Final accuracy and robustness results remain pending.
+Current paths and status are in the live record.
+
+The [duration/capacity review](duration_capacity_review.json) records why no
+replacement is queued solely to reach 30 minutes for this TP8 pilot. Its recovered
+23-minute interval already provides 90 complete windows. Future experiments that
+require a specific uninterrupted horizon should use standard provisioning with
+bounded runtime; the project has sufficient standard A100 quota, but this is not
+proof of physical capacity. The full-length pilot milestone is still incomplete.

@@ -21,6 +21,12 @@ was launched during the 02:22 UTC status check.
 Both interrupted runs now have [validated observed intervals in the corpus](preempted_recovery.md).
 The success-receipt gate establishes completed-run status and controls pilot
 progression; it is not a blanket exclusion of earlier valid telemetry.
+The [duration and capacity review](duration_capacity_review.json) finds that an
+exact 30-minute TP8 capture is not required for the current window analysis;
+no duration-only replacement is queued. Standard A100 quota can accommodate a
+16-GPU pair, but physical capacity has not been allocated or demonstrated.
+Use standard provisioning when an experiment needs a specified uninterrupted
+horizon, with an independent seed, explicit runtime cap and verified shutdown.
 [Live execution](live_execution.json) records the campaign and separate analysis run.
 The operator supplied the live listing in `gcloud-instances.local.json`. It
 contains `spar-a100-0` and `spar-a100-1` in `us-central1-c`, both stopped,
@@ -137,7 +143,7 @@ cache serialization then exposed legacy `N/A` sensor strings and mixed throttle
 status types. Numeric missing values and categorical status are now normalized,
 with a parquet round-trip regression. The current attempt runs in `schema_retry/`
 with two cache workers, a four-vCPU quota and the same memory cap. The shared analysis
-VM remains running after this job. At 02:22 UTC on October 13, five of six feature
-chunks had completed (61,138 windows); the evaluation service was still active.
-Model evaluation had not started. Real results and useful-learning validation
+VM remains running after this job. At 02:54 UTC on October 13, the feature cache
+was complete (75,841 windows / 2,561 jobs) and mechanism-family paired evaluation
+was running. Final scores and useful-learning validation
 remain pending and must not be inferred from unit-test success.

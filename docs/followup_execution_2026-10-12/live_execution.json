@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-13T02:38:57.184899+00:00",
+  "updated_utc": "2026-10-13T02:58:13.679660+00:00",
   "cloud_access": "API, SSH and GCS available; existing Google Cloud and GitHub authentication sufficient",
   "failed_smoke": {
     "campaign": "followup_a100_20261012T232425Z",
@@ -99,20 +99,22 @@
       "status": "running",
       "systemd_unit": "spar-followup-analysis-20261012T232425Z-schema1",
       "work": "/var/tmp/spar_followup/20261012T232425Z/schema_retry/results",
-      "phase": "cache",
+      "phase": "mechanism_paired",
       "workers": 2,
       "cpu_quota_vcpus": 4,
       "memory_limit_gib": 24,
       "runtime_limit_s": 14400,
       "stops_vm": false,
-      "checked_utc": "2026-10-13T02:24:01.791112+00:00",
+      "checked_utc": "2026-10-13T02:58:13.679660+00:00",
       "started_utc": "2026-10-12T23:48:20.996728Z",
       "retained_telemetry_rows": 5419644,
       "total_jobs": 2850,
       "feature_chunks_total": 6,
-      "feature_chunks_complete": 5,
-      "feature_windows_so_far": 61138,
-      "completed_evaluation_phases": [],
+      "feature_chunks_complete": 6,
+      "feature_windows_so_far": 75841,
+      "completed_evaluation_phases": [
+        "cache"
+      ],
       "model_metrics_available": false,
       "feature_chunks": [
         {
@@ -126,24 +128,30 @@
           "windows": 11429
         },
         {
-          "chunk": 4,
-          "jobs": 475,
-          "windows": 12549
-        },
-        {
           "chunk": 3,
           "jobs": 475,
           "windows": 13600
         },
         {
+          "chunk": 4,
+          "jobs": 475,
+          "windows": 12549
+        },
+        {
           "chunk": 5,
           "jobs": 475,
           "windows": 12598
+        },
+        {
+          "chunk": 6,
+          "jobs": 475,
+          "windows": 14703
         }
       ],
       "systemd_active_state": "active",
       "systemd_sub_state": "running",
-      "memory_current_bytes": 8202436608
+      "memory_current_bytes": 8202436608,
+      "window_cache_jobs": 2561
     }
   },
   "previous_gpu_campaign": {
@@ -228,5 +236,6 @@
     "manifest": "data/preempted_recovery_20261013/manifest.json",
     "readme": "preempted_recovery.md",
     "classification_results": "These are additional corpus inputs; the in-flight analysis uses its original frozen input snapshot."
-  }
+  },
+  "duration_capacity_review": "duration_capacity_review.json"
 }

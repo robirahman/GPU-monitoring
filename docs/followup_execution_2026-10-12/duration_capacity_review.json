@@ -1,0 +1,63 @@
+{
+  "checked_utc": "2026-10-13T02:58:13.679660+00:00",
+  "replacement_queued": false,
+  "nonpreemptible_launched": false,
+  "decision": "No duration-only replacement for the current TP8 pilot: 30 minutes is a collection target, not an evaluator admission requirement.",
+  "evidence": {
+    "window_seconds": 30,
+    "stride_seconds": 15,
+    "recovered_retry_contiguous_step_interval_seconds": 1383.0805220603943,
+    "recovered_retry_complete_windows": 90,
+    "retry_logged_steps": 503,
+    "captures_share_seed": 8123401,
+    "distinct_seed_groups": 1
+  },
+  "qualification": "This establishes usable window inputs, not adequate statistical power, duration-invariant behavior or long-horizon robustness. The full-length pilot milestone remains incomplete.",
+  "future_continuity_criteria": [
+    "A specified uninterrupted horizon is part of the experiment, such as a matched full-run comparison.",
+    "Repeated slow synchronization or learning cycles do not fit in existing captures.",
+    "Long-horizon alert persistence or sustained serving/HPC behavior is under test."
+  ],
+  "next_collection_priority": "Fresh independent seeds and matched controls; retain interrupted captures. Prefer standard provisioning when an explicit uninterrupted horizon is required, with bounded runtime and shutdown.",
+  "cloud": {
+    "project": "focus-surfer-494820-g0",
+    "region": "us-central1",
+    "zone": "us-central1-c",
+    "nodes": [
+      "spar-a100-0",
+      "spar-a100-1"
+    ],
+    "node_states": [
+      "TERMINATED",
+      "TERMINATED"
+    ],
+    "current_provisioning": "SPOT",
+    "standard_gpu_pair_in_inventory": false,
+    "regional_quotas": {
+      "NVIDIA_A100_GPUS": {
+        "limit": 16.0,
+        "usage": 0.0
+      },
+      "PREEMPTIBLE_NVIDIA_A100_GPUS": {
+        "limit": 64.0,
+        "usage": 0.0
+      },
+      "A2_CPUS": {
+        "limit": 192.0,
+        "usage": 0.0
+      }
+    },
+    "reservations": [],
+    "physical_capacity": "Not allocated or tested; sufficient quota is not proof of available hardware."
+  },
+  "list_price": {
+    "source": "https://cloud.google.com/products/compute/pricing/accelerator-optimized",
+    "region": "us-central1",
+    "machine_type": "a2-highgpu-8g",
+    "currency": "USD",
+    "standard_per_instance_hour": 29.38708,
+    "standard_pair_hour": 58.77416,
+    "standard_pair_30min_compute_only": 29.38708,
+    "excludes": "Startup, smoke, upload/teardown time, disks, networking and account-specific taxes/discounts."
+  }
+}
