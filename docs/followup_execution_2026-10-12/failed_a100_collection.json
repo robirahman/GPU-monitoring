@@ -1,0 +1,205 @@
+{
+  "checked_utc": "2026-10-13T01:17:47.016080+00:00",
+  "campaign": "followup_a100_20261012T233445Z",
+  "run_id": "4c6fe5ccea7a",
+  "stage": "collect",
+  "workload": "s16_train_tp8",
+  "requested_duration_s": 1800,
+  "status": "failed_spot_preemption",
+  "admitted_to_corpus": false,
+  "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/",
+  "controller_error": "collect: both VMs stopped without complete receipts",
+  "cloud_events": [
+    {
+      "protoPayload": {
+        "methodName": "v1.compute.instances.stop",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-0",
+        "status": {}
+      },
+      "timestamp": "2026-10-12T23:55:59.471978Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "v1.compute.instances.stop",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-1",
+        "status": {}
+      },
+      "timestamp": "2026-10-12T23:55:59.348094Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "v1.compute.instances.stop",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-0",
+        "status": {}
+      },
+      "timestamp": "2026-10-12T23:55:58.790522Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "v1.compute.instances.stop",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-1",
+        "status": {}
+      },
+      "timestamp": "2026-10-12T23:55:58.779811Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "compute.instances.guestTerminate",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-1",
+        "status": {
+          "message": "Instance terminated by guest OS shutdown."
+        }
+      },
+      "timestamp": "2026-10-12T23:55:37.946742Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "compute.instances.preempted",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-0",
+        "status": {
+          "message": "Instance was preempted."
+        }
+      },
+      "timestamp": "2026-10-12T23:51:50.428910Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "v1.compute.instances.start",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-1",
+        "status": {}
+      },
+      "timestamp": "2026-10-12T23:46:22.519161Z"
+    },
+    {
+      "protoPayload": {
+        "methodName": "v1.compute.instances.start",
+        "resourceName": "projects/focus-surfer-494820-g0/zones/us-central1-c/instances/spar-a100-0",
+        "status": {}
+      },
+      "timestamp": "2026-10-12T23:45:34.272529Z"
+    }
+  ],
+  "partial_data": "Rolling checkpoints and surviving host final telemetry remain in GCS; missing completed per-rank progress and peer receipt prevent admission.",
+  "nodes": [
+    {
+      "node": "spar-a100-0",
+      "rank": 0,
+      "status": "collecting",
+      "started_utc": "2026-10-12T23:47:41.275985+00:00",
+      "finished_utc": null,
+      "local_result": null,
+      "queue_returncode": null,
+      "uploaded_artifacts": [],
+      "status_is_last_durable_snapshot": true
+    },
+    {
+      "node": "spar-a100-1",
+      "rank": 1,
+      "status": "failed_collection",
+      "started_utc": "2026-10-12T23:47:44.475718+00:00",
+      "finished_utc": "2026-10-12T23:51:49.274553+00:00",
+      "local_result": {
+        "marker_ok": false,
+        "gpu_streams": 8,
+        "nic_present": true,
+        "seed_records_ok": true,
+        "seeded_ranks": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "progress_records_ok": false,
+        "progress": {},
+        "complete": false,
+        "scientific_admission": "pending_peer_and_progress_review"
+      },
+      "queue_returncode": 0,
+      "uploaded_artifacts": [
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet",
+          "bytes": 27176,
+          "sha256": "2384291f9cda4b6edb5efc1341b584321c92d90e7b1b9475f47af6d78921f975",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21829,
+          "sha256": "637970bd679f3dc69ee23560c31be367ff3b19b08aaf01b91b2bfe7777dcfa92",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21849,
+          "sha256": "361c450f325bb7f39b59e37dbff083209097bd611aac787f36c1f68983346dce",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21781,
+          "sha256": "2fc4992cd20b2f5feb76ebb3a92c8f90850411aa924563699180a5a8a8e0a167",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21873,
+          "sha256": "27aca711b5a2d1096407ed20de6242535d0d3a8f3b3752d2025b4a7ee38b55bd",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21671,
+          "sha256": "7e97895ddf7802cd438d230a256ab55f28b4a69a33d325b142f1896c9cf1c735",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21827,
+          "sha256": "bd58464a1d19a3ebb6b70872f5686914e81b3ded73cd65ee52f94b85a6a84f74",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21841,
+          "sha256": "55cbe0ecba428a1cb2d56680af7ee76040f2916ac73f4db954aac7f6fd39908d",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "bytes": 21728,
+          "sha256": "602cfa0606129c889b25d68e604b12bd6334b7c6717aed64b768e3aabcc665c0",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/.done/followup_a100_20261012T233445Z_collect/s16_train_tp8_node1_4c6fe5ccea7a.failed",
+          "bytes": 52,
+          "sha256": "535abdb832d405daf94bb0a14d775e54475228daae41384b236a5a78d07d393a",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/followup_4c6fe5ccea7a.queue.log",
+          "bytes": 16488,
+          "sha256": "662bdf0b1abaae9a92365a762e12630a6892222cb1ce6433f168ccb3ea2b177c",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/s16_train_tp8_node1_4c6fe5ccea7a.log",
+          "bytes": 51379,
+          "sha256": "f7abd168f96ff28ba7835f3c2e6b271fd3abd6f68ed3de98dc8bb575c6fc5697",
+          "verified": true
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/s16_train_tp8_node1_4c6fe5ccea7a.nic.log",
+          "bytes": 337,
+          "sha256": "474ffee7a390756703683fdbb7d22dc21b70ad93c2f84be0b597d96648ffced7",
+          "verified": true
+        }
+      ],
+      "status_is_last_durable_snapshot": true
+    }
+  ]
+}

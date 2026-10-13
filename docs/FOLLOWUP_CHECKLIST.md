@@ -54,8 +54,10 @@ not useful training time. Historical job identities remain provisional.
 - [x] Execute a live two-node smoke and validate downloaded receipts and telemetry.
   [Verified smoke](followup_execution_2026-10-12/verified_a100_smoke.json): 16 GPU
   streams, two NIC streams, all 16 workers with progress, and 26 verified uploads.
-- [ ] Complete and validate the first 30-minute repetition, started at 23:48 UTC
-  on October 12; [live execution](followup_execution_2026-10-12/live_execution.json)
+- [ ] Complete and validate the first 30-minute repetition. Google Cloud preempted
+  one Spot node at 23:51 UTC on October 12, interrupting the first collection;
+  partial data remains excluded. A fresh smoke-gated retry started at 01:14 UTC
+  on October 13. [Live execution](followup_execution_2026-10-12/live_execution.json)
   records progress. Scientific corpus admission remains separate.
 
 ## Corpus accounting and recovery

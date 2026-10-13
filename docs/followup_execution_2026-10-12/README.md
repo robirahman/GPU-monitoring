@@ -106,15 +106,24 @@ Cloud API, SSH and object storage access now work. All 14,716 selected inputs
 The first cache build hit its 24 GiB memory limit; avoidable dataframe copies
 were removed and the evaluation relaunched in a separate directory.
 The first executed A100 smoke completed TP8 on all 16 workers but was rejected
-for missing final NIC files; a SIGTERM handling fix is pushed and a fresh
-campaign is running. [Live execution record](live_execution.json) and
+for missing final NIC files; a SIGTERM handling fix is pushed and the next
+smoke passed. [Live execution record](live_execution.json) and
 [verified input summary](verified_analysis_inputs.json) supersede the earlier
 access/input-blocked status above. No new classifier results are claimed.
 
 The repaired A100 smoke is now [verified](verified_a100_smoke.json): 1,776 GPU
 samples and 222 NIC samples across 18 streams, with all 16 workers reporting
 progress. These smoke samples stay out of the scientific corpus. The 30-minute
-collection started at 23:48 UTC. The analysis retry passed the memory failure
+collection started at 23:48 UTC on October 12, but Google Cloud preempted one
+Spot node at 23:51:50 UTC. The partial run is excluded from the scientific corpus;
+[failure evidence](failed_a100_collection.json) records the interruption and
+preserved artifacts. Both hosts stopped before a fresh smoke-gated retry started
+at 01:14 UTC on October 13.
+
+The analysis retry passed the memory failure
 point, then found mixed numeric/`N/A` sensor values at parquet serialization;
 normalization is covered by a new round-trip regression and a third isolated
-analysis attempt is running. Current paths and status are in the live record.
+analysis attempt is running. At 01:12 UTC on October 13, two of six feature chunks
+had completed, producing 22,391 windows. Model evaluation had not started, so
+accuracy and robustness results remain pending. Current paths and status are in
+the live record.

@@ -8,7 +8,12 @@ and TP8 completed on all 16 workers. The gate rejected that smoke because the
 NIC recorder did not flush final parquet on SIGTERM. This is now fixed and
 covered by a real subprocess regression. The [fresh smoke passed](verified_a100_smoke.json)
 with 16 GPU streams, two NIC streams and 26 downloaded, hash-verified artifacts.
-The 30-minute collection started at 23:48 UTC on October 12.
+The 30-minute collection started at 23:48 UTC on October 12, but Google Cloud
+preempted `spar-a100-0` at 23:51:50 UTC. The distributed workload failed and
+both hosts stopped. [Failure evidence](failed_a100_collection.json) preserves
+the cloud audit events and partial-upload records; this run is excluded from
+the scientific corpus. A fresh smoke-gated retry on the same pair started at
+01:14 UTC on October 13; completion is pending.
 [Live execution](live_execution.json) records the campaign and separate analysis run.
 The operator supplied the live listing in `gcloud-instances.local.json`. It
 contains `spar-a100-0` and `spar-a100-1` in `us-central1-c`, both stopped,
@@ -125,5 +130,7 @@ cache serialization then exposed legacy `N/A` sensor strings and mixed throttle
 status types. Numeric missing values and categorical status are now normalized,
 with a parquet round-trip regression. The current attempt runs in `schema_retry/`
 with two cache workers, a four-vCPU quota and the same memory cap. The shared analysis
-VM remains running after this job. Real results and useful-learning validation
+VM remains running after this job. At 01:12 UTC on October 13, two of six feature
+chunks had completed (22,391 windows); both cache workers were still active.
+Model evaluation had not started. Real results and useful-learning validation
 remain pending and must not be inferred from unit-test success.

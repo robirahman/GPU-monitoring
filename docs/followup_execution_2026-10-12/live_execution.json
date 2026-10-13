@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-12T23:49:05.590223+00:00",
+  "updated_utc": "2026-10-13T01:17:47.016080+00:00",
   "cloud_access": "API, SSH and GCS available; existing Google Cloud and GitHub authentication sufficient",
   "failed_smoke": {
     "campaign": "followup_a100_20261012T232425Z",
@@ -33,32 +33,6 @@
     "behavior": "SIGTERM/SIGINT set an event; final NIC parquet is saved and partial checkpoint removed.",
     "focused_tests_passed": 24,
     "includes_real_sigterm_and_parquet_test": true
-  },
-  "current_gpu_campaign": {
-    "campaign": "followup_a100_20261012T233445Z",
-    "controller_pid": 23583,
-    "status": "collecting",
-    "collection_duration_s": 1800,
-    "collection_started": true,
-    "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/",
-    "log": "logs/followup_a100_collection.log",
-    "smoke_status": "recorded_and_checked",
-    "smoke_gpu_streams": 16,
-    "smoke_nic_streams": 2,
-    "smoke_uploaded_artifacts_verified": 26,
-    "smoke_gpu_samples": 1776,
-    "smoke_nic_samples": 222,
-    "smoke_duration_s_range": [
-      106.01490092277527,
-      114.02530002593994
-    ],
-    "smoke_workers_with_progress": 16,
-    "smoke_admitted_to_corpus": false,
-    "smoke_summary": "verified_a100_smoke.json",
-    "between_stage_cleanup": "After validated downloads, both hosts were cloud-stopped and confirmed TERMINATED; controller resumed the collection stage.",
-    "collection_run_id": "4c6fe5ccea7a",
-    "collection_launch_utc": "2026-10-12T23:48:01Z",
-    "collection_seed": 8123401
   },
   "analysis": {
     "host": "spar-analysis-0",
@@ -130,7 +104,71 @@
       "cpu_quota_vcpus": 4,
       "memory_limit_gib": 24,
       "runtime_limit_s": 14400,
-      "stops_vm": false
+      "stops_vm": false,
+      "checked_utc": "2026-10-13T01:12:00Z",
+      "started_utc": "2026-10-12T23:48:20.996728Z",
+      "retained_telemetry_rows": 5419644,
+      "total_jobs": 2850,
+      "feature_chunks_total": 6,
+      "feature_chunks_complete": 2,
+      "feature_windows_so_far": 22391,
+      "completed_evaluation_phases": [],
+      "model_metrics_available": false
     }
+  },
+  "previous_gpu_campaign": {
+    "campaign": "followup_a100_20261012T233445Z",
+    "controller_pid": null,
+    "status": "failed_spot_preemption",
+    "collection_duration_s": 1800,
+    "collection_started": true,
+    "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/",
+    "log": "logs/followup_a100_collection.log",
+    "smoke_status": "recorded_and_checked",
+    "smoke_gpu_streams": 16,
+    "smoke_nic_streams": 2,
+    "smoke_uploaded_artifacts_verified": 26,
+    "smoke_gpu_samples": 1776,
+    "smoke_nic_samples": 222,
+    "smoke_duration_s_range": [
+      106.01490092277527,
+      114.02530002593994
+    ],
+    "smoke_workers_with_progress": 16,
+    "smoke_admitted_to_corpus": false,
+    "smoke_summary": "verified_a100_smoke.json",
+    "between_stage_cleanup": "After validated downloads, both hosts were cloud-stopped and confirmed TERMINATED; controller resumed the collection stage.",
+    "collection_run_id": "4c6fe5ccea7a",
+    "collection_launch_utc": "2026-10-12T23:48:01Z",
+    "collection_seed": 8123401,
+    "collection_completed": false,
+    "collection_admitted_to_corpus": false,
+    "failure_record": "failed_a100_collection.json",
+    "preemption_utc": "2026-10-12T23:51:50.428910Z",
+    "cleanup": "Both nodes confirmed TERMINATED before a fresh retry on October 13."
+  },
+  "current_gpu_campaign": {
+    "campaign": "followup_a100_20261013T011424Z",
+    "controller_pid": 35149,
+    "status": "running_smoke",
+    "stage": "smoke",
+    "started_utc": "2026-10-13T01:14:24Z",
+    "nodes": [
+      "spar-a100-0",
+      "spar-a100-1"
+    ],
+    "observed_node_states": [
+      "RUNNING",
+      "RUNNING"
+    ],
+    "gpu": "16 NVIDIA A100 SXM4 40GB across two hosts",
+    "cell": "s16_train_tp8",
+    "smoke_duration_s": 60,
+    "collection_duration_s": 1800,
+    "collection_started": false,
+    "admitted_to_corpus": false,
+    "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/",
+    "log": "logs/followup_a100_collection.log",
+    "retry_reason": "Original 30-minute run interrupted by Spot preemption; retry once on the same pair with the full smoke gate."
   }
 }
