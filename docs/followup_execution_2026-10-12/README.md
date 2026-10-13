@@ -118,12 +118,15 @@ collection started at 23:48 UTC on October 12, but Google Cloud preempted one
 Spot node at 23:51:50 UTC. The partial run is excluded from the scientific corpus;
 [failure evidence](failed_a100_collection.json) records the interruption and
 preserved artifacts. Both hosts stopped before a fresh smoke-gated retry started
-at 01:14 UTC on October 13.
+at 01:14 UTC on October 13. That retry passed its smoke gate and launched
+collection at 01:27 UTC, but a second Spot preemption interrupted it at 01:53 UTC.
+Both GPU hosts are now stopped. [Retry evidence](failed_a100_retry.json) records
+the partial artifacts and missing completion evidence; this retry is also excluded.
 
 The analysis retry passed the memory failure
 point, then found mixed numeric/`N/A` sensor values at parquet serialization;
 normalization is covered by a new round-trip regression and a third isolated
-analysis attempt is running. At 01:12 UTC on October 13, two of six feature chunks
-had completed, producing 22,391 windows. Model evaluation had not started, so
+analysis attempt is running. At 02:22 UTC on October 13, five of six feature chunks
+had completed, producing 61,138 windows. Model evaluation had not started, so
 accuracy and robustness results remain pending. Current paths and status are in
 the live record.

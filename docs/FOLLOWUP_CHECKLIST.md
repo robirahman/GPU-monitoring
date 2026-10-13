@@ -57,8 +57,11 @@ not useful training time. Historical job identities remain provisional.
 - [ ] Complete and validate the first 30-minute repetition. Google Cloud preempted
   one Spot node at 23:51 UTC on October 12, interrupting the first collection;
   partial data remains excluded. A fresh smoke-gated retry started at 01:14 UTC
-  on October 13. [Live execution](followup_execution_2026-10-12/live_execution.json)
-  records progress. Scientific corpus admission remains separate.
+  on October 13, but another Spot preemption interrupted collection at 01:53 UTC,
+  about 26 minutes after launch. Both GPU VMs are stopped; no completed repetition
+  is admitted. [Retry evidence](followup_execution_2026-10-12/failed_a100_retry.json)
+  and [live execution](followup_execution_2026-10-12/live_execution.json) record the
+  outcome. Scientific corpus admission remains separate.
 
 ## Corpus accounting and recovery
 

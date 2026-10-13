@@ -13,7 +13,11 @@ preempted `spar-a100-0` at 23:51:50 UTC. The distributed workload failed and
 both hosts stopped. [Failure evidence](failed_a100_collection.json) preserves
 the cloud audit events and partial-upload records; this run is excluded from
 the scientific corpus. A fresh smoke-gated retry on the same pair started at
-01:14 UTC on October 13; completion is pending.
+01:14 UTC on October 13. Its smoke gate passed and collection launched at 01:27
+UTC, but Google Cloud preempted the same node again at 01:53:22 UTC, about 26
+minutes after launch. [Retry evidence](failed_a100_retry.json) records the partial
+data and absent completion receipts. Both GPU hosts are now stopped; no new retry
+was launched during the 02:22 UTC status check.
 [Live execution](live_execution.json) records the campaign and separate analysis run.
 The operator supplied the live listing in `gcloud-instances.local.json`. It
 contains `spar-a100-0` and `spar-a100-1` in `us-central1-c`, both stopped,
@@ -130,7 +134,7 @@ cache serialization then exposed legacy `N/A` sensor strings and mixed throttle
 status types. Numeric missing values and categorical status are now normalized,
 with a parquet round-trip regression. The current attempt runs in `schema_retry/`
 with two cache workers, a four-vCPU quota and the same memory cap. The shared analysis
-VM remains running after this job. At 01:12 UTC on October 13, two of six feature
-chunks had completed (22,391 windows); both cache workers were still active.
+VM remains running after this job. At 02:22 UTC on October 13, five of six feature
+chunks had completed (61,138 windows); the evaluation service was still active.
 Model evaluation had not started. Real results and useful-learning validation
 remain pending and must not be inferred from unit-test success.
