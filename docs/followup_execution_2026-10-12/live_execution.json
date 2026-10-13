@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-13T02:24:01.791112+00:00",
+  "updated_utc": "2026-10-13T02:38:57.184899+00:00",
   "cloud_access": "API, SSH and GCS available; existing Google Cloud and GitHub authentication sufficient",
   "failed_smoke": {
     "campaign": "followup_a100_20261012T232425Z",
@@ -172,10 +172,14 @@
     "collection_launch_utc": "2026-10-12T23:48:01Z",
     "collection_seed": 8123401,
     "collection_completed": false,
-    "collection_admitted_to_corpus": false,
+    "collection_admitted_to_corpus": true,
     "failure_record": "failed_a100_collection.json",
     "preemption_utc": "2026-10-12T23:51:50.428910Z",
-    "cleanup": "Both nodes confirmed TERMINATED before a fresh retry on October 13."
+    "cleanup": "Both nodes confirmed TERMINATED before a fresh retry on October 13.",
+    "admitted_to_corpus": true,
+    "corpus_disposition": "accepted_observed_training_interval",
+    "interval_recovery_manifest": "data/preempted_recovery_20261013/manifest.json",
+    "completed_repetition_credit": 0
   },
   "current_gpu_campaign": {
     "campaign": "followup_a100_20261013T011424Z",
@@ -196,7 +200,7 @@
     "smoke_duration_s": 60,
     "collection_duration_s": 1800,
     "collection_started": true,
-    "admitted_to_corpus": false,
+    "admitted_to_corpus": true,
     "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/",
     "log": "logs/followup_a100_collection.log",
     "retry_reason": "Original 30-minute run interrupted by Spot preemption; retry once on the same pair with the full smoke gate.",
@@ -207,6 +211,22 @@
     "preemption_utc": "2026-10-13T01:53:22.077321Z",
     "failure_record": "failed_a100_retry.json",
     "smoke_status": "passed_gate_before_collection",
-    "next_retry_launched": false
+    "next_retry_launched": false,
+    "collection_admitted_to_corpus": true,
+    "corpus_disposition": "accepted_observed_training_interval",
+    "interval_recovery_manifest": "data/preempted_recovery_20261013/manifest.json",
+    "completed_repetition_credit": 0
+  },
+  "preempted_recovery": {
+    "runs": 2,
+    "accelerator_samples": 23530,
+    "accelerator_hours": 6.528440491822031,
+    "accelerator_streams": 32,
+    "nic_streams": 4,
+    "validated_windows": 94,
+    "completed_repetitions": 0,
+    "manifest": "data/preempted_recovery_20261013/manifest.json",
+    "readme": "preempted_recovery.md",
+    "classification_results": "These are additional corpus inputs; the in-flight analysis uses its original frozen input snapshot."
   }
 }

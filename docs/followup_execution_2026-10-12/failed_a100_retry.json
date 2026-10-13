@@ -6,7 +6,7 @@
   "workload": "s16_train_tp8",
   "requested_duration_s": 1800,
   "status": "failed_spot_preemption",
-  "admitted_to_corpus": false,
+  "admitted_to_corpus": true,
   "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/",
   "cloud_events": [
     {
@@ -186,5 +186,10 @@
     "TERMINATED"
   ],
   "controller_status": "Local campaign file unavailable in this session; cloud events and durable node state provide the failure evidence.",
-  "partial_data": "Preemption occurred about 26 minutes after launch. Persisted partial GPU data and final surviving-node files lack completed per-rank progress and peer success receipts. They are not admitted as a completed repetition."
+  "partial_data": "Original capture is preserved in GCS. Validated common GPU/NIC intervals bounded by saved STEP events are admitted to the corpus; startup and unobserved tails remain raw-only. Preemption does not invalidate the earlier work or earn completion credit.",
+  "run_completed": false,
+  "completed_repetition_credit": 0,
+  "corpus_disposition": "accepted_observed_training_interval",
+  "admission_updated_utc": "2026-10-13T02:38:57.184899+00:00",
+  "interval_recovery_manifest": "data/preempted_recovery_20261013/manifest.json"
 }

@@ -1,4 +1,8 @@
-"""Collection validity is separate from workload objective and utilization."""
+"""Run-exit evidence is separate from objective, utilization and interval validity.
+
+A failed exit does not invalidate every earlier sample. Reviewed recovery can
+admit observed intervals from interrupted jobs while retaining this exit status.
+"""
 import re
 
 # Every run_workload_multi_gpu.py mode names each parquet it saves: multi-GPU and

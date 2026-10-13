@@ -6,7 +6,7 @@
   "workload": "s16_train_tp8",
   "requested_duration_s": 1800,
   "status": "failed_spot_preemption",
-  "admitted_to_corpus": false,
+  "admitted_to_corpus": true,
   "cloud_prefix": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/",
   "controller_error": "collect: both VMs stopped without complete receipts",
   "cloud_events": [
@@ -79,7 +79,7 @@
       "timestamp": "2026-10-12T23:45:34.272529Z"
     }
   ],
-  "partial_data": "Rolling checkpoints and surviving host final telemetry remain in GCS; missing completed per-rank progress and peer receipt prevent admission.",
+  "partial_data": "Original capture is preserved in GCS. Validated common GPU/NIC intervals bounded by saved STEP events are admitted to the corpus; startup and unobserved tails remain raw-only. Preemption does not invalidate the earlier work or earn completion credit.",
   "nodes": [
     {
       "node": "spar-a100-0",
@@ -201,5 +201,10 @@
       ],
       "status_is_last_durable_snapshot": true
     }
-  ]
+  ],
+  "run_completed": false,
+  "completed_repetition_credit": 0,
+  "corpus_disposition": "accepted_observed_training_interval",
+  "admission_updated_utc": "2026-10-13T02:38:57.184899+00:00",
+  "interval_recovery_manifest": "data/preempted_recovery_20261013/manifest.json"
 }

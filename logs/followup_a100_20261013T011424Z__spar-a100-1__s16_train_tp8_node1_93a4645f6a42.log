@@ -1,0 +1,606 @@
+2026-10-13 01:27:29,734 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_tp8, 8 GPUs, node=1, run_id=93a4645f6a42
+Run ID: 93a4645f6a42
+2026-10-13 01:27:29,764 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,765 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,765 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,781 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,782 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,782 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,800 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,800 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,800 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,821 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,822 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,822 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,843 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,844 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,844 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,862 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,862 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,862 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,881 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,881 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,881 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:29,900 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-10-13 01:27:29,901 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_tp8, run=93a4645f6a42)
+2026-10-13 01:27:29,901 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-10-13 01:27:31,903 [spar.multi_gpu] INFO:   Launching: /opt/spar/followup/followup_a100_20261013T011424Z_collect/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=300 --nproc-per-node=8 workloads/train_tp.py --tp-size 8 --duration 1800
+W1013 01:27:35.439000 4347 torch/distributed/run.py:793] 
+W1013 01:27:35.439000 4347 torch/distributed/run.py:793] *****************************************
+W1013 01:27:35.439000 4347 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1013 01:27:35.439000 4347 torch/distributed/run.py:793] *****************************************
+RUN_SEED {"base_seed": 8123401, "rank": 12, "local_rank": 4, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 11, "local_rank": 3, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 13, "local_rank": 5, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 14, "local_rank": 6, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 15, "local_rank": 7, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 9, "local_rank": 1, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 8, "local_rank": 0, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+RUN_SEED {"base_seed": 8123401, "rank": 10, "local_rank": 2, "run_stamp": "followup_a100_20261013T011424Z_collect", "deterministic_algorithms": false}
+2026-10-13 01:28:29,849 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,849 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,860 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,885 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,914 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,920 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,939 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:28:29,960 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:29,873 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:29,895 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:29,931 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:29,952 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:29,976 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:30,838 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:30,852 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:29:30,926 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:29,891 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:29,908 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:29,941 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:29,961 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:29,991 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:30,851 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:30,863 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:30:30,935 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:29,928 [spar.telemetry] INFO: Checkpoint 4: 241 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:29,951 [spar.telemetry] INFO: Checkpoint 4: 241 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:29,976 [spar.telemetry] INFO: Checkpoint 4: 241 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:30,002 [spar.telemetry] INFO: Checkpoint 4: 241 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:30,872 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:30,874 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:30,894 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:31:30,948 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:29,993 [spar.telemetry] INFO: Checkpoint 5: 301 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:30,017 [spar.telemetry] INFO: Checkpoint 5: 301 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:30,885 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:30,906 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:30,939 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:30,968 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:30,968 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:32:31,884 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:30,031 [spar.telemetry] INFO: Checkpoint 6: 361 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:30,893 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:30,916 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:30,977 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:30,998 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:31,894 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:31,977 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:33:31,996 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:30,046 [spar.telemetry] INFO: Checkpoint 7: 421 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:30,908 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:30,930 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:31,001 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:31,009 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:31,914 [spar.telemetry] INFO: Checkpoint 7: 423 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:32,958 [spar.telemetry] INFO: Checkpoint 7: 424 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:34:32,983 [spar.telemetry] INFO: Checkpoint 7: 424 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:30,058 [spar.telemetry] INFO: Checkpoint 8: 481 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:30,920 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:30,942 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:31,021 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:32,006 [spar.telemetry] INFO: Checkpoint 8: 483 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:32,930 [spar.telemetry] INFO: Checkpoint 8: 484 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:32,969 [spar.telemetry] INFO: Checkpoint 8: 484 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:35:32,992 [spar.telemetry] INFO: Checkpoint 8: 484 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:30,073 [spar.telemetry] INFO: Checkpoint 9: 541 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:30,952 [spar.telemetry] INFO: Checkpoint 9: 542 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:31,032 [spar.telemetry] INFO: Checkpoint 9: 542 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:31,933 [spar.telemetry] INFO: Checkpoint 9: 543 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:32,090 [spar.telemetry] INFO: Checkpoint 9: 543 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:32,983 [spar.telemetry] INFO: Checkpoint 9: 544 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:33,005 [spar.telemetry] INFO: Checkpoint 9: 544 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:36:33,931 [spar.telemetry] INFO: Checkpoint 9: 545 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:30,085 [spar.telemetry] INFO: Checkpoint 10: 601 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:30,965 [spar.telemetry] INFO: Checkpoint 10: 602 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:31,043 [spar.telemetry] INFO: Checkpoint 10: 602 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:32,942 [spar.telemetry] INFO: Checkpoint 10: 604 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:33,031 [spar.telemetry] INFO: Checkpoint 10: 604 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:33,942 [spar.telemetry] INFO: Checkpoint 10: 605 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:33,995 [spar.telemetry] INFO: Checkpoint 10: 605 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:37:34,017 [spar.telemetry] INFO: Checkpoint 10: 605 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:30,098 [spar.telemetry] INFO: Checkpoint 11: 661 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:31,010 [spar.telemetry] INFO: Checkpoint 11: 662 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:31,057 [spar.telemetry] INFO: Checkpoint 11: 662 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:32,951 [spar.telemetry] INFO: Checkpoint 11: 664 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:33,054 [spar.telemetry] INFO: Checkpoint 11: 664 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:33,958 [spar.telemetry] INFO: Checkpoint 11: 665 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:35,006 [spar.telemetry] INFO: Checkpoint 11: 666 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:38:35,030 [spar.telemetry] INFO: Checkpoint 11: 666 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:30,123 [spar.telemetry] INFO: Checkpoint 12: 721 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:31,069 [spar.telemetry] INFO: Checkpoint 12: 722 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:32,086 [spar.telemetry] INFO: Checkpoint 12: 723 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:32,963 [spar.telemetry] INFO: Checkpoint 12: 724 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:34,061 [spar.telemetry] INFO: Checkpoint 12: 725 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:34,965 [spar.telemetry] INFO: Checkpoint 12: 726 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:36,018 [spar.telemetry] INFO: Checkpoint 12: 727 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:39:36,042 [spar.telemetry] INFO: Checkpoint 12: 727 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:31,104 [spar.telemetry] INFO: Checkpoint 13: 782 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:31,186 [spar.telemetry] INFO: Checkpoint 13: 782 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:32,976 [spar.telemetry] INFO: Checkpoint 13: 784 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:33,006 [spar.telemetry] INFO: Checkpoint 13: 784 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:34,087 [spar.telemetry] INFO: Checkpoint 13: 785 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:34,976 [spar.telemetry] INFO: Checkpoint 13: 786 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:37,031 [spar.telemetry] INFO: Checkpoint 13: 788 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:40:37,047 [spar.telemetry] INFO: Checkpoint 13: 788 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:32,093 [spar.telemetry] INFO: Checkpoint 14: 843 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:32,142 [spar.telemetry] INFO: Checkpoint 14: 843 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:33,020 [spar.telemetry] INFO: Checkpoint 14: 844 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:33,987 [spar.telemetry] INFO: Checkpoint 14: 845 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:34,988 [spar.telemetry] INFO: Checkpoint 14: 846 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:35,093 [spar.telemetry] INFO: Checkpoint 14: 846 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:38,045 [spar.telemetry] INFO: Checkpoint 14: 849 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:41:38,057 [spar.telemetry] INFO: Checkpoint 14: 849 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:32,107 [spar.telemetry] INFO: Checkpoint 15: 903 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:32,154 [spar.telemetry] INFO: Checkpoint 15: 903 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:33,032 [spar.telemetry] INFO: Checkpoint 15: 904 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:33,998 [spar.telemetry] INFO: Checkpoint 15: 905 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:35,106 [spar.telemetry] INFO: Checkpoint 15: 906 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:35,998 [spar.telemetry] INFO: Checkpoint 15: 907 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:39,053 [spar.telemetry] INFO: Checkpoint 15: 910 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:42:39,068 [spar.telemetry] INFO: Checkpoint 15: 910 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:32,214 [spar.telemetry] INFO: Checkpoint 16: 963 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:33,049 [spar.telemetry] INFO: Checkpoint 16: 964 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:33,118 [spar.telemetry] INFO: Checkpoint 16: 964 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:34,010 [spar.telemetry] INFO: Checkpoint 16: 965 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:35,163 [spar.telemetry] INFO: Checkpoint 16: 966 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:36,014 [spar.telemetry] INFO: Checkpoint 16: 967 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:39,085 [spar.telemetry] INFO: Checkpoint 16: 970 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:43:39,086 [spar.telemetry] INFO: Checkpoint 16: 970 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:33,134 [spar.telemetry] INFO: Checkpoint 17: 1024 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:33,180 [spar.telemetry] INFO: Checkpoint 17: 1024 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:34,022 [spar.telemetry] INFO: Checkpoint 17: 1025 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:34,062 [spar.telemetry] INFO: Checkpoint 17: 1025 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:36,133 [spar.telemetry] INFO: Checkpoint 17: 1027 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:37,029 [spar.telemetry] INFO: Checkpoint 17: 1028 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:40,096 [spar.telemetry] INFO: Checkpoint 17: 1031 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:44:40,097 [spar.telemetry] INFO: Checkpoint 17: 1031 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:33,151 [spar.telemetry] INFO: Checkpoint 18: 1084 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:34,082 [spar.telemetry] INFO: Checkpoint 18: 1085 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:34,191 [spar.telemetry] INFO: Checkpoint 18: 1085 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:35,035 [spar.telemetry] INFO: Checkpoint 18: 1086 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:36,150 [spar.telemetry] INFO: Checkpoint 18: 1087 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:38,034 [spar.telemetry] INFO: Checkpoint 18: 1089 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:41,107 [spar.telemetry] INFO: Checkpoint 18: 1092 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:45:41,108 [spar.telemetry] INFO: Checkpoint 18: 1092 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:34,160 [spar.telemetry] INFO: Checkpoint 19: 1145 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:34,207 [spar.telemetry] INFO: Checkpoint 19: 1145 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:35,051 [spar.telemetry] INFO: Checkpoint 19: 1146 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:35,098 [spar.telemetry] INFO: Checkpoint 19: 1146 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:37,162 [spar.telemetry] INFO: Checkpoint 19: 1148 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:39,047 [spar.telemetry] INFO: Checkpoint 19: 1150 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:42,112 [spar.telemetry] INFO: Checkpoint 19: 1153 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:46:42,114 [spar.telemetry] INFO: Checkpoint 19: 1153 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:34,178 [spar.telemetry] INFO: Checkpoint 20: 1205 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:34,228 [spar.telemetry] INFO: Checkpoint 20: 1205 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:36,063 [spar.telemetry] INFO: Checkpoint 20: 1207 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:36,112 [spar.telemetry] INFO: Checkpoint 20: 1207 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:37,180 [spar.telemetry] INFO: Checkpoint 20: 1208 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:39,061 [spar.telemetry] INFO: Checkpoint 20: 1210 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:43,132 [spar.telemetry] INFO: Checkpoint 20: 1214 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:47:43,133 [spar.telemetry] INFO: Checkpoint 20: 1214 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:35,191 [spar.telemetry] INFO: Checkpoint 21: 1266 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:35,241 [spar.telemetry] INFO: Checkpoint 21: 1266 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:37,076 [spar.telemetry] INFO: Checkpoint 21: 1268 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:37,170 [spar.telemetry] INFO: Checkpoint 21: 1268 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:37,197 [spar.telemetry] INFO: Checkpoint 21: 1268 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:40,075 [spar.telemetry] INFO: Checkpoint 21: 1271 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:44,149 [spar.telemetry] INFO: Checkpoint 21: 1275 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:48:44,151 [spar.telemetry] INFO: Checkpoint 21: 1275 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:35,257 [spar.telemetry] INFO: Checkpoint 22: 1326 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:36,202 [spar.telemetry] INFO: Checkpoint 22: 1327 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:38,087 [spar.telemetry] INFO: Checkpoint 22: 1329 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:38,140 [spar.telemetry] INFO: Checkpoint 22: 1329 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:38,204 [spar.telemetry] INFO: Checkpoint 22: 1329 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:41,089 [spar.telemetry] INFO: Checkpoint 22: 1332 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:45,166 [spar.telemetry] INFO: Checkpoint 22: 1336 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:49:45,168 [spar.telemetry] INFO: Checkpoint 22: 1336 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:36,270 [spar.telemetry] INFO: Checkpoint 23: 1387 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:37,215 [spar.telemetry] INFO: Checkpoint 23: 1388 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:38,119 [spar.telemetry] INFO: Checkpoint 23: 1389 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:38,161 [spar.telemetry] INFO: Checkpoint 23: 1389 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:38,218 [spar.telemetry] INFO: Checkpoint 23: 1389 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:42,101 [spar.telemetry] INFO: Checkpoint 23: 1393 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:46,172 [spar.telemetry] INFO: Checkpoint 23: 1397 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:50:46,203 [spar.telemetry] INFO: Checkpoint 23: 1397 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:37,234 [spar.telemetry] INFO: Checkpoint 24: 1448 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:37,281 [spar.telemetry] INFO: Checkpoint 24: 1448 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:39,116 [spar.telemetry] INFO: Checkpoint 24: 1450 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:39,173 [spar.telemetry] INFO: Checkpoint 24: 1450 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:39,232 [spar.telemetry] INFO: Checkpoint 24: 1450 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:42,116 [spar.telemetry] INFO: Checkpoint 24: 1453 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:47,196 [spar.telemetry] INFO: Checkpoint 24: 1458 samples -> data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:51:47,197 [spar.telemetry] INFO: Checkpoint 24: 1458 samples -> data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:52:37,298 [spar.telemetry] INFO: Checkpoint 25: 1508 samples -> data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:52:38,246 [spar.telemetry] INFO: Checkpoint 25: 1509 samples -> data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:52:40,126 [spar.telemetry] INFO: Checkpoint 25: 1511 samples -> data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:52:40,192 [spar.telemetry] INFO: Checkpoint 25: 1511 samples -> data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+2026-10-13 01:52:40,246 [spar.telemetry] INFO: Checkpoint 25: 1511 samples -> data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+[rank13]:[E1013 01:52:41.933878240 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105350, OpType=ALLREDUCE, NumelIn=2048, NumelOut=2048, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<53590>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x702e21b6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x702dd70002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x702dd70004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x702dd7007eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x702dd700993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x702e21fd65c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x702e22a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x702e22b268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank13]:[E1013 01:52:41.937786520 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 8 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105350, last enqueued NCCL work: 105395, last completed NCCL work: 105349.
+[rank14]:[E1013 01:52:41.933878244 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105275, OpType=ALLREDUCE, NumelIn=1572864, NumelOut=1572864, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<51406>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x75b46116c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x75b4166002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x75b4166004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x75b416607eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x75b41660993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x75b4616635c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x75b462094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x75b4621268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank14]:[E1013 01:52:41.937880954 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 9 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105275, last enqueued NCCL work: 105395, last completed NCCL work: 105274.
+[rank11]:[E1013 01:52:41.941873796 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105261, OpType=ALLREDUCE, NumelIn=2048, NumelOut=2048, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<50610>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7990cc2b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7990818002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7990818004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x799081807eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x79908180993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7990cc71f5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7990cd094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x7990cd1268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank11]:[E1013 01:52:41.943871194 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 6 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105261, last enqueued NCCL work: 105395, last completed NCCL work: 105260.
+[rank8]:[E1013 01:52:41.949535194 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105252, OpType=ALLREDUCE, NumelIn=524288, NumelOut=524288, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<35790>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x78cab1cb9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x78ca672002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x78ca672004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x78ca67207eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x78ca6720993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x78cab21235c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x78cab2a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x78cab2b268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank8]:[E1013 01:52:41.951523898 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 3 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105252, last enqueued NCCL work: 105395, last completed NCCL work: 105251.
+[rank12]:[E1013 01:52:41.956096724 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105282, OpType=ALLREDUCE, NumelIn=2048, NumelOut=2048, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<55438>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d739ecb9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7d73542002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7d73542004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7d7354207eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7d735420993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7d739f0df5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7d739fa94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x7d739fb268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank12]:[E1013 01:52:41.958049985 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 7 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105282, last enqueued NCCL work: 105395, last completed NCCL work: 105281.
+[rank15]:[E1013 01:52:41.970552764 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105396, OpType=ALLREDUCE, NumelIn=65536000, NumelOut=65536000, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<49942>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x76a0b12b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x76a0668002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x76a0668004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x76a066807eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x76a06680993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x76a0b16ee5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x76a0b2094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x76a0b21268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank15]:[E1013 01:52:41.972570205 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 10 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105396, last enqueued NCCL work: 105527, last completed NCCL work: 105395.
+[rank9]:[E1013 01:52:41.981030655 ProcessGroupNCCL.cpp:542] [Rank 1] Collective WorkNCCL(SeqNum=105290, OpType=ALLREDUCE, NumelIn=2048, NumelOut=2048, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgress: Connection closed by remote peer spar-a100-0.c.focus-surfer-494820-g0.internal<59132>
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7bda35b6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7bd9eb0002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7bd9eb0004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7bd9eb007eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7bd9eb00993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7bda3601f5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7bda36a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x1268e0 (0x7bda36b268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank9]:[E1013 01:52:41.983019170 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 4 Rank 1] Exception (either an error or timeout) detected by watchdog at work: 105290, last enqueued NCCL work: 105395, last completed NCCL work: 105289.
+2026-10-13 01:52:43,127 [spar.telemetry] INFO: Checkpoint 25: 1514 samples -> data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial
+[W1013 01:52:43.880229205 TCPStore.cpp:131] [c10d] recvVector failed on SocketImpl(fd=4, addr=[spar-a100-1.c.focus-surfer-494820-g0.internal]:43704, remote=[spar-a100-0.c.focus-surfer-494820-g0.internal]:29500): failed to recv, got 0 bytes
+Exception raised from recvBytes at ../torch/csrc/distributed/c10d/Utils.hpp:670 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d7df4f6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x5fec818 (0x7d7de47ec818 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: <unknown function> + 0x5fece49 (0x7d7de47ece49 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0x5fefd67 (0x7d7de47efd67 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::compareSet(std::string const&, std::vector<unsigned char, std::allocator<unsigned char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&) + 0x254 (0x7d7de47e95e4 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0xd71874 (0x7d7df4371874 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #6: <unknown function> + 0x4cb474 (0x7d7df3acb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #7: <unknown function> + 0x18b292 (0x568d046cb292 in /opt/spar/repo/venv-main/bin/python3)
+frame #8: _PyObject_MakeTpCall + 0x25b (0x568d046c1bab in /opt/spar/repo/venv-main/bin/python3)
+frame #9: <unknown function> + 0x199030 (0x568d046d9030 in /opt/spar/repo/venv-main/bin/python3)
+frame #10: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #11: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #12: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #13: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #14: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #15: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #16: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #17: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #18: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #19: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #20: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #21: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #22: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #23: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #24: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #25: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #26: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #27: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #28: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #29: <unknown function> + 0x198e61 (0x568d046d8e61 in /opt/spar/repo/venv-main/bin/python3)
+frame #30: <unknown function> + 0x2adcca (0x568d047edcca in /opt/spar/repo/venv-main/bin/python3)
+frame #31: <unknown function> + 0x2a3bf8 (0x568d047e3bf8 in /opt/spar/repo/venv-main/bin/python3)
+frame #32: <unknown function> + 0x94a83 (0x7d7df5e94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #33: <unknown function> + 0x1268e0 (0x7d7df5f268e0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+W1013 01:52:43.434000 4347 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1331] The node 'spar-a100-1.c.focus-surfer-494820-g0.internal_4347_0' has failed to send a keep-alive heartbeat to the rendezvous 'none' due to an error of type RendezvousConnectionError.
+[W1013 01:52:43.946803926 TCPStore.cpp:122] [c10d] sendBytes failed on SocketImpl(fd=4, addr=[spar-a100-1.c.focus-surfer-494820-g0.internal]:43704, remote=[spar-a100-0.c.focus-surfer-494820-g0.internal]:29500): Broken pipe
+Exception raised from sendBytes at ../torch/csrc/distributed/c10d/Utils.hpp:645 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d7df4f6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x5fecb29 (0x7d7de47ecb29 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: c10d::TCPStore::compareSet(std::string const&, std::vector<unsigned char, std::allocator<unsigned char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&) + 0x22d (0x7d7de47e95bd in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0xd71874 (0x7d7df4371874 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #4: <unknown function> + 0x4cb474 (0x7d7df3acb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #5: <unknown function> + 0x18b292 (0x568d046cb292 in /opt/spar/repo/venv-main/bin/python3)
+frame #6: _PyObject_MakeTpCall + 0x25b (0x568d046c1bab in /opt/spar/repo/venv-main/bin/python3)
+frame #7: <unknown function> + 0x199030 (0x568d046d9030 in /opt/spar/repo/venv-main/bin/python3)
+frame #8: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #9: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #10: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #11: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #12: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #13: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #14: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #15: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #16: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #17: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #18: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #19: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #20: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #21: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #22: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #23: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #24: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #25: _PyObject_FastCallDictTstate + 0xc4 (0x568d046c0d84 in /opt/spar/repo/venv-main/bin/python3)
+frame #26: _PyObject_Call_Prepend + 0xc1 (0x568d046d5dc1 in /opt/spar/repo/venv-main/bin/python3)
+frame #27: <unknown function> + 0x29dea4 (0x568d047ddea4 in /opt/spar/repo/venv-main/bin/python3)
+frame #28: PyObject_Call + 0xbb (0x568d046d983b in /opt/spar/repo/venv-main/bin/python3)
+frame #29: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #30: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #31: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #32: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #33: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #34: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #35: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #36: <unknown function> + 0x25b036 (0x568d0479b036 in /opt/spar/repo/venv-main/bin/python3)
+frame #37: PyEval_EvalCode + 0x86 (0x568d0479af06 in /opt/spar/repo/venv-main/bin/python3)
+frame #38: <unknown function> + 0x281a88 (0x568d047c1a88 in /opt/spar/repo/venv-main/bin/python3)
+frame #39: <unknown function> + 0x27c0df (0x568d047bc0df in /opt/spar/repo/venv-main/bin/python3)
+frame #40: <unknown function> + 0x281825 (0x568d047c1825 in /opt/spar/repo/venv-main/bin/python3)
+frame #41: _PyRun_SimpleFileObject + 0x1a8 (0x568d047c0d68 in /opt/spar/repo/venv-main/bin/python3)
+frame #42: _PyRun_AnyFileObject + 0x47 (0x568d047c0a47 in /opt/spar/repo/venv-main/bin/python3)
+frame #43: Py_RunMain + 0x2be (0x568d047b4eae in /opt/spar/repo/venv-main/bin/python3)
+frame #44: Py_BytesMain + 0x2d (0x568d0478ef4d in /opt/spar/repo/venv-main/bin/python3)
+frame #45: <unknown function> + 0x29d90 (0x7d7df5e29d90 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #46: __libc_start_main + 0x80 (0x7d7df5e29e40 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #47: _start + 0x25 (0x568d0478ee45 in /opt/spar/repo/venv-main/bin/python3)
+
+W1013 01:52:43.477000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4426 closing signal SIGTERM
+W1013 01:52:43.478000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4427 closing signal SIGTERM
+W1013 01:52:43.478000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4428 closing signal SIGTERM
+W1013 01:52:43.479000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4429 closing signal SIGTERM
+W1013 01:52:43.479000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4430 closing signal SIGTERM
+W1013 01:52:43.479000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4431 closing signal SIGTERM
+W1013 01:52:43.480000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4432 closing signal SIGTERM
+W1013 01:52:43.480000 4347 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4433 closing signal SIGTERM
+[W1013 01:52:44.285906792 TCPStore.cpp:122] [c10d] sendBytes failed on SocketImpl(fd=4, addr=[spar-a100-1.c.focus-surfer-494820-g0.internal]:43704, remote=[spar-a100-0.c.focus-surfer-494820-g0.internal]:29500): Broken pipe
+Exception raised from sendBytes at ../torch/csrc/distributed/c10d/Utils.hpp:645 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d7df4f6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x5fecb29 (0x7d7de47ecb29 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: c10d::TCPStore::compareSet(std::string const&, std::vector<unsigned char, std::allocator<unsigned char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&) + 0x22d (0x7d7de47e95bd in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0xd71874 (0x7d7df4371874 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #4: <unknown function> + 0x4cb474 (0x7d7df3acb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #5: <unknown function> + 0x18b292 (0x568d046cb292 in /opt/spar/repo/venv-main/bin/python3)
+frame #6: _PyObject_MakeTpCall + 0x25b (0x568d046c1bab in /opt/spar/repo/venv-main/bin/python3)
+frame #7: <unknown function> + 0x199030 (0x568d046d9030 in /opt/spar/repo/venv-main/bin/python3)
+frame #8: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #9: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #10: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #11: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #12: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #13: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #14: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #15: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #16: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #17: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #18: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #19: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #20: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #21: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #22: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #23: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #24: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #25: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #26: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #27: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #28: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #29: _PyObject_FastCallDictTstate + 0xc4 (0x568d046c0d84 in /opt/spar/repo/venv-main/bin/python3)
+frame #30: _PyObject_Call_Prepend + 0xc1 (0x568d046d5dc1 in /opt/spar/repo/venv-main/bin/python3)
+frame #31: <unknown function> + 0x29dea4 (0x568d047ddea4 in /opt/spar/repo/venv-main/bin/python3)
+frame #32: PyObject_Call + 0xbb (0x568d046d983b in /opt/spar/repo/venv-main/bin/python3)
+frame #33: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #34: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #35: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #36: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #37: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #38: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #39: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #40: <unknown function> + 0x25b036 (0x568d0479b036 in /opt/spar/repo/venv-main/bin/python3)
+frame #41: PyEval_EvalCode + 0x86 (0x568d0479af06 in /opt/spar/repo/venv-main/bin/python3)
+frame #42: <unknown function> + 0x281a88 (0x568d047c1a88 in /opt/spar/repo/venv-main/bin/python3)
+frame #43: <unknown function> + 0x27c0df (0x568d047bc0df in /opt/spar/repo/venv-main/bin/python3)
+frame #44: <unknown function> + 0x281825 (0x568d047c1825 in /opt/spar/repo/venv-main/bin/python3)
+frame #45: _PyRun_SimpleFileObject + 0x1a8 (0x568d047c0d68 in /opt/spar/repo/venv-main/bin/python3)
+frame #46: _PyRun_AnyFileObject + 0x47 (0x568d047c0a47 in /opt/spar/repo/venv-main/bin/python3)
+frame #47: Py_RunMain + 0x2be (0x568d047b4eae in /opt/spar/repo/venv-main/bin/python3)
+frame #48: Py_BytesMain + 0x2d (0x568d0478ef4d in /opt/spar/repo/venv-main/bin/python3)
+frame #49: <unknown function> + 0x29d90 (0x7d7df5e29d90 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #50: __libc_start_main + 0x80 (0x7d7df5e29e40 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #51: _start + 0x25 (0x568d0478ee45 in /opt/spar/repo/venv-main/bin/python3)
+
+W1013 01:52:44.818000 4347 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1282] The node 'spar-a100-1.c.focus-surfer-494820-g0.internal_4347_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+[W1013 01:52:44.298461452 TCPStore.cpp:122] [c10d] sendBytes failed on SocketImpl(fd=4, addr=[spar-a100-1.c.focus-surfer-494820-g0.internal]:43704, remote=[spar-a100-0.c.focus-surfer-494820-g0.internal]:29500): Broken pipe
+Exception raised from sendBytes at ../torch/csrc/distributed/c10d/Utils.hpp:645 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d7df4f6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x5fecb29 (0x7d7de47ecb29 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: c10d::TCPStore::compareSet(std::string const&, std::vector<unsigned char, std::allocator<unsigned char> > const&, std::vector<unsigned char, std::allocator<unsigned char> > const&) + 0x22d (0x7d7de47e95bd in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0xd71874 (0x7d7df4371874 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #4: <unknown function> + 0x4cb474 (0x7d7df3acb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #5: <unknown function> + 0x18b292 (0x568d046cb292 in /opt/spar/repo/venv-main/bin/python3)
+frame #6: _PyObject_MakeTpCall + 0x25b (0x568d046c1bab in /opt/spar/repo/venv-main/bin/python3)
+frame #7: <unknown function> + 0x199030 (0x568d046d9030 in /opt/spar/repo/venv-main/bin/python3)
+frame #8: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #9: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #10: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #11: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #12: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #13: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #14: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #15: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #16: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #17: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #18: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #19: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #20: _PyEval_EvalFrameDefault + 0x807 (0x568d046b5e07 in /opt/spar/repo/venv-main/bin/python3)
+frame #21: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #22: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #23: _PyObject_FastCallDictTstate + 0xc4 (0x568d046c0d84 in /opt/spar/repo/venv-main/bin/python3)
+frame #24: _PyObject_Call_Prepend + 0xc1 (0x568d046d5dc1 in /opt/spar/repo/venv-main/bin/python3)
+frame #25: <unknown function> + 0x29dea4 (0x568d047ddea4 in /opt/spar/repo/venv-main/bin/python3)
+frame #26: PyObject_Call + 0xbb (0x568d046d983b in /opt/spar/repo/venv-main/bin/python3)
+frame #27: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #28: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #29: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #30: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #31: _PyEval_EvalFrameDefault + 0x28e9 (0x568d046b7ee9 in /opt/spar/repo/venv-main/bin/python3)
+frame #32: _PyFunction_Vectorcall + 0x7c (0x568d046cbaec in /opt/spar/repo/venv-main/bin/python3)
+frame #33: _PyEval_EvalFrameDefault + 0x6c0 (0x568d046b5cc0 in /opt/spar/repo/venv-main/bin/python3)
+frame #34: <unknown function> + 0x25b036 (0x568d0479b036 in /opt/spar/repo/venv-main/bin/python3)
+frame #35: PyEval_EvalCode + 0x86 (0x568d0479af06 in /opt/spar/repo/venv-main/bin/python3)
+frame #36: <unknown function> + 0x281a88 (0x568d047c1a88 in /opt/spar/repo/venv-main/bin/python3)
+frame #37: <unknown function> + 0x27c0df (0x568d047bc0df in /opt/spar/repo/venv-main/bin/python3)
+frame #38: <unknown function> + 0x281825 (0x568d047c1825 in /opt/spar/repo/venv-main/bin/python3)
+frame #39: _PyRun_SimpleFileObject + 0x1a8 (0x568d047c0d68 in /opt/spar/repo/venv-main/bin/python3)
+frame #40: _PyRun_AnyFileObject + 0x47 (0x568d047c0a47 in /opt/spar/repo/venv-main/bin/python3)
+frame #41: Py_RunMain + 0x2be (0x568d047b4eae in /opt/spar/repo/venv-main/bin/python3)
+frame #42: Py_BytesMain + 0x2d (0x568d0478ef4d in /opt/spar/repo/venv-main/bin/python3)
+frame #43: <unknown function> + 0x29d90 (0x7d7df5e29d90 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #44: __libc_start_main + 0x80 (0x7d7df5e29e40 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #45: _start + 0x25 (0x568d0478ee45 in /opt/spar/repo/venv-main/bin/python3)
+
+W1013 01:52:44.828000 4347 torch/distributed/elastic/rendezvous/dynamic_rendezvous.py:1282] The node 'spar-a100-1.c.focus-surfer-494820-g0.internal_4347_0' has failed to shutdown the rendezvous 'none' due to an error of type RendezvousConnectionError.
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/c10d_rendezvous_backend.py", line 117, in _call_store
+    return getattr(self._store, store_op)(*args, **kwargs)
+torch.distributed.DistNetworkError: Broken pipe
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/spar/followup/followup_a100_20261013T011424Z_collect/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 891, in _invoke_run
+    num_nodes_waiting = rdzv_handler.num_nodes_waiting()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/dynamic_rendezvous.py", line 1253, in num_nodes_waiting
+    self._state_holder.sync()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/dynamic_rendezvous.py", line 423, in sync
+    set_response = self._backend.set_state(state_bits, self._token)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/c10d_rendezvous_backend.py", line 100, in set_state
+    base64_state: bytes = self._call_store(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/rendezvous/c10d_rendezvous_backend.py", line 119, in _call_store
+    raise RendezvousConnectionError(
+torch.distributed.elastic.rendezvous.api.RendezvousConnectionError: The connection to the C10d store has failed. See inner exception for details.
+2026-10-13 01:52:45,717 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-10-13 01:52:47,719 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,734 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,741 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,741 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,753 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,759 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,759 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,770 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,777 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,777 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,788 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,794 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,794 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,805 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,811 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,811 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,822 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,829 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,829 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,839 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,845 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,846 [spar.telemetry] INFO: Telemetry stopped. 1518 samples collected.
+2026-10-13 01:52:47,856 [spar.telemetry] INFO: Saved 1518 rows to data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet
+2026-10-13 01:52:47,862 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet (1518 rows)
+2026-10-13 01:52:47,867 [spar.multi_gpu] INFO: Multi-GPU run complete: 93a4645f6a42 (rc=1)

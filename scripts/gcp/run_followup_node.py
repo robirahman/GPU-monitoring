@@ -5,6 +5,10 @@ The caller must launch both ranks under systemd with a shared deadline and
 KillMode=control-group. Periodic uploads preserve partial results; final uploads
 are downloaded and SHA256 checked. Completion is provisional until both node
 receipts and progress/telemetry have been adjudicated.
+
+These checks establish completed-run status, not blanket corpus eligibility.
+Interrupted runs retain their raw artifacts; separately validated observed
+intervals may enter the corpus without a success receipt or repetition credit.
 """
 import argparse
 from datetime import datetime, timezone

@@ -1,0 +1,1894 @@
+{
+  "schema": "preempted-followup-recovery-v1",
+  "policy": "Preserve raw capture; admit validated observed intervals independently of job exit status. Keep original job IDs and group all windows from each job together. No synthetic padding or completed-duration credit.",
+  "source_policy": "Original bytes remain at generation-pinned GCS URIs. Derived files and STEP logs are separate corpus inputs.",
+  "implementation_sha256": "cb6f41d1a7a673183908c7c46b2d0462062d6ea0d56d5334e443731ef57d85dc",
+  "review_evidence": [
+    {
+      "path": "docs/followup_execution_2026-10-12/failed_a100_collection.json",
+      "sha256": "fb651c71ee46c0e3cbeb878ff3d8c32a2291a48f6b70103e1b356865ca246de4"
+    },
+    {
+      "path": "docs/followup_execution_2026-10-12/failed_a100_retry.json",
+      "sha256": "7be8811dd3b65853d28d644d60b2c4663ae438f97d8b9cd152883d07491c8d98"
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "4c6fe5ccea7a",
+      "campaign": "followup_a100_20261012T233445Z",
+      "workload": "s16_train_tp8",
+      "base_seed": 8123401,
+      "repetition_group": "s16_train_tp8|A100|seed=8123401",
+      "collection_status": "preempted",
+      "run_completed": false,
+      "completed_repetition_credit": 0,
+      "admitted_to_corpus": true,
+      "corpus_disposition": "accepted_observed_training_interval",
+      "synthetic_workload": true,
+      "useful_learning_validated": false,
+      "first_step": 1791848912.312425,
+      "last_step": 1791849000.758368,
+      "step_evidence": {
+        "first_step": 1791848912.312425,
+        "last_step": 1791849000.758368,
+        "logged_steps": 38,
+        "scope": "synchronous TP8/DP2 job; rank 0 reports after gradient collectives and optimizer step"
+      },
+      "common_interval_s": [
+        1791848912.312425,
+        1791849000.758368
+      ],
+      "preemption_epoch": 1791849110.42891,
+      "streams": [
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 0,
+          "source_hashes": [
+            "e8a23358f95a183ecf230912aadafb9ef4fdf53557c5f19e763d7eeb05d87730"
+          ],
+          "raw": {
+            "samples": 182,
+            "t0": 1791848883.098779,
+            "t1": 1791849064.130664,
+            "span_s": 181.03188514709473,
+            "median_dt": 1.0001749992370605,
+            "gap_capped_s": 181.03188514709473
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.10392,
+            "t1": 1791849000.119203,
+            "span_s": 87.01528310775757,
+            "median_dt": 1.0001740455627441,
+            "gap_capped_s": 87.01528310775757
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 1,
+          "source_hashes": [
+            "53313ef3a1fff580dfcc85edb81df0744a9f219ac1c1a5cfdad0fc84cdebcd2d"
+          ],
+          "raw": {
+            "samples": 182,
+            "t0": 1791848883.115763,
+            "t1": 1791849064.151007,
+            "span_s": 181.0352439880371,
+            "median_dt": 1.0001800060272217,
+            "gap_capped_s": 181.0352439880371
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.121064,
+            "t1": 1791849000.137835,
+            "span_s": 87.01677107810974,
+            "median_dt": 1.0001840591430664,
+            "gap_capped_s": 87.01677107810974
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 2,
+          "source_hashes": [
+            "2f6a55c851f71aeb4503fd90c89023084be08eb066ed49c9a405f39a7fc57e8f"
+          ],
+          "raw": {
+            "samples": 181,
+            "t0": 1791848883.134709,
+            "t1": 1791849063.167107,
+            "span_s": 180.03239822387695,
+            "median_dt": 1.0001640319824219,
+            "gap_capped_s": 180.03239822387695
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.139617,
+            "t1": 1791849000.154895,
+            "span_s": 87.01527810096741,
+            "median_dt": 1.0001499652862549,
+            "gap_capped_s": 87.01527810096741
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 3,
+          "source_hashes": [
+            "c6d8ee7749bcc455638870e60733e3a5ca3efa4f0f5a7dde8934b8a57408a429"
+          ],
+          "raw": {
+            "samples": 182,
+            "t0": 1791848883.154501,
+            "t1": 1791849064.180139,
+            "span_s": 181.0256381034851,
+            "median_dt": 1.0001368522644043,
+            "gap_capped_s": 181.0256381034851
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.158407,
+            "t1": 1791849000.170805,
+            "span_s": 87.01239800453186,
+            "median_dt": 1.0001389980316162,
+            "gap_capped_s": 87.01239800453186
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 4,
+          "source_hashes": [
+            "9eb32bc6330d4f7a70fe34432a92b04e464972fc5549d46cfad59e13f4cba4ec"
+          ],
+          "raw": {
+            "samples": 181,
+            "t0": 1791848883.17275,
+            "t1": 1791849063.19823,
+            "span_s": 180.02548003196716,
+            "median_dt": 1.0001389980316162,
+            "gap_capped_s": 180.02548003196716
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.177072,
+            "t1": 1791849000.189261,
+            "span_s": 87.01218891143799,
+            "median_dt": 1.000133991241455,
+            "gap_capped_s": 87.01218891143799
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 5,
+          "source_hashes": [
+            "3589816e5776272b91a77beb63c1171abf1f51e50dacf65bb7ca09807a160250"
+          ],
+          "raw": {
+            "samples": 181,
+            "t0": 1791848883.191139,
+            "t1": 1791849063.219046,
+            "span_s": 180.02790713310242,
+            "median_dt": 1.0001235008239746,
+            "gap_capped_s": 180.02790713310242
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.195534,
+            "t1": 1791849000.207343,
+            "span_s": 87.01180911064148,
+            "median_dt": 1.0001201629638672,
+            "gap_capped_s": 87.01180911064148
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 6,
+          "source_hashes": [
+            "ca84eb6b7a03cad4154aef581509b5391195dba9409ddbe2f7ac721f2ccfbd12"
+          ],
+          "raw": {
+            "samples": 181,
+            "t0": 1791848883.209832,
+            "t1": 1791849063.233508,
+            "span_s": 180.02367615699768,
+            "median_dt": 1.0001205205917358,
+            "gap_capped_s": 180.02367615699768
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.213611,
+            "t1": 1791849000.224436,
+            "span_s": 87.01082515716553,
+            "median_dt": 1.0001180171966553,
+            "gap_capped_s": 87.01082515716553
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 7,
+          "source_hashes": [
+            "c944b8f68320df2e5e78b5ceb0f81fed3ac77f591086f09ab8c67ee66655c31b"
+          ],
+          "raw": {
+            "samples": 181,
+            "t0": 1791848883.228744,
+            "t1": 1791849063.261062,
+            "span_s": 180.0323178768158,
+            "median_dt": 1.0001585483551025,
+            "gap_capped_s": 180.0323178768158
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.234341,
+            "t1": 1791849000.248119,
+            "span_s": 87.01377820968628,
+            "median_dt": 1.0001537799835205,
+            "gap_capped_s": 87.01377820968628
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 0,
+          "source_hashes": [
+            "1bf9e4f88ca77da28874415a24ba180edcb1d3092b59bb6d5d1ed6dbf90f639d",
+            "637970bd679f3dc69ee23560c31be367ff3b19b08aaf01b91b2bfe7777dcfa92"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.004362,
+            "t1": 1791849071.032089,
+            "span_s": 196.02772688865662,
+            "median_dt": 1.0001368522644043,
+            "gap_capped_s": 196.02772688865662
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.010196,
+            "t1": 1791849000.022624,
+            "span_s": 87.01242804527283,
+            "median_dt": 1.0001399517059326,
+            "gap_capped_s": 87.01242804527283
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 1,
+          "source_hashes": [
+            "361c450f325bb7f39b59e37dbff083209097bd611aac787f36c1f68983346dce",
+            "6bd3c0f601d375b6885a167af25d91c953ed1bf7070bbd96c2bcb15352352fd9"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.021214,
+            "t1": 1791849071.056496,
+            "span_s": 196.0352818965912,
+            "median_dt": 1.0001769065856934,
+            "gap_capped_s": 196.0352818965912
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.02942,
+            "t1": 1791849000.043491,
+            "span_s": 87.01407098770142,
+            "median_dt": 1.0001399517059326,
+            "gap_capped_s": 87.01407098770142
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 2,
+          "source_hashes": [
+            "2fc4992cd20b2f5feb76ebb3a92c8f90850411aa924563699180a5a8a8e0a167",
+            "f292e9172dd32d8170cb9adc2817407660431a7a62b48b8ad55d0fc80c32216c"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.03964,
+            "t1": 1791849071.073012,
+            "span_s": 196.03337216377258,
+            "median_dt": 1.000180959701538,
+            "gap_capped_s": 196.03337216377258
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.044437,
+            "t1": 1791849000.060283,
+            "span_s": 87.01584601402283,
+            "median_dt": 1.0001931190490723,
+            "gap_capped_s": 87.01584601402283
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 3,
+          "source_hashes": [
+            "258b3262093408dc185b392777dfb3574a13facab1b788e6b90fa95e3c85e308",
+            "27aca711b5a2d1096407ed20de6242535d0d3a8f3b3752d2025b4a7ee38b55bd"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.058318,
+            "t1": 1791849071.091202,
+            "span_s": 196.03288412094116,
+            "median_dt": 1.0001540184020996,
+            "gap_capped_s": 196.03288412094116
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.065554,
+            "t1": 1791849000.079437,
+            "span_s": 87.01388311386108,
+            "median_dt": 1.0001451969146729,
+            "gap_capped_s": 87.01388311386108
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 4,
+          "source_hashes": [
+            "7e97895ddf7802cd438d230a256ab55f28b4a69a33d325b142f1896c9cf1c735",
+            "a411edc227a7ca954a391f6386b74356181ef01a9456b6c98511b5dd3aede567"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.078211,
+            "t1": 1791849071.107543,
+            "span_s": 196.02933192253113,
+            "median_dt": 1.00014066696167,
+            "gap_capped_s": 196.02933192253113
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.084466,
+            "t1": 1791849000.097228,
+            "span_s": 87.01276206970215,
+            "median_dt": 1.000143051147461,
+            "gap_capped_s": 87.01276206970215
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 5,
+          "source_hashes": [
+            "17870335d72210dc039ac637948bd206bcc03ae417d413f9ea7b50f1eabb5690",
+            "bd58464a1d19a3ebb6b70872f5686914e81b3ded73cd65ee52f94b85a6a84f74"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.096831,
+            "t1": 1791849071.13043,
+            "span_s": 196.0335988998413,
+            "median_dt": 1.000166893005371,
+            "gap_capped_s": 196.0335988998413
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.104291,
+            "t1": 1791849000.120606,
+            "span_s": 87.01631498336792,
+            "median_dt": 1.0001909732818604,
+            "gap_capped_s": 87.01631498336792
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 6,
+          "source_hashes": [
+            "55cbe0ecba428a1cb2d56680af7ee76040f2916ac73f4db954aac7f6fd39908d",
+            "800176244d9632706f34cec55ccaf5ef7ed02e06f8f4cad1978e2369b57608b0"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.117362,
+            "t1": 1791849071.159814,
+            "span_s": 196.0424518585205,
+            "median_dt": 1.000185489654541,
+            "gap_capped_s": 196.0424518585205
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.125029,
+            "t1": 1791849000.146645,
+            "span_s": 87.02161598205566,
+            "median_dt": 1.0001790523529053,
+            "gap_capped_s": 87.02161598205566
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 7,
+          "source_hashes": [
+            "602cfa0606129c889b25d68e604b12bd6334b7c6717aed64b768e3aabcc665c0",
+            "b381dbea7f884954cef3b3b58fc75516659a84219492d723bdc71db27510f108"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848875.135499,
+            "t1": 1791849071.164375,
+            "span_s": 196.02887606620789,
+            "median_dt": 1.0001394748687744,
+            "gap_capped_s": 196.02887606620789
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.140645,
+            "t1": 1791849000.154172,
+            "span_s": 87.0135269165039,
+            "median_dt": 1.0001490116119385,
+            "gap_capped_s": 87.0135269165039
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/nic_s16_train_tp8_node0_4c6fe5ccea7a.parquet",
+          "role": "nic",
+          "hostname": "spar-a100-0",
+          "source_hashes": [
+            "2fddbdebc595ac67bf79ea422481e452c2a020b8f6406408114f6e4753210a5c",
+            "e9a3dda592feefc9d665e9f86a83c267b0a4fe6c3bb506a4e1c849b2af905a92"
+          ],
+          "raw": {
+            "samples": 183,
+            "t0": 1791848883.0521536,
+            "t1": 1791849065.0794377,
+            "span_s": 182.02728414535522,
+            "median_dt": 1.0001517534255981,
+            "gap_capped_s": 182.02728414535522
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848913.0559893,
+            "t1": 1791849000.0701642,
+            "span_s": 87.0141749382019,
+            "median_dt": 1.0001611709594727,
+            "gap_capped_s": 87.0141749382019
+          },
+          "cleanup": {
+            "outside_pair_or_existing_samples": 95,
+            "invalid_metric_values": 0,
+            "rounded_key_duplicates": 0
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet",
+          "role": "nic",
+          "hostname": "spar-a100-1",
+          "source_hashes": [
+            "2384291f9cda4b6edb5efc1341b584321c92d90e7b1b9475f47af6d78921f975",
+            "804f0af25d75ca51f03d4e414bc4592659f0bbd6702306fdcaac9343502c0d5b"
+          ],
+          "raw": {
+            "samples": 197,
+            "t0": 1791848874.957363,
+            "t1": 1791849070.994329,
+            "span_s": 196.03696608543396,
+            "median_dt": 1.0001882314682007,
+            "gap_capped_s": 196.03696608543396
+          },
+          "admitted": {
+            "samples": 88,
+            "t0": 1791848912.9648614,
+            "t1": 1791848999.9816654,
+            "span_s": 87.01680397987366,
+            "median_dt": 1.0001986026763916,
+            "gap_capped_s": 87.01680397987366
+          },
+          "cleanup": {
+            "outside_pair_or_existing_samples": 109,
+            "invalid_metric_values": 0,
+            "rounded_key_duplicates": 0
+          }
+        }
+      ],
+      "sources": [
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/nic_s16_train_tp8_node0_4c6fe5ccea7a.parquet#1791849070171571",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/nic_s16_train_tp8_node0_4c6fe5ccea7a.parquet",
+          "generation": "1791849070171571",
+          "bytes": 26232,
+          "md5": "TxJ3ZujBF6a8SLPwum77HQ==",
+          "crc32c": "/vV+eA==",
+          "sha256": "e9a3dda592feefc9d665e9f86a83c267b0a4fe6c3bb506a4e1c849b2af905a92"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/nic_s16_train_tp8_node0_4c6fe5ccea7a.parquet.partial#1791848987736612",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/nic_s16_train_tp8_node0_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848987736612",
+          "bytes": 15193,
+          "md5": "tyEy548iF6yzZsedIZC38w==",
+          "crc32c": "PiNWLQ==",
+          "sha256": "2fddbdebc595ac67bf79ea422481e452c2a020b8f6406408114f6e4753210a5c"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849072858738",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849072858738",
+          "bytes": 21514,
+          "md5": "pmuIdnWPM+R1bOdimoovYw==",
+          "crc32c": "gg7/QA==",
+          "sha256": "e8a23358f95a183ecf230912aadafb9ef4fdf53557c5f19e763d7eeb05d87730"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849075506494",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849075506494",
+          "bytes": 21371,
+          "md5": "r70iMhjSvpT9nRxHCkQu3w==",
+          "crc32c": "OnPMBA==",
+          "sha256": "53313ef3a1fff580dfcc85edb81df0744a9f219ac1c1a5cfdad0fc84cdebcd2d"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849078109960",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849078109960",
+          "bytes": 21337,
+          "md5": "yo8FWYw3XTLmysOfAhbShQ==",
+          "crc32c": "CW8vqQ==",
+          "sha256": "2f6a55c851f71aeb4503fd90c89023084be08eb066ed49c9a405f39a7fc57e8f"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849080701307",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849080701307",
+          "bytes": 21423,
+          "md5": "i1J8NnfC2YWGeEH1SAnSSQ==",
+          "crc32c": "FsoZ7Q==",
+          "sha256": "c6d8ee7749bcc455638870e60733e3a5ca3efa4f0f5a7dde8934b8a57408a429"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849083339206",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849083339206",
+          "bytes": 21322,
+          "md5": "V/uO84Jo5YX53IOvFIP6rw==",
+          "crc32c": "HDq0Lg==",
+          "sha256": "9eb32bc6330d4f7a70fe34432a92b04e464972fc5549d46cfad59e13f4cba4ec"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849085954176",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849085954176",
+          "bytes": 21458,
+          "md5": "77y1MtfFz5J09pPTTS/bPA==",
+          "crc32c": "rxM+zQ==",
+          "sha256": "3589816e5776272b91a77beb63c1171abf1f51e50dacf65bb7ca09807a160250"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849088559112",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849088559112",
+          "bytes": 21452,
+          "md5": "99PM3VB8AGnE712ZGOmHJA==",
+          "crc32c": "+9PtGg==",
+          "sha256": "ca84eb6b7a03cad4154aef581509b5391195dba9409ddbe2f7ac721f2ccfbd12"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849091187922",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/data/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849091187922",
+          "bytes": 21401,
+          "md5": "HAiDhwbcngytWU189gw4UQ==",
+          "crc32c": "CM2r1A==",
+          "sha256": "c944b8f68320df2e5e78b5ceb0f81fed3ac77f591086f09ab8c67ee66655c31b"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/logs/followup_4c6fe5ccea7a.json#1791849001062963",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/logs/followup_4c6fe5ccea7a.json",
+          "generation": "1791849001062963",
+          "bytes": 37075,
+          "md5": "XwxZ+HOd6VYUV3jxCLRk9g==",
+          "crc32c": "jIgnmA==",
+          "sha256": "b540b10e89956b30618bce62a814c3431c039f1ccf4479ebcdf462ac9e4671f7"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/logs/followup_4c6fe5ccea7a.queue.log#1791849002616000",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/logs/followup_4c6fe5ccea7a.queue.log",
+          "generation": "1791849002616000",
+          "bytes": 14356,
+          "md5": "4Lda+C4mHSHYjrWTOFkQig==",
+          "crc32c": "kKMphw==",
+          "sha256": "a63da06069cdbfa5a1108d38e6e13b31eac76a0a1a80d414b37f30a781d4540f"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/logs/s16_train_tp8_node0_4c6fe5ccea7a.log#1791849004161551",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/logs/s16_train_tp8_node0_4c6fe5ccea7a.log",
+          "generation": "1791849004161551",
+          "bytes": 10905,
+          "md5": "n28V8nJCHqtr9MnGSOjflA==",
+          "crc32c": "3EqlJw==",
+          "sha256": "83e53d4367564b481b9140672b7298b5d16f6af664a60d9ee6ae99cfb2976c42"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-0/logs/s16_train_tp8_node0_4c6fe5ccea7a.nic.log#1791849005660479",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-0/logs/s16_train_tp8_node0_4c6fe5ccea7a.nic.log",
+          "generation": "1791849005660479",
+          "bytes": 132,
+          "md5": "tLffS+uzlfW8PilR/Da/gw==",
+          "crc32c": "Kzkktg==",
+          "sha256": "aaee25485d3a5d37f220ccea6a52088b00991652380d3cc1495767a1f72c9121"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet#1791849076325784",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet",
+          "generation": "1791849076325784",
+          "bytes": 27176,
+          "md5": "CkIEvbcpjyy7841T6Yc5Cw==",
+          "crc32c": "DSk7/Q==",
+          "sha256": "2384291f9cda4b6edb5efc1341b584321c92d90e7b1b9475f47af6d78921f975"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet.partial#1791848990903699",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848990903699",
+          "bytes": 14944,
+          "md5": "ujTkcPljyxrDBDS/PamTZQ==",
+          "crc32c": "w4vH8A==",
+          "sha256": "804f0af25d75ca51f03d4e414bc4592659f0bbd6702306fdcaac9343502c0d5b"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849078955951",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849078955951",
+          "bytes": 21829,
+          "md5": "TFRfGlCPMCVKYxobLrOX1Q==",
+          "crc32c": "RLPaEA==",
+          "sha256": "637970bd679f3dc69ee23560c31be367ff3b19b08aaf01b91b2bfe7777dcfa92"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791848992555186",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848992555186",
+          "bytes": 16650,
+          "md5": "iSj2hDF91Z4A0YXpjfJpbw==",
+          "crc32c": "q5sJiw==",
+          "sha256": "1bf9e4f88ca77da28874415a24ba180edcb1d3092b59bb6d5d1ed6dbf90f639d"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849081599809",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849081599809",
+          "bytes": 21849,
+          "md5": "Ga3i8F64zcP+67etNi7/FQ==",
+          "crc32c": "odOA/A==",
+          "sha256": "361c450f325bb7f39b59e37dbff083209097bd611aac787f36c1f68983346dce"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791848994107341",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848994107341",
+          "bytes": 16704,
+          "md5": "Z2iJhmznF4il6H6bGQJEuw==",
+          "crc32c": "+FSD5A==",
+          "sha256": "6bd3c0f601d375b6885a167af25d91c953ed1bf7070bbd96c2bcb15352352fd9"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849084269826",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849084269826",
+          "bytes": 21781,
+          "md5": "ssBN+R2BkgBJLBfDFnHETg==",
+          "crc32c": "sf3Qhw==",
+          "sha256": "2fc4992cd20b2f5feb76ebb3a92c8f90850411aa924563699180a5a8a8e0a167"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791848995770503",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848995770503",
+          "bytes": 16613,
+          "md5": "Iak2JlrSNUjPrfYGzBbr5Q==",
+          "crc32c": "wD2C3w==",
+          "sha256": "f292e9172dd32d8170cb9adc2817407660431a7a62b48b8ad55d0fc80c32216c"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849086897738",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849086897738",
+          "bytes": 21873,
+          "md5": "hcmScBYwkZ8liFffs7Kk5w==",
+          "crc32c": "/SfJ0A==",
+          "sha256": "27aca711b5a2d1096407ed20de6242535d0d3a8f3b3752d2025b4a7ee38b55bd"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791848997468304",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848997468304",
+          "bytes": 16695,
+          "md5": "eESyE6TrO2BLna3EdPRjfg==",
+          "crc32c": "HWZHlQ==",
+          "sha256": "258b3262093408dc185b392777dfb3574a13facab1b788e6b90fa95e3c85e308"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849089558222",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849089558222",
+          "bytes": 21671,
+          "md5": "ia1z8ByIpEuAQvKF74VevQ==",
+          "crc32c": "IjNkNQ==",
+          "sha256": "7e97895ddf7802cd438d230a256ab55f28b4a69a33d325b142f1896c9cf1c735"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791848999174142",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791848999174142",
+          "bytes": 18925,
+          "md5": "IGXJj5RAcnLVz7r7t9k1mg==",
+          "crc32c": "hPawQQ==",
+          "sha256": "a411edc227a7ca954a391f6386b74356181ef01a9456b6c98511b5dd3aede567"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849092166115",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849092166115",
+          "bytes": 21827,
+          "md5": "iNGwg7HzaTYyf5ra+0LeVQ==",
+          "crc32c": "1QBhIg==",
+          "sha256": "bd58464a1d19a3ebb6b70872f5686914e81b3ded73cd65ee52f94b85a6a84f74"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849000786981",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849000786981",
+          "bytes": 19075,
+          "md5": "ka63qW6JSeoNty7zj1mMGw==",
+          "crc32c": "sJ3ozQ==",
+          "sha256": "17870335d72210dc039ac637948bd206bcc03ae417d413f9ea7b50f1eabb5690"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849094785651",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849094785651",
+          "bytes": 21841,
+          "md5": "N06rvee88bwlqpjWlUAJQg==",
+          "crc32c": "IjEv4Q==",
+          "sha256": "55cbe0ecba428a1cb2d56680af7ee76040f2916ac73f4db954aac7f6fd39908d"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849002299955",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849002299955",
+          "bytes": 19049,
+          "md5": "P3zcWoM8c82r2zlX5/2dVw==",
+          "crc32c": "PIiPrQ==",
+          "sha256": "800176244d9632706f34cec55ccaf5ef7ed02e06f8f4cad1978e2369b57608b0"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet#1791849097331464",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "generation": "1791849097331464",
+          "bytes": 21728,
+          "md5": "cJI1f0pj0HT6ZbX7om4EBQ==",
+          "crc32c": "3tWyeQ==",
+          "sha256": "602cfa0606129c889b25d68e604b12bd6334b7c6717aed64b768e3aabcc665c0"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial#1791849004196747",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet.partial",
+          "generation": "1791849004196747",
+          "bytes": 19037,
+          "md5": "A86JLP2pKOu36BfJS00wmg==",
+          "crc32c": "2+zpLA==",
+          "sha256": "b381dbea7f884954cef3b3b58fc75516659a84219492d723bdc71db27510f108"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/.done/followup_a100_20261012T233445Z_collect/s16_train_tp8_node1_4c6fe5ccea7a.failed#1791849099978432",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/logs/.done/followup_a100_20261012T233445Z_collect/s16_train_tp8_node1_4c6fe5ccea7a.failed",
+          "generation": "1791849099978432",
+          "bytes": 52,
+          "md5": "FIGKxXe/bf1lOzClocY6JA==",
+          "crc32c": "KyAB+A==",
+          "sha256": "535abdb832d405daf94bb0a14d775e54475228daae41384b236a5a78d07d393a"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/followup_4c6fe5ccea7a.json#1791849110316154",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/logs/followup_4c6fe5ccea7a.json",
+          "generation": "1791849110316154",
+          "bytes": 41550,
+          "md5": "lt2xjHL0cZiBXxFIjsk2+w==",
+          "crc32c": "mAgMpg==",
+          "sha256": "0c173693a2f4a76466ef8bd7e5105869d8f20301e6832d947b80e075dc3e9bd7"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/followup_4c6fe5ccea7a.queue.log#1791849102553452",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/logs/followup_4c6fe5ccea7a.queue.log",
+          "generation": "1791849102553452",
+          "bytes": 16488,
+          "md5": "CvNeRvZfCjRAGrR+l3htGA==",
+          "crc32c": "bYfShg==",
+          "sha256": "662bdf0b1abaae9a92365a762e12630a6892222cb1ce6433f168ccb3ea2b177c"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/s16_train_tp8_node1_4c6fe5ccea7a.log#1791849105144627",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/logs/s16_train_tp8_node1_4c6fe5ccea7a.log",
+          "generation": "1791849105144627",
+          "bytes": 51379,
+          "md5": "lJquCf5Uy99fOHLmpkiNqg==",
+          "crc32c": "/36L4A==",
+          "sha256": "f7abd168f96ff28ba7835f3c2e6b271fd3abd6f68ed3de98dc8bb575c6fc5697"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261012T233445Z/spar-a100-1/logs/s16_train_tp8_node1_4c6fe5ccea7a.nic.log#1791849107714958",
+          "name": "runs/followup_a100_20261012T233445Z/spar-a100-1/logs/s16_train_tp8_node1_4c6fe5ccea7a.nic.log",
+          "generation": "1791849107714958",
+          "bytes": 337,
+          "md5": "F4zUjSmJWUg25SJXQNWEgw==",
+          "crc32c": "JCGmtg==",
+          "sha256": "474ffee7a390756703683fdbb7d22dc21b70ad93c2f84be0b597d96648ffced7"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "49079f5d889e1d41bfd0358b347d6faf3c711113ece00cab644ee0c14f96ba38",
+          "bytes": 20071
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "6caca3e81b885c9f569c5fe8e4308465c8cae09a8030569430d022e4e92f9459",
+          "bytes": 20004
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "88c516938d1010346fbfe9dc29ea956226912eaa33f34050207d90f0ad15e56b",
+          "bytes": 20037
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "f1614b59aa74501d3611d940828029497762c83b59f863d98ab06c9572ad6f5d",
+          "bytes": 20008
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "82fba5620e44ebab83f04ff8eb5a1ea06408c14e418bf71c2215a98d72b4d015",
+          "bytes": 19995
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "88db70780390ce1111b4d77bead55e8f93660c4c85347315faf3b64b01b95c10",
+          "bytes": 20051
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "2fc76bb8ebed48b218ba2129192290af7df14bd730ad89f73115dedf58eedd98",
+          "bytes": 20064
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "5c4697dfc5c026ea09bf4db75190f7a3aba5b70d3c890bd89075c3ab6e99e90b",
+          "bytes": 20075
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "df4e57b1568f6388ce01c232e6b2904a4bb42e3e100855d7bbfbc50402727870",
+          "bytes": 19935
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "4e87865cc685efd026b09e9ecd6e383bffd3266749183f0ac98b44c3a47f399e",
+          "bytes": 20010
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "651524b9b48bd80f78dc49028e1fd5c8337521cc4b4cf3caeac5861207ee6ed0",
+          "bytes": 20012
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "69222261b371c4e5c7180374bc923759316f13955e49acb3ba9379dbf65cad91",
+          "bytes": 19979
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "9c5088ef71604fce79c096d7bcb53d9eab950ba3c89e3668f12ef888381bc662",
+          "bytes": 19938
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "47c866f7bc10c250996f06a4bdf08b91469599518c490369267050cfef8e962b",
+          "bytes": 20075
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "eb8316d306d5e0fd63832370a999f76f1c2221c151e58fcf173f8d4c8c2fbb9a",
+          "bytes": 19990
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_4c6fe5ccea7a.parquet",
+          "sha256": "96cdc2aca725db6fb89614e326746cebc2debaca75e985484c124b8cff4732cc",
+          "bytes": 19967
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-0/nic_s16_train_tp8_node0_4c6fe5ccea7a.parquet",
+          "sha256": "538483995da13324db369dc0f38cd017341bb2340b1874ee601e8ad382f35f04",
+          "bytes": 17855
+        },
+        {
+          "path": "data/gcp/followup_a100_20261012T233445Z/spar-a100-1/nic_s16_train_tp8_node1_4c6fe5ccea7a.parquet",
+          "sha256": "25cdbc1db566c7a62f0e45fc65764dc830167c324317150127785f5ba6cfb1c3",
+          "bytes": 17878
+        },
+        {
+          "path": "logs/followup_a100_20261012T233445Z__spar-a100-0__s16_train_tp8_node0_4c6fe5ccea7a.log",
+          "sha256": "83e53d4367564b481b9140672b7298b5d16f6af664a60d9ee6ae99cfb2976c42",
+          "bytes": 10905
+        },
+        {
+          "path": "logs/followup_a100_20261012T233445Z__spar-a100-1__s16_train_tp8_node1_4c6fe5ccea7a.log",
+          "sha256": "f7abd168f96ff28ba7835f3c2e6b271fd3abd6f68ed3de98dc8bb575c6fc5697",
+          "bytes": 51379
+        }
+      ]
+    },
+    {
+      "run_id": "93a4645f6a42",
+      "campaign": "followup_a100_20261013T011424Z",
+      "workload": "s16_train_tp8",
+      "base_seed": 8123401,
+      "repetition_group": "s16_train_tp8|A100|seed=8123401",
+      "collection_status": "preempted",
+      "run_completed": false,
+      "completed_repetition_credit": 0,
+      "admitted_to_corpus": true,
+      "corpus_disposition": "accepted_observed_training_interval",
+      "synthetic_workload": true,
+      "useful_learning_validated": false,
+      "first_step": 1791854886.025384,
+      "last_step": 1791856269.105906,
+      "step_evidence": {
+        "first_step": 1791854886.025384,
+        "last_step": 1791856269.105906,
+        "logged_steps": 503,
+        "scope": "synchronous TP8/DP2 job; rank 0 reports after gradient collectives and optimizer step"
+      },
+      "common_interval_s": [
+        1791854886.025384,
+        1791856269.105906
+      ],
+      "preemption_epoch": 1791856402.077321,
+      "streams": [
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 0,
+          "source_hashes": [
+            "9973a680447f405a400c62c90584d48013f01ae7e073ccc025a26ee5896daf60"
+          ],
+          "raw": {
+            "samples": 1462,
+            "t0": 1791854858.62701,
+            "t1": 1791856319.889825,
+            "span_s": 1461.2628149986267,
+            "median_dt": 1.0001659393310547,
+            "gap_capped_s": 1461.2628149986267
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.631998,
+            "t1": 1791856268.883145,
+            "span_s": 1382.251147031784,
+            "median_dt": 1.0001709461212158,
+            "gap_capped_s": 1382.251147031784
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 1,
+          "source_hashes": [
+            "4f270f62c6afa6ace103344f59884399152f5f4ad6f158ad436fb13685469b06"
+          ],
+          "raw": {
+            "samples": 1452,
+            "t0": 1791854858.643804,
+            "t1": 1791856309.888264,
+            "span_s": 1451.2444598674774,
+            "median_dt": 1.00016188621521,
+            "gap_capped_s": 1451.2444598674774
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.648484,
+            "t1": 1791856268.881924,
+            "span_s": 1382.2334399223328,
+            "median_dt": 1.00016188621521,
+            "gap_capped_s": 1382.2334399223328
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 2,
+          "source_hashes": [
+            "62cfc991a12377bae89713fe351bc6fcd4de52cebcbf61307b05400decd18b8a"
+          ],
+          "raw": {
+            "samples": 1462,
+            "t0": 1791854858.661759,
+            "t1": 1791856319.886962,
+            "span_s": 1461.225203037262,
+            "median_dt": 1.0001449584960938,
+            "gap_capped_s": 1461.225203037262
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.666102,
+            "t1": 1791856268.879372,
+            "span_s": 1382.2132699489594,
+            "median_dt": 1.0001444816589355,
+            "gap_capped_s": 1382.2132699489594
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 3,
+          "source_hashes": [
+            "f06c74b1baa5cfae9a8546426cd7bfcb741dc40f21f6068a435e4c186e5bccdf"
+          ],
+          "raw": {
+            "samples": 1452,
+            "t0": 1791854858.680004,
+            "t1": 1791856309.951138,
+            "span_s": 1451.2711341381073,
+            "median_dt": 1.0001561641693115,
+            "gap_capped_s": 1451.2711341381073
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.683519,
+            "t1": 1791856268.944953,
+            "span_s": 1382.2614340782166,
+            "median_dt": 1.0001578330993652,
+            "gap_capped_s": 1382.2614340782166
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 4,
+          "source_hashes": [
+            "1a7861adbfdfe27866853b217f0881701b7a16da5dcf9f7fdb94241f5a5654cf"
+          ],
+          "raw": {
+            "samples": 1460,
+            "t0": 1791854858.698329,
+            "t1": 1791856317.955497,
+            "span_s": 1459.2571680545807,
+            "median_dt": 1.000147819519043,
+            "gap_capped_s": 1459.2571680545807
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.702169,
+            "t1": 1791856268.946656,
+            "span_s": 1382.2444870471954,
+            "median_dt": 1.000147819519043,
+            "gap_capped_s": 1382.2444870471954
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 5,
+          "source_hashes": [
+            "483af220b051412d57793409d730b0aa1390beeaaf4f418a6dd321544dc9b898"
+          ],
+          "raw": {
+            "samples": 1457,
+            "t0": 1791854858.716971,
+            "t1": 1791856314.978029,
+            "span_s": 1456.2610580921173,
+            "median_dt": 1.0001461505889893,
+            "gap_capped_s": 1456.2610580921173
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.721241,
+            "t1": 1791856268.972735,
+            "span_s": 1382.2514939308167,
+            "median_dt": 1.0001474618911743,
+            "gap_capped_s": 1382.2514939308167
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 6,
+          "source_hashes": [
+            "25f57f0fbad220c1c542c9e5c78265bb785a22cde4516771597f29daef12846f"
+          ],
+          "raw": {
+            "samples": 1461,
+            "t0": 1791854858.735172,
+            "t1": 1791856318.968466,
+            "span_s": 1460.2332940101624,
+            "median_dt": 1.0001540184020996,
+            "gap_capped_s": 1460.2332940101624
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.738532,
+            "t1": 1791856268.961656,
+            "span_s": 1382.2231240272522,
+            "median_dt": 1.000154972076416,
+            "gap_capped_s": 1382.2231240272522
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-0",
+          "gpu_index": 7,
+          "source_hashes": [
+            "17ca768ce4c3e41ec2968280175522092292c3de3d421a628b500b12b59f461b"
+          ],
+          "raw": {
+            "samples": 1452,
+            "t0": 1791854858.753927,
+            "t1": 1791856309.963973,
+            "span_s": 1451.2100460529327,
+            "median_dt": 1.0001299381256104,
+            "gap_capped_s": 1451.2100460529327
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.758207,
+            "t1": 1791856268.959174,
+            "span_s": 1382.200966835022,
+            "median_dt": 1.0001314878463745,
+            "gap_capped_s": 1382.200966835022
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 0,
+          "source_hashes": [
+            "5bad4bab37e6f921f2aab8611a6f24c37ce0889ec4e1dd79c5c21c9eda8a1626",
+            "e520dec39af44d26078a5013e00f42285c27463f32cc55d905ef2da9bee563ab"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.765398,
+            "t1": 1791856367.070998,
+            "span_s": 1517.3055999279022,
+            "median_dt": 1.000197172164917,
+            "gap_capped_s": 1517.3055999279022
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.773869,
+            "t1": 1791856269.050795,
+            "span_s": 1382.2769260406494,
+            "median_dt": 1.0001959800720215,
+            "gap_capped_s": 1382.2769260406494
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 1,
+          "source_hashes": [
+            "735682529d31ac77326277ce21c0a72311317f42198296f19a695a4e7cf46cd9",
+            "e8047eaa3e9a77d89fffef3f0b0a3a286c90c3525deda36c44009120b792e1ef"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.782307,
+            "t1": 1791856367.070545,
+            "span_s": 1517.2882380485535,
+            "median_dt": 1.0001790523529053,
+            "gap_capped_s": 1517.2882380485535
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.789635,
+            "t1": 1791856269.052544,
+            "span_s": 1382.2629091739655,
+            "median_dt": 1.0001790523529053,
+            "gap_capped_s": 1382.2629091739655
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 2,
+          "source_hashes": [
+            "3ac047ce4d007ae471a7728957ceb93d428c23913c2181434e79c185466b91cb",
+            "8b1f8438fba268792d684ed74a5d0cd23825215d256e4923207f11993d8c6e98"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.800661,
+            "t1": 1791856367.132807,
+            "span_s": 1517.3321459293365,
+            "median_dt": 1.0002100467681885,
+            "gap_capped_s": 1517.3321459293365
+          },
+          "admitted": {
+            "samples": 1382,
+            "t0": 1791854886.807881,
+            "t1": 1791856268.111331,
+            "span_s": 1381.3034498691559,
+            "median_dt": 1.000209093093872,
+            "gap_capped_s": 1381.3034498691559
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 3,
+          "source_hashes": [
+            "419ee7cedbd0b4bcf742d30c019ff56fe9a1410c3067660f0d55799826503bfc",
+            "7826f06bdf15c6ada86e07c54b1dd7cc60c0c78afb99e9faac44c11ab9480d25"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.82198,
+            "t1": 1791856367.130142,
+            "span_s": 1517.3081619739532,
+            "median_dt": 1.0001740455627441,
+            "gap_capped_s": 1517.3081619739532
+          },
+          "admitted": {
+            "samples": 1382,
+            "t0": 1791854886.830401,
+            "t1": 1791856268.111711,
+            "span_s": 1381.281310081482,
+            "median_dt": 1.0001730918884277,
+            "gap_capped_s": 1381.281310081482
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 4,
+          "source_hashes": [
+            "29863fba33802c61708063442ca96fb79bea73a5ec367206c9d248fb8f2b2e6e",
+            "7feaf3184dbbea119ef851a035031fcca47640b267ee7490d8951a1622a40941"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.844205,
+            "t1": 1791856367.191438,
+            "span_s": 1517.347233057022,
+            "median_dt": 1.0002191066741943,
+            "gap_capped_s": 1517.347233057022
+          },
+          "admitted": {
+            "samples": 1382,
+            "t0": 1791854886.852302,
+            "t1": 1791856268.16984,
+            "span_s": 1381.317538022995,
+            "median_dt": 1.0002198219299316,
+            "gap_capped_s": 1381.317538022995
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 5,
+          "source_hashes": [
+            "468d04ada37eda0b18f25b6f6878fce563a149173d239a01fcc8ce62f701e87d",
+            "f309670f12a3da646ffba1d924c643ea5c42f9e6b53c107928edc1abe1fc2dfc"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.862606,
+            "t1": 1791856367.129648,
+            "span_s": 1517.2670419216156,
+            "median_dt": 1.0001599788665771,
+            "gap_capped_s": 1517.2670419216156
+          },
+          "admitted": {
+            "samples": 1382,
+            "t0": 1791854886.86961,
+            "t1": 1791856268.111049,
+            "span_s": 1381.2414388656616,
+            "median_dt": 1.0001590251922607,
+            "gap_capped_s": 1381.2414388656616
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 6,
+          "source_hashes": [
+            "2857b0d7a34861884a71a2e748e702bc7eff31e83ed28ba84f39f3f9fd35507a",
+            "4960ef2ba13822f721ab35ae77766b0b1f6bc3f48c00821dd9c76d99af35bd17"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.881397,
+            "t1": 1791856367.190492,
+            "span_s": 1517.3090949058533,
+            "median_dt": 1.0001819133758545,
+            "gap_capped_s": 1517.3090949058533
+          },
+          "admitted": {
+            "samples": 1382,
+            "t0": 1791854886.88812,
+            "t1": 1791856268.169766,
+            "span_s": 1381.28164601326,
+            "median_dt": 1.000180959701538,
+            "gap_capped_s": 1381.28164601326
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "role": "accelerator",
+          "hostname": "spar-a100-1",
+          "gpu_index": 7,
+          "source_hashes": [
+            "9ec964d58e2684711999e682dbb32e4477fec367d928bf9fb79cf05650186378",
+            "a2ba7c85d240e559447f07a9d4cbe19f1a193b805b553e398d08562979c721ca"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.901297,
+            "t1": 1791856367.244626,
+            "span_s": 1517.3433289527893,
+            "median_dt": 1.0002140998840332,
+            "gap_capped_s": 1517.3433289527893
+          },
+          "admitted": {
+            "samples": 1382,
+            "t0": 1791854886.90872,
+            "t1": 1791856268.22113,
+            "span_s": 1381.312409877777,
+            "median_dt": 1.000213861465454,
+            "gap_capped_s": 1381.312409877777
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/nic_s16_train_tp8_node0_93a4645f6a42.parquet",
+          "role": "nic",
+          "hostname": "spar-a100-0",
+          "source_hashes": [
+            "13f051a62a9f4045361d29c409f57a6126697ed2ebb5a82330379921f6632d46",
+            "5ee15d68da709ebc0c90c5cfff23de0c4769cc7c37a951dbb7c28cc91df065f7"
+          ],
+          "raw": {
+            "samples": 1503,
+            "t0": 1791854858.5798218,
+            "t1": 1791856360.814521,
+            "span_s": 1502.2346992492676,
+            "median_dt": 1.000148892402649,
+            "gap_capped_s": 1502.2346992492676
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.5837367,
+            "t1": 1791856268.7993548,
+            "span_s": 1382.215618133545,
+            "median_dt": 1.0001490116119385,
+            "gap_capped_s": 1382.215618133545
+          },
+          "cleanup": {
+            "outside_pair_or_existing_samples": 120,
+            "invalid_metric_values": 0,
+            "rounded_key_duplicates": 0
+          }
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/nic_s16_train_tp8_node1_93a4645f6a42.parquet",
+          "role": "nic",
+          "hostname": "spar-a100-1",
+          "source_hashes": [
+            "7fc70359e9219972d3e37887eee43e1e2f80710fd964e1c6a1e4042847d65f3e",
+            "c65283042c80843f7d05f27507eddde2f29c98085aa055f7900211c48c0e2c83"
+          ],
+          "raw": {
+            "samples": 1518,
+            "t0": 1791854849.7197528,
+            "t1": 1791856367.0354068,
+            "span_s": 1517.315654039383,
+            "median_dt": 1.0001943111419678,
+            "gap_capped_s": 1517.315654039383
+          },
+          "admitted": {
+            "samples": 1383,
+            "t0": 1791854886.7282584,
+            "t1": 1791856269.0142229,
+            "span_s": 1382.2859644889832,
+            "median_dt": 1.000192642211914,
+            "gap_capped_s": 1382.2859644889832
+          },
+          "cleanup": {
+            "outside_pair_or_existing_samples": 135,
+            "invalid_metric_values": 0,
+            "rounded_key_duplicates": 0
+          }
+        }
+      ],
+      "sources": [
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/nic_s16_train_tp8_node0_93a4645f6a42.parquet#1791856365974932",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/nic_s16_train_tp8_node0_93a4645f6a42.parquet",
+          "generation": "1791856365974932",
+          "bytes": 145059,
+          "md5": "MI9FSVAyjy+Ctxw5t/SsmQ==",
+          "crc32c": "yPsKRQ==",
+          "sha256": "5ee15d68da709ebc0c90c5cfff23de0c4769cc7c37a951dbb7c28cc91df065f7"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/nic_s16_train_tp8_node0_93a4645f6a42.parquet.partial#1791856251561994",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/nic_s16_train_tp8_node0_93a4645f6a42.parquet.partial",
+          "generation": "1791856251561994",
+          "bytes": 135075,
+          "md5": "pfdE7EbsIAtF1ivisEieAA==",
+          "crc32c": "jpIbhA==",
+          "sha256": "13f051a62a9f4045361d29c409f57a6126697ed2ebb5a82330379921f6632d46"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856368685080",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856368685080",
+          "bytes": 66362,
+          "md5": "8qLnpgND8Pb44G4mrr/4sA==",
+          "crc32c": "vljlOA==",
+          "sha256": "9973a680447f405a400c62c90584d48013f01ae7e073ccc025a26ee5896daf60"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856371447005",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856371447005",
+          "bytes": 65383,
+          "md5": "65xYqTQ7C6h9TDFu2y8pVg==",
+          "crc32c": "iHbcAg==",
+          "sha256": "4f270f62c6afa6ace103344f59884399152f5f4ad6f158ad436fb13685469b06"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856374256204",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856374256204",
+          "bytes": 66204,
+          "md5": "FfwXaJskIuNiFSQRlTwm3A==",
+          "crc32c": "J0dsMg==",
+          "sha256": "62cfc991a12377bae89713fe351bc6fcd4de52cebcbf61307b05400decd18b8a"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856376979813",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856376979813",
+          "bytes": 65365,
+          "md5": "V3whmLZOXD8hgjAwGYT+Dw==",
+          "crc32c": "UvgDeQ==",
+          "sha256": "f06c74b1baa5cfae9a8546426cd7bfcb741dc40f21f6068a435e4c186e5bccdf"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856379681928",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856379681928",
+          "bytes": 66185,
+          "md5": "Y5812cWsCjSnXjkRDLAojw==",
+          "crc32c": "6lLUnw==",
+          "sha256": "1a7861adbfdfe27866853b217f0881701b7a16da5dcf9f7fdb94241f5a5654cf"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856382470487",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856382470487",
+          "bytes": 66516,
+          "md5": "4NA5nL++JyRyRkpgRmcqaw==",
+          "crc32c": "eYrm4A==",
+          "sha256": "483af220b051412d57793409d730b0aa1390beeaaf4f418a6dd321544dc9b898"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856385184325",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856385184325",
+          "bytes": 66609,
+          "md5": "IDGPHhuVXgdXsYZ4XV89/Q==",
+          "crc32c": "E53tlw==",
+          "sha256": "25f57f0fbad220c1c542c9e5c78265bb785a22cde4516771597f29daef12846f"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856387982801",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/data/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856387982801",
+          "bytes": 66775,
+          "md5": "KMF1fVRmZVjxKAdKDKdXfA==",
+          "crc32c": "IvpyNA==",
+          "sha256": "17ca768ce4c3e41ec2968280175522092292c3de3d421a628b500b12b59f461b"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/logs/followup_93a4645f6a42.json#1791856267575331",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/logs/followup_93a4645f6a42.json",
+          "generation": "1791856267575331",
+          "bytes": 37075,
+          "md5": "WtjtFkMyF4woLP5cCgO4cw==",
+          "crc32c": "Kzm7JA==",
+          "sha256": "69e24f64670fcc71279b83c939be201e783a2960a836a0d8ab8ee0fe87674a3f"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/logs/followup_93a4645f6a42.queue.log#1791856269338909",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/logs/followup_93a4645f6a42.queue.log",
+          "generation": "1791856269338909",
+          "bytes": 14356,
+          "md5": "lwA1seEYsK/XkwSQopQXlQ==",
+          "crc32c": "bjF1Vg==",
+          "sha256": "f483f54f231525b3664aff9fdbd8f2b6de446c1e9abc599fdd92bcc01367d4e5"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/logs/s16_train_tp8_node0_93a4645f6a42.log#1791856271112988",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/logs/s16_train_tp8_node0_93a4645f6a42.log",
+          "generation": "1791856271112988",
+          "bytes": 86979,
+          "md5": "gkKQoDuMETgRnHHZi61wQQ==",
+          "crc32c": "0n6inw==",
+          "sha256": "3befe4e074c11a6db1a92a6ccfe2419fdbbd56e6436143708e0b28a9094865e1"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-0/logs/s16_train_tp8_node0_93a4645f6a42.nic.log#1791856272915516",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-0/logs/s16_train_tp8_node0_93a4645f6a42.nic.log",
+          "generation": "1791856272915516",
+          "bytes": 132,
+          "md5": "gU5Gk9sU23QJhzKGAhIpWg==",
+          "crc32c": "4msKZg==",
+          "sha256": "33262ca92c1c890d1d16f495fed6a8c719ec89ee81e3aebcd41268cfb1cfa442"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/nic_s16_train_tp8_node1_93a4645f6a42.parquet#1791856372221347",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/nic_s16_train_tp8_node1_93a4645f6a42.parquet",
+          "generation": "1791856372221347",
+          "bytes": 146926,
+          "md5": "FPR9bY836cnkFXJON+S2Gg==",
+          "crc32c": "cceEUg==",
+          "sha256": "c65283042c80843f7d05f27507eddde2f29c98085aa055f7900211c48c0e2c83"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/nic_s16_train_tp8_node1_93a4645f6a42.parquet.partial#1791856250675830",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/nic_s16_train_tp8_node1_93a4645f6a42.parquet.partial",
+          "generation": "1791856250675830",
+          "bytes": 135274,
+          "md5": "ktDml+dX/xJ2B1WJioVkwA==",
+          "crc32c": "090lVw==",
+          "sha256": "7fc70359e9219972d3e37887eee43e1e2f80710fd964e1c6a1e4042847d65f3e"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856374699869",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856374699869",
+          "bytes": 68809,
+          "md5": "WMcipH8+djKe7qTrZ7s/vw==",
+          "crc32c": "oTIAGA==",
+          "sha256": "e520dec39af44d26078a5013e00f42285c27463f32cc55d905ef2da9bee563ab"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856252387347",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856252387347",
+          "bytes": 64566,
+          "md5": "BxDNWAOZmrthLT9dQFsgXQ==",
+          "crc32c": "U9X7/g==",
+          "sha256": "5bad4bab37e6f921f2aab8611a6f24c37ce0889ec4e1dd79c5c21c9eda8a1626"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856377175610",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856377175610",
+          "bytes": 67473,
+          "md5": "lk19gjRZAcvyYa61mvfonw==",
+          "crc32c": "CvPyAw==",
+          "sha256": "735682529d31ac77326277ce21c0a72311317f42198296f19a695a4e7cf46cd9"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856254274890",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856254274890",
+          "bytes": 63211,
+          "md5": "/BgVfJlFGLlfBJiVOk2tZA==",
+          "crc32c": "y5V0fg==",
+          "sha256": "e8047eaa3e9a77d89fffef3f0b0a3a286c90c3525deda36c44009120b792e1ef"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856379614722",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856379614722",
+          "bytes": 68540,
+          "md5": "RrsYTaR9AW8bKxGAsEVZFg==",
+          "crc32c": "nVjXAQ==",
+          "sha256": "8b1f8438fba268792d684ed74a5d0cd23825215d256e4923207f11993d8c6e98"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856255977421",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856255977421",
+          "bytes": 64155,
+          "md5": "F2w7Dh/WISEtA8K42OwSSQ==",
+          "crc32c": "FF8vpA==",
+          "sha256": "3ac047ce4d007ae471a7728957ceb93d428c23913c2181434e79c185466b91cb"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856382131699",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856382131699",
+          "bytes": 67597,
+          "md5": "sdlqtlL7sqKOr8UEm2eG2w==",
+          "crc32c": "07GbzA==",
+          "sha256": "419ee7cedbd0b4bcf742d30c019ff56fe9a1410c3067660f0d55799826503bfc"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856257638030",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856257638030",
+          "bytes": 63557,
+          "md5": "5r0Q4d20qzfzd244G/AX4w==",
+          "crc32c": "cQoViQ==",
+          "sha256": "7826f06bdf15c6ada86e07c54b1dd7cc60c0c78afb99e9faac44c11ab9480d25"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856384650014",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856384650014",
+          "bytes": 68759,
+          "md5": "V0CcQJ/9zHBq9GfUCZ++sg==",
+          "crc32c": "QqQYXA==",
+          "sha256": "7feaf3184dbbea119ef851a035031fcca47640b267ee7490d8951a1622a40941"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856259265541",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856259265541",
+          "bytes": 64396,
+          "md5": "GsL29/yzyznI0yLy0jedXA==",
+          "crc32c": "PKm4WQ==",
+          "sha256": "29863fba33802c61708063442ca96fb79bea73a5ec367206c9d248fb8f2b2e6e"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856387169335",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856387169335",
+          "bytes": 68146,
+          "md5": "+8ZPbLJIFeJF2S9g/QinkQ==",
+          "crc32c": "b7y4qA==",
+          "sha256": "468d04ada37eda0b18f25b6f6878fce563a149173d239a01fcc8ce62f701e87d"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856260934922",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856260934922",
+          "bytes": 64090,
+          "md5": "6UXk8zW3++CNbw8ZtYKERA==",
+          "crc32c": "QEAXSQ==",
+          "sha256": "f309670f12a3da646ffba1d924c643ea5c42f9e6b53c107928edc1abe1fc2dfc"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856389679520",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856389679520",
+          "bytes": 68933,
+          "md5": "PMhJ19mzOOkyFwVWXsWxpg==",
+          "crc32c": "CZalTQ==",
+          "sha256": "4960ef2ba13822f721ab35ae77766b0b1f6bc3f48c00821dd9c76d99af35bd17"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856262805267",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856262805267",
+          "bytes": 64481,
+          "md5": "4Cdjp9Coi2FsIUL8AqigzA==",
+          "crc32c": "yKvRFg==",
+          "sha256": "2857b0d7a34861884a71a2e748e702bc7eff31e83ed28ba84f39f3f9fd35507a"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet#1791856392146738",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "generation": "1791856392146738",
+          "bytes": 68365,
+          "md5": "09O2wtJ1/TOU8NAY83ksfg==",
+          "crc32c": "j+VJVQ==",
+          "sha256": "a2ba7c85d240e559447f07a9d4cbe19f1a193b805b553e398d08562979c721ca"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial#1791856264566205",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/data/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet.partial",
+          "generation": "1791856264566205",
+          "bytes": 64009,
+          "md5": "+2BBqg7NTRPIP+XHNCe3GA==",
+          "crc32c": "SjB+cQ==",
+          "sha256": "9ec964d58e2684711999e682dbb32e4477fec367d928bf9fb79cf05650186378"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/logs/.done/followup_a100_20261013T011424Z_collect/s16_train_tp8_node1_93a4645f6a42.failed#1791856394682637",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/logs/.done/followup_a100_20261013T011424Z_collect/s16_train_tp8_node1_93a4645f6a42.failed",
+          "generation": "1791856394682637",
+          "bytes": 53,
+          "md5": "anESF5a7gO/0rVOimfvc4g==",
+          "crc32c": "aDebxA==",
+          "sha256": "8ec1fa90566b7b6029357f72a67f179f63f76544e7c1cf76d33586d810b639bd"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/logs/followup_93a4645f6a42.json#1791856404598799",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/logs/followup_93a4645f6a42.json",
+          "generation": "1791856404598799",
+          "bytes": 41551,
+          "md5": "Kqkp4UCIDue4xaOwTUWi8A==",
+          "crc32c": "kLErrA==",
+          "sha256": "bef63caa785cf3654cc7d11fea88847cbcb93b660acb6e5e27ea0f2a49272f64"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/logs/followup_93a4645f6a42.queue.log#1791856397136629",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/logs/followup_93a4645f6a42.queue.log",
+          "generation": "1791856397136629",
+          "bytes": 16493,
+          "md5": "ofHm0Jyo9AMqWeMzAaGJqg==",
+          "crc32c": "Lh9QeA==",
+          "sha256": "b13370f92b074e7b2ceae7377c362b503b433066c90be21459e1df83bbb92b6c"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/logs/s16_train_tp8_node1_93a4645f6a42.log#1791856399619309",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/logs/s16_train_tp8_node1_93a4645f6a42.log",
+          "generation": "1791856399619309",
+          "bytes": 79763,
+          "md5": "quSfbS29sZMGbwiAcBPGtg==",
+          "crc32c": "O2NLMA==",
+          "sha256": "a525f1ec5ab91425f0409662720677448cf9dc57d2a935a50af1f58f963d4704"
+        },
+        {
+          "uri": "gs://focus-surfer-494820-g0-telemetry/runs/followup_a100_20261013T011424Z/spar-a100-1/logs/s16_train_tp8_node1_93a4645f6a42.nic.log#1791856402115611",
+          "name": "runs/followup_a100_20261013T011424Z/spar-a100-1/logs/s16_train_tp8_node1_93a4645f6a42.nic.log",
+          "generation": "1791856402115611",
+          "bytes": 338,
+          "md5": "poc4/K68gnpKb7R7AdrBIA==",
+          "crc32c": "TadveQ==",
+          "sha256": "39e2bca9f55773abb58cc6872e321505531dd7ffa66066e9c5d37a0dad105d51"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "22641fe97944bc88e0fb2907ca9156b5c7381a93020f51282779e7cb813f4194",
+          "bytes": 65524
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "f555f3aa9a2add13a7645db5457f1797964079639fa6bfc08a7250379edfd9cc",
+          "bytes": 64862
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "e857658aa901748e23f3f9909fd464e91eb764f1060bdc194d552ecbb2636dcc",
+          "bytes": 65301
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "84142da55168ee13d52c91e81763734ee10a8aad508379a4fca574992156387d",
+          "bytes": 65033
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "d17e0d79ce323470189945734ab2cb3f57d91f7a1e07b5e114807bd4941d53a3",
+          "bytes": 65620
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "aa7181b023dca2b7346d4f8394d11c7cdb071774ecfa672444278b186e02055b",
+          "bytes": 65752
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "409dd47ed1374de41124b2d5895703dda2c3531c489556c54166dd6a0cf7651a",
+          "bytes": 65823
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/s16_train_tp8_node0_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "9e7009b4648a0c6d48cd80d197ba20334acc2208437471cc30f04f3570e74fbb",
+          "bytes": 66188
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu0_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "a7a3cef5ee941f91a33ed6dbc8fac32e7de74940e1e8dddf6c3a2d65ee15de62",
+          "bytes": 66281
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu1_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "fd56c7ff1bf5c5459683a29805d360c84a1bb9a2dbda15012d92bbe28469a68a",
+          "bytes": 65100
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu2_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "d3f1ad6d5c7cea24e42d99e35a33a709356ef047d03939814985f1c6fbb7eb7b",
+          "bytes": 65907
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu3_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "389814c7aed0be3499a9f1ae1c49faf7ec6779a930a85720f698b1609fef3641",
+          "bytes": 64953
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu4_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "680534b6da0615710720d9f5e25cbb167ab402a5855e1c4a5ba41cee94d49342",
+          "bytes": 66220
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu5_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "abfc9dbe24770ea725c6412e7f4935adbf8c3423364f91c5a7c5cce84fd63999",
+          "bytes": 65846
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu6_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "95a4f7dcc81277887f803d23bca230e4cea78b8b7f4762b5184391636b080f3a",
+          "bytes": 66379
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/s16_train_tp8_node1_gpu7_NVIDIA_A100_SXM4_40GB_93a4645f6a42.parquet",
+          "sha256": "6504f1de4324dace2c292690cdbe28f443d3952044dcd2eb08d4103d46931460",
+          "bytes": 66017
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-0/nic_s16_train_tp8_node0_93a4645f6a42.parquet",
+          "sha256": "c711a3ed1748a45bf51332b64bf490151a47b6c83de8ebc51e06ad6b0e2ab53c",
+          "bytes": 134563
+        },
+        {
+          "path": "data/gcp/followup_a100_20261013T011424Z/spar-a100-1/nic_s16_train_tp8_node1_93a4645f6a42.parquet",
+          "sha256": "c7ef2a8909c9f1a71a90a9f86623f43173d4c5b390d73d5d270485b2d3cd32a5",
+          "bytes": 135241
+        },
+        {
+          "path": "logs/followup_a100_20261013T011424Z__spar-a100-0__s16_train_tp8_node0_93a4645f6a42.log",
+          "sha256": "3befe4e074c11a6db1a92a6ccfe2419fdbbd56e6436143708e0b28a9094865e1",
+          "bytes": 86979
+        },
+        {
+          "path": "logs/followup_a100_20261013T011424Z__spar-a100-1__s16_train_tp8_node1_93a4645f6a42.log",
+          "sha256": "a525f1ec5ab91425f0409662720677448cf9dc57d2a935a50af1f58f963d4704",
+          "bytes": 79763
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "runs": 2,
+    "accelerator_streams": 32,
+    "nic_streams": 4,
+    "accelerator_samples": 23530,
+    "accelerator_hours": 6.528440491822031,
+    "completed_repetitions": 0
+  }
+}

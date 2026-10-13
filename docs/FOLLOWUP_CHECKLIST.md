@@ -56,12 +56,16 @@ not useful training time. Historical job identities remain provisional.
   streams, two NIC streams, all 16 workers with progress, and 26 verified uploads.
 - [ ] Complete and validate the first 30-minute repetition. Google Cloud preempted
   one Spot node at 23:51 UTC on October 12, interrupting the first collection;
-  partial data remains excluded. A fresh smoke-gated retry started at 01:14 UTC
+  raw data was preserved. A fresh smoke-gated retry started at 01:14 UTC
   on October 13, but another Spot preemption interrupted collection at 01:53 UTC,
   about 26 minutes after launch. Both GPU VMs are stopped; no completed repetition
   is admitted. [Retry evidence](followup_execution_2026-10-12/failed_a100_retry.json)
   and [live execution](followup_execution_2026-10-12/live_execution.json) record the
   outcome. Scientific corpus admission remains separate.
+- [x] Recover the valid observed intervals from both Spot-preempted A100 runs
+  into the corpus: 23,530 GPU samples, 6.52844 accelerator-hours and 94 complete
+  30-second windows with all 16 GPUs and both NICs. Preserve preemption status
+  and give zero completed-repetition credit. [Recovery](followup_execution_2026-10-12/preempted_recovery.md).
 
 ## Corpus accounting and recovery
 
@@ -77,8 +81,11 @@ not useful training time. Historical job identities remain provisional.
   Keep the documented weak filler separate from competent saturated attacks.
 - [ ] Reassess low utilization TPU exclusions using completed device work and
   progress, without filtering on the detector's own input signal alone.
-- [ ] Keep smoke tests, failed jobs, recording tails and derived predictions out
-  of main corpus totals. Preserve failed prefixes for a separately defined test.
+- [ ] Keep smoke tests, unobserved/invalid tails and derived predictions out of
+  main corpus totals. Preserve interrupted runs and admit validated observed
+  intervals independently of exit status; count actual exposure and coverage.
+  Reassess earlier whole-job exclusions for recoverable intervals with appropriate
+  work evidence. Group retries sharing a seed for splitting and uncertainty.
 - [ ] Retain the eight short legacy JSON captures as supplemental evidence;
   do not count them as complete 30 second windows.
 - [ ] Verify the known truncated waveform against the upstream instrument data;

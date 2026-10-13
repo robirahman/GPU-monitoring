@@ -115,13 +115,17 @@ The repaired A100 smoke is now [verified](verified_a100_smoke.json): 1,776 GPU
 samples and 222 NIC samples across 18 streams, with all 16 workers reporting
 progress. These smoke samples stay out of the scientific corpus. The 30-minute
 collection started at 23:48 UTC on October 12, but Google Cloud preempted one
-Spot node at 23:51:50 UTC. The partial run is excluded from the scientific corpus;
+Spot node at 23:51:50 UTC. The interrupted run received no completed-repetition credit;
 [failure evidence](failed_a100_collection.json) records the interruption and
 preserved artifacts. Both hosts stopped before a fresh smoke-gated retry started
 at 01:14 UTC on October 13. That retry passed its smoke gate and launched
 collection at 01:27 UTC, but a second Spot preemption interrupted it at 01:53 UTC.
 Both GPU hosts are now stopped. [Retry evidence](failed_a100_retry.json) records
-the partial artifacts and missing completion evidence; this retry is also excluded.
+the partial artifacts and missing completion evidence; this retry also received no
+completed-repetition credit. Both runs' valid observed intervals have since been
+[recovered into the corpus](preempted_recovery.md): 23,530 GPU samples, 6.52844
+accelerator-hours and 94 complete 30-second windows across 16 GPUs and two hosts.
+Preemption status is retained; run completion is not required for interval admission.
 
 The analysis retry passed the memory failure
 point, then found mixed numeric/`N/A` sensor values at parquet serialization;

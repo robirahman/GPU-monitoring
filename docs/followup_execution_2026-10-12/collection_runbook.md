@@ -11,13 +11,16 @@ with 16 GPU streams, two NIC streams and 26 downloaded, hash-verified artifacts.
 The 30-minute collection started at 23:48 UTC on October 12, but Google Cloud
 preempted `spar-a100-0` at 23:51:50 UTC. The distributed workload failed and
 both hosts stopped. [Failure evidence](failed_a100_collection.json) preserves
-the cloud audit events and partial-upload records; this run is excluded from
-the scientific corpus. A fresh smoke-gated retry on the same pair started at
+the cloud audit events and partial-upload records; this run is incomplete.
+A fresh smoke-gated retry on the same pair started at
 01:14 UTC on October 13. Its smoke gate passed and collection launched at 01:27
 UTC, but Google Cloud preempted the same node again at 01:53:22 UTC, about 26
 minutes after launch. [Retry evidence](failed_a100_retry.json) records the partial
 data and absent completion receipts. Both GPU hosts are now stopped; no new retry
 was launched during the 02:22 UTC status check.
+Both interrupted runs now have [validated observed intervals in the corpus](preempted_recovery.md).
+The success-receipt gate establishes completed-run status and controls pilot
+progression; it is not a blanket exclusion of earlier valid telemetry.
 [Live execution](live_execution.json) records the campaign and separate analysis run.
 The operator supplied the live listing in `gcloud-instances.local.json`. It
 contains `spar-a100-0` and `spar-a100-1` in `us-central1-c`, both stopped,
