@@ -74,6 +74,29 @@ diluted ×5, ResNet without instrumentation, cuFFT, path-trace render, idle).
 | Training start vs first completed update (GPU) | ResNet 6.1 s (cuDNN autotuning), BERT 1.0 s, MLP 0.04 s |
 | Diluted ×5 vs ordinary (ResNet) | 38.5% of useful throughput; 85% accuracy at 90 s vs 60 s (1.5×) |
 
+## Pilot session 2 (2026-10-21, different order) — replication
+
+10 of 10 runs completed. 0 contiguity breaks, 0 over-range, 0 rail samples; peak 0.61–0.63 of full scale.
+Scope–GPU marker offset median −0.16 to +0.53 ms, IQR 1.5–1.9 ms. One 0.20 s DCGM gap (render run) recorded in
+`health_intervals.csv`. Instrumentation slowdown 0.05%. BERT 91.3%, ResNet 86.5% (ordinary) / 87.3% (diluted ×5),
+MLP 55.1%, Whisper WER 4.7%, Phi-3 20/20. Diluted ×5 again gave 38.6% of the ordinary useful throughput; with
+30 s evaluation spacing both runs crossed 85% at the 60 s evaluation, so time-to-quality needs finer evaluation
+spacing in the attack campaign.
+
+## Type 4 tooling check
+
+Whisper serving at 1 request/s with one 20 s ResNet burst planned at +53.000 s on the window grid: the
+GPU-timed training start was +53.0002 s (3.0002 s into its 10 s window), training lasted 20.016 s, the start gate
+was not late, and serving continued throughout (WER 4.0%; median service time 69 ms with no burst, 127 ms while
+the burst was loading, 149 ms during training).
+
+## Where the data is
+
+Raw recordings (envelopes, decimated and full-rate waveforms, polls, sensor parquet parts) stay on amodo under
+`~/campaign/sessions/<session>/<label>_<run_id>/`, about 5.6 GB per pilot session. Per-run summaries
+(manifest, validation, metrics, health intervals, alignment edges, compressed events and sensor metadata) are
+in `data/h200_followup/`.
+
 ## Not verified here (needs someone at the rig)
 
 - Identity of the installed probe (RCP60XS variant), its sensitivity and transfer response. The plan requires a

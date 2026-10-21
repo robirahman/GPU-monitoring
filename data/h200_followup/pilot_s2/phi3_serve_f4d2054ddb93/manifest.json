@@ -1,0 +1,46 @@
+{
+ "run_id": "f4d2054ddb93",
+ "job_id": "pilot_s2-phi3_serve",
+ "session_id": "pilot_s2",
+ "partition": "pilot",
+ "label": "phi3_serve",
+ "class_label": "ml_inference",
+ "family": "phi3",
+ "kind": "serve",
+ "argv": [
+  "--model",
+  "phi3",
+  "--schedule",
+  "60:0.1,30:0,60:0.3,30:0.05",
+  "--seed",
+  "0"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "every:60:1:20",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "a969745e494e7e9283380b81c0de82d593e336e3",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "started_wall_ns": 1792609661324973852,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 192.07341575699684,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792609896361959972,
+ "ok": true,
+ "bytes_on_disk": 618233033
+}
