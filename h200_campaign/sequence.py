@@ -11,8 +11,9 @@ Burst placement: --bursts "DUR@START[,DUR@START...]" in seconds from the grid
 origin. The grid origin is this script's 'sequence_grid_origin' event; the
 detector's 10 s windows are [origin + 10k, origin + 10k + 10). START values are
 the intended training-start times; because loading precedes training, each
-burst process is launched --lead seconds early (measured during the pilot) and
-the achieved offset is recorded, never assumed.
+burst process is launched --lead seconds early and then holds at train.py's
+start gate (--start-at-mono) until the intended time. The achieved start (GPU
+time of train_start) and any lateness (start_gate event) are recorded.
 
 --bursts "" gives the inference-only control with the same serving schedule.
 Serving continues for --observe seconds after the last planned burst end.
@@ -40,7 +41,8 @@ def main():
     ap.add_argument("--bursts", default="", help='e.g. "20@60,45@180"; empty = inference-only control')
     ap.add_argument("--burst-family", default="resnet")
     ap.add_argument("--burst-args", default="", help="extra train.py args, space separated")
-    ap.add_argument("--lead", type=float, default=15.0, help="launch this many s before intended train start")
+    ap.add_argument("--lead", type=float, default=40.0,
+                    help="launch this many s early; must exceed load + initial eval (the start gate does the timing)")
     ap.add_argument("--observe", type=float, default=180.0)
     ap.add_argument("--pre", type=float, default=60.0, help="min serving before first burst / total if control")
     ap.add_argument("--seed", type=int, default=0)
@@ -75,6 +77,7 @@ def main():
             time.sleep(0.05)
         cmd = [PY, str(REPO / "h200_campaign" / "train.py"), "--family", args.burst_family,
                "--duration", str(dur), "--seed", str(args.seed + i), "--eval-every-sec", "1e9",
+               "--start-at-mono", f"{origin + start:.6f}",
                "--metrics", str(mdir / f"burst{i}_metrics.json")] + (["--events", args.events] if args.events else [])
         cmd += args.burst_args.split() if args.burst_args else []
         e = env | {"SPAR_BURST_INDEX": str(i)}

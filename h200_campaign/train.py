@@ -263,6 +263,8 @@ def main():
     ap.add_argument("--period-ms", type=float, default=200.0)
     ap.add_argument("--power-cap", type=int, default=0)
     ap.add_argument("--warmup-updates", type=int, default=5)
+    ap.add_argument("--start-at-mono", type=float, default=None,
+                    help="after loading and the initial eval, wait until this CLOCK_MONOTONIC second to start training")
     ap.add_argument("--gpu-marks", type=int, default=1, help="CUDA-event timestamp every update (0=off)")
     ap.add_argument("--metrics", required=True)
     ap.add_argument("--events", default=None)
@@ -296,13 +298,18 @@ def main():
 
     evals, useful, fwd_only, updates, micro = [], 0, 0, 0, 0
     phase_train = True
-    phase_t0 = time.monotonic()
-    t_start = time.monotonic()
-    last_eval = t_start
     try:
         evals.append({"updates": 0, "t": 0.0, **task.evaluate()})
         log.emit("eval", **evals[-1])
         task.model.train()
+        if args.start_at_mono is not None:
+            torch.cuda.synchronize()
+            lateness = time.monotonic() - args.start_at_mono
+            log.emit("start_gate", target_mono_s=args.start_at_mono, late_s=max(0.0, lateness), ok=lateness <= 0)
+            while time.monotonic() < args.start_at_mono:
+                time.sleep(min(0.01, max(0.0, args.start_at_mono - time.monotonic())))
+        # duration, eval cadence and phase timers all count from the start of training
+        t_start = phase_t0 = last_eval = time.monotonic()
         mark("train_start", note="first training work submitted next")
         while updates < args.updates and time.monotonic() - t_start < args.duration:
             now = time.monotonic()
