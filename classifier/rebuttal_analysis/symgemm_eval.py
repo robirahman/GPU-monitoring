@@ -115,6 +115,7 @@ def run_level(win_sub, p, tau, k, m):
     df = pd.DataFrame({
         "run_id": win_sub["run_id"].values,
         "t": win_sub["window_start"].values,
+        "available_at": win_sub["window_end"].values,
         "p": p,
     }).sort_values(["run_id", "t"])
     n_alert, ttfa = 0, []
@@ -125,7 +126,7 @@ def run_level(win_sub, p, tau, k, m):
         i = kofm(flags, k, m)
         if i is not None:
             n_alert += 1
-            ttfa.append(g["t"].values[i] - g["t"].values[0])
+            ttfa.append(g["available_at"].values[i] - g["t"].values[0])
     return {
         "n_runs": runs,
         "runs_alerting": n_alert,

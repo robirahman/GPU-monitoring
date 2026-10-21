@@ -293,12 +293,26 @@ class TelemetryCollector:
         enable_dcgm: bool = True,
         checkpoint_sec: float = 300.0,
         checkpoint_path: str | None = None,
+        job_id: str | None = None,
+        attempt_id: str | None = None,
+        node_id: str | None = None,
+        class_label: str | None = None,
     ):
         self.metadata = GpuMetadata(gpu_index)
         self._handle = self.metadata.handle
         self._interval = interval_sec
         self._workload_label = workload_label
         self._run_id = run_id or uuid.uuid4().hex[:12]
+        # run_id stays stream-specific for historical classifiers. job_id is
+        # the split group shared by every rank/node and all retry attempts.
+        self.job_id = job_id or os.environ.get("SPAR_JOB_ID") or self._run_id
+        self.attempt_id = attempt_id or os.environ.get("SPAR_ATTEMPT_ID", "1")
+        self.node_id = node_id or os.environ.get("SPAR_NODE_ID") or socket.gethostname()
+        self.class_label = class_label or os.environ.get("SPAR_CLASS_LABEL")
+        if self.class_label is not None and self.class_label not in {"ml_training", "ml_inference", "other"}:
+            raise ValueError("Invalid class_label")
+        self.stream_id = ":".join((self.job_id, self.attempt_id, self.node_id,
+                                   self.metadata.gpu_uuid, "nvml"))
         self._records: list[dict] = []
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -473,6 +487,15 @@ class TelemetryCollector:
         df["gpu_uuid"] = self.metadata.gpu_uuid
         df["driver_version"] = self.metadata.driver_version
         df["hostname"] = self.metadata.hostname
+        df["sensor_type"] = "nvml"
+        df["schema_version"] = 1
+        df["job_id"] = self.job_id
+        df["attempt_id"] = self.attempt_id
+        df["node_id"] = self.node_id
+        df["stream_id"] = self.stream_id
+        df["gpu_index"] = self.metadata.gpu_index
+        if self.class_label is not None:
+            df["class_label"] = self.class_label
         return df
 
     def _write_parquet(self, df: pd.DataFrame, path: Path):

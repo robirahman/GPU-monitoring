@@ -98,6 +98,7 @@ def markov_extrapolation(train_seqs, tau, stride, durations_min):
     and perfectly-correlated bounds."""
     # Pool per-window alert transitions across training runs.
     n0 = n01 = 0          # windows in no-alert state; of those, transitions to alert
+    n1 = n11 = 0
     n_alert = n_total = 0
     stat0_runs = []
     for _, _, _, p, ws, s in train_seqs:
@@ -108,6 +109,9 @@ def markov_extrapolation(train_seqs, tau, stride, durations_min):
             if a[i - 1] == 0:
                 n0 += 1
                 n01 += a[i]
+            else:
+                n1 += 1
+                n11 += a[i]
     p_win = n_alert / n_total if n_total else np.nan          # marginal per-window alert prob
     p01 = n01 / n0 if n0 else np.nan                          # P(alert | prev no-alert)
     # Stationary no-alert probability from the marginal.
@@ -124,7 +128,7 @@ def markov_extrapolation(train_seqs, tau, stride, durations_min):
                      "P_detect_markov": markov,
                      "P_detect_correlated": corr})
     meta = {"p_window_alert": p_win, "p01_alert_given_prev_clear": p01,
-            "lag1_persistence_p11": (1 - (n0 - n01) / n0) if n0 else np.nan}
+            "lag1_persistence_p11": n11 / n1 if n1 else np.nan}
     return pd.DataFrame(rows), meta
 
 
