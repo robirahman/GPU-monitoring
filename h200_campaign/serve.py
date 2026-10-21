@@ -64,8 +64,10 @@ class Phi3:
         prompt = self.rng.choice(self.items)
         max_new = self.rng.choice([32, 64, 128, 256])
         msgs = [{"role": "user", "content": prompt}]
-        ids = self.tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").cuda()
-        out = self.model.generate(ids, max_new_tokens=max_new, do_sample=False, pad_token_id=self.tok.eos_token_id)
+        enc = self.tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt", return_dict=True)
+        ids = enc["input_ids"].cuda()
+        out = self.model.generate(ids, attention_mask=enc["attention_mask"].cuda(), max_new_tokens=max_new,
+                                  do_sample=False, pad_token_id=self.tok.eos_token_id)
         new = out[0, ids.shape[1]:]
         return {"prompt_tokens": int(ids.shape[1]), "new_tokens": int(new.numel()), "max_new": max_new,
                 "text": self.tok.decode(new, skip_special_tokens=True)[:200]}
@@ -79,15 +81,18 @@ class Whisper:
         from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
         self.proc = AutoProcessor.from_pretrained(self.name)
         self.model = AutoModelForSpeechSeq2Seq.from_pretrained(self.name, torch_dtype=torch.float16).cuda().eval()
-        ds = load_dataset("openslr/librispeech_asr", "clean", split="validation").cast_column("audio", Audio(sampling_rate=16000))
+        ds = load_dataset("openslr/librispeech_asr", "clean", split="validation").cast_column("audio", Audio(decode=False))
         self.ds, self.fingerprint = ds, ds._fingerprint
         self.revision = getattr(self.model.config, "_commit_hash", None)
         self.rng = rng
 
     @torch.no_grad()
     def request(self):
+        import io
+        import soundfile as sf
         r = self.ds[self.rng.randrange(len(self.ds))]
-        a = r["audio"]["array"]
+        a, sr = sf.read(io.BytesIO(r["audio"]["bytes"]), dtype="float32")
+        assert sr == 16000, sr
         feats = self.proc(a, sampling_rate=16000, return_tensors="pt").input_features.cuda().half()
         ids = self.model.generate(feats, language="en", task="transcribe")
         hyp = self.proc.batch_decode(ids, skip_special_tokens=True)[0]

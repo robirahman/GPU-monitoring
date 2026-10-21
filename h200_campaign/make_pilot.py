@@ -28,7 +28,7 @@ RUNS = [
          argv=["--family", "resnet", "--duration", "300", "--seed", "0", "--gpu-marks", "0"], timeout_s=900,
          sensors=False, job_id_suffix="resnet_pair", purpose="instrumentation overhead control"),
     dict(label="phi3_serve", class_label="ml_inference", family="phi3", kind="serve",
-         argv=["--model", "phi3", "--schedule", "60:0.5,30:0,60:2,30:0.2", "--seed", "0"], timeout_s=900),
+         argv=["--model", "phi3", "--schedule", "60:0.1,30:0,60:0.3,30:0.05", "--seed", "0"], timeout_s=900),
     dict(label="whisper_serve", class_label="ml_inference", family="whisper", kind="serve",
          argv=["--model", "whisper", "--schedule", "60:1,30:0,60:3", "--seed", "0"], timeout_s=900),
     dict(label="cufft", class_label="other", family="cufft", kind="nonml", workload="cufft",
