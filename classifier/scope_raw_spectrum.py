@@ -126,10 +126,28 @@ def build_raw_map(data_dirs) -> dict:
     return m
 
 
-def attach_raw_features(windows: pd.DataFrame, raw_map: dict) -> pd.DataFrame:
-    """Left-join per-run raw-spectral features onto a window frame. The raw
-    snippet is one short capture per run, so every window of a run gets that
-    run's raw features (constant within run). Runs with no raw snippet get NaN."""
+def attach_raw_features(windows: pd.DataFrame, raw_map: dict,
+                        allow_run_constant: bool = False) -> pd.DataFrame:
+    """Left-join per-run raw-spectral features onto a window frame.
+
+    The raw snippet is ONE short capture per run, so these features are a
+    constant within a run. A window that ends before the capture instant would
+    therefore carry features derived from telemetry that had not happened yet --
+    the same defect the 2026-08 causal sweep removed from ``run_level_features``.
+    The snippet carries no usable epoch (the filename stamp is local wall-clock
+    and the array itself is bare ADC counts), so there is no way to mask the
+    windows that precede it.
+
+    Window-level evaluation therefore has to opt in explicitly, and saying yes
+    means accepting a known look-ahead. Run-level and per-run analyses pass
+    ``allow_run_constant=True`` legitimately: there the constant is the unit of
+    analysis rather than a per-window feature. tests/test_causality.py pins this.
+    """
+    if not allow_run_constant:
+        raise ValueError(
+            "attach_raw_features broadcasts one per-run capture onto every window of "
+            "that run, so windows preceding the capture would see their own future. "
+            "Pass allow_run_constant=True only for run-level analysis.")
     cache: dict[str, dict] = {}
     rows = []
     for rid in windows["run_id"].astype(str):

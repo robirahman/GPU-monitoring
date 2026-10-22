@@ -46,86 +46,97 @@ RESULTS_DIR.mkdir(exist_ok=True)
 
 # ── Additional evasion-resistant features ────────────────────────────────────
 
+def _physics_features(power, util, mem) -> dict:
+    """The five Round-3 physical invariants over one observation prefix.
+
+    Caller decides what the prefix is; this only computes. Keeping it separate
+    is what makes the causal slice above auditable.
+    """
+    if len(power) == 0:
+        return dict(cumulative_energy_wh=0.0, power_mem_correlation=0.0,
+                    util_bimodal_score=0.0, power_efficiency_ratio=0.0,
+                    sustained_compute_frac=0.0)
+    feats = {}
+
+    # Energy = integral of power over time. If you did real compute, energy was
+    # consumed, and no amount of shaping hides it.
+    feats["cumulative_energy_wh"] = float(power.sum()) / 3600.0
+
+    # Training: memory high AND power high, correlated. Pre-allocation plus
+    # idle padding gives high memory with low power, which is unnatural.
+    if len(power) > 5 and power.std() > 0 and mem.std() > 0:
+        corr = np.corrcoef(power, mem)[0, 1]
+        feats["power_mem_correlation"] = float(corr) if np.isfinite(corr) else 0.0
+    else:
+        feats["power_mem_correlation"] = 0.0
+
+    # Idle-padded evasion is bimodal (bursts of compute separated by zero);
+    # real training is mostly sustained.
+    feats["util_bimodal_score"] = (float((util < 15).mean() * (util > 70).mean())
+                                   if len(util) > 10 else 0.0)
+
+    # Watts per % utilisation. Real training is consistent; throttled evasion
+    # is artificially low.
+    mean_util, mean_power = float(util.mean()), float(power.mean())
+    feats["power_efficiency_ratio"] = mean_power / mean_util if mean_util > 1 else mean_power
+
+    # Fraction of samples inside a run of >50% utilisation at least 10 s long.
+    if len(util) > 10:
+        sustained = streak = 0
+        for hot in util > 50:
+            streak = streak + 1 if hot else 0
+            if streak >= 10:
+                sustained += 1
+        feats["sustained_compute_frac"] = sustained / max(len(util), 1)
+    else:
+        feats["sustained_compute_frac"] = 0.0
+    return feats
+
+
+EVASION_RESISTANT_FEATURES = ("cumulative_energy_wh", "power_mem_correlation",
+                              "util_bimodal_score", "power_efficiency_ratio",
+                              "sustained_compute_frac")
+
+
 def add_evasion_resistant_features(df_win: pd.DataFrame, df_raw: pd.DataFrame) -> pd.DataFrame:
     """Add features that are hard to spoof without reducing real throughput.
 
-    These exploit physical invariants:
-    - Energy = integral of power over time (can't be hidden)
-    - Memory-power correlation (training: high mem + high power; idle padding
-      creates high mem + LOW power which is unnatural)
-    - Compute intensity = power / utilization (training has consistent ratio;
-      evasion creates artificial idle gaps that change the ratio)
+    Each window sees its run from the start up to its own ``window_end`` and no
+    further, which is what a live monitor has and mirrors
+    ``sliding_windows(run_level_mode="causal")``.
+
+    Until 2026-10-22 this stamped the WHOLE run onto every window: ``run_raw``
+    was never sliced, so ``cumulative_energy_wh`` was total run energy, a
+    quantity only knowable once the run is over. The 2026-08 causal sweep fixed
+    ``run_level_features`` and missed this sibling, and ``eval_catchup`` strips
+    the fixed plateau features only to re-admit these -- so the leak survived on
+    exactly the path that claims to control for it. tests/test_causality.py
+    pins the property.
     """
-    new_feats = {}
+    missing = [c for c in ("run_id", "window_end") if c not in df_win.columns]
+    if missing:
+        raise ValueError(f"causal evasion-resistant features need {missing} on the window frame")
 
-    for run_id in df_win["run_id"].unique():
-        run_raw = df_raw[df_raw["run_id"] == run_id]
-        if run_raw.empty:
+    values = {name: {} for name in EVASION_RESISTANT_FEATURES}
+    for run_id, raw in df_raw.groupby("run_id", sort=False):
+        index = df_win.index[df_win["run_id"] == run_id]
+        if raw.empty or len(index) == 0:
             continue
+        raw = raw.sort_values("ts")
+        ts = raw["ts"].to_numpy(dtype=float)
+        power = raw["power_draw_w"].to_numpy(dtype=float)
+        util = raw["gpu_utilization_pct"].to_numpy(dtype=float)
+        mem = raw["mem_used_mb"].to_numpy(dtype=float)
+        # One prefix length per window: samples strictly before its end.
+        observed = np.searchsorted(ts, df_win.loc[index, "window_end"].to_numpy(dtype=float),
+                                   side="left")
+        for idx, n_obs in zip(index, observed):
+            for name, value in _physics_features(power[:n_obs], util[:n_obs], mem[:n_obs]).items():
+                values[name][idx] = value
 
-        win_mask = df_win["run_id"] == run_id
-        for idx in df_win[win_mask].index:
-            # Get the raw data for this window's time range
-            # (approximation: use whole-run features as window-level proxies)
-            power = run_raw["power_draw_w"].values
-            util = run_raw["gpu_utilization_pct"].values
-            mem = run_raw["mem_used_mb"].values
-
-            # Feature 1: Cumulative energy (Watt-seconds)
-            # Can't be hidden — if you did real compute, energy was consumed
-            new_feats.setdefault("cumulative_energy_wh", {})[idx] = power.sum() / 3600.0
-
-            # Feature 2: Power-memory correlation
-            # Training: memory high AND power high (correlated)
-            # Evasion with pre-alloc + idle: memory high but power low (uncorrelated)
-            if len(power) > 5 and power.std() > 0 and mem.std() > 0:
-                corr = np.corrcoef(power, mem[:len(power)])[0, 1]
-                new_feats.setdefault("power_mem_correlation", {})[idx] = corr if np.isfinite(corr) else 0.0
-            else:
-                new_feats.setdefault("power_mem_correlation", {})[idx] = 0.0
-
-            # Feature 3: Bimodal utilization score
-            # Idle-padded evasion creates bimodal util distribution (high compute + zero idle)
-            # Real training is mostly sustained high utilization
-            if len(util) > 10:
-                low_frac = (util < 15).mean()
-                high_frac = (util > 70).mean()
-                bimodal = low_frac * high_frac  # High when both extremes present
-                new_feats.setdefault("util_bimodal_score", {})[idx] = bimodal
-            else:
-                new_feats.setdefault("util_bimodal_score", {})[idx] = 0.0
-
-            # Feature 4: Power efficiency ratio
-            # Watts per % utilization — real training is consistent,
-            # evasion with throttling is artificially low
-            mean_util = util.mean()
-            mean_power = power.mean()
-            if mean_util > 1:
-                new_feats.setdefault("power_efficiency_ratio", {})[idx] = mean_power / mean_util
-            else:
-                new_feats.setdefault("power_efficiency_ratio", {})[idx] = mean_power
-
-            # Feature 5: Sustained compute fraction
-            # Fraction of time at >50% util for >10 consecutive seconds
-            # Training is sustained; evasion is bursty
-            if len(util) > 10:
-                sustained = 0
-                streak = 0
-                for u in util:
-                    if u > 50:
-                        streak += 1
-                        if streak >= 10:
-                            sustained += 1
-                    else:
-                        streak = 0
-                new_feats.setdefault("sustained_compute_frac", {})[idx] = sustained / max(len(util), 1)
-            else:
-                new_feats.setdefault("sustained_compute_frac", {})[idx] = 0.0
-
-    # Add new features to dataframe
-    for feat_name, feat_dict in new_feats.items():
-        df_win[feat_name] = df_win.index.map(feat_dict).fillna(0.0)
-
+    for name in EVASION_RESISTANT_FEATURES:
+        mapped = pd.Series(df_win.index.map(values[name]), index=df_win.index, dtype="float64")
+        df_win[name] = mapped.fillna(0.0)
     return df_win
 
 
