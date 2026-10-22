@@ -50,7 +50,7 @@ CLASS = {"serve": "ml_inference", "cufft": "other", "render": "other", "nbody": 
 # training lineages: train.py argv prefix, used by type1, attacks and bursts
 CAL_TRAIN = {"mlp": ["--family", "mlp"], "resnet": ["--family", "resnet"], "bert": ["--family", "bert"],
              "qwen": ["--family", "lora", "--model", "Qwen/Qwen2.5-0.5B", "--dataset", "wikitext"]}
-TEST_TRAIN = {"efficientnet": ["--family", "effnet"],
+TEST_TRAIN = {"efficientnet": ["--family", "effnet", "--eval-images", "2000"],
               "olmo": ["--family", "lora", "--model", "allenai/OLMo-2-0425-1B", "--dataset", "tinystories", "--eval-tokens", "16384"],
               "pythia": ["--family", "lora", "--model", "EleutherAI/pythia-1b", "--dataset", "tinystories", "--eval-tokens", "16384"]}
 ATTACKED = {"calibration": ["resnet", "bert", "qwen"], "test": ["efficientnet", "olmo", "pythia"]}

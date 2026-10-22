@@ -125,7 +125,8 @@ class CifarTask(Task):
         self.model.eval()
         correct, loss, n = 0, 0.0, 0
         step = 250 if self.resize else 1000
-        for i in range(0, self.xte.shape[0], step):
+        n_eval = self.xte.shape[0] if getattr(self, "eval_n", None) is None else min(self.eval_n, self.xte.shape[0])
+        for i in range(0, n_eval, step):
             x, y = self.xte[i:i + step], self.yte[i:i + step]
             with torch.autocast("cuda", dtype=torch.bfloat16):
                 o = self._fwd(x)
@@ -290,6 +291,8 @@ def main():
     ap.add_argument("--family", required=True, choices=["mlp", "resnet", "bert", "lora", "effnet"])
     ap.add_argument("--dataset", default="wikitext", choices=["wikitext", "tinystories"], help="lora corpus")
     ap.add_argument("--eval-tokens", type=int, default=65536)
+    ap.add_argument("--eval-images", type=int, default=None,
+                    help="CIFAR tasks: periodic evals use the first N test images (fixed subset); the final eval uses all")
     ap.add_argument("--lr-schedule", default="constant", choices=["constant", "cosine"],
                     help="cosine: linear warmup then cosine decay over --updates (needs a finite update budget)")
     ap.add_argument("--warmup-frac", type=float, default=0.03)
@@ -335,6 +338,8 @@ def main():
     else:
         task = LoraTask(args.model, bs, args.seq_len, dev, args.seed, dataset=args.dataset, eval_tokens=args.eval_tokens)
     opt = task.optimizer()
+    if args.eval_images is not None:
+        task.eval_n = args.eval_images
     sched = None
     if args.lr_schedule == "cosine":
         assert args.updates < 10**8, "cosine schedule needs --updates"
@@ -438,6 +443,8 @@ def main():
             mark("train_end", updates=updates)
         torch.cuda.synchronize()
         log.emit("train_end_synced", updates=updates)
+        if hasattr(task, "eval_n"):
+            task.eval_n = None
         evals.append({"updates": updates, "t": time.monotonic() - t_start, "final": True, **task.evaluate()})
         log.emit("eval", **evals[-1])
     finally:
