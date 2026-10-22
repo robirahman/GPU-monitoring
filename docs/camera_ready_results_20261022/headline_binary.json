@@ -1,0 +1,40 @@
+{
+  "tier": "A_camera_ready",
+  "window_sec": 30.0,
+  "stride_sec": 15.0,
+  "results": [
+    {
+      "variant": "published (leaky, job labels)",
+      "windows": 33333,
+      "workloads": 210,
+      "folds": 5,
+      "accuracy": 0.871991003623038,
+      "std": 0.08458424664440779,
+      "training_share": 0.5335853358533585
+    },
+    {
+      "variant": "causal, job labels",
+      "windows": 33333,
+      "workloads": 210,
+      "folds": 5,
+      "accuracy": 0.857802062789124,
+      "std": 0.09994456840975512,
+      "training_share": 0.5335853358533585
+    },
+    {
+      "variant": "causal, window labels",
+      "windows": 24546,
+      "workloads": 141,
+      "folds": 5,
+      "accuracy": 0.841367343364648,
+      "std": 0.07065842629878347,
+      "training_share": 0.3601401450338141
+    },
+    {
+      "variant": "causal, window labels, steps-only",
+      "windows": 0,
+      "accuracy": null,
+      "note": "not enough labelled windows to score"
+    }
+  ]
+}

@@ -75,52 +75,107 @@ bites where the paper reports its weakest numbers.
 
 STEP logging was added on 2026-07-24, after every tier A run had been
 collected. Of tier A's 1,371 jobs, 375 are mixed-work -- 9,185 windows, the
-whole adversarial table -- and **none has a STEP log**.
+whole adversarial table -- and **none has a STEP log**. Nor is there anything
+else to mine: of 1,739 launcher logs, 1,217 carry `STEP` lines, 522 carry no
+work evidence at all, and **none** carries the per-30 s progress record without
+also carrying STEP lines.
 
-`classifier/schedule_reconstruction.py` recovers what the schedule allows:
-strategy L trains on batch indices 0, N, 2N, ... with batch 0 at the start of
-the run, and a batch rate measured from reference logs of the *same cell*
-places those steps. The rate is carried as an interval and a window is labelled
-only where its endpoints agree.
+`classifier/schedule_reconstruction.py` recovers what the schedule allows.
+Strategy L trains on batch indices 0, N, 2N, ... with batch 0 at the start of
+the run, and a batch rate measured from a reference log places those steps. The
+rate is carried as an interval and a window is labelled only where its
+endpoints agree.
 
-| cell | windows | reconstructed as inference | share |
-| :-- | --: | --: | --: |
-| `adversarial_L_diluted_10` | 253 | 240 | 94.9% |
-| `adversarial_L_diluted_20` | 145 | 138 | 95.2% |
+The reference has to match on **both** the cell and the device. The rate is a
+property of the run, not of the schedule: `L_diluted_10` and its 8-worker
+sibling differ by three orders of magnitude, and the camera-ready
+`L_diluted_10` cell ran on six GPU models of which only the A100 has a logged
+sibling. Borrowing across either axis relocates every reconstructed step.
 
-Every one of those 378 windows is currently scored as a missed detection. They
-are a substantial part of what Round 3's 52-60% measures.
+| cell | device | windows | reconstructed |
+| :-- | :-- | --: | --: |
+| `adversarial_L_diluted_10` | A100-SXM4-80GB | 20 | 1 training, 19 inference |
+| `adversarial_L_diluted_20` | A100-SXM4-80GB | 20 | 1 training, 19 inference |
 
-**The remaining 8,787 windows (95.7%) stay unresolved.** `adversarial_composite_*`,
-`adversarial_N_grad_accum_*`, `adversarial_M_composite_memmin_*`,
-`whitebox_diluted_*`, `whitebox_lora_*`, `dilution_sweep_N*` and
-`adversarial_L_diluted_5` have neither a STEP log nor a reference run whose
-rate would place their steps. Their per-window truth is not recoverable from
-what was recorded, and the module refuses rather than guessing.
+**40 of 9,185 windows.** The other 9,145 stay unresolved: their cell has no
+logged sibling on their device, or is not deterministic in the batch index at
+all (`F_interleave` is phase-interleaved, `I_stochastic` is stochastic). The
+module refuses rather than guessing.
 
-Three ways forward, in order of what they cost:
+> An earlier revision of this document reported 398 recovered windows. That
+> figure applied the A100 batch rate to the same cell on the RTX 5080, B200,
+> H200, MI300X and RX 9070 XT. The device match is now required and the correct
+> figure is 40.
 
-1. Report the adversarial tables as **run-level** detection, which is what they
-   have always measured, and say so in the caption.
-2. Extend the reconstruction. `adversarial_composite_<pct>` and
-   `adversarial_N_grad_accum_<k>` are also deterministic; they need a reference
-   run with STEP logging to fix their rate.
-3. Re-collect those families with logging, as the rebuttal already did for
-   `L_diluted`, `F_interleave` and `I_stochastic`.
+## 5. The strategy-L cells are dataloader-starved, and it is severe
 
-## 5. A workload-validity problem these runs surfaced
+`adversarial_L_diluted_10` on an A100-SXM4-80GB, running the exact camera-ready
+command (`--strategy L --duration 300 --dilution 10 --batch-size 128`), reports
+in its own summary line:
 
-The reference runs for `adversarial_L_diluted_10` are dataloader-starved.
-`L_diluted_10_rep1` completed **4 batches in 300 s** (~70 s each) while its
-8-worker sibling `L_diluted_10_mw8_rep1` completed **4,647**. At four batches a
-1-in-10 schedule takes exactly one gradient step, so the run is a nearly idle
-GPU with one step in it rather than training diluted to 10%.
+```
+352s: 512 samples, 1 img/s, train=1, infer=3
+Strategy L complete. 512 samples (1 img/s), train_batches=1, infer_batches=3, train_frac=25.0%
+```
 
-That is independent of labelling and it affects what the cell demonstrates.
-Whatever is decided about the labels, the camera-ready should not describe
-these runs as 10%-diluted training without saying what they actually did.
+Four batches in 352 seconds. Its 8-worker sibling did **1,939 img/s** -- about
+2,000x faster -- on the same device.
 
-## 6. Other corrections in this branch
+`workloads/adversarial_round3.py:219` makes this explicit: `--num-workers`
+defaults to 0 "to preserve the behaviour every existing corpus run had", and
+runs with workers get a distinct label so they are not pooled with the
+`num_workers=0` runs. So the starvation is known and deliberate as a corpus
+property. What it means for the paper is less comfortable:
+
+- The cell is not training diluted to 10%. It is a near-idle GPU that takes one
+  gradient step, and the program itself reports `train_frac=25.0%`.
+- A detector that misses it is missing one gradient step in six minutes of idle,
+  which is a much weaker claim than "dilution defeats the classifier".
+- Round 3's 52-60% and Table 7's `L_diluted` row are measured on these runs.
+
+Whatever is decided about labels, the camera-ready should not describe these as
+10%-diluted training without saying what they actually did.
+
+## 6. What re-runs would buy
+
+`scripts/plan_step_log_reruns.py` enumerates the (cell, device) pairs that each
+need one logged reference run. Three reps per pair gives a rate interval rather
+than a point estimate, which is what the reconstruction consumes.
+
+| device | pairs | tier A jobs | windows unlocked | GPU-hours |
+| :-- | --: | --: | --: | --: |
+| GeForce RTX 5080 | 46 | 113 | 1,886 | 11.1 |
+| AMD RX 9070 XT | 28 | 104 | 1,963 | 7.3 |
+| B200 | 20 | 21 | 1,212 | 3.8 |
+| H200 | 19 | 22 | 1,325 | 5.1 |
+| A100-SXM4-80GB | 17 | 17 | 1,273 | 3.9 |
+| AMD Instinct MI300X VF | 14 | 42 | 843 | 3.8 |
+| H100 NVL | 14 | 31 | 328 | 2.0 |
+| GeForce RTX 5090 | 14 | 14 | 269 | 3.7 |
+| RTX 4050 Laptop | 9 | 9 | 0 | 0.1 |
+| **total** | **181** | **373** | **9,099** | **40.5** |
+
+Forty GPU-hours recovers per-window truth for essentially the entire
+camera-ready adversarial table. Two of the nine devices are local machines
+(RTX 5080 desktop, RTX 4050 laptop: 55 pairs, 11.1 GPU-hours) and cost nothing
+but time; the AMD parts need the non-GCP provider.
+
+Three caveats:
+
+1. A re-run measures the rate of *a* run of that cell on that device, not of
+   the archived run. For a dataloader-bound cell the rate is set by the host
+   CPU, so a re-run on a different host measures a different bottleneck. Run
+   the reference on the same machine where one still exists, and record the
+   host in the log.
+2. It only helps cells deterministic in the batch index. `F_interleave`,
+   `I_stochastic`, `composite_*` and `M_composite_memmin_*` need their own
+   schedule model, or a re-run that simply emits STEP lines directly -- which
+   is strictly better and costs the same.
+3. The cheapest version of all of this is to re-run with STEP logging enabled
+   and skip the reconstruction entirely. The reconstruction exists because the
+   archived runs cannot be re-run; anything you actually re-run should just log.
+
+## 7. Other corrections in this branch
 
 - `run_level_detection.per_run_sequences` called a run training by its **first**
   window's label, so a diluted job that opened on inference became a benign run

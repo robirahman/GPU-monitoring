@@ -541,7 +541,13 @@ def assign_work_labels(rows, intervals, workload_label, objective):
         # and a measured batch rate places those in time. Camera-ready runs all
         # predate STEP logging, so this is the only per-window truth they have.
         from classifier.schedule_reconstruction import reconstruct_labels
-        reconstructed, _ = reconstruct_labels(workload_label, starts, ends, float(starts.min()))
+        # The batch rate is a property of the device as much as of the cell, so
+        # the reference run has to match both. Windows carry the device they
+        # came from; without it the reconstruction declines rather than
+        # borrowing another GPU's rate.
+        hardware = rows[0].get("gpu_name") if isinstance(rows[0], dict) else None
+        reconstructed, _ = reconstruct_labels(workload_label, starts, ends,
+                                              float(starts.min()), hardware)
         work = program_work(workload_label)
         nan = [np.nan] * len(rows)
         if reconstructed is None:

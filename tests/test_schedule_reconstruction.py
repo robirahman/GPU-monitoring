@@ -16,6 +16,7 @@ from classifier.schedule_reconstruction import (dilution_factor, reconstruct_lab
                                                 reference_rates)
 
 T0 = 0.0
+A100 = "NVIDIA A100-SXM4-80GB"   # the only device with logged diluted siblings
 
 
 def windows(window_sec, n, t0=T0):
@@ -41,12 +42,20 @@ class DeferralTests(unittest.TestCase):
     def test_single_kind_cells_defer_to_the_program_label(self):
         starts, ends = windows(30.0, 6)
         for label in ("dilution_sweep_inference", "dilution_sweep_N1", "train_resnet50"):
-            labels, meta = reconstruct_labels(label, starts, ends, T0)
+            labels, meta = reconstruct_labels(label, starts, ends, T0, A100)
             self.assertIsNone(labels, f"{label}: {meta['reason']}")
+
+    def test_refuses_to_borrow_another_device_s_rate(self):
+        """The camera-ready L_diluted_10 ran on six GPU models; one has a log."""
+        starts, ends = windows(30.0, 6)
+        for hardware in ("GeForce RTX 5080", "B200", "AMD Instinct MI300X VF", "H200"):
+            labels, meta = reconstruct_labels("adversarial_L_diluted_10", starts, ends,
+                                              T0, hardware)
+            self.assertIsNone(labels, f"{hardware}: {meta['reason']}")
 
     def test_refuses_a_cell_with_no_measured_rate(self):
         starts, ends = windows(30.0, 6)
-        labels, meta = reconstruct_labels("whitebox_lora_N5", starts, ends, T0)
+        labels, meta = reconstruct_labels("whitebox_lora_N5", starts, ends, T0, A100)
         self.assertIsNone(labels)
         self.assertIn("batch rate", meta["reason"])
 
@@ -61,11 +70,11 @@ class ScheduleTests(unittest.TestCase):
         so one window of the run is training and the rest are pure inference --
         yet every one of them is currently scored as a training miss.
         """
-        lo, hi, n_runs = reference_rates("adversarial_L_diluted_10")
+        lo, hi, n_runs = reference_rates("adversarial_L_diluted_10", A100)
         self.assertGreater(n_runs, 0, "the reference logs for this cell are missing")
         self.assertLess(hi, 1.0, "expected a dataloader-starved reference run")
         starts, ends = windows(30.0, 18)
-        labels, meta = reconstruct_labels("adversarial_L_diluted_10", starts, ends, T0)
+        labels, meta = reconstruct_labels("adversarial_L_diluted_10", starts, ends, T0, A100)
         self.assertIsNotNone(labels)
         self.assertEqual(int((labels == "ml_training").sum()), 1)
         self.assertEqual(int((labels == "ml_inference").sum()), 17)
@@ -77,7 +86,7 @@ class ScheduleTests(unittest.TestCase):
         The correction has to bite only where the evidence says it should.
         """
         starts, ends = windows(30.0, 18)
-        labels, _ = reconstruct_labels("adversarial_L_diluted_10_mw8", starts, ends, T0)
+        labels, _ = reconstruct_labels("adversarial_L_diluted_10_mw8", starts, ends, T0, A100)
         self.assertIsNotNone(labels)
         self.assertTrue((labels == "ml_training").all())
 
@@ -85,7 +94,7 @@ class ScheduleTests(unittest.TestCase):
         """batch_idx=0 always trains and always starts the run."""
         for label in ("adversarial_L_diluted_10", "adversarial_L_diluted_20"):
             starts, ends = windows(30.0, 18)
-            labels, _ = reconstruct_labels(label, starts, ends, T0)
+            labels, _ = reconstruct_labels(label, starts, ends, T0, A100)
             self.assertEqual(labels[0], "ml_training", label)
 
 
@@ -96,7 +105,7 @@ class UncertaintyTests(unittest.TestCase):
 
         starts, ends = windows(30.0, 40)
         with mock.patch.object(sr, "reference_rates", return_value=(0.30, 0.45, 2)):
-            labels, meta = sr.reconstruct_labels("adversarial_L_diluted_10", starts, ends, T0)
+            labels, meta = sr.reconstruct_labels("adversarial_L_diluted_10", starts, ends, T0, A100)
         self.assertIsNotNone(labels)
         self.assertTrue(any(v is None for v in labels),
                         "a wide rate interval must leave some window unadjudicated")

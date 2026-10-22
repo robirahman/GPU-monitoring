@@ -35,7 +35,10 @@ import numpy as np
 import pandas as pd
 
 from classifier.data_sources import ROOT
-from classifier.window_labels import default_log_paths, parse_work_log
+from classifier.window_labels import default_log_paths, parse_work_log, read_log_text
+
+# The collector writes the device into the launcher log header.
+LOG_GPU = re.compile(r"Telemetry started \(gpu=([^,]+),")
 
 # Cells whose schedule is deterministic in the batch index. The trailing group
 # is N, the number of batches per gradient step.
@@ -51,22 +54,40 @@ def dilution_factor(label):
     return int(m[1]) if m else None
 
 
-def reference_rates(label, root=ROOT):
-    """(low, high, n_runs) batches/second from STEP logs of the SAME cell.
+def gpu_family(name):
+    """Normalise a device name to the family the manifest and filenames use."""
+    name = str(name).strip()
+    if "TPU" in name:
+        return "Google TPU " + name.split("TPU")[-1].strip().split("-")[0]
+    if "AMD" in name or "Radeon" in name:
+        return name.replace("AMD Radeon ", "AMD ").strip()
+    return name.replace("NVIDIA ", "").strip()
 
-    Same cell, not same family: `L_diluted_10` and `L_diluted_10_mw8` are the
-    same dilution at rates three orders of magnitude apart, and borrowing one
-    for the other would relocate every reconstructed step.
+
+def reference_rates(label, hardware, root=ROOT):
+    """(low, high, n_runs) batches/second from STEP logs of the SAME cell AND device.
+
+    Same cell, because `L_diluted_10` and `L_diluted_10_mw8` are the same
+    dilution at rates three orders of magnitude apart. Same device, because the
+    rate is a property of the run rather than of the schedule: the camera-ready
+    `L_diluted_10` cell ran on six GPU models and only the A100 one has a
+    logged sibling. Borrowing across either axis relocates every reconstructed
+    step, so both are required rather than preferred.
     """
+    if not hardware:
+        return None, None, 0
+    want_gpu = gpu_family(hardware)
     # Telemetry calls the cell `adversarial_L_diluted_10`; its launcher log is
     # `L_diluted_10_rep1.log.gz`, optionally under a `<session>__<host>__` prefix.
     stem_base = re.sub(r"^adversarial_", "", str(label))
     want = re.compile(rf"^{re.escape(stem_base)}_rep\d+$")
     rates = []
     for path in default_log_paths(Path(root)):
-        stem = Path(path).name.split(".log")[0]
-        stem = stem.split("__")[-1]
+        stem = Path(path).name.split(".log")[0].split("__")[-1]
         if not want.match(stem):
+            continue
+        header = LOG_GPU.search(read_log_text(path))
+        if not header or gpu_family(header[1]) != want_gpu:
             continue
         ts = parse_work_log(path)["events"].ts.to_numpy(dtype=float)
         ts = np.sort(ts[np.isfinite(ts)])
@@ -88,7 +109,7 @@ def _labels_at_rate(starts, ends, t0, n, rate):
     return (t0 + first * period) < ends
 
 
-def reconstruct_labels(label, window_starts, window_ends, t0, root=ROOT):
+def reconstruct_labels(label, window_starts, window_ends, t0, hardware=None, root=ROOT):
     """Per-window labels for one diluted run, or None where not recoverable.
 
     Returns (labels, meta). `labels` is an object array of "ml_training",
@@ -107,9 +128,10 @@ def reconstruct_labels(label, window_starts, window_ends, t0, root=ROOT):
         return None, dict(reason="not a deterministically diluted cell")
     if n == 1:
         return None, dict(reason="N=1 trains on every batch; the program label settles it")
-    lo, hi, n_runs = reference_rates(label, root)
+    lo, hi, n_runs = reference_rates(label, hardware, root)
     if lo is None:
-        return None, dict(reason=f"no STEP log measures the batch rate of {label}")
+        return None, dict(reason=f"no STEP log measures the batch rate of {label} "
+                                 f"on {hardware or 'this device'}")
     at_lo = _labels_at_rate(starts, ends, t0, n, lo)
     at_hi = _labels_at_rate(starts, ends, t0, n, hi)
     agree = at_lo == at_hi
@@ -132,9 +154,10 @@ def reconstruct_frame(windows, root=ROOT):
     out["reconstructed_label"] = None
     notes = {}
     for (label, run_id), g in out.groupby(["workload_label", "run_id"], sort=False):
+        hardware = g["gpu_name"].iloc[0] if "gpu_name" in g else None
         labels, meta = reconstruct_labels(label, g.window_start.to_numpy(float),
                                           g.window_end.to_numpy(float),
-                                          float(g.window_start.min()), root)
+                                          float(g.window_start.min()), hardware, root)
         notes[str(label)] = meta
         if labels is None:
             continue
