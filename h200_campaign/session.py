@@ -95,6 +95,17 @@ def stop_sensors(procs):
     return rc
 
 
+def _call(cmd, env, timeout):
+    """subprocess.call with a timeout, so a hung helper cannot stall the campaign."""
+    p = subprocess.Popen(cmd, cwd=REPO, env=env, start_new_session=True)
+    try:
+        return p.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(p.pid, signal.SIGKILL)
+        p.wait()
+        return "timeout"
+
+
 def emit(path: Path, run_id, job_id, event, **extra):
     rec = {"schema": 1, "run_id": run_id, "job_id": job_id, "attempt_id": "1", "stream": "orchestrator",
            "pid": os.getpid(), "event": event, "wall_ns": time.time_ns(), "mono_ns": time.monotonic_ns(),
@@ -103,6 +114,27 @@ def emit(path: Path, run_id, job_id, event, **extra):
         rec["extra"] = extra
     with open(path, "a") as f:
         f.write(json.dumps(rec, default=str) + "\n")
+
+
+def clear_stray_gpu_processes():
+    """Kill leftover campaign processes still holding the GPU (e.g. orphans of a crashed run); report them."""
+    out = subprocess.run(["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"],
+                         capture_output=True, text=True).stdout.split()
+    killed = []
+    for pid in out:
+        try:
+            cmd = Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+        except OSError:
+            continue
+        if "gpu-monitoring" in cmd or "h200_campaign" in cmd:
+            try:
+                os.kill(int(pid), signal.SIGKILL)
+                killed.append({"pid": int(pid), "cmd": cmd[:300]})
+            except OSError:
+                pass
+    if killed:
+        time.sleep(5)
+    return killed
 
 
 def run_one(spec: dict, plan: dict, root: Path, sensors_on: bool):
@@ -127,14 +159,17 @@ def run_one(spec: dict, plan: dict, root: Path, sensors_on: bool):
            "block": plan.get("block"), "day": plan.get("day"), "collection_type": spec.get("collection_type"),
            "attack": spec.get("attack"), "extra": spec.get("extra"),
            "started_wall_ns": time.time_ns()}
-    emit(ev, run_id, job_id, "run_start", label=spec["label"])
+    stray = clear_stray_gpu_processes()
+    if stray:
+        man["stray_gpu_processes_killed"] = stray
+    emit(ev, run_id, job_id, "run_start", label=spec["label"], stray_killed=len(stray))
     procs = start_sensors(d, "c", cfg) if sensors_on else {}
     if sensors_on and not (d / "scope_ready.json").exists():
         man["failure"] = "scope logger did not start"
     marker = [PY, "-m", "h200_campaign.markers", "--events", str(ev)]
     if sensors_on:
         time.sleep(3)
-        man["marker_start_rc"] = subprocess.call(marker + ["--tag", "start"], cwd=REPO, env=env)
+        man["marker_start_rc"] = _call(marker + ["--tag", "start"], env, 300)
         time.sleep(3)
     cmd = list(WORKLOADS[spec.get("workload", spec["kind"])]) + spec.get("argv", [])
     if spec["kind"] == "timeline":
@@ -161,14 +196,17 @@ def run_one(spec: dict, plan: dict, root: Path, sensors_on: bool):
     man["workload_wall_s"] = time.monotonic() - t0
     if sensors_on:
         time.sleep(3)
-        man["marker_end_rc"] = subprocess.call(marker + ["--tag", "end"], cwd=REPO, env=env)
+        man["marker_end_rc"] = _call(marker + ["--tag", "end"], env, 300)
         time.sleep(3)
         man["sensor_rc"] = stop_sensors(procs)
-        v = subprocess.run([PY, "-m", "h200_campaign.validate", str(d)], cwd=REPO, env=env,
-                           capture_output=True, text=True)
-        man["validate_rc"] = v.returncode
-        if v.returncode != 0:
-            (d / "validate.err").write_text(v.stderr[-20000:])
+        try:
+            v = subprocess.run([PY, "-m", "h200_campaign.validate", str(d)], cwd=REPO, env=env,
+                               capture_output=True, text=True, timeout=3600)
+            man["validate_rc"] = v.returncode
+            if v.returncode != 0:
+                (d / "validate.err").write_text(v.stderr[-20000:])
+        except subprocess.TimeoutExpired:
+            man["validate_rc"] = "timeout"
     emit(ev, run_id, job_id, "run_end")
     man["ended_wall_ns"] = time.time_ns()
     man["ok"] = (rc == 0 and "failure" not in man and (not sensors_on or man.get("validate_rc") == 0))

@@ -20,4 +20,6 @@ for f in $($PY -c "import json,sys; print(' '.join(json.load(open('$PLANS/campai
     echo "session $sid exited rc=$rc (try $try)" >> ~/campaign/logs/driver.log
   done
 done
-echo "{\"state\": \"campaign_done\", \"t\": \"$(date -u +%FT%TZ)\"}" > $STATUS
+$PY -m h200_campaign.campaign_status --plans $PLANS > ~/campaign/FINAL_STATUS.json 2>&1
+bash ~/gpu-monitoring/h200_campaign/export_summaries.sh ~/campaign/exports/summaries_final.tgz >> ~/campaign/logs/driver.log 2>&1
+echo "{\"state\": \"campaign_done\", \"t\": \"$(date -u +%FT%TZ)\", \"final_status\": \"~/campaign/FINAL_STATUS.json\", \"export\": \"~/campaign/exports/summaries_final.tgz\"}" > $STATUS
