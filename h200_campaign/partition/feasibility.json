@@ -1,0 +1,605 @@
+{
+ "schema": 1,
+ "host": "amodo-gigabyte-6 (H200 NVL)",
+ "date": "2026-10-22",
+ "attempts": [
+  {
+   "attempt": 1,
+   "valid": false,
+   "invalidated_because": "environment regression introduced while installing candidate packages: diffusers/torch_geometric upgraded huggingface_hub to 1.33, which transformers 4.57 refuses to import (all transformers-based candidates failed at import); qiskit_aer hit a static-TLS libgomp load error. Neither is a property of the candidate lineages. Fixed by pinning huggingface_hub 0.36.2 with diffusers 0.35.2 and preloading Aer's bundled libgomp; all candidates were then rechecked identically.",
+   "results": [
+    {
+     "lineage": "t5",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.5,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "swin",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "efficientnet",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "pythia",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "olmo",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "falcon",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "granite",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "mamba",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "gnn_gin",
+     "feasible": true,
+     "losses": [
+      0.4863,
+      1.1742,
+      0.4727
+     ],
+     "step_s": [
+      0.145,
+      0.004,
+      0.003
+     ],
+     "graphs": 256,
+     "check_s": 9.0,
+     "peak_mem_gb": 0.12
+    },
+    {
+     "lineage": "wav2vec2",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.4,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "dit",
+     "feasible": false,
+     "error": "RuntimeError: Failed to import diffusers.pipelines.dit.pipeline_dit because of the following error (look up to see its traceback):\nFailed to import diffusers.models.autoencoders.autoencoder_kl because of the following error (look up to see its traceback):\nFailed to import diffusers.loaders.peft because of the following error (look up to see its traceback):\nhuggingface-hub>=0.34.0,<1.0 is required ",
+     "check_s": 1.9,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "bark",
+     "feasible": false,
+     "error": "ImportError: huggingface-hub>=0.34.0,<1.0 is required for a normal functioning of this module, but found huggingface-hub==1.33.0.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main",
+     "check_s": 1.1,
+     "peak_mem_gb": 0.0
+    },
+    {
+     "lineage": "openmm",
+     "feasible": true,
+     "atoms": 21384,
+     "platform": "CUDA",
+     "steps_per_s": 3791.6,
+     "potential_kj_mol": -290543.5,
+     "check_s": 4.1
+    },
+    {
+     "lineage": "rapids",
+     "feasible": true,
+     "groupby_join_s": 0.04,
+     "join_rows": 20000000,
+     "pagerank_s": 0.02,
+     "pagerank_sum": 1.0,
+     "check_s": 4.3
+    },
+    {
+     "lineage": "qiskit_aer",
+     "feasible": false,
+     "error": "ImportError: /home/tenant/venvs/nonml/lib/python3.12/site-packages/qiskit_aer/backends/../../qiskit_aer_gpu.libs/libgomp-6a29c32d.so.1.0.0: cannot allocate memory in static TLS block",
+     "check_s": 0.2
+    },
+    {
+     "lineage": "cupy_montecarlo",
+     "feasible": true,
+     "mc_price": 7.1278,
+     "black_scholes": 7.1281,
+     "mc_s": 0.809,
+     "check_s": 0.9
+    }
+   ]
+  },
+  {
+   "attempt": 2,
+   "valid": true,
+   "results": [
+    {
+     "lineage": "t5",
+     "feasible": true,
+     "losses": [
+      1.7208,
+      1.5318,
+      1.322
+     ],
+     "step_s": [
+      0.352,
+      0.097,
+      0.094
+     ],
+     "sample_output": "Amanda baked cookies and will bring Jerry some tomorrow.",
+     "check_s": 28.9,
+     "peak_mem_gb": 16.42
+    },
+    {
+     "lineage": "swin",
+     "feasible": true,
+     "losses": [
+      4.6255,
+      4.4429,
+      4.1396
+     ],
+     "step_s": [
+      0.346,
+      0.04,
+      0.039
+     ],
+     "infer_logits_shape": [
+      8,
+      100
+     ],
+     "check_s": 13.6,
+     "peak_mem_gb": 5.03
+    },
+    {
+     "lineage": "efficientnet",
+     "feasible": true,
+     "losses": [
+      4.6211,
+      4.5193,
+      4.3872
+     ],
+     "step_s": [
+      10.399,
+      0.019,
+      0.018
+     ],
+     "infer_logits_shape": [
+      8,
+      100
+     ],
+     "check_s": 19.5,
+     "peak_mem_gb": 2.86
+    },
+    {
+     "lineage": "pythia",
+     "feasible": true,
+     "losses": [
+      2.0128,
+      1.9602,
+      1.8919
+     ],
+     "step_s": [
+      0.913,
+      0.047,
+      0.044
+     ],
+     "sample_output": "Once upon a time, there was a man named\n\nHugh. He was a good man, and he had a good heart.",
+     "lora": true,
+     "check_s": 55.8,
+     "peak_mem_gb": 3.86
+    },
+    {
+     "lineage": "olmo",
+     "feasible": true,
+     "losses": [
+      1.4404,
+      1.4148,
+      1.3626
+     ],
+     "step_s": [
+      1.178,
+      0.07,
+      0.069
+     ],
+     "sample_output": "Once upon a time, in a land far, far away, there was a kingdom called the Kingdom of the Seven Stars. It was ruled",
+     "lora": true,
+     "check_s": 117.7,
+     "peak_mem_gb": 9.57
+    },
+    {
+     "lineage": "falcon",
+     "feasible": true,
+     "losses": [
+      1.4851,
+      1.4728,
+      1.4467
+     ],
+     "step_s": [
+      1.514,
+      0.067,
+      0.065
+     ],
+     "sample_output": "Once upon a time, in a small town named Harmonyville, there lived two best friends - Timmy the Tortoise and Sally the Squirrel.",
+     "lora": true,
+     "check_s": 70.0,
+     "peak_mem_gb": 10.59
+    },
+    {
+     "lineage": "granite",
+     "feasible": true,
+     "losses": [
+      1.1836,
+      1.0745,
+      0.9207
+     ],
+     "step_s": [
+      1.098,
+      0.128,
+      0.127
+     ],
+     "sample_output": "Once upon a time, there was a little girl named Lily. She loved to play with her toy car. One day",
+     "lora": true,
+     "check_s": 107.0,
+     "peak_mem_gb": 15.72
+    },
+    {
+     "lineage": "mamba",
+     "feasible": true,
+     "losses": [
+      1.801,
+      1.4695,
+      1.2073
+     ],
+     "step_s": [
+      8.725,
+      7.81,
+      7.819
+     ],
+     "sample_output": "Once upon a time, there was a little girl named Alice. She was very happy. One day, she saw a big, fat,",
+     "lora": false,
+     "check_s": 52.4,
+     "peak_mem_gb": 51.72
+    },
+    {
+     "lineage": "gnn_gin",
+     "feasible": true,
+     "losses": [
+      1.5478,
+      0.7581,
+      0.452
+     ],
+     "step_s": [
+      0.158,
+      0.004,
+      0.003
+     ],
+     "graphs": 256,
+     "check_s": 4.4,
+     "peak_mem_gb": 0.12
+    },
+    {
+     "lineage": "wav2vec2",
+     "feasible": true,
+     "word_overlap": 1.0,
+     "sample_output": "concord returned to its place amidst the tents",
+     "check_s": 28.7,
+     "peak_mem_gb": 0.91
+    },
+    {
+     "lineage": "dit",
+     "feasible": true,
+     "images": 2,
+     "size": [
+      256,
+      256
+     ],
+     "gen_s": 0.75,
+     "check_s": 64.4,
+     "peak_mem_gb": 1.91
+    },
+    {
+     "lineage": "bark",
+     "feasible": true,
+     "audio_samples": 123520,
+     "audio_s": 5.15,
+     "gen_s": 3.66,
+     "check_s": 46.5,
+     "peak_mem_gb": 0.94
+    },
+    {
+     "lineage": "openmm",
+     "feasible": true,
+     "atoms": 21384,
+     "platform": "CUDA",
+     "steps_per_s": 5754.4,
+     "potential_kj_mol": -290678.1,
+     "check_s": 2.0
+    },
+    {
+     "lineage": "rapids",
+     "feasible": true,
+     "groupby_join_s": 0.04,
+     "join_rows": 20000000,
+     "pagerank_s": 0.02,
+     "pagerank_sum": 1.0,
+     "check_s": 1.8
+    },
+    {
+     "lineage": "qiskit_aer",
+     "feasible": true,
+     "qubits": 28,
+     "device": "GPU",
+     "sim_s": 0.59,
+     "check_s": 0.8
+    },
+    {
+     "lineage": "cupy_montecarlo",
+     "feasible": true,
+     "mc_price": 7.1299,
+     "black_scholes": 7.1281,
+     "mc_s": 0.28,
+     "check_s": 0.4
+    }
+   ]
+  }
+ ],
+ "results": {
+  "t5": {
+   "lineage": "t5",
+   "feasible": true,
+   "losses": [
+    1.7208,
+    1.5318,
+    1.322
+   ],
+   "step_s": [
+    0.352,
+    0.097,
+    0.094
+   ],
+   "sample_output": "Amanda baked cookies and will bring Jerry some tomorrow.",
+   "check_s": 28.9,
+   "peak_mem_gb": 16.42
+  },
+  "swin": {
+   "lineage": "swin",
+   "feasible": true,
+   "losses": [
+    4.6255,
+    4.4429,
+    4.1396
+   ],
+   "step_s": [
+    0.346,
+    0.04,
+    0.039
+   ],
+   "infer_logits_shape": [
+    8,
+    100
+   ],
+   "check_s": 13.6,
+   "peak_mem_gb": 5.03
+  },
+  "efficientnet": {
+   "lineage": "efficientnet",
+   "feasible": true,
+   "losses": [
+    4.6211,
+    4.5193,
+    4.3872
+   ],
+   "step_s": [
+    10.399,
+    0.019,
+    0.018
+   ],
+   "infer_logits_shape": [
+    8,
+    100
+   ],
+   "check_s": 19.5,
+   "peak_mem_gb": 2.86
+  },
+  "pythia": {
+   "lineage": "pythia",
+   "feasible": true,
+   "losses": [
+    2.0128,
+    1.9602,
+    1.8919
+   ],
+   "step_s": [
+    0.913,
+    0.047,
+    0.044
+   ],
+   "sample_output": "Once upon a time, there was a man named\n\nHugh. He was a good man, and he had a good heart.",
+   "lora": true,
+   "check_s": 55.8,
+   "peak_mem_gb": 3.86
+  },
+  "olmo": {
+   "lineage": "olmo",
+   "feasible": true,
+   "losses": [
+    1.4404,
+    1.4148,
+    1.3626
+   ],
+   "step_s": [
+    1.178,
+    0.07,
+    0.069
+   ],
+   "sample_output": "Once upon a time, in a land far, far away, there was a kingdom called the Kingdom of the Seven Stars. It was ruled",
+   "lora": true,
+   "check_s": 117.7,
+   "peak_mem_gb": 9.57
+  },
+  "falcon": {
+   "lineage": "falcon",
+   "feasible": true,
+   "losses": [
+    1.4851,
+    1.4728,
+    1.4467
+   ],
+   "step_s": [
+    1.514,
+    0.067,
+    0.065
+   ],
+   "sample_output": "Once upon a time, in a small town named Harmonyville, there lived two best friends - Timmy the Tortoise and Sally the Squirrel.",
+   "lora": true,
+   "check_s": 70.0,
+   "peak_mem_gb": 10.59
+  },
+  "granite": {
+   "lineage": "granite",
+   "feasible": true,
+   "losses": [
+    1.1836,
+    1.0745,
+    0.9207
+   ],
+   "step_s": [
+    1.098,
+    0.128,
+    0.127
+   ],
+   "sample_output": "Once upon a time, there was a little girl named Lily. She loved to play with her toy car. One day",
+   "lora": true,
+   "check_s": 107.0,
+   "peak_mem_gb": 15.72
+  },
+  "mamba": {
+   "lineage": "mamba",
+   "feasible": true,
+   "losses": [
+    1.801,
+    1.4695,
+    1.2073
+   ],
+   "step_s": [
+    8.725,
+    7.81,
+    7.819
+   ],
+   "sample_output": "Once upon a time, there was a little girl named Alice. She was very happy. One day, she saw a big, fat,",
+   "lora": false,
+   "check_s": 52.4,
+   "peak_mem_gb": 51.72
+  },
+  "gnn_gin": {
+   "lineage": "gnn_gin",
+   "feasible": true,
+   "losses": [
+    1.5478,
+    0.7581,
+    0.452
+   ],
+   "step_s": [
+    0.158,
+    0.004,
+    0.003
+   ],
+   "graphs": 256,
+   "check_s": 4.4,
+   "peak_mem_gb": 0.12
+  },
+  "wav2vec2": {
+   "lineage": "wav2vec2",
+   "feasible": true,
+   "word_overlap": 1.0,
+   "sample_output": "concord returned to its place amidst the tents",
+   "check_s": 28.7,
+   "peak_mem_gb": 0.91
+  },
+  "dit": {
+   "lineage": "dit",
+   "feasible": true,
+   "images": 2,
+   "size": [
+    256,
+    256
+   ],
+   "gen_s": 0.75,
+   "check_s": 64.4,
+   "peak_mem_gb": 1.91
+  },
+  "bark": {
+   "lineage": "bark",
+   "feasible": true,
+   "audio_samples": 123520,
+   "audio_s": 5.15,
+   "gen_s": 3.66,
+   "check_s": 46.5,
+   "peak_mem_gb": 0.94
+  },
+  "openmm": {
+   "lineage": "openmm",
+   "feasible": true,
+   "atoms": 21384,
+   "platform": "CUDA",
+   "steps_per_s": 5754.4,
+   "potential_kj_mol": -290678.1,
+   "check_s": 2.0
+  },
+  "rapids": {
+   "lineage": "rapids",
+   "feasible": true,
+   "groupby_join_s": 0.04,
+   "join_rows": 20000000,
+   "pagerank_s": 0.02,
+   "pagerank_sum": 1.0,
+   "check_s": 1.8
+  },
+  "qiskit_aer": {
+   "lineage": "qiskit_aer",
+   "feasible": true,
+   "qubits": 28,
+   "device": "GPU",
+   "sim_s": 0.59,
+   "check_s": 0.8
+  },
+  "cupy_montecarlo": {
+   "lineage": "cupy_montecarlo",
+   "feasible": true,
+   "mc_price": 7.1299,
+   "black_scholes": 7.1281,
+   "mc_s": 0.28,
+   "check_s": 0.4
+  }
+ },
+ "notes": {
+  "mamba": "feasible under the rule, but ran the slow non-fused path (7.8 s/step) without mamba-ssm kernels; if drawn, kernels must be installed before collection"
+ }
+}
