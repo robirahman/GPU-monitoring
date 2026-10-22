@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import platform
 import subprocess
@@ -55,14 +56,16 @@ class Task:
 class CifarTask(Task):
     def __init__(self, arch, bs, device, seed):
         from datasets import load_dataset
-        ds = load_dataset("uoft-cs/cifar10")
+        self.n_cls = 100 if arch == "effnet" else 10
+        ds = load_dataset("uoft-cs/cifar100" if self.n_cls == 100 else "uoft-cs/cifar10")
+        lab = "fine_label" if self.n_cls == 100 else "label"
         mean = torch.tensor([0.4914, 0.4822, 0.4465]).view(1, 3, 1, 1)
         std = torch.tensor([0.2470, 0.2435, 0.2616]).view(1, 3, 1, 1)
 
         def to(split):
             imgs = np.stack([np.asarray(im, dtype=np.uint8) for im in split["img"]])
             x = (torch.from_numpy(imgs).permute(0, 3, 1, 2).float() / 255 - mean) / std
-            return x.to(device), torch.tensor(split["label"]).to(device), imgs
+            return x.to(device), torch.tensor(split[lab]).to(device), imgs
         self.xtr, self.ytr, raw_tr = to(ds["train"])
         self.xte, self.yte, raw_te = to(ds["test"])
         self.fingerprint = {"train": f"{ds['train']._fingerprint}/sha={sha(raw_tr)}/n={len(raw_tr)}",
@@ -70,6 +73,13 @@ class CifarTask(Task):
         if arch == "mlp":
             self.model = nn.Sequential(nn.Flatten(), nn.Linear(3072, 2048), nn.ReLU(), nn.Linear(2048, 1024),
                                        nn.ReLU(), nn.Linear(1024, 512), nn.ReLU(), nn.Linear(512, 10))
+            self.lr = 0.05
+        elif arch == "effnet":
+            from transformers import AutoModelForImageClassification
+            m = AutoModelForImageClassification.from_pretrained("google/efficientnet-b0", num_labels=100,
+                                                                ignore_mismatched_sizes=True)
+            self.hf_revision = getattr(m.config, "_commit_hash", None)
+            self.model = m
             self.lr = 0.05
         else:
             import torchvision.models as tvm
@@ -80,8 +90,16 @@ class CifarTask(Task):
             self.lr = 0.1
         self.model = self.model.to(device).to(memory_format=torch.channels_last if arch != "mlp" else torch.contiguous_format)
         self.bs, self.g = bs, torch.Generator(device=device).manual_seed(seed)
-        self.revision = f"torchvision-{arch}"
+        self.revision = getattr(self, "hf_revision", None) or f"torchvision-{arch}"
         self.augment = arch != "mlp"
+        self.resize = 224 if arch == "effnet" else None
+        self.hf = arch == "effnet"
+
+    def _fwd(self, x):
+        if self.resize:
+            x = F.interpolate(x, size=self.resize, mode="bilinear", align_corners=False)
+        o = self.model(pixel_values=x) if self.hf else self.model(x)
+        return o.logits if self.hf else o
 
     def optimizer(self):
         return torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=0.9, weight_decay=5e-4, nesterov=True)
@@ -97,7 +115,7 @@ class CifarTask(Task):
     def loss(self, b):
         x, y = b
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            return F.cross_entropy(self.model(x), y)
+            return F.cross_entropy(self._fwd(x), y)
 
     def size(self, b):
         return b[0].shape[0]
@@ -106,10 +124,11 @@ class CifarTask(Task):
     def evaluate(self):
         self.model.eval()
         correct, loss, n = 0, 0.0, 0
-        for i in range(0, self.xte.shape[0], 1000):
-            x, y = self.xte[i:i + 1000], self.yte[i:i + 1000]
+        step = 250 if self.resize else 1000
+        for i in range(0, self.xte.shape[0], step):
+            x, y = self.xte[i:i + step], self.yte[i:i + step]
             with torch.autocast("cuda", dtype=torch.bfloat16):
-                o = self.model(x)
+                o = self._fwd(x)
             loss += F.cross_entropy(o.float(), y, reduction="sum").item()
             correct += (o.argmax(1) == y).sum().item()
             n += y.numel()
@@ -168,23 +187,34 @@ class BertTask(Task):
 class LoraTask(Task):
     unit = "tokens"
 
-    def __init__(self, model_name, bs, seq, device, seed, rank=16):
+    def __init__(self, model_name, bs, seq, device, seed, rank=16, dataset="wikitext", eval_tokens=65536):
         from datasets import load_dataset
         from peft import LoraConfig, get_peft_model
         from transformers import AutoModelForCausalLM, AutoTokenizer
         tok = AutoTokenizer.from_pretrained(model_name)
-        ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1")
+        if dataset == "wikitext":
+            ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1")
+            splits = {"train": ds["train"], "validation": ds["validation"]}
+        else:   # TinyStories: first 200k training stories (~40M tokens) and the validation split
+            ds = load_dataset("roneneldan/TinyStories")
+            splits = {"train": ds["train"].select(range(200_000)), "validation": ds["validation"]}
+        eos = tok.eos_token or ""
+
         def ids(split):
-            text = "\n\n".join(t for t in ds[split]["text"] if t.strip())
+            text = (eos + "\n\n").join(t for t in splits[split]["text"] if t.strip())
             return torch.tensor(tok(text, return_tensors=None)["input_ids"], dtype=torch.long)
         self.tr, self.va = ids("train").to(device), ids("validation").to(device)
-        self.fingerprint = {"train": ds["train"]._fingerprint + f"/tokens={self.tr.numel()}",
-                            "validation": ds["validation"]._fingerprint + f"/tokens={self.va.numel()}"}
+        self.fingerprint = {"train": splits["train"]._fingerprint + f"/tokens={self.tr.numel()}",
+                            "validation": splits["validation"]._fingerprint + f"/tokens={self.va.numel()}",
+                            "dataset": dataset}
+        self.eval_tokens = eval_tokens
         base = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).to(device)
         self.revision = getattr(base.config, "_commit_hash", None) or model_name
         base.gradient_checkpointing_enable()
         base.enable_input_require_grads()
-        tm = [m for m in ("q_proj", "k_proj", "v_proj", "o_proj", "qkv_proj") if any(n.endswith(m) for n, _ in base.named_modules())]
+        # every linear layer except the output head, identically for every LLM lineage
+        tm = sorted({n.split(".")[-1] for n, mod in base.named_modules() if isinstance(mod, nn.Linear)}
+                    - {"lm_head", "embed_out"})
         self.model = get_peft_model(base, LoraConfig(r=rank, lora_alpha=2 * rank, lora_dropout=0.05,
                                                      target_modules=tm, task_type="CAUSAL_LM"))
         self.bs, self.seq, self.lr = bs, seq, 2e-4
@@ -205,10 +235,10 @@ class LoraTask(Task):
         return x.numel()
 
     @torch.no_grad()
-    def evaluate(self, max_tokens=65536):
+    def evaluate(self):
         self.model.eval()
         loss, n = 0.0, 0
-        v = self.va[:max_tokens]
+        v = self.va[:self.eval_tokens]
         for i in range(0, v.numel() - self.seq, self.seq * 8):
             chunk = v[i:i + self.seq * 8]
             x = chunk[: (chunk.numel() // self.seq) * self.seq].view(-1, self.seq)
@@ -216,6 +246,9 @@ class LoraTask(Task):
             n += x.numel()
         self.model.train()
         return {"val_loss": loss / n, "val_ppl": float(np.exp(loss / n)), "val_n": n}
+
+    def trainable_state(self):
+        return {k: v for k, v in self.model.state_dict().items() if "lora_" in k}
 
 
 # --------------------------------------------------------------------------- filler
@@ -245,9 +278,16 @@ def set_power_cap(watts):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--family", required=True, choices=["mlp", "resnet", "bert", "lora"])
+    ap.add_argument("--family", required=True, choices=["mlp", "resnet", "bert", "lora", "effnet"])
+    ap.add_argument("--dataset", default="wikitext", choices=["wikitext", "tinystories"], help="lora corpus")
+    ap.add_argument("--eval-tokens", type=int, default=65536)
+    ap.add_argument("--lr-schedule", default="constant", choices=["constant", "cosine"],
+                    help="cosine: linear warmup then cosine decay over --updates (needs a finite update budget)")
+    ap.add_argument("--warmup-frac", type=float, default=0.03)
+    ap.add_argument("--ckpt-every-sec", type=float, default=0.0, help="save trainable weights this often (file I/O)")
+    ap.add_argument("--ckpt-dir", default=None)
     ap.add_argument("--model", default="Qwen/Qwen2.5-0.5B", help="lora base model")
-    ap.add_argument("--mode", default="ordinary", choices=["ordinary", "diluted", "interleave", "shape"])
+    ap.add_argument("--mode", default="ordinary", choices=["ordinary", "diluted", "interleave", "shape", "cover_only"])
     ap.add_argument("--updates", type=int, default=10**9)
     ap.add_argument("--duration", type=float, default=300.0, help="wall seconds of the training loop")
     ap.add_argument("--batch-size", type=int, default=None)
@@ -277,21 +317,29 @@ def main():
     torch.backends.cudnn.benchmark = True
     torch.backends.cuda.matmul.allow_tf32 = True
     dev = "cuda"
-    bs = args.batch_size or {"mlp": 512, "resnet": 256, "bert": 32, "lora": 8}[args.family]
+    bs = args.batch_size or {"mlp": 512, "resnet": 256, "bert": 32, "lora": 8, "effnet": 128}[args.family]
     log.emit("load_start")
-    if args.family in ("mlp", "resnet"):
+    if args.family in ("mlp", "resnet", "effnet"):
         task = CifarTask(args.family, bs, dev, args.seed)
     elif args.family == "bert":
         task = BertTask(bs, dev, args.seed)
     else:
-        task = LoraTask(args.model, bs, args.seq_len, dev, args.seed)
+        task = LoraTask(args.model, bs, args.seq_len, dev, args.seed, dataset=args.dataset, eval_tokens=args.eval_tokens)
     opt = task.optimizer()
+    sched = None
+    if args.lr_schedule == "cosine":
+        assert args.updates < 10**8, "cosine schedule needs --updates"
+        warm = max(1, int(args.warmup_frac * args.updates))
+        sched = torch.optim.lr_scheduler.LambdaLR(opt, lambda u: min(1.0, (u + 1) / warm) * 0.5 *
+                                                  (1 + math.cos(math.pi * min(u, args.updates) / args.updates)))
     torch.cuda.synchronize()
     log.emit("load_end", batch_size=bs, unit=task.unit, revision=task.revision, data=task.fingerprint)
 
     gl = EventLog(args.events, stream="workload_gpu", gpu=True) if args.gpu_marks else None
     mark = (lambda ev, **kv: gl.emit(ev, gpu_mark=True, _depth=2, **kv)) if gl else (lambda ev, **kv: log.emit(ev, _depth=2, **kv))
-    filler = Filler(args.other, task, dev) if args.mode == "interleave" else None
+    filler = Filler(args.other, task, dev) if args.mode in ("interleave", "cover_only") else None
+    ckpt_dir = Path(args.ckpt_dir or Path(args.metrics).parent / "ckpt")
+    last_ckpt, ckpt_bytes = None, 0
     prev_cap = set_power_cap(args.power_cap) if args.power_cap else None
     if prev_cap:
         log.emit("power_cap_set", watts=args.power_cap, previous=prev_cap)
@@ -309,8 +357,19 @@ def main():
             while time.monotonic() < args.start_at_mono:
                 time.sleep(min(0.01, max(0.0, args.start_at_mono - time.monotonic())))
         # duration, eval cadence and phase timers all count from the start of training
-        t_start = phase_t0 = last_eval = time.monotonic()
-        mark("train_start", note="first training work submitted next")
+        t_start = phase_t0 = last_eval = last_ckpt = time.monotonic()
+        if args.mode == "cover_only":
+            # control: the attack's cover work alone, no training at all
+            log.emit("cover_start", kind=args.other)
+            n_cover = 0
+            while time.monotonic() - t_start < args.duration:
+                filler.step()
+                n_cover += 1
+            torch.cuda.synchronize()
+            log.emit("cover_end", steps=n_cover)
+            args.updates = 0
+        else:
+            mark("train_start", note="first training work submitted next")
         while updates < args.updates and time.monotonic() - t_start < args.duration:
             now = time.monotonic()
             if args.mode == "interleave":
@@ -339,6 +398,8 @@ def main():
             opt.zero_grad(set_to_none=True)
             loss.backward()
             opt.step()
+            if sched is not None:
+                sched.step()
             updates += 1
             useful += task.size(b)
             if updates == 1:
@@ -355,7 +416,17 @@ def main():
                               **task.evaluate()})
                 log.emit("eval_end", **evals[-1])
                 last_eval = time.monotonic()
-        mark("train_end", updates=updates)
+            if args.ckpt_every_sec and time.monotonic() - last_ckpt >= args.ckpt_every_sec:
+                ckpt_dir.mkdir(parents=True, exist_ok=True)
+                log.emit("ckpt_start", updates=updates)
+                st = task.trainable_state() if hasattr(task, "trainable_state") else task.model.state_dict()
+                f = ckpt_dir / "latest.pt"
+                torch.save({"updates": updates, "model": st, "opt": opt.state_dict()}, f)
+                ckpt_bytes += f.stat().st_size
+                log.emit("ckpt_end", updates=updates, bytes=f.stat().st_size)
+                last_ckpt = time.monotonic()
+        if args.mode != "cover_only":
+            mark("train_end", updates=updates)
         torch.cuda.synchronize()
         log.emit("train_end_synced", updates=updates)
         evals.append({"updates": updates, "t": time.monotonic() - t_start, "final": True, **task.evaluate()})
@@ -366,12 +437,14 @@ def main():
             log.emit("power_cap_restored", watts=prev_cap)
     wall = time.monotonic() - t_start
     m = {"family": args.family, "mode": args.mode, "args": vars(args), "batch_size": bs, "unit": task.unit,
-         "updates": updates, "useful_units": useful, "forward_only_units": fwd_only,
+         "updates": updates, "useful_units": useful, "forward_only_units": fwd_only, "ckpt_bytes": ckpt_bytes,
+         "lr_schedule": args.lr_schedule, "update_budget": args.updates if args.updates < 10**8 else None,
          "wall_s_train_loop": wall, "useful_units_per_s": useful / wall if wall else None,
          "evals": evals, "data_fingerprint": task.fingerprint, "model_revision": task.revision,
          "seed": args.seed, "torch": torch.__version__, "cuda": torch.version.cuda, "python": platform.python_version(),
          "objective": {"mlp": "CIFAR-10 cross-entropy", "resnet": "CIFAR-10 cross-entropy", "bert": "SST-2 cross-entropy",
-                       "lora": "WikiText-2 causal LM cross-entropy"}[args.family]}
+                       "lora": f"{args.dataset} causal LM cross-entropy",
+                       "effnet": "CIFAR-100 cross-entropy (ImageNet-pretrained EfficientNet-B0)"}[args.family]}
     Path(args.metrics).write_text(json.dumps(m, indent=1, default=str))
     if gl:
         gl.close()

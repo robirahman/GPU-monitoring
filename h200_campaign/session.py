@@ -18,8 +18,11 @@ Plan JSON:
 from __future__ import annotations
 
 import argparse
+import glob
+import hashlib
 import json
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -37,7 +40,11 @@ WORKLOADS = {
     "render": [PY, str(REPO / "workloads" / "rendering_proxy.py")],
     "nbody": [PY, str(REPO / "workloads" / "nbody_sim.py")],
     "idle": [PY, str(REPO / "workloads" / "idle.py")],
+    "timeline": [PY, str(REPO / "h200_campaign" / "timeline.py")],
+    "nonml": [str(Path.home() / "venvs" / "nonml" / "bin" / "python"), str(REPO / "h200_campaign" / "nonml.py")],
 }
+FROZEN = REPO / "h200_campaign" / "frozen_settings.json"
+MIN_FREE_GB = 40
 STOP = False
 
 
@@ -107,13 +114,21 @@ def run_one(spec: dict, plan: dict, root: Path, sensors_on: bool):
     env = os.environ | {"SPAR_RUN_ID": run_id, "SPAR_JOB_ID": job_id, "SPAR_ATTEMPT_ID": "1",
                         "SPAR_CLASS_LABEL": spec["class_label"], "H200_EVENTS_PATH": str(ev),
                         "PYTHONPATH": str(REPO)}
+    if spec["kind"] == "nonml" and "qiskit" in spec.get("argv", []):
+        libs = glob.glob(str(Path.home() / "venvs/nonml/lib/python3.12/site-packages/qiskit_aer_gpu.libs/libgomp-*.so*"))
+        if libs:
+            env["LD_PRELOAD"] = libs[0]
+    cfg = dict(plan.get("sensors", {})) | spec.get("sensor_overrides", {})
     man = {"run_id": run_id, "job_id": job_id, "session_id": plan["session_id"], "partition": plan["partition"],
            "label": spec["label"], "class_label": spec["class_label"], "family": spec.get("family"),
            "kind": spec["kind"], "argv": spec.get("argv", []), "sensors_on": sensors_on,
-           "sensor_cfg": plan.get("sensors", {}), "git": git_state(), "host": os.uname().nodename,
+           "sensor_cfg": cfg, "git": git_state(), "host": os.uname().nodename, "attempt": spec.get("_attempt", 1),
+           "frozen_settings_sha256": hashlib.sha256(FROZEN.read_bytes()).hexdigest() if FROZEN.exists() else None,
+           "block": plan.get("block"), "day": plan.get("day"), "collection_type": spec.get("collection_type"),
+           "attack": spec.get("attack"), "extra": spec.get("extra"),
            "started_wall_ns": time.time_ns()}
     emit(ev, run_id, job_id, "run_start", label=spec["label"])
-    procs = start_sensors(d, "c", plan.get("sensors", {})) if sensors_on else {}
+    procs = start_sensors(d, "c", cfg) if sensors_on else {}
     if sensors_on and not (d / "scope_ready.json").exists():
         man["failure"] = "scope logger did not start"
     marker = [PY, "-m", "h200_campaign.markers", "--events", str(ev)]
@@ -122,7 +137,10 @@ def run_one(spec: dict, plan: dict, root: Path, sensors_on: bool):
         man["marker_start_rc"] = subprocess.call(marker + ["--tag", "start"], cwd=REPO, env=env)
         time.sleep(3)
     cmd = list(WORKLOADS[spec.get("workload", spec["kind"])]) + spec.get("argv", [])
-    if spec["kind"] in ("train", "serve", "sequence"):
+    if spec["kind"] == "timeline":
+        (d / "timeline.json").write_text(json.dumps(spec["timeline"], indent=1))
+        cmd += ["--timeline", str(d / "timeline.json")]
+    if spec["kind"] in ("train", "serve", "sequence", "timeline", "nonml"):
         cmd += ["--metrics", str(d / "metrics.json"), "--events", str(ev)]
     emit(ev, run_id, job_id, "process_launch", cmd=cmd)
     t0 = time.monotonic()
@@ -157,7 +175,7 @@ def run_one(spec: dict, plan: dict, root: Path, sensors_on: bool):
     man["bytes_on_disk"] = sum(f.stat().st_size for f in d.iterdir() if f.is_file())
     (d / "manifest.json").write_text(json.dumps(man, indent=1, default=str))
     with open(root / plan["session_id"] / "ledger.jsonl", "a") as f:
-        f.write(json.dumps({k: man.get(k) for k in ("run_id", "label", "ok", "workload_rc", "failure",
+        f.write(json.dumps({k: man.get(k) for k in ("run_id", "label", "attempt", "ok", "workload_rc", "failure",
                                                      "workload_wall_s", "bytes_on_disk")} | {"dir": str(d)}) + "\n")
     return man
 
@@ -174,14 +192,29 @@ def main():
     root = Path(args.root)
     (root / plan["session_id"]).mkdir(parents=True, exist_ok=True)
     (root / plan["session_id"] / "plan.json").write_text(json.dumps(plan, indent=1))
+    ledger = root / plan["session_id"] / "ledger.jsonl"
     for spec in plan["runs"]:
         if STOP:
             break
         if args.only and spec["label"] != args.only:
             continue
+        # resume: skip labels already done; a failed run is retried once (its folder is kept)
+        prior = [json.loads(l) for l in ledger.read_text().splitlines()] if ledger.exists() else []
+        prior = [r for r in prior if r["label"] == spec["label"]]
+        if any(r.get("ok") for r in prior) or len(prior) >= 2:
+            continue
+        free_gb = shutil.disk_usage(root).free / 2**30
+        if free_gb < MIN_FREE_GB:
+            print(json.dumps({"stopped": "disk", "free_gb": free_gb}), flush=True)
+            sys.exit(5)
+        spec = dict(spec, _attempt=len(prior) + 1)
         m = run_one(spec, plan, root, not args.no_sensors and spec.get("sensors", True))
-        print(json.dumps({k: m.get(k) for k in ("label", "run_id", "ok", "workload_rc", "failure", "workload_wall_s")}),
-              flush=True)
+        print(json.dumps({k: m.get(k) for k in ("label", "run_id", "attempt", "ok", "workload_rc", "failure",
+                                                "workload_wall_s")}), flush=True)
+        if not m.get("ok") and m["attempt"] < 2 and not STOP:
+            m = run_one(dict(spec, _attempt=2), plan, root, not args.no_sensors and spec.get("sensors", True))
+            print(json.dumps({k: m.get(k) for k in ("label", "run_id", "attempt", "ok", "workload_rc", "failure",
+                                                    "workload_wall_s")}), flush=True)
     print("SESSION_DONE", flush=True)
 
 

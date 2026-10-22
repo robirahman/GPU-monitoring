@@ -1,0 +1,36 @@
+{
+ "schema": 1,
+ "frozen_on": "2026-10-22",
+ "approved_by": "Robi Rahman (project lead), in conversation",
+ "basis": "pilot_s1 and pilot_s2 (20 runs): peak 0.61-0.63 of the +/-10 V range, 0 rail samples, 0 over-range polls, 0 contiguity breaks; at +/-5 V every full-load step clipped (~150 us per edge)",
+ "scope": {
+  "device": "PicoScope 5464E+MSO s/n 12669/0001, psospa driver 1.1.9.6000, FW 1.11.1.0 / 2.4.5.0",
+  "channel": "A", "coupling": "DC", "range": "V10", "resolution_bits": 16, "bandwidth_limit": "BW_20MHZ",
+  "requested_interval_ns": 51.2, "actual_interval_ns": 51.2, "fs_raw_hz": 19531250,
+  "decimation": {"factor": 20, "stages": [4, 5], "design": "Kaiser FIR, 80 dB, linear phase, centred",
+                 "fs_out_hz": 976562.5, "alias_protected_band_hz": [0, 400000]},
+  "envelope_bin_decimated_samples": 977,
+  "probe_v_per_a": "NOT CALIBRATED; 0.100 V/A is a recorded claim; stored data are volts/counts"
+ },
+ "raw_policy": {
+  "runs_planned_under_15_min": "all (full decimated waveform)",
+  "longer_runs": "every:60:10 (10 s of decimated waveform every 60 s from stream start; exact sample-index ranges in *_scope_segments.parquet); continuous envelope always",
+  "hires_undecimated": "none (used only in validation)"
+ },
+ "nvml": {"interval_s": 1.0, "detector_counters": ["gpu_utilization_pct", "mem_utilization_pct", "mem_used_mb", "power_draw_w",
+          "temperature_c", "sm_clock_mhz", "mem_clock_mhz", "pcie_tx_mbps", "pcie_rx_mbps"],
+          "extras_not_features": ["clocks_event_reasons", "power_instant_w"]},
+ "dcgm": {"interval_ms": 100, "fields": [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 155, 150, 203, 204],
+          "note": "kept separate from N; host receipt time only"},
+ "bmc": {"dcmi_interval_s": 0.5, "sys_power": "SDR SYS_POWER polled back to back in its own thread (~1.6 s per query)",
+         "note": "P = whole-node power"},
+ "markers": {"pattern_s": [0.3, 0.6, 1.2], "gap_s": 1.0, "repeat": 2, "at": ["start", "end"], "load": "bf16 8192^3 matmul"},
+ "alignment": "per-run offsets from marker edges: scope threshold crossing of 1 ms v_rms_ac envelope vs CUDA-event GPU times; scope sample index -> host monotonic via lower envelope of poll receipts",
+ "interval_rejection_rule": {
+  "reject": ["scope ADC rail samples in a ~1 ms envelope bin (that bin)", "scope driver over-range flag (that poll's samples)",
+             "scope contiguity break (that poll's samples)", "NVML gap > 2.0 s", "BMC DCMI gap > 1.0 s", "DCGM gap > 0.2 s",
+             "sensor missing, late start or early stop (the uncovered span)"],
+  "accounting": "rejected time stays in the evaluation denominator and is reported as monitoring unavailability (health_intervals.csv)"
+ },
+ "test_partition_handling": "test-partition recordings get sensor-health validation only; no feature extraction, detector scoring or threshold work on them until detector settings are frozen"
+}

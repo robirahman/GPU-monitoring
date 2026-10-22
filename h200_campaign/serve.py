@@ -101,9 +101,125 @@ class Whisper:
                 "text": hyp[:200]}
 
 
+class CausalLM:
+    """Base (non-chat) decoder LLM serving: Alpaca instructions as plain-text prompts."""
+
+    def __init__(self, rng, name):
+        from datasets import load_dataset
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        self.name = name
+        self.tok = AutoTokenizer.from_pretrained(name)
+        if self.tok.pad_token is None:
+            self.tok.pad_token = self.tok.eos_token
+        self.model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=torch.bfloat16).cuda().eval()
+        ds = load_dataset("tatsu-lab/alpaca", split="train")
+        self.items = [f"Instruction: {r['instruction']}\n{r['input']}\nResponse:" for r in ds]
+        self.fingerprint, self.revision, self.rng = ds._fingerprint, getattr(self.model.config, "_commit_hash", None), rng
+
+    @torch.no_grad()
+    def request(self):
+        max_new = self.rng.choice([32, 64, 128, 256])
+        enc = self.tok(self.rng.choice(self.items), return_tensors="pt").to("cuda")
+        out = self.model.generate(**enc, max_new_tokens=max_new, do_sample=False, pad_token_id=self.tok.pad_token_id)
+        new = out[0, enc["input_ids"].shape[1]:]
+        return {"prompt_tokens": int(enc["input_ids"].shape[1]), "new_tokens": int(new.numel()), "max_new": max_new,
+                "text": self.tok.decode(new, skip_special_tokens=True)[:200]}
+
+
+class Wav2Vec2:
+    name = "facebook/wav2vec2-large-960h-lv60-self"
+
+    def __init__(self, rng):
+        from datasets import Audio, load_dataset
+        from transformers import AutoProcessor, Wav2Vec2ForCTC
+        self.proc = AutoProcessor.from_pretrained(self.name)
+        self.model = Wav2Vec2ForCTC.from_pretrained(self.name, torch_dtype=torch.float16).cuda().eval()
+        ds = load_dataset("openslr/librispeech_asr", "clean", split="test").cast_column("audio", Audio(decode=False))
+        self.ds, self.fingerprint = ds, ds._fingerprint
+        self.revision = getattr(self.model.config, "_commit_hash", None)
+        self.rng = rng
+
+    @torch.no_grad()
+    def request(self):
+        import io
+        import soundfile as sf
+        r = self.ds[self.rng.randrange(len(self.ds))]
+        a, sr = sf.read(io.BytesIO(r["audio"]["bytes"]), dtype="float32")
+        x = self.proc(a, sampling_rate=sr, return_tensors="pt").input_values.cuda().half()
+        hyp = self.proc.batch_decode(self.model(x).logits.argmax(-1))[0]
+        e, n = wer(r["text"], hyp)
+        return {"audio_s": len(a) / sr, "new_tokens": 0, "wer_errors": e, "wer_words": n, "text": hyp[:200]}
+
+
+class Bark:
+    name = "suno/bark-small"
+
+    def __init__(self, rng):
+        from datasets import load_dataset
+        from transformers import AutoProcessor, BarkModel
+        self.proc = AutoProcessor.from_pretrained(self.name)
+        self.model = BarkModel.from_pretrained(self.name, torch_dtype=torch.float16).cuda().eval()
+        ds = load_dataset("tatsu-lab/alpaca", split="train")
+        self.items = [" ".join(o.split()[:25]) for o in ds["output"] if len(o.split()) >= 8]
+        self.fingerprint, self.revision, self.rng = ds._fingerprint, getattr(self.model.config, "_commit_hash", None), rng
+
+    @torch.no_grad()
+    def request(self):
+        text = self.rng.choice(self.items)
+        x = self.proc(text, voice_preset=f"v2/en_speaker_{self.rng.randrange(10)}").to("cuda")
+        audio = self.model.generate(**x)
+        sr = self.model.generation_config.sample_rate
+        return {"text_words": len(text.split()), "audio_s": audio.shape[-1] / sr, "new_tokens": 0, "text": text[:200]}
+
+
+class DiT:
+    name = "facebook/DiT-XL-2-256"
+
+    def __init__(self, rng):
+        from diffusers import DiTPipeline
+        self.pipe = DiTPipeline.from_pretrained(self.name, torch_dtype=torch.float16).to("cuda")
+        self.pipe.set_progress_bar_config(disable=True)
+        self.fingerprint, self.revision, self.rng = "imagenet-1k class labels", None, rng
+
+    @torch.no_grad()
+    def request(self):
+        n = self.rng.choice([1, 2, 4])
+        steps = self.rng.choice([25, 50])
+        labels = [self.rng.randrange(1000) for _ in range(n)]
+        imgs = self.pipe(class_labels=labels, num_inference_steps=steps,
+                         generator=torch.manual_seed(self.rng.randrange(2**31))).images
+        return {"images": len(imgs), "steps": steps, "new_tokens": 0, "text": f"classes={labels}"}
+
+
+class EffNetClassify:
+    name = "google/efficientnet-b0"
+
+    def __init__(self, rng):
+        from datasets import load_dataset
+        from transformers import AutoModelForImageClassification
+        self.model = AutoModelForImageClassification.from_pretrained(self.name, torch_dtype=torch.float16).cuda().eval()
+        ds = load_dataset("uoft-cs/cifar100", split="test")
+        self.imgs = torch.tensor(np.stack([np.asarray(i) for i in ds["img"]])).permute(0, 3, 1, 2).contiguous()
+        self.fingerprint, self.revision, self.rng = ds._fingerprint, getattr(self.model.config, "_commit_hash", None), rng
+        self.labels = self.model.config.id2label
+
+    @torch.no_grad()
+    def request(self):
+        import torch.nn.functional as F
+        n = self.rng.choice([1, 8, 32, 64])
+        idx = torch.tensor([self.rng.randrange(self.imgs.shape[0]) for _ in range(n)])
+        x = F.interpolate(self.imgs[idx].cuda().half() / 255, size=224, mode="bilinear")
+        top = self.model(pixel_values=x).logits.argmax(-1).tolist()
+        return {"images": n, "new_tokens": 0, "text": self.labels[top[0]][:80]}
+
+
+MODELS = {"phi3": Phi3, "whisper": Whisper, "wav2vec2": Wav2Vec2, "bark": Bark, "dit": DiT, "effnet": EffNetClassify,
+          "olmo": lambda rng: CausalLM(rng, "allenai/OLMo-2-0425-1B"),
+          "pythia": lambda rng: CausalLM(rng, "EleutherAI/pythia-1b")}
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, choices=["phi3", "whisper"])
+    ap.add_argument("--model", required=True, choices=sorted(MODELS))
     ap.add_argument("--schedule", default="120:0.5")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--warmup", type=int, default=2)
@@ -116,7 +232,7 @@ def main():
     rng = random.Random(args.seed)
     torch.manual_seed(args.seed)
     log.emit("load_start")
-    srv = (Phi3 if args.model == "phi3" else Whisper)(rng)
+    srv = MODELS[args.model](rng)
     torch.cuda.synchronize()
     log.emit("load_end", model=srv.name, revision=srv.revision, data=srv.fingerprint)
     log.emit("warmup_start")
@@ -173,7 +289,7 @@ def main():
          "service_ms_p50": float(np.median([r["service_ms"] for r in reqs])) if reqs else None,
          "queue_ms_p95": float(np.quantile([r["queue_ms"] for r in reqs], 0.95)) if reqs else None,
          "samples": [r["text"] for r in reqs[:5]]}
-    if args.model == "whisper" and reqs:
+    if args.model in ("whisper", "wav2vec2") and reqs:
         m["wer"] = sum(r["wer_errors"] for r in reqs) / max(1, sum(r["wer_words"] for r in reqs))
     Path(args.metrics).write_text(json.dumps(m, indent=1, default=str))
     log.emit("process_exit")
