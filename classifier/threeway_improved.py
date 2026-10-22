@@ -41,7 +41,7 @@ from classifier.workload_labels import (  # shared by software and physical sens
     TRAINING_LABELS, INFERENCE_LABELS, OTHER_LABELS, threeway_label, canonical_workload,
 )
 from classifier.data_sources import accelerator_files, read_parquet, resolve_payload, filename_workload_label, pointer, sha256
-from classifier.window_labels import assign_work_labels, own_intervals
+from classifier.window_labels import resolve_work_events, assign_work_labels, own_intervals
 
 
 # ── Raw signal columns ───────────────────────────────────────────────────────
@@ -598,14 +598,21 @@ def sliding_windows(
     stride_sec: float,
     run_level_mode: str = "causal",
     step_log_map: dict | None = None,
-    work_events: dict | None = None,
+    work_events: dict | str | None = "auto",
 ) -> pd.DataFrame:
     """Extract sliding-window feature vectors per run.
 
     ``work_events`` (``{job_id: intervals}`` from window_labels) labels every
     window by the work its job did inside it rather than by the job's name;
-    ``job_label`` then keeps the objective. Without it, windows carry the job
-    objective as before.
+    ``job_label`` then keeps the objective.
+
+    It defaults to ``"auto"``, which resolves the committed launcher logs for
+    whatever is in ``df``. A diluted job alternates training with inference, so
+    inheriting the job label marks its inference-only windows as missed
+    training -- measured at 71% of windows for ``L_diluted_10`` and 78% for
+    ``wb_lora_7b_N500``. Passing ``None`` restores the old job-label behaviour
+    and is for reproducing archived numbers only, the same role
+    ``run_level_mode="orig"`` plays for the causal fix.
 
     ``run_level_mode`` controls the whole-run "pre-allocation" features
     (``first_30s_mem_*``, ``time_to_mem_plateau_samples``):
@@ -624,6 +631,8 @@ def sliding_windows(
     if run_level_mode not in ("orig", "none", "causal"):
         raise ValueError(
             f"run_level_mode must be 'orig', 'none', or 'causal', got {run_level_mode!r}")
+
+    work_events = resolve_work_events(work_events, df)
 
     results = []
     # One series per physical stream. A shared run_id spans every GPU and host of

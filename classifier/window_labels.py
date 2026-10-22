@@ -34,6 +34,7 @@ from __future__ import annotations
 import glob
 import gzip
 import re
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -409,6 +410,57 @@ def job_work_intervals(frame, index) -> dict:
             if len(intervals):
                 out[str(job)] = intervals.reset_index(drop=True)
     return out
+
+
+AUTO = "auto"
+
+
+@lru_cache(maxsize=4)
+def _work_index(root_str: str) -> dict:
+    """Parse every committed launcher log once per process.
+
+    ~1,800 logs, a few seconds. Every windowing call would otherwise redo it.
+    """
+    return build_work_index(default_log_paths(Path(root_str)))
+
+
+def work_events_for(frame, root=None) -> dict:
+    """``{key: intervals}`` for `frame`, keyed by job_id and, where unambiguous, run_id.
+
+    ``sliding_windows`` looks the events up by job_id when the frame carries
+    one and by run_id when it does not, so both keys are provided. Identity is
+    assigned here when the frame has not been through
+    ``assign_stream_and_job_ids`` -- which is the usual case at the ``eval_*``
+    entry points, since they window a raw load.
+
+    A run_id that covers more than one job is left unaliased: guessing there
+    would attach one execution's step timeline to another's windows.
+    """
+    from classifier.data_sources import ROOT
+    from classifier.multinode_features import assign_stream_and_job_ids
+    index = _work_index(str(root if root is not None else ROOT))
+    if not index:
+        return {}
+    ids = frame if "job_id" in frame.columns else assign_stream_and_job_ids(frame)
+    events = job_work_intervals(ids, index)
+    if not events or "run_id" not in ids.columns:
+        return events
+    jobs_per_run = ids.groupby(ids.run_id.astype(str)).job_id.nunique()
+    aliased = dict(events)
+    pairs = ids[["run_id", "job_id"]].astype(str).drop_duplicates()
+    for run_id, job_id in pairs.itertuples(index=False):
+        if jobs_per_run.get(run_id, 2) == 1 and job_id in events:
+            aliased.setdefault(run_id, events[job_id])
+    return aliased
+
+
+def resolve_work_events(work_events, frame):
+    """Normalise the ``work_events`` argument shared by both windowers."""
+    if isinstance(work_events, str):
+        if work_events != AUTO:
+            raise ValueError(f"work_events must be a mapping, None, or {AUTO!r}")
+        return work_events_for(frame)
+    return work_events
 
 
 def _covered(starts, ends, x):

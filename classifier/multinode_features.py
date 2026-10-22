@@ -446,19 +446,22 @@ def expected_rank_count(job_df):
 
 
 def sliding_windows_multinode(df, window_sec=30.0, stride_sec=15.0,
-                              min_rank_coverage=0.8, keep_degraded=False, work_events=None):
+                              min_rank_coverage=0.8, keep_degraded=False, work_events="auto"):
     """One aligned row per job/window, with permutation-invariant rank pooling.
 
     Default drops windows below the declared width/time coverage. Unknown legacy
     widths remain explicitly unknown, and cannot substantiate complete topology.
     keep_degraded is for diagnostics, not the primary evaluation. ``work_events``
     (``{job_id: intervals}``) labels each window by the work any rank of the job
-    did inside it, as in ``sliding_windows``.
+    did inside it, as in ``sliding_windows``, and defaults to ``"auto"``:
+    resolved from the committed launcher logs. ``None`` keeps the job label on
+    every window and exists for reproducing archived numbers.
     """
-    from classifier.window_labels import assign_work_labels
+    from classifier.window_labels import assign_work_labels, resolve_work_events
     if window_sec <= 0 or stride_sec <= 0 or not 0 < min_rank_coverage <= 1:
         raise ValueError("Invalid window, stride, or rank coverage")
     df = assign_stream_and_job_ids(df)
+    work_events = resolve_work_events(work_events, df)
     rows = []
     for job_id, job_df in df.groupby("job_id"):
         first = len(rows)
