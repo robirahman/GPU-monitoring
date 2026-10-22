@@ -36,7 +36,7 @@ from h200_campaign.events import EventLog  # noqa: E402
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--serve-model", default="phi3", choices=["phi3", "whisper"])
+    ap.add_argument("--serve-model", default="phi3", choices=["phi3", "whisper", "wav2vec2", "bark", "dit", "effnet", "olmo", "pythia"])
     ap.add_argument("--serve-rate", type=float, default=1.0)
     ap.add_argument("--bursts", default="", help='e.g. "20@60,45@180"; empty = inference-only control')
     ap.add_argument("--burst-family", default="resnet")

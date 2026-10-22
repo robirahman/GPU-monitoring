@@ -66,20 +66,21 @@ def rapids_chunks(rng):
             yield {"op": op, "rows": n, "result_rows": r, "ok": r == n}
         else:
             nv, ne = rng.choice([1, 4]) * 1_000_000, rng.choice([10, 40]) * 1_000_000
+            src = cp.random.randint(0, nv, ne)
             G = cugraph.Graph(directed=True)
-            G.from_cudf_edgelist(cudf.DataFrame({"s": cp.random.randint(0, nv, ne), "d": cp.random.randint(0, nv, ne)}),
+            G.from_cudf_edgelist(cudf.DataFrame({"s": src, "d": cp.random.randint(0, nv, ne)}),
                                  source="s", destination="d")
             if op == "pagerank":
                 s = float(cugraph.pagerank(G).pagerank.sum())
                 yield {"op": op, "vertices": nv, "edges": ne, "pagerank_sum": s, "ok": abs(s - 1) < 1e-3}
             else:
-                d = cugraph.bfs(G, start=0)
+                d = cugraph.bfs(G, start=int(src[0]))      # a vertex that is in the graph
                 yield {"op": op, "vertices": nv, "edges": ne, "reached": int((d.distance < 2**31 - 1).sum()), "ok": True}
 
 
 def qiskit_chunks(rng):
     from qiskit import QuantumCircuit, transpile
-    from qiskit.circuit.library import QFT
+    from qiskit.circuit.library import QFTGate
     from qiskit_aer import AerSimulator
     sim = AerSimulator(method="statevector", device="GPU")
     while True:
@@ -87,7 +88,7 @@ def qiskit_chunks(rng):
         qc = QuantumCircuit(nq)
         if rng.random() < 0.5:
             qc.h(range(nq))
-            qc.append(QFT(nq), range(nq))
+            qc.append(QFTGate(nq), range(nq))
             kind = "qft"
         else:
             for _ in range(rng.choice([10, 20])):

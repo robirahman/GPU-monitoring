@@ -389,6 +389,9 @@ def main():
             if args.mode == "interleave":
                 span = args.train_sec if phase_train else args.other_sec
                 if now - phase_t0 >= span:
+                    # drain queued work so the phase boundary is physical, not just a host-side switch
+                    torch.cuda.synchronize()
+                    now = time.monotonic()
                     phase_train = not phase_train
                     phase_t0 = now
                     mark("phase_train" if phase_train else "phase_other", kind=args.other)
