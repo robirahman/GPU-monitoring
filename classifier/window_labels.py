@@ -536,12 +536,31 @@ def assign_work_labels(rows, intervals, workload_label, objective):
                     label_train_s=lab["train_s"], label_infer_s=lab["infer_s"],
                     label_other_s=lab["other_s"], label_unknown_s=lab["unknown_s"], label_train_frac=frac)
     else:
+        # No STEP evidence. Before giving up on the window, try the schedule: a
+        # deterministically diluted cell trains on batch indices 0, N, 2N, ...
+        # and a measured batch rate places those in time. Camera-ready runs all
+        # predate STEP logging, so this is the only per-window truth they have.
+        from classifier.schedule_reconstruction import reconstruct_labels
+        reconstructed, _ = reconstruct_labels(workload_label, starts, ends, float(starts.min()))
         work = program_work(workload_label)
         nan = [np.nan] * len(rows)
-        cols = dict(threeway_label=[work or "unresolved"] * len(rows),
-                    label_source=["program" if work else "unresolved"] * len(rows),
-                    label_train_s=nan, label_infer_s=nan, label_other_s=nan,
-                    label_unknown_s=nan, label_train_frac=nan)
+        if reconstructed is None:
+            cols = dict(threeway_label=[work or "unresolved"] * len(rows),
+                        label_source=["program" if work else "unresolved"] * len(rows),
+                        label_train_s=nan, label_infer_s=nan, label_other_s=nan,
+                        label_unknown_s=nan, label_train_frac=nan)
+        else:
+            # Windows the rate interval cannot adjudicate stay unresolved rather
+            # than inheriting a label the recorded data does not support.
+            resolved = np.array([r is not None for r in reconstructed])
+            labels = np.where(resolved, reconstructed, work or "unresolved").astype(object)
+            source = np.where(resolved, "reconstructed",
+                              "program" if work else "unresolved").astype(object)
+            cols = dict(threeway_label=labels, label_source=source,
+                        label_train_s=nan, label_infer_s=nan, label_other_s=nan,
+                        label_unknown_s=nan,
+                        label_train_frac=np.where(resolved,
+                                                  (labels == "ml_training").astype(float), np.nan))
     for i, row in enumerate(rows):
         row["job_label"] = objective
         for key, values in cols.items():

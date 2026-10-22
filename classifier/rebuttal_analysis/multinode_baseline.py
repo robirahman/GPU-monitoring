@@ -101,7 +101,14 @@ def load(paths, window, stride, stream_to_job=None):
     if w.empty:
         return None
     w["grp"] = workload_group(w.workload_label.values)
-    w["cls"] = [threeway_label(l) for l in w.workload_label]
+    # `cls` is both the fitting target and the scoring truth, so it has to be
+    # the work the window actually contains. Re-deriving it from workload_label
+    # here would put the job objective back on every window and undo the window
+    # labels sliding_windows just assigned.
+    w = w[w.get("label_source", "steps") != "unresolved"]
+    if w.empty:
+        return None
+    w["cls"] = w["threeway_label"].astype(str)
     w["is_adv"] = [bool(ADV.search(l)) for l in w.workload_label]
     w["job_id"] = w.run_id.map(stream_to_job).fillna(w.run_id)
     return w

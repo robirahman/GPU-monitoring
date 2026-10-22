@@ -49,6 +49,11 @@ def load_harmonized():
     return raw
 
 
+# Share of the target device's runs reserved for unsupervised calibration and
+# kept out of scoring.
+CALIBRATION_SHARE = 0.3
+
+
 def experiment1(raw):
     log.info("\n" + "="*64 + "\n(1) PER-DEVICE-NORMALIZED TRANSFER  NVIDIA -> MI300X\n" + "="*64)
     df = raw[raw["vendor"].isin(["nvidia", "mi300x"])].copy()
@@ -59,8 +64,21 @@ def experiment1(raw):
     feats = get_feature_cols(w)
     X = w[feats].astype(float).fillna(0.0)
 
+    # Per-device statistics are unsupervised, but they must not come from the
+    # windows being scored: taken over the whole frame they are fitted on the
+    # MI300X evaluation rows themselves, and on every window of a run including
+    # the ones that come after. Hold out a calibration slice of the target
+    # device's runs instead, which is what a deployer actually has.
+    mi_runs = np.sort(w.loc[w["vendor"] == "mi300x", "run_id"].unique())
+    n_cal = max(1, int(round(CALIBRATION_SHARE * len(mi_runs))))
+    cal_runs = set(np.random.default_rng(0).permutation(mi_runs)[:n_cal])
+    calibration = (w["vendor"] == "mi300x") & w["run_id"].isin(cal_runs)
+    stats_on = (w["vendor"] == "nvidia") | calibration
+    log.info(f"  calibration: {n_cal} of {len(mi_runs)} MI300X runs held out of scoring")
+
     def run(Xmat, tag):
-        tr = w["vendor"] == "nvidia"; te = w["vendor"] == "mi300x"
+        tr = w["vendor"] == "nvidia"
+        te = (w["vendor"] == "mi300x") & ~calibration
         clf = TwoStageClassifier(backend="random_forest")
         clf.fit(np.nan_to_num(Xmat[tr.values]), w.loc[tr, "threeway_label"].values,
                 groups=w.loc[tr, "run_id"].values, feature_cols=feats)
@@ -73,8 +91,9 @@ def experiment1(raw):
     # Per-device z-score: each feature standardized within its own gpu_name.
     Xn = X.copy()
     for col in feats:
-        gm = X[col].groupby(w["gpu_name"]).transform("mean")
-        gs = X[col].groupby(w["gpu_name"]).transform("std").replace(0, 1.0)
+        seen = X[col].where(stats_on)
+        gm = seen.groupby(w["gpu_name"]).transform("mean")
+        gs = seen.groupby(w["gpu_name"]).transform("std").replace(0, 1.0)
         Xn[col] = (X[col] - gm) / gs
     run(Xn.values, "per-device z-scored")
 
@@ -82,12 +101,14 @@ def experiment1(raw):
     # scale by its device std. Preserves "how far above idle", which is the
     # cross-device-comparable signal (unlike unconditional z-scoring, which
     # also removes it). Falls back to device mean for devices lacking idle.
-    idle = w["workload_label"].astype(str).str.contains("idle", case=False, na=False)
+    idle = (w["workload_label"].astype(str).str.contains("idle", case=False, na=False)
+            & stats_on)
     Xb = X.copy()
     for col in feats:
+        seen = X[col].where(stats_on)
         idle_mean = X.loc[idle, col].groupby(w.loc[idle, "gpu_name"]).mean()
-        dev_mean = X[col].groupby(w["gpu_name"]).mean()
-        dev_std = X[col].groupby(w["gpu_name"]).std().replace(0, 1.0)
+        dev_mean = seen.groupby(w["gpu_name"]).mean()
+        dev_std = seen.groupby(w["gpu_name"]).std().replace(0, 1.0)
         base = w["gpu_name"].map(idle_mean).fillna(w["gpu_name"].map(dev_mean))
         Xb[col] = (X[col] - base.values) / w["gpu_name"].map(dev_std).values
     n_idle_dev = w.loc[idle, "gpu_name"].nunique()

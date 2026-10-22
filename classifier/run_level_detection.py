@@ -60,7 +60,10 @@ def per_run_sequences(df: pd.DataFrame):
     """Yield (run_id, workload_label, is_training, sorted p_train array, stride)."""
     for (run_id,), g in df.groupby(["run_id"]):
         g = g.sort_values("window_start")
-        is_train = (g["threeway_label"].iloc[0] == TRAINING_LABEL)
+        # Any window, not the first one. Windows now carry observed work, and a
+        # diluted job that opens on inference would otherwise count as a benign
+        # run -- removing it from the missed-run denominator entirely.
+        is_train = bool(g["threeway_label"].eq(TRAINING_LABEL).any())
         ws = g["window_start"].values
         stride = float(np.median(np.diff(ws))) if len(ws) > 1 else np.nan
         yield run_id, g["workload_label"].iloc[0], is_train, g["p_train"].values, ws, stride
