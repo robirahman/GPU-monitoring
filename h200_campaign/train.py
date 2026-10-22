@@ -200,9 +200,18 @@ class LoraTask(Task):
             splits = {"train": ds["train"].select(range(200_000)), "validation": ds["validation"]}
         eos = tok.eos_token or ""
 
+        cache = DATA / "tokcache"
+        cache.mkdir(parents=True, exist_ok=True)
+
         def ids(split):
+            # tokenised corpora are cached per (model, dataset, split, data fingerprint), like a real job's preprocessing
+            f = cache / f"{model_name.replace('/', '__')}_{dataset}_{split}_{splits[split]._fingerprint}.npy"
+            if f.exists():
+                return torch.from_numpy(np.load(f)).long()
             text = (eos + "\n\n").join(t for t in splits[split]["text"] if t.strip())
-            return torch.tensor(tok(text, return_tensors=None)["input_ids"], dtype=torch.long)
+            arr = np.asarray(tok(text, return_tensors=None)["input_ids"], dtype=np.int32)
+            np.save(f, arr)
+            return torch.from_numpy(arr).long()
         self.tr, self.va = ids("train").to(device), ids("validation").to(device)
         self.fingerprint = {"train": splits["train"]._fingerprint + f"/tokens={self.tr.numel()}",
                             "validation": splits["validation"]._fingerprint + f"/tokens={self.va.numel()}",
