@@ -17,6 +17,7 @@ Usage:
 
 import json
 import logging
+import pathlib
 import re
 import sys
 import warnings
@@ -135,11 +136,37 @@ def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_all_data() -> pd.DataFrame:
-    """Load telemetry from all data sources."""
+MANIFEST_STREAMS = PROJECT_ROOT / "docs/camera_ready_manifest_20261022/streams.parquet"
+
+
+def tier_files(tier, manifest=MANIFEST_STREAMS):
+    """The accelerator files one frozen tier of the corpus is made of.
+
+    Regenerating a camera-ready number means loading the streams that back it
+    and no others. The tree holds three experimental eras side by side, so an
+    unfiltered load silently mixes the submitted corpus with the rebuttal
+    additions and the multi-node follow-up.
+    """
+    import pandas as _pd
+    if not pathlib.Path(manifest).is_file():
+        raise FileNotFoundError(f"{manifest} is missing; run scripts/camera_ready_manifest.py")
+    streams = _pd.read_parquet(manifest, columns=["file", "tier"])
+    wanted = {tier} if isinstance(tier, str) else set(tier)
+    unknown = wanted - set(streams.tier.unique())
+    if unknown:
+        raise ValueError(f"unknown tier(s) {sorted(unknown)}; "
+                         f"manifest has {sorted(streams.tier.unique())}")
+    return {str(PROJECT_ROOT / f) for f in streams.loc[streams.tier.isin(wanted), "file"]}
+
+
+def load_all_data(tier=None) -> pd.DataFrame:
+    """Load telemetry from all data sources, or from one frozen tier of them."""
     frames = []
+    keep = tier_files(tier) if tier is not None else None
 
     for p in accelerator_files(PROJECT_ROOT):
+        if keep is not None and str(p) not in keep:
+            continue
         # Resolve before reading. Missing objects and bad schemas are fatal,
         # so this function can never silently train on a partial LFS checkout.
         df = _normalize_columns(read_parquet(p))
