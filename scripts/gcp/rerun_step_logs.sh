@@ -33,6 +33,12 @@ CELL_SET="${CELL_SET:-all}"
 ONLY_CELLS="${ONLY_CELLS:-}"
 HOST="$(hostname -s)"
 PY="${REPO}/venv-main/bin/python"
+# The DDP cells' registry command starts with a bare `torchrun`, resolved from
+# PATH. The campaign runs as root under sudo, whose PATH does not include the
+# venv, so every one of them died with "[Errno 2] No such file or directory:
+# 'torchrun'" two seconds in -- after the collector had already started, so
+# each produced eight 5-row parquets and a log that looked like a real run.
+export PATH="${REPO}/venv-main/bin:${PATH}"
 GCS="${BUCKET}/runs/${STAMP}/${HOST}"
 say() { echo "[$(date -u '+%H:%M:%SZ')] [rerun] $*"; }
 
@@ -75,8 +81,11 @@ run_cell() {  # run_cell <cell> <rep> <mode>
   local cell="$1" rep="$2" mode="$3"
   if [ -n "$ONLY_CELLS" ] && ! printf '%s' "$cell" | grep -Eq "$ONLY_CELLS"; then return 0; fi
   local log="logs/${STAMP}__${HOST}__${cell}_rep${rep}.log"
-  if [ -s "$log" ] && grep -q "SPAR_CELL_DONE" "$log"; then
-    say "skip ${cell} rep${rep} (already complete)"; return 0
+  # Completed means exit=0. A failed cell writes SPAR_CELL_DONE too, so the
+  # looser test made every failure permanent: a re-invocation after a fix
+  # skipped exactly the runs the fix was for.
+  if [ -s "$log" ] && grep -q "SPAR_CELL_DONE.*exit=0" "$log"; then
+    say "skip ${cell} rep${rep} (already succeeded)"; return 0
   fi
   say "run ${cell} rep${rep} (${mode})"
   {
