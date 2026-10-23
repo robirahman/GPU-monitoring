@@ -38,6 +38,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `python workloads/<script>.py`
+    from _step import emit_step
+
 from torch.utils.checkpoint import checkpoint_sequential
 
 
@@ -125,6 +131,9 @@ def strategy_e_memory_minimal(args, device):
 
             total_loss += loss.item()
             steps += 1
+            # Every iteration of E is a gradient step; the memory-minimal
+            # trick changes what it costs, not what it is.
+            emit_step("train", steps, tokens=data.size(0))
 
             # Aggressive memory cleanup
             del data, target, output, loss, x
@@ -337,6 +346,8 @@ def strategy_g_clock_throttled(args, device):
 
                 total_loss += loss.item()
                 steps += 1
+                # Throttled, but still a gradient step every iteration.
+                emit_step("train", steps, tokens=data.size(0))
                 del data, target, output, loss
 
                 # Software throttle: brief sleep between steps to further reduce power

@@ -39,6 +39,12 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `python workloads/<script>.py`
+    from _step import emit_step
+
+
 # Try NVIDIA (pynvml) first, fall back to AMD (amdsmi). On AMD machines
 # pynvml import fails cleanly; amdsmi ships with ROCm at /opt/rocm/share/amd_smi.
 HAS_NVML = False
@@ -190,6 +196,7 @@ def strategy_h_mimicry(args, device):
             loss.backward()
             optimizer.step()
             train_steps += 1
+            emit_step("train", train_steps, tokens=data.size(0))
             del data, tgt, output, loss
         else:
             # Mimicry step: run the target workload's actual compute
@@ -218,6 +225,9 @@ def strategy_h_mimicry(args, device):
 
             torch.cuda.synchronize()
             mimicry_steps += 1
+            # Real cuFFT / mining / n-body compute, not idle: these slots are
+            # non-ML work, and labelling them `infer` would be wrong.
+            emit_step("nonml", mimicry_steps)
 
         # Feedback control: adjust train_probability to match target util
         now = time.time()
@@ -400,6 +410,8 @@ def strategy_j_thermal_matched(args, device):
         optimizer.step()
         total_loss += loss.item()
         steps += 1
+        # The PID controller modulates the gaps between steps, not the steps.
+        emit_step("train", steps, tokens=data.size(0))
         del data, target, output, loss
 
         # Controlled sleep to modulate utilization
