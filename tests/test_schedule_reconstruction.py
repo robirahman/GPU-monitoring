@@ -31,6 +31,17 @@ class FactorTests(unittest.TestCase):
                             ("whitebox_diluted_N20", 20)):
             self.assertEqual(dilution_factor(label), want, label)
 
+    def test_reads_n_from_a_data_parallel_dilution_cell(self):
+        # Strategy L in adversarial_ddp.py uses the same `batch_idx % N == 0`
+        # predicate as the single-GPU cell, with every rank on the same batch.
+        self.assertEqual(dilution_factor("adversarial_L_ddp_10"), 10)
+        self.assertEqual(dilution_factor("adversarial_L_ddp_5"), 5)
+
+    def test_staggered_dilution_has_no_single_schedule(self):
+        # Rank r trains where batch_idx % (N * world_size) == r, so there is no
+        # one schedule for the run; reconstructing it needs a per-rank model.
+        self.assertIsNone(dilution_factor("adversarial_L_ddp_stagger_5"))
+
     def test_ignores_cells_with_no_declared_schedule(self):
         for label in ("train_resnet50", "dilution_sweep_inference", "adversarial_K_online_learning"):
             self.assertIsNone(dilution_factor(label), label)

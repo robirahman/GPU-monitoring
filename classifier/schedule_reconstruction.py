@@ -42,8 +42,20 @@ LOG_GPU = re.compile(r"Telemetry started \(gpu=([^,]+),")
 
 # Cells whose schedule is deterministic in the batch index. The trailing group
 # is N, the number of batches per gradient step.
+#
+# adversarial_L_ddp_<N> belongs here: workloads/adversarial_ddp.py strategy L
+# trains where `batch_idx % dilution == 0`, the same predicate as strategy L in
+# adversarial_round3.py, and all ranks train on the same batches, so one
+# schedule describes the job. Its STEP lines come from rank 0 alone, so the
+# measured rate is the batch rate rather than world_size times it.
+#
+# L-stagger is deliberately absent. Rank r trains where
+# `batch_idx % (dilution * world_size) == r`, so the run has no single
+# schedule, and every rank emits -- reconstructing it needs a per-rank model,
+# not this one.
 DETERMINISTIC_DILUTION = re.compile(
-    r"^(?:dilution_sweep_N|adversarial_L_diluted_|whitebox_diluted_N|whitebox_lora_N)"
+    r"^(?:dilution_sweep_N|adversarial_L_diluted_|adversarial_L_ddp_"
+    r"|whitebox_diluted_N|whitebox_lora_N)"
     r"(\d+)(?:_mw\d+)?$")
 PURE_INFERENCE = re.compile(r"^(?:dilution_sweep_inference|wb_inference.*)$")
 
