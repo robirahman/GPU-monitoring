@@ -37,6 +37,18 @@ GCS="${BUCKET}/runs/${STAMP}/${HOST}"
 say() { echo "[$(date -u '+%H:%M:%SZ')] [rerun] $*"; }
 
 cd "$REPO" || { echo "no repo at $REPO" >&2; exit 1; }
+
+# ONE campaign per node, enforced. Two of these running at once put two
+# workloads on the same GPU, and the telemetry of both is then a measurement
+# of neither -- which is exactly what happened on 2026-10-23T01:43Z when a
+# driver re-launched this while the first pass was still going. The lock is
+# held for the whole campaign and released when the process exits, so a second
+# invocation exits immediately rather than queueing behind the first.
+exec 9>/var/lock/spar_rerun.lock
+if ! flock -n 9; then
+  echo "[rerun] another campaign already holds /var/lock/spar_rerun.lock -- refusing to share the GPU" >&2
+  exit 75
+fi
 mkdir -p data logs meta
 
 # Cells needing a logged reference on A100-SXM4-80GB, from
