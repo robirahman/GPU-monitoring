@@ -142,21 +142,34 @@ Whatever is decided about labels, the camera-ready should not describe these as
 need one logged reference run. Three reps per pair gives a rate interval rather
 than a point estimate, which is what the reconstruction consumes.
 
-| device | pairs | tier A jobs | windows unlocked | GPU-hours |
-| :-- | --: | --: | --: | --: |
-| GeForce RTX 5080 | 46 | 113 | 1,886 | 11.1 |
-| AMD RX 9070 XT | 28 | 104 | 1,963 | 7.3 |
-| B200 | 20 | 21 | 1,212 | 3.8 |
-| H200 | 19 | 22 | 1,325 | 5.1 |
-| A100-SXM4-80GB | 17 | 17 | 1,273 | 3.9 |
-| AMD Instinct MI300X VF | 14 | 42 | 843 | 3.8 |
-| H100 NVL | 14 | 31 | 328 | 2.0 |
-| GeForce RTX 5090 | 14 | 14 | 269 | 3.7 |
-| RTX 4050 Laptop | 9 | 9 | 0 | 0.1 |
-| **total** | **181** | **373** | **9,099** | **40.5** |
+| device | pairs | windows in those pairs | pairs reconstruction can use | windows it can label | GPU-hours |
+| :-- | --: | --: | --: | --: | --: |
+| GeForce RTX 5080 | 46 | 1,886 | 16 | 526 | 11.1 |
+| AMD RX 9070 XT | 28 | 1,963 | 6 | 342 | 7.3 |
+| B200 | 20 | 1,212 | 6 | 456 | 3.8 |
+| H200 | 19 | 1,325 | 6 | 456 | 5.1 |
+| A100-SXM4-80GB | 17 | 1,273 | 4 | 416 | 3.9 |
+| AMD Instinct MI300X VF | 14 | 843 | 6 | 360 | 3.8 |
+| H100 NVL | 14 | 328 | 0 | 0 | 2.0 |
+| GeForce RTX 5090 | 14 | 269 | 7 | 134 | 3.7 |
+| RTX 4050 Laptop | 9 | 0 | 0 | 0 | 0.1 |
+| **total** | **181** | **9,099** | **51** | **2,690** | **40.7** |
 
-Forty GPU-hours recovers per-window truth for essentially the entire
-camera-ready adversarial table. Two of the nine devices are local machines
+> An earlier revision of this section reported the fourth column as "windows
+> unlocked" and totalled it at 9,099. That is the window count of every pair
+> that lacks a reference, not the count a reference can label.
+> `schedule_reconstruction` only handles cells deterministic in the batch
+> index, and 130 of the 181 pairs are not: `F_interleave` is phase-interleaved,
+> `I_stochastic` is stochastic, and `composite_*`, `H_mimicry`, `E_memory_minimal`,
+> `G_clock_throttled`, `J_pid` and `K_online_learning` declare no schedule at
+> all. The reconstructable figure is **2,690 windows**, and it reached that
+> only after `adversarial_L_ddp_<N>` was added to `DETERMINISTIC_DILUTION`;
+> before that it was 1,562.
+
+Forty GPU-hours therefore recovers per-window truth for under a third of the
+camera-ready adversarial table, not essentially all of it. The rest needs
+either a per-cell schedule model or -- better, and the same price -- a re-run
+that emits STEP lines, which is now what every adversarial strategy does. Two of the nine devices are local machines
 (RTX 5080 desktop, RTX 4050 laptop: 55 pairs, 11.1 GPU-hours) and cost nothing
 but time; the AMD parts need the non-GCP provider.
 
@@ -170,7 +183,10 @@ Three caveats:
 2. It only helps cells deterministic in the batch index. `F_interleave`,
    `I_stochastic`, `composite_*` and `M_composite_memmin_*` need their own
    schedule model, or a re-run that simply emits STEP lines directly -- which
-   is strictly better and costs the same.
+   is strictly better and costs the same. As of `05bb03e4` strategies E, G, H
+   and J emit them too, so a re-run of those cells needs no schedule model at
+   all; H's mimicry slots are real cuFFT/mining/n-body compute and emit
+   `kind=nonml`, which the work-label path reads as `other`.
 3. The cheapest version of all of this is to re-run with STEP logging enabled
    and skip the reconstruction entirely. The reconstruction exists because the
    archived runs cannot be re-run; anything you actually re-run should just log.
