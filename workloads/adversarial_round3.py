@@ -30,6 +30,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `python workloads/adversarial_round3.py`
+    from _step import emit_step
+
 from torch.utils.data import DataLoader
 
 
@@ -90,6 +96,7 @@ def strategy_k_online_learning(args, device):
 
     wall_start = time.time()
     last_print = wall_start
+    batches = 0
     total_samples = 0
     passes = 0
 
@@ -108,6 +115,10 @@ def strategy_k_online_learning(args, device):
             loss.backward()
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
+            # That update is what makes this slot training rather than the
+            # inference it is disguised as, so every batch emits kind=train.
+            batches += 1
+            emit_step("train", batches, tokens=data.size(0))
 
             # Immediately free gradient memory
             del output, loss
