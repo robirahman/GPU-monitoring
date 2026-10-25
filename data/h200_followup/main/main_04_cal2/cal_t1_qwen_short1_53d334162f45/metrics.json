@@ -1,0 +1,89 @@
+{
+ "family": "lora",
+ "mode": "ordinary",
+ "args": {
+  "family": "lora",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 90.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 453797,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_04_cal2/cal_t1_qwen_short1_53d334162f45/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_04_cal2/cal_t1_qwen_short1_53d334162f45/events.jsonl"
+ },
+ "batch_size": 8,
+ "unit": "tokens",
+ "updates": 639,
+ "useful_units": 2617344,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 90.68003173702164,
+ "useful_units_per_s": 28863.509968660783,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 3.0446191132068634,
+   "val_ppl": 21.002030283289976,
+   "val_n": 65536
+  },
+  {
+   "updates": 211,
+   "t": 30.004288839991204,
+   "train_loss": 2.404158353805542,
+   "val_loss": 2.4206945672631264,
+   "val_ppl": 11.253673033870268,
+   "val_n": 65536
+  },
+  {
+   "updates": 429,
+   "t": 60.67562293697847,
+   "train_loss": 2.5084433555603027,
+   "val_loss": 2.417892187833786,
+   "val_ppl": 11.22218012021268,
+   "val_n": 65536
+  },
+  {
+   "updates": 639,
+   "t": 90.06046106800204,
+   "final": true,
+   "val_loss": 2.4322534948587418,
+   "val_ppl": 11.384508125606205,
+   "val_n": 65536
+  }
+ ],
+ "data_fingerprint": {
+  "train": "5d4fb603254a7a5b/tokens=2564764",
+  "validation": "51d84d52d095f90d/tokens=267130",
+  "dataset": "wikitext"
+ },
+ "model_revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+ "seed": 453797,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "wikitext causal LM cross-entropy"
+}

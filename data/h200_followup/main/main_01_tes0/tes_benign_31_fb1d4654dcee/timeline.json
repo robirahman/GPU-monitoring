@@ -1,0 +1,128 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 10,
+   "planned_s": 418.76391924483437,
+   "procs": [
+    {
+     "label": "dit",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "dit",
+      "--schedule",
+      "91:0.6,51:1.0,23:1.0,252:0.3"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 584.7899262225046,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "584",
+      "--seed",
+      "379625"
+     ]
+    },
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "204:0,380:20"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 666.6888636326541,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "557:0.12,5:0,103:0.12"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 235.8299528279251,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "235",
+      "--seed",
+      "895885"
+     ]
+    },
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "235",
+      "--seed",
+      "525767"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 694.784386018226,
+   "procs": [
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "427:1,24:5,242:5"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 199.14295205385588,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "199",
+      "--seed",
+      "855539"
+     ]
+    }
+   ]
+  }
+ ]
+}

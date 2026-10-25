@@ -1,0 +1,273 @@
+{
+ "family": "lora",
+ "mode": "ordinary",
+ "args": {
+  "family": "lora",
+  "dataset": "tinystories",
+  "eval_tokens": 16384,
+  "eval_images": null,
+  "lr_schedule": "cosine",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "EleutherAI/pythia-1b",
+  "mode": "ordinary",
+  "updates": 2923,
+  "duration": 719.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 116,
+  "eval_every_sec": 1000000000.0,
+  "seed": 896655,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_07_tes3/tes_atk_pythia_ord_r1_0e01ee670797/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_07_tes3/tes_atk_pythia_ord_r1_0e01ee670797/events.jsonl"
+ },
+ "batch_size": 8,
+ "unit": "tokens",
+ "updates": 2923,
+ "useful_units": 11972608,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "cosine",
+ "update_budget": 2923,
+ "wall_s_train_loop": 366.98902462399565,
+ "useful_units_per_s": 32623.88572047004,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 1.8496802747249603,
+   "val_ppl": 6.357786452585019,
+   "val_n": 16384
+  },
+  {
+   "updates": 116,
+   "t": 16.128033332992345,
+   "train_loss": 1.5302830934524536,
+   "val_loss": 1.4252564311027527,
+   "val_ppl": 4.158924183543343,
+   "val_n": 16384
+  },
+  {
+   "updates": 232,
+   "t": 30.590773913019802,
+   "train_loss": 1.5094493627548218,
+   "val_loss": 1.350885421037674,
+   "val_ppl": 3.860842488913226,
+   "val_n": 16384
+  },
+  {
+   "updates": 348,
+   "t": 45.057211593026295,
+   "train_loss": 1.519068956375122,
+   "val_loss": 1.3195457756519318,
+   "val_ppl": 3.741721410238666,
+   "val_n": 16384
+  },
+  {
+   "updates": 464,
+   "t": 59.52147234400036,
+   "train_loss": 1.3834095001220703,
+   "val_loss": 1.2942272424697876,
+   "val_ppl": 3.6481757293325288,
+   "val_n": 16384
+  },
+  {
+   "updates": 580,
+   "t": 73.98290831199847,
+   "train_loss": 1.4317619800567627,
+   "val_loss": 1.2743987441062927,
+   "val_ppl": 3.57655034152307,
+   "val_n": 16384
+  },
+  {
+   "updates": 696,
+   "t": 88.4471594330389,
+   "train_loss": 1.3787786960601807,
+   "val_loss": 1.261827141046524,
+   "val_ppl": 3.531868817968767,
+   "val_n": 16384
+  },
+  {
+   "updates": 812,
+   "t": 103.10291418299312,
+   "train_loss": 1.49708890914917,
+   "val_loss": 1.2471270859241486,
+   "val_ppl": 3.4803298922747743,
+   "val_n": 16384
+  },
+  {
+   "updates": 928,
+   "t": 117.5651497360086,
+   "train_loss": 1.2749358415603638,
+   "val_loss": 1.234509438276291,
+   "val_ppl": 3.436692197467878,
+   "val_n": 16384
+  },
+  {
+   "updates": 1044,
+   "t": 132.03070542099886,
+   "train_loss": 1.3602027893066406,
+   "val_loss": 1.2258715331554413,
+   "val_ppl": 3.4071342196255547,
+   "val_n": 16384
+  },
+  {
+   "updates": 1160,
+   "t": 146.4956834280165,
+   "train_loss": 1.4959299564361572,
+   "val_loss": 1.2193646132946014,
+   "val_ppl": 3.3850362431533054,
+   "val_n": 16384
+  },
+  {
+   "updates": 1276,
+   "t": 160.96141130203614,
+   "train_loss": 1.341845154762268,
+   "val_loss": 1.2083989381790161,
+   "val_ppl": 3.3481198121711433,
+   "val_n": 16384
+  },
+  {
+   "updates": 1392,
+   "t": 175.4307405850268,
+   "train_loss": 1.2971453666687012,
+   "val_loss": 1.20828577876091,
+   "val_ppl": 3.3477409623170673,
+   "val_n": 16384
+  },
+  {
+   "updates": 1508,
+   "t": 189.9092169260257,
+   "train_loss": 1.355246901512146,
+   "val_loss": 1.1975889205932617,
+   "val_ppl": 3.312121499869204,
+   "val_n": 16384
+  },
+  {
+   "updates": 1624,
+   "t": 204.56416747003095,
+   "train_loss": 1.2246917486190796,
+   "val_loss": 1.1885687112808228,
+   "val_ppl": 3.2823798104627615,
+   "val_n": 16384
+  },
+  {
+   "updates": 1740,
+   "t": 219.01920830400195,
+   "train_loss": 1.3871828317642212,
+   "val_loss": 1.1891053915023804,
+   "val_ppl": 3.284141871576058,
+   "val_n": 16384
+  },
+  {
+   "updates": 1856,
+   "t": 233.47633615601808,
+   "train_loss": 1.4138810634613037,
+   "val_loss": 1.1816561222076416,
+   "val_ppl": 3.2597683096962022,
+   "val_n": 16384
+  },
+  {
+   "updates": 1972,
+   "t": 247.93375963601284,
+   "train_loss": 1.279253602027893,
+   "val_loss": 1.1784403324127197,
+   "val_ppl": 3.2493024171066103,
+   "val_n": 16384
+  },
+  {
+   "updates": 2088,
+   "t": 262.3930787660065,
+   "train_loss": 1.4517582654953003,
+   "val_loss": 1.1776425242424011,
+   "val_ppl": 3.246711130902505,
+   "val_n": 16384
+  },
+  {
+   "updates": 2204,
+   "t": 276.8759901120211,
+   "train_loss": 1.3703292608261108,
+   "val_loss": 1.1725400686264038,
+   "val_ppl": 3.230187123815758,
+   "val_n": 16384
+  },
+  {
+   "updates": 2320,
+   "t": 291.3334816620336,
+   "train_loss": 1.300155520439148,
+   "val_loss": 1.1712017357349396,
+   "val_ppl": 3.2258669497027617,
+   "val_n": 16384
+  },
+  {
+   "updates": 2436,
+   "t": 305.9815586450277,
+   "train_loss": 1.247876524925232,
+   "val_loss": 1.1698370575904846,
+   "val_ppl": 3.221467682054535,
+   "val_n": 16384
+  },
+  {
+   "updates": 2552,
+   "t": 320.43769522203365,
+   "train_loss": 1.3411167860031128,
+   "val_loss": 1.1672966480255127,
+   "val_ppl": 3.213294221106723,
+   "val_n": 16384
+  },
+  {
+   "updates": 2668,
+   "t": 334.8970627610106,
+   "train_loss": 1.423420786857605,
+   "val_loss": 1.1667257845401764,
+   "val_ppl": 3.2114603922510185,
+   "val_n": 16384
+  },
+  {
+   "updates": 2784,
+   "t": 349.3558008540422,
+   "train_loss": 1.2727279663085938,
+   "val_loss": 1.1664524972438812,
+   "val_ppl": 3.2105828608378166,
+   "val_n": 16384
+  },
+  {
+   "updates": 2900,
+   "t": 363.8219258750323,
+   "train_loss": 1.3127145767211914,
+   "val_loss": 1.166414886713028,
+   "val_ppl": 3.210462111382812,
+   "val_n": 16384
+  },
+  {
+   "updates": 2923,
+   "t": 366.83979468699545,
+   "final": true,
+   "val_loss": 1.1663664877414703,
+   "val_ppl": 3.210306732078526,
+   "val_n": 16384
+  }
+ ],
+ "data_fingerprint": {
+  "train": "bd7568e44bff4de0/tokens=45467212",
+  "validation": "711783787731926f/tokens=4819184",
+  "dataset": "tinystories"
+ },
+ "model_revision": "f73d7dcc545c8bd326d8559c8ef84ffe92fea6b2",
+ "seed": 896655,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "tinystories causal LM cross-entropy"
+}

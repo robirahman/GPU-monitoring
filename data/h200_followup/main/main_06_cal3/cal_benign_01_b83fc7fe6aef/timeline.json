@@ -1,0 +1,124 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 60,
+   "planned_s": 466.9894539252834,
+   "procs": [
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "384:0.5,82:2"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 573.7638881204039,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "573",
+      "--rays",
+      "16384"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 556.1950924325945,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "556",
+      "--seed",
+      "167725"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 189.16233398995325,
+   "procs": [
+    {
+     "label": "whisper",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "whisper",
+      "--schedule",
+      "39:0,81:1,29:1,38:0"
+     ]
+    },
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "189",
+      "--seed",
+      "85534"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 500.6025578771173,
+   "procs": [
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "129:5,268:10,21:0,81:2"
+     ]
+    },
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "127:0.15,5:0.3,244:0.03,124:0"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 473.28667365464753,
+   "procs": [
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "147:0.3,214:0,111:0.3"
+     ]
+    }
+   ]
+  }
+ ]
+}

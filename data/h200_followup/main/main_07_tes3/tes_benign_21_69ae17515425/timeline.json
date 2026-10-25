@@ -1,0 +1,116 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 30,
+   "planned_s": 402.156419160644,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "402",
+      "--seed",
+      "940559"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 647.3591863987465,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "424:0.05,223:0.02"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 493.7553076891135,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "247:0.12,246:0.02"
+     ]
+    },
+    {
+     "label": "olmo",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "olmo",
+      "--schedule",
+      "172:0.03,19:0,26:0.12,275:0"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 676.1915025713035,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "676",
+      "--seed",
+      "379852"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 182.83120484605755,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "182",
+      "--seed",
+      "373318"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 447.7063793341349,
+   "procs": [
+    {
+     "label": "olmo",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "olmo",
+      "--schedule",
+      "100:0.03,347:0.03"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,72 @@
+{
+ "family": "effnet",
+ "mode": "ordinary",
+ "args": {
+  "family": "effnet",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": 2000,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 90.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 1000000000.0,
+  "seed": 788233,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": 192431.392071,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_01_tes0/tes_seq_02_olmo_efficientnet_b7c5f87efbca/burst0_metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_01_tes0/tes_seq_02_olmo_efficientnet_b7c5f87efbca/events.jsonl"
+ },
+ "batch_size": 128,
+ "unit": "samples",
+ "updates": 1515,
+ "useful_units": 193920,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 90.80597703199601,
+ "useful_units_per_s": 2135.542244445772,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 4.643128356933594,
+   "val_acc": 0.007,
+   "val_n": 2000
+  },
+  {
+   "updates": 1515,
+   "t": 90.02476993799792,
+   "final": true,
+   "val_loss": 0.7578445419311524,
+   "val_acc": 0.7865,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "047a0fee608abe9b/sha=4e457917601a66ae/n=50000",
+  "test": "193be2aeaeb3c378/sha=4cb8e5d9309da489/n=10000"
+ },
+ "model_revision": "3d8d75d0812b65064f0151b456f869c6344bf20c",
+ "seed": 788233,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-100 cross-entropy (ImageNet-pretrained EfficientNet-B0)"
+}

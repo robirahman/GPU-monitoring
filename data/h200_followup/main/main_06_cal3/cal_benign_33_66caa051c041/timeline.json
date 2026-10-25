@@ -1,0 +1,114 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 0,
+   "planned_s": 624.1439026496039,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "624",
+      "--seed",
+      "950899"
+     ]
+    },
+    {
+     "label": "whisper",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "whisper",
+      "--schedule",
+      "117:0.3,5:1,260:0,243:0"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 686.1900510368171,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "686",
+      "--seed",
+      "697172"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 492.91489665186475,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "492",
+      "--rays",
+      "32768"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 528.9492239547354,
+   "procs": [
+    {
+     "label": "nbody",
+     "kind": "nbody",
+     "argv": [
+      "--duration",
+      "528",
+      "--particles",
+      "8192"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 248.4799490507116,
+   "procs": [
+    {
+     "label": "cufft",
+     "kind": "cufft",
+     "argv": [
+      "--duration",
+      "248",
+      "--size",
+      "2048"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 239.32197665626745,
+   "procs": [
+    {
+     "label": "cufft",
+     "kind": "cufft",
+     "argv": [
+      "--duration",
+      "239",
+      "--size",
+      "4096"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,140 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 60,
+   "planned_s": 239.97884223811383,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "239",
+      "--seed",
+      "974627"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 324.1479735900272,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "324",
+      "--rays",
+      "32768"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 612.1363047181297,
+   "procs": [
+    {
+     "label": "cufft",
+     "kind": "cufft",
+     "argv": [
+      "--duration",
+      "612",
+      "--size",
+      "2048"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 415.1025415034484,
+   "procs": [
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "249:0.15,165:0.03"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 251.8628356925516,
+   "procs": [
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "47:0.5,118:0.5,85:2"
+     ]
+    },
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "251",
+      "--seed",
+      "289928"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 485.4736441949789,
+   "procs": [
+    {
+     "label": "nbody",
+     "kind": "nbody",
+     "argv": [
+      "--duration",
+      "485",
+      "--particles",
+      "8192"
+     ]
+    },
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "136:0.5,219:0,129:10"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 421.2978580627505,
+   "procs": [
+    {
+     "label": "cufft",
+     "kind": "cufft",
+     "argv": [
+      "--duration",
+      "421",
+      "--size",
+      "4096"
+     ]
+    }
+   ]
+  }
+ ]
+}

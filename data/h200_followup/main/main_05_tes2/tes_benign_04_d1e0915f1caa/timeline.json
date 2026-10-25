@@ -1,0 +1,124 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 10,
+   "planned_s": 289.32050302681375,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "289",
+      "--seed",
+      "941180"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 652.6383688591766,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "652",
+      "--seed",
+      "829894"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 300.3291567093162,
+   "procs": [
+    {
+     "label": "dit",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "dit",
+      "--schedule",
+      "108:0.3,64:0.3,50:0.3,76:0"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 607.0368611528061,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "607",
+      "--seed",
+      "408342"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 610.817222388624,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "610",
+      "--seed",
+      "887290"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 319.8373641222851,
+   "procs": [
+    {
+     "label": "pythia",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "pythia",
+      "--schedule",
+      "66:0.1,128:0.4,124:0.2"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 160.0205237409782,
+   "procs": [
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "47:5,20:1,92:5"
+     ]
+    }
+   ]
+  }
+ ]
+}

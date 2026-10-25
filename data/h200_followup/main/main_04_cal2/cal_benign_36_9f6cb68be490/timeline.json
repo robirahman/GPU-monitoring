@@ -1,0 +1,114 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 0,
+   "planned_s": 445.21974083753247,
+   "procs": [
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "316:0.03,20:0.15,107:0.3"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 624.5766575662137,
+   "procs": [
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "302:5,322:5"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 381.6107127746984,
+   "procs": [
+    {
+     "label": "whisper",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "whisper",
+      "--schedule",
+      "191:0.3,189:2"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 418.627299952559,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "418",
+      "--seed",
+      "345801"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 573.4962004537674,
+   "procs": [
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "104:0.5,204:0.5,98:5,166:2"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 316.4693884152289,
+   "procs": [
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "100:0.3,34:0.03,109:0,72:0"
+     ]
+    },
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "316",
+      "--seed",
+      "61655"
+     ]
+    }
+   ]
+  }
+ ]
+}

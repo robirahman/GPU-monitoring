@@ -1,0 +1,104 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 60,
+   "planned_s": 386.6117136409588,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "386",
+      "--seed",
+      "898654"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 417.95610972710165,
+   "procs": [
+    {
+     "label": "wav2vec2",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "wav2vec2",
+      "--schedule",
+      "154:2,52:5,211:0"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 503.5685719436068,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "503",
+      "--seed",
+      "701149"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 523.8733126063689,
+   "procs": [
+    {
+     "label": "cufft",
+     "kind": "cufft",
+     "argv": [
+      "--duration",
+      "523",
+      "--size",
+      "4096"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 523.7412531531099,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "523",
+      "--rays",
+      "65536"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 464.24903892885413,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "464",
+      "--rays",
+      "65536"
+     ]
+    }
+   ]
+  }
+ ]
+}

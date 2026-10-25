@@ -1,0 +1,118 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 30,
+   "planned_s": 657.0418106467384,
+   "procs": [
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "201:0.03,455:0.08"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 606.0330389537596,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "606",
+      "--seed",
+      "230693"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 478.78825892899556,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "478",
+      "--seed",
+      "948184"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 504.58373273090814,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "504",
+      "--seed",
+      "174237"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 485.7662450805507,
+   "procs": [
+    {
+     "label": "cufft",
+     "kind": "cufft",
+     "argv": [
+      "--duration",
+      "485",
+      "--size",
+      "1024"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 187.7869136590475,
+   "procs": [
+    {
+     "label": "nbody",
+     "kind": "nbody",
+     "argv": [
+      "--duration",
+      "187",
+      "--particles",
+      "16384"
+     ]
+    },
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "187",
+      "--seed",
+      "55049"
+     ]
+    }
+   ]
+  }
+ ]
+}

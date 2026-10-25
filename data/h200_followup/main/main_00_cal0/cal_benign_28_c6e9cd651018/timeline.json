@@ -1,0 +1,114 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 10,
+   "planned_s": 537.6661007535533,
+   "procs": [
+    {
+     "label": "nbody",
+     "kind": "nbody",
+     "argv": [
+      "--duration",
+      "537",
+      "--particles",
+      "8192"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 586.4748495865358,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "586",
+      "--rays",
+      "65536"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 586.7115935636734,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "586",
+      "--seed",
+      "348259"
+     ]
+    },
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "586",
+      "--rays",
+      "32768"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 655.0199037039772,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "655",
+      "--seed",
+      "512894"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 378.1735766723324,
+   "procs": [
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "378",
+      "--rays",
+      "16384"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 225.95397571992817,
+   "procs": [
+    {
+     "label": "phi3",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "phi3",
+      "--schedule",
+      "93:0.15,67:0.03,64:0.08"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,124 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 10,
+   "planned_s": 568.4864952754967,
+   "procs": [
+    {
+     "label": "whisper",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "whisper",
+      "--schedule",
+      "119:1,270:0.3,79:0,99:1"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 252.56218173057866,
+   "procs": [
+    {
+     "label": "cupy_montecarlo",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "cupymc",
+      "--duration",
+      "252",
+      "--seed",
+      "376156"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 375.95029622514835,
+   "procs": [
+    {
+     "label": "qiskit_aer",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "qiskit",
+      "--duration",
+      "375",
+      "--seed",
+      "402341"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 657.6861952631447,
+   "procs": [
+    {
+     "label": "whisper",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "whisper",
+      "--schedule",
+      "449:2,207:4"
+     ]
+    },
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "657",
+      "--rays",
+      "16384"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 245.6568731510363,
+   "procs": [
+    {
+     "label": "nbody",
+     "kind": "nbody",
+     "argv": [
+      "--duration",
+      "245",
+      "--particles",
+      "8192"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 708.4139028327121,
+   "procs": [
+    {
+     "label": "whisper",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "whisper",
+      "--schedule",
+      "253:0.3,17:0.3,108:0,328:1"
+     ]
+    },
+    {
+     "label": "render",
+     "kind": "render",
+     "argv": [
+      "--duration",
+      "708",
+      "--rays",
+      "65536"
+     ]
+    }
+   ]
+  }
+ ]
+}

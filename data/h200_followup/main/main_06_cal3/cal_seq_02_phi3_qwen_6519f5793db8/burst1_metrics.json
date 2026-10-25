@@ -1,0 +1,73 @@
+{
+ "family": "lora",
+ "mode": "ordinary",
+ "args": {
+  "family": "lora",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 45.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 1000000000.0,
+  "seed": 419239,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": 362414.118789,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_06_cal3/cal_seq_02_phi3_qwen_6519f5793db8/burst1_metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_06_cal3/cal_seq_02_phi3_qwen_6519f5793db8/events.jsonl"
+ },
+ "batch_size": 8,
+ "unit": "tokens",
+ "updates": 318,
+ "useful_units": 1302528,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 45.64872227405431,
+ "useful_units_per_s": 28533.723072909037,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 3.0446191132068634,
+   "val_ppl": 21.002030283289976,
+   "val_n": 65536
+  },
+  {
+   "updates": 318,
+   "t": 45.02810711105121,
+   "final": true,
+   "val_loss": 2.4163258597254753,
+   "val_ppl": 11.204616263026374,
+   "val_n": 65536
+  }
+ ],
+ "data_fingerprint": {
+  "train": "5d4fb603254a7a5b/tokens=2564764",
+  "validation": "51d84d52d095f90d/tokens=267130",
+  "dataset": "wikitext"
+ },
+ "model_revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+ "seed": 419239,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "wikitext causal LM cross-entropy"
+}

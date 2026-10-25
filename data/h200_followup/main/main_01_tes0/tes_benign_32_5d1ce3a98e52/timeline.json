@@ -1,0 +1,136 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 120,
+   "planned_s": 595.7226425502829,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "595",
+      "--seed",
+      "419924"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 389.76277881435885,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "389",
+      "--seed",
+      "642738"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 186.45524482307664,
+   "procs": [
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "97:1,45:50,43:20"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 60,
+   "planned_s": 420.2122062756657,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "420",
+      "--seed",
+      "25032"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 337.0117565318444,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "337",
+      "--seed",
+      "478732"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 397.5019835265212,
+   "procs": [
+    {
+     "label": "openmm",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "openmm",
+      "--duration",
+      "397",
+      "--seed",
+      "978922"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 253.3333874782502,
+   "procs": [
+    {
+     "label": "dit",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "dit",
+      "--schedule",
+      "62:0.6,126:1.0,63:0.3"
+     ]
+    },
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "147:1,24:20,80:5"
+     ]
+    }
+   ]
+  }
+ ]
+}

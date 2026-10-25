@@ -1,0 +1,1648 @@
+{
+ "session_id": "main_05_tes2",
+ "partition": "test",
+ "block": 2,
+ "order_index": 5,
+ "campaign_seed": 293735711,
+ "sensors": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "runs": [
+  {
+   "label": "tes_atk_pythia_ord_r0",
+   "class_label": "ml_training",
+   "family": "pythia",
+   "kind": "train",
+   "collection_type": "attack_matched_ordinary",
+   "job_id": "test-attack-pythia-rep0",
+   "attack": null,
+   "timeout_s": 2519,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "EleutherAI/pythia-1b",
+    "--dataset",
+    "tinystories",
+    "--eval-tokens",
+    "16384",
+    "--updates",
+    "2923",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "116",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "719",
+    "--seed",
+    "23266",
+    "--mode",
+    "ordinary"
+   ]
+  },
+  {
+   "label": "tes_atk_efficientnet_ord_r1",
+   "class_label": "ml_training",
+   "family": "efficientnet",
+   "kind": "train",
+   "collection_type": "attack_matched_ordinary",
+   "job_id": "test-attack-efficientnet-rep1",
+   "attack": null,
+   "timeout_s": 2520,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "effnet",
+    "--eval-images",
+    "2000",
+    "--updates",
+    "11304",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "452",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "720",
+    "--seed",
+    "374677",
+    "--mode",
+    "ordinary"
+   ]
+  },
+  {
+   "label": "tes_t1_olmo_short0",
+   "class_label": "ml_training",
+   "family": "olmo",
+   "kind": "train",
+   "collection_type": "training_timing",
+   "timeout_s": 1200,
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "allenai/OLMo-2-0425-1B",
+    "--dataset",
+    "tinystories",
+    "--eval-tokens",
+    "16384",
+    "--duration",
+    "90",
+    "--seed",
+    "331329",
+    "--eval-every-sec",
+    "30"
+   ]
+  },
+  {
+   "label": "tes_atk_efficientnet_cover_r1",
+   "class_label": "other",
+   "family": "cufft",
+   "kind": "train",
+   "collection_type": "attack_cover_only_control",
+   "job_id": "test-attack-efficientnet-rep1",
+   "timeout_s": 2400,
+   "argv": [
+    "--family",
+    "effnet",
+    "--eval-images",
+    "2000",
+    "--mode",
+    "cover_only",
+    "--other",
+    "fft",
+    "--duration",
+    "360",
+    "--seed",
+    "374677"
+   ]
+  },
+  {
+   "label": "tes_seq_04_dit_pythia",
+   "class_label": "mixed",
+   "family": "pythia+dit",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "dit",
+    "--serve-rate",
+    "0.3",
+    "--bursts",
+    "20@67.0,10@150,90@283",
+    "--burst-family",
+    "lora",
+    "--burst-args=--model EleutherAI/pythia-1b --dataset tinystories --eval-tokens 16384",
+    "--observe",
+    "180",
+    "--lead",
+    "36",
+    "--seed",
+    "890765"
+   ]
+  },
+  {
+   "label": "tes_seqctl_0_olmo",
+   "class_label": "ml_inference",
+   "family": "olmo",
+   "kind": "sequence",
+   "collection_type": "burst_control_inference_only",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "olmo",
+    "--serve-rate",
+    "0.1",
+    "--bursts",
+    "",
+    "--pre",
+    "300",
+    "--observe",
+    "180",
+    "--seed",
+    "46734"
+   ]
+  },
+  {
+   "label": "tes_benign_05",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 30,
+      "planned_s": 221.09738076040924,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "221",
+         "--seed",
+         "882506"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 661.0852260480102,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "661",
+         "--seed",
+         "814733"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 396.84441834752784,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "396",
+         "--seed",
+         "438329"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 701.6091127561474,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "701",
+         "--seed",
+         "130884"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 648.1227066301525,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "648",
+         "--seed",
+         "770606"
+        ]
+       },
+       {
+        "label": "olmo",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "olmo",
+         "--schedule",
+         "480:0.2,168:0.12"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2848.758844542247,
+    "lineage_seconds": {
+     "rapids": 221.09738076040924,
+     "idle": 220.0,
+     "openmm": 2407.661463781838,
+     "olmo": 648.1227066301525
+    }
+   }
+  },
+  {
+   "label": "tes_benign_17",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 30,
+      "planned_s": 549.9792291367185,
+      "procs": [
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "335:5,214:20"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 360.83419634874645,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "92:0.1,268:0.3"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 205.43722448623575,
+      "procs": [
+       {
+        "label": "olmo",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "olmo",
+         "--schedule",
+         "73:0.2,88:0.12,8:0,34:0.12"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 383.71415498519514,
+      "procs": [
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "71:0.05,152:0.02,85:0.02,74:0.05"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 270.03719825280945,
+      "procs": [
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "56:5,19:50,193:1"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 593.555520586872,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "192:0,150:0.05,32:0.2,218:0.1"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 312.7857645235025,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "138:0.3,87:0.3,10:1.0,76:1.0"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2886.34328832008,
+    "lineage_seconds": {
+     "efficientnet": 820.016427389528,
+     "idle": 210.0,
+     "dit": 673.619960872249,
+     "olmo": 205.43722448623575,
+     "bark": 383.71415498519514,
+     "pythia": 593.555520586872
+    }
+   }
+  },
+  {
+   "label": "tes_atk_efficientnet_int_r0",
+   "class_label": "ml_training",
+   "family": "efficientnet",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "test-attack-efficientnet-rep0",
+   "attack": {
+    "strategy": "interleaving",
+    "train_s": 5,
+    "cover_s": 15,
+    "cover": "cuFFT"
+   },
+   "timeout_s": 4320,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "effnet",
+    "--eval-images",
+    "2000",
+    "--updates",
+    "11304",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "452",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "2520",
+    "--seed",
+    "415228",
+    "--mode",
+    "interleave",
+    "--train-sec",
+    "5",
+    "--other-sec",
+    "15",
+    "--other",
+    "fft"
+   ]
+  },
+  {
+   "label": "tes_seq_08_efficientnet_olmo",
+   "class_label": "mixed",
+   "family": "olmo+efficientnet",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "effnet",
+    "--serve-rate",
+    "10.0",
+    "--bursts",
+    "10@67.0",
+    "--burst-family",
+    "lora",
+    "--burst-args=--model allenai/OLMo-2-0425-1B --dataset tinystories --eval-tokens 16384",
+    "--observe",
+    "180",
+    "--lead",
+    "36",
+    "--seed",
+    "532620"
+   ]
+  },
+  {
+   "label": "tes_benign_26",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 30,
+      "planned_s": 423.9867586782294,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "113:0.3,310:0.6"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 542.5639470682884,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "129:0.2,87:0.05,243:0.05,82:0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 366.3753314026177,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "106:0,69:0.3,113:0.1,76:0.6"
+        ]
+       },
+       {
+        "label": "olmo",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "olmo",
+         "--schedule",
+         "64:0.03,31:0.07,42:0.03,227:0.07"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 344.2896372992673,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "77:0.6,103:0.6,74:0.3,88:0.6"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 624.8323785105255,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "200:0.4,15:0.4,269:0.1,139:0.4"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 390.4297404188086,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "390",
+         "--seed",
+         "817533"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2932.477793377737,
+    "lineage_seconds": {
+     "dit": 1134.6517273801144,
+     "idle": 240.0,
+     "pythia": 1167.396325578814,
+     "olmo": 366.3753314026177,
+     "rapids": 390.4297404188086
+    }
+   }
+  },
+  {
+   "label": "tes_benign_25",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 120,
+      "planned_s": 517.5172563764096,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "517",
+         "--seed",
+         "594632"
+        ]
+       },
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "517",
+         "--seed",
+         "108694"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 442.63322864547274,
+      "procs": [
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "221:0.05,76:0.12,144:0.12"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 252.99542789751504,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "252",
+         "--seed",
+         "739198"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 224.63457004627202,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "59:0,18:1.0,60:0.1,86:0.3"
+        ]
+       },
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "73:0,101:0.02,50:0.08"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 244.57850672996025,
+      "procs": [
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "137:0.02,31:0.05,75:0.05"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 306.369200265165,
+      "procs": [
+       {
+        "label": "olmo",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "olmo",
+         "--schedule",
+         "92:0,213:0.2"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 535.6940450436631,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "450:0.1,85:0"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2894.422235004458,
+    "lineage_seconds": {
+     "rapids": 517.5172563764096,
+     "openmm": 770.5126842739246,
+     "idle": 370.0,
+     "bark": 911.846305421705,
+     "dit": 760.328615089935,
+     "olmo": 306.369200265165
+    }
+   }
+  },
+  {
+   "label": "tes_benign_04",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 10,
+      "planned_s": 289.32050302681375,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "289",
+         "--seed",
+         "941180"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 652.6383688591766,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "652",
+         "--seed",
+         "829894"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 300.3291567093162,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "108:0.3,64:0.3,50:0.3,76:0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 607.0368611528061,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "607",
+         "--seed",
+         "408342"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 610.817222388624,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "610",
+         "--seed",
+         "887290"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 319.8373641222851,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "66:0.1,128:0.4,124:0.2"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 160.0205237409782,
+      "procs": [
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "47:5,20:1,92:5"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "openmm": 900.1377254154378,
+     "idle": 60.0,
+     "rapids": 1259.6752300119826,
+     "dit": 300.3291567093162,
+     "pythia": 319.8373641222851,
+     "efficientnet": 160.0205237409782
+    }
+   }
+  },
+  {
+   "label": "tes_atk_efficientnet_int_r1",
+   "class_label": "ml_training",
+   "family": "efficientnet",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "test-attack-efficientnet-rep1",
+   "attack": {
+    "strategy": "interleaving",
+    "train_s": 5,
+    "cover_s": 15,
+    "cover": "cuFFT"
+   },
+   "timeout_s": 4320,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "effnet",
+    "--eval-images",
+    "2000",
+    "--updates",
+    "11304",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "452",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "2520",
+    "--seed",
+    "374677",
+    "--mode",
+    "interleave",
+    "--train-sec",
+    "5",
+    "--other-sec",
+    "15",
+    "--other",
+    "fft"
+   ]
+  },
+  {
+   "label": "tes_atk_pythia_dil5_r0",
+   "class_label": "ml_training",
+   "family": "pythia",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "test-attack-pythia-rep0",
+   "attack": {
+    "strategy": "diluted_updates",
+    "dilution": 5
+   },
+   "timeout_s": 4319,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "EleutherAI/pythia-1b",
+    "--dataset",
+    "tinystories",
+    "--eval-tokens",
+    "16384",
+    "--updates",
+    "2923",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "116",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "2519",
+    "--seed",
+    "23266",
+    "--mode",
+    "diluted",
+    "--dilution",
+    "5"
+   ]
+  },
+  {
+   "label": "tes_atk_pythia_cover_r0",
+   "class_label": "other",
+   "family": "cufft",
+   "kind": "train",
+   "collection_type": "attack_cover_only_control",
+   "job_id": "test-attack-pythia-rep0",
+   "timeout_s": 2400,
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "EleutherAI/pythia-1b",
+    "--dataset",
+    "tinystories",
+    "--eval-tokens",
+    "16384",
+    "--mode",
+    "cover_only",
+    "--other",
+    "fft",
+    "--duration",
+    "359",
+    "--seed",
+    "23266"
+   ]
+  },
+  {
+   "label": "tes_benign_16",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 0,
+      "planned_s": 231.269754341257,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "143:0.05,87:0.05"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 500.23490027634716,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "88:0,313:0.05,97:0.05"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 515.113541421907,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "222:1.0,101:0.1,191:1.0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 460.78318026528814,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "84:0.6,238:1.0,49:0,87:0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 541.1509497043961,
+      "procs": [
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "163:0.08,225:0.05,152:0.08"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 448.9257672540849,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "448",
+         "--seed",
+         "787997"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 242.52190673671976,
+      "procs": [
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "117:0.02,9:0.02,115:0"
+        ]
+       },
+       {
+        "label": "olmo",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "olmo",
+         "--schedule",
+         "167:0.07,9:0.12,65:0.2"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "pythia": 731.5046546176042,
+     "idle": 60.0,
+     "dit": 975.8967216871952,
+     "bark": 783.6728564411159,
+     "rapids": 448.9257672540849,
+     "olmo": 242.52190673671976
+    }
+   }
+  },
+  {
+   "label": "tes_benign_27",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 60,
+      "planned_s": 439.9940496260734,
+      "procs": [
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "301:50,138:20"
+        ]
+       },
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "439",
+         "--seed",
+         "306223"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 610.9997711546412,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "610",
+         "--seed",
+         "628434"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 599.1879867678538,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "599",
+         "--seed",
+         "750306"
+        ]
+       },
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "100:20,353:1,145:50"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 502.237500290394,
+      "procs": [
+       {
+        "label": "dit",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "dit",
+         "--schedule",
+         "78:0.1,251:0.6,171:1.0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 647.5806921610379,
+      "procs": [
+       {
+        "label": "olmo",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "olmo",
+         "--schedule",
+         "311:0.2,149:0.2,186:0.12"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "efficientnet": 1039.182036393927,
+     "openmm": 439.9940496260734,
+     "idle": 200.0,
+     "rapids": 1210.187757922495,
+     "dit": 502.237500290394,
+     "olmo": 647.5806921610379
+    }
+   }
+  },
+  {
+   "label": "tes_benign_00",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 60,
+      "planned_s": 412.55850069698033,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "412",
+         "--seed",
+         "659450"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 425.1263646413512,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "425",
+         "--seed",
+         "442912"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 256.1935790959943,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "256",
+         "--seed",
+         "767144"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 254.06552472506905,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "254",
+         "--seed",
+         "4235"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 214.61792988197422,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "214",
+         "--seed",
+         "377421"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 551.3425753839507,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "551",
+         "--seed",
+         "167971"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 561.1721796070003,
+      "procs": [
+       {
+        "label": "openmm",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "openmm",
+         "--duration",
+         "561",
+         "--seed",
+         "233081"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2955.07665403232,
+    "lineage_seconds": {
+     "openmm": 1781.2668347839256,
+     "idle": 280.0,
+     "rapids": 893.8098192483944
+    }
+   }
+  },
+  {
+   "label": "tes_benign_14",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 0,
+      "planned_s": 430.9321808991617,
+      "procs": [
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "194:1,23:1,78:5,134:0"
+        ]
+       },
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "430",
+         "--seed",
+         "71210"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 212.75406672910373,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "169:0.05,43:0.2"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 460.29387453944065,
+      "procs": [
+       {
+        "label": "efficientnet",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "effnet",
+         "--schedule",
+         "273:0,186:5"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 420.7555815075565,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "314:0.1,106:0.4"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 502.2459577455777,
+      "procs": [
+       {
+        "label": "pythia",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "pythia",
+         "--schedule",
+         "121:0.4,204:0.1,76:0.4,99:0.1"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 517.2749091404407,
+      "procs": [
+       {
+        "label": "bark",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "bark",
+         "--schedule",
+         "84:0,320:0.08,112:0.12"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 125.74342943871898,
+      "procs": [
+       {
+        "label": "rapids",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "rapids",
+         "--duration",
+         "125",
+         "--seed",
+         "596498"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "efficientnet": 891.2260554386023,
+     "rapids": 556.6756103378807,
+     "idle": 330.0,
+     "pythia": 1135.755605982238,
+     "bark": 517.2749091404407
+    }
+   }
+  }
+ ]
+}

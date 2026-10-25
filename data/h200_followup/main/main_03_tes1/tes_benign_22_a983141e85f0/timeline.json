@@ -1,0 +1,140 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 60,
+   "planned_s": 212.8176067252245,
+   "procs": [
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "99:5,47:1,21:1,44:5"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 301.77064966278556,
+   "procs": [
+    {
+     "label": "dit",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "dit",
+      "--schedule",
+      "192:0.1,109:0"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 687.4863340003826,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "687",
+      "--seed",
+      "753042"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 290.39453333080144,
+   "procs": [
+    {
+     "label": "olmo",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "olmo",
+      "--schedule",
+      "46:0.07,103:0.03,51:0.07,87:0.12"
+     ]
+    },
+    {
+     "label": "pythia",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "pythia",
+      "--schedule",
+      "44:0.2,29:0.4,216:0.4"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 342.9161843781904,
+   "procs": [
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "342",
+      "--seed",
+      "891571"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 272.2374806636537,
+   "procs": [
+    {
+     "label": "pythia",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "pythia",
+      "--schedule",
+      "138:0.1,133:0.1"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 632.377211238962,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "444:0.02,188:0.08"
+     ]
+    },
+    {
+     "label": "efficientnet",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "effnet",
+      "--schedule",
+      "154:20,172:0,304:5"
+     ]
+    }
+   ]
+  }
+ ]
+}

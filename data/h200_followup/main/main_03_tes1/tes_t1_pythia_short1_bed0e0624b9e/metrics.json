@@ -1,0 +1,89 @@
+{
+ "family": "lora",
+ "mode": "ordinary",
+ "args": {
+  "family": "lora",
+  "dataset": "tinystories",
+  "eval_tokens": 16384,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "EleutherAI/pythia-1b",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 90.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 162620,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_03_tes1/tes_t1_pythia_short1_bed0e0624b9e/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_03_tes1/tes_t1_pythia_short1_bed0e0624b9e/events.jsonl"
+ },
+ "batch_size": 8,
+ "unit": "tokens",
+ "updates": 712,
+ "useful_units": 2916352,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 90.2018479469989,
+ "useful_units_per_s": 32331.399703846422,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 1.8496802747249603,
+   "val_ppl": 6.357786452585019,
+   "val_n": 16384
+  },
+  {
+   "updates": 229,
+   "t": 30.106549113988876,
+   "train_loss": 1.5478808879852295,
+   "val_loss": 1.3453573882579803,
+   "val_ppl": 3.839558508549508,
+   "val_n": 16384
+  },
+  {
+   "updates": 473,
+   "t": 60.374025724013336,
+   "train_loss": 1.5784986019134521,
+   "val_loss": 1.2836785316467285,
+   "val_ppl": 3.609894442623293,
+   "val_n": 16384
+  },
+  {
+   "updates": 712,
+   "t": 90.0525358270097,
+   "final": true,
+   "val_loss": 1.2466720044612885,
+   "val_ppl": 3.47874641898816,
+   "val_n": 16384
+  }
+ ],
+ "data_fingerprint": {
+  "train": "bd7568e44bff4de0/tokens=45467212",
+  "validation": "711783787731926f/tokens=4819184",
+  "dataset": "tinystories"
+ },
+ "model_revision": "f73d7dcc545c8bd326d8559c8ef84ffe92fea6b2",
+ "seed": 162620,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "tinystories causal LM cross-entropy"
+}

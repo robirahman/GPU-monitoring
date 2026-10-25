@@ -1,0 +1,88 @@
+{
+ "family": "mlp",
+ "mode": "ordinary",
+ "args": {
+  "family": "mlp",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 90.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 487225,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_06_cal3/cal_t1_mlp_short1_47c410826cf4/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_06_cal3/cal_t1_mlp_short1_47c410826cf4/events.jsonl"
+ },
+ "batch_size": 512,
+ "unit": "samples",
+ "updates": 97298,
+ "useful_units": 49816576,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 90.00372087705182,
+ "useful_units_per_s": 553494.62793934,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 2.3016764404296874,
+   "val_acc": 0.1054,
+   "val_n": 10000
+  },
+  {
+   "updates": 32298,
+   "t": 30.000533976999577,
+   "train_loss": 2.304656982421875,
+   "val_loss": 2.30284130859375,
+   "val_acc": 0.1,
+   "val_n": 10000
+  },
+  {
+   "updates": 64755,
+   "t": 60.004155735019594,
+   "train_loss": 2.30084228515625,
+   "val_loss": 2.30268603515625,
+   "val_acc": 0.1,
+   "val_n": 10000
+  },
+  {
+   "updates": 97298,
+   "t": 90.00123598100618,
+   "final": true,
+   "val_loss": 2.302664794921875,
+   "val_acc": 0.1,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "dc9b490412f5c250/sha=c5b8e1d062f7373a/n=50000",
+  "test": "bab4620c7501a3e6/sha=f9b1e2130bab680d/n=10000"
+ },
+ "model_revision": "torchvision-mlp",
+ "seed": 487225,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-10 cross-entropy"
+}

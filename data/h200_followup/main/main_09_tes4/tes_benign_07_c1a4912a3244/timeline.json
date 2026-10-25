@@ -1,0 +1,112 @@
+{
+ "segments": [
+  {
+   "gap_before_s": 60,
+   "planned_s": 650.6296916037925,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "129:0,83:0.05,437:0.02"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 280.51023939670154,
+   "procs": [
+    {
+     "label": "pythia",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "pythia",
+      "--schedule",
+      "59:0.4,115:0.1,105:0.4"
+     ]
+    },
+    {
+     "label": "rapids",
+     "kind": "nonml",
+     "argv": [
+      "--app",
+      "rapids",
+      "--duration",
+      "280",
+      "--seed",
+      "297396"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 0,
+   "planned_s": 701.7636748731871,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "236:0,31:0.05,154:0.08,278:0.12"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 120,
+   "planned_s": 218.9053693126096,
+   "procs": [
+    {
+     "label": "olmo",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "olmo",
+      "--schedule",
+      "130:0.03,87:0.03"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 30,
+   "planned_s": 673.493350866238,
+   "procs": [
+    {
+     "label": "bark",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "bark",
+      "--schedule",
+      "180:0,196:0.08,80:0.08,215:0.12"
+     ]
+    }
+   ]
+  },
+  {
+   "gap_before_s": 10,
+   "planned_s": 244.69767394747123,
+   "procs": [
+    {
+     "label": "olmo",
+     "kind": "serve",
+     "argv": [
+      "--model",
+      "olmo",
+      "--schedule",
+      "150:0.2,94:0.03"
+     ]
+    }
+   ]
+  }
+ ]
+}

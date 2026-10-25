@@ -1,0 +1,272 @@
+{
+ "family": "resnet",
+ "mode": "shape",
+ "args": {
+  "family": "resnet",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "cosine",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "shape",
+  "updates": 63000,
+  "duration": 1800.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 2520,
+  "eval_every_sec": 1000000000.0,
+  "seed": 120308,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.4,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_02_cal1/cal_atk_resnet_shape_r1_bd97e25ce26a/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_02_cal1/cal_atk_resnet_shape_r1_bd97e25ce26a/events.jsonl"
+ },
+ "batch_size": 256,
+ "unit": "samples",
+ "updates": 63000,
+ "useful_units": 16128000,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "cosine",
+ "update_budget": 63000,
+ "wall_s_train_loop": 846.1759528949915,
+ "useful_units_per_s": 19059.8656754802,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 2.4005216552734376,
+   "val_acc": 0.1055,
+   "val_n": 10000
+  },
+  {
+   "updates": 2520,
+   "t": 39.67199333800818,
+   "train_loss": 0.21438345313072205,
+   "val_loss": 0.5099297760009766,
+   "val_acc": 0.8325,
+   "val_n": 10000
+  },
+  {
+   "updates": 5040,
+   "t": 73.26640046099783,
+   "train_loss": 0.1130269467830658,
+   "val_loss": 0.5198312072753907,
+   "val_acc": 0.8433,
+   "val_n": 10000
+  },
+  {
+   "updates": 7560,
+   "t": 106.8664983229828,
+   "train_loss": 0.11503700911998749,
+   "val_loss": 0.6367116088867187,
+   "val_acc": 0.8251,
+   "val_n": 10000
+  },
+  {
+   "updates": 10080,
+   "t": 140.4664660450071,
+   "train_loss": 0.09673397988080978,
+   "val_loss": 0.5215952667236328,
+   "val_acc": 0.8488,
+   "val_n": 10000
+  },
+  {
+   "updates": 12600,
+   "t": 174.0669501250086,
+   "train_loss": 0.07872045785188675,
+   "val_loss": 0.5386092956542968,
+   "val_acc": 0.8491,
+   "val_n": 10000
+  },
+  {
+   "updates": 15120,
+   "t": 207.66643104000832,
+   "train_loss": 0.060098111629486084,
+   "val_loss": 0.5963981689453125,
+   "val_acc": 0.8336,
+   "val_n": 10000
+  },
+  {
+   "updates": 17640,
+   "t": 241.26640535198385,
+   "train_loss": 0.08599787950515747,
+   "val_loss": 0.4976716644287109,
+   "val_acc": 0.8617,
+   "val_n": 10000
+  },
+  {
+   "updates": 20160,
+   "t": 274.86643524401006,
+   "train_loss": 0.07164657115936279,
+   "val_loss": 0.45902002258300784,
+   "val_acc": 0.8715,
+   "val_n": 10000
+  },
+  {
+   "updates": 22680,
+   "t": 308.46633132800343,
+   "train_loss": 0.057399116456508636,
+   "val_loss": 0.4358747131347656,
+   "val_acc": 0.8802,
+   "val_n": 10000
+  },
+  {
+   "updates": 25200,
+   "t": 342.06701174899354,
+   "train_loss": 0.05923300236463547,
+   "val_loss": 0.5325897216796875,
+   "val_acc": 0.8545,
+   "val_n": 10000
+  },
+  {
+   "updates": 27720,
+   "t": 375.666372022999,
+   "train_loss": 0.06849855184555054,
+   "val_loss": 0.4742142333984375,
+   "val_acc": 0.8648,
+   "val_n": 10000
+  },
+  {
+   "updates": 30240,
+   "t": 409.26648390101036,
+   "train_loss": 0.04663538932800293,
+   "val_loss": 0.4160711975097656,
+   "val_acc": 0.8836,
+   "val_n": 10000
+  },
+  {
+   "updates": 32760,
+   "t": 442.8664518010046,
+   "train_loss": 0.03477539122104645,
+   "val_loss": 0.43081086120605466,
+   "val_acc": 0.881,
+   "val_n": 10000
+  },
+  {
+   "updates": 35280,
+   "t": 476.4664618890092,
+   "train_loss": 0.031149636954069138,
+   "val_loss": 0.5010678527832031,
+   "val_acc": 0.8747,
+   "val_n": 10000
+  },
+  {
+   "updates": 37800,
+   "t": 510.0668982460047,
+   "train_loss": 0.017251551151275635,
+   "val_loss": 0.4704194763183594,
+   "val_acc": 0.8743,
+   "val_n": 10000
+  },
+  {
+   "updates": 40320,
+   "t": 543.6664374780084,
+   "train_loss": 0.007850490510463715,
+   "val_loss": 0.3993135284423828,
+   "val_acc": 0.8931,
+   "val_n": 10000
+  },
+  {
+   "updates": 42840,
+   "t": 577.2663409379893,
+   "train_loss": 0.02339692786335945,
+   "val_loss": 0.4200884368896484,
+   "val_acc": 0.8942,
+   "val_n": 10000
+  },
+  {
+   "updates": 45360,
+   "t": 610.8664574160066,
+   "train_loss": 0.001960919238626957,
+   "val_loss": 0.2708674530029297,
+   "val_acc": 0.9247,
+   "val_n": 10000
+  },
+  {
+   "updates": 47880,
+   "t": 644.4663574160077,
+   "train_loss": 0.0015086308121681213,
+   "val_loss": 0.249355322265625,
+   "val_acc": 0.9274,
+   "val_n": 10000
+  },
+  {
+   "updates": 50400,
+   "t": 678.0670037319942,
+   "train_loss": 0.0018565542995929718,
+   "val_loss": 0.24382972106933593,
+   "val_acc": 0.9289,
+   "val_n": 10000
+  },
+  {
+   "updates": 52920,
+   "t": 711.6663302140078,
+   "train_loss": 0.0020576491951942444,
+   "val_loss": 0.24259691314697265,
+   "val_acc": 0.929,
+   "val_n": 10000
+  },
+  {
+   "updates": 55440,
+   "t": 745.2664184829919,
+   "train_loss": 0.001568518579006195,
+   "val_loss": 0.24295619659423828,
+   "val_acc": 0.9284,
+   "val_n": 10000
+  },
+  {
+   "updates": 57960,
+   "t": 778.866370971984,
+   "train_loss": 0.001886516809463501,
+   "val_loss": 0.24381432800292968,
+   "val_acc": 0.9293,
+   "val_n": 10000
+  },
+  {
+   "updates": 60480,
+   "t": 812.4664204279834,
+   "train_loss": 0.0014879927039146423,
+   "val_loss": 0.24232582244873047,
+   "val_acc": 0.9299,
+   "val_n": 10000
+  },
+  {
+   "updates": 63000,
+   "t": 846.0668839449936,
+   "train_loss": 0.001596294343471527,
+   "val_loss": 0.24103899383544922,
+   "val_acc": 0.9308,
+   "val_n": 10000
+  },
+  {
+   "updates": 63000,
+   "t": 846.1282870759896,
+   "final": true,
+   "val_loss": 0.24103899383544922,
+   "val_acc": 0.9308,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "dc9b490412f5c250/sha=c5b8e1d062f7373a/n=50000",
+  "test": "bab4620c7501a3e6/sha=f9b1e2130bab680d/n=10000"
+ },
+ "model_revision": "torchvision-resnet",
+ "seed": 120308,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-10 cross-entropy"
+}

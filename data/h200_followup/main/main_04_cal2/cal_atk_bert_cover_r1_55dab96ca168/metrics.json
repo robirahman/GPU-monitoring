@@ -1,0 +1,72 @@
+{
+ "family": "bert",
+ "mode": "cover_only",
+ "args": {
+  "family": "bert",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "cover_only",
+  "updates": 0,
+  "duration": 360.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 65344,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_04_cal2/cal_atk_bert_cover_r1_55dab96ca168/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_04_cal2/cal_atk_bert_cover_r1_55dab96ca168/events.jsonl"
+ },
+ "batch_size": 32,
+ "unit": "samples",
+ "updates": 0,
+ "useful_units": 0,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": 0,
+ "wall_s_train_loop": 360.15659057197627,
+ "useful_units_per_s": 0.0,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 0.6960964372398657,
+   "val_acc": 0.5149082568807339,
+   "val_n": 872
+  },
+  {
+   "updates": 0,
+   "t": 360.08279259398114,
+   "final": true,
+   "val_loss": 0.6960964372398657,
+   "val_acc": 0.5149082568807339,
+   "val_n": 872
+  }
+ ],
+ "data_fingerprint": {
+  "train": "e0f6962d602757cb",
+  "validation": "0e2b00033b48693f"
+ },
+ "model_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+ "seed": 65344,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "SST-2 cross-entropy"
+}

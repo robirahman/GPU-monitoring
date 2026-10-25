@@ -1,0 +1,61 @@
+{
+ "run_id": "d78fd2ae33d4",
+ "job_id": "main_05_tes2-tes_t1_olmo_short0",
+ "session_id": "main_05_tes2",
+ "partition": "test",
+ "label": "tes_t1_olmo_short0",
+ "class_label": "ml_training",
+ "family": "olmo",
+ "kind": "train",
+ "argv": [
+  "--family",
+  "lora",
+  "--model",
+  "allenai/OLMo-2-0425-1B",
+  "--dataset",
+  "tinystories",
+  "--eval-tokens",
+  "16384",
+  "--duration",
+  "90",
+  "--seed",
+  "331329",
+  "--eval-every-sec",
+  "30"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "aee4885d2ebf513d972f3a5c4a3bb4460e7c43fe",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "attempt": 1,
+ "frozen_settings_sha256": "d0f44692120ae5a3a4257ce9a7b19911aadc631215a8809c8c2700bfb207d4a9",
+ "block": 2,
+ "day": null,
+ "collection_type": "training_timing",
+ "attack": null,
+ "extra": null,
+ "started_wall_ns": 1792797333083506084,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 98.60039219202008,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792797474755574860,
+ "ok": true,
+ "bytes_on_disk": 274705760
+}

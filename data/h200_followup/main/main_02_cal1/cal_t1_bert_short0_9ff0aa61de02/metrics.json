@@ -1,0 +1,88 @@
+{
+ "family": "bert",
+ "mode": "ordinary",
+ "args": {
+  "family": "bert",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 90.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 564006,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_02_cal1/cal_t1_bert_short0_9ff0aa61de02/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_02_cal1/cal_t1_bert_short0_9ff0aa61de02/events.jsonl"
+ },
+ "batch_size": 32,
+ "unit": "samples",
+ "updates": 5637,
+ "useful_units": 180384,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 90.0822642200219,
+ "useful_units_per_s": 2002.4363459539622,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 0.7091881966372149,
+   "val_acc": 0.4908256880733945,
+   "val_n": 872
+  },
+  {
+   "updates": 1835,
+   "t": 30.00646697601769,
+   "train_loss": 0.03577685356140137,
+   "val_loss": 0.22748063942161176,
+   "val_acc": 0.926605504587156,
+   "val_n": 872
+  },
+  {
+   "updates": 3740,
+   "t": 60.09492164500989,
+   "train_loss": 0.03911435604095459,
+   "val_loss": 0.29694510750267483,
+   "val_acc": 0.911697247706422,
+   "val_n": 872
+  },
+  {
+   "updates": 5637,
+   "t": 90.0114042040077,
+   "final": true,
+   "val_loss": 0.23024050071151977,
+   "val_acc": 0.9139908256880734,
+   "val_n": 872
+  }
+ ],
+ "data_fingerprint": {
+  "train": "e0f6962d602757cb",
+  "validation": "0e2b00033b48693f"
+ },
+ "model_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+ "seed": 564006,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "SST-2 cross-entropy"
+}

@@ -1,0 +1,68 @@
+{
+ "run_id": "601a50ab8fca",
+ "job_id": "calibration-attack-bert-rep1",
+ "session_id": "main_02_cal1",
+ "partition": "calibration",
+ "label": "cal_atk_bert_dil5_r1",
+ "class_label": "ml_training",
+ "family": "bert",
+ "kind": "train",
+ "argv": [
+  "--family",
+  "bert",
+  "--updates",
+  "22680",
+  "--lr-schedule",
+  "cosine",
+  "--eval-every",
+  "907",
+  "--eval-every-sec",
+  "1e9",
+  "--duration",
+  "2520",
+  "--seed",
+  "65344",
+  "--mode",
+  "diluted",
+  "--dilution",
+  "5"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "every:60:10",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "aee4885d2ebf513d972f3a5c4a3bb4460e7c43fe",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "attempt": 1,
+ "frozen_settings_sha256": "d0f44692120ae5a3a4257ce9a7b19911aadc631215a8809c8c2700bfb207d4a9",
+ "block": 1,
+ "day": null,
+ "collection_type": "attack",
+ "attack": {
+  "strategy": "diluted_updates",
+  "dilution": 5
+ },
+ "extra": null,
+ "started_wall_ns": 1792714075433585529,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 759.2573437360115,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792714878411530588,
+ "ok": true,
+ "bytes_on_disk": 335590453
+}
