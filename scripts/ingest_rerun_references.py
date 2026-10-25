@@ -71,60 +71,69 @@ def install(staged: Path, stamp: str, root: Path) -> tuple[int, int]:
     return n_pq, n_log
 
 
-def telemetry_agreement(cell: str, device: str, stamp: str, root: Path) -> dict:  # noqa: C901
+def telemetry_agreement(cell: str, device: str, stamp: str, root: Path) -> dict:
     """How close the re-run's telemetry sits to the archived run's.
 
-    Returns the overlap of the two utilisation distributions and the ratio of
-    median power. A rate measured on a run that does not look like the archived
-    one is not that run's rate.
+    Compares MEAN utilisation, the fraction of samples with any utilisation at
+    all, and the wall-clock span. Not the median, which was the first version
+    and was useless here: a GPU idle in more than half its samples has a median
+    of 0 whatever the rest of the run did, so it scored a dead 27-second run
+    and a healthy diluted one identically at 0.
+
+    Span matters on its own. Four of these cells' archived runs stop around
+    30 s into a 300 s workload with the GPU never once registering activity --
+    those are aborted runs, not slow ones, and no rate can be recovered from
+    them.
     """
-    out = {"archived_util": np.nan, "rerun_util": np.nan,
-           "power_ratio": np.nan, "verdict": "no archived run"}
-    # The device has to match. The same cell ran on nine GPU models, and the
-    # first archived file for `adversarial_E_memory_minimal` is an RX 9070 XT
-    # run -- comparing an A100 re-run against that says nothing about either.
-    # The collector writes the device into the filename with non-alphanumerics
-    # flattened to underscores.
+    out = {"a_span": np.nan, "r_span": np.nan, "a_util": np.nan, "r_util": np.nan,
+           "a_busy": np.nan, "r_busy": np.nan, "verdict": "no archived run"}
     want = re.sub(r"[^A-Za-z0-9]+", "_", device)
     arch = sorted(p for p in (root / "data").rglob(f"{cell}_*.parquet")
-                  if want in p.name)
-    arch = [p for p in arch if f"/gcp/{stamp}/" not in str(p)]
+                  if want in p.name and "/gcp/2026102" not in str(p))
     rerun = sorted((root / "data" / "gcp" / stamp).glob(f"{cell}_*.parquet"))
     if not arch or not rerun:
         out["verdict"] = "no archived run" if not arch else "no re-run"
         return out
 
-    def load(paths):
-        # data_sources.read_parquet resolves an LFS pointer through
-        # SPAR_LFS_OBJECTS; the working tree holds pointers, not payloads, so
-        # pandas on its own sees a 130-byte text file and raises.
-        frames = []
-        for p in paths:
+    def summarise(paths):
+        seen, spans, means, busy = set(), [], [], []
+        for q in paths:
             try:
-                frames.append(read_parquet(p))
+                d = read_parquet(q)
             except Exception:
                 continue
-        return pd.concat(frames) if frames else None
+            if not len(d) or "gpu_utilization_pct" not in d:
+                continue
+            rid = d["run_id"].iloc[0] if "run_id" in d else q.name
+            if rid in seen:          # the tree holds some runs twice
+                continue
+            seen.add(rid)
+            u = d["gpu_utilization_pct"].astype(float)
+            spans.append(float(d.timestamp_epoch.max() - d.timestamp_epoch.min()))
+            means.append(float(u.mean()))
+            busy.append(float((u > 0).mean()))
+        if not spans:
+            return None
+        return (float(np.mean(spans)), float(np.mean(means)), float(np.mean(busy)))
 
-    a, r = load(arch), load(rerun)
+    a, r = summarise(arch), summarise(rerun)
     if a is None or r is None:
         out["verdict"] = "unreadable (LFS pointer?)"
         return out
-    ucol = next((c for c in ("gpu_utilization_pct", "utilization_gpu") if c in a and c in r), None)
-    pcol = next((c for c in ("power_draw_w", "power_w") if c in a and c in r), None)
-    if ucol:
-        out["archived_util"] = float(a[ucol].median())
-        out["rerun_util"] = float(r[ucol].median())
-    if pcol and float(a[pcol].median()) > 0:
-        out["power_ratio"] = float(r[pcol].median()) / float(a[pcol].median())
-    # Deliberately blunt: this is a go/no-go on transferring a rate, not a test.
-    du = abs(out["archived_util"] - out["rerun_util"])
-    if np.isnan(du):
-        out["verdict"] = "no comparable column"
-    elif du <= 10 and (np.isnan(out["power_ratio"]) or 0.8 <= out["power_ratio"] <= 1.25):
+    out["a_span"], out["a_util"], out["a_busy"] = a
+    out["r_span"], out["r_util"], out["r_busy"] = r
+
+    # An archived run that stopped at a fraction of the re-run's duration with
+    # a GPU that never activated did not run; it died.
+    if a[0] < 0.5 * r[0] and a[2] < 0.05:
+        out["verdict"] = "ARCHIVED RUN ABORTED"
+    # Ran to length, but did ~nothing while the re-run was busy throughout.
+    elif a[2] < 0.10 and r[2] > 0.50:
+        out["verdict"] = "ARCHIVED RUN STARVED"
+    elif abs(a[1] - r[1]) <= 8 and abs(a[2] - r[2]) <= 0.15:
         out["verdict"] = "comparable"
     else:
-        out["verdict"] = "DIVERGED - do not transfer rate"
+        out["verdict"] = "diverged"
     return out
 
 
@@ -159,8 +168,12 @@ def main() -> int:
             "rate_lo": None if lo is None else round(lo, 4),
             "rate_hi": None if hi is None else round(hi, 4),
             "spread": None if lo is None or not lo else round(hi / lo, 2),
-            "archived_util": round(agree["archived_util"], 1) if agree["archived_util"] == agree["archived_util"] else None,
-            "rerun_util": round(agree["rerun_util"], 1) if agree["rerun_util"] == agree["rerun_util"] else None,
+            "a_span": None if agree["a_span"] != agree["a_span"] else round(agree["a_span"]),
+            "r_span": None if agree["r_span"] != agree["r_span"] else round(agree["r_span"]),
+            "a_util": None if agree["a_util"] != agree["a_util"] else round(agree["a_util"], 1),
+            "r_util": None if agree["r_util"] != agree["r_util"] else round(agree["r_util"], 1),
+            "a_busy": None if agree["a_busy"] != agree["a_busy"] else round(agree["a_busy"], 2),
+            "r_busy": None if agree["r_busy"] != agree["r_busy"] else round(agree["r_busy"], 2),
             "verdict": agree["verdict"],
         })
     df = pd.DataFrame(rows)

@@ -191,6 +191,62 @@ Three caveats:
    and skip the reconstruction entirely. The reconstruction exists because the
    archived runs cannot be re-run; anything you actually re-run should just log.
 
+## 6b. The A100 re-runs: what they found, 2026-10-23
+
+All 17 A100-SXM4-80GB pairs were re-run with STEP logging, three reps each:
+51 runs, 177 parquets. Per-cell numbers in `rerun_references_20261023b.csv`
+(single-GPU) and `rerun_references_20261023c.csv` (data-parallel). H200 and
+B200 were not reachable -- this project has no quota metric for either, and
+H100 NVL and RTX 5090 are not GCP SKUs.
+
+**Four of the eleven single-GPU cells never ran.** Their archived runs stop
+about 30 s into a 300 s workload with the GPU never once registering
+utilisation:
+
+| cell | archived span | archived mean util | samples with any util | windows in corpus |
+| :-- | --: | --: | --: | --: |
+| `F_interleave_30` | 27 s | 0.0% | 0% | 0 |
+| `H_mimicry_cufft` | 32 s | 0.0% | 0% | 1 |
+| `H_mimicry_mining` | 31 s | 0.0% | 0% | 1 |
+| `J_pid_75` | 30 s | 0.0% | 0% | 1 |
+
+These are aborted runs, not slow ones. The re-runs of the same cells on the
+same GPU model hold 97% of samples busy for the full 308 s. Together these
+four cells contribute three windows to the camera-ready A100 table, so little
+is corrupted -- but the table reports them as evasion results, and they are
+not results at all.
+
+**Three more ran to length while doing almost nothing.**
+
+| cell | archived util / busy | re-run util / busy |
+| :-- | --: | --: |
+| `K_online_learning` | 0.9% / 2% | 64.0% / 97% |
+| `L_diluted_2` | 0.9% / 2% | 89.5% / 97% |
+| `L_diluted_5` | 0.2% / 1% | 53.7% / 97% |
+
+This is §5's starvation, measured against a healthy sibling rather than
+inferred: the archived `L_diluted_2` GPU was idle in 98% of its samples. The
+remaining four cells (`E_memory_minimal`, `F_interleave_50`, `I_stochastic_30`,
+`G_clock_throttled`) are comparable or close, and all six data-parallel cells'
+archived runs are healthy (85-93% mean utilisation).
+
+**The reconstruction yield is zero.** Of the four A100 cells deterministic in
+the batch index -- `L_diluted_2`, `L_diluted_5`, `L_ddp_10`, `L_ddp_5` -- none
+has a transferable rate: the first two because their archived runs are starved,
+the DDP pair because the archived runs held 85-91% utilisation where the
+re-runs held 44-51%. A rate measured on a run that does not resemble the
+archived one is not that run's rate, so none was transferred. Section 6's
+estimate of 416 reconstructable A100 windows is an upper bound on what a
+reference *could* unlock, not what these references did.
+
+What the campaign does deliver is 51 runs carrying their own per-window truth,
+which is what caveat 3 recommended over reconstruction in the first place.
+
+One incidental confirmation: `L_ddp_stagger_5` measures 49.3 batches/s against
+`L_ddp_5`'s 6.4, a ratio of 7.7 on an 8-rank job. That is every rank emitting,
+exactly as `_step.py` warns, and why `edf784c6` left stagger out of
+`DETERMINISTIC_DILUTION`.
+
 ## 7. Other corrections in this branch
 
 - `run_level_detection.per_run_sequences` called a run training by its **first**
