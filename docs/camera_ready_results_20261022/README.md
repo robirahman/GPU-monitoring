@@ -247,6 +247,48 @@ One incidental confirmation: `L_ddp_stagger_5` measures 49.3 batches/s against
 exactly as `_step.py` warns, and why `edf784c6` left stagger out of
 `DETERMINISTIC_DILUTION`.
 
+## 6c. Actual adversarial coverage per device, 2026-10-26
+
+`scripts/audit_run_health.py` classifies every tier-A adversarial job by what
+its telemetry shows it did. 46 of 294 are unusable, and they are not spread
+evenly -- the coverage a device appears to have and the coverage it has differ
+most exactly where the paper's weakest numbers come from.
+
+| device | cells usable / claimed | jobs usable / total | windows usable / total |
+| :-- | --: | --: | --: |
+| `GeForce RTX 5080` | 29 / 29 | 96 / 96 | 1555 / 1555 |\n| `AMD RX 9070 XT` | 19 / 19 | 76 / 76 | 1444 / 1444 |\n| `H200` | 14 / 19 | 17 / 22 | 1225 / 1325 |\n| `A100-SXM4-80GB` | 10 / 19 | 10 / 19 | 1210 / 1313 |\n| `B200` | 8 / 20 | 8 / 21 | 1112 / 1212 |\n| `AMD Instinct MI300X VF` | 6 / 6 | 18 / 18 | 360 / 360 |\n| `H100 NVL` | 9 / 14 | 21 / 31 | 258 / 328 |\n| `GeForce RTX 5090` | 2 / 2 | 2 / 2 | 39 / 39 |\n| `GeForce RTX 4050 Laptop GPU` | 0 / 9 | 0 / 9 | 0 / 0 |
+
+`GeForce RTX 4050 Laptop GPU` has **no usable adversarial runs at all**: all
+nine jobs stop within 6-7 s with the GPU never activating. Any statement of
+the form "N evasion families across 9 GPU models" is wrong for this device,
+and incomplete for B200 (8 of 20 cells), A100-SXM4-80GB (10 of 19), H100 NVL
+(9 of 14) and H200 (14 of 19).
+
+The three verdicts, and what each costs:
+
+- **aborted** (19 jobs, 3 windows) -- stopped short with the GPU idle. Costs
+  coverage, not correctness: a 6-32 s run yields 0-1 windows, so these cells
+  are absent from the evaluation rather than wrong in it.
+- **truncated** (12 jobs, 70 windows) -- stopped short with the GPU working.
+  The H100 NVL `composite_*` jobs ran 128 s of 300 at ~90% busy and their
+  seven windows apiece are sound, so these are **not** excluded; they are
+  listed for re-collection at full length.
+- **starved** (15 jobs, 300 windows) -- ran to length with the GPU idle in
+  99% of samples. These are excluded, because their windows are labelled
+  adversarial training while the device did essentially nothing.
+
+Exclusions are recorded in `data/quality_exclusions.json` by job identity, so
+`apply_quality_exclusions` drops them on every path that already honours it,
+and the raw files are preserved. The full list, including the truncated jobs
+that are kept, is `recollection_list.csv`.
+
+Prevention is in `scripts/run_health.py`, called by both runners: a run that
+aborts, truncates or leaves the GPU idle now says so when it finishes and
+writes a `.health.json` beside its telemetry, and `--require-gpu-activity`
+turns that into a non-zero exit for campaigns that should never produce one.
+Replayed over the corpus it agrees with the post-hoc audit on 293 of 294 jobs
+and would have caught all 46 on the day they were collected.
+
 ## 7. Other corrections in this branch
 
 - `run_level_detection.per_run_sequences` called a run training by its **first**

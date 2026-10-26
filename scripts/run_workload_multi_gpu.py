@@ -26,7 +26,9 @@ from pathlib import Path
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _REPO_ROOT)
 
+_LAST_FRAMES = []  # rank-ordered frames of the most recent run
 from scripts.collect_telemetry import TelemetryCollector
+from scripts.run_health import report_run_health, requested_duration_of
 from workloads.registry import get_workload, WORKLOAD_REGISTRY
 
 log = logging.getLogger("spar.multi_gpu")
@@ -147,6 +149,7 @@ def run_multi_gpu(args, workload_cmd):
         fname = generate_filename(args.workload, c.metadata.gpu_name, i, run_id,
                                   node_rank=args.node_rank)
         fpath = str(output_dir / fname)
+        _LAST_FRAMES.append(c.to_dataframe())
         c.save(fpath)
         rows = len(c.to_dataframe()) if hasattr(c, 'to_dataframe') else '?'
         log.info(f"  GPU {i}: saved {fpath} ({rows} rows)")
@@ -307,6 +310,8 @@ def main():
                         help="Rolling crash snapshot interval for distributed/telemetry-only mode; 0 disables")
     parser.add_argument("--no-dcgm", action="store_true")
     parser.add_argument("--timeout", type=int, default=None)
+    parser.add_argument("--require-gpu-activity", action="store_true",
+                        help="Exit 5 if the run aborted, truncated or left the GPU idle")
     parser.add_argument("--parallel", action="store_true",
                         help="Run independent single-GPU workloads in parallel")
     parser.add_argument("--run-id", type=str, default=None,
@@ -362,6 +367,17 @@ def main():
 
         run_id, rc = run_multi_gpu(args, workload_cmd)
         log.info(f"Multi-GPU run complete: {run_id[:12]} (rc={rc})")
+        # Rank 0's stream stands for the job: the ranks of one torchrun job run
+        # the same schedule, so if GPU 0 never activated none of them did. This
+        # is the check that would have caught the six DDP cells whose `torchrun`
+        # was missing from PATH -- they exited clean, wrote eight 5-row
+        # parquets apiece, and logged no gradient steps at all.
+        if _LAST_FRAMES:
+            health = report_run_health(_LAST_FRAMES[0],
+                                       requested_duration_of(workload_cmd))
+            if args.require_gpu_activity and health != "ok":
+                log.error("FAILING: --require-gpu-activity set and run health is %s", health)
+                sys.exit(5)
         sys.exit(rc)
 
 

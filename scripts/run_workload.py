@@ -36,6 +36,7 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _REPO_ROOT)
 
 from scripts.collect_telemetry import TelemetryCollector
+from scripts.run_health import report_run_health, requested_duration_of
 from workloads.registry import get_workload, list_workloads, WORKLOAD_REGISTRY
 
 log = logging.getLogger("spar.launcher")
@@ -115,6 +116,8 @@ def main():
         help="Flush a crash-safety telemetry snapshot every N seconds (0 to disable)",
     )
     parser.add_argument("--timeout", type=int, default=None, help="Kill workload after N seconds")
+    parser.add_argument("--require-gpu-activity", action="store_true",
+                        help="Exit 5 if the run aborted, truncated or left the GPU idle")
     parser.add_argument("--ncu", action="store_true", help="Also run Nsight Compute Tier 3")
     parser.add_argument(
         "--list",
@@ -264,12 +267,20 @@ def main():
     collector.stop()
     collector.save(output_path, fmt=args.format)
 
+    # A zero exit code says the process ended tidily, not that it did any work.
+    # Four cells in the camera-ready corpus exited clean after 30 s with a GPU
+    # that never activated, and were taken for results for six months.
+    health = report_run_health(collector.to_dataframe(),
+                               requested_duration_of(workload_command),
+                               output_path)
+
     # Summary
     print("\n" + "=" * 60)
     print("Run Summary")
     print("=" * 60)
     print(f"  Samples collected: {collector.sample_count}")
     print(f"  Workload exit code: {exit_code}")
+    print(f"  Run health: {health}")
     print(f"  Output file: {output_path}")
     print("=" * 60)
 
@@ -281,6 +292,13 @@ def main():
 
     # Propagate the workload's exit code — otherwise orchestrators treat a
     # crashed workload as "completed" because telemetry saved successfully.
+    if args.require_gpu_activity and health != "ok":
+        # Opt-in, because a genuinely idle workload is legitimate telemetry:
+        # an inference server waiting for requests is `starved` by this test
+        # and is not broken. Collection campaigns that only run compute cells
+        # should set it and treat the run as failed.
+        print(f"  FAILING: --require-gpu-activity set and run health is {health}")
+        sys.exit(5)
     sys.exit(exit_code if exit_code is not None else 0)
 
 
