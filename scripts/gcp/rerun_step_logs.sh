@@ -35,6 +35,10 @@ ONLY_CELLS="${ONLY_CELLS:-}"
 # Used for re-collections that are not one of the standing sets, e.g. the
 # worker-fed _mw8 siblings of the starved cells.
 CELLS="${CELLS:-}"
+# Pass --require-gpu-activity to the runner, so a cell that aborts or leaves
+# the device idle fails the run instead of filing telemetry that looks fine.
+REQUIRE_GPU_ACTIVITY="${REQUIRE_GPU_ACTIVITY:-0}"
+GUARD=(); [ "$REQUIRE_GPU_ACTIVITY" = 1 ] && GUARD=(--require-gpu-activity)
 HOST="$(hostname -s)"
 PY="${REPO}/venv-main/bin/python"
 # The DDP cells' registry command starts with a bare `torchrun`, resolved from
@@ -96,10 +100,10 @@ run_cell() {  # run_cell <cell> <rep> <mode>
     echo "SPAR_CELL_BEGIN cell=${cell} rep=${rep} stamp=${STAMP} host=${HOST} utc=$(date -u +%FT%TZ)"
     if [ "$mode" = ddp ]; then
       "$PY" scripts/run_workload_multi_gpu.py --workload "$cell" --num-gpus 8 \
-            --output-dir data/ --no-dcgm 2>&1
+            --output-dir data/ --no-dcgm "${GUARD[@]}" 2>&1
     else
       "$PY" scripts/run_workload.py --workload "$cell" --gpu-index 0 \
-            --output-dir data/ --no-dcgm 2>&1
+            --output-dir data/ --no-dcgm "${GUARD[@]}" 2>&1
     fi
     echo "SPAR_CELL_DONE cell=${cell} rep=${rep} exit=$? utc=$(date -u +%FT%TZ)"
   } 2>&1 | tee "$log"
