@@ -121,7 +121,14 @@ def _labels_at_rate(starts, ends, t0, n, rate):
     return (t0 + first * period) < ends
 
 
-def reconstruct_labels(label, window_starts, window_ends, t0, hardware=None, root=ROOT):
+# A run whose GPU was busy in less than this fraction of its samples did not
+# execute the schedule the cell name describes, whatever a reference run of the
+# same cell managed. scripts/run_health.py uses the same floor.
+STARVED_BUSY = 0.10
+
+
+def reconstruct_labels(label, window_starts, window_ends, t0, hardware=None, root=ROOT,
+                       busy_frac=None):
     """Per-window labels for one diluted run, or None where not recoverable.
 
     Returns (labels, meta). `labels` is an object array of "ml_training",
@@ -138,6 +145,13 @@ def reconstruct_labels(label, window_starts, window_ends, t0, hardware=None, roo
     n = dilution_factor(label)
     if n is None:
         return None, dict(reason="not a deterministically diluted cell")
+    # The reference says how fast this cell CAN run; the target's own telemetry
+    # says whether it did. Where they contradict each other, the telemetry wins.
+    if busy_frac is not None and busy_frac < STARVED_BUSY:
+        return None, dict(reason=f"target run is starved (GPU busy in "
+                                 f"{busy_frac:.1%} of samples); a reference run "
+                                 f"of the same cell does not describe it",
+                          busy_frac=float(busy_frac))
     if n == 1:
         return None, dict(reason="N=1 trains on every batch; the program label settles it")
     lo, hi, n_runs = reference_rates(label, hardware, root)
@@ -167,9 +181,17 @@ def reconstruct_frame(windows, root=ROOT):
     notes = {}
     for (label, run_id), g in out.groupby(["workload_label", "run_id"], sort=False):
         hardware = g["gpu_name"].iloc[0] if "gpu_name" in g else None
+        # idle_frac is the per-window share of samples at zero utilisation, so
+        # its complement is how much of the run actually used the device.
+        busy = None
+        if "idle_frac" in g:
+            idle = g["idle_frac"].astype(float)
+            if idle.notna().any():
+                busy = 1.0 - float(idle.mean())
         labels, meta = reconstruct_labels(label, g.window_start.to_numpy(float),
                                           g.window_end.to_numpy(float),
-                                          float(g.window_start.min()), hardware, root)
+                                          float(g.window_start.min()), hardware, root,
+                                          busy_frac=busy)
         notes[str(label)] = meta
         if labels is None:
             continue

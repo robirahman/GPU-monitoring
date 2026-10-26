@@ -15,7 +15,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from classifier.data_sources import read_parquet  # noqa: E402
+from classifier.data_sources import apply_quality_exclusions, read_parquet  # noqa: E402
 from classifier.threeway_improved import sliding_windows  # noqa: E402
 from classifier.workload_labels import threeway_label  # noqa: E402
 
@@ -52,7 +52,11 @@ def main():
         if (i + 1) % 100 == 0:
             print(f"  loaded {i + 1:,}/{len(tier_a):,}", flush=True)
     raw = pd.concat(frames, ignore_index=True)
-    print(f"{len(raw):,} rows", flush=True)
+    # The same exclusions every other analysis path applies. Without this the
+    # table reports label changes for the 15 starved jobs that no longer count
+    # towards any published number.
+    raw = apply_quality_exclusions(raw, PROJECT_ROOT)
+    print(f"{len(raw):,} rows after quality exclusions", flush=True)
 
     win = sliding_windows(raw, WINDOW, STRIDE)
     win["job_objective"] = win["workload_label"].map(threeway_label)

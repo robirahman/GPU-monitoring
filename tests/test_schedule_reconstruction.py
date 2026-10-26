@@ -31,6 +31,19 @@ class FactorTests(unittest.TestCase):
                             ("whitebox_diluted_N20", 20)):
             self.assertEqual(dilution_factor(label), want, label)
 
+    def test_a_starved_target_is_refused_however_fast_the_reference_ran(self):
+        # adversarial_L_diluted_2 on A100: the archived run did about four
+        # batches in 324 s and its GPU is idle in 98% of samples, while the
+        # 2026-10 reference measures 3.8 batches/s. Applying the reference rate
+        # labels all 20 windows training for a run that took one gradient step,
+        # so the target's own telemetry has to be able to veto it.
+        starts = np.arange(0.0, 300.0, 30.0)
+        labels, meta = reconstruct_labels(
+            "adversarial_L_diluted_2", starts, starts + 30.0, 0.0,
+            hardware="A100-SXM4-80GB", busy_frac=0.018)
+        self.assertIsNone(labels)
+        self.assertIn("starved", meta["reason"])
+
     def test_reads_n_from_a_data_parallel_dilution_cell(self):
         # Strategy L in adversarial_ddp.py uses the same `batch_idx % N == 0`
         # predicate as the single-GPU cell, with every rank on the same batch.
