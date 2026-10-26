@@ -31,6 +31,10 @@ CELL_SET="${CELL_SET:-all}"
 # STEP lines today, so the instrumented ones run first and the rest follow once
 # their generator has been taught to log.
 ONLY_CELLS="${ONLY_CELLS:-}"
+# An explicit space-separated cell list, which overrides CELL_SET entirely.
+# Used for re-collections that are not one of the standing sets, e.g. the
+# worker-fed _mw8 siblings of the starved cells.
+CELLS="${CELLS:-}"
 HOST="$(hostname -s)"
 PY="${REPO}/venv-main/bin/python"
 # The DDP cells' registry command starts with a bare `torchrun`, resolved from
@@ -105,6 +109,12 @@ run_cell() {  # run_cell <cell> <rep> <mode>
 say "campaign ${STAMP} on ${HOST}: cell set '${CELL_SET}', ${REPS} reps"
 "$PY" -c 'import torch;print("torch",torch.__version__,"gpus",torch.cuda.device_count())' \
   | sed 's/^/[rerun] /'
+
+if [ -n "$CELLS" ]; then
+  read -r -a SINGLE <<< "$CELLS"
+  DDP=()
+  say "explicit cell list: ${SINGLE[*]}"
+fi
 
 for rep in $(seq 1 "$REPS"); do
   if [ "$CELL_SET" != ddp ]; then
