@@ -8,8 +8,10 @@ set -u
 DEST="gdrive:H200-followup-raw-2026-10"
 LOG=~/campaign/logs/upload.log
 ST=~/campaign/upload_status.json
-SEL=(--exclude "/logs/upload*" --include "/sessions/**" --include "/logs/**" --include "/exports/**"
-     --include "/plans/**" --include "/FINAL_STATUS.json")
+# filter file: rules apply in order, first match wins; the upload's own logs are never part of the data set
+FILTER=~/campaign/upload_filter.txt
+printf "%s\n" "- /logs/upload*" "+ /sessions/**" "+ /logs/**" "+ /exports/**" "+ /plans/**" "+ /FINAL_STATUS.json" "- *" > "$FILTER"
+SEL=(--filter-from "$FILTER")
 TUNE=(--transfers 8 --checkers 16 --drive-chunk-size 128M --fast-list --retries 5 --low-level-retries 20
       --log-file "$LOG" --log-level INFO --stats 60s --stats-one-line)
 status() { echo "{\"state\": \"$1\", \"t\": \"$(date -u +%FT%TZ)\"$2}" > "$ST"; }
@@ -27,7 +29,7 @@ phase() {   # phase NAME [extra rclone filter args...]
 }
 
 cd ~/campaign || exit 1
-phase phase1_no_waveforms --exclude "*.npy"
+phase phase1_no_waveforms --exclude "*.npy"   # given before the filter file, so it takes precedence
 status phase1_done ""
 phase phase2_waveforms
 status verifying ""
