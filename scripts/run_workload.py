@@ -151,6 +151,12 @@ def main():
     if extra_cmd:
         # Command mode: user passed -- followed by a command
         workload_command = extra_cmd
+        # A bare `python` means this interpreter, as the registry's sys.executable
+        # does. Left to Popen, Windows resolves it next to the base interpreter a
+        # venv launcher was started from, so the workload silently ran outside
+        # the venv.
+        if workload_command[0] in ("python", "python3"):
+            workload_command = [sys.executable] + workload_command[1:]
         workload_label = args.workload
         timeout = args.timeout
     else:

@@ -1,0 +1,19 @@
+# Windows + NVIDIA collection box (the RTX 4050 laptop). requirements_v2.txt is
+# Linux-only -- it pins triton and the nvidia-*-cu12 wheels, which have no
+# Windows build -- and carries no transformers/datasets for the HF workloads.
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
+torchaudio==2.5.1+cu121
+numpy==2.2.6
+pandas==2.3.3
+pyarrow==23.0.1
+nvidia-ml-py==13.590.48
+psutil>=5.9
+transformers>=4.45,<5
+datasets>=2.20
+accelerate>=0.34
+tokenizers>=0.20
+# whisper_inference runs through openai-whisper (modern_inference.py --model whisper)
+openai-whisper==20250625

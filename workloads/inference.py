@@ -11,8 +11,12 @@ Usage:
 
 import argparse
 import os
-import fcntl
 import time
+
+try:
+    import fcntl
+except ImportError:  # Windows: one GPU per box, so no sibling to race
+    fcntl = None
 
 import torch
 import torch.nn as nn
@@ -62,7 +66,8 @@ def main():
     # every freshly provisioned node hits this.
     os.makedirs(args.data_dir, exist_ok=True)
     with open(os.path.join(args.data_dir, ".cifar10.lock"), "w") as _lk:
-        fcntl.flock(_lk, fcntl.LOCK_EX)
+        if fcntl is not None:
+            fcntl.flock(_lk, fcntl.LOCK_EX)
         dataset = torchvision.datasets.CIFAR10(
             root=args.data_dir, train=False, download=True, transform=transform
         )

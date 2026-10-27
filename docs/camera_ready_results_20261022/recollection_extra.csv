@@ -1,0 +1,11 @@
+verdict,cell,hw,note
+aborted,pytorch_resnet_cifar10,GeForce RTX 4050 Laptop GPU,"all 3 reps 5-7 s at 0% util; likely cause: torchvision absent from the laptop Python (as of 2026-10-26)"
+aborted,pytorch_resnet_cifar10_amp,GeForce RTX 4050 Laptop GPU,"all 3 reps 5-6 s at 0% util; likely cause: torchvision absent from the laptop Python (as of 2026-10-26)"
+aborted,pytorch_mlp_cifar10,GeForce RTX 4050 Laptop GPU,"all 3 reps 5 s at 0% util; likely cause: torchvision absent from the laptop Python (as of 2026-10-26)"
+aborted,resnet50_inference,GeForce RTX 4050 Laptop GPU,"all 3 reps 5-6 s at 0% util; likely cause: inference.py imported fcntl, which Windows lacks"
+aborted,whisper_inference,GeForce RTX 4050 Laptop GPU,"all 3 reps 6 s at 0% util; likely cause: openai-whisper absent from the laptop Python (as of 2026-10-26)"
+aborted,blender_bmw,GeForce RTX 4050 Laptop GPU,"all 3 reps 7-13 s at 0-1% util; reproduced 2026-10-26: Blender 5.1 has no NISHITA sky type, and Python and Blender resolve /tmp differently on Windows (both fixed in blender_render.py)"
+truncated,ethash_cuda,GeForce RTX 4050 Laptop GPU,"all 3 reps 12-15 s of 300 s requested; reproduced 2026-10-26: CUDA OOM, --dag-size 1024 allocates 16 GiB (the DAG tensor has 16 columns); re-run with --dag-size 256 (4 GiB)"
+starved,deepseek_r1_inference,GeForce RTX 4050 Laptop GPU,"ran to the 420 s timeout at 0% util with ~230 MB on the GPU; the model never loaded"
+idle_prefix,bert_sst2,GeForce RTX 4050 Laptop GPU,"rep 2cec9ec1 idle for ~9 min before training (first-run download); the other two reps are sound"
+idle_prefix,gpt2_wikitext2,GeForce RTX 4050 Laptop GPU,"rep 1656e880 idle for ~8 min before training (first-run download); the other two reps are sound"

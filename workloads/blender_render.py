@@ -15,10 +15,14 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 
 
-SCENE_BLEND = "/tmp/blender_benchmark/complex_scene.blend"
+# /tmp on Linux. A literal "/tmp" breaks on Windows, where Python and Blender
+# resolve it against different roots.
+_TMP = tempfile.gettempdir().replace("\\", "/")
+SCENE_BLEND = f"{_TMP}/blender_benchmark/complex_scene.blend"
 
 
 def check_blender():
@@ -149,7 +153,9 @@ nodes.clear()
 output = nodes.new('ShaderNodeOutputWorld')
 bg = nodes.new('ShaderNodeBackground')
 sky = nodes.new('ShaderNodeTexSky')
-sky.sky_type = 'NISHITA'
+# Blender 5 renamed the Nishita model MULTIPLE_SCATTERING; older builds keep NISHITA
+sky_types = {i.identifier for i in sky.bl_rna.properties['sky_type'].enum_items}
+sky.sky_type = 'NISHITA' if 'NISHITA' in sky_types else 'MULTIPLE_SCATTERING'
 world.node_tree.links.new(sky.outputs[0], bg.inputs['Color'])
 world.node_tree.links.new(bg.outputs[0], output.inputs['Surface'])
 
@@ -174,7 +180,7 @@ print('SCENE CREATED')
     return SCENE_BLEND
 
 
-def render(blend_file, samples, output_prefix="/tmp/blender_render_"):
+def render(blend_file, samples, output_prefix=f"{_TMP}/blender_render_"):
     """Render one frame with Blender Cycles CUDA."""
     setup_script = (
         "import bpy\n"
