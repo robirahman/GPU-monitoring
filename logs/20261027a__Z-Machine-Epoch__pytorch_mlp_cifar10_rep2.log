@@ -1,0 +1,62 @@
+2026-10-27 03:18:20,567 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=pytorch_mlp_cifar10, run=90256dce689e)
+Training simple_mlp on cifar10
+  Device: cuda
+  Epochs: 20, Batch size: 512, LR: 0.01
+  AMP: False
+Files already downloaded and verified
+  Epoch 1/20: loss=1.9286, acc=31.9%, time=9.3s
+  Epoch 2/20: loss=1.6161, acc=43.3%, time=9.2s
+  Epoch 3/20: loss=1.4973, acc=47.6%, time=9.2s
+  Epoch 4/20: loss=1.4078, acc=50.9%, time=9.2s
+  Epoch 5/20: loss=1.3375, acc=53.6%, time=9.2s
+  Epoch 6/20: loss=1.2748, acc=55.8%, time=9.3s
+  Epoch 7/20: loss=1.2142, acc=57.8%, time=9.3s
+  Epoch 8/20: loss=1.1672, acc=59.5%, time=9.2s
+  Epoch 9/20: loss=1.1191, acc=61.4%, time=9.2s
+  Epoch 10/20: loss=1.0683, acc=63.0%, time=9.3s
+  Epoch 11/20: loss=1.0198, acc=64.6%, time=9.2s
+  Epoch 12/20: loss=0.9756, acc=66.2%, time=9.3s
+  Epoch 13/20: loss=0.9428, acc=67.4%, time=9.2s
+  Epoch 14/20: loss=0.8992, acc=69.3%, time=9.3s
+  Epoch 15/20: loss=0.8642, acc=70.4%, time=9.3s
+  Epoch 16/20: loss=0.8116, acc=72.4%, time=9.1s
+  Epoch 17/20: loss=0.7774, acc=73.4%, time=9.2s
+  Epoch 18/20: loss=0.7360, acc=74.8%, time=9.1s
+  Epoch 19/20: loss=0.7073, acc=75.9%, time=9.1s
+  Epoch 20/20: loss=0.6600, acc=77.3%, time=9.1s
+Training complete. Total wall time: 184.1s
+2026-10-27 03:21:32,808 [spar.telemetry] INFO: Telemetry stopped. 191 samples collected.
+2026-10-27 03:21:32,841 [spar.telemetry] INFO: Saved 191 rows to C:\Users\robir\Documents\SPAR hardware\data\pytorch_mlp_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_90256dce_20261027_031820.parquet
+2026-10-27 03:21:32,843 [scripts.run_health] INFO: Run health: ok (span 192s, GPU busy in 35.6% of 191 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    pytorch_mlp_cifar10
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\pytorch_training.py --model simple_mlp --dataset cifar10 --epochs 20 --batch-size 512
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      90256dce689e
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/pytorch_mlp_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_90256dce_20261027_031820.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/pytorch_mlp_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_90256dce_20261027_031820.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\pytorch_training.py --model simple_mlp --dataset cifar10 --epochs 20 --batch-size 512
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=188.1s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 191
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/pytorch_mlp_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_90256dce_20261027_031820.parquet
+============================================================
+SPAR_CELL_DONE cell=pytorch_mlp_cifar10 rep=2 exit=0 utc=2026-10-27T07:21:32Z

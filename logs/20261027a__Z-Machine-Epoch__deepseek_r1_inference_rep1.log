@@ -1,0 +1,84 @@
+2026-10-27 02:37:54,541 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=deepseek_r1_inference, run=b59ff3f4e5f0)
+`torch_dtype` is deprecated! Use `dtype` instead!
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+2026-10-27 02:42:55,538 [spar.telemetry] INFO: Checkpoint 1: 300 samples -> C:\Users\robir\Documents\SPAR hardware\data\deepseek_r1_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_b59ff3f4_20261027_023754.parquet.partial
+Setting `pad_token_id` to `eos_token_id`:151643 for open-end generation.
+Device: cuda
+Loading DeepSeek-R1-Distill-Qwen-1.5B...
+Model loaded: 1.8B params
+  Iter 5: 1280 tokens, 27.4 tok/s, 47s
+  Iter 10: 2560 tokens, 28.4 tok/s, 90s
+  Iter 15: 3840 tokens, 28.9 tok/s, 133s
+  Iter 20: 5120 tokens, 29.2 tok/s, 175s
+  Iter 25: 6400 tokens, 29.4 tok/s, 218s
+  Iter 30: 7680 tokens, 29.4 tok/s, 261s
+  Iter 35: 8960 tokens, 29.5 tok/s, 304s
+DeepSeek-R1 inference complete: 35 iterations, 8960 tokens, 29.5 tok/s, 304.1s
+2026-10-27 02:43:10,469 [spar.telemetry] INFO: Telemetry stopped. 314 samples collected.
+2026-10-27 02:43:10,487 [spar.telemetry] INFO: Saved 314 rows to C:\Users\robir\Documents\SPAR hardware\data\deepseek_r1_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_b59ff3f4_20261027_023754.parquet
+2026-10-27 02:43:10,490 [scripts.run_health] INFO: Run health: ok (span 315s of 300s requested, GPU busy in 97.1% of 314 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    deepseek_r1_inference
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\modern_inference.py --model deepseek_r1 --duration 300 --max-tokens 256
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      b59ff3f4e5f0
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/deepseek_r1_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_b59ff3f4_20261027_023754.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/deepseek_r1_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_b59ff3f4_20261027_023754.parquet.partial
+  Timeout:     420s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\modern_inference.py --model deepseek_r1 --duration 300 --max-tokens 256
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=311.9s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 314
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/deepseek_r1_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_b59ff3f4_20261027_023754.parquet
+============================================================
+SPAR_CELL_DONE cell=deepseek_r1_inference rep=1 exit=0 utc=2026-10-27T06:43:10Z

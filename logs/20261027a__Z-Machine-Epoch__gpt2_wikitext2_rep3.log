@@ -1,0 +1,52 @@
+2026-10-27 03:13:05,591 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=gpt2_wikitext2, run=39a3ddeb16d2)
+Using the latest cached version of the dataset since Salesforce/wikitext couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'wikitext-2-raw-v1' at C:\Users\robir\.cache\huggingface\datasets\Salesforce___wikitext\wikitext-2-raw-v1\0.0.0\b08601e04326c79dfdd32d625aee71d232d685c3 (last modified on Mon Oct 26 16:08:05 2026).
+Token indices sequence length is longer than the specified maximum sequence length for this model (2403644 > 1024). Running this sequence through the model will result in indexing errors
+`loss_type=None` was set in the config but it is unrecognized. Using the default loss: `ForCausalLMLoss`.
+GPT-2 124M fine-tuning
+  Device: cuda, Steps: 400, Batch: 2, AMP: False
+Loading WikiText-2 dataset...
+  Step 50/400: loss=3.3990, elapsed=16.6s
+  Step 100/400: loss=3.6142, elapsed=28.3s
+  Step 150/400: loss=3.4781, elapsed=40.1s
+  Step 200/400: loss=3.4664, elapsed=51.7s
+  Step 250/400: loss=2.8658, elapsed=63.4s
+  Step 300/400: loss=3.8317, elapsed=75.1s
+  Step 350/400: loss=3.1501, elapsed=86.7s
+  Step 400/400: loss=3.4666, elapsed=98.4s
+GPT-2 fine-tuning complete. Steps: 400, Wall time: 98.6s
+2026-10-27 03:15:06,056 [spar.telemetry] INFO: Telemetry stopped. 120 samples collected.
+2026-10-27 03:15:06,088 [spar.telemetry] INFO: Saved 120 rows to C:\Users\robir\Documents\SPAR hardware\data\gpt2_wikitext2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_39a3ddeb_20261027_031305.parquet
+2026-10-27 03:15:06,091 [scripts.run_health] INFO: Run health: ok (span 120s, GPU busy in 78.3% of 120 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    gpt2_wikitext2
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe workloads/gpt2_finetune.py --steps 400 --batch-size 2
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      39a3ddeb16d2
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/gpt2_wikitext2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_39a3ddeb_20261027_031305.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/gpt2_wikitext2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_39a3ddeb_20261027_031305.parquet.partial
+  Timeout:     1200s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe workloads/gpt2_finetune.py --steps 400 --batch-size 2
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=116.5s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 120
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/gpt2_wikitext2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_39a3ddeb_20261027_031305.parquet
+============================================================
+SPAR_CELL_DONE cell=gpt2_wikitext2 rep=3 exit=0 utc=2026-10-27T07:15:06Z

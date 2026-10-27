@@ -1,0 +1,62 @@
+2026-10-27 03:58:22,417 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=resnet50_inference, run=6ea5c2324020)
+2026-10-27 04:03:23,137 [spar.telemetry] INFO: Checkpoint 1: 299 samples -> C:\Users\robir\Documents\SPAR hardware\data\resnet50_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_6ea5c232_20261027_035822.parquet.partial
+2026-10-27 04:08:23,597 [spar.telemetry] INFO: Checkpoint 2: 597 samples -> C:\Users\robir\Documents\SPAR hardware\data\resnet50_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_6ea5c232_20261027_035822.parquet.partial
+Inference workload: resnet50
+  Device: cuda, Batch: 256, Duration: 600s
+Files already downloaded and verified
+  Pass 1: 10000 samples, 319 img/s, 31.3s elapsed
+  Pass 2: 20000 samples, 320 img/s, 62.5s elapsed
+  Pass 3: 30000 samples, 320 img/s, 93.7s elapsed
+  Pass 4: 40000 samples, 321 img/s, 124.6s elapsed
+  Pass 5: 50000 samples, 321 img/s, 155.6s elapsed
+  Pass 6: 60000 samples, 322 img/s, 186.6s elapsed
+  Pass 7: 70000 samples, 322 img/s, 217.6s elapsed
+  Pass 8: 80000 samples, 322 img/s, 248.6s elapsed
+  Pass 9: 90000 samples, 322 img/s, 279.6s elapsed
+  Pass 10: 100000 samples, 322 img/s, 310.6s elapsed
+  Pass 11: 110000 samples, 322 img/s, 341.6s elapsed
+  Pass 12: 120000 samples, 322 img/s, 372.5s elapsed
+  Pass 13: 130000 samples, 322 img/s, 403.6s elapsed
+  Pass 14: 140000 samples, 322 img/s, 434.5s elapsed
+  Pass 15: 150000 samples, 322 img/s, 465.5s elapsed
+  Pass 16: 160000 samples, 322 img/s, 496.5s elapsed
+  Pass 17: 170000 samples, 322 img/s, 527.5s elapsed
+  Pass 18: 180000 samples, 322 img/s, 558.8s elapsed
+  Pass 19: 190000 samples, 322 img/s, 589.9s elapsed
+  Pass 20: 191792 samples, 319 img/s, 600.6s elapsed
+Inference complete. Samples: 191792, Throughput: 319 img/s
+2026-10-27 04:08:31,201 [spar.telemetry] INFO: Telemetry stopped. 604 samples collected.
+2026-10-27 04:08:31,217 [spar.telemetry] INFO: Saved 604 rows to C:\Users\robir\Documents\SPAR hardware\data\resnet50_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_6ea5c232_20261027_035822.parquet
+2026-10-27 04:08:31,222 [scripts.run_health] INFO: Run health: ok (span 608s of 600s requested, GPU busy in 77.8% of 604 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    resnet50_inference
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\inference.py --model resnet50 --batch-size 256 --duration 600
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      6ea5c2324020
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/resnet50_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_6ea5c232_20261027_035822.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/resnet50_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_6ea5c232_20261027_035822.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\inference.py --model resnet50 --batch-size 256 --duration 600
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=604.8s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 604
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/resnet50_inference_NVIDIA_GeForce_RTX_4050_Laptop_GPU_6ea5c232_20261027_035822.parquet
+============================================================
+SPAR_CELL_DONE cell=resnet50_inference rep=1 exit=0 utc=2026-10-27T08:08:31Z

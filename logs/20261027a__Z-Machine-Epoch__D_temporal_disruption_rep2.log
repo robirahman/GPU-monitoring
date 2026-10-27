@@ -1,0 +1,58 @@
+2026-10-27 01:22:24,847 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=adversarial_D_temporal_disruption, run=bf51ce52d350)
+2026-10-27 01:27:25,591 [spar.telemetry] INFO: Checkpoint 1: 299 samples -> C:\Users\robir\Documents\SPAR hardware\data\adversarial_D_temporal_disruption_NVIDIA_GeForce_RTX_4050_Laptop_GPU_bf51ce52_20261027_012224.parquet.partial
+Device: cuda
+Strategy D: Temporal Disruption
+  Random batch sizes [4-512], random CUDA noise between steps
+Files already downloaded and verified
+  Step 200: loss=1.7205, bs=16, elapsed=19s
+  Step 400: loss=2.6421, bs=4, elapsed=38s
+  Step 600: loss=1.5759, bs=32, elapsed=57s
+  Step 800: loss=1.7018, bs=16, elapsed=77s
+  Step 1000: loss=1.5343, bs=512, elapsed=94s
+  Step 1200: loss=1.5909, bs=256, elapsed=111s
+  Step 1400: loss=3.0683, bs=4, elapsed=128s
+  Step 1600: loss=1.3631, bs=128, elapsed=146s
+  Step 1800: loss=1.4316, bs=32, elapsed=165s
+  Step 2000: loss=1.2568, bs=64, elapsed=184s
+  Step 2200: loss=1.1593, bs=512, elapsed=201s
+  Step 2400: loss=1.2351, bs=128, elapsed=218s
+  Step 2600: loss=1.3920, bs=64, elapsed=237s
+  Step 2800: loss=1.0573, bs=256, elapsed=255s
+  Step 3000: loss=1.0223, bs=128, elapsed=274s
+  Step 3200: loss=0.9657, bs=512, elapsed=291s
+Strategy D complete: 3296 steps, 420496 samples, 300.2s, 1401 samples/sec
+2026-10-27 01:27:42,922 [spar.telemetry] INFO: Telemetry stopped. 316 samples collected.
+2026-10-27 01:27:42,936 [spar.telemetry] INFO: Saved 316 rows to C:\Users\robir\Documents\SPAR hardware\data\adversarial_D_temporal_disruption_NVIDIA_GeForce_RTX_4050_Laptop_GPU_bf51ce52_20261027_012224.parquet
+2026-10-27 01:27:42,939 [scripts.run_health] INFO: Run health: ok (span 318s of 300s requested, GPU busy in 94.6% of 316 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_D_temporal_disruption
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\adversarial_training.py --strategy D --duration 300
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      bf51ce52d350
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/adversarial_D_temporal_disruption_NVIDIA_GeForce_RTX_4050_Laptop_GPU_bf51ce52_20261027_012224.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/adversarial_D_temporal_disruption_NVIDIA_GeForce_RTX_4050_Laptop_GPU_bf51ce52_20261027_012224.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\adversarial_training.py --strategy D --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=314.1s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 316
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/adversarial_D_temporal_disruption_NVIDIA_GeForce_RTX_4050_Laptop_GPU_bf51ce52_20261027_012224.parquet
+============================================================
+SPAR_CELL_DONE cell=adversarial_D_temporal_disruption rep=2 exit=0 utc=2026-10-27T05:27:43Z

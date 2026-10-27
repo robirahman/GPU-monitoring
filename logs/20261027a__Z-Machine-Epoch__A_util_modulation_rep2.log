@@ -1,0 +1,42 @@
+2026-10-27 00:51:13,221 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=adversarial_A_util_modulation, run=9cf8ceca8e50)
+2026-10-27 00:56:14,023 [spar.telemetry] INFO: Checkpoint 1: 299 samples -> C:\Users\robir\Documents\SPAR hardware\data\adversarial_A_util_modulation_NVIDIA_GeForce_RTX_4050_Laptop_GPU_9cf8ceca_20261027_005113.parquet.partial
+Device: cuda
+Strategy A: Utilization Modulation
+  Sleep range: 0.10-0.50s between batches
+Files already downloaded and verified
+Strategy A complete: 588 steps, 304.0s, 495 samples/sec
+2026-10-27 00:56:25,440 [spar.telemetry] INFO: Telemetry stopped. 310 samples collected.
+2026-10-27 00:56:25,447 [spar.telemetry] INFO: Saved 310 rows to C:\Users\robir\Documents\SPAR hardware\data\adversarial_A_util_modulation_NVIDIA_GeForce_RTX_4050_Laptop_GPU_9cf8ceca_20261027_005113.parquet
+2026-10-27 00:56:25,449 [scripts.run_health] INFO: Run health: ok (span 312s of 300s requested, GPU busy in 69.0% of 310 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_A_util_modulation
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\adversarial_training.py --strategy A --duration 300 --sleep-min 0.1 --sleep-max 0.5
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      9cf8ceca8e50
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/adversarial_A_util_modulation_NVIDIA_GeForce_RTX_4050_Laptop_GPU_9cf8ceca_20261027_005113.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/adversarial_A_util_modulation_NVIDIA_GeForce_RTX_4050_Laptop_GPU_9cf8ceca_20261027_005113.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\adversarial_training.py --strategy A --duration 300 --sleep-min 0.1 --sleep-max 0.5
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=308.2s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 310
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/adversarial_A_util_modulation_NVIDIA_GeForce_RTX_4050_Laptop_GPU_9cf8ceca_20261027_005113.parquet
+============================================================
+SPAR_CELL_DONE cell=adversarial_A_util_modulation rep=2 exit=0 utc=2026-10-27T04:56:25Z

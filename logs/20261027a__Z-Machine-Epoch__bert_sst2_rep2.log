@@ -1,0 +1,50 @@
+2026-10-27 02:13:33,698 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=bert_sst2, run=5b479bec91f2)
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Using the latest cached version of the dataset since nyu-mll/glue couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'sst2' at C:\Users\robir\.cache\huggingface\datasets\nyu-mll___glue\sst2\0.0.0\bcdcba79d07bc864c1c254ccfcedcce55bcc9a8c (last modified on Mon Oct 26 16:09:07 2026).
+BERT-base fine-tuning on SST-2
+  Device: cuda, Steps: 300, Batch: 8, AMP: False
+Loading SST-2 dataset...
+  Step 50/300: loss=0.4302, elapsed=12.2s
+  Step 100/300: loss=0.0621, elapsed=19.7s
+  Step 150/300: loss=0.3579, elapsed=27.2s
+  Step 200/300: loss=0.0862, elapsed=34.7s
+  Step 250/300: loss=0.5366, elapsed=42.2s
+  Step 300/300: loss=0.5254, elapsed=49.8s
+BERT fine-tuning complete. Steps: 300, Wall time: 49.9s
+2026-10-27 02:14:35,295 [spar.telemetry] INFO: Telemetry stopped. 62 samples collected.
+2026-10-27 02:14:35,327 [spar.telemetry] INFO: Saved 62 rows to C:\Users\robir\Documents\SPAR hardware\data\bert_sst2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_5b479bec_20261027_021333.parquet
+2026-10-27 02:14:35,329 [scripts.run_health] INFO: Run health: ok (span 62s, GPU busy in 74.2% of 62 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    bert_sst2
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe workloads/bert_finetune.py --steps 300 --batch-size 8
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      5b479bec91f2
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/bert_sst2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_5b479bec_20261027_021333.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/bert_sst2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_5b479bec_20261027_021333.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe workloads/bert_finetune.py --steps 300 --batch-size 8
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=57.6s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 62
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/bert_sst2_NVIDIA_GeForce_RTX_4050_Laptop_GPU_5b479bec_20261027_021333.parquet
+============================================================
+SPAR_CELL_DONE cell=bert_sst2 rep=2 exit=0 utc=2026-10-27T06:14:35Z

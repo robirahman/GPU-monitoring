@@ -1,0 +1,52 @@
+2026-10-27 02:23:07,097 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=blender_bmw, run=a31ec9bb17e8)
+2026-10-27 02:28:07,656 [spar.telemetry] INFO: Checkpoint 1: 299 samples -> C:\Users\robir\Documents\SPAR hardware\data\blender_bmw_NVIDIA_GeForce_RTX_4050_Laptop_GPU_a31ec9bb_20261027_022307.parquet.partial
+Blender Cycles rendering workload
+  Samples: 1024, Loops: 5
+  Blender: Blender 5.1.0
+  Scene already exists: C:/Users/robir/AppData/Local/Temp/blender_benchmark/complex_scene.blend
+  Render 1/5...
+  Render 1 complete: 87.6s
+  Render 2/5...
+  Render 2 complete: 87.6s
+  Render 3/5...
+  Render 3 complete: 87.7s
+  Render 4/5...
+  Render 4 complete: 88.4s
+  Render 5/5...
+  Render 5 complete: 88.0s
+Blender rendering complete. Total wall time: 439.2s
+2026-10-27 02:30:30,506 [spar.telemetry] INFO: Telemetry stopped. 440 samples collected.
+2026-10-27 02:30:30,524 [spar.telemetry] INFO: Saved 440 rows to C:\Users\robir\Documents\SPAR hardware\data\blender_bmw_NVIDIA_GeForce_RTX_4050_Laptop_GPU_a31ec9bb_20261027_022307.parquet
+2026-10-27 02:30:30,527 [scripts.run_health] INFO: Run health: ok (span 442s, GPU busy in 94.5% of 440 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    blender_bmw
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\blender_render.py --samples 1024 --loops 5
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      a31ec9bb17e8
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/blender_bmw_NVIDIA_GeForce_RTX_4050_Laptop_GPU_a31ec9bb_20261027_022307.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/blender_bmw_NVIDIA_GeForce_RTX_4050_Laptop_GPU_a31ec9bb_20261027_022307.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\blender_render.py --samples 1024 --loops 5
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=439.4s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 440
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/blender_bmw_NVIDIA_GeForce_RTX_4050_Laptop_GPU_a31ec9bb_20261027_022307.parquet
+============================================================
+SPAR_CELL_DONE cell=blender_bmw rep=2 exit=0 utc=2026-10-27T06:30:30Z

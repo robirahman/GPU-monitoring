@@ -1,0 +1,53 @@
+2026-10-27 03:24:46,362 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=pytorch_resnet_cifar10, run=fe7afc423113)
+2026-10-27 03:29:47,256 [spar.telemetry] INFO: Checkpoint 1: 299 samples -> C:\Users\robir\Documents\SPAR hardware\data\pytorch_resnet_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_fe7afc42_20261027_032446.parquet.partial
+Training resnet18 on cifar10
+  Device: cuda
+  Epochs: 10, Batch size: 512, LR: 0.01
+  AMP: False
+Files already downloaded and verified
+  Epoch 1/10: loss=1.7002, acc=36.5%, time=40.3s
+  Epoch 2/10: loss=1.2453, acc=54.6%, time=40.6s
+  Epoch 3/10: loss=1.0221, acc=63.1%, time=40.6s
+  Epoch 4/10: loss=0.8311, acc=70.4%, time=40.5s
+  Epoch 5/10: loss=0.6593, acc=77.0%, time=40.5s
+  Epoch 6/10: loss=0.4897, acc=83.1%, time=40.6s
+  Epoch 7/10: loss=0.3319, acc=89.0%, time=40.6s
+  Epoch 8/10: loss=0.2020, acc=93.8%, time=40.6s
+  Epoch 9/10: loss=0.0926, acc=97.6%, time=40.6s
+  Epoch 10/10: loss=0.0352, acc=99.4%, time=40.3s
+Training complete. Total wall time: 405.1s
+2026-10-27 03:31:39,625 [spar.telemetry] INFO: Telemetry stopped. 410 samples collected.
+2026-10-27 03:31:39,642 [spar.telemetry] INFO: Saved 410 rows to C:\Users\robir\Documents\SPAR hardware\data\pytorch_resnet_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_fe7afc42_20261027_032446.parquet
+2026-10-27 03:31:39,645 [scripts.run_health] INFO: Run health: ok (span 413s, GPU busy in 82.0% of 410 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    pytorch_resnet_cifar10
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\pytorch_training.py --model resnet18 --dataset cifar10 --epochs 10 --batch-size 512
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      fe7afc423113
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/pytorch_resnet_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_fe7afc42_20261027_032446.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/pytorch_resnet_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_fe7afc42_20261027_032446.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\pytorch_training.py --model resnet18 --dataset cifar10 --epochs 10 --batch-size 512
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=409.3s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 410
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/pytorch_resnet_cifar10_NVIDIA_GeForce_RTX_4050_Laptop_GPU_fe7afc42_20261027_032446.parquet
+============================================================
+SPAR_CELL_DONE cell=pytorch_resnet_cifar10 rep=1 exit=0 utc=2026-10-27T07:31:39Z

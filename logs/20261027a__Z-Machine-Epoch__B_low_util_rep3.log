@@ -1,0 +1,42 @@
+2026-10-27 01:11:56,804 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=adversarial_B_low_util, run=c43e60b7591d)
+2026-10-27 01:16:57,023 [spar.telemetry] INFO: Checkpoint 1: 299 samples -> C:\Users\robir\Documents\SPAR hardware\data\adversarial_B_low_util_NVIDIA_GeForce_RTX_4050_Laptop_GPU_c43e60b7_20261027_011156.parquet.partial
+Device: cuda
+Strategy B: Low-Utilization Training
+  Batch size: 2, heavy CPU augmentation
+Files already downloaded and verified
+Strategy B complete: 24313 steps, 300.0s, 162 samples/sec
+2026-10-27 01:17:05,087 [spar.telemetry] INFO: Telemetry stopped. 307 samples collected.
+2026-10-27 01:17:05,101 [spar.telemetry] INFO: Saved 307 rows to C:\Users\robir\Documents\SPAR hardware\data\adversarial_B_low_util_NVIDIA_GeForce_RTX_4050_Laptop_GPU_c43e60b7_20261027_011156.parquet
+2026-10-27 01:17:05,103 [scripts.run_health] INFO: Run health: ok (span 308s of 300s requested, GPU busy in 97.4% of 307 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_B_low_util
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\adversarial_training.py --strategy B --duration 300
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      c43e60b7591d
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/adversarial_B_low_util_NVIDIA_GeForce_RTX_4050_Laptop_GPU_c43e60b7_20261027_011156.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/adversarial_B_low_util_NVIDIA_GeForce_RTX_4050_Laptop_GPU_c43e60b7_20261027_011156.parquet.partial
+  Timeout:     360s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe C:\Users\robir\Documents\SPAR hardware\workloads\adversarial_training.py --strategy B --duration 300
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=304.2s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 307
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/adversarial_B_low_util_NVIDIA_GeForce_RTX_4050_Laptop_GPU_c43e60b7_20261027_011156.parquet
+============================================================
+SPAR_CELL_DONE cell=adversarial_B_low_util rep=3 exit=0 utc=2026-10-27T05:17:05Z

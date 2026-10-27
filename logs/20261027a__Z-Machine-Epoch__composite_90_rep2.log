@@ -1,0 +1,53 @@
+2026-10-27 02:01:08,577 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 4050 Laptop GPU, interval=1.0s, dcgm=disabled, label=adversarial_composite_90, run=645cff0f0e73)
+Composite Adversarial Training
+  Idle fraction: 90%
+  Batch size: 256
+  Grad accumulation: 4 steps
+  Memory pre-alloc: 2048 MB
+  Duration: 120s
+  Device: cuda
+  Pre-allocated: 2048 MB on GPU
+Files already downloaded and verified
+
+Composite adversarial complete:
+  Steps: 392
+  Samples: 100000
+  Throughput: 814 samples/sec
+  Duration: 122.9s
+  Idle fraction: 90%
+  EVASION_TAX_DATA: idle_frac=0.9, throughput=813.8, samples=100000, steps=392, duration=122.9
+2026-10-27 02:03:19,605 [spar.telemetry] INFO: Telemetry stopped. 130 samples collected.
+2026-10-27 02:03:19,636 [spar.telemetry] INFO: Saved 130 rows to C:\Users\robir\Documents\SPAR hardware\data\adversarial_composite_90_NVIDIA_GeForce_RTX_4050_Laptop_GPU_645cff0f_20261027_020108.parquet
+2026-10-27 02:03:19,638 [scripts.run_health] INFO: Run health: ok (span 130s of 120s requested, GPU busy in 78.5% of 130 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    adversarial_composite_90
+  Command:     C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe workloads/adversarial_composite.py --idle-fraction 0.90 --duration 120 --prealloc-mb 2048
+  GPU:         NVIDIA GeForce RTX 4050 Laptop GPU (index 0)
+  Run ID:      645cff0f0e73
+  Output:      C:\Users\robir\Documents\SPAR hardware\data/adversarial_composite_90_NVIDIA_GeForce_RTX_4050_Laptop_GPU_645cff0f_20261027_020108.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> C:\Users\robir\Documents\SPAR hardware\data/adversarial_composite_90_NVIDIA_GeForce_RTX_4050_Laptop_GPU_645cff0f_20261027_020108.parquet.partial
+  Timeout:     240s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: C:\Users\robir\Documents\SPAR hardware\venv\Scripts\python.exe workloads/adversarial_composite.py --idle-fraction 0.90 --duration 120 --prealloc-mb 2048
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=127.0s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 130
+  Workload exit code: 0
+  Run health: ok
+  Output file: C:\Users\robir\Documents\SPAR hardware\data/adversarial_composite_90_NVIDIA_GeForce_RTX_4050_Laptop_GPU_645cff0f_20261027_020108.parquet
+============================================================
+SPAR_CELL_DONE cell=adversarial_composite_90 rep=2 exit=0 utc=2026-10-27T06:03:19Z
