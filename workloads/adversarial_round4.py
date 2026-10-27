@@ -37,6 +37,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `python workloads/<script>.py`
+    from _step import emit_step
+
 from torch.utils.checkpoint import checkpoint_sequential
 
 
@@ -125,6 +131,7 @@ def strategy_m_composite_memory_minimal(args, device):
 
             total_loss += loss.item()
             steps += 1
+            emit_step("train", steps, tokens=data.size(0))
 
             # Aggressive cleanup (from E)
             del data, target, output, loss, x
@@ -139,6 +146,7 @@ def strategy_m_composite_memory_minimal(args, device):
                 jitter = random.uniform(0.5, 1.5)
                 actual_sleep = min(target_sleep * jitter, 2.0)
                 time.sleep(actual_sleep)
+                emit_step("stall", steps)
 
                 # Occasional dummy kernel (from composite)
                 if random.random() < 0.1:
@@ -241,6 +249,10 @@ def strategy_n_grad_accum_dilution(args, device):
                 optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
                 update_count += 1
+            # Strategy N never leaves train mode: every batch is a gradient
+            # computation whether or not it triggers an optimizer update.
+            emit_step("train", batch_idx, tokens=data.size(0),
+                      phase="sync" if batch_idx % accum_steps == 0 else "accum")
 
             del output, loss, data, target
 

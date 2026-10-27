@@ -34,6 +34,12 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `python workloads/<script>.py`
+    from _step import emit_step
+
+
 
 def build_resnet18_cifar(num_classes=10):
     model = torchvision.models.resnet18(weights=None, num_classes=num_classes)
@@ -90,11 +96,16 @@ def strategy_a(args, device):
             optimizer.step()
             running_loss += loss.item()
             steps += 1
+            emit_step("train", steps, tokens=data.size(0))
 
             # THE DISGUISE: sync GPU then sleep for a random interval
             torch.cuda.synchronize()
             sleep_time = random.uniform(args.sleep_min, args.sleep_max)
             time.sleep(sleep_time)
+            # Closes the training slot at the gradient step. Without this the
+            # sleep is folded into the step before it, because a STEP line
+            # reports the work done since the previous line.
+            emit_step("stall", steps)
 
         if epoch % 5 == 0:
             elapsed = time.time() - start
@@ -162,6 +173,9 @@ def strategy_b(args, device):
             optimizer.step()
             running_loss += loss.item()
             steps += 1
+            # Tiny batches and CPU-side augmentation make this look like
+            # inference; it is a gradient step on every one of them.
+            emit_step("train", steps, tokens=data.size(0))
 
         if epoch % 2 == 0:
             elapsed = time.time() - start
@@ -223,6 +237,7 @@ def strategy_d(args, device):
         optimizer.step()
         steps += 1
         total_samples += bs
+        emit_step("train", steps, tokens=bs)
 
         # THE DISGUISE: inject random CUDA noise between some steps
         if random.random() < 0.3:  # 30% chance of noise injection
@@ -232,10 +247,14 @@ def strategy_d(args, device):
             for _ in range(noise_iters):
                 _ = torch.mm(a, a)
             del a
+            # Real matmuls, but not ML work: labelling them `infer` would
+            # assert a forward pass that never happened.
+            emit_step("nonml", steps)
 
         # Random micro-sleep (0-50ms) to further break periodicity
         if random.random() < 0.2:
             time.sleep(random.uniform(0, 0.05))
+            emit_step("stall", steps)
 
         if steps % 200 == 0:
             elapsed = time.time() - start

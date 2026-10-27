@@ -37,6 +37,12 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+try:
+    from workloads._step import emit_step
+except ImportError:  # launched as `python workloads/<script>.py`
+    from _step import emit_step
+
+
 
 def build_resnet18_cifar(num_classes=10):
     model = torchvision.models.resnet18(weights=None, num_classes=num_classes)
@@ -123,6 +129,11 @@ def main():
 
             steps += 1
             total_samples += data.size(0)
+            # Every batch runs forward+backward, so every batch is training;
+            # `phase` marks which ones also update the optimizer, matching the
+            # dialect adversarial_ddp.py's K-accum already emits.
+            emit_step("train", steps, tokens=data.size(0),
+                      phase="sync" if steps % args.accum_steps == 0 else "accum")
 
             # ── EVASION 4: Gradient accumulation ────────────────────
             # Only step optimizer every N batches to reduce periodic
@@ -149,6 +160,7 @@ def main():
                 actual_sleep = min(actual_sleep, 2.0)  # Cap at 2s
 
                 time.sleep(actual_sleep)
+                emit_step("stall", steps)
 
                 # Occasionally inject a dummy CUDA kernel (10% chance)
                 # to further randomize the power/util profile
