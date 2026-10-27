@@ -159,10 +159,18 @@ def tier_files(tier, manifest=MANIFEST_STREAMS):
     return {str(PROJECT_ROOT / f) for f in streams.loc[streams.tier.isin(wanted), "file"]}
 
 
-def load_all_data(tier=None) -> pd.DataFrame:
-    """Load telemetry from all data sources, or from one frozen tier of them."""
+def load_all_data(tier=None, extra_files=None) -> pd.DataFrame:
+    """Load telemetry from all data sources, or from one frozen tier of them.
+
+    `extra_files` adds accelerator files that the tier does not contain. It
+    exists for sensitivity analysis -- "what if this gap had been filled?" --
+    and a result computed with it is NOT that tier's number. Callers are
+    expected to label it as something else.
+    """
     frames = []
     keep = tier_files(tier) if tier is not None else None
+    if keep is not None and extra_files:
+        keep = keep | {str(pathlib.Path(f).resolve()) for f in extra_files}
 
     for p in accelerator_files(PROJECT_ROOT):
         if keep is not None and str(p) not in keep:
