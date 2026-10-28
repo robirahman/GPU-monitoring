@@ -251,6 +251,41 @@ WORKLOAD_REGISTRY = {
         "description": "Composite adversarial: 0% idle (baseline, full throughput)",
         "default_timeout": 180,
     },
+    "adversarial_composite_10": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.1", "--duration", "120"],
+        "description": "Composite evasion at 10% idle padding "
+                       "(grad accumulation + randomised idle + dummy kernels)",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_20": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.2", "--duration", "120"],
+        "description": "Composite evasion at 20% idle padding "
+                       "(grad accumulation + randomised idle + dummy kernels)",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_40": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.4", "--duration", "120"],
+        "description": "Composite evasion at 40% idle padding "
+                       "(grad accumulation + randomised idle + dummy kernels)",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_60": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.6", "--duration", "120"],
+        "description": "Composite evasion at 60% idle padding "
+                       "(grad accumulation + randomised idle + dummy kernels)",
+        "default_timeout": 180,
+    },
+    "adversarial_composite_80": {
+        "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
+                    "--idle-fraction", "0.8", "--duration", "120"],
+        "description": "Composite evasion at 80% idle padding "
+                       "(grad accumulation + randomised idle + dummy kernels)",
+        "default_timeout": 180,
+    },
     "adversarial_composite_30": {
         "command": [sys.executable, os.path.join(_WORKLOADS_DIR, "adversarial_composite.py"),
                     "--idle-fraction", "0.3", "--duration", "120"],
