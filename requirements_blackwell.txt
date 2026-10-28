@@ -1,0 +1,26 @@
+# NVIDIA Blackwell datacenter collection box (B200, compute capability 10.0).
+#
+# requirements_v2.txt pins torch 2.5.1+cu121, whose wheels carry kernels for
+# sm_50 through sm_90 only. B200 is sm_100, so that build cannot launch a
+# kernel on it: it fails with "no kernel image is available for execution on
+# the device". Blackwell needs a CUDA 12.8 build.
+#
+# Deliberately a floor and not an exact pin. Which cu128 wheel is current moves
+# faster than this file does, and a wrong exact pin fails at install with a
+# resolver error on a box nobody can debug from here. The quickstart's
+# preflight proves the GPU can launch a kernel, and prints torch.__version__
+# and torch.cuda.get_arch_list() into the launcher log, so what actually ran is
+# recorded in the run rather than assumed from this file.
+#
+# This IS a different software stack from the rest of the corpus, and there is
+# no way around it: the corpus pin predates the hardware.
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+torch>=2.7
+torchvision>=0.22
+
+numpy>=2.0
+pandas>=2.2
+pyarrow>=17
+nvidia-ml-py>=12.560
+psutil>=5.9
