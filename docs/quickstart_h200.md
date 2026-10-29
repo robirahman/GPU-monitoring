@@ -2,6 +2,8 @@
 
 **Rent: 1x H200 141GB, plus 8x H200 for the FSDP cells.** 3 cells x 3 reps = 9 runs.
 
+**One rental covers everything here.** Rent the 8x node and run the single-GPU cells on it too -- they take device 0 and leave the rest idle, which costs nothing extra and saves a second rental.
+
 These replace tier-A jobs that aborted, stopped short, or ran with the GPU idle. Under the policy recorded in `data/tier_a_recollections.json`, a re-collection of the same cell on the same `gpu_name` can be promoted back into tier A, so this is repairing the frozen corpus and not only its coverage claims.
 
 ## 1. Clone and install

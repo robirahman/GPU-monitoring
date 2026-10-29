@@ -56,7 +56,12 @@ RENT = {
         "devices."),
     "B200": ("b200", "1x B200",
         "Needs `requirements_blackwell.txt` (cu128). The repo's default pin "
-        "is torch 2.5.1+cu121, which carries no sm_100 kernels."),
+        "is torch 2.5.1+cu121, which carries no sm_100 kernels.\n\n"
+        "`adversarial_G_clock_throttled` calls `nvidia-smi -pl` and "
+        "`--lock-gpu-clocks`, which need privileged access. It was skipped on "
+        "the last B200 rental for exactly that reason. Take a bare-metal or "
+        "privileged instance if you want it; otherwise expect it to fail and "
+        "leave the other three cells unaffected."),
     "A100-SXM4-80GB": ("a100_80gb", "1x A100 80GB, plus 8x A100 80GB for the FSDP cells",
         "Reachable on GCP: this project holds NVIDIA_A100_80GB_GPUS=16 in "
         "four regions."),
@@ -65,6 +70,13 @@ RENT = {
     "AMD Instinct MI300X VF": ("mi300x", "1x MI300X",
         "Use `requirements_amd.txt` and `scripts/run_workload_amd.py`."),
 }
+
+
+# AMD is out of scope: not available on Vast.ai, and the RX 9070 XT and
+# MI300X runs are not part of the NeurIPS corpus the camera-ready reports.
+# `unknown` has no device to rent. Dropped rather than deleted, so re-adding
+# them later is one edit.
+SKIP_DEVICES = {"AMD RX 9070 XT", "AMD Instinct MI300X VF", "unknown"}
 
 
 def gpus(cell):
@@ -97,7 +109,7 @@ def main():
     # starved cells are collected under their worker-fed name
     d["collect_as"] = [c + "_mw8" if v == "starved" and R.get(c + "_mw8") else c
                        for c, v in zip(d.cell, d.verdict)]
-    todo = d[~d.done & d.runnable].copy()
+    todo = d[~d.done & d.runnable & ~d.hw.isin(SKIP_DEVICES)].copy()
 
     summary = []
     for hw, g in todo.groupby("hw"):
@@ -114,6 +126,12 @@ def main():
              f"{runs} runs.\n"]
         if note:
             t.append(note + "\n")
+        if single and multi:
+            n = max(x[1] for x in multi)
+            t.append(f"**One rental covers everything here.** Rent the "
+                     f"{n}x node and run the single-GPU cells on it too -- "
+                     f"they take device 0 and leave the rest idle, which "
+                     f"costs nothing extra and saves a second rental.\n")
         t += ["These replace tier-A jobs that aborted, stopped short, or ran "
               "with the GPU idle. Under the policy recorded in "
               "`data/tier_a_recollections.json`, a re-collection of the same "
@@ -197,6 +215,64 @@ def main():
               "but `verdict` other than `ok` is not.\n"]
 
         (ROOT / "docs" / f"quickstart_{slug}.md").write_text("\n".join(t) + "\n")
+
+    # Expected windows restored, from the healthy siblings of each cell.
+    man = pd.read_parquet(ROOT / "docs/camera_ready_manifest_20261022/streams.parquet")
+    tier_a = man[man.tier.eq("A_camera_ready")]
+    ex = {x["job_id"] for x in json.loads(
+        (ROOT / "data/quality_exclusions.json").read_text())["excluded_jobs"]}
+    yields = {}
+    for (cell, hw), g in tier_a.groupby(["base", "hw"]):
+        h = g[~g.job_id.isin(ex)]
+        if len(h):
+            yields[(cell, hw)] = float(h.groupby("job_id").nominal_windows.sum().mean())
+
+    index = []
+    for hw, g in todo.groupby("hw"):
+        if hw not in RENT:
+            continue
+        cells = sorted(set(g.collect_as))
+        win = 0.0
+        for c in cells:
+            base = c[:-4] if c.endswith("_mw8") else c
+            y = yields.get((base, hw))
+            if y is None:
+                ys = [v for (cc, _), v in yields.items() if cc == base]
+                y = sum(ys) / len(ys) if ys else 19.0
+            win += y * len(g[g.collect_as.eq(c)])
+        mg = sorted({int(n) for n in g.gpus.dropna() if n > 1})
+        index.append(dict(device=hw, rent=RENT[hw][1], slug=RENT[hw][0],
+                          cells=len(cells), runs=len(cells) * 3,
+                          windows=int(round(win)), multi=mg[0] if mg else 1))
+    idx = pd.DataFrame(index).sort_values("windows", ascending=False)
+
+    lines = ["# Which rentals to take, in order\n",
+             "Ranked by the tier-A windows each one restores, estimated from "
+             "the healthy siblings of the same cell on the same device. "
+             "Re-collections can be promoted back into tier A "
+             "(`data/tier_a_recollections.json`), so these windows return to "
+             "the frozen corpus rather than only to coverage claims.\n",
+             "| # | rent | cells | runs | windows restored | quickstart |",
+             "| --: | :-- | --: | --: | --: | :-- |"]
+    for i, (_, r) in enumerate(idx.iterrows(), 1):
+        lines.append(f"| {i} | {r.rent} | {r.cells} | {r.runs} | "
+                     f"~{r.windows} | `quickstart_{r.slug}.md` |")
+    lines += ["",
+              f"**{int(idx.runs.sum())} runs, ~{int(idx.windows.sum())} windows, "
+              f"{len(idx)} rentals.**\n",
+              "Where a device has both single- and multi-GPU cells, one "
+              "multi-GPU rental covers both: a 1-GPU cell runs on device 0 and "
+              "leaves the rest idle.\n",
+              "The bottom of this list earns its place poorly. H100 NVL is one "
+              "cell worth about four windows -- a whole rental for a rounding "
+              "error. Worth stating as a gap instead unless the rental is "
+              "nearly free.\n",
+              "Not reproducible at all: `baseline_infer`, `baseline_train`, "
+              "`ffmpeg_vaapi`, `nvlink_latency`, `nvlink_p2p` have no registry "
+              "entry, so there is no command to re-run them.\n"]
+    (ROOT / "docs/RENTAL_PRIORITY.md").write_text("\n".join(lines) + "\n")
+    print("wrote docs/RENTAL_PRIORITY.md")
+    print(idx[["device", "cells", "runs", "windows"]].to_string(index=False))
 
     s = pd.DataFrame(summary, columns=["device", "rent", "1-GPU cells",
                                        "multi-GPU cells", "runs"])

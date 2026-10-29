@@ -4,6 +4,8 @@
 
 Needs `requirements_blackwell.txt` (cu128). The repo's default pin is torch 2.5.1+cu121, which carries no sm_100 kernels.
 
+`adversarial_G_clock_throttled` calls `nvidia-smi -pl` and `--lock-gpu-clocks`, which need privileged access. It was skipped on the last B200 rental for exactly that reason. Take a bare-metal or privileged instance if you want it; otherwise expect it to fail and leave the other three cells unaffected.
+
 These replace tier-A jobs that aborted, stopped short, or ran with the GPU idle. Under the policy recorded in `data/tier_a_recollections.json`, a re-collection of the same cell on the same `gpu_name` can be promoted back into tier A, so this is repairing the frozen corpus and not only its coverage claims.
 
 ## 1. Clone and install
