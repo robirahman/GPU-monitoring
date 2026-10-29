@@ -45,6 +45,53 @@ log = logging.getLogger("spar.telemetry")
 # GpuMetadata — static GPU information captured once at startup
 # ---------------------------------------------------------------------------
 
+def host_info() -> dict:
+    """CPU model, core counts, RAM and OS of the machine running the workload.
+
+    Best-effort and never fatal: a missing field is worth less than a failed
+    collection. Values are meta_-prefixed so get_feature_cols cannot pick them
+    up -- a constant-per-machine core count would be a device fingerprint.
+    """
+    info = {
+        "meta_cpu_model": "unknown",
+        "meta_cpu_cores_physical": -1,
+        "meta_cpu_cores_logical": -1,
+        "meta_ram_gb": -1.0,
+        "meta_os": "unknown",
+    }
+    try:
+        import platform
+        info["meta_os"] = f"{platform.system()} {platform.release()}".strip()
+        # platform.processor() is informative on Windows and macOS and often
+        # empty on Linux, where /proc/cpuinfo is the readable source.
+        model = (platform.processor() or "").strip()
+        if not model or model == platform.machine():
+            try:
+                with open("/proc/cpuinfo", "r") as f:
+                    for line in f:
+                        if line.lower().startswith("model name"):
+                            model = line.split(":", 1)[1].strip()
+                            break
+            except OSError:
+                pass
+        if model:
+            info["meta_cpu_model"] = model
+    except Exception:  # noqa: BLE001 - metadata must never fail a run
+        pass
+    try:
+        import psutil
+        info["meta_cpu_cores_physical"] = int(psutil.cpu_count(logical=False) or -1)
+        info["meta_cpu_cores_logical"] = int(psutil.cpu_count(logical=True) or -1)
+        info["meta_ram_gb"] = round(psutil.virtual_memory().total / 1024**3, 1)
+    except Exception:  # noqa: BLE001 - psutil is not installed everywhere
+        try:
+            import os
+            info["meta_cpu_cores_logical"] = int(os.cpu_count() or -1)
+        except Exception:
+            pass
+    return info
+
+
 class GpuMetadata:
     """Captures static GPU properties via pynvml."""
 
@@ -66,6 +113,9 @@ class GpuMetadata:
         # is the only thing that separates node0-gpu0 from node1-gpu0. Kept as
         # a string column so get_feature_cols() never treats it as a feature.
         self.hostname = socket.gethostname()
+        # The machine itself, for the question "why did this run behave like
+        # that" that driver_version alone could never answer.
+        self.host = host_info()
 
         try:
             cuda_ver_raw = pynvml.nvmlSystemGetCudaDriverVersion_v2()
@@ -107,6 +157,7 @@ class GpuMetadata:
             "pcie_gen": self.pcie_gen,
             "pcie_width": self.pcie_width,
             "hostname": self.hostname,
+            **self.host,
         }
 
     def cleanup(self):
@@ -473,6 +524,8 @@ class TelemetryCollector:
         df["gpu_uuid"] = self.metadata.gpu_uuid
         df["driver_version"] = self.metadata.driver_version
         df["hostname"] = self.metadata.hostname
+        for key, value in self.metadata.host.items():
+            df[key] = value
         return df
 
     def _write_parquet(self, df: pd.DataFrame, path: Path):

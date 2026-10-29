@@ -1,0 +1,212 @@
+#!/usr/bin/env python3
+"""Write one quickstart per instance type for the tier-A runs still owed.
+
+Since 2026-10-29 a re-collection can be promoted into tier A when it is the
+same cell on the same gpu_name (data/tier_a_recollections.json), so a broken
+job is now worth replacing even where healthy siblings exist: the replacement
+adds its windows back to the frozen corpus rather than only to coverage
+claims.
+
+Grouped so one rental covers one device. Cells needing more than one GPU are
+split into their own block, because they decide the instance size.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+from workloads.registry import WORKLOAD_REGISTRY as R  # noqa: E402
+
+# device -> (slug, what to rent, extra notes)
+# What `torch.cuda.get_device_name(0)` must contain. Checked in full rather
+# than by last token: "NVL" alone matches H100 NVL and H200 NVL both, and the
+# corpus keys on gpu_name, so landing on the wrong one silently creates a
+# different device.
+EXPECT = {
+    "GeForce RTX 4050 Laptop GPU": "RTX 4050",
+    "GeForce RTX 5080": "RTX 5080",
+    "H100 80GB HBM3": "H100 80GB",
+    "H100 NVL": "H100 NVL",
+    "H200": "H200",
+    "H200 NVL": "H200 NVL",
+    "B200": "B200",
+    "A100-SXM4-80GB": "A100-SXM4-80GB",
+    "AMD RX 9070 XT": "9070",
+    "AMD Instinct MI300X VF": "MI300X",
+}
+
+RENT = {
+    "GeForce RTX 4050 Laptop GPU": ("rtx4050", "the laptop you already have", ""),
+    "GeForce RTX 5080": ("rtx5080", "1x RTX 5080 (Vast.ai)",
+        "Prefer driver **581.95**, the dominant archived 5080 driver. "
+        "`phi3_mini` is the only LLM that failed on this device -- 48 of 51 "
+        "other inference jobs ran fine on the same box and driver -- so "
+        "confirm the model loads before committing to the full run."),
+    "H100 80GB HBM3": ("h100_80gb", "1x H100 SXM 80GB", ""),
+    "H100 NVL": ("h100_nvl", "1x H100 **NVL** (94GB PCIe)",
+        "NVL specifically, not SXM 80GB: they report different `gpu_name` and "
+        "would land as different devices."),
+    "H200": ("h200", "1x H200 141GB, plus 8x H200 for the FSDP cells", ""),
+    "H200 NVL": ("h200_nvl", "1x H200 **NVL**",
+        "Distinct from plain `H200` in this corpus -- both exist as separate "
+        "devices."),
+    "B200": ("b200", "1x B200",
+        "Needs `requirements_blackwell.txt` (cu128). The repo's default pin "
+        "is torch 2.5.1+cu121, which carries no sm_100 kernels."),
+    "A100-SXM4-80GB": ("a100_80gb", "1x A100 80GB, plus 8x A100 80GB for the FSDP cells",
+        "Reachable on GCP: this project holds NVIDIA_A100_80GB_GPUS=16 in "
+        "four regions."),
+    "AMD RX 9070 XT": ("rx9070xt", "1x AMD RX 9070 XT",
+        "Use `requirements_amd.txt` and `scripts/run_workload_amd.py`."),
+    "AMD Instinct MI300X VF": ("mi300x", "1x MI300X",
+        "Use `requirements_amd.txt` and `scripts/run_workload_amd.py`."),
+}
+
+
+def gpus(cell):
+    e = R.get(cell)
+    if not e:
+        return None
+    for tok in (str(x) for x in e["command"]):
+        m = re.match(r"--nproc_per_node=(\d+)$", tok)
+        if m:
+            return int(m[1])
+    return 1
+
+
+def already_done(cell, hw):
+    """A 2026-10-2x re-collection of this cell on this device exists."""
+    tok = re.sub(r"[^A-Za-z0-9]+", "_", hw)
+    for base in (cell, cell + "_mw8"):
+        # rglob: the A100 re-collections live under data/gcp/<stamp>/, not in
+        # data/ root, and a non-recursive glob reported them as still owed.
+        if list((ROOT / "data").rglob(f"{base}_*{tok}*_2026102*.parquet")):
+            return True
+    return False
+
+
+def main():
+    d = pd.read_csv(ROOT / "docs/camera_ready_results_20261022/recollection_list.csv")
+    d["gpus"] = d.cell.map(gpus)
+    d["runnable"] = d.cell.map(lambda c: bool(R.get(c)))
+    d["done"] = [already_done(c, h) for c, h in zip(d.cell, d.hw)]
+    # starved cells are collected under their worker-fed name
+    d["collect_as"] = [c + "_mw8" if v == "starved" and R.get(c + "_mw8") else c
+                       for c, v in zip(d.cell, d.verdict)]
+    todo = d[~d.done & d.runnable].copy()
+
+    summary = []
+    for hw, g in todo.groupby("hw"):
+        if hw not in RENT:
+            continue
+        slug, rent, note = RENT[hw]
+        single = sorted({c for c, n in zip(g.collect_as, g.gpus) if n == 1})
+        multi = sorted({(c, int(n)) for c, n in zip(g.collect_as, g.gpus) if n and n > 1})
+        runs = (len(single) + len(multi)) * 3
+        summary.append((hw, rent, len(single), len(multi), runs))
+
+        t = [f"# Collecting the missing {hw} runs\n",
+             f"**Rent: {rent}.** {len(single) + len(multi)} cells x 3 reps = "
+             f"{runs} runs.\n"]
+        if note:
+            t.append(note + "\n")
+        t += ["These replace tier-A jobs that aborted, stopped short, or ran "
+              "with the GPU idle. Under the policy recorded in "
+              "`data/tier_a_recollections.json`, a re-collection of the same "
+              "cell on the same `gpu_name` can be promoted back into tier A, "
+              "so this is repairing the frozen corpus and not only its "
+              "coverage claims.\n",
+              "## 1. Clone and install\n", "```bash",
+              "GIT_LFS_SKIP_SMUDGE=1 git clone -b neurips-camera-ready \\",
+              "    https://github.com/robirahman/GPU-monitoring.git",
+              "cd GPU-monitoring",
+              "python3 -m venv venv && . venv/bin/activate",
+              "pip install --upgrade pip"]
+        if "AMD" in hw:
+            t.append("pip install -r requirements_amd.txt")
+        elif hw == "B200":
+            t.append("pip install -r requirements_blackwell.txt   # cu128, sm_100")
+        else:
+            t.append("pip install -r requirements_v2.txt")
+        t += ["pip install psutil   # so the run records its CPU, cores and RAM",
+              "python -c \"import torchvision; torchvision.datasets.CIFAR10('data/cifar10', train=False, download=True)\"",
+              "export STAMP=$(date -u +%Y%m%d)a",
+              "mkdir -p data logs", "```\n",
+              "## 2. Preflight\n", "```bash",
+              "python - <<'PY'",
+              "import sys, torch",
+              f"want = {EXPECT[hw]!r}",
+              f"forbid = {'H200' if hw == 'H100 NVL' else ('H100' if hw == 'H200 NVL' else '')!r}",
+              "assert torch.cuda.is_available(), 'CUDA not available'",
+              "name = torch.cuda.get_device_name(0)",
+              "print('device :', name)",
+              "print('torch  :', torch.__version__, '| cuda', torch.version.cuda)",
+              "print('arch   :', torch.cuda.get_arch_list())",
+              "if want not in name or (forbid and forbid in name):",
+              "    sys.exit(f'FAIL: need a device named like {want!r}, got {name!r}')",
+              "x = torch.randn(2048, 2048, device='cuda'); (x @ x).sum().item()",
+              "torch.cuda.synchronize(); print('preflight OK')",
+              "PY", "```\n"]
+
+        runner = ("scripts/run_workload_amd.py" if "AMD" in hw
+                  else "scripts/run_workload.py")
+        if single:
+            t += [f"## 3. The {len(single)} single-GPU cells\n", "```bash",
+                  f'CELLS="{" ".join(single)}"',
+                  "for cell in $CELLS; do for rep in 1 2 3; do",
+                  '  log="logs/${STAMP}__$(hostname -s)__${cell#adversarial_}_rep${rep}.log"',
+                  '  grep -q "SPAR_CELL_DONE.*exit=0" "$log" 2>/dev/null && continue',
+                  f'  python {runner} --workload "$cell" \\',
+                  '    --output-dir data/ --no-dcgm --require-gpu-activity 2>&1 | tee "$log"',
+                  '  echo "SPAR_CELL_DONE cell=$cell rep=$rep exit=${PIPESTATUS[0]}" >> "$log"',
+                  "done; done", "```\n"]
+        if multi:
+            n = max(x[1] for x in multi)
+            t += [f"## 4. The multi-GPU cells -- these need a {n}x {hw} node\n",
+                  "```bash",
+                  f'CELLS="{" ".join(c for c, _ in multi)}"',
+                  "for cell in $CELLS; do for rep in 1 2 3; do",
+                  '  log="logs/${STAMP}__$(hostname -s)__${cell}_rep${rep}.log"',
+                  '  grep -q "SPAR_CELL_DONE.*exit=0" "$log" 2>/dev/null && continue',
+                  f'  python scripts/run_workload_multi_gpu.py --workload "$cell" --num-gpus {n} \\',
+                  '    --output-dir data/ --no-dcgm --require-gpu-activity 2>&1 | tee "$log"',
+                  '  echo "SPAR_CELL_DONE cell=$cell rep=$rep exit=${PIPESTATUS[0]}" >> "$log"',
+                  "done; done", "```\n"]
+
+        t += ["## 5. Check, then ship\n", "```bash",
+              'for f in logs/${STAMP}__*.log; do',
+              '  printf "%-52s steps=%-7s %s\\n" "$(basename "$f")" \\',
+              '    "$(grep -c \'^STEP \' "$f")" "$(grep -o \'SPAR_CELL_DONE.*\' "$f")"',
+              "done",
+              'grep -h \'"verdict"\' data/*.health.json | sort | uniq -c',
+              "",
+              "git add data/*.parquet data/*.health.json logs/${STAMP}__*.log",
+              f'git commit -m "Collect {hw} re-runs, stamp ${{STAMP}}"',
+              "git push origin neurips-camera-ready", "```\n",
+              "Every health verdict should read `ok`. Not every cell emits "
+              "STEP lines -- only the instrumented adversarial strategies do "
+              "-- so `steps=0` on an inference or baseline cell is expected, "
+              "but `verdict` other than `ok` is not.\n"]
+
+        (ROOT / "docs" / f"quickstart_{slug}.md").write_text("\n".join(t) + "\n")
+
+    s = pd.DataFrame(summary, columns=["device", "rent", "1-GPU cells",
+                                       "multi-GPU cells", "runs"])
+    s = s.sort_values("runs", ascending=False)
+    print(s.to_string(index=False))
+    print("\ntotal runs:", int(s.runs.sum()), " rentals:", len(s))
+    skipped = d[~d.runnable]
+    if len(skipped):
+        print("\nnot reproducible (no registry entry):",
+              ", ".join(sorted(set(skipped.cell))))
+    done = d[d.done]
+    print("already re-collected:", done.job_id.nunique(), "jobs")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

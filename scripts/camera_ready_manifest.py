@@ -71,6 +71,46 @@ TIERS = [
 ]
 
 
+# Re-collections promoted into tier A by explicit decision rather than by date.
+#
+# The policy is that a re-collection belongs in tier A when it is the same job
+# on the same hardware configuration. "Same configuration" has to be defined
+# against what the corpus actually records, and that is very little: the only
+# host field any parquet carries is driver_version -- no CPU model, no core
+# count, no RAM, no OS. So the checkable bar is same cell on the same
+# gpu_name, with drivers recorded on both sides in the manifest rather than
+# required to match, because tier A does not hold the driver constant either
+# (RTX 5080 alone spans 576.83 and 581.95).
+#
+# Each promotion names the job it answers for, so the substitution is
+# auditable instead of implied by a date range.
+_PROMOTIONS = None
+
+
+def promotions(root=None):
+    """{run_id: entry} from data/tier_a_recollections.json, or {}."""
+    global _PROMOTIONS
+    if _PROMOTIONS is None:
+        f = Path(root or PROJECT_ROOT) / "data/tier_a_recollections.json"
+        _PROMOTIONS = ({e["run_id"]: e for e in json.loads(f.read_text()).get("promoted", [])}
+                       if f.is_file() else {})
+    return _PROMOTIONS
+
+
+def promoted_tier(run_id, cell, gpu_name, root=None):
+    """"A_camera_ready" if this stream is an approved re-collection, else None.
+
+    The cell and gpu_name must match what the entry claims, so a stale or
+    mistyped run_id relabels nothing.
+    """
+    e = promotions(root).get(str(run_id))
+    if not e:
+        return None
+    if str(cell) != str(e["cell"]) or str(gpu_name) != str(e["gpu_name"]):
+        return None
+    return "A_camera_ready"
+
+
 def tier_of(t0):
     for name, start, end, _ in TIERS:
         if (start is None or t0 >= start) and (end is None or t0 < end):
@@ -157,6 +197,18 @@ def deduplicate(d):
 def enrich(dd, work_index):
     dd = dd.copy()
     dd["tier"] = dd.t0.map(tier_of)
+    # An approved re-collection overrides the date window. Checked per stream
+    # against the cell and gpu_name the entry claims, so a stale or mistyped
+    # run_id relabels nothing.
+    if promotions():
+        promoted = dd.apply(
+            lambda r: promoted_tier(r.get("run_id"), r.get("base"), r.get("gpu_name")),
+            axis=1)
+        dd.loc[promoted.notna(), "tier"] = "A_camera_ready"
+        dd["tier_source"] = promoted.notna().map(
+            {True: "re-collection promoted", False: "collection date"})
+    else:
+        dd["tier_source"] = "collection date"
     dd["cls"] = dd.base.map(threeway_label)
     dd["cell"] = dd.base.map(canonical_workload)
     dd["evasion_family"] = dd.base.map(lambda b: workload_family(b, level="mechanism"))
