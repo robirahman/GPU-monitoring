@@ -14,6 +14,9 @@
 #
 # This IS a different software stack from the rest of the corpus, and there is
 # no way around it: the corpus pin predates the hardware.
+# The quantized inference cell `mistral_7b_q4` additionally needs a GPTQ
+# backend, which nothing here declares. See requirements_gptq.txt and
+# install it alongside this file.
 --extra-index-url https://download.pytorch.org/whl/cu128
 
 torch>=2.7

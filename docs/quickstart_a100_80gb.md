@@ -15,6 +15,7 @@ cd GPU-monitoring
 python3 -m venv venv && . venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements_v2.txt
+pip install -r requirements_gptq.txt   # mistral_7b_q4 is a GPTQ checkpoint
 pip install psutil   # so the run records its CPU, cores and RAM
 python -c "import torchvision; torchvision.datasets.CIFAR10('data/cifar10', train=False, download=True)"
 export STAMP=$(date -u +%Y%m%d)a

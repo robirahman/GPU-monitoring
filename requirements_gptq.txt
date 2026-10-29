@@ -1,0 +1,28 @@
+# GPTQ support for the quantized inference cells.
+#
+# workloads/llm_inference.py maps `mistral_7b_q4` to
+# TheBloke/Mistral-7B-Instruct-v0.2-GPTQ, and its own comment at line 138 says
+# "gptq / awq paths: transformers + auto-gptq / autoawq handle dtype
+# internally" -- but no requirements file in this repo has ever declared that
+# backend. Transformers cannot load a GPTQ checkpoint without one, so the cell
+# depends on something the environment was never told to install.
+#
+# This is a DECLARED dependency, not a diagnosis of the archived failures.
+# Those runs are flaky rather than absent: mistral_7b_q4 produced 60 windows on
+# A100-SXM4-80GB and 60 on H200 NVL while also aborting once on the first and
+# five times on the second. A missing backend fails every time, so whatever
+# collected the healthy runs had GPTQ support installed by hand, and the
+# aborts have another cause -- most likely the 4 GB checkpoint download.
+#
+# Kept separate from requirements_v2.txt on purpose: that file is the stack the
+# corpus was collected under, and these wheels are large, change fast, and are
+# only needed by one cell. Install it alongside, not instead:
+#
+#     pip install -r requirements_v2.txt -r requirements_gptq.txt
+#
+# Floors rather than exact pins, for the same reason as
+# requirements_blackwell.txt: which build is current moves faster than this
+# file, and a wrong exact pin fails at install on a rented box.
+optimum>=1.20
+gptqmodel>=1.0        # supersedes auto-gptq; `pip install auto-gptq` if this
+                      # has no wheel for your torch/CUDA combination

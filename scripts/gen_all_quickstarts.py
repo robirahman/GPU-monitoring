@@ -132,6 +132,10 @@ def main():
             t.append("pip install -r requirements_blackwell.txt   # cu128, sm_100")
         else:
             t.append("pip install -r requirements_v2.txt")
+        # Any quantized inference cell needs a GPTQ backend that no base
+        # requirements file declares; see requirements_gptq.txt.
+        if any("mistral_7b_q4" in c for c in list(single) + [c for c, _ in multi]):
+            t.append("pip install -r requirements_gptq.txt   # mistral_7b_q4 is a GPTQ checkpoint")
         t += ["pip install psutil   # so the run records its CPU, cores and RAM",
               "python -c \"import torchvision; torchvision.datasets.CIFAR10('data/cifar10', train=False, download=True)\"",
               "export STAMP=$(date -u +%Y%m%d)a",

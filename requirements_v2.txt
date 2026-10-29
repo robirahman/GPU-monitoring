@@ -1,5 +1,8 @@
 # torch/torchvision/torchaudio below carry the +cu121 local version tag, which is
 # not on PyPI — it only exists on PyTorch's own wheel index.
+# The quantized inference cell `mistral_7b_q4` additionally needs a GPTQ
+# backend, which nothing here declares. See requirements_gptq.txt and
+# install it alongside this file.
 --extra-index-url https://download.pytorch.org/whl/cu121
 
 contourpy==1.3.2

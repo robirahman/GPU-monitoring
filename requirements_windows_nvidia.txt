@@ -1,6 +1,9 @@
 # Windows + NVIDIA collection box (the RTX 4050 laptop). requirements_v2.txt is
 # Linux-only -- it pins triton and the nvidia-*-cu12 wheels, which have no
 # Windows build -- and carries no transformers/datasets for the HF workloads.
+# The quantized inference cell `mistral_7b_q4` additionally needs a GPTQ
+# backend, which nothing here declares. See requirements_gptq.txt and
+# install it alongside this file.
 --extra-index-url https://download.pytorch.org/whl/cu121
 
 torch==2.5.1+cu121
