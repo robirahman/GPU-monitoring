@@ -122,6 +122,10 @@ def main():
              '    grep -q "SPAR_CELL_DONE.*exit=0" "$log" 2>/dev/null && continue',
              '    python scripts/run_workload.py --workload "$cell" \\',
              '      --output-dir data/ --no-dcgm --require-gpu-activity 2>&1 | tee "$log"',
+             # run_workload.py prints no completion marker of its own; this is what
+             # makes the loop resumable and what the step-5 check reads.
+             "    rc=${PIPESTATUS[0]}",
+             '    echo "SPAR_CELL_DONE cell=${cell} rep=${rep} exit=${rc} utc=$(date -u +%FT%TZ)" | tee -a "$log"',
              "  done",
              "done",
              "```\n",

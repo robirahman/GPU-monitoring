@@ -71,6 +71,8 @@ for cell in $CELLS; do
     grep -q "SPAR_CELL_DONE.*exit=0" "$log" 2>/dev/null && continue
     python scripts/run_workload.py --workload "$cell" \
       --output-dir data/ --no-dcgm --require-gpu-activity 2>&1 | tee "$log"
+    rc=${PIPESTATUS[0]}
+    echo "SPAR_CELL_DONE cell=${cell} rep=${rep} exit=${rc} utc=$(date -u +%FT%TZ)" | tee -a "$log"
   done
 done
 ```
