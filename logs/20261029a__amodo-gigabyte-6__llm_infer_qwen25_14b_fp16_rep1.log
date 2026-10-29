@@ -1,0 +1,904 @@
+2026-10-29 19:10:38,850 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200 NVL, interval=1.0s, dcgm=disabled, label=llm_infer_qwen25_14b_fp16, run=b16d336c640b)
+Loading qwen25_14b_fp16 via vLLM
+  model_id=Qwen/Qwen2.5-14B-Instruct dtype=float16 tensor_parallel_size=1 pipeline_parallel_size=1 backend=None
+(MainProcess pid=2902074) INFO 10-29 19:10:45 [api_utils.py:286] non-default args: {'trust_remote_code': True, 'dtype': 'float16', 'gpu_memory_utilization': 0.9, 'disable_log_stats': True, 'model': 'Qwen/Qwen2.5-14B-Instruct'}
+(MainProcess pid=2902074) INFO 10-29 19:10:45 [model.py:733] Resolved architecture: Qwen2ForCausalLM
+(MainProcess pid=2902074) WARNING 10-29 19:10:45 [model.py:2498] Casting torch.bfloat16 to torch.float16.
+(MainProcess pid=2902074) INFO 10-29 19:10:45 [model.py:2152] Using max model len 32768
+(MainProcess pid=2902074) INFO 10-29 19:10:45 [scheduler.py:307] Chunked prefill is enabled with max_num_batched_tokens=16384.
+(MainProcess pid=2902074) INFO 10-29 19:10:45 [kernel.py:467] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(MainProcess pid=2902074) WARNING 10-29 19:10:45 [flashinfer.py:99] FlashInfer kernels are disabled: flashinfer-cubin is not installed and nvcc (CUDA_HOME, CUDA_PATH, PATH or /usr/local/cuda) or ninja (PATH) is missing. Set CUDA_HOME to a CUDA toolkit and put ninja on PATH, or run `vllm download-kernels`.
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 2940.28it/s]
+(EngineCore pid=2902243) INFO 10-29 19:10:51 [core.py:133] Initializing a V1 LLM engine (v0.32.0) with config: model='Qwen/Qwen2.5-14B-Instruct', speculative_config=None, tokenizer='Qwen/Qwen2.5-14B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=True, dtype=torch.float16, max_seq_len=32768, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=Qwen/Qwen2.5-14B-Instruct, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [16384], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=2902243) WARNING 10-29 19:10:51 [flashinfer.py:99] FlashInfer kernels are disabled: flashinfer-cubin is not installed and nvcc (CUDA_HOME, CUDA_PATH, PATH or /usr/local/cuda) or ninja (PATH) is missing. Set CUDA_HOME to a CUDA toolkit and put ninja on PATH, or run `vllm download-kernels`.
+(EngineCore pid=2902243) INFO 10-29 19:10:52 [parallel_state.py:1906] world_size=1 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_4825f6bc154b41c68ae9295f12b1f096 backend=nccl
+(EngineCore pid=2902243) INFO 10-29 19:10:52 [parallel_state.py:2350] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=2902243) INFO 10-29 19:10:52 [gpu_worker.py:518] Using V2 Model Runner
+(EngineCore pid=2902243) INFO 10-29 19:10:53 [model_runner.py:392] Loading model from scratch...
+(EngineCore pid=2902243) INFO 10-29 19:10:53 [cuda.py:506] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(EngineCore pid=2902243) INFO 10-29 19:10:53 [flash_attn.py:1117] Using FlashAttention version 3
+(EngineCore pid=2902243) INFO 10-29 19:10:54 [base_loader.py:82] Initializing model took 1.025071 seconds
+(EngineCore pid=2902243) INFO 10-29 19:10:54 [weight_utils.py:1108] Filesystem type for checkpoints: EXT4. Checkpoint size: 27.51 GiB. Available RAM: 114.36 GiB.
+(EngineCore pid=2902243) INFO 10-29 19:10:54 [weight_utils.py:1131] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+Loading safetensors checkpoint shards:   0% Completed | 0/8 [00:00<?, ?it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight embed_tokens.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.0.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.0.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.0.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.0.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.1.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.1.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.1.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.1.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.2.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.2.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.2.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.2.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.3.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:54 [utils.py:333] Attempted to load weight layers.3.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.3.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.3.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.4.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.4.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.4.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  12% Completed | 1/8 [00:00<00:02,  2.46it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.10.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.10.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.10.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.10.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.11.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.11.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.11.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.4.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.5.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.5.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.5.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.5.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.6.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.6.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.6.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.6.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.7.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.7.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.7.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.7.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.8.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.8.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.8.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.8.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.9.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.9.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.9.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.9.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  25% Completed | 2/8 [00:00<00:02,  2.11it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.11.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.12.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.12.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.12.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.12.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.13.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.13.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.13.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.13.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.14.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.14.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.14.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.14.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.15.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.15.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.15.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.15.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.16.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.16.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.16.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.16.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.17.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:55 [utils.py:333] Attempted to load weight layers.17.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.17.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.17.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.18.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.18.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.18.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  38% Completed | 3/8 [00:01<00:02,  2.02it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.18.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.19.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.19.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.19.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.19.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.20.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.20.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.20.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.20.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.21.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.21.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.21.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.21.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.22.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.22.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.22.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.22.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.23.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.23.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.23.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.23.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.24.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.24.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.24.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.24.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.25.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.25.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.25.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.25.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.26.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  50% Completed | 4/8 [00:01<00:02,  1.98it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.26.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.26.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.26.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.27.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.27.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.27.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.27.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.28.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.28.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.28.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.28.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.29.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.29.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.29.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.29.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.30.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.30.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.30.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.30.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.31.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:56 [utils.py:333] Attempted to load weight layers.31.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.31.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.31.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.32.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.32.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.32.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.32.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.33.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.33.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.33.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  62% Completed | 5/8 [00:02<00:01,  1.96it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.33.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.34.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.34.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.34.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.34.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.35.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.35.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.35.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.35.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.36.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.36.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.36.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.36.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.37.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.37.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.37.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.37.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.38.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.38.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.38.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.38.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.39.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.39.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.39.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.39.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.40.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.40.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.40.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  75% Completed | 6/8 [00:03<00:01,  1.94it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.40.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.41.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.41.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.41.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.41.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.42.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.42.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.42.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.42.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.43.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.43.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.43.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.43.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.44.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.44.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.44.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.44.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.45.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:57 [utils.py:333] Attempted to load weight layers.45.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.45.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.45.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.46.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.46.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.46.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.46.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.47.input_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.47.post_attention_layernorm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.47.self_attn.o_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards:  88% Completed | 7/8 [00:03<00:00,  1.93it/s]
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight lm_head.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight layers.47.mlp.down_proj.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+(EngineCore pid=2902243) WARNING 10-29 19:10:58 [utils.py:333] Attempted to load weight norm.weight with dtype torch.bfloat16 into parameter with dtype torch.float16
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:03<00:00,  2.47it/s]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:03<00:00,  2.16it/s]
+
+(EngineCore pid=2902243) INFO 10-29 19:10:58 [default_loader.py:501] Loading weights took 3.71 seconds
+(EngineCore pid=2902243) INFO 10-29 19:10:59 [model_runner.py:424] Model loading took 27.57 GiB memory and 7.078287 seconds
+(EngineCore pid=2902243) INFO 10-29 19:10:59 [topk_topp_sampler.py:96] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=2902243) INFO 10-29 19:10:59 [torch_utils.py:295] Reducing Torch threads from 32 to 1 for serving. Set OMP_NUM_THREADS in the external environment to override.
+(EngineCore pid=2902243) INFO 10-29 19:10:59 [utils.py:347] Using LBNHC KV cache layout.
+(EngineCore pid=2902243) INFO 10-29 19:11:00 [monitor.py:40] [backbone] Starting torch.compile
+(EngineCore pid=2902243) INFO 10-29 19:11:05 [backends.py:1104] [backbone] Using cache directory: /home/tenant/.cache/vllm/torch_compile_cache/79c421c8e5/rank_0_0/backbone for vLLM's torch.compile
+(EngineCore pid=2902243) INFO 10-29 19:11:05 [backends.py:1166] [backbone] Dynamo bytecode transform time: 4.90 s
+(EngineCore pid=2902243) INFO 10-29 19:11:10 [backends.py:398] [backbone] Compiling a graph for compile range (1, 16384) takes 4.68 s
+(EngineCore pid=2902243) INFO 10-29 19:11:13 [backends.py:927] collected artifacts: 49 entries, 3 artifacts, 4723443 bytes total
+(EngineCore pid=2902243) INFO 10-29 19:11:13 [decorators.py:743] [backbone] saved AOT compiled function to /home/tenant/.cache/vllm/torch_compile_cache/torch_aot_compile/d390f8f8d44b7ebb9022a970fd96c00ad2ecd94c980062587808e45b60e1b2d6/rank_0_0/model
+(EngineCore pid=2902243) INFO 10-29 19:11:13 [monitor.py:62] [backbone] torch.compile took 12.69 s in total
+(EngineCore pid=2902243) INFO 10-29 19:11:13 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.05 s
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):   4%|▍         | 2/51 [00:00<00:04, 11.81it/s]Capturing CUDA graphs (PIECEWISE):   8%|▊         | 4/51 [00:00<00:03, 12.31it/s]Capturing CUDA graphs (PIECEWISE):  12%|█▏        | 6/51 [00:00<00:03, 12.64it/s]Capturing CUDA graphs (PIECEWISE):  16%|█▌        | 8/51 [00:00<00:03, 12.93it/s]Capturing CUDA graphs (PIECEWISE):  20%|█▉        | 10/51 [00:00<00:03, 13.40it/s]Capturing CUDA graphs (PIECEWISE):  24%|██▎       | 12/51 [00:00<00:02, 13.88it/s]Capturing CUDA graphs (PIECEWISE):  27%|██▋       | 14/51 [00:01<00:02, 13.83it/s]Capturing CUDA graphs (PIECEWISE):  31%|███▏      | 16/51 [00:01<00:02, 14.22it/s]Capturing CUDA graphs (PIECEWISE):  35%|███▌      | 18/51 [00:01<00:02, 14.69it/s]Capturing CUDA graphs (PIECEWISE):  39%|███▉      | 20/51 [00:01<00:02, 15.01it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 22/51 [00:01<00:01, 15.29it/s]Capturing CUDA graphs (PIECEWISE):  47%|████▋     | 24/51 [00:01<00:01, 15.54it/s]Capturing CUDA graphs (PIECEWISE):  51%|█████     | 26/51 [00:01<00:01, 15.76it/s]Capturing CUDA graphs (PIECEWISE):  55%|█████▍    | 28/51 [00:01<00:01, 15.90it/s]Capturing CUDA graphs (PIECEWISE):  59%|█████▉    | 30/51 [00:02<00:01, 16.07it/s]Capturing CUDA graphs (PIECEWISE):  63%|██████▎   | 32/51 [00:02<00:01, 16.28it/s]Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 34/51 [00:02<00:01, 16.44it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████   | 36/51 [00:02<00:00, 16.59it/s]Capturing CUDA graphs (PIECEWISE):  75%|███████▍  | 38/51 [00:02<00:00, 16.66it/s]Capturing CUDA graphs (PIECEWISE):  78%|███████▊  | 40/51 [00:02<00:00, 16.70it/s]Capturing CUDA graphs (PIECEWISE):  82%|████████▏ | 42/51 [00:02<00:00, 16.81it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▋ | 44/51 [00:02<00:00, 16.96it/s]Capturing CUDA graphs (PIECEWISE):  90%|█████████ | 46/51 [00:02<00:00, 17.41it/s]Capturing CUDA graphs (PIECEWISE):  94%|█████████▍| 48/51 [00:03<00:00, 18.02it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:03<00:00, 19.36it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:03<00:00, 15.82it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/2 [00:00<?, ?it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00, 24.60it/s]
+(EngineCore pid=2902243) INFO 10-29 19:11:20 [model_runner.py:1127] Graph capturing finished in 4 secs, took 0.75 GiB
+(EngineCore pid=2902243) INFO 10-29 19:11:20 [gpu_worker.py:759] Available KV cache memory: 94.19 GiB
+(EngineCore pid=2902243) INFO 10-29 19:11:20 [gpu_worker.py:774] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8898 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9102. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=2902243) INFO 10-29 19:11:20 [kv_cache_utils.py:2327] GPU KV cache size: 514,400 tokens, Maximum concurrency for 32,768 tokens per request: 15.70x
+(EngineCore pid=2902243) INFO 10-29 19:11:20 [kernel_warmup.py:176] JIT kernel warmup starting.
+(EngineCore pid=2902243) INFO 10-29 19:11:20 [kernel_warmup.py:189] JIT kernel warmup finished in 0.00s.
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):   4%|▍         | 2/51 [00:00<00:04, 11.39it/s]Capturing CUDA graphs (PIECEWISE):   8%|▊         | 4/51 [00:00<00:03, 12.48it/s]Capturing CUDA graphs (PIECEWISE):  12%|█▏        | 6/51 [00:00<00:03, 13.01it/s]Capturing CUDA graphs (PIECEWISE):  16%|█▌        | 8/51 [00:00<00:03, 13.41it/s]Capturing CUDA graphs (PIECEWISE):  20%|█▉        | 10/51 [00:00<00:02, 13.97it/s]Capturing CUDA graphs (PIECEWISE):  24%|██▎       | 12/51 [00:00<00:02, 14.42it/s]Capturing CUDA graphs (PIECEWISE):  27%|██▋       | 14/51 [00:01<00:02, 14.75it/s]Capturing CUDA graphs (PIECEWISE):  31%|███▏      | 16/51 [00:01<00:02, 15.18it/s]Capturing CUDA graphs (PIECEWISE):  35%|███▌      | 18/51 [00:01<00:02, 15.62it/s]Capturing CUDA graphs (PIECEWISE):  39%|███▉      | 20/51 [00:01<00:01, 15.95it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 22/51 [00:01<00:01, 16.30it/s]Capturing CUDA graphs (PIECEWISE):  47%|████▋     | 24/51 [00:01<00:01, 16.61it/s]Capturing CUDA graphs (PIECEWISE):  51%|█████     | 26/51 [00:01<00:01, 16.92it/s]Capturing CUDA graphs (PIECEWISE):  55%|█████▍    | 28/51 [00:01<00:01, 17.19it/s]Capturing CUDA graphs (PIECEWISE):  59%|█████▉    | 30/51 [00:01<00:01, 17.46it/s]Capturing CUDA graphs (PIECEWISE):  63%|██████▎   | 32/51 [00:02<00:01, 17.70it/s]Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 34/51 [00:02<00:00, 17.94it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████   | 36/51 [00:02<00:00, 18.09it/s]Capturing CUDA graphs (PIECEWISE):  75%|███████▍  | 38/51 [00:02<00:00, 18.20it/s]Capturing CUDA graphs (PIECEWISE):  78%|███████▊  | 40/51 [00:02<00:00, 18.33it/s]Capturing CUDA graphs (PIECEWISE):  82%|████████▏ | 42/51 [00:02<00:00, 18.48it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▋ | 44/51 [00:02<00:00, 18.63it/s]Capturing CUDA graphs (PIECEWISE):  92%|█████████▏| 47/51 [00:02<00:00, 19.47it/s]Capturing CUDA graphs (PIECEWISE):  98%|█████████▊| 50/51 [00:02<00:00, 20.30it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:03<00:00, 16.92it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/51 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):   6%|▌         | 3/51 [00:00<00:01, 25.59it/s]Capturing CUDA graphs (FULL):  12%|█▏        | 6/51 [00:00<00:01, 26.67it/s]Capturing CUDA graphs (FULL):  18%|█▊        | 9/51 [00:00<00:01, 27.86it/s]Capturing CUDA graphs (FULL):  25%|██▌       | 13/51 [00:00<00:01, 29.78it/s]Capturing CUDA graphs (FULL):  33%|███▎      | 17/51 [00:00<00:01, 31.84it/s]Capturing CUDA graphs (FULL):  41%|████      | 21/51 [00:00<00:00, 33.85it/s]Capturing CUDA graphs (FULL):  51%|█████     | 26/51 [00:00<00:00, 36.22it/s]Capturing CUDA graphs (FULL):  61%|██████    | 31/51 [00:00<00:00, 38.48it/s]Capturing CUDA graphs (FULL):  71%|███████   | 36/51 [00:01<00:00, 40.63it/s]Capturing CUDA graphs (FULL):  80%|████████  | 41/51 [00:01<00:00, 42.42it/s]Capturing CUDA graphs (FULL):  90%|█████████ | 46/51 [00:01<00:00, 44.41it/s]Capturing CUDA graphs (FULL): 100%|██████████| 51/51 [00:01<00:00, 38.53it/s]
+(EngineCore pid=2902243) INFO 10-29 19:11:34 [model_runner.py:1127] Graph capturing finished in 5 secs, took 0.54 GiB
+(EngineCore pid=2902243) INFO 10-29 19:11:34 [gpu_worker.py:971] CUDA graph pool memory: 0.54 GiB (actual), 1.42 GiB (estimated), difference: 0.88 GiB (161.9%).
+(EngineCore pid=2902243) INFO 10-29 19:11:34 [gpu_worker.py:1034] Free memory on device (139.29/139.8 GiB) on startup. Desired GPU memory utilization is (0.9, 125.82 GiB). Actual usage is 28.47 GiB for consumed memory (weights + non-torch), 3.16 GiB for peak activation, and 0.54 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=100397087437` (93.5 GiB) to fit into requested memory, or `--kv-cache-memory=114855882240` (106.97 GiB) to fully utilize gpu memory. Current kv cache memory in use is 94.19 GiB.
+(EngineCore pid=2902243) INFO 10-29 19:11:35 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=2902243) INFO 10-29 19:11:35 [core.py:395] init engine (profile, create kv cache, warmup model) took 36.06 s (compilation: 12.69 s)
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 2348.70it/s]
+(EngineCore pid=2902243) INFO 10-29 19:11:36 [kernel.py:467] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(MainProcess pid=2902074) INFO 10-29 19:11:36 [hf.py:648] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+STEP ts=1793301096.716034 kind=pending batch_idx=0 tokens=0 passes=1 node=-1 rank=-1 event_id=0 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 3300.65it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s](EngineCore pid=2902243) WARNING 10-29 19:11:36 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_stats_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=2902243) WARNING 10-29 19:11:37 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_step_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(EngineCore pid=2902243) WARNING 10-29 19:11:37 [jit_monitor.py:140] Triton kernel JIT compilation during inference: _topp_sb_mask_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+Processed prompts:  12%|█▎        | 1/8 [00:04<00:30,  4.32s/it, est. speed input: 9.71 toks/s, output: 59.19 toks/s]Processed prompts: 100%|██████████| 8/8 [00:04<00:00,  4.32s/it, est. speed input: 66.44 toks/s, output: 472.48 toks/s]Processed prompts: 100%|██████████| 8/8 [00:04<00:00,  1.85it/s, est. speed input: 66.44 toks/s, output: 472.48 toks/s]
+STEP ts=1793301101.054044 kind=infer batch_idx=0 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301096.716034 event_id=0 phase=end evidence=completed_generate_call
+  iter 1: 2048 tok, 472.1 tok/s, 4s
+STEP ts=1793301101.054070 kind=pending batch_idx=1 tokens=0 passes=1 node=-1 rank=-1 event_id=1 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 3732.42it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.45 toks/s, output: 102.73 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.53 toks/s, output: 818.67 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.53 toks/s, output: 818.67 toks/s]
+STEP ts=1793301103.558241 kind=infer batch_idx=1 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301101.054070 event_id=1 phase=end evidence=completed_generate_call
+  iter 2: 4096 tok, 598.6 tok/s, 7s
+STEP ts=1793301103.558261 kind=pending batch_idx=2 tokens=0 passes=1 node=-1 rank=-1 event_id=2 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4437.24it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.45 toks/s, output: 102.79 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.18 toks/s, output: 819.07 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.18 toks/s, output: 819.07 toks/s]
+STEP ts=1793301106.060829 kind=infer batch_idx=2 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301103.558261 event_id=2 phase=end evidence=completed_generate_call
+  iter 3: 6144 tok, 657.5 tok/s, 9s
+STEP ts=1793301106.060848 kind=pending batch_idx=3 tokens=0 passes=1 node=-1 rank=-1 event_id=3 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4548.52it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.87 toks/s, output: 102.85 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.25 toks/s, output: 819.55 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.25 toks/s, output: 819.55 toks/s]
+STEP ts=1793301108.561910 kind=infer batch_idx=3 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301106.060848 event_id=3 phase=end evidence=completed_generate_call
+  iter 4: 8192 tok, 691.5 tok/s, 12s
+STEP ts=1793301108.561936 kind=pending batch_idx=4 tokens=0 passes=1 node=-1 rank=-1 event_id=4 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4064.25it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.45 toks/s, output: 102.78 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.57 toks/s, output: 818.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.57 toks/s, output: 818.97 toks/s]
+STEP ts=1793301111.064994 kind=infer batch_idx=4 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301108.561936 event_id=4 phase=end evidence=completed_generate_call
+  iter 5: 10240 tok, 713.6 tok/s, 14s
+STEP ts=1793301111.065015 kind=pending batch_idx=5 tokens=0 passes=1 node=-1 rank=-1 event_id=5 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4458.47it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.45 toks/s, output: 102.79 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.18 toks/s, output: 819.05 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.18 toks/s, output: 819.05 toks/s]
+STEP ts=1793301113.567634 kind=infer batch_idx=5 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301111.065015 event_id=5 phase=end evidence=completed_generate_call
+  iter 6: 12288 tok, 729.2 tok/s, 17s
+STEP ts=1793301113.567654 kind=pending batch_idx=6 tokens=0 passes=1 node=-1 rank=-1 event_id=6 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4434.31it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.86 toks/s, output: 102.79 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.19 toks/s, output: 819.11 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.19 toks/s, output: 819.11 toks/s]
+STEP ts=1793301116.070118 kind=infer batch_idx=6 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301113.567654 event_id=6 phase=end evidence=completed_generate_call
+  iter 7: 14336 tok, 740.7 tok/s, 19s
+STEP ts=1793301116.070138 kind=pending batch_idx=7 tokens=0 passes=1 node=-1 rank=-1 event_id=7 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4385.63it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.46 toks/s, output: 102.79 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.59 toks/s, output: 819.11 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.59 toks/s, output: 819.11 toks/s]
+STEP ts=1793301118.572624 kind=infer batch_idx=7 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301116.070138 event_id=7 phase=end evidence=completed_generate_call
+  iter 8: 16384 tok, 749.6 tok/s, 22s
+STEP ts=1793301118.572644 kind=pending batch_idx=8 tokens=0 passes=1 node=-1 rank=-1 event_id=8 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4506.37it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.45 toks/s, output: 102.80 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.19 toks/s, output: 819.13 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.19 toks/s, output: 819.13 toks/s]
+STEP ts=1793301121.074993 kind=infer batch_idx=8 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301118.572644 event_id=8 phase=end evidence=completed_generate_call
+  iter 9: 18432 tok, 756.7 tok/s, 24s
+STEP ts=1793301121.075012 kind=pending batch_idx=9 tokens=0 passes=1 node=-1 rank=-1 event_id=9 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4413.31it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.87 toks/s, output: 102.80 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.20 toks/s, output: 819.19 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.20 toks/s, output: 819.19 toks/s]
+STEP ts=1793301123.577247 kind=infer batch_idx=9 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301121.075012 event_id=9 phase=end evidence=completed_generate_call
+  iter 10: 20480 tok, 762.4 tok/s, 27s
+STEP ts=1793301123.577267 kind=pending batch_idx=10 tokens=0 passes=1 node=-1 rank=-1 event_id=10 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4464.40it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.47 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.72 toks/s, output: 820.14 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.72 toks/s, output: 820.14 toks/s]
+STEP ts=1793301126.076560 kind=infer batch_idx=10 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301123.577267 event_id=10 phase=end evidence=completed_generate_call
+  iter 11: 22528 tok, 767.3 tok/s, 29s
+STEP ts=1793301126.076577 kind=pending batch_idx=11 tokens=0 passes=1 node=-1 rank=-1 event_id=11 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5279.17it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.99 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.40 toks/s, output: 820.72 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 105.40 toks/s, output: 820.72 toks/s]
+STEP ts=1793301128.573833 kind=infer batch_idx=11 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301126.076577 event_id=11 phase=end evidence=completed_generate_call
+  iter 12: 24576 tok, 771.4 tok/s, 32s
+STEP ts=1793301128.573858 kind=pending batch_idx=12 tokens=0 passes=1 node=-1 rank=-1 event_id=12 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4044.65it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.88 toks/s, output: 102.86 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.27 toks/s, output: 819.68 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.27 toks/s, output: 819.68 toks/s]
+STEP ts=1793301131.074778 kind=infer batch_idx=12 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301128.573858 event_id=12 phase=end evidence=completed_generate_call
+  iter 13: 26624 tok, 774.9 tok/s, 34s
+STEP ts=1793301131.074800 kind=pending batch_idx=13 tokens=0 passes=1 node=-1 rank=-1 event_id=13 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4517.90it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.27 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.27 toks/s]
+STEP ts=1793301133.573698 kind=infer batch_idx=13 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301131.074800 event_id=13 phase=end evidence=completed_generate_call
+  iter 14: 28672 tok, 777.9 tok/s, 37s
+STEP ts=1793301133.573719 kind=pending batch_idx=14 tokens=0 passes=1 node=-1 rank=-1 event_id=14 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4523.99it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.35 toks/s, output: 820.36 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.35 toks/s, output: 820.36 toks/s]
+STEP ts=1793301136.072338 kind=infer batch_idx=14 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301133.573719 event_id=14 phase=end evidence=completed_generate_call
+  iter 15: 30720 tok, 780.6 tok/s, 39s
+STEP ts=1793301136.072359 kind=pending batch_idx=15 tokens=0 passes=1 node=-1 rank=-1 event_id=15 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4471.54it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.20 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.20 toks/s]
+STEP ts=1793301138.571503 kind=infer batch_idx=15 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301136.072359 event_id=15 phase=end evidence=completed_generate_call
+  iter 16: 32768 tok, 782.9 tok/s, 42s
+STEP ts=1793301138.571523 kind=pending batch_idx=16 tokens=0 passes=1 node=-1 rank=-1 event_id=16 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4479.90it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.28 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.28 toks/s]
+STEP ts=1793301141.070406 kind=infer batch_idx=16 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301138.571523 event_id=16 phase=end evidence=completed_generate_call
+  iter 17: 34816 tok, 785.0 tok/s, 44s
+STEP ts=1793301141.070427 kind=pending batch_idx=17 tokens=0 passes=1 node=-1 rank=-1 event_id=17 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4552.22it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.35 toks/s, output: 820.39 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.35 toks/s, output: 820.39 toks/s]
+STEP ts=1793301143.568936 kind=infer batch_idx=17 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301141.070427 event_id=17 phase=end evidence=completed_generate_call
+  iter 18: 36864 tok, 786.8 tok/s, 47s
+STEP ts=1793301143.568956 kind=pending batch_idx=18 tokens=0 passes=1 node=-1 rank=-1 event_id=18 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4550.37it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.88 toks/s, output: 102.91 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.32 toks/s, output: 820.03 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.32 toks/s, output: 820.03 toks/s]
+STEP ts=1793301146.068552 kind=infer batch_idx=18 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301143.568956 event_id=18 phase=end evidence=completed_generate_call
+  iter 19: 38912 tok, 788.4 tok/s, 49s
+STEP ts=1793301146.068573 kind=pending batch_idx=19 tokens=0 passes=1 node=-1 rank=-1 event_id=19 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4568.96it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.76 toks/s, output: 820.43 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.76 toks/s, output: 820.43 toks/s]
+STEP ts=1793301148.566964 kind=infer batch_idx=19 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301146.068573 event_id=19 phase=end evidence=completed_generate_call
+  iter 20: 40960 tok, 790.0 tok/s, 52s
+STEP ts=1793301148.566984 kind=pending batch_idx=20 tokens=0 passes=1 node=-1 rank=-1 event_id=20 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4512.43it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.28 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.28 toks/s]
+STEP ts=1793301151.065830 kind=infer batch_idx=20 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301148.566984 event_id=20 phase=end evidence=completed_generate_call
+  iter 21: 43008 tok, 791.3 tok/s, 54s
+STEP ts=1793301151.065851 kind=pending batch_idx=21 tokens=0 passes=1 node=-1 rank=-1 event_id=21 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4511.22it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.19 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.19 toks/s]
+STEP ts=1793301153.564985 kind=infer batch_idx=21 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301151.065851 event_id=21 phase=end evidence=completed_generate_call
+  iter 22: 45056 tok, 792.6 tok/s, 57s
+STEP ts=1793301153.565006 kind=pending batch_idx=22 tokens=0 passes=1 node=-1 rank=-1 event_id=22 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4514.25it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.98 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.78 toks/s, output: 820.60 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.78 toks/s, output: 820.60 toks/s]
+STEP ts=1793301156.062904 kind=infer batch_idx=22 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301153.565006 event_id=22 phase=end evidence=completed_generate_call
+  iter 23: 47104 tok, 793.7 tok/s, 59s
+STEP ts=1793301156.062925 kind=pending batch_idx=23 tokens=0 passes=1 node=-1 rank=-1 event_id=23 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4589.58it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.37 toks/s, output: 820.52 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 105.37 toks/s, output: 820.52 toks/s]
+STEP ts=1793301158.561023 kind=infer batch_idx=23 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301156.062925 event_id=23 phase=end evidence=completed_generate_call
+  iter 24: 49152 tok, 794.8 tok/s, 62s
+STEP ts=1793301158.561044 kind=pending batch_idx=24 tokens=0 passes=1 node=-1 rank=-1 event_id=24 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4468.56it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.35 toks/s, output: 820.23 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.35 toks/s, output: 820.23 toks/s]
+STEP ts=1793301161.060064 kind=infer batch_idx=24 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301158.561044 event_id=24 phase=end evidence=completed_generate_call
+  iter 25: 51200 tok, 795.7 tok/s, 64s
+STEP ts=1793301161.060085 kind=pending batch_idx=25 tokens=0 passes=1 node=-1 rank=-1 event_id=25 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4500.93it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.77 toks/s, output: 820.48 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.77 toks/s, output: 820.48 toks/s]
+STEP ts=1793301163.558349 kind=infer batch_idx=25 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301161.060085 event_id=25 phase=end evidence=completed_generate_call
+  iter 26: 53248 tok, 796.6 tok/s, 67s
+STEP ts=1793301163.558370 kind=pending batch_idx=26 tokens=0 passes=1 node=-1 rank=-1 event_id=26 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4834.93it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.27 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.27 toks/s]
+STEP ts=1793301166.057126 kind=infer batch_idx=26 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301163.558370 event_id=26 phase=end evidence=completed_generate_call
+  iter 27: 55296 tok, 797.4 tok/s, 69s
+STEP ts=1793301166.057147 kind=pending batch_idx=27 tokens=0 passes=1 node=-1 rank=-1 event_id=27 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4530.10it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.90 toks/s, output: 102.99 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.41 toks/s, output: 820.72 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 115.41 toks/s, output: 820.72 toks/s]
+STEP ts=1793301168.554699 kind=infer batch_idx=27 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301166.057147 event_id=27 phase=end evidence=completed_generate_call
+  iter 28: 57344 tok, 798.2 tok/s, 72s
+STEP ts=1793301168.554726 kind=pending batch_idx=28 tokens=0 passes=1 node=-1 rank=-1 event_id=28 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 3999.34it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.47 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.72 toks/s, output: 820.10 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.72 toks/s, output: 820.10 toks/s]
+STEP ts=1793301171.054382 kind=infer batch_idx=28 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301168.554726 event_id=28 phase=end evidence=completed_generate_call
+  iter 29: 59392 tok, 798.9 tok/s, 74s
+STEP ts=1793301171.054403 kind=pending batch_idx=29 tokens=0 passes=1 node=-1 rank=-1 event_id=29 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4559.65it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.35 toks/s, output: 820.39 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.35 toks/s, output: 820.39 toks/s]
+STEP ts=1793301173.552914 kind=infer batch_idx=29 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301171.054403 event_id=29 phase=end evidence=completed_generate_call
+  iter 30: 61440 tok, 799.6 tok/s, 77s
+STEP ts=1793301173.552936 kind=pending batch_idx=30 tokens=0 passes=1 node=-1 rank=-1 event_id=30 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4499.72it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.20 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.20 toks/s]
+STEP ts=1793301176.052051 kind=infer batch_idx=30 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301173.552936 event_id=30 phase=end evidence=completed_generate_call
+  iter 31: 63488 tok, 800.2 tok/s, 79s
+STEP ts=1793301176.052072 kind=pending batch_idx=31 tokens=0 passes=1 node=-1 rank=-1 event_id=31 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4202.71it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.98 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.78 toks/s, output: 820.58 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.78 toks/s, output: 820.58 toks/s]
+STEP ts=1793301178.550164 kind=infer batch_idx=31 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301176.052072 event_id=31 phase=end evidence=completed_generate_call
+  iter 32: 65536 tok, 800.8 tok/s, 82s
+STEP ts=1793301178.550186 kind=pending batch_idx=32 tokens=0 passes=1 node=-1 rank=-1 event_id=32 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4559.03it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.28 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.28 toks/s]
+STEP ts=1793301181.049026 kind=infer batch_idx=32 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301178.550186 event_id=32 phase=end evidence=completed_generate_call
+  iter 33: 67584 tok, 801.4 tok/s, 84s
+STEP ts=1793301181.049047 kind=pending batch_idx=33 tokens=0 passes=1 node=-1 rank=-1 event_id=33 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4549.14it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.36 toks/s, output: 820.34 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.36 toks/s, output: 820.34 toks/s]
+STEP ts=1793301183.547711 kind=infer batch_idx=33 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301181.049047 event_id=33 phase=end evidence=completed_generate_call
+  iter 34: 69632 tok, 801.9 tok/s, 87s
+STEP ts=1793301183.547733 kind=pending batch_idx=34 tokens=0 passes=1 node=-1 rank=-1 event_id=34 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4510.00it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.75 toks/s, output: 820.34 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.75 toks/s, output: 820.34 toks/s]
+STEP ts=1793301186.046430 kind=infer batch_idx=34 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301183.547733 event_id=34 phase=end evidence=completed_generate_call
+  iter 35: 71680 tok, 802.4 tok/s, 89s
+STEP ts=1793301186.046451 kind=pending batch_idx=35 tokens=0 passes=1 node=-1 rank=-1 event_id=35 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4626.28it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.43 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.43 toks/s]
+STEP ts=1793301188.544806 kind=infer batch_idx=35 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301186.046451 event_id=35 phase=end evidence=completed_generate_call
+  iter 36: 73728 tok, 802.9 tok/s, 92s
+STEP ts=1793301188.544826 kind=pending batch_idx=36 tokens=0 passes=1 node=-1 rank=-1 event_id=36 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5005.88it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.90 toks/s, output: 103.00 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.42 toks/s, output: 820.78 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 115.42 toks/s, output: 820.78 toks/s]
+STEP ts=1793301191.041992 kind=infer batch_idx=36 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301188.544826 event_id=36 phase=end evidence=completed_generate_call
+  iter 37: 75776 tok, 803.3 tok/s, 94s
+STEP ts=1793301191.042020 kind=pending batch_idx=37 tokens=0 passes=1 node=-1 rank=-1 event_id=37 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 3870.18it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.47 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.73 toks/s, output: 820.22 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.73 toks/s, output: 820.22 toks/s]
+STEP ts=1793301193.541359 kind=infer batch_idx=37 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301191.042020 event_id=37 phase=end evidence=completed_generate_call
+  iter 38: 77824 tok, 803.8 tok/s, 97s
+STEP ts=1793301193.541380 kind=pending batch_idx=38 tokens=0 passes=1 node=-1 rank=-1 event_id=38 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4900.60it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.33 toks/s, output: 820.24 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.33 toks/s, output: 820.24 toks/s]
+STEP ts=1793301196.040186 kind=infer batch_idx=38 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301193.541380 event_id=38 phase=end evidence=completed_generate_call
+  iter 39: 79872 tok, 804.2 tok/s, 99s
+STEP ts=1793301196.040206 kind=pending batch_idx=39 tokens=0 passes=1 node=-1 rank=-1 event_id=39 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4621.82it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.88 toks/s, output: 102.89 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.30 toks/s, output: 819.91 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.30 toks/s, output: 819.91 toks/s]
+STEP ts=1793301198.540104 kind=infer batch_idx=39 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301196.040206 event_id=39 phase=end evidence=completed_generate_call
+  iter 40: 81920 tok, 804.5 tok/s, 102s
+STEP ts=1793301198.540123 kind=pending batch_idx=40 tokens=0 passes=1 node=-1 rank=-1 event_id=40 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4715.35it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.76 toks/s, output: 820.43 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.76 toks/s, output: 820.43 toks/s]
+STEP ts=1793301201.038425 kind=infer batch_idx=40 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301198.540123 event_id=40 phase=end evidence=completed_generate_call
+  iter 41: 83968 tok, 804.9 tok/s, 104s
+STEP ts=1793301201.038445 kind=pending batch_idx=41 tokens=0 passes=1 node=-1 rank=-1 event_id=41 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4803.10it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.35 toks/s, output: 820.39 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.35 toks/s, output: 820.39 toks/s]
+STEP ts=1793301203.536845 kind=infer batch_idx=41 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301201.038445 event_id=41 phase=end evidence=completed_generate_call
+  iter 42: 86016 tok, 805.2 tok/s, 107s
+STEP ts=1793301203.536865 kind=pending batch_idx=42 tokens=0 passes=1 node=-1 rank=-1 event_id=42 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4632.67it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.37 toks/s, output: 820.44 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.37 toks/s, output: 820.44 toks/s]
+STEP ts=1793301206.035156 kind=infer batch_idx=42 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301203.536865 event_id=42 phase=end evidence=completed_generate_call
+  iter 43: 88064 tok, 805.6 tok/s, 109s
+STEP ts=1793301206.035175 kind=pending batch_idx=43 tokens=0 passes=1 node=-1 rank=-1 event_id=43 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4764.90it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.29 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.29 toks/s]
+STEP ts=1793301208.533862 kind=infer batch_idx=43 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301206.035175 event_id=43 phase=end evidence=completed_generate_call
+  iter 44: 90112 tok, 805.9 tok/s, 112s
+STEP ts=1793301208.533881 kind=pending batch_idx=44 tokens=0 passes=1 node=-1 rank=-1 event_id=44 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4737.32it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.33 toks/s, output: 820.25 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.33 toks/s, output: 820.25 toks/s]
+STEP ts=1793301211.032701 kind=infer batch_idx=44 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301208.533881 event_id=44 phase=end evidence=completed_generate_call
+  iter 45: 92160 tok, 806.2 tok/s, 114s
+STEP ts=1793301211.032720 kind=pending batch_idx=45 tokens=0 passes=1 node=-1 rank=-1 event_id=45 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4631.39it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.37 toks/s, output: 820.38 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.37 toks/s, output: 820.38 toks/s]
+STEP ts=1793301213.531191 kind=infer batch_idx=45 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301211.032720 event_id=45 phase=end evidence=completed_generate_call
+  iter 46: 94208 tok, 806.5 tok/s, 117s
+STEP ts=1793301213.531210 kind=pending batch_idx=46 tokens=0 passes=1 node=-1 rank=-1 event_id=46 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4719.99it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.30 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.30 toks/s]
+STEP ts=1793301216.029911 kind=infer batch_idx=46 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301213.531210 event_id=46 phase=end evidence=completed_generate_call
+  iter 47: 96256 tok, 806.7 tok/s, 119s
+STEP ts=1793301216.029931 kind=pending batch_idx=47 tokens=0 passes=1 node=-1 rank=-1 event_id=47 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4685.06it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.29 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.29 toks/s]
+STEP ts=1793301218.528661 kind=infer batch_idx=47 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301216.029931 event_id=47 phase=end evidence=completed_generate_call
+  iter 48: 98304 tok, 807.0 tok/s, 122s
+STEP ts=1793301218.528681 kind=pending batch_idx=48 tokens=0 passes=1 node=-1 rank=-1 event_id=48 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4696.21it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.36 toks/s, output: 820.35 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.36 toks/s, output: 820.35 toks/s]
+STEP ts=1793301221.027205 kind=infer batch_idx=48 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301218.528681 event_id=48 phase=end evidence=completed_generate_call
+  iter 49: 100352 tok, 807.3 tok/s, 124s
+STEP ts=1793301221.027224 kind=pending batch_idx=49 tokens=0 passes=1 node=-1 rank=-1 event_id=49 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4719.99it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.75 toks/s, output: 820.31 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.75 toks/s, output: 820.31 toks/s]
+STEP ts=1793301223.525858 kind=infer batch_idx=49 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301221.027224 event_id=49 phase=end evidence=completed_generate_call
+  iter 50: 102400 tok, 807.5 tok/s, 127s
+STEP ts=1793301223.525877 kind=pending batch_idx=50 tokens=0 passes=1 node=-1 rank=-1 event_id=50 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4712.70it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.28 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.28 toks/s]
+STEP ts=1793301226.024610 kind=infer batch_idx=50 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301223.525877 event_id=50 phase=end evidence=completed_generate_call
+  iter 51: 104448 tok, 807.7 tok/s, 129s
+STEP ts=1793301226.024628 kind=pending batch_idx=51 tokens=0 passes=1 node=-1 rank=-1 event_id=51 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4657.10it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.38 toks/s, output: 820.51 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 115.38 toks/s, output: 820.51 toks/s]
+STEP ts=1793301228.522692 kind=infer batch_idx=51 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301226.024628 event_id=51 phase=end evidence=completed_generate_call
+  iter 52: 106496 tok, 808.0 tok/s, 132s
+STEP ts=1793301228.522711 kind=pending batch_idx=52 tokens=0 passes=1 node=-1 rank=-1 event_id=52 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4981.36it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.98 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.78 toks/s, output: 820.60 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.78 toks/s, output: 820.60 toks/s]
+STEP ts=1793301231.020410 kind=infer batch_idx=52 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301228.522711 event_id=52 phase=end evidence=completed_generate_call
+  iter 53: 108544 tok, 808.2 tok/s, 134s
+STEP ts=1793301231.020432 kind=pending batch_idx=53 tokens=0 passes=1 node=-1 rank=-1 event_id=53 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4493.09it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.90 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.30 toks/s, output: 819.99 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.30 toks/s, output: 819.99 toks/s]
+STEP ts=1793301233.520158 kind=infer batch_idx=53 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301231.020432 event_id=53 phase=end evidence=completed_generate_call
+  iter 54: 110592 tok, 808.4 tok/s, 137s
+STEP ts=1793301233.520177 kind=pending batch_idx=54 tokens=0 passes=1 node=-1 rank=-1 event_id=54 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4668.77it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.33 toks/s, output: 820.15 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.33 toks/s, output: 820.15 toks/s]
+STEP ts=1793301236.019336 kind=infer batch_idx=54 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301233.520177 event_id=54 phase=end evidence=completed_generate_call
+  iter 55: 112640 tok, 808.6 tok/s, 139s
+STEP ts=1793301236.019356 kind=pending batch_idx=55 tokens=0 passes=1 node=-1 rank=-1 event_id=55 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4714.03it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.26 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.26 toks/s]
+STEP ts=1793301238.518155 kind=infer batch_idx=55 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301236.019356 event_id=55 phase=end evidence=completed_generate_call
+  iter 56: 114688 tok, 808.8 tok/s, 142s
+STEP ts=1793301238.518174 kind=pending batch_idx=56 tokens=0 passes=1 node=-1 rank=-1 event_id=56 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4817.58it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.41 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.41 toks/s]
+STEP ts=1793301241.016489 kind=infer batch_idx=56 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301238.518174 event_id=56 phase=end evidence=completed_generate_call
+  iter 57: 116736 tok, 809.0 tok/s, 144s
+STEP ts=1793301241.016508 kind=pending batch_idx=57 tokens=0 passes=1 node=-1 rank=-1 event_id=57 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4698.84it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.37 toks/s, output: 820.40 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.37 toks/s, output: 820.40 toks/s]
+STEP ts=1793301243.514897 kind=infer batch_idx=57 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301241.016508 event_id=57 phase=end evidence=completed_generate_call
+  iter 58: 118784 tok, 809.2 tok/s, 147s
+STEP ts=1793301243.514916 kind=pending batch_idx=58 tokens=0 passes=1 node=-1 rank=-1 event_id=58 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4712.70it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.77 toks/s, output: 820.53 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.77 toks/s, output: 820.53 toks/s]
+STEP ts=1793301246.012908 kind=infer batch_idx=58 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301243.514916 event_id=58 phase=end evidence=completed_generate_call
+  iter 59: 120832 tok, 809.3 tok/s, 149s
+STEP ts=1793301246.012927 kind=pending batch_idx=59 tokens=0 passes=1 node=-1 rank=-1 event_id=59 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4796.23it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.29 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.29 toks/s]
+STEP ts=1793301248.511608 kind=infer batch_idx=59 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301246.012927 event_id=59 phase=end evidence=completed_generate_call
+  iter 60: 122880 tok, 809.5 tok/s, 152s
+STEP ts=1793301248.511627 kind=pending batch_idx=60 tokens=0 passes=1 node=-1 rank=-1 event_id=60 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4680.49it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.48s/it, est. speed input: 16.91 toks/s, output: 103.04 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.48s/it, est. speed input: 115.47 toks/s, output: 821.13 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 115.47 toks/s, output: 821.13 toks/s]
+STEP ts=1793301251.007853 kind=infer batch_idx=60 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301248.511627 event_id=60 phase=end evidence=completed_generate_call
+  iter 61: 124928 tok, 809.7 tok/s, 154s
+STEP ts=1793301251.007880 kind=pending batch_idx=61 tokens=0 passes=1 node=-1 rank=-1 event_id=61 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 3855.94it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.98 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.78 toks/s, output: 820.58 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.78 toks/s, output: 820.58 toks/s]
+STEP ts=1793301253.506129 kind=infer batch_idx=61 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301251.007880 event_id=61 phase=end evidence=completed_generate_call
+  iter 62: 126976 tok, 809.8 tok/s, 157s
+STEP ts=1793301253.506149 kind=pending batch_idx=62 tokens=0 passes=1 node=-1 rank=-1 event_id=62 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4559.65it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.43 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.43 toks/s]
+STEP ts=1793301256.004504 kind=infer batch_idx=62 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301253.506149 event_id=62 phase=end evidence=completed_generate_call
+  iter 63: 129024 tok, 810.0 tok/s, 159s
+STEP ts=1793301256.004522 kind=pending batch_idx=63 tokens=0 passes=1 node=-1 rank=-1 event_id=63 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4703.45it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.37 toks/s, output: 820.42 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.37 toks/s, output: 820.42 toks/s]
+STEP ts=1793301258.502842 kind=infer batch_idx=63 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301256.004522 event_id=63 phase=end evidence=completed_generate_call
+  iter 64: 131072 tok, 810.2 tok/s, 162s
+STEP ts=1793301258.502861 kind=pending batch_idx=64 tokens=0 passes=1 node=-1 rank=-1 event_id=64 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4711.38it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.75 toks/s, output: 820.32 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.75 toks/s, output: 820.32 toks/s]
+STEP ts=1793301261.001472 kind=infer batch_idx=64 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301258.502861 event_id=64 phase=end evidence=completed_generate_call
+  iter 65: 133120 tok, 810.3 tok/s, 164s
+STEP ts=1793301261.001490 kind=pending batch_idx=65 tokens=0 passes=1 node=-1 rank=-1 event_id=65 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4788.70it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.47 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.47 toks/s]
+STEP ts=1793301263.499644 kind=infer batch_idx=65 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301261.001490 event_id=65 phase=end evidence=completed_generate_call
+  iter 66: 135168 tok, 810.4 tok/s, 167s
+STEP ts=1793301263.499663 kind=pending batch_idx=66 tokens=0 passes=1 node=-1 rank=-1 event_id=66 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4760.84it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.37 toks/s, output: 820.38 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.37 toks/s, output: 820.38 toks/s]
+STEP ts=1793301265.998094 kind=infer batch_idx=66 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301263.499663 event_id=66 phase=end evidence=completed_generate_call
+  iter 67: 137216 tok, 810.6 tok/s, 169s
+STEP ts=1793301265.998112 kind=pending batch_idx=67 tokens=0 passes=1 node=-1 rank=-1 event_id=67 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4792.81it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.76 toks/s, output: 820.42 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.76 toks/s, output: 820.42 toks/s]
+STEP ts=1793301268.496397 kind=infer batch_idx=67 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301265.998112 event_id=67 phase=end evidence=completed_generate_call
+  iter 68: 139264 tok, 810.7 tok/s, 172s
+STEP ts=1793301268.496416 kind=pending batch_idx=68 tokens=0 passes=1 node=-1 rank=-1 event_id=68 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4788.02it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.37 toks/s, output: 820.55 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 105.37 toks/s, output: 820.55 toks/s]
+STEP ts=1793301270.994324 kind=infer batch_idx=68 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301268.496416 event_id=68 phase=end evidence=completed_generate_call
+  iter 69: 141312 tok, 810.8 tok/s, 174s
+STEP ts=1793301270.994344 kind=pending batch_idx=69 tokens=0 passes=1 node=-1 rank=-1 event_id=69 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4630.11it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.88 toks/s, output: 102.90 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.31 toks/s, output: 819.98 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.31 toks/s, output: 819.98 toks/s]
+STEP ts=1793301273.494030 kind=infer batch_idx=69 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301270.994344 event_id=69 phase=end evidence=completed_generate_call
+  iter 70: 143360 tok, 811.0 tok/s, 177s
+STEP ts=1793301273.494049 kind=pending batch_idx=70 tokens=0 passes=1 node=-1 rank=-1 event_id=70 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4685.72it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.77 toks/s, output: 820.47 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.77 toks/s, output: 820.47 toks/s]
+STEP ts=1793301275.992219 kind=infer batch_idx=70 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301273.494049 event_id=70 phase=end evidence=completed_generate_call
+  iter 71: 145408 tok, 811.1 tok/s, 179s
+STEP ts=1793301275.992238 kind=pending batch_idx=71 tokens=0 passes=1 node=-1 rank=-1 event_id=71 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4707.41it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.43 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.43 toks/s]
+STEP ts=1793301278.490538 kind=infer batch_idx=71 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301275.992238 event_id=71 phase=end evidence=completed_generate_call
+  iter 72: 147456 tok, 811.2 tok/s, 182s
+STEP ts=1793301278.490557 kind=pending batch_idx=72 tokens=0 passes=1 node=-1 rank=-1 event_id=72 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4628.84it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.35 toks/s, output: 820.29 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.35 toks/s, output: 820.29 toks/s]
+STEP ts=1793301280.989324 kind=infer batch_idx=72 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301278.490557 event_id=72 phase=end evidence=completed_generate_call
+  iter 73: 149504 tok, 811.3 tok/s, 184s
+STEP ts=1793301280.989344 kind=pending batch_idx=73 tokens=0 passes=1 node=-1 rank=-1 event_id=73 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4608.49it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.76 toks/s, output: 820.45 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.76 toks/s, output: 820.45 toks/s]
+STEP ts=1793301283.487620 kind=infer batch_idx=73 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301280.989344 event_id=73 phase=end evidence=completed_generate_call
+  iter 74: 151552 tok, 811.4 tok/s, 187s
+STEP ts=1793301283.487639 kind=pending batch_idx=74 tokens=0 passes=1 node=-1 rank=-1 event_id=74 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4721.32it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.35 toks/s, output: 820.38 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.35 toks/s, output: 820.38 toks/s]
+STEP ts=1793301285.986089 kind=infer batch_idx=74 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301283.487639 event_id=74 phase=end evidence=completed_generate_call
+  iter 75: 153600 tok, 811.5 tok/s, 189s
+STEP ts=1793301285.986109 kind=pending batch_idx=75 tokens=0 passes=1 node=-1 rank=-1 event_id=75 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4663.58it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.38 toks/s, output: 820.45 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.38 toks/s, output: 820.45 toks/s]
+STEP ts=1793301288.484383 kind=infer batch_idx=75 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301285.986109 event_id=75 phase=end evidence=completed_generate_call
+  iter 76: 155648 tok, 811.6 tok/s, 192s
+STEP ts=1793301288.484402 kind=pending batch_idx=76 tokens=0 passes=1 node=-1 rank=-1 event_id=76 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4729.97it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.48s/it, est. speed input: 14.49 toks/s, output: 103.02 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.48s/it, est. speed input: 107.82 toks/s, output: 820.91 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.82 toks/s, output: 820.91 toks/s]
+STEP ts=1793301290.981252 kind=infer batch_idx=76 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301288.484402 event_id=76 phase=end evidence=completed_generate_call
+  iter 77: 157696 tok, 811.8 tok/s, 194s
+STEP ts=1793301290.981276 kind=pending batch_idx=77 tokens=0 passes=1 node=-1 rank=-1 event_id=77 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4205.34it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.33 toks/s, output: 820.19 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.33 toks/s, output: 820.19 toks/s]
+STEP ts=1793301293.480546 kind=infer batch_idx=77 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301290.981276 event_id=77 phase=end evidence=completed_generate_call
+  iter 78: 159744 tok, 811.9 tok/s, 197s
+STEP ts=1793301293.480566 kind=pending batch_idx=78 tokens=0 passes=1 node=-1 rank=-1 event_id=78 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4466.78it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.88 toks/s, output: 102.91 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.32 toks/s, output: 820.06 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.32 toks/s, output: 820.06 toks/s]
+STEP ts=1793301295.980088 kind=infer batch_idx=78 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301293.480566 event_id=78 phase=end evidence=completed_generate_call
+  iter 79: 161792 tok, 811.9 tok/s, 199s
+STEP ts=1793301295.980107 kind=pending batch_idx=79 tokens=0 passes=1 node=-1 rank=-1 event_id=79 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4502.14it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.47 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.73 toks/s, output: 820.16 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.73 toks/s, output: 820.16 toks/s]
+STEP ts=1793301298.479311 kind=infer batch_idx=79 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301295.980107 event_id=79 phase=end evidence=completed_generate_call
+  iter 80: 163840 tok, 812.0 tok/s, 202s
+STEP ts=1793301298.479337 kind=pending batch_idx=80 tokens=0 passes=1 node=-1 rank=-1 event_id=80 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4581.44it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.44 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.44 toks/s]
+STEP ts=1793301300.977643 kind=infer batch_idx=80 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301298.479337 event_id=80 phase=end evidence=completed_generate_call
+  iter 81: 165888 tok, 812.1 tok/s, 204s
+STEP ts=1793301300.977663 kind=pending batch_idx=81 tokens=0 passes=1 node=-1 rank=-1 event_id=81 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4450.19it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.36 toks/s, output: 820.32 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.36 toks/s, output: 820.32 toks/s]
+STEP ts=1793301303.476418 kind=infer batch_idx=81 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301300.977663 event_id=81 phase=end evidence=completed_generate_call
+  iter 82: 167936 tok, 812.2 tok/s, 207s
+STEP ts=1793301303.476438 kind=pending batch_idx=82 tokens=0 passes=1 node=-1 rank=-1 event_id=82 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4565.85it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.47 toks/s, output: 102.91 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.71 toks/s, output: 820.06 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.71 toks/s, output: 820.06 toks/s]
+STEP ts=1793301305.975922 kind=infer batch_idx=82 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301303.476438 event_id=82 phase=end evidence=completed_generate_call
+  iter 83: 169984 tok, 812.3 tok/s, 209s
+STEP ts=1793301305.975942 kind=pending batch_idx=83 tokens=0 passes=1 node=-1 rank=-1 event_id=83 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4481.09it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.30 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.30 toks/s]
+STEP ts=1793301308.474744 kind=infer batch_idx=83 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301305.975942 event_id=83 phase=end evidence=completed_generate_call
+  iter 84: 172032 tok, 812.4 tok/s, 212s
+STEP ts=1793301308.474764 kind=pending batch_idx=84 tokens=0 passes=1 node=-1 rank=-1 event_id=84 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4512.43it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.35 toks/s, output: 820.27 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.35 toks/s, output: 820.27 toks/s]
+STEP ts=1793301310.973629 kind=infer batch_idx=84 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301308.474764 event_id=84 phase=end evidence=completed_generate_call
+  iter 85: 174080 tok, 812.5 tok/s, 214s
+STEP ts=1793301310.973650 kind=pending batch_idx=85 tokens=0 passes=1 node=-1 rank=-1 event_id=85 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4447.24it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.48s/it, est. speed input: 14.49 toks/s, output: 103.05 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.48s/it, est. speed input: 107.86 toks/s, output: 821.17 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.86 toks/s, output: 821.17 toks/s]
+STEP ts=1793301313.469859 kind=infer batch_idx=85 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301310.973650 event_id=85 phase=end evidence=completed_generate_call
+  iter 86: 176128 tok, 812.6 tok/s, 217s
+STEP ts=1793301313.469888 kind=pending batch_idx=86 tokens=0 passes=1 node=-1 rank=-1 event_id=86 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4072.63it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.33 toks/s, output: 820.22 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.33 toks/s, output: 820.22 toks/s]
+STEP ts=1793301315.969106 kind=infer batch_idx=86 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301313.469888 event_id=86 phase=end evidence=completed_generate_call
+  iter 87: 178176 tok, 812.6 tok/s, 219s
+STEP ts=1793301315.969127 kind=pending batch_idx=87 tokens=0 passes=1 node=-1 rank=-1 event_id=87 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4904.90it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.88 toks/s, output: 102.90 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.31 toks/s, output: 820.01 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.31 toks/s, output: 820.01 toks/s]
+STEP ts=1793301318.468621 kind=infer batch_idx=87 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301315.969127 event_id=87 phase=end evidence=completed_generate_call
+  iter 88: 180224 tok, 812.7 tok/s, 222s
+STEP ts=1793301318.468642 kind=pending batch_idx=88 tokens=0 passes=1 node=-1 rank=-1 event_id=88 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4379.33it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.75 toks/s, output: 820.36 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.75 toks/s, output: 820.36 toks/s]
+STEP ts=1793301320.967265 kind=infer batch_idx=88 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301318.468642 event_id=88 phase=end evidence=completed_generate_call
+  iter 89: 182272 tok, 812.8 tok/s, 224s
+STEP ts=1793301320.967283 kind=pending batch_idx=89 tokens=0 passes=1 node=-1 rank=-1 event_id=89 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5263.44it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.28 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.28 toks/s]
+STEP ts=1793301323.465842 kind=infer batch_idx=89 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301320.967283 event_id=89 phase=end evidence=completed_generate_call
+  iter 90: 184320 tok, 812.9 tok/s, 227s
+STEP ts=1793301323.465862 kind=pending batch_idx=90 tokens=0 passes=1 node=-1 rank=-1 event_id=90 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4446.65it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.36 toks/s, output: 820.36 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.36 toks/s, output: 820.36 toks/s]
+STEP ts=1793301325.964468 kind=infer batch_idx=90 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301323.465862 event_id=90 phase=end evidence=completed_generate_call
+  iter 91: 186368 tok, 813.0 tok/s, 229s
+STEP ts=1793301325.964486 kind=pending batch_idx=91 tokens=0 passes=1 node=-1 rank=-1 event_id=91 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5205.47it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.95 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.76 toks/s, output: 820.41 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.76 toks/s, output: 820.41 toks/s]
+STEP ts=1793301328.462645 kind=infer batch_idx=91 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301325.964486 event_id=91 phase=end evidence=completed_generate_call
+  iter 92: 188416 tok, 813.0 tok/s, 232s
+STEP ts=1793301328.462664 kind=pending batch_idx=92 tokens=0 passes=1 node=-1 rank=-1 event_id=92 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4809.29it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.33 toks/s, output: 820.18 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.33 toks/s, output: 820.18 toks/s]
+STEP ts=1793301330.961657 kind=infer batch_idx=92 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301328.462664 event_id=92 phase=end evidence=completed_generate_call
+  iter 93: 190464 tok, 813.1 tok/s, 234s
+STEP ts=1793301330.961674 kind=pending batch_idx=93 tokens=0 passes=1 node=-1 rank=-1 event_id=93 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5109.55it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.33 toks/s, output: 820.16 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.33 toks/s, output: 820.16 toks/s]
+STEP ts=1793301333.460660 kind=infer batch_idx=93 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301330.961674 event_id=93 phase=end evidence=completed_generate_call
+  iter 94: 192512 tok, 813.2 tok/s, 237s
+STEP ts=1793301333.460680 kind=pending batch_idx=94 tokens=0 passes=1 node=-1 rank=-1 event_id=94 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4530.10it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.77 toks/s, output: 820.48 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.77 toks/s, output: 820.48 toks/s]
+STEP ts=1793301335.958865 kind=infer batch_idx=94 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301333.460680 event_id=94 phase=end evidence=completed_generate_call
+  iter 95: 194560 tok, 813.2 tok/s, 239s
+STEP ts=1793301335.958882 kind=pending batch_idx=95 tokens=0 passes=1 node=-1 rank=-1 event_id=95 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5170.17it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.32 toks/s, output: 820.15 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.32 toks/s, output: 820.15 toks/s]
+STEP ts=1793301338.457877 kind=infer batch_idx=95 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301335.958882 event_id=95 phase=end evidence=completed_generate_call
+  iter 96: 196608 tok, 813.3 tok/s, 242s
+STEP ts=1793301338.457897 kind=pending batch_idx=96 tokens=0 passes=1 node=-1 rank=-1 event_id=96 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4347.56it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]2026-10-29 19:15:38,931 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /home/tenant/neurips-recollect/GPU-monitoring/data/llm_infer_qwen25_14b_fp16_NVIDIA_H200_NVL_b16d336c_20261029_191038.parquet.partial
+Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.23 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.23 toks/s]
+STEP ts=1793301340.956964 kind=infer batch_idx=96 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301338.457897 event_id=96 phase=end evidence=completed_generate_call
+  iter 97: 198656 tok, 813.4 tok/s, 244s
+STEP ts=1793301340.956985 kind=pending batch_idx=97 tokens=0 passes=1 node=-1 rank=-1 event_id=97 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4745.36it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.75 toks/s, output: 820.31 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.75 toks/s, output: 820.31 toks/s]
+STEP ts=1793301343.455624 kind=infer batch_idx=97 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301340.956985 event_id=97 phase=end evidence=completed_generate_call
+  iter 98: 200704 tok, 813.4 tok/s, 247s
+STEP ts=1793301343.455644 kind=pending batch_idx=98 tokens=0 passes=1 node=-1 rank=-1 event_id=98 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4522.16it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.27 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.27 toks/s]
+STEP ts=1793301345.954495 kind=infer batch_idx=98 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301343.455644 event_id=98 phase=end evidence=completed_generate_call
+  iter 99: 202752 tok, 813.5 tok/s, 249s
+STEP ts=1793301345.954513 kind=pending batch_idx=99 tokens=0 passes=1 node=-1 rank=-1 event_id=99 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5176.56it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.35 toks/s, output: 820.24 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.35 toks/s, output: 820.24 toks/s]
+STEP ts=1793301348.453217 kind=infer batch_idx=99 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301345.954513 event_id=99 phase=end evidence=completed_generate_call
+  iter 100: 204800 tok, 813.5 tok/s, 252s
+STEP ts=1793301348.453237 kind=pending batch_idx=100 tokens=0 passes=1 node=-1 rank=-1 event_id=100 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4734.65it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.47 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.73 toks/s, output: 820.15 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.73 toks/s, output: 820.15 toks/s]
+STEP ts=1793301350.952358 kind=infer batch_idx=100 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301348.453237 event_id=100 phase=end evidence=completed_generate_call
+  iter 101: 206848 tok, 813.6 tok/s, 254s
+STEP ts=1793301350.952375 kind=pending batch_idx=101 tokens=0 passes=1 node=-1 rank=-1 event_id=101 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5297.51it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.98 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.38 toks/s, output: 820.62 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 105.38 toks/s, output: 820.62 toks/s]
+STEP ts=1793301353.449908 kind=infer batch_idx=101 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301350.952375 event_id=101 phase=end evidence=completed_generate_call
+  iter 102: 208896 tok, 813.7 tok/s, 257s
+STEP ts=1793301353.449930 kind=pending batch_idx=102 tokens=0 passes=1 node=-1 rank=-1 event_id=102 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4214.85it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.35 toks/s, output: 820.26 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.35 toks/s, output: 820.26 toks/s]
+STEP ts=1793301355.948930 kind=infer batch_idx=102 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301353.449930 event_id=102 phase=end evidence=completed_generate_call
+  iter 103: 210944 tok, 813.7 tok/s, 259s
+STEP ts=1793301355.948948 kind=pending batch_idx=103 tokens=0 passes=1 node=-1 rank=-1 event_id=103 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5144.02it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.73 toks/s, output: 820.21 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.73 toks/s, output: 820.21 toks/s]
+STEP ts=1793301358.447755 kind=infer batch_idx=103 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301355.948948 event_id=103 phase=end evidence=completed_generate_call
+  iter 104: 212992 tok, 813.8 tok/s, 262s
+STEP ts=1793301358.447776 kind=pending batch_idx=104 tokens=0 passes=1 node=-1 rank=-1 event_id=104 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4582.06it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.37 toks/s, output: 820.50 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 105.37 toks/s, output: 820.50 toks/s]
+STEP ts=1793301360.945883 kind=infer batch_idx=104 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301358.447776 event_id=104 phase=end evidence=completed_generate_call
+  iter 105: 215040 tok, 813.8 tok/s, 264s
+STEP ts=1793301360.945900 kind=pending batch_idx=105 tokens=0 passes=1 node=-1 rank=-1 event_id=105 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5189.36it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.23 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.23 toks/s]
+STEP ts=1793301363.444628 kind=infer batch_idx=105 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301360.945900 event_id=105 phase=end evidence=completed_generate_call
+  iter 106: 217088 tok, 813.9 tok/s, 267s
+STEP ts=1793301363.444648 kind=pending batch_idx=106 tokens=0 passes=1 node=-1 rank=-1 event_id=106 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4474.52it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.78 toks/s, output: 820.54 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 107.78 toks/s, output: 820.54 toks/s]
+STEP ts=1793301365.942681 kind=infer batch_idx=106 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301363.444648 event_id=106 phase=end evidence=completed_generate_call
+  iter 107: 219136 tok, 813.9 tok/s, 269s
+STEP ts=1793301365.942699 kind=pending batch_idx=107 tokens=0 passes=1 node=-1 rank=-1 event_id=107 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5200.62it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.36 toks/s, output: 820.41 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.36 toks/s, output: 820.41 toks/s]
+STEP ts=1793301368.440878 kind=infer batch_idx=107 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301365.942699 event_id=107 phase=end evidence=completed_generate_call
+  iter 108: 221184 tok, 814.0 tok/s, 272s
+STEP ts=1793301368.440899 kind=pending batch_idx=108 tokens=0 passes=1 node=-1 rank=-1 event_id=108 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4345.30it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.39 toks/s, output: 820.54 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 115.39 toks/s, output: 820.54 toks/s]
+STEP ts=1793301370.938988 kind=infer batch_idx=108 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301368.440899 event_id=108 phase=end evidence=completed_generate_call
+  iter 109: 223232 tok, 814.1 tok/s, 274s
+STEP ts=1793301370.939005 kind=pending batch_idx=109 tokens=0 passes=1 node=-1 rank=-1 event_id=109 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5295.00it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.75 toks/s, output: 820.31 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.75 toks/s, output: 820.31 toks/s]
+STEP ts=1793301373.437453 kind=infer batch_idx=109 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301370.939005 event_id=109 phase=end evidence=completed_generate_call
+  iter 110: 225280 tok, 814.1 tok/s, 277s
+STEP ts=1793301373.437473 kind=pending batch_idx=110 tokens=0 passes=1 node=-1 rank=-1 event_id=110 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4512.43it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.48s/it, est. speed input: 12.48 toks/s, output: 103.03 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.48s/it, est. speed input: 105.43 toks/s, output: 821.03 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.21it/s, est. speed input: 105.43 toks/s, output: 821.03 toks/s]
+STEP ts=1793301375.934042 kind=infer batch_idx=110 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301373.437473 event_id=110 phase=end evidence=completed_generate_call
+  iter 111: 227328 tok, 814.2 tok/s, 279s
+STEP ts=1793301375.934064 kind=pending batch_idx=111 tokens=0 passes=1 node=-1 rank=-1 event_id=111 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4637.15it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.22 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.22 toks/s]
+STEP ts=1793301378.433014 kind=infer batch_idx=111 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301375.934064 event_id=111 phase=end evidence=completed_generate_call
+  iter 112: 229376 tok, 814.2 tok/s, 282s
+STEP ts=1793301378.433033 kind=pending batch_idx=112 tokens=0 passes=1 node=-1 rank=-1 event_id=112 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4800.35it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.96 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.76 toks/s, output: 820.44 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.76 toks/s, output: 820.44 toks/s]
+STEP ts=1793301380.931241 kind=infer batch_idx=112 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301378.433033 event_id=112 phase=end evidence=completed_generate_call
+  iter 113: 231424 tok, 814.3 tok/s, 284s
+STEP ts=1793301380.931257 kind=pending batch_idx=113 tokens=0 passes=1 node=-1 rank=-1 event_id=113 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5321.88it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.34 toks/s, output: 820.33 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.34 toks/s, output: 820.33 toks/s]
+STEP ts=1793301383.429662 kind=infer batch_idx=113 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301380.931257 event_id=113 phase=end evidence=completed_generate_call
+  iter 114: 233472 tok, 814.3 tok/s, 287s
+STEP ts=1793301383.429682 kind=pending batch_idx=114 tokens=0 passes=1 node=-1 rank=-1 event_id=114 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4341.93it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.93 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.34 toks/s, output: 820.19 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.34 toks/s, output: 820.19 toks/s]
+STEP ts=1793301385.928835 kind=infer batch_idx=114 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301383.429682 event_id=114 phase=end evidence=completed_generate_call
+  iter 115: 235520 tok, 814.3 tok/s, 289s
+STEP ts=1793301385.928851 kind=pending batch_idx=115 tokens=0 passes=1 node=-1 rank=-1 event_id=115 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5314.29it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.30 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.30 toks/s]
+STEP ts=1793301388.427324 kind=infer batch_idx=115 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301385.928851 event_id=115 phase=end evidence=completed_generate_call
+  iter 116: 237568 tok, 814.4 tok/s, 292s
+STEP ts=1793301388.427344 kind=pending batch_idx=116 tokens=0 passes=1 node=-1 rank=-1 event_id=116 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4775.07it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.46 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.31 toks/s, output: 820.09 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.31 toks/s, output: 820.09 toks/s]
+STEP ts=1793301390.926623 kind=infer batch_idx=116 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301388.427344 event_id=116 phase=end evidence=completed_generate_call
+  iter 117: 239616 tok, 814.4 tok/s, 294s
+STEP ts=1793301390.926640 kind=pending batch_idx=117 tokens=0 passes=1 node=-1 rank=-1 event_id=117 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5295.00it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 16.89 toks/s, output: 102.92 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 115.33 toks/s, output: 820.14 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 115.33 toks/s, output: 820.14 toks/s]
+STEP ts=1793301393.425599 kind=infer batch_idx=117 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301390.926640 event_id=117 phase=end evidence=completed_generate_call
+  iter 118: 241664 tok, 814.5 tok/s, 297s
+STEP ts=1793301393.425619 kind=pending batch_idx=118 tokens=0 passes=1 node=-1 rank=-1 event_id=118 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 4552.84it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 14.48 toks/s, output: 102.94 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 107.74 toks/s, output: 820.25 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 107.74 toks/s, output: 820.25 toks/s]
+STEP ts=1793301395.924519 kind=infer batch_idx=118 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301393.425619 event_id=118 phase=end evidence=completed_generate_call
+  iter 119: 243712 tok, 814.5 tok/s, 299s
+STEP ts=1793301395.924536 kind=pending batch_idx=119 tokens=0 passes=1 node=-1 rank=-1 event_id=119 phase=start evidence=generate_call
+Rendering prompts:   0%|          | 0/8 [00:00<?, ?it/s]Rendering prompts: 100%|██████████| 8/8 [00:00<00:00, 5320.19it/s]
+Processed prompts:   0%|          | 0/8 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  12%|█▎        | 1/8 [00:02<00:17,  2.49s/it, est. speed input: 12.47 toks/s, output: 102.97 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  2.49s/it, est. speed input: 105.37 toks/s, output: 820.49 toks/s]Processed prompts: 100%|██████████| 8/8 [00:02<00:00,  3.20it/s, est. speed input: 105.37 toks/s, output: 820.49 toks/s]
+STEP ts=1793301398.422434 kind=infer batch_idx=119 tokens=2048 passes=1 node=-1 rank=-1 start_ts=1793301395.924536 event_id=119 phase=end evidence=completed_generate_call
+  iter 120: 245760 tok, 814.6 tok/s, 302s
+qwen25_14b_fp16 done: 120 iters, 245760 tok, 814.6 tok/s, 301.7s wall, TP=1
+(MainProcess pid=2902074) INFO 10-29 19:16:38 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=2902243) INFO 10-29 19:16:38 [core.py:1454] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=2902243) INFO 10-29 19:16:38 [core.py:1635] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=2902243) INFO 10-29 19:16:38 [core.py:1666] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=2902243) INFO 10-29 19:16:38 [core.py:1499] [shutdown] EngineCore: exiting busy loop
+2026-10-29 19:16:46,020 [spar.telemetry] INFO: Telemetry stopped. 368 samples collected.
+2026-10-29 19:16:46,025 [spar.telemetry] INFO: Saved 368 rows to /home/tenant/neurips-recollect/GPU-monitoring/data/llm_infer_qwen25_14b_fp16_NVIDIA_H200_NVL_b16d336c_20261029_191038.parquet
+2026-10-29 19:16:46,028 [scripts.run_health] INFO: Run health: ok (span 367s of 300s requested, GPU busy in 87.0% of 368 samples)
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_infer_qwen25_14b_fp16
+  Command:     /home/tenant/neurips-recollect/GPU-monitoring/venv-vllm/bin/python /home/tenant/neurips-recollect/GPU-monitoring/workloads/llm_inference_vllm.py --model qwen25_14b_fp16 --duration 300 --batch-size 8 --max-tokens 256
+  GPU:         NVIDIA H200 NVL (index 0)
+  Run ID:      b16d336c640b
+  Output:      /home/tenant/neurips-recollect/GPU-monitoring/data/llm_infer_qwen25_14b_fp16_NVIDIA_H200_NVL_b16d336c_20261029_191038.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /home/tenant/neurips-recollect/GPU-monitoring/data/llm_infer_qwen25_14b_fp16_NVIDIA_H200_NVL_b16d336c_20261029_191038.parquet.partial
+  Timeout:     720s
+  NCU (Tier3): no
+============================================================
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /home/tenant/neurips-recollect/GPU-monitoring/venv-vllm/bin/python /home/tenant/neurips-recollect/GPU-monitoring/workloads/llm_inference_vllm.py --model qwen25_14b_fp16 --duration 300 --batch-size 8 --max-tokens 256
+----------------------------------------
+----------------------------------------
+Workload finished (exit_code=0, duration=363.2s)
+Collecting post-workload cooldown (2s)...
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 368
+  Workload exit code: 0
+  Run health: ok
+  Output file: /home/tenant/neurips-recollect/GPU-monitoring/data/llm_infer_qwen25_14b_fp16_NVIDIA_H200_NVL_b16d336c_20261029_191038.parquet
+============================================================
+SPAR_CELL_DONE cell=llm_infer_qwen25_14b_fp16 rep=1 exit=0
