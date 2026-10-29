@@ -54,16 +54,30 @@ ABORT_BUSY = 0.05
 STARVED_BUSY = 0.10
 DEFAULT_DURATION = 300.0
 
+# Cells that are SUPPOSED to leave the GPU idle. `idle` is the idle-GPU
+# baseline; the EC* cells are the edge-case probes built to be near-silent.
+# Judging them by busy fraction asks them to fail at their own purpose.
+IDLE_BY_DESIGN = {
+    "idle", "idle_h100",
+    "EC1_phantom", "EC2_silent", "EC3_sparse", "EC5_frozen",
+    "EC6_low_int", "EC7_amp_mask", "EC8_mem_idle",
+}
 
-def requested_duration(cell: str) -> float:
-    """`--duration N` from the cell's registry command, else the common default."""
+
+def requested_duration(cell: str):
+    """`--duration N` from the cell's registry command, or None if unknown.
+
+    None matters. A cell with no registry entry declares no duration, and
+    assuming the 300 s default is what turned ten complete 128 s
+    adversarial_composite runs into "truncated".
+    """
     try:
         from workloads.registry import WORKLOAD_REGISTRY
     except Exception:
-        return DEFAULT_DURATION
+        return None
     entry = WORKLOAD_REGISTRY.get(cell)
     if not entry:
-        return DEFAULT_DURATION
+        return None
     cmd = [str(x) for x in entry.get("command", [])]
     for i, tok in enumerate(cmd):
         if tok == "--duration" and i + 1 < len(cmd):
@@ -74,12 +88,14 @@ def requested_duration(cell: str) -> float:
         m = re.match(r"--duration=(\d+(?:\.\d+)?)$", tok)
         if m:
             return float(m[1])
-    return DEFAULT_DURATION
+    return None
 
 
-def audit(root: Path) -> pd.DataFrame:
+def audit(root: Path, adversarial_only: bool = False) -> pd.DataFrame:
     m = pd.read_parquet(root / MANIFEST)
-    a = m[m.tier.eq("A_camera_ready") & m.base.str.startswith("adversarial_")].copy()
+    a = m[m.tier.eq("A_camera_ready")].copy()
+    if adversarial_only:
+        a = a[a.base.str.startswith("adversarial_")]
     rows = []
     for _, r in a.iterrows():
         p = root / r.file
@@ -103,24 +119,32 @@ def audit(root: Path) -> pd.DataFrame:
         streams=("file", "count"))
     j["duration_s"] = j.cell.map(requested_duration)
     j["verdict"] = "ok"
-    short = j.span_s < ABORT_SPAN_FRAC * j.duration_s
+    declared = j.duration_s.notna()
+    short = declared & (j.span_s < ABORT_SPAN_FRAC * j.duration_s.fillna(0))
     j.loc[short & (j.busy.fillna(0) < ABORT_BUSY), "verdict"] = "aborted"
     j.loc[short & (j.busy.fillna(0) >= ABORT_BUSY), "verdict"] = "truncated"
-    j.loc[j.verdict.eq("ok") & (j.busy < STARVED_BUSY), "verdict"] = "starved"
+    j.loc[j.verdict.eq("ok") & (j.busy < STARVED_BUSY)
+          & ~j.cell.isin(IDLE_BY_DESIGN), "verdict"] = "starved"
+    j.loc[j.cell.isin(IDLE_BY_DESIGN) & j.verdict.eq("ok"), "verdict"] = "ok"
     return j.sort_values(["verdict", "hw", "cell"])
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--adversarial-only", action="store_true",
+                    help="only the adversarial families (the pre-2026-10-29 scope)")
     ap.add_argument("--write", action="store_true",
                     help="update data/quality_exclusions.json and write the lists")
     args = ap.parse_args()
     root = Path(ROOT)
-    j = audit(root)
+    j = audit(root, adversarial_only=args.adversarial_only)
 
     bad = j[j.verdict.ne("ok")]
-    print(f"tier-A adversarial jobs: {len(j)}")
+    scope = "adversarial" if args.adversarial_only else "all"
+    print(f"tier-A jobs ({scope}): {len(j)}  "
+          f"({int(j.duration_s.isna().sum())} with no declared duration, "
+          f"span tests skipped for those)")
     for v in ("aborted", "truncated", "starved"):
         g = j[j.verdict.eq(v)]
         print(f"  {v}: {len(g)} jobs, {int(g.windows.sum())} windows "
