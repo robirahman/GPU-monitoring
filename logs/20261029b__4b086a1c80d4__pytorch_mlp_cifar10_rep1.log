@@ -1,0 +1,62 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    pytorch_mlp_cifar10
+  Command:     /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/pytorch_training.py --model simple_mlp --dataset cifar10 --epochs 20 --batch-size 512
+  GPU:         NVIDIA H200 (index 0)
+  Run ID:      572df324843b
+  Output:      /workspace/GPU-monitoring/data/pytorch_mlp_cifar10_NVIDIA_H200_572df324_20261029_210724.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring/data/pytorch_mlp_cifar10_NVIDIA_H200_572df324_20261029_210724.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+2026-10-29 21:07:24,242 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H200, interval=1.0s, dcgm=disabled, label=pytorch_mlp_cifar10, run=572df324843b)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/pytorch_training.py --model simple_mlp --dataset cifar10 --epochs 20 --batch-size 512
+----------------------------------------
+Training simple_mlp on cifar10
+  Device: cuda
+  Epochs: 20, Batch size: 512, LR: 0.01
+  AMP: False
+Files already downloaded and verified
+  Epoch 1/20: loss=1.9208, acc=32.0%, time=2.4s
+  Epoch 2/20: loss=1.6159, acc=43.2%, time=2.3s
+  Epoch 3/20: loss=1.4976, acc=47.5%, time=2.4s
+  Epoch 4/20: loss=1.4120, acc=50.6%, time=2.3s
+  Epoch 5/20: loss=1.3383, acc=53.2%, time=2.3s
+  Epoch 6/20: loss=1.2753, acc=55.4%, time=2.4s
+  Epoch 7/20: loss=1.2191, acc=57.3%, time=2.4s
+  Epoch 8/20: loss=1.1648, acc=59.6%, time=2.3s
+  Epoch 9/20: loss=1.1151, acc=61.3%, time=2.3s
+  Epoch 10/20: loss=1.0756, acc=62.6%, time=2.3s
+  Epoch 11/20: loss=1.0275, acc=64.4%, time=2.3s
+  Epoch 12/20: loss=0.9836, acc=65.9%, time=2.3s
+  Epoch 13/20: loss=0.9458, acc=67.3%, time=2.3s
+  Epoch 14/20: loss=0.9048, acc=68.7%, time=2.3s
+  Epoch 15/20: loss=0.8556, acc=70.7%, time=2.3s
+  Epoch 16/20: loss=0.8180, acc=72.0%, time=2.3s
+  Epoch 17/20: loss=0.7842, acc=73.1%, time=2.3s
+  Epoch 18/20: loss=0.7361, acc=74.7%, time=2.3s
+  Epoch 19/20: loss=0.6989, acc=76.0%, time=2.3s
+  Epoch 20/20: loss=0.6811, acc=76.7%, time=2.3s
+Training complete. Total wall time: 46.7s
+----------------------------------------
+Workload finished (exit_code=0, duration=50.5s)
+Collecting post-workload cooldown (2s)...
+2026-10-29 21:08:18,773 [spar.telemetry] INFO: Telemetry stopped. 55 samples collected.
+2026-10-29 21:08:18,823 [spar.telemetry] INFO: Saved 55 rows to /workspace/GPU-monitoring/data/pytorch_mlp_cifar10_NVIDIA_H200_572df324_20261029_210724.parquet
+2026-10-29 21:08:18,829 [scripts.run_health] INFO: Run health: ok (span 54s, GPU busy in 81.8% of 55 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 55
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring/data/pytorch_mlp_cifar10_NVIDIA_H200_572df324_20261029_210724.parquet
+============================================================
+SPAR_CELL_DONE cell=pytorch_mlp_cifar10 rep=1 exit=0
