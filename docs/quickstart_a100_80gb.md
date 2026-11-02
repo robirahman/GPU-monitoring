@@ -69,6 +69,20 @@ for cell in $CELLS; do for rep in 1 2 3; do
 done; done
 ```
 
+## Already collected on A100-SXM4-80GB -- do not re-run these
+
+| cell | runs already collected |
+| :-- | --: |
+| `adversarial_F_interleave_30` | 3 |
+| `adversarial_H_mimicry_cufft` | 3 |
+| `adversarial_H_mimicry_mining` | 3 |
+| `adversarial_J_pid_75` | 3 |
+| `adversarial_K_online_learning` | 6 |
+| `adversarial_L_diluted_10_mw8` | 3 |
+| `adversarial_L_diluted_2` | 3 |
+| `adversarial_L_diluted_20_mw8` | 3 |
+| `adversarial_L_diluted_5` | 3 |
+
 ## 5. Check, then ship
 
 ```bash

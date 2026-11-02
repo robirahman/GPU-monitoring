@@ -55,6 +55,25 @@ for cell in $CELLS; do for rep in 1 2 3; do
 done; done
 ```
 
+## Already collected on B200 -- do not re-run these
+
+| cell | runs already collected |
+| :-- | --: |
+| `adversarial_E_memory_minimal` | 3 |
+| `adversarial_F_interleave_50` | 3 |
+| `adversarial_H_mimicry_cufft` | 3 |
+| `adversarial_I_stochastic_30` | 3 |
+| `adversarial_J_pid_75` | 3 |
+| `adversarial_K_online_learning_mw8` | 3 |
+| `adversarial_L_diluted_10_mw8` | 3 |
+| `adversarial_L_diluted_20_mw8` | 3 |
+| `adversarial_L_diluted_2_mw8` | 3 |
+| `adversarial_L_diluted_5_mw8` | 3 |
+
+## Cannot be reproduced on B200
+
+`nvlink_latency`, `nvlink_p2p` have no registry entry, so there is no command to run them. Gaps to state in the paper, not work for this rental.
+
 ## 5. Check, then ship
 
 ```bash

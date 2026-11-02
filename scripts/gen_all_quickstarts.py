@@ -90,15 +90,42 @@ def gpus(cell):
     return 1
 
 
+# Anything collected on or after this date is a re-collection rather than part
+# of the frozen corpus. Tier A closed 2026-06-18; the campaign began 2026-10-23.
+RECOLLECT_FROM = 1792000000.0  # 2026-10-20 UTC
+
+_RECOLLECTED = None
+
+
+def _manifest():
+    return pd.read_parquet(ROOT / "docs/camera_ready_manifest_20261022/streams.parquet")
+
+
 def already_done(cell, hw):
-    """A 2026-10-2x re-collection of this cell on this device exists."""
-    tok = re.sub(r"[^A-Za-z0-9]+", "_", hw)
+    """Has this cell already been re-collected on this device?
+
+    Asked of the manifest, not of filenames. Multi-GPU parquets are written as
+    `<cell>_node0_gpu<N>_<DEVICE>_<run_id>.parquet` with no date in the name,
+    so the date-glob this replaces reported every one of them as outstanding --
+    including H200 fsdp_70b_nvlink the day after it was collected, which would
+    have sent someone to re-rent an 8-GPU node for finished work.
+    """
+    global _RECOLLECTED
+    if _RECOLLECTED is None:
+        m = _manifest()
+        fresh = m[m.t0 >= RECOLLECT_FROM]
+        _RECOLLECTED = {(str(b), str(h)) for b, h in zip(fresh.base, fresh.hw)}
+    return (cell, hw) in _RECOLLECTED or (cell + "_mw8", hw) in _RECOLLECTED
+
+
+def done_jobs(cell, hw):
+    """(name_as_collected, n_jobs) for a cell already re-collected on hw."""
+    m = _manifest()
     for base in (cell, cell + "_mw8"):
-        # rglob: the A100 re-collections live under data/gcp/<stamp>/, not in
-        # data/ root, and a non-recursive glob reported them as still owed.
-        if list((ROOT / "data").rglob(f"{base}_*{tok}*_2026102*.parquet")):
-            return True
-    return False
+        g = m[(m.base == base) & (m.hw == hw) & (m.t0 >= RECOLLECT_FROM)]
+        if len(g):
+            return base, int(g.job_id.nunique())
+    return None
 
 
 def main():
@@ -198,6 +225,25 @@ def main():
                   '    --output-dir data/ --no-dcgm --require-gpu-activity 2>&1 | tee "$log"',
                   '  echo "SPAR_CELL_DONE cell=$cell rep=$rep exit=${PIPESTATUS[0]}" >> "$log"',
                   "done; done", "```\n"]
+
+        finished = []
+        for cell in sorted(set(d[d.hw.eq(hw)].collect_as)):
+            base = cell[:-4] if cell.endswith("_mw8") else cell
+            info = done_jobs(base, hw)
+            if info:
+                finished.append(info)
+        if finished:
+            t += [f"## Already collected on {hw} -- do not re-run these\n",
+                  "| cell | runs already collected |", "| :-- | --: |"]
+            for base, jobs in sorted(set(finished)):
+                t.append(f"| `{base}` | {jobs} |")
+            t.append("")
+        cannot = sorted(set(d[d.hw.eq(hw) & ~d.runnable].cell))
+        if cannot:
+            t += [f"## Cannot be reproduced on {hw}\n",
+                  f"`{'`, `'.join(cannot)}` have no registry entry, so there "
+                  f"is no command to run them. Gaps to state in the paper, "
+                  f"not work for this rental.\n"]
 
         t += ["## 5. Check, then ship\n", "```bash",
               'for f in logs/${STAMP}__*.log; do',

@@ -51,6 +51,10 @@ for cell in $CELLS; do for rep in 1 2 3; do
 done; done
 ```
 
+## Cannot be reproduced on H100 80GB HBM3
+
+`nvlink_latency` have no registry entry, so there is no command to run them. Gaps to state in the paper, not work for this rental.
+
 ## 5. Check, then ship
 
 ```bash
