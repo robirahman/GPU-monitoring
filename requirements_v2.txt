@@ -49,3 +49,10 @@ torchvision==0.20.1+cu121
 triton==3.1.0
 typing_extensions==4.15.0
 tzdata==2025.3
+
+# The llm_infer_* cells import transformers. It must stay on 4.x: 5.20.2
+# prints 'Disabling PyTorch because PyTorch >= 2.6 is required but found
+# 2.5.1+cu121' and then reports AutoModelForCausalLM as unavailable, so the
+# cell aborts in seconds with the GPU untouched. Not installed by default --
+# only the llm_infer_* and bert/gpt2 cells need it -- but pin it when you do:
+#     pip install 'transformers<5' accelerate sentencepiece

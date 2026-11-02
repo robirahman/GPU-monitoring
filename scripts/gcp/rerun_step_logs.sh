@@ -99,7 +99,20 @@ run_cell() {  # run_cell <cell> <rep> <mode>
   {
     echo "SPAR_CELL_BEGIN cell=${cell} rep=${rep} stamp=${STAMP} host=${HOST} utc=$(date -u +%FT%TZ)"
     if [ "$mode" = ddp ]; then
-      "$PY" scripts/run_workload_multi_gpu.py --workload "$cell" --num-gpus 8 \
+      _ng=$("$PY" - "$cell" <<'PYNG'
+import re, sys
+sys.path.insert(0, ".")
+from workloads.registry import WORKLOAD_REGISTRY as R
+e = R.get(sys.argv[1]); n = 8
+if e:
+    for tok in (str(x) for x in e.get("command", [])):
+        m = re.match(r"--nproc_per_node=(\d+)$", tok)
+        if m:
+            n = int(m.group(1))
+print(n)
+PYNG
+)
+      "$PY" scripts/run_workload_multi_gpu.py --workload "$cell" --num-gpus "${_ng:-8}" \
             --output-dir data/ --no-dcgm "${GUARD[@]}" 2>&1
     else
       "$PY" scripts/run_workload.py --workload "$cell" --gpu-index 0 \
@@ -115,9 +128,32 @@ say "campaign ${STAMP} on ${HOST}: cell set '${CELL_SET}', ${REPS} reps"
   | sed 's/^/[rerun] /'
 
 if [ -n "$CELLS" ]; then
-  read -r -a SINGLE <<< "$CELLS"
-  DDP=()
-  say "explicit cell list: ${SINGLE[*]}"
+  # Split by what each cell declares, not by assuming. A cell whose registry
+  # command carries --nproc_per_node=N is a torchrun job and must go through
+  # run_workload_multi_gpu.py; sending it down the single-GPU path leaves one
+  # device visible and every rank above 0 dies on set_device().
+  SINGLE=(); DDP=()
+  for _c in $CELLS; do
+    _n=$("$PY" - "$_c" <<'PYGPU'
+import re, sys
+sys.path.insert(0, ".")
+try:
+    from workloads.registry import WORKLOAD_REGISTRY as R
+except Exception:
+    print(1); raise SystemExit
+e = R.get(sys.argv[1])
+n = 1
+if e:
+    for tok in (str(x) for x in e.get("command", [])):
+        m = re.match(r"--nproc_per_node=(\d+)$", tok)
+        if m:
+            n = int(m.group(1))
+print(n)
+PYGPU
+)
+    if [ "${_n:-1}" -gt 1 ]; then DDP+=("$_c"); else SINGLE+=("$_c"); fi
+  done
+  say "explicit cells -- single-GPU: ${SINGLE[*]:-none} | multi-GPU: ${DDP[*]:-none}"
 fi
 
 for rep in $(seq 1 "$REPS"); do
