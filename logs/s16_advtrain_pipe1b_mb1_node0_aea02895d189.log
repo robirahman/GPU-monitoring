@@ -1,0 +1,110 @@
+2026-09-08 00:30:40,883 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_pipe1b_mb1, 8 GPUs, node=0, run_id=aea02895d189
+Run ID: aea02895d189
+2026-09-08 00:30:40,914 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:40,915 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:40,915 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:40,933 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:40,933 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:40,933 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:40,953 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:40,953 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:40,953 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:40,972 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:40,972 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:40,972 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:40,992 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:40,992 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:40,992 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:41,012 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:41,012 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:41,012 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:41,028 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:41,029 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:41,029 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:41,047 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:30:41,047 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=aea02895d189)
+2026-09-08 00:30:41,047 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:30:43,047 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 1 --batch-size 8 --seq-len 1024 --duration 600
+W0908 00:30:44.698000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0908 00:30:44.698000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0908 00:30:44.698000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0908 00:30:44.698000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+MN-P pipeline disguise: 1b over 2 stages x 8 FSDP ranks
+  stage layer bounds: [(0, 12), (12, 24)]  (n_layers=24)
+  microbatches=1 batch=8 seq=1024 hidden=2048
+  activation tensor: 33.6 MB per rank per hop
+  predicted inter-node bytes/step: 537 MB (fwd activations + bwd grads, 8 ranks)
+  Duration: 600s
+  Post-init GPU memory: 0.4 GB
+[rank0]:[W908 00:31:14.883622270 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank7]:[W908 00:31:14.994475090 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 7]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank5]:[W908 00:31:14.998586967 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 5]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank2]:[W908 00:31:14.081086970 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank3]:[W908 00:31:14.122352105 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank1]:[W908 00:31:14.125607686 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank6]:[W908 00:31:15.178969312 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 6]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank4]:[W908 00:31:15.383303621 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 4]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+  edge communicators warm
+STEP ts=1788827478.396 kind=train batch_idx=1 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827478.932 kind=train batch_idx=2 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827479.488 kind=train batch_idx=3 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827480.042 kind=train batch_idx=4 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827480.599 kind=train batch_idx=5 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827481.154 kind=train batch_idx=6 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827481.712 kind=train batch_idx=7 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827482.272 kind=train batch_idx=8 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827482.838 kind=train batch_idx=9 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827483.403 kind=train batch_idx=10 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827483.967 kind=train batch_idx=11 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827484.527 kind=train batch_idx=12 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827485.086 kind=train batch_idx=13 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827485.642 kind=train batch_idx=14 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827486.206 kind=train batch_idx=15 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827486.767 kind=train batch_idx=16 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827487.334 kind=train batch_idx=17 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827487.895 kind=train batch_idx=18 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827488.457 kind=train batch_idx=19 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827489.017 kind=train batch_idx=20 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827489.577 kind=train batch_idx=21 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827490.137 kind=train batch_idx=22 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827490.700 kind=train batch_idx=23 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827491.271 kind=train batch_idx=24 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827491.836 kind=train batch_idx=25 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827492.387 kind=train batch_idx=26 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827492.943 kind=train batch_idx=27 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827493.502 kind=train batch_idx=28 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827494.055 kind=train batch_idx=29 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827494.617 kind=train batch_idx=30 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827495.173 kind=train batch_idx=31 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788827495.734 kind=train batch_idx=32 tokens=65536 passes=1 node=0 rank=0 loss=nan
+W0908 00:31:36.196000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGTERM death signal, shutting down workers
+W0908 00:31:36.197000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33465 closing signal SIGTERM
+W0908 00:31:36.198000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33466 closing signal SIGTERM
+W0908 00:31:36.198000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33467 closing signal SIGTERM
+W0908 00:31:36.199000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33468 closing signal SIGTERM
+W0908 00:31:36.199000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33469 closing signal SIGTERM
+W0908 00:31:36.199000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33470 closing signal SIGTERM
+W0908 00:31:36.200000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33471 closing signal SIGTERM
+W0908 00:31:36.200000 33395 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 33472 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 33395 got signal: 15

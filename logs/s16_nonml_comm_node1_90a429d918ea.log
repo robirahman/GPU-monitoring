@@ -1,0 +1,358 @@
+2026-09-04 21:10:54,506 [spar.multi_gpu] INFO: Multi-GPU run: s16_nonml_comm, 8 GPUs, node=1, run_id=90a429d918ea
+Run ID: 90a429d918ea
+2026-09-04 21:10:54,535 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,535 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,535 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,548 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,549 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,549 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,566 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,566 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,566 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,589 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,589 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,589 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,609 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,609 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,609 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,626 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,626 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,626 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,642 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,642 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,642 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:54,657 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-04 21:10:54,657 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_nonml_comm, run=90a429d918ea)
+2026-09-04 21:10:54,657 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-04 21:10:56,657 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/nonml_distributed.py --mode comm --comm-mb 256 --duration 600
+W0904 21:10:58.314000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0904 21:10:58.314000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0904 21:10:58.314000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0904 21:10:58.314000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+[rank9]:[E904 21:21:30.830440301 ProcessGroupNCCL.cpp:616] [Rank 9] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600015 milliseconds before timing out.
+[rank9]:[E904 21:21:30.830769956 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 9] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 184, last completed NCCL work: 183.
+[rank14]:[E904 21:21:30.841697560 ProcessGroupNCCL.cpp:616] [Rank 14] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600026 milliseconds before timing out.
+[rank14]:[E904 21:21:30.841957275 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 14] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank10]:[E904 21:21:30.845562642 ProcessGroupNCCL.cpp:616] [Rank 10] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600030 milliseconds before timing out.
+[rank10]:[E904 21:21:30.845847166 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 10] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank15]:[E904 21:21:30.878612495 ProcessGroupNCCL.cpp:616] [Rank 15] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600063 milliseconds before timing out.
+[rank15]:[E904 21:21:30.878901295 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 15] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank8]:[E904 21:21:30.883258108 ProcessGroupNCCL.cpp:616] [Rank 8] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600068 milliseconds before timing out.
+[rank8]:[E904 21:21:30.883496486 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 8] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 184, last completed NCCL work: 183.
+[rank11]:[E904 21:21:30.889520161 ProcessGroupNCCL.cpp:616] [Rank 11] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600074 milliseconds before timing out.
+[rank11]:[E904 21:21:30.889766547 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 11] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank13]:[E904 21:21:30.891614059 ProcessGroupNCCL.cpp:616] [Rank 13] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600076 milliseconds before timing out.
+[rank13]:[E904 21:21:30.892104667 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 13] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank12]:[E904 21:21:30.906238488 ProcessGroupNCCL.cpp:616] [Rank 12] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600091 milliseconds before timing out.
+[rank12]:[E904 21:21:30.906490757 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 12] Exception (either an error or timeout) detected by watchdog at work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank15]:[E904 21:21:31.205848535 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 15] Timeout at NCCL work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank15]:[E904 21:21:31.205872960 ProcessGroupNCCL.cpp:630] [Rank 15] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank15]:[E904 21:21:31.205877655 ProcessGroupNCCL.cpp:636] [Rank 15] To avoid data inconsistency, we are taking the entire process down.
+[rank15]:[E904 21:21:31.207415460 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 15] Process group watchdog thread terminated with exception: [Rank 15] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600063 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x77ae044b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x77adb9a00a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x77adb9a07ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x77adb9a0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x77ae049225c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x77ae05294a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x77ae05326890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 15] Process group watchdog thread terminated with exception: [Rank 15] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600063 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x77ae044b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x77adb9a00a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x77adb9a07ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x77adb9a0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x77ae049225c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x77ae05294a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x77ae05326890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x77ae044b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x77adb967eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x77ae049225c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x77ae05294a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x77ae05326890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank10]:[E904 21:21:31.225855004 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 10] Timeout at NCCL work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank10]:[E904 21:21:31.225882593 ProcessGroupNCCL.cpp:630] [Rank 10] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank10]:[E904 21:21:31.225887403 ProcessGroupNCCL.cpp:636] [Rank 10] To avoid data inconsistency, we are taking the entire process down.
+[rank10]:[E904 21:21:31.227393385 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 10] Process group watchdog thread terminated with exception: [Rank 10] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600030 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7c83fc2b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7c83b1800a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7c83b1807ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7c83b180993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7c83fc7255c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7c83fd094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7c83fd126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+[rank12]:[E904 21:21:31.227541220 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 12] Timeout at NCCL work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank12]:[E904 21:21:31.227559542 ProcessGroupNCCL.cpp:630] [Rank 12] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank12]:[E904 21:21:31.227563906 ProcessGroupNCCL.cpp:636] [Rank 12] To avoid data inconsistency, we are taking the entire process down.
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 10] Process group watchdog thread terminated with exception: [Rank 10] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600030 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7c83fc2b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7c83b1800a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7c83b1807ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7c83b180993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7c83fc7255c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7c83fd094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7c83fd126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7c83fc2b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x7c83b147eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x7c83fc7255c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x7c83fd094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x7c83fd126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank11]:[E904 21:21:31.228650932 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 11] Timeout at NCCL work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank11]:[E904 21:21:31.228672194 ProcessGroupNCCL.cpp:630] [Rank 11] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank11]:[E904 21:21:31.228676734 ProcessGroupNCCL.cpp:636] [Rank 11] To avoid data inconsistency, we are taking the entire process down.
+[rank12]:[E904 21:21:31.229052016 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 12] Process group watchdog thread terminated with exception: [Rank 12] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600091 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x767489d6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x76743f200a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x76743f207ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x76743f20993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x76748a1c05c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x76748ac94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x76748ad26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 12] Process group watchdog thread terminated with exception: [Rank 12] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600091 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x767489d6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x76743f200a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x76743f207ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x76743f20993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x76748a1c05c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x76748ac94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x76748ad26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x767489d6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x76743ee7eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x76748a1c05c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x76748ac94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x76748ad26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank13]:[E904 21:21:31.230132437 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 13] Timeout at NCCL work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank13]:[E904 21:21:31.230157093 ProcessGroupNCCL.cpp:630] [Rank 13] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank13]:[E904 21:21:31.230161724 ProcessGroupNCCL.cpp:636] [Rank 13] To avoid data inconsistency, we are taking the entire process down.
+[rank11]:[E904 21:21:31.230182334 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 11] Process group watchdog thread terminated with exception: [Rank 11] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600074 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7726352b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7725ea800a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7725ea807ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7725ea80993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x77263574a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x772636094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x772636126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+[rank14]:[E904 21:21:31.230551533 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 14] Timeout at NCCL work: 184, last enqueued NCCL work: 185, last completed NCCL work: 183.
+[rank14]:[E904 21:21:31.230569139 ProcessGroupNCCL.cpp:630] [Rank 14] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank14]:[E904 21:21:31.230588024 ProcessGroupNCCL.cpp:636] [Rank 14] To avoid data inconsistency, we are taking the entire process down.
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 11] Process group watchdog thread terminated with exception: [Rank 11] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600074 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7726352b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7725ea800a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7725ea807ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7725ea80993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x77263574a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x772636094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x772636126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7726352b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x7725ea47eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x77263574a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x772636094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x772636126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank13]:[E904 21:21:31.231631009 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 13] Process group watchdog thread terminated with exception: [Rank 13] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600076 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7cbfb056c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7cbf65a00a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7cbf65a07ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7cbf65a0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7cbfb0a7a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7cbfb1494a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7cbfb1526890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+[rank14]:[E904 21:21:31.232060789 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 14] Process group watchdog thread terminated with exception: [Rank 14] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600026 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7b685cb6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7b6812000a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7b6812007ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7b681200993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7b685d07a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7b685da94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7b685db26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 13] Process group watchdog thread terminated with exception: [Rank 13] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600076 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7cbfb056c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7cbf65a00a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7cbf65a07ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7cbf65a0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7cbfb0a7a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7cbfb1494a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7cbfb1526890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7cbfb056c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x7cbf6567eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x7cbfb0a7a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x7cbfb1494a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x7cbfb1526890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 14] Process group watchdog thread terminated with exception: [Rank 14] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600026 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7b685cb6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7b6812000a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7b6812007ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7b681200993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7b685d07a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7b685da94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7b685db26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7b685cb6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x7b6811c7eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x7b685d07a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x7b685da94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x7b685db26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank9]:[E904 21:21:31.345046608 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 9] Timeout at NCCL work: 184, last enqueued NCCL work: 184, last completed NCCL work: 183.
+[rank9]:[E904 21:21:31.345072545 ProcessGroupNCCL.cpp:630] [Rank 9] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank9]:[E904 21:21:31.345077418 ProcessGroupNCCL.cpp:636] [Rank 9] To avoid data inconsistency, we are taking the entire process down.
+[rank9]:[E904 21:21:31.346576627 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 9] Process group watchdog thread terminated with exception: [Rank 9] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600015 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7722d416c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x772289600a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x772289607ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x77228960993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7722d467a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7722d5094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7722d5126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 9] Process group watchdog thread terminated with exception: [Rank 9] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600015 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7722d416c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x772289600a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x772289607ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x77228960993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7722d467a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x7722d5094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x7722d5126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7722d416c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x77228927eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x7722d467a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x7722d5094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x7722d5126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank8]:[E904 21:21:31.697105742 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 8] Timeout at NCCL work: 184, last enqueued NCCL work: 184, last completed NCCL work: 183.
+[rank8]:[E904 21:21:31.697136734 ProcessGroupNCCL.cpp:630] [Rank 8] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank8]:[E904 21:21:31.697141894 ProcessGroupNCCL.cpp:636] [Rank 8] To avoid data inconsistency, we are taking the entire process down.
+[rank8]:[E904 21:21:31.698651739 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 8] Process group watchdog thread terminated with exception: [Rank 8] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600068 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x78ff7b16c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x78ff30600a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x78ff30607ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x78ff3060993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x78ff7b5af5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x78ff7c094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x78ff7c126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 8] Process group watchdog thread terminated with exception: [Rank 8] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=184, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600068 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x78ff7b16c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x78ff30600a92 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x78ff30607ed3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x78ff3060993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x78ff7b5af5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94a83 (0x78ff7c094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x126890 (0x78ff7c126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x78ff7b16c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x78ff3027eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x78ff7b5af5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x78ff7c094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x78ff7c126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+W0904 21:22:01.476000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61324 closing signal SIGTERM
+W0904 21:22:01.476000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61325 closing signal SIGTERM
+W0904 21:22:01.476000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61327 closing signal SIGTERM
+W0904 21:22:01.476000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61328 closing signal SIGTERM
+W0904 21:22:01.477000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61329 closing signal SIGTERM
+W0904 21:22:01.477000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61330 closing signal SIGTERM
+W0904 21:22:01.477000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 61331 closing signal SIGTERM
+E0904 21:22:10.170000 61259 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: -6) local_rank: 2 (pid: 61326) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+===========================================================
+workloads/nonml_distributed.py FAILED
+-----------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+-----------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-04_21:22:01
+  host      : spar-a100-1.c.focus-surfer-494820-g0.internal
+  rank      : 10 (local_rank: 2)
+  exitcode  : -6 (pid: 61326)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 61326
+===========================================================
+2026-09-04 21:22:10,582 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-04 21:22:12,584 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,608 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu0_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,612 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_nonml_comm_node1_gpu0_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,613 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,620 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu1_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,624 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_nonml_comm_node1_gpu1_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,624 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,632 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu2_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,635 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_nonml_comm_node1_gpu2_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,636 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,643 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu3_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,647 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_nonml_comm_node1_gpu3_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,647 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,654 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu4_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,658 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_nonml_comm_node1_gpu4_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,658 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,665 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu5_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,669 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_nonml_comm_node1_gpu5_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,669 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,677 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu6_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,681 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_nonml_comm_node1_gpu6_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,681 [spar.telemetry] INFO: Telemetry stopped. 678 samples collected.
+2026-09-04 21:22:12,688 [spar.telemetry] INFO: Saved 678 rows to data/s16_nonml_comm_node1_gpu7_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet
+2026-09-04 21:22:12,692 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_nonml_comm_node1_gpu7_NVIDIA_A100_SXM4_40GB_90a429d918ea.parquet (678 rows)
+2026-09-04 21:22:12,693 [spar.multi_gpu] INFO: Multi-GPU run complete: 90a429d918ea (rc=1)

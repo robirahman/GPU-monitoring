@@ -1,0 +1,94 @@
+2026-09-17 14:31:44,570 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_fsdp1b_b32_nockpt, 8 GPUs, node=1, run_id=5de4f1fb91b1
+Run ID: 5de4f1fb91b1
+2026-09-17 14:31:44,600 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,601 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,601 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,619 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,619 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,619 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,637 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,637 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,637 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,655 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,655 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,655 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,673 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,674 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,674 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,692 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,692 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,692 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,710 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,711 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,711 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:44,729 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 14:31:44,730 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp1b_b32_nockpt, run=5de4f1fb91b1)
+2026-09-17 14:31:44,730 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 14:31:46,732 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/fsdp_training.py --size 1b --batch-size 32 --seq-len 1024 --no-activation-ckpt --duration 600
+W0917 14:31:48.387000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0917 14:31:48.387000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0917 14:31:48.387000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0917 14:31:48.387000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0917 14:32:01.220000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25796 closing signal SIGTERM
+W0917 14:32:01.221000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25797 closing signal SIGTERM
+W0917 14:32:01.221000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25799 closing signal SIGTERM
+W0917 14:32:01.221000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25800 closing signal SIGTERM
+W0917 14:32:01.221000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25801 closing signal SIGTERM
+W0917 14:32:01.221000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25802 closing signal SIGTERM
+W0917 14:32:01.221000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 25803 closing signal SIGTERM
+E0917 14:32:02.087000 25731 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 2 (pid: 25798) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/fsdp_training.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-17_14:32:01
+  host      : spar-a100-1.c.focus-surfer-494820-g0.internal
+  rank      : 10 (local_rank: 2)
+  exitcode  : 1 (pid: 25798)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-09-17 14:32:02,573 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-17 14:32:04,576 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,597 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu0_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,599 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu0_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,599 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,603 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu1_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,605 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu1_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,605 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,609 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu2_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,611 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu2_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,611 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,615 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu3_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,617 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu3_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,617 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,621 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu4_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,623 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu4_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,623 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,627 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu5_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,629 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu5_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,629 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,633 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,635 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu6_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,635 [spar.telemetry] INFO: Telemetry stopped. 20 samples collected.
+2026-09-17 14:32:04,639 [spar.telemetry] INFO: Saved 20 rows to data/s16_train_fsdp1b_b32_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet
+2026-09-17 14:32:04,641 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_fsdp1b_b32_nockpt_node1_gpu7_NVIDIA_A100_SXM4_40GB_5de4f1fb91b1.parquet (20 rows)
+2026-09-17 14:32:04,641 [spar.multi_gpu] INFO: Multi-GPU run complete: 5de4f1fb91b1 (rc=1)

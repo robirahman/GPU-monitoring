@@ -1,0 +1,297 @@
+2026-09-08 00:59:47,386 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_pipe1b_mb1, 8 GPUs, node=0, run_id=b9d70d33287f
+Run ID: b9d70d33287f
+2026-09-08 00:59:47,417 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,417 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,417 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,436 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,436 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,436 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,454 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,454 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,454 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,474 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,474 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,475 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,492 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,493 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,493 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,512 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,512 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,512 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,531 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,531 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,531 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:47,550 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 00:59:47,550 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb1, run=b9d70d33287f)
+2026-09-08 00:59:47,550 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 00:59:49,552 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 1 --batch-size 8 --seq-len 1024 --duration 600
+W0908 00:59:51.206000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0908 00:59:51.206000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0908 00:59:51.206000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0908 00:59:51.206000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+MN-P pipeline disguise: 1b over 2 stages x 8 FSDP ranks
+  stage layer bounds: [(0, 12), (12, 24)]  (n_layers=24)
+  microbatches=1 batch=8 seq=1024 hidden=2048
+  activation tensor: 33.6 MB per rank per hop
+  predicted inter-node bytes/step: 537 MB (fwd activations + bwd grads, 8 ranks)
+  Duration: 600s
+  Post-init GPU memory: 0.4 GB
+[rank0]:[W908 01:00:19.952134151 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank3]:[W908 01:00:20.235954372 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank1]:[W908 01:00:20.368392727 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank7]:[W908 01:00:20.386894793 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 7]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank6]:[W908 01:00:20.387013055 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 6]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank4]:[W908 01:00:20.394837628 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 4]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank2]:[W908 01:00:20.399775864 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank5]:[W908 01:00:20.577709488 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 5]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+  edge communicators warm
+STEP ts=1788829223.538 kind=train batch_idx=1 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829224.114 kind=train batch_idx=2 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829224.687 kind=train batch_idx=3 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829225.271 kind=train batch_idx=4 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829225.860 kind=train batch_idx=5 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829226.444 kind=train batch_idx=6 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829227.027 kind=train batch_idx=7 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829227.612 kind=train batch_idx=8 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829228.195 kind=train batch_idx=9 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829228.789 kind=train batch_idx=10 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829229.374 kind=train batch_idx=11 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829229.940 kind=train batch_idx=12 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829230.513 kind=train batch_idx=13 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829231.104 kind=train batch_idx=14 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829231.691 kind=train batch_idx=15 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829232.289 kind=train batch_idx=16 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829232.881 kind=train batch_idx=17 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829233.472 kind=train batch_idx=18 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829234.049 kind=train batch_idx=19 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829234.624 kind=train batch_idx=20 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829235.198 kind=train batch_idx=21 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829235.766 kind=train batch_idx=22 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829236.350 kind=train batch_idx=23 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829236.937 kind=train batch_idx=24 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829237.524 kind=train batch_idx=25 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829238.118 kind=train batch_idx=26 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829238.703 kind=train batch_idx=27 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829239.291 kind=train batch_idx=28 tokens=65536 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788829239.869 kind=train batch_idx=29 tokens=65536 passes=1 node=0 rank=0 loss=nan
+[rank7]:[E908 01:00:39.132664981 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<45995> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7c9b27d6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7c9add2002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7c9add2004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7c9add207eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7c9add20993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7c9b2824a5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7c9b28c94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7c9b28d26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank3]:[E908 01:00:39.132650704 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<48837> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x701ecb2b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x701e808002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x701e808004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x701e80807eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x701e8080993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x701ecb6ee5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x701ecc094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x701ecc126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank7]:[E908 01:00:39.138028053 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 10 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank3]:[E908 01:00:39.138046928 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 6 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank6]:[E908 01:00:39.136157229 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<56707> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x76b7dd8b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x76b792e002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x76b792e004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x76b792e07eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x76b792e0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x76b7ddcee5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x76b7de694a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x76b7de726890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank6]:[E908 01:00:39.138107345 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 9 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank2]:[E908 01:00:40.146689807 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<43977> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7dd5b696c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7dd56c2002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7dd56c2004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7dd56c207eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7dd56c20993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7dd5b70be5c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7dd5b7a94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7dd5b7b26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank2]:[E908 01:00:40.148616347 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 5 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank4]:[E908 01:00:40.168209372 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<59921> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7813d216c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7813876002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7813876004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x781387607eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x78138760993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7813d26545c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7813d3094a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7813d3126890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank4]:[E908 01:00:40.170202346 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 7 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank0]:[E908 01:00:40.169360899 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<40919> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d063b76c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7d05f0c002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7d05f0c004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7d05f0c07eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7d05f0c0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7d063bc025c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7d063c694a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7d063c726890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank0]:[E908 01:00:40.171282362 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 3 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank5]:[E908 01:00:40.169410574 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<34313> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7291be56c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x729173a002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x729173a004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x729173a07eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x729173a0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7291be9c35c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7291bf494a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7291bf526890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank5]:[E908 01:00:40.171914123 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 8 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank1]:[E908 01:00:40.181096685 ProcessGroupNCCL.cpp:542] [Rank 0] Collective WorkNCCL(SeqNum=0, OpType=SEND, NumelIn=16777216, NumelOut=16777216, Timeout(ms)=600000) raised the following async exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<41815> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f3c1fd6c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7f3bd52002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7f3bd52004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7f3bd5207eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7f3bd520993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7f3c202705c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7f3c20c94a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7f3c20d26890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[E908 01:00:40.183042761 ProcessGroupNCCL.cpp:1785] [PG ID 2 PG GUID 4 Rank 0] Exception (either an error or timeout) detected by watchdog at work: 0, last enqueued NCCL work: 0, last completed NCCL work: 0.
+[rank0]:[E908 01:00:43.337861704 ProcessGroupNCCL.cpp:630] [Rank 0] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank0]:[E908 01:00:43.337890959 ProcessGroupNCCL.cpp:636] [Rank 0] To avoid data inconsistency, we are taking the entire process down.
+[rank0]:[E908 01:00:43.337951231 ProcessGroupNCCL.cpp:1595] [PG ID 2 PG GUID 3 Rank 0] Process group watchdog thread terminated with exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<40919> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d063b76c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7d05f0c002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7d05f0c004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7d05f0c07eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7d05f0c0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7d063bc025c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7d063c694a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7d063c726890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 2 PG GUID 3 Rank 0] Process group watchdog thread terminated with exception: NCCL error: remote process exited or there was a network error, NCCL version 2.21.5
+ncclRemoteError: A call failed possibly due to a network error or a remote process exiting prematurely.
+Last error:
+socketProgressOpt: Call to recv from 10.128.15.224<40919> failed : Broken pipe
+Exception raised from checkForNCCLErrorsInternal at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:2027 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d063b76c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::checkForNCCLErrorsInternal(std::shared_ptr<c10d::NCCLComm>&) + 0x220 (0x7d05f0c002a0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::WorkNCCL::checkAndSetException() + 0x7c (0x7d05f0c004ec in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::watchdogHandler() + 0x213 (0x7d05f0c07eb3 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7d05f0c0993d in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x145c0 (0x7d063bc025c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #6: <unknown function> + 0x94a83 (0x7d063c694a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #7: <unknown function> + 0x126890 (0x7d063c726890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7d063b76c446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x7d05f087eb1b in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x7d063bc025c0 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94a83 (0x7d063c694a83 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x126890 (0x7d063c726890 in /lib/x86_64-linux-gnu/libc.so.6)
+
+W0908 01:00:43.761000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4423 closing signal SIGTERM
+W0908 01:00:43.761000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4424 closing signal SIGTERM
+W0908 01:00:43.762000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4425 closing signal SIGTERM
+W0908 01:00:43.762000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4426 closing signal SIGTERM
+W0908 01:00:43.762000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4427 closing signal SIGTERM
+W0908 01:00:43.763000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4428 closing signal SIGTERM
+W0908 01:00:43.763000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 4429 closing signal SIGTERM
+E0908 01:00:44.969000 4352 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: -6) local_rank: 0 (pid: 4422) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+===========================================================
+workloads/adversarial_multinode_pipeline.py FAILED
+-----------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+-----------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-08_01:00:43
+  host      : spar-a100-0.c.focus-surfer-494820-g0.internal
+  rank      : 0 (local_rank: 0)
+  exitcode  : -6 (pid: 4422)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 4422
+===========================================================
+2026-09-08 01:00:45,419 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-08 01:00:47,421 [spar.telemetry] INFO: Telemetry stopped. 60 samples collected.
+2026-09-08 01:00:47,442 [spar.telemetry] INFO: Saved 60 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,444 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_pipe1b_mb1_node0_gpu0_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (60 rows)
+2026-09-08 01:00:47,486 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,491 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,493 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_pipe1b_mb1_node0_gpu1_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,510 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,515 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,517 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_pipe1b_mb1_node0_gpu2_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,525 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,530 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,532 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_pipe1b_mb1_node0_gpu3_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,544 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,549 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,551 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_pipe1b_mb1_node0_gpu4_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,561 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,566 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,568 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_pipe1b_mb1_node0_gpu5_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,584 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,588 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,590 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb1_node0_gpu6_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,599 [spar.telemetry] INFO: Telemetry stopped. 61 samples collected.
+2026-09-08 01:00:47,603 [spar.telemetry] INFO: Saved 61 rows to data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet
+2026-09-08 01:00:47,605 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb1_node0_gpu7_NVIDIA_A100_SXM4_40GB_b9d70d33287f.parquet (61 rows)
+2026-09-08 01:00:47,605 [spar.multi_gpu] INFO: Multi-GPU run complete: b9d70d33287f (rc=1)

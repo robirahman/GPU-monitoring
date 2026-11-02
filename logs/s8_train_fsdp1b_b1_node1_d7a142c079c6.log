@@ -1,0 +1,1553 @@
+2026-09-17 17:58:11,313 [spar.multi_gpu] INFO: Multi-GPU run: s8_train_fsdp1b_b1, 8 GPUs, node=1, run_id=d7a142c079c6
+Run ID: d7a142c079c6
+2026-09-17 17:58:11,344 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,345 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,345 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,362 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,363 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,363 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,381 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,381 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,381 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,399 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,399 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,399 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,419 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,419 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,419 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,439 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,439 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,439 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,457 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,457 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,457 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:11,475 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 17:58:11,475 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s8_train_fsdp1b_b1, run=d7a142c079c6)
+2026-09-17 17:58:11,475 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 17:58:13,477 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --standalone --nproc-per-node=8 workloads/fsdp_training.py --size 1b --batch-size 1 --seq-len 256 --duration 600
+W0917 17:58:15.115000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0917 17:58:15.115000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0917 17:58:15.115000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0917 17:58:15.115000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+FSDP Training: 1b model on 8 GPUs
+  Hidden: 2048, Layers: 24, Heads: 16, FFN: 8192
+  Per-GPU batch: 1, Seq len: 256
+  Global batch: 8
+  Mixed precision: bf16, Sharding: FULL_SHARD
+  Activation checkpointing: True
+  CPU offload: False
+  Duration: 600s
+  Parameters: 1,343,623,168 (1.3B)
+  Optimizer: adamw
+  Post-init GPU memory: 1.8 GB
+  Training started...
+STEP ts=1789667905.862 kind=train batch_idx=1 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667906.043 kind=train batch_idx=2 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667906.213 kind=train batch_idx=3 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667906.383 kind=train batch_idx=4 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667906.556 kind=train batch_idx=5 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 5: loss=10.3750, 3046 tok/s, peak_mem=3.5GB, elapsed=3s/600s
+STEP ts=1789667906.732 kind=train batch_idx=6 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667906.901 kind=train batch_idx=7 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667907.223 kind=train batch_idx=8 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667907.582 kind=train batch_idx=9 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667907.755 kind=train batch_idx=10 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 10: loss=10.3750, 4491 tok/s, peak_mem=3.5GB, elapsed=5s/600s
+STEP ts=1789667907.923 kind=train batch_idx=11 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667908.090 kind=train batch_idx=12 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667908.259 kind=train batch_idx=13 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667908.427 kind=train batch_idx=14 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667908.599 kind=train batch_idx=15 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 15: loss=10.3750, 5684 tok/s, peak_mem=3.5GB, elapsed=5s/600s
+STEP ts=1789667908.767 kind=train batch_idx=16 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667908.933 kind=train batch_idx=17 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667909.100 kind=train batch_idx=18 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667909.267 kind=train batch_idx=19 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667909.437 kind=train batch_idx=20 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 20: loss=10.3750, 6561 tok/s, peak_mem=3.5GB, elapsed=6s/600s
+STEP ts=1789667909.605 kind=train batch_idx=21 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667909.771 kind=train batch_idx=22 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667909.938 kind=train batch_idx=23 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667910.104 kind=train batch_idx=24 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667910.275 kind=train batch_idx=25 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 25: loss=10.3750, 7231 tok/s, peak_mem=3.5GB, elapsed=7s/600s
+STEP ts=1789667910.441 kind=train batch_idx=26 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667910.607 kind=train batch_idx=27 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667910.773 kind=train batch_idx=28 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667910.940 kind=train batch_idx=29 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667911.112 kind=train batch_idx=30 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 30: loss=10.3750, 7760 tok/s, peak_mem=3.5GB, elapsed=8s/600s
+STEP ts=1789667911.280 kind=train batch_idx=31 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667911.454 kind=train batch_idx=32 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667911.622 kind=train batch_idx=33 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667911.788 kind=train batch_idx=34 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667911.957 kind=train batch_idx=35 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 35: loss=10.3750, 8180 tok/s, peak_mem=3.5GB, elapsed=9s/600s
+STEP ts=1789667912.125 kind=train batch_idx=36 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667912.297 kind=train batch_idx=37 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667912.463 kind=train batch_idx=38 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667912.630 kind=train batch_idx=39 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667912.802 kind=train batch_idx=40 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 40: loss=10.3750, 8526 tok/s, peak_mem=3.5GB, elapsed=10s/600s
+STEP ts=1789667912.974 kind=train batch_idx=41 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667913.140 kind=train batch_idx=42 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667913.306 kind=train batch_idx=43 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667913.472 kind=train batch_idx=44 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667913.642 kind=train batch_idx=45 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 45: loss=10.3750, 8821 tok/s, peak_mem=3.5GB, elapsed=10s/600s
+STEP ts=1789667913.808 kind=train batch_idx=46 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667914.074 kind=train batch_idx=47 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667914.239 kind=train batch_idx=48 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667914.514 kind=train batch_idx=49 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667914.687 kind=train batch_idx=50 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 50: loss=10.3750, 8910 tok/s, peak_mem=3.5GB, elapsed=11s/600s
+STEP ts=1789667914.852 kind=train batch_idx=51 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667915.023 kind=train batch_idx=52 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667915.189 kind=train batch_idx=53 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667915.358 kind=train batch_idx=54 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667915.528 kind=train batch_idx=55 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 55: loss=10.3750, 9133 tok/s, peak_mem=3.5GB, elapsed=12s/600s
+STEP ts=1789667915.695 kind=train batch_idx=56 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667915.861 kind=train batch_idx=57 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667916.031 kind=train batch_idx=58 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667916.198 kind=train batch_idx=59 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667916.368 kind=train batch_idx=60 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 60: loss=10.3750, 9328 tok/s, peak_mem=3.5GB, elapsed=13s/600s
+STEP ts=1789667916.534 kind=train batch_idx=61 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667916.700 kind=train batch_idx=62 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667916.867 kind=train batch_idx=63 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667917.035 kind=train batch_idx=64 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667917.206 kind=train batch_idx=65 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 65: loss=10.3750, 9500 tok/s, peak_mem=3.5GB, elapsed=14s/600s
+STEP ts=1789667917.380 kind=train batch_idx=66 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667917.547 kind=train batch_idx=67 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667917.714 kind=train batch_idx=68 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667917.881 kind=train batch_idx=69 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667918.053 kind=train batch_idx=70 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 70: loss=10.3750, 9648 tok/s, peak_mem=3.5GB, elapsed=15s/600s
+STEP ts=1789667918.220 kind=train batch_idx=71 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667918.387 kind=train batch_idx=72 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667918.552 kind=train batch_idx=73 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667918.720 kind=train batch_idx=74 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667918.890 kind=train batch_idx=75 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 75: loss=10.3750, 9786 tok/s, peak_mem=3.5GB, elapsed=16s/600s
+STEP ts=1789667919.056 kind=train batch_idx=76 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667919.222 kind=train batch_idx=77 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667919.388 kind=train batch_idx=78 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667919.556 kind=train batch_idx=79 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667919.726 kind=train batch_idx=80 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 80: loss=10.3750, 9910 tok/s, peak_mem=3.5GB, elapsed=17s/600s
+STEP ts=1789667919.892 kind=train batch_idx=81 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667920.058 kind=train batch_idx=82 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667920.223 kind=train batch_idx=83 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667920.389 kind=train batch_idx=84 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667920.560 kind=train batch_idx=85 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 85: loss=10.3750, 10025 tok/s, peak_mem=3.5GB, elapsed=17s/600s
+STEP ts=1789667920.726 kind=train batch_idx=86 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667920.976 kind=train batch_idx=87 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667921.143 kind=train batch_idx=88 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667921.414 kind=train batch_idx=89 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667921.584 kind=train batch_idx=90 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 90: loss=10.3750, 10023 tok/s, peak_mem=3.5GB, elapsed=18s/600s
+STEP ts=1789667921.750 kind=train batch_idx=91 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667921.915 kind=train batch_idx=92 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667922.080 kind=train batch_idx=93 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667922.246 kind=train batch_idx=94 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667922.422 kind=train batch_idx=95 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 95: loss=10.3750, 10119 tok/s, peak_mem=3.5GB, elapsed=19s/600s
+STEP ts=1789667922.589 kind=train batch_idx=96 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667922.755 kind=train batch_idx=97 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667922.920 kind=train batch_idx=98 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667923.086 kind=train batch_idx=99 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667923.257 kind=train batch_idx=100 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 100: loss=10.3750, 10208 tok/s, peak_mem=3.5GB, elapsed=20s/600s
+STEP ts=1789667923.422 kind=train batch_idx=101 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667923.588 kind=train batch_idx=102 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667923.757 kind=train batch_idx=103 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667923.923 kind=train batch_idx=104 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667924.093 kind=train batch_idx=105 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 105: loss=10.3750, 10290 tok/s, peak_mem=3.5GB, elapsed=21s/600s
+STEP ts=1789667924.259 kind=train batch_idx=106 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667924.425 kind=train batch_idx=107 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667924.590 kind=train batch_idx=108 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667924.761 kind=train batch_idx=109 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667924.939 kind=train batch_idx=110 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 110: loss=10.3750, 10360 tok/s, peak_mem=3.5GB, elapsed=22s/600s
+STEP ts=1789667925.105 kind=train batch_idx=111 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667925.273 kind=train batch_idx=112 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667925.449 kind=train batch_idx=113 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667925.614 kind=train batch_idx=114 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667925.785 kind=train batch_idx=115 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 115: loss=10.3750, 10426 tok/s, peak_mem=3.5GB, elapsed=23s/600s
+STEP ts=1789667925.951 kind=train batch_idx=116 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667926.117 kind=train batch_idx=117 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667926.289 kind=train batch_idx=118 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667926.455 kind=train batch_idx=119 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667926.625 kind=train batch_idx=120 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 120: loss=10.3750, 10489 tok/s, peak_mem=3.5GB, elapsed=23s/600s
+STEP ts=1789667926.791 kind=train batch_idx=121 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667926.957 kind=train batch_idx=122 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667927.123 kind=train batch_idx=123 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667927.290 kind=train batch_idx=124 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667927.461 kind=train batch_idx=125 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 125: loss=10.3750, 10550 tok/s, peak_mem=3.5GB, elapsed=24s/600s
+STEP ts=1789667927.726 kind=train batch_idx=126 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667927.894 kind=train batch_idx=127 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667928.168 kind=train batch_idx=128 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667928.334 kind=train batch_idx=129 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667928.504 kind=train batch_idx=130 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 130: loss=10.3750, 10519 tok/s, peak_mem=3.5GB, elapsed=25s/600s
+STEP ts=1789667928.670 kind=train batch_idx=131 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667928.836 kind=train batch_idx=132 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667929.001 kind=train batch_idx=133 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667929.167 kind=train batch_idx=134 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667929.338 kind=train batch_idx=135 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 135: loss=10.3750, 10575 tok/s, peak_mem=3.5GB, elapsed=26s/600s
+STEP ts=1789667929.504 kind=train batch_idx=136 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667929.669 kind=train batch_idx=137 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667929.835 kind=train batch_idx=138 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667930.001 kind=train batch_idx=139 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667930.171 kind=train batch_idx=140 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 140: loss=10.3750, 10628 tok/s, peak_mem=3.5GB, elapsed=27s/600s
+STEP ts=1789667930.337 kind=train batch_idx=141 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667930.503 kind=train batch_idx=142 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667930.669 kind=train batch_idx=143 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667930.834 kind=train batch_idx=144 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667931.005 kind=train batch_idx=145 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 145: loss=10.3750, 10678 tok/s, peak_mem=3.5GB, elapsed=28s/600s
+STEP ts=1789667931.173 kind=train batch_idx=146 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667931.340 kind=train batch_idx=147 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667931.506 kind=train batch_idx=148 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667931.671 kind=train batch_idx=149 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667931.841 kind=train batch_idx=150 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 150: loss=10.3750, 10724 tok/s, peak_mem=3.5GB, elapsed=29s/600s
+STEP ts=1789667932.007 kind=train batch_idx=151 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667932.173 kind=train batch_idx=152 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667932.339 kind=train batch_idx=153 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667932.505 kind=train batch_idx=154 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667932.676 kind=train batch_idx=155 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 155: loss=10.3750, 10768 tok/s, peak_mem=3.5GB, elapsed=29s/600s
+STEP ts=1789667932.842 kind=train batch_idx=156 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667933.008 kind=train batch_idx=157 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667933.178 kind=train batch_idx=158 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667933.344 kind=train batch_idx=159 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667933.522 kind=train batch_idx=160 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 160: loss=10.3750, 10805 tok/s, peak_mem=3.5GB, elapsed=30s/600s
+STEP ts=1789667933.687 kind=train batch_idx=161 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667933.853 kind=train batch_idx=162 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667934.019 kind=train batch_idx=163 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667934.185 kind=train batch_idx=164 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667934.354 kind=train batch_idx=165 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 165: loss=10.3750, 10845 tok/s, peak_mem=3.5GB, elapsed=31s/600s
+STEP ts=1789667934.610 kind=train batch_idx=166 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667934.775 kind=train batch_idx=167 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667935.031 kind=train batch_idx=168 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667935.197 kind=train batch_idx=169 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667935.368 kind=train batch_idx=170 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 170: loss=10.3750, 10821 tok/s, peak_mem=3.5GB, elapsed=32s/600s
+STEP ts=1789667935.535 kind=train batch_idx=171 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667935.700 kind=train batch_idx=172 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667935.867 kind=train batch_idx=173 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667936.035 kind=train batch_idx=174 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667936.205 kind=train batch_idx=175 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 175: loss=10.3750, 10857 tok/s, peak_mem=3.5GB, elapsed=33s/600s
+STEP ts=1789667936.373 kind=train batch_idx=176 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667936.542 kind=train batch_idx=177 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667936.709 kind=train batch_idx=178 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667936.878 kind=train batch_idx=179 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667937.054 kind=train batch_idx=180 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 180: loss=10.3750, 10887 tok/s, peak_mem=3.5GB, elapsed=34s/600s
+STEP ts=1789667937.221 kind=train batch_idx=181 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667937.387 kind=train batch_idx=182 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667937.556 kind=train batch_idx=183 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667937.771 kind=train batch_idx=184 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667937.944 kind=train batch_idx=185 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 185: loss=10.3750, 10903 tok/s, peak_mem=3.5GB, elapsed=35s/600s
+STEP ts=1789667938.112 kind=train batch_idx=186 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667938.281 kind=train batch_idx=187 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667938.449 kind=train batch_idx=188 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667938.617 kind=train batch_idx=189 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667938.789 kind=train batch_idx=190 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 190: loss=10.3750, 10932 tok/s, peak_mem=3.5GB, elapsed=36s/600s
+STEP ts=1789667938.957 kind=train batch_idx=191 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667939.125 kind=train batch_idx=192 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667939.292 kind=train batch_idx=193 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667939.458 kind=train batch_idx=194 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667939.635 kind=train batch_idx=195 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 195: loss=10.3750, 10959 tok/s, peak_mem=3.5GB, elapsed=36s/600s
+STEP ts=1789667939.803 kind=train batch_idx=196 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667939.970 kind=train batch_idx=197 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667940.137 kind=train batch_idx=198 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667940.305 kind=train batch_idx=199 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667940.476 kind=train batch_idx=200 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 200: loss=10.3750, 10987 tok/s, peak_mem=3.5GB, elapsed=37s/600s
+STEP ts=1789667940.645 kind=train batch_idx=201 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667940.812 kind=train batch_idx=202 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667940.981 kind=train batch_idx=203 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667941.149 kind=train batch_idx=204 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667941.401 kind=train batch_idx=205 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 205: loss=10.3750, 10989 tok/s, peak_mem=3.5GB, elapsed=38s/600s
+STEP ts=1789667941.568 kind=train batch_idx=206 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667941.841 kind=train batch_idx=207 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667942.007 kind=train batch_idx=208 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667942.174 kind=train batch_idx=209 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667942.349 kind=train batch_idx=210 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 210: loss=10.3750, 10984 tok/s, peak_mem=3.5GB, elapsed=39s/600s
+STEP ts=1789667942.515 kind=train batch_idx=211 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667942.685 kind=train batch_idx=212 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667942.851 kind=train batch_idx=213 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667943.017 kind=train batch_idx=214 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667943.188 kind=train batch_idx=215 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 215: loss=10.3750, 11010 tok/s, peak_mem=3.5GB, elapsed=40s/600s
+STEP ts=1789667943.354 kind=train batch_idx=216 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667943.520 kind=train batch_idx=217 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667943.686 kind=train batch_idx=218 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667943.853 kind=train batch_idx=219 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667944.026 kind=train batch_idx=220 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 220: loss=10.3750, 11034 tok/s, peak_mem=3.5GB, elapsed=41s/600s
+STEP ts=1789667944.193 kind=train batch_idx=221 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667944.360 kind=train batch_idx=222 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667944.526 kind=train batch_idx=223 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667944.691 kind=train batch_idx=224 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667944.866 kind=train batch_idx=225 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 225: loss=10.3750, 11058 tok/s, peak_mem=3.5GB, elapsed=42s/600s
+STEP ts=1789667945.032 kind=train batch_idx=226 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667945.199 kind=train batch_idx=227 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667945.365 kind=train batch_idx=228 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667945.532 kind=train batch_idx=229 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667945.706 kind=train batch_idx=230 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 230: loss=10.3750, 11080 tok/s, peak_mem=3.5GB, elapsed=43s/600s
+STEP ts=1789667945.872 kind=train batch_idx=231 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667946.039 kind=train batch_idx=232 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667946.206 kind=train batch_idx=233 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667946.377 kind=train batch_idx=234 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667946.550 kind=train batch_idx=235 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 235: loss=10.3750, 11101 tok/s, peak_mem=3.5GB, elapsed=43s/600s
+STEP ts=1789667946.716 kind=train batch_idx=236 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667946.882 kind=train batch_idx=237 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667947.048 kind=train batch_idx=238 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667947.214 kind=train batch_idx=239 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667947.384 kind=train batch_idx=240 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 240: loss=10.3750, 11123 tok/s, peak_mem=3.5GB, elapsed=44s/600s
+STEP ts=1789667947.551 kind=train batch_idx=241 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667947.717 kind=train batch_idx=242 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667947.882 kind=train batch_idx=243 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667948.049 kind=train batch_idx=244 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667948.293 kind=train batch_idx=245 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 245: loss=10.3750, 11126 tok/s, peak_mem=3.5GB, elapsed=45s/600s
+STEP ts=1789667948.460 kind=train batch_idx=246 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667948.723 kind=train batch_idx=247 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667948.889 kind=train batch_idx=248 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667949.054 kind=train batch_idx=249 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667949.225 kind=train batch_idx=250 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 250: loss=10.3750, 11123 tok/s, peak_mem=3.5GB, elapsed=46s/600s
+STEP ts=1789667949.391 kind=train batch_idx=251 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667949.557 kind=train batch_idx=252 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667949.723 kind=train batch_idx=253 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667949.888 kind=train batch_idx=254 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667950.059 kind=train batch_idx=255 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 255: loss=10.3750, 11144 tok/s, peak_mem=3.5GB, elapsed=47s/600s
+STEP ts=1789667950.225 kind=train batch_idx=256 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667950.390 kind=train batch_idx=257 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667950.557 kind=train batch_idx=258 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667950.722 kind=train batch_idx=259 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667950.893 kind=train batch_idx=260 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 260: loss=10.3750, 11163 tok/s, peak_mem=3.5GB, elapsed=48s/600s
+STEP ts=1789667951.060 kind=train batch_idx=261 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667951.229 kind=train batch_idx=262 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667951.395 kind=train batch_idx=263 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667951.562 kind=train batch_idx=264 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667951.733 kind=train batch_idx=265 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 265: loss=10.3750, 11181 tok/s, peak_mem=3.5GB, elapsed=49s/600s
+STEP ts=1789667951.899 kind=train batch_idx=266 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667952.065 kind=train batch_idx=267 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667952.230 kind=train batch_idx=268 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667952.397 kind=train batch_idx=269 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667952.568 kind=train batch_idx=270 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 270: loss=10.3750, 11199 tok/s, peak_mem=3.5GB, elapsed=49s/600s
+STEP ts=1789667952.734 kind=train batch_idx=271 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667952.900 kind=train batch_idx=272 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667953.066 kind=train batch_idx=273 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667953.236 kind=train batch_idx=274 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667953.408 kind=train batch_idx=275 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 275: loss=10.3750, 11216 tok/s, peak_mem=3.5GB, elapsed=50s/600s
+STEP ts=1789667953.575 kind=train batch_idx=276 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667953.742 kind=train batch_idx=277 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667953.909 kind=train batch_idx=278 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667954.075 kind=train batch_idx=279 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667954.247 kind=train batch_idx=280 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 280: loss=10.3750, 11232 tok/s, peak_mem=3.5GB, elapsed=51s/600s
+STEP ts=1789667954.414 kind=train batch_idx=281 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667954.581 kind=train batch_idx=282 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667954.747 kind=train batch_idx=283 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667954.986 kind=train batch_idx=284 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667955.168 kind=train batch_idx=285 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 285: loss=10.3750, 11230 tok/s, peak_mem=3.5GB, elapsed=52s/600s
+STEP ts=1789667955.428 kind=train batch_idx=286 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667955.595 kind=train batch_idx=287 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667955.763 kind=train batch_idx=288 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667955.932 kind=train batch_idx=289 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667956.103 kind=train batch_idx=290 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 290: loss=10.3750, 11225 tok/s, peak_mem=3.5GB, elapsed=53s/600s
+STEP ts=1789667956.270 kind=train batch_idx=291 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667956.435 kind=train batch_idx=292 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667956.601 kind=train batch_idx=293 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667956.767 kind=train batch_idx=294 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667956.937 kind=train batch_idx=295 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 295: loss=10.3750, 11242 tok/s, peak_mem=3.5GB, elapsed=54s/600s
+STEP ts=1789667957.103 kind=train batch_idx=296 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667957.269 kind=train batch_idx=297 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667957.435 kind=train batch_idx=298 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667957.601 kind=train batch_idx=299 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667957.771 kind=train batch_idx=300 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 300: loss=10.3750, 11258 tok/s, peak_mem=3.5GB, elapsed=55s/600s
+STEP ts=1789667957.938 kind=train batch_idx=301 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667958.103 kind=train batch_idx=302 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667958.269 kind=train batch_idx=303 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667958.434 kind=train batch_idx=304 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667958.604 kind=train batch_idx=305 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 305: loss=10.3750, 11273 tok/s, peak_mem=3.5GB, elapsed=55s/600s
+STEP ts=1789667958.773 kind=train batch_idx=306 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667958.939 kind=train batch_idx=307 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667959.105 kind=train batch_idx=308 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667959.271 kind=train batch_idx=309 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667959.441 kind=train batch_idx=310 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 310: loss=10.3750, 11287 tok/s, peak_mem=3.5GB, elapsed=56s/600s
+STEP ts=1789667959.608 kind=train batch_idx=311 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667959.773 kind=train batch_idx=312 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667959.940 kind=train batch_idx=313 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667960.106 kind=train batch_idx=314 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667960.284 kind=train batch_idx=315 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 315: loss=10.3750, 11300 tok/s, peak_mem=3.5GB, elapsed=57s/600s
+STEP ts=1789667960.450 kind=train batch_idx=316 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667960.616 kind=train batch_idx=317 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667960.784 kind=train batch_idx=318 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667960.950 kind=train batch_idx=319 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667961.121 kind=train batch_idx=320 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 320: loss=10.3750, 11314 tok/s, peak_mem=3.5GB, elapsed=58s/600s
+STEP ts=1789667961.287 kind=train batch_idx=321 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667961.458 kind=train batch_idx=322 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667961.625 kind=train batch_idx=323 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667961.867 kind=train batch_idx=324 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667962.038 kind=train batch_idx=325 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 325: loss=10.3750, 11311 tok/s, peak_mem=3.5GB, elapsed=59s/600s
+STEP ts=1789667962.305 kind=train batch_idx=326 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667962.471 kind=train batch_idx=327 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667962.641 kind=train batch_idx=328 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667962.807 kind=train batch_idx=329 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667962.979 kind=train batch_idx=330 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 330: loss=10.3750, 11305 tok/s, peak_mem=3.5GB, elapsed=60s/600s
+STEP ts=1789667963.145 kind=train batch_idx=331 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667963.312 kind=train batch_idx=332 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667963.480 kind=train batch_idx=333 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667963.647 kind=train batch_idx=334 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667963.818 kind=train batch_idx=335 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 335: loss=10.3750, 11317 tok/s, peak_mem=3.5GB, elapsed=61s/600s
+STEP ts=1789667963.984 kind=train batch_idx=336 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667964.154 kind=train batch_idx=337 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667964.321 kind=train batch_idx=338 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667964.486 kind=train batch_idx=339 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667964.657 kind=train batch_idx=340 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 340: loss=10.3750, 11329 tok/s, peak_mem=3.5GB, elapsed=61s/600s
+STEP ts=1789667964.823 kind=train batch_idx=341 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667964.989 kind=train batch_idx=342 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667965.159 kind=train batch_idx=343 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667965.326 kind=train batch_idx=344 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667965.496 kind=train batch_idx=345 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 345: loss=10.3750, 11341 tok/s, peak_mem=3.5GB, elapsed=62s/600s
+STEP ts=1789667965.662 kind=train batch_idx=346 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667965.828 kind=train batch_idx=347 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667965.994 kind=train batch_idx=348 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667966.161 kind=train batch_idx=349 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667966.333 kind=train batch_idx=350 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 350: loss=10.3750, 11353 tok/s, peak_mem=3.5GB, elapsed=63s/600s
+STEP ts=1789667966.499 kind=train batch_idx=351 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667966.664 kind=train batch_idx=352 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667966.830 kind=train batch_idx=353 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667967.003 kind=train batch_idx=354 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667967.174 kind=train batch_idx=355 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 355: loss=10.3750, 11364 tok/s, peak_mem=3.5GB, elapsed=64s/600s
+STEP ts=1789667967.341 kind=train batch_idx=356 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667967.507 kind=train batch_idx=357 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667967.672 kind=train batch_idx=358 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667967.837 kind=train batch_idx=359 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667968.008 kind=train batch_idx=360 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 360: loss=10.3750, 11375 tok/s, peak_mem=3.5GB, elapsed=65s/600s
+STEP ts=1789667968.180 kind=train batch_idx=361 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667968.346 kind=train batch_idx=362 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667968.587 kind=train batch_idx=363 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667968.753 kind=train batch_idx=364 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667969.016 kind=train batch_idx=365 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 365: loss=10.3750, 11357 tok/s, peak_mem=3.5GB, elapsed=66s/600s
+STEP ts=1789667969.184 kind=train batch_idx=366 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667969.351 kind=train batch_idx=367 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667969.518 kind=train batch_idx=368 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667969.684 kind=train batch_idx=369 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667969.856 kind=train batch_idx=370 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 370: loss=10.3750, 11367 tok/s, peak_mem=3.5GB, elapsed=67s/600s
+STEP ts=1789667970.022 kind=train batch_idx=371 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667970.190 kind=train batch_idx=372 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667970.357 kind=train batch_idx=373 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667970.523 kind=train batch_idx=374 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667970.703 kind=train batch_idx=375 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 375: loss=10.3750, 11376 tok/s, peak_mem=3.5GB, elapsed=68s/600s
+STEP ts=1789667970.872 kind=train batch_idx=376 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667971.039 kind=train batch_idx=377 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667971.208 kind=train batch_idx=378 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667971.374 kind=train batch_idx=379 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667971.545 kind=train batch_idx=380 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 380: loss=10.3750, 11386 tok/s, peak_mem=3.5GB, elapsed=68s/600s
+STEP ts=1789667971.711 kind=train batch_idx=381 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667971.877 kind=train batch_idx=382 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667972.043 kind=train batch_idx=383 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667972.209 kind=train batch_idx=384 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667972.381 kind=train batch_idx=385 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 385: loss=10.3750, 11396 tok/s, peak_mem=3.5GB, elapsed=69s/600s
+STEP ts=1789667972.547 kind=train batch_idx=386 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667972.713 kind=train batch_idx=387 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667972.883 kind=train batch_idx=388 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667973.053 kind=train batch_idx=389 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667973.223 kind=train batch_idx=390 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 390: loss=10.3750, 11406 tok/s, peak_mem=3.5GB, elapsed=70s/600s
+STEP ts=1789667973.389 kind=train batch_idx=391 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667973.556 kind=train batch_idx=392 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667973.721 kind=train batch_idx=393 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667973.887 kind=train batch_idx=394 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667974.058 kind=train batch_idx=395 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 395: loss=10.3750, 11416 tok/s, peak_mem=3.5GB, elapsed=71s/600s
+STEP ts=1789667974.224 kind=train batch_idx=396 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667974.390 kind=train batch_idx=397 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667974.557 kind=train batch_idx=398 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667974.723 kind=train batch_idx=399 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667974.893 kind=train batch_idx=400 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 400: loss=10.3750, 11426 tok/s, peak_mem=3.5GB, elapsed=72s/600s
+STEP ts=1789667975.060 kind=train batch_idx=401 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667975.226 kind=train batch_idx=402 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667975.465 kind=train batch_idx=403 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667975.632 kind=train batch_idx=404 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667975.897 kind=train batch_idx=405 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 405: loss=10.3750, 11409 tok/s, peak_mem=3.5GB, elapsed=73s/600s
+STEP ts=1789667976.068 kind=train batch_idx=406 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667976.234 kind=train batch_idx=407 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667976.400 kind=train batch_idx=408 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667976.566 kind=train batch_idx=409 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667976.736 kind=train batch_idx=410 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 410: loss=10.3750, 11418 tok/s, peak_mem=3.5GB, elapsed=74s/600s
+STEP ts=1789667976.903 kind=train batch_idx=411 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667977.069 kind=train batch_idx=412 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667977.235 kind=train batch_idx=413 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667977.401 kind=train batch_idx=414 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667977.572 kind=train batch_idx=415 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 415: loss=10.3750, 11427 tok/s, peak_mem=3.5GB, elapsed=74s/600s
+STEP ts=1789667977.738 kind=train batch_idx=416 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667977.905 kind=train batch_idx=417 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667978.071 kind=train batch_idx=418 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667978.237 kind=train batch_idx=419 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667978.408 kind=train batch_idx=420 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 420: loss=10.3750, 11436 tok/s, peak_mem=3.5GB, elapsed=75s/600s
+STEP ts=1789667978.574 kind=train batch_idx=421 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667978.739 kind=train batch_idx=422 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667978.905 kind=train batch_idx=423 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667979.071 kind=train batch_idx=424 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667979.241 kind=train batch_idx=425 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 425: loss=10.3750, 11446 tok/s, peak_mem=3.5GB, elapsed=76s/600s
+STEP ts=1789667979.408 kind=train batch_idx=426 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667979.575 kind=train batch_idx=427 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667979.741 kind=train batch_idx=428 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667979.907 kind=train batch_idx=429 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667980.078 kind=train batch_idx=430 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 430: loss=10.3750, 11454 tok/s, peak_mem=3.5GB, elapsed=77s/600s
+STEP ts=1789667980.245 kind=train batch_idx=431 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667980.411 kind=train batch_idx=432 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667980.578 kind=train batch_idx=433 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667980.743 kind=train batch_idx=434 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667980.914 kind=train batch_idx=435 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 435: loss=10.3750, 11463 tok/s, peak_mem=3.5GB, elapsed=78s/600s
+STEP ts=1789667981.081 kind=train batch_idx=436 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667981.246 kind=train batch_idx=437 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667981.412 kind=train batch_idx=438 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667981.578 kind=train batch_idx=439 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667981.749 kind=train batch_idx=440 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 440: loss=10.3750, 11471 tok/s, peak_mem=3.5GB, elapsed=79s/600s
+STEP ts=1789667981.915 kind=train batch_idx=441 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667982.154 kind=train batch_idx=442 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667982.320 kind=train batch_idx=443 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667982.582 kind=train batch_idx=444 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667982.753 kind=train batch_idx=445 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 445: loss=10.3750, 11455 tok/s, peak_mem=3.5GB, elapsed=80s/600s
+STEP ts=1789667982.919 kind=train batch_idx=446 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667983.085 kind=train batch_idx=447 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667983.250 kind=train batch_idx=448 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667983.417 kind=train batch_idx=449 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667983.587 kind=train batch_idx=450 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 450: loss=10.3750, 11464 tok/s, peak_mem=3.5GB, elapsed=80s/600s
+STEP ts=1789667983.754 kind=train batch_idx=451 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667983.929 kind=train batch_idx=452 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667984.095 kind=train batch_idx=453 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667984.272 kind=train batch_idx=454 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667984.443 kind=train batch_idx=455 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 455: loss=10.3750, 11469 tok/s, peak_mem=3.5GB, elapsed=81s/600s
+STEP ts=1789667984.609 kind=train batch_idx=456 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667984.775 kind=train batch_idx=457 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667984.947 kind=train batch_idx=458 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667985.114 kind=train batch_idx=459 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667985.284 kind=train batch_idx=460 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 460: loss=10.3750, 11476 tok/s, peak_mem=3.5GB, elapsed=82s/600s
+STEP ts=1789667985.451 kind=train batch_idx=461 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667985.617 kind=train batch_idx=462 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667985.783 kind=train batch_idx=463 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667985.949 kind=train batch_idx=464 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667986.120 kind=train batch_idx=465 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 465: loss=10.3750, 11484 tok/s, peak_mem=3.5GB, elapsed=83s/600s
+STEP ts=1789667986.286 kind=train batch_idx=466 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667986.452 kind=train batch_idx=467 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667986.618 kind=train batch_idx=468 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667986.783 kind=train batch_idx=469 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667986.954 kind=train batch_idx=470 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 470: loss=10.3750, 11492 tok/s, peak_mem=3.5GB, elapsed=84s/600s
+STEP ts=1789667987.120 kind=train batch_idx=471 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667987.285 kind=train batch_idx=472 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667987.452 kind=train batch_idx=473 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667987.618 kind=train batch_idx=474 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667987.788 kind=train batch_idx=475 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 475: loss=10.3750, 11500 tok/s, peak_mem=3.5GB, elapsed=85s/600s
+STEP ts=1789667987.956 kind=train batch_idx=476 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667988.123 kind=train batch_idx=477 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667988.289 kind=train batch_idx=478 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667988.455 kind=train batch_idx=479 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667988.626 kind=train batch_idx=480 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 480: loss=10.3750, 11507 tok/s, peak_mem=3.5GB, elapsed=85s/600s
+STEP ts=1789667988.792 kind=train batch_idx=481 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667989.031 kind=train batch_idx=482 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667989.197 kind=train batch_idx=483 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667989.453 kind=train batch_idx=484 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667989.636 kind=train batch_idx=485 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 485: loss=10.3750, 11491 tok/s, peak_mem=3.5GB, elapsed=86s/600s
+STEP ts=1789667989.804 kind=train batch_idx=486 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667989.970 kind=train batch_idx=487 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667990.137 kind=train batch_idx=488 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667990.303 kind=train batch_idx=489 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667990.473 kind=train batch_idx=490 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 490: loss=10.3750, 11498 tok/s, peak_mem=3.5GB, elapsed=87s/600s
+STEP ts=1789667990.639 kind=train batch_idx=491 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667990.805 kind=train batch_idx=492 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667990.971 kind=train batch_idx=493 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667991.136 kind=train batch_idx=494 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667991.307 kind=train batch_idx=495 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 495: loss=10.3750, 11505 tok/s, peak_mem=3.5GB, elapsed=88s/600s
+STEP ts=1789667991.473 kind=train batch_idx=496 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667991.640 kind=train batch_idx=497 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667991.805 kind=train batch_idx=498 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667991.970 kind=train batch_idx=499 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667992.141 kind=train batch_idx=500 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 500: loss=10.3750, 11512 tok/s, peak_mem=3.5GB, elapsed=89s/600s
+STEP ts=1789667992.307 kind=train batch_idx=501 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667992.473 kind=train batch_idx=502 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667992.639 kind=train batch_idx=503 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667992.805 kind=train batch_idx=504 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667992.975 kind=train batch_idx=505 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 505: loss=10.3750, 11520 tok/s, peak_mem=3.5GB, elapsed=90s/600s
+STEP ts=1789667993.141 kind=train batch_idx=506 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667993.307 kind=train batch_idx=507 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667993.473 kind=train batch_idx=508 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667993.640 kind=train batch_idx=509 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667993.810 kind=train batch_idx=510 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 510: loss=10.3750, 11527 tok/s, peak_mem=3.5GB, elapsed=91s/600s
+STEP ts=1789667993.976 kind=train batch_idx=511 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667994.142 kind=train batch_idx=512 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667994.307 kind=train batch_idx=513 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667994.473 kind=train batch_idx=514 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667994.644 kind=train batch_idx=515 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 515: loss=10.3750, 11533 tok/s, peak_mem=3.5GB, elapsed=91s/600s
+STEP ts=1789667994.810 kind=train batch_idx=516 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667994.975 kind=train batch_idx=517 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667995.141 kind=train batch_idx=518 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667995.307 kind=train batch_idx=519 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667995.477 kind=train batch_idx=520 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 520: loss=10.3750, 11540 tok/s, peak_mem=3.5GB, elapsed=92s/600s
+STEP ts=1789667995.718 kind=train batch_idx=521 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667995.884 kind=train batch_idx=522 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667996.136 kind=train batch_idx=523 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667996.302 kind=train batch_idx=524 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667996.473 kind=train batch_idx=525 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 525: loss=10.3750, 11527 tok/s, peak_mem=3.5GB, elapsed=93s/600s
+STEP ts=1789667996.640 kind=train batch_idx=526 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667996.806 kind=train batch_idx=527 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667996.972 kind=train batch_idx=528 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667997.137 kind=train batch_idx=529 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667997.308 kind=train batch_idx=530 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 530: loss=10.3750, 11533 tok/s, peak_mem=3.5GB, elapsed=94s/600s
+STEP ts=1789667997.475 kind=train batch_idx=531 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667997.641 kind=train batch_idx=532 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667997.807 kind=train batch_idx=533 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667997.982 kind=train batch_idx=534 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667998.159 kind=train batch_idx=535 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 535: loss=10.3750, 11538 tok/s, peak_mem=3.5GB, elapsed=95s/600s
+STEP ts=1789667998.326 kind=train batch_idx=536 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667998.496 kind=train batch_idx=537 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667998.662 kind=train batch_idx=538 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667998.827 kind=train batch_idx=539 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667998.995 kind=train batch_idx=540 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 540: loss=10.3750, 11544 tok/s, peak_mem=3.5GB, elapsed=96s/600s
+STEP ts=1789667999.162 kind=train batch_idx=541 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667999.328 kind=train batch_idx=542 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667999.493 kind=train batch_idx=543 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667999.659 kind=train batch_idx=544 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789667999.833 kind=train batch_idx=545 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 545: loss=10.3750, 11550 tok/s, peak_mem=3.5GB, elapsed=97s/600s
+STEP ts=1789667999.999 kind=train batch_idx=546 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668000.165 kind=train batch_idx=547 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668000.330 kind=train batch_idx=548 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668000.496 kind=train batch_idx=549 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668000.666 kind=train batch_idx=550 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 550: loss=10.3750, 11556 tok/s, peak_mem=3.5GB, elapsed=97s/600s
+STEP ts=1789668000.831 kind=train batch_idx=551 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668000.996 kind=train batch_idx=552 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668001.161 kind=train batch_idx=553 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668001.327 kind=train batch_idx=554 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668001.495 kind=train batch_idx=555 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 555: loss=10.3750, 11563 tok/s, peak_mem=3.5GB, elapsed=98s/600s
+STEP ts=1789668001.661 kind=train batch_idx=556 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668001.826 kind=train batch_idx=557 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668001.991 kind=train batch_idx=558 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668002.157 kind=train batch_idx=559 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668002.330 kind=train batch_idx=560 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 560: loss=10.3750, 11569 tok/s, peak_mem=3.5GB, elapsed=99s/600s
+STEP ts=1789668002.571 kind=train batch_idx=561 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668002.737 kind=train batch_idx=562 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668003.001 kind=train batch_idx=563 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668003.167 kind=train batch_idx=564 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668003.343 kind=train batch_idx=565 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 565: loss=10.3750, 11554 tok/s, peak_mem=3.5GB, elapsed=100s/600s
+STEP ts=1789668003.509 kind=train batch_idx=566 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668003.675 kind=train batch_idx=567 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668003.840 kind=train batch_idx=568 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668004.006 kind=train batch_idx=569 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668004.175 kind=train batch_idx=570 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 570: loss=10.3750, 11560 tok/s, peak_mem=3.5GB, elapsed=101s/600s
+STEP ts=1789668004.340 kind=train batch_idx=571 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668004.506 kind=train batch_idx=572 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668004.671 kind=train batch_idx=573 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668004.837 kind=train batch_idx=574 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668005.006 kind=train batch_idx=575 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 575: loss=10.3750, 11567 tok/s, peak_mem=3.5GB, elapsed=102s/600s
+STEP ts=1789668005.172 kind=train batch_idx=576 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668005.340 kind=train batch_idx=577 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668005.506 kind=train batch_idx=578 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668005.671 kind=train batch_idx=579 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668005.841 kind=train batch_idx=580 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 580: loss=10.3750, 11572 tok/s, peak_mem=3.5GB, elapsed=103s/600s
+STEP ts=1789668006.006 kind=train batch_idx=581 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668006.171 kind=train batch_idx=582 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668006.336 kind=train batch_idx=583 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668006.501 kind=train batch_idx=584 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668006.671 kind=train batch_idx=585 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 585: loss=10.3750, 11578 tok/s, peak_mem=3.5GB, elapsed=103s/600s
+STEP ts=1789668006.836 kind=train batch_idx=586 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668007.001 kind=train batch_idx=587 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668007.166 kind=train batch_idx=588 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668007.331 kind=train batch_idx=589 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668007.502 kind=train batch_idx=590 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 590: loss=10.3750, 11584 tok/s, peak_mem=3.5GB, elapsed=104s/600s
+STEP ts=1789668007.668 kind=train batch_idx=591 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668007.833 kind=train batch_idx=592 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668007.999 kind=train batch_idx=593 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668008.165 kind=train batch_idx=594 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668008.336 kind=train batch_idx=595 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 595: loss=10.3750, 11590 tok/s, peak_mem=3.5GB, elapsed=105s/600s
+STEP ts=1789668008.501 kind=train batch_idx=596 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668008.667 kind=train batch_idx=597 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668008.832 kind=train batch_idx=598 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668008.998 kind=train batch_idx=599 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668009.237 kind=train batch_idx=600 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 600: loss=10.3750, 11588 tok/s, peak_mem=3.5GB, elapsed=106s/600s
+STEP ts=1789668009.403 kind=train batch_idx=601 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668009.657 kind=train batch_idx=602 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668009.824 kind=train batch_idx=603 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668009.990 kind=train batch_idx=604 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668010.161 kind=train batch_idx=605 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 605: loss=10.3750, 11583 tok/s, peak_mem=3.5GB, elapsed=107s/600s
+STEP ts=1789668010.327 kind=train batch_idx=606 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668010.493 kind=train batch_idx=607 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668010.658 kind=train batch_idx=608 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668010.824 kind=train batch_idx=609 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668010.994 kind=train batch_idx=610 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 610: loss=10.3750, 11589 tok/s, peak_mem=3.5GB, elapsed=108s/600s
+STEP ts=1789668011.162 kind=train batch_idx=611 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668011.329 kind=train batch_idx=612 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668011.495 kind=train batch_idx=613 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668011.661 kind=train batch_idx=614 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668011.832 kind=train batch_idx=615 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 615: loss=10.3750, 11594 tok/s, peak_mem=3.5GB, elapsed=109s/600s
+STEP ts=1789668011.998 kind=train batch_idx=616 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668012.164 kind=train batch_idx=617 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668012.330 kind=train batch_idx=618 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668012.497 kind=train batch_idx=619 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668012.669 kind=train batch_idx=620 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 620: loss=10.3750, 11599 tok/s, peak_mem=3.5GB, elapsed=109s/600s
+STEP ts=1789668012.835 kind=train batch_idx=621 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668013.002 kind=train batch_idx=622 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668013.168 kind=train batch_idx=623 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668013.334 kind=train batch_idx=624 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668013.505 kind=train batch_idx=625 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 625: loss=10.3750, 11604 tok/s, peak_mem=3.5GB, elapsed=110s/600s
+STEP ts=1789668013.671 kind=train batch_idx=626 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668013.842 kind=train batch_idx=627 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668014.008 kind=train batch_idx=628 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668014.174 kind=train batch_idx=629 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668014.345 kind=train batch_idx=630 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 630: loss=10.3750, 11608 tok/s, peak_mem=3.5GB, elapsed=111s/600s
+STEP ts=1789668014.511 kind=train batch_idx=631 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668014.677 kind=train batch_idx=632 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668014.843 kind=train batch_idx=633 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668015.008 kind=train batch_idx=634 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668015.179 kind=train batch_idx=635 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 635: loss=10.3750, 11613 tok/s, peak_mem=3.5GB, elapsed=112s/600s
+STEP ts=1789668015.345 kind=train batch_idx=636 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668015.511 kind=train batch_idx=637 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668015.677 kind=train batch_idx=638 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668015.843 kind=train batch_idx=639 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668016.082 kind=train batch_idx=640 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 640: loss=10.3750, 11611 tok/s, peak_mem=3.5GB, elapsed=113s/600s
+STEP ts=1789668016.249 kind=train batch_idx=641 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668016.501 kind=train batch_idx=642 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668016.668 kind=train batch_idx=643 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668016.833 kind=train batch_idx=644 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668017.004 kind=train batch_idx=645 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 645: loss=10.3750, 11607 tok/s, peak_mem=3.5GB, elapsed=114s/600s
+STEP ts=1789668017.170 kind=train batch_idx=646 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668017.337 kind=train batch_idx=647 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668017.503 kind=train batch_idx=648 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668017.668 kind=train batch_idx=649 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668017.840 kind=train batch_idx=650 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 650: loss=10.3750, 11611 tok/s, peak_mem=3.5GB, elapsed=115s/600s
+STEP ts=1789668018.006 kind=train batch_idx=651 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668018.172 kind=train batch_idx=652 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668018.339 kind=train batch_idx=653 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668018.504 kind=train batch_idx=654 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668018.675 kind=train batch_idx=655 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 655: loss=10.3750, 11616 tok/s, peak_mem=3.5GB, elapsed=115s/600s
+STEP ts=1789668018.841 kind=train batch_idx=656 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668019.007 kind=train batch_idx=657 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668019.173 kind=train batch_idx=658 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668019.339 kind=train batch_idx=659 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668019.510 kind=train batch_idx=660 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 660: loss=10.3750, 11621 tok/s, peak_mem=3.5GB, elapsed=116s/600s
+STEP ts=1789668019.677 kind=train batch_idx=661 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668019.843 kind=train batch_idx=662 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668020.008 kind=train batch_idx=663 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668020.174 kind=train batch_idx=664 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668020.346 kind=train batch_idx=665 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 665: loss=10.3750, 11625 tok/s, peak_mem=3.5GB, elapsed=117s/600s
+STEP ts=1789668020.512 kind=train batch_idx=666 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668020.679 kind=train batch_idx=667 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668020.844 kind=train batch_idx=668 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668021.010 kind=train batch_idx=669 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668021.181 kind=train batch_idx=670 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 670: loss=10.3750, 11630 tok/s, peak_mem=3.5GB, elapsed=118s/600s
+STEP ts=1789668021.349 kind=train batch_idx=671 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668021.515 kind=train batch_idx=672 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668021.681 kind=train batch_idx=673 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668021.847 kind=train batch_idx=674 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668022.018 kind=train batch_idx=675 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 675: loss=10.3750, 11634 tok/s, peak_mem=3.5GB, elapsed=119s/600s
+STEP ts=1789668022.184 kind=train batch_idx=676 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668022.350 kind=train batch_idx=677 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668022.516 kind=train batch_idx=678 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668022.755 kind=train batch_idx=679 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668022.926 kind=train batch_idx=680 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 680: loss=10.3750, 11631 tok/s, peak_mem=3.5GB, elapsed=120s/600s
+STEP ts=1789668023.181 kind=train batch_idx=681 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668023.347 kind=train batch_idx=682 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668023.513 kind=train batch_idx=683 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668023.678 kind=train batch_idx=684 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668023.849 kind=train batch_idx=685 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 685: loss=10.3750, 11627 tok/s, peak_mem=3.5GB, elapsed=121s/600s
+STEP ts=1789668024.021 kind=train batch_idx=686 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668024.187 kind=train batch_idx=687 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668024.353 kind=train batch_idx=688 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668024.519 kind=train batch_idx=689 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668024.690 kind=train batch_idx=690 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 690: loss=10.3750, 11631 tok/s, peak_mem=3.5GB, elapsed=121s/600s
+STEP ts=1789668024.856 kind=train batch_idx=691 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668025.021 kind=train batch_idx=692 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668025.187 kind=train batch_idx=693 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668025.353 kind=train batch_idx=694 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668025.523 kind=train batch_idx=695 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 695: loss=10.3750, 11636 tok/s, peak_mem=3.5GB, elapsed=122s/600s
+STEP ts=1789668025.689 kind=train batch_idx=696 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668025.855 kind=train batch_idx=697 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668026.020 kind=train batch_idx=698 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668026.185 kind=train batch_idx=699 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668026.357 kind=train batch_idx=700 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 700: loss=10.3750, 11640 tok/s, peak_mem=3.5GB, elapsed=123s/600s
+STEP ts=1789668026.523 kind=train batch_idx=701 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668026.689 kind=train batch_idx=702 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668026.855 kind=train batch_idx=703 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668027.021 kind=train batch_idx=704 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668027.192 kind=train batch_idx=705 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 705: loss=10.3750, 11644 tok/s, peak_mem=3.5GB, elapsed=124s/600s
+STEP ts=1789668027.358 kind=train batch_idx=706 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668027.524 kind=train batch_idx=707 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668027.691 kind=train batch_idx=708 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668027.856 kind=train batch_idx=709 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668028.027 kind=train batch_idx=710 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 710: loss=10.3750, 11648 tok/s, peak_mem=3.5GB, elapsed=125s/600s
+STEP ts=1789668028.193 kind=train batch_idx=711 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668028.360 kind=train batch_idx=712 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668028.525 kind=train batch_idx=713 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668028.691 kind=train batch_idx=714 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668028.862 kind=train batch_idx=715 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 715: loss=10.3750, 11652 tok/s, peak_mem=3.5GB, elapsed=126s/600s
+STEP ts=1789668029.028 kind=train batch_idx=716 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668029.194 kind=train batch_idx=717 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668029.360 kind=train batch_idx=718 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668029.600 kind=train batch_idx=719 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668029.770 kind=train batch_idx=720 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 720: loss=10.3750, 11650 tok/s, peak_mem=3.5GB, elapsed=127s/600s
+STEP ts=1789668030.021 kind=train batch_idx=721 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668030.187 kind=train batch_idx=722 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668030.364 kind=train batch_idx=723 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668030.533 kind=train batch_idx=724 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668030.706 kind=train batch_idx=725 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 725: loss=10.3750, 11644 tok/s, peak_mem=3.5GB, elapsed=128s/600s
+STEP ts=1789668030.871 kind=train batch_idx=726 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668031.037 kind=train batch_idx=727 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668031.204 kind=train batch_idx=728 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668031.370 kind=train batch_idx=729 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668031.545 kind=train batch_idx=730 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 730: loss=10.3750, 11648 tok/s, peak_mem=3.5GB, elapsed=128s/600s
+STEP ts=1789668031.721 kind=train batch_idx=731 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668031.887 kind=train batch_idx=732 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668032.055 kind=train batch_idx=733 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668032.220 kind=train batch_idx=734 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668032.391 kind=train batch_idx=735 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 735: loss=10.3750, 11651 tok/s, peak_mem=3.5GB, elapsed=129s/600s
+STEP ts=1789668032.557 kind=train batch_idx=736 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668032.722 kind=train batch_idx=737 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668032.887 kind=train batch_idx=738 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668033.052 kind=train batch_idx=739 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668033.221 kind=train batch_idx=740 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 740: loss=10.3750, 11655 tok/s, peak_mem=3.5GB, elapsed=130s/600s
+STEP ts=1789668033.388 kind=train batch_idx=741 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668033.554 kind=train batch_idx=742 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668033.720 kind=train batch_idx=743 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668033.886 kind=train batch_idx=744 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668034.056 kind=train batch_idx=745 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 745: loss=10.3750, 11659 tok/s, peak_mem=3.5GB, elapsed=131s/600s
+STEP ts=1789668034.222 kind=train batch_idx=746 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668034.387 kind=train batch_idx=747 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668034.555 kind=train batch_idx=748 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668034.734 kind=train batch_idx=749 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668034.905 kind=train batch_idx=750 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 750: loss=10.3750, 11662 tok/s, peak_mem=3.5GB, elapsed=132s/600s
+STEP ts=1789668035.071 kind=train batch_idx=751 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668035.237 kind=train batch_idx=752 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668035.404 kind=train batch_idx=753 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668035.570 kind=train batch_idx=754 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668035.741 kind=train batch_idx=755 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 755: loss=10.3750, 11666 tok/s, peak_mem=3.5GB, elapsed=133s/600s
+STEP ts=1789668035.907 kind=train batch_idx=756 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668036.075 kind=train batch_idx=757 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668036.315 kind=train batch_idx=758 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668036.480 kind=train batch_idx=759 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668036.740 kind=train batch_idx=760 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 760: loss=10.3750, 11655 tok/s, peak_mem=3.5GB, elapsed=134s/600s
+STEP ts=1789668036.906 kind=train batch_idx=761 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668037.072 kind=train batch_idx=762 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668037.237 kind=train batch_idx=763 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668037.403 kind=train batch_idx=764 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668037.574 kind=train batch_idx=765 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 765: loss=10.3750, 11659 tok/s, peak_mem=3.5GB, elapsed=134s/600s
+STEP ts=1789668037.740 kind=train batch_idx=766 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668037.905 kind=train batch_idx=767 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668038.070 kind=train batch_idx=768 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668038.236 kind=train batch_idx=769 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668038.406 kind=train batch_idx=770 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 770: loss=10.3750, 11663 tok/s, peak_mem=3.5GB, elapsed=135s/600s
+STEP ts=1789668038.573 kind=train batch_idx=771 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668038.739 kind=train batch_idx=772 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668038.905 kind=train batch_idx=773 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668039.070 kind=train batch_idx=774 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668039.240 kind=train batch_idx=775 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 775: loss=10.3750, 11667 tok/s, peak_mem=3.5GB, elapsed=136s/600s
+STEP ts=1789668039.405 kind=train batch_idx=776 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668039.572 kind=train batch_idx=777 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668039.739 kind=train batch_idx=778 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668039.904 kind=train batch_idx=779 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668040.073 kind=train batch_idx=780 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 780: loss=10.3750, 11670 tok/s, peak_mem=3.5GB, elapsed=137s/600s
+STEP ts=1789668040.239 kind=train batch_idx=781 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668040.405 kind=train batch_idx=782 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668040.571 kind=train batch_idx=783 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668040.736 kind=train batch_idx=784 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668040.907 kind=train batch_idx=785 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 785: loss=10.3750, 11674 tok/s, peak_mem=3.5GB, elapsed=138s/600s
+STEP ts=1789668041.072 kind=train batch_idx=786 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668041.251 kind=train batch_idx=787 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668041.416 kind=train batch_idx=788 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668041.581 kind=train batch_idx=789 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668041.760 kind=train batch_idx=790 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 790: loss=10.3750, 11676 tok/s, peak_mem=3.5GB, elapsed=139s/600s
+STEP ts=1789668041.926 kind=train batch_idx=791 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668042.091 kind=train batch_idx=792 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668042.257 kind=train batch_idx=793 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668042.423 kind=train batch_idx=794 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668042.594 kind=train batch_idx=795 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 795: loss=10.3750, 11680 tok/s, peak_mem=3.5GB, elapsed=139s/600s
+STEP ts=1789668042.760 kind=train batch_idx=796 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668042.930 kind=train batch_idx=797 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668043.168 kind=train batch_idx=798 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668043.334 kind=train batch_idx=799 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668043.593 kind=train batch_idx=800 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 800: loss=10.3750, 11670 tok/s, peak_mem=3.5GB, elapsed=140s/600s
+STEP ts=1789668043.760 kind=train batch_idx=801 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668043.926 kind=train batch_idx=802 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668044.093 kind=train batch_idx=803 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668044.259 kind=train batch_idx=804 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668044.429 kind=train batch_idx=805 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 805: loss=10.3750, 11673 tok/s, peak_mem=3.5GB, elapsed=141s/600s
+STEP ts=1789668044.596 kind=train batch_idx=806 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668044.761 kind=train batch_idx=807 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668044.926 kind=train batch_idx=808 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668045.092 kind=train batch_idx=809 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668045.267 kind=train batch_idx=810 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 810: loss=10.3750, 11676 tok/s, peak_mem=3.5GB, elapsed=142s/600s
+STEP ts=1789668045.433 kind=train batch_idx=811 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668045.599 kind=train batch_idx=812 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668045.764 kind=train batch_idx=813 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668045.929 kind=train batch_idx=814 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668046.100 kind=train batch_idx=815 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 815: loss=10.3750, 11680 tok/s, peak_mem=3.5GB, elapsed=143s/600s
+STEP ts=1789668046.265 kind=train batch_idx=816 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668046.430 kind=train batch_idx=817 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668046.596 kind=train batch_idx=818 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668046.762 kind=train batch_idx=819 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668046.933 kind=train batch_idx=820 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 820: loss=10.3750, 11683 tok/s, peak_mem=3.5GB, elapsed=144s/600s
+STEP ts=1789668047.099 kind=train batch_idx=821 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668047.265 kind=train batch_idx=822 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668047.430 kind=train batch_idx=823 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668047.602 kind=train batch_idx=824 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668047.772 kind=train batch_idx=825 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 825: loss=10.3750, 11686 tok/s, peak_mem=3.5GB, elapsed=145s/600s
+STEP ts=1789668047.938 kind=train batch_idx=826 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668048.103 kind=train batch_idx=827 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668048.267 kind=train batch_idx=828 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668048.432 kind=train batch_idx=829 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668048.604 kind=train batch_idx=830 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 830: loss=10.3750, 11690 tok/s, peak_mem=3.5GB, elapsed=145s/600s
+STEP ts=1789668048.769 kind=train batch_idx=831 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668048.934 kind=train batch_idx=832 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668049.099 kind=train batch_idx=833 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668049.267 kind=train batch_idx=834 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668049.438 kind=train batch_idx=835 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 835: loss=10.3750, 11693 tok/s, peak_mem=3.5GB, elapsed=146s/600s
+STEP ts=1789668049.603 kind=train batch_idx=836 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668049.841 kind=train batch_idx=837 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668050.006 kind=train batch_idx=838 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668050.260 kind=train batch_idx=839 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668050.430 kind=train batch_idx=840 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 840: loss=10.3750, 11684 tok/s, peak_mem=3.5GB, elapsed=147s/600s
+STEP ts=1789668050.595 kind=train batch_idx=841 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668050.760 kind=train batch_idx=842 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668050.925 kind=train batch_idx=843 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668051.090 kind=train batch_idx=844 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668051.261 kind=train batch_idx=845 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 845: loss=10.3750, 11688 tok/s, peak_mem=3.5GB, elapsed=148s/600s
+STEP ts=1789668051.425 kind=train batch_idx=846 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668051.591 kind=train batch_idx=847 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668051.756 kind=train batch_idx=848 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668051.921 kind=train batch_idx=849 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668052.091 kind=train batch_idx=850 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 850: loss=10.3750, 11691 tok/s, peak_mem=3.5GB, elapsed=149s/600s
+STEP ts=1789668052.257 kind=train batch_idx=851 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668052.422 kind=train batch_idx=852 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668052.587 kind=train batch_idx=853 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668052.752 kind=train batch_idx=854 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668052.923 kind=train batch_idx=855 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 855: loss=10.3750, 11695 tok/s, peak_mem=3.5GB, elapsed=150s/600s
+STEP ts=1789668053.089 kind=train batch_idx=856 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668053.254 kind=train batch_idx=857 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668053.419 kind=train batch_idx=858 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668053.584 kind=train batch_idx=859 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668053.755 kind=train batch_idx=860 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 860: loss=10.3750, 11698 tok/s, peak_mem=3.5GB, elapsed=151s/600s
+STEP ts=1789668053.920 kind=train batch_idx=861 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668054.086 kind=train batch_idx=862 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668054.251 kind=train batch_idx=863 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668054.416 kind=train batch_idx=864 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668054.587 kind=train batch_idx=865 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 865: loss=10.3750, 11702 tok/s, peak_mem=3.5GB, elapsed=151s/600s
+STEP ts=1789668054.752 kind=train batch_idx=866 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668054.917 kind=train batch_idx=867 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668055.083 kind=train batch_idx=868 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668055.248 kind=train batch_idx=869 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668055.421 kind=train batch_idx=870 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 870: loss=10.3750, 11705 tok/s, peak_mem=3.5GB, elapsed=152s/600s
+STEP ts=1789668055.587 kind=train batch_idx=871 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668055.752 kind=train batch_idx=872 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668055.920 kind=train batch_idx=873 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668056.088 kind=train batch_idx=874 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668056.258 kind=train batch_idx=875 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 875: loss=10.3750, 11708 tok/s, peak_mem=3.5GB, elapsed=153s/600s
+STEP ts=1789668056.424 kind=train batch_idx=876 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668056.661 kind=train batch_idx=877 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668056.826 kind=train batch_idx=878 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668057.079 kind=train batch_idx=879 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668057.250 kind=train batch_idx=880 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 880: loss=10.3750, 11699 tok/s, peak_mem=3.5GB, elapsed=154s/600s
+STEP ts=1789668057.416 kind=train batch_idx=881 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668057.581 kind=train batch_idx=882 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668057.746 kind=train batch_idx=883 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668057.911 kind=train batch_idx=884 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668058.086 kind=train batch_idx=885 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 885: loss=10.3750, 11702 tok/s, peak_mem=3.5GB, elapsed=155s/600s
+STEP ts=1789668058.251 kind=train batch_idx=886 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668058.416 kind=train batch_idx=887 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668058.581 kind=train batch_idx=888 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668058.746 kind=train batch_idx=889 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668058.916 kind=train batch_idx=890 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 890: loss=10.3750, 11705 tok/s, peak_mem=3.5GB, elapsed=156s/600s
+STEP ts=1789668059.082 kind=train batch_idx=891 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668059.247 kind=train batch_idx=892 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668059.412 kind=train batch_idx=893 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668059.577 kind=train batch_idx=894 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668059.747 kind=train batch_idx=895 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 895: loss=10.3750, 11708 tok/s, peak_mem=3.5GB, elapsed=157s/600s
+STEP ts=1789668059.916 kind=train batch_idx=896 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668060.093 kind=train batch_idx=897 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668060.264 kind=train batch_idx=898 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668060.430 kind=train batch_idx=899 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668060.601 kind=train batch_idx=900 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 900: loss=10.3750, 11710 tok/s, peak_mem=3.5GB, elapsed=157s/600s
+STEP ts=1789668060.767 kind=train batch_idx=901 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668060.933 kind=train batch_idx=902 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668061.099 kind=train batch_idx=903 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668061.266 kind=train batch_idx=904 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668061.436 kind=train batch_idx=905 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 905: loss=10.3750, 11713 tok/s, peak_mem=3.5GB, elapsed=158s/600s
+STEP ts=1789668061.602 kind=train batch_idx=906 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668061.768 kind=train batch_idx=907 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668061.935 kind=train batch_idx=908 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668062.101 kind=train batch_idx=909 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668062.273 kind=train batch_idx=910 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 910: loss=10.3750, 11715 tok/s, peak_mem=3.5GB, elapsed=159s/600s
+STEP ts=1789668062.439 kind=train batch_idx=911 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668062.605 kind=train batch_idx=912 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668062.771 kind=train batch_idx=913 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668062.939 kind=train batch_idx=914 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668063.110 kind=train batch_idx=915 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 915: loss=10.3750, 11718 tok/s, peak_mem=3.5GB, elapsed=160s/600s
+STEP ts=1789668063.351 kind=train batch_idx=916 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668063.517 kind=train batch_idx=917 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668063.775 kind=train batch_idx=918 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668063.958 kind=train batch_idx=919 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668064.133 kind=train batch_idx=920 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 920: loss=10.3750, 11707 tok/s, peak_mem=3.5GB, elapsed=161s/600s
+STEP ts=1789668064.300 kind=train batch_idx=921 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668064.466 kind=train batch_idx=922 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668064.632 kind=train batch_idx=923 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668064.798 kind=train batch_idx=924 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668064.972 kind=train batch_idx=925 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 925: loss=10.3750, 11710 tok/s, peak_mem=3.5GB, elapsed=162s/600s
+STEP ts=1789668065.139 kind=train batch_idx=926 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668065.307 kind=train batch_idx=927 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668065.476 kind=train batch_idx=928 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668065.668 kind=train batch_idx=929 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668065.871 kind=train batch_idx=930 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 930: loss=10.3750, 11708 tok/s, peak_mem=3.5GB, elapsed=163s/600s
+STEP ts=1789668066.063 kind=train batch_idx=931 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668066.257 kind=train batch_idx=932 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668066.451 kind=train batch_idx=933 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668066.619 kind=train batch_idx=934 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668066.792 kind=train batch_idx=935 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 935: loss=10.3750, 11705 tok/s, peak_mem=3.5GB, elapsed=164s/600s
+STEP ts=1789668066.974 kind=train batch_idx=936 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668067.142 kind=train batch_idx=937 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668067.309 kind=train batch_idx=938 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668067.503 kind=train batch_idx=939 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668067.678 kind=train batch_idx=940 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 940: loss=10.3750, 11704 tok/s, peak_mem=3.5GB, elapsed=164s/600s
+STEP ts=1789668067.844 kind=train batch_idx=941 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668068.010 kind=train batch_idx=942 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668068.177 kind=train batch_idx=943 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668068.348 kind=train batch_idx=944 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668068.520 kind=train batch_idx=945 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 945: loss=10.3750, 11706 tok/s, peak_mem=3.5GB, elapsed=165s/600s
+STEP ts=1789668068.687 kind=train batch_idx=946 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668068.854 kind=train batch_idx=947 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668069.019 kind=train batch_idx=948 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668069.188 kind=train batch_idx=949 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668069.359 kind=train batch_idx=950 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 950: loss=10.3750, 11709 tok/s, peak_mem=3.5GB, elapsed=166s/600s
+STEP ts=1789668069.525 kind=train batch_idx=951 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668069.691 kind=train batch_idx=952 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668069.857 kind=train batch_idx=953 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668070.024 kind=train batch_idx=954 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668070.195 kind=train batch_idx=955 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 955: loss=10.3750, 11712 tok/s, peak_mem=3.5GB, elapsed=167s/600s
+STEP ts=1789668070.434 kind=train batch_idx=956 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668070.601 kind=train batch_idx=957 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668070.854 kind=train batch_idx=958 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668071.020 kind=train batch_idx=959 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668071.198 kind=train batch_idx=960 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 960: loss=10.3750, 11703 tok/s, peak_mem=3.5GB, elapsed=168s/600s
+STEP ts=1789668071.364 kind=train batch_idx=961 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668071.530 kind=train batch_idx=962 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668071.696 kind=train batch_idx=963 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668071.862 kind=train batch_idx=964 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668072.034 kind=train batch_idx=965 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 965: loss=10.3750, 11705 tok/s, peak_mem=3.5GB, elapsed=169s/600s
+STEP ts=1789668072.200 kind=train batch_idx=966 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668072.366 kind=train batch_idx=967 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668072.533 kind=train batch_idx=968 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668072.699 kind=train batch_idx=969 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668072.870 kind=train batch_idx=970 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 970: loss=10.3750, 11708 tok/s, peak_mem=3.5GB, elapsed=170s/600s
+STEP ts=1789668073.037 kind=train batch_idx=971 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668073.204 kind=train batch_idx=972 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668073.371 kind=train batch_idx=973 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668073.537 kind=train batch_idx=974 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668073.711 kind=train batch_idx=975 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 975: loss=10.3750, 11710 tok/s, peak_mem=3.5GB, elapsed=171s/600s
+STEP ts=1789668073.879 kind=train batch_idx=976 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668074.045 kind=train batch_idx=977 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668074.211 kind=train batch_idx=978 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668074.378 kind=train batch_idx=979 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668074.549 kind=train batch_idx=980 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 980: loss=10.3750, 11713 tok/s, peak_mem=3.5GB, elapsed=171s/600s
+STEP ts=1789668074.717 kind=train batch_idx=981 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668074.883 kind=train batch_idx=982 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668075.050 kind=train batch_idx=983 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668075.216 kind=train batch_idx=984 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668075.389 kind=train batch_idx=985 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 985: loss=10.3750, 11715 tok/s, peak_mem=3.5GB, elapsed=172s/600s
+STEP ts=1789668075.556 kind=train batch_idx=986 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668075.722 kind=train batch_idx=987 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668075.888 kind=train batch_idx=988 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668076.055 kind=train batch_idx=989 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668076.226 kind=train batch_idx=990 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 990: loss=10.3750, 11718 tok/s, peak_mem=3.5GB, elapsed=173s/600s
+STEP ts=1789668076.393 kind=train batch_idx=991 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668076.559 kind=train batch_idx=992 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668076.725 kind=train batch_idx=993 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668076.891 kind=train batch_idx=994 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668077.131 kind=train batch_idx=995 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 995: loss=10.3750, 11716 tok/s, peak_mem=3.5GB, elapsed=174s/600s
+STEP ts=1789668077.297 kind=train batch_idx=996 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668077.571 kind=train batch_idx=997 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668077.738 kind=train batch_idx=998 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668077.903 kind=train batch_idx=999 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668078.075 kind=train batch_idx=1000 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1000: loss=10.3750, 11711 tok/s, peak_mem=3.5GB, elapsed=175s/600s
+STEP ts=1789668078.241 kind=train batch_idx=1001 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668078.406 kind=train batch_idx=1002 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668078.573 kind=train batch_idx=1003 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668078.739 kind=train batch_idx=1004 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668078.911 kind=train batch_idx=1005 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1005: loss=10.3750, 11713 tok/s, peak_mem=3.5GB, elapsed=176s/600s
+STEP ts=1789668079.077 kind=train batch_idx=1006 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668079.247 kind=train batch_idx=1007 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668079.413 kind=train batch_idx=1008 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668079.579 kind=train batch_idx=1009 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668079.750 kind=train batch_idx=1010 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1010: loss=10.3750, 11716 tok/s, peak_mem=3.5GB, elapsed=177s/600s
+STEP ts=1789668079.916 kind=train batch_idx=1011 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668080.082 kind=train batch_idx=1012 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668080.248 kind=train batch_idx=1013 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668080.414 kind=train batch_idx=1014 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668080.585 kind=train batch_idx=1015 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1015: loss=10.3750, 11718 tok/s, peak_mem=3.5GB, elapsed=177s/600s
+STEP ts=1789668080.751 kind=train batch_idx=1016 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668080.917 kind=train batch_idx=1017 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668081.083 kind=train batch_idx=1018 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668081.249 kind=train batch_idx=1019 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668081.420 kind=train batch_idx=1020 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1020: loss=10.3750, 11721 tok/s, peak_mem=3.5GB, elapsed=178s/600s
+STEP ts=1789668081.586 kind=train batch_idx=1021 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668081.752 kind=train batch_idx=1022 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668081.918 kind=train batch_idx=1023 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668082.084 kind=train batch_idx=1024 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668082.255 kind=train batch_idx=1025 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1025: loss=10.3750, 11723 tok/s, peak_mem=3.5GB, elapsed=179s/600s
+STEP ts=1789668082.422 kind=train batch_idx=1026 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668082.589 kind=train batch_idx=1027 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668082.755 kind=train batch_idx=1028 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668082.922 kind=train batch_idx=1029 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668083.093 kind=train batch_idx=1030 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1030: loss=10.3750, 11726 tok/s, peak_mem=3.5GB, elapsed=180s/600s
+STEP ts=1789668083.260 kind=train batch_idx=1031 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668083.426 kind=train batch_idx=1032 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668083.593 kind=train batch_idx=1033 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668083.759 kind=train batch_idx=1034 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668083.997 kind=train batch_idx=1035 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1035: loss=10.3750, 11724 tok/s, peak_mem=3.5GB, elapsed=181s/600s
+STEP ts=1789668084.164 kind=train batch_idx=1036 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668084.423 kind=train batch_idx=1037 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668084.597 kind=train batch_idx=1038 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668084.767 kind=train batch_idx=1039 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668084.937 kind=train batch_idx=1040 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1040: loss=10.3750, 11719 tok/s, peak_mem=3.5GB, elapsed=182s/600s
+STEP ts=1789668085.103 kind=train batch_idx=1041 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668085.270 kind=train batch_idx=1042 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668085.436 kind=train batch_idx=1043 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668085.602 kind=train batch_idx=1044 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668085.773 kind=train batch_idx=1045 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1045: loss=10.3750, 11722 tok/s, peak_mem=3.5GB, elapsed=183s/600s
+STEP ts=1789668085.939 kind=train batch_idx=1046 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668086.108 kind=train batch_idx=1047 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668086.274 kind=train batch_idx=1048 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668086.444 kind=train batch_idx=1049 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668086.623 kind=train batch_idx=1050 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1050: loss=10.3750, 11723 tok/s, peak_mem=3.5GB, elapsed=183s/600s
+STEP ts=1789668086.789 kind=train batch_idx=1051 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668086.957 kind=train batch_idx=1052 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668087.130 kind=train batch_idx=1053 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668087.296 kind=train batch_idx=1054 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668087.468 kind=train batch_idx=1055 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1055: loss=10.3750, 11725 tok/s, peak_mem=3.5GB, elapsed=184s/600s
+STEP ts=1789668087.640 kind=train batch_idx=1056 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668087.806 kind=train batch_idx=1057 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668087.972 kind=train batch_idx=1058 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668088.142 kind=train batch_idx=1059 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668088.314 kind=train batch_idx=1060 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1060: loss=10.3750, 11727 tok/s, peak_mem=3.5GB, elapsed=185s/600s
+STEP ts=1789668088.480 kind=train batch_idx=1061 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668088.647 kind=train batch_idx=1062 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668088.816 kind=train batch_idx=1063 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668088.982 kind=train batch_idx=1064 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668089.156 kind=train batch_idx=1065 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1065: loss=10.3750, 11729 tok/s, peak_mem=3.5GB, elapsed=186s/600s
+STEP ts=1789668089.323 kind=train batch_idx=1066 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668089.490 kind=train batch_idx=1067 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668089.656 kind=train batch_idx=1068 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668089.825 kind=train batch_idx=1069 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668089.997 kind=train batch_idx=1070 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1070: loss=10.3750, 11731 tok/s, peak_mem=3.5GB, elapsed=187s/600s
+STEP ts=1789668090.163 kind=train batch_idx=1071 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668090.331 kind=train batch_idx=1072 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668090.497 kind=train batch_idx=1073 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668090.736 kind=train batch_idx=1074 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668090.909 kind=train batch_idx=1075 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1075: loss=10.3750, 11728 tok/s, peak_mem=3.5GB, elapsed=188s/600s
+STEP ts=1789668091.163 kind=train batch_idx=1076 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668091.330 kind=train batch_idx=1077 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668091.495 kind=train batch_idx=1078 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668091.662 kind=train batch_idx=1079 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668091.845 kind=train batch_idx=1080 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1080: loss=10.3750, 11725 tok/s, peak_mem=3.5GB, elapsed=189s/600s
+STEP ts=1789668092.012 kind=train batch_idx=1081 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668092.178 kind=train batch_idx=1082 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668092.344 kind=train batch_idx=1083 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668092.510 kind=train batch_idx=1084 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668092.681 kind=train batch_idx=1085 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1085: loss=10.3750, 11727 tok/s, peak_mem=3.5GB, elapsed=189s/600s
+STEP ts=1789668092.850 kind=train batch_idx=1086 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668093.016 kind=train batch_idx=1087 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668093.182 kind=train batch_idx=1088 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668093.348 kind=train batch_idx=1089 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668093.519 kind=train batch_idx=1090 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1090: loss=10.3750, 11729 tok/s, peak_mem=3.5GB, elapsed=190s/600s
+STEP ts=1789668093.685 kind=train batch_idx=1091 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668093.851 kind=train batch_idx=1092 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668094.020 kind=train batch_idx=1093 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668094.186 kind=train batch_idx=1094 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668094.357 kind=train batch_idx=1095 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1095: loss=10.3750, 11731 tok/s, peak_mem=3.5GB, elapsed=191s/600s
+STEP ts=1789668094.525 kind=train batch_idx=1096 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668094.696 kind=train batch_idx=1097 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668094.874 kind=train batch_idx=1098 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668095.044 kind=train batch_idx=1099 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668095.223 kind=train batch_idx=1100 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1100: loss=10.3750, 11732 tok/s, peak_mem=3.5GB, elapsed=192s/600s
+STEP ts=1789668095.390 kind=train batch_idx=1101 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668095.556 kind=train batch_idx=1102 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668095.722 kind=train batch_idx=1103 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668095.888 kind=train batch_idx=1104 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668096.059 kind=train batch_idx=1105 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1105: loss=10.3750, 11734 tok/s, peak_mem=3.5GB, elapsed=193s/600s
+STEP ts=1789668096.225 kind=train batch_idx=1106 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668096.391 kind=train batch_idx=1107 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668096.557 kind=train batch_idx=1108 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668096.723 kind=train batch_idx=1109 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668096.894 kind=train batch_idx=1110 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1110: loss=10.3750, 11736 tok/s, peak_mem=3.5GB, elapsed=194s/600s
+STEP ts=1789668097.061 kind=train batch_idx=1111 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668097.227 kind=train batch_idx=1112 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668097.393 kind=train batch_idx=1113 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668097.632 kind=train batch_idx=1114 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668097.803 kind=train batch_idx=1115 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1115: loss=10.3750, 11734 tok/s, peak_mem=3.5GB, elapsed=195s/600s
+STEP ts=1789668098.064 kind=train batch_idx=1116 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668098.237 kind=train batch_idx=1117 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668098.402 kind=train batch_idx=1118 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668098.569 kind=train batch_idx=1119 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668098.740 kind=train batch_idx=1120 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1120: loss=10.3750, 11730 tok/s, peak_mem=3.5GB, elapsed=196s/600s
+STEP ts=1789668098.906 kind=train batch_idx=1121 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668099.073 kind=train batch_idx=1122 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668099.239 kind=train batch_idx=1123 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668099.405 kind=train batch_idx=1124 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668099.576 kind=train batch_idx=1125 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1125: loss=10.3750, 11732 tok/s, peak_mem=3.5GB, elapsed=196s/600s
+STEP ts=1789668099.743 kind=train batch_idx=1126 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668099.909 kind=train batch_idx=1127 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668100.075 kind=train batch_idx=1128 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668100.242 kind=train batch_idx=1129 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668100.413 kind=train batch_idx=1130 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1130: loss=10.3750, 11734 tok/s, peak_mem=3.5GB, elapsed=197s/600s
+STEP ts=1789668100.580 kind=train batch_idx=1131 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668100.747 kind=train batch_idx=1132 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668100.913 kind=train batch_idx=1133 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668101.080 kind=train batch_idx=1134 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668101.251 kind=train batch_idx=1135 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1135: loss=10.3750, 11736 tok/s, peak_mem=3.5GB, elapsed=198s/600s
+STEP ts=1789668101.418 kind=train batch_idx=1136 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668101.585 kind=train batch_idx=1137 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668101.752 kind=train batch_idx=1138 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668101.918 kind=train batch_idx=1139 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668102.090 kind=train batch_idx=1140 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1140: loss=10.3750, 11738 tok/s, peak_mem=3.5GB, elapsed=199s/600s
+STEP ts=1789668102.257 kind=train batch_idx=1141 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668102.422 kind=train batch_idx=1142 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668102.588 kind=train batch_idx=1143 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668102.754 kind=train batch_idx=1144 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668102.925 kind=train batch_idx=1145 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1145: loss=10.3750, 11741 tok/s, peak_mem=3.5GB, elapsed=200s/600s
+STEP ts=1789668103.091 kind=train batch_idx=1146 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668103.262 kind=train batch_idx=1147 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668103.428 kind=train batch_idx=1148 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668103.594 kind=train batch_idx=1149 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668103.765 kind=train batch_idx=1150 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1150: loss=10.3750, 11742 tok/s, peak_mem=3.5GB, elapsed=201s/600s
+STEP ts=1789668103.934 kind=train batch_idx=1151 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668104.100 kind=train batch_idx=1152 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668104.345 kind=train batch_idx=1153 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668104.516 kind=train batch_idx=1154 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668104.776 kind=train batch_idx=1155 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1155: loss=10.3750, 11734 tok/s, peak_mem=3.5GB, elapsed=202s/600s
+STEP ts=1789668104.943 kind=train batch_idx=1156 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668105.114 kind=train batch_idx=1157 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668105.281 kind=train batch_idx=1158 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668105.447 kind=train batch_idx=1159 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668105.618 kind=train batch_idx=1160 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1160: loss=10.3750, 11736 tok/s, peak_mem=3.5GB, elapsed=202s/600s
+STEP ts=1789668105.785 kind=train batch_idx=1161 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668105.951 kind=train batch_idx=1162 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668106.121 kind=train batch_idx=1163 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668106.289 kind=train batch_idx=1164 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668106.459 kind=train batch_idx=1165 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1165: loss=10.3750, 11738 tok/s, peak_mem=3.5GB, elapsed=203s/600s
+STEP ts=1789668106.625 kind=train batch_idx=1166 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668106.791 kind=train batch_idx=1167 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668106.957 kind=train batch_idx=1168 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668107.122 kind=train batch_idx=1169 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668107.293 kind=train batch_idx=1170 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1170: loss=10.3750, 11740 tok/s, peak_mem=3.5GB, elapsed=204s/600s
+STEP ts=1789668107.462 kind=train batch_idx=1171 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668107.628 kind=train batch_idx=1172 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668107.793 kind=train batch_idx=1173 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668107.958 kind=train batch_idx=1174 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668108.129 kind=train batch_idx=1175 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1175: loss=10.3750, 11742 tok/s, peak_mem=3.5GB, elapsed=205s/600s
+STEP ts=1789668108.295 kind=train batch_idx=1176 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668108.460 kind=train batch_idx=1177 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668108.626 kind=train batch_idx=1178 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668108.792 kind=train batch_idx=1179 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668108.964 kind=train batch_idx=1180 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1180: loss=10.3750, 11744 tok/s, peak_mem=3.5GB, elapsed=206s/600s
+STEP ts=1789668109.131 kind=train batch_idx=1181 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668109.299 kind=train batch_idx=1182 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668109.465 kind=train batch_idx=1183 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668109.632 kind=train batch_idx=1184 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668109.804 kind=train batch_idx=1185 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1185: loss=10.3750, 11746 tok/s, peak_mem=3.5GB, elapsed=207s/600s
+STEP ts=1789668109.971 kind=train batch_idx=1186 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668110.137 kind=train batch_idx=1187 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668110.304 kind=train batch_idx=1188 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668110.470 kind=train batch_idx=1189 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668110.641 kind=train batch_idx=1190 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1190: loss=10.3750, 11748 tok/s, peak_mem=3.5GB, elapsed=207s/600s
+STEP ts=1789668110.807 kind=train batch_idx=1191 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668110.973 kind=train batch_idx=1192 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668111.213 kind=train batch_idx=1193 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668111.379 kind=train batch_idx=1194 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668111.639 kind=train batch_idx=1195 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1195: loss=10.3750, 11741 tok/s, peak_mem=3.5GB, elapsed=208s/600s
+STEP ts=1789668111.805 kind=train batch_idx=1196 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668111.972 kind=train batch_idx=1197 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668112.139 kind=train batch_idx=1198 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668112.306 kind=train batch_idx=1199 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668112.483 kind=train batch_idx=1200 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1200: loss=10.3750, 11743 tok/s, peak_mem=3.5GB, elapsed=209s/600s
+STEP ts=1789668112.650 kind=train batch_idx=1201 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668112.819 kind=train batch_idx=1202 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668112.985 kind=train batch_idx=1203 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668113.151 kind=train batch_idx=1204 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668113.323 kind=train batch_idx=1205 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1205: loss=10.3750, 11744 tok/s, peak_mem=3.5GB, elapsed=210s/600s
+STEP ts=1789668113.490 kind=train batch_idx=1206 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668113.656 kind=train batch_idx=1207 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668113.821 kind=train batch_idx=1208 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668113.987 kind=train batch_idx=1209 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668114.157 kind=train batch_idx=1210 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1210: loss=10.3750, 11747 tok/s, peak_mem=3.5GB, elapsed=211s/600s
+STEP ts=1789668114.323 kind=train batch_idx=1211 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668114.489 kind=train batch_idx=1212 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668114.655 kind=train batch_idx=1213 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668114.820 kind=train batch_idx=1214 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668114.990 kind=train batch_idx=1215 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1215: loss=10.3750, 11749 tok/s, peak_mem=3.5GB, elapsed=212s/600s
+STEP ts=1789668115.156 kind=train batch_idx=1216 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668115.325 kind=train batch_idx=1217 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668115.493 kind=train batch_idx=1218 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668115.660 kind=train batch_idx=1219 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668115.832 kind=train batch_idx=1220 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1220: loss=10.3750, 11750 tok/s, peak_mem=3.5GB, elapsed=213s/600s
+STEP ts=1789668115.999 kind=train batch_idx=1221 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668116.166 kind=train batch_idx=1222 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668116.333 kind=train batch_idx=1223 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668116.506 kind=train batch_idx=1224 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668116.678 kind=train batch_idx=1225 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1225: loss=10.3750, 11752 tok/s, peak_mem=3.5GB, elapsed=213s/600s
+STEP ts=1789668116.846 kind=train batch_idx=1226 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668117.014 kind=train batch_idx=1227 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668117.180 kind=train batch_idx=1228 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668117.346 kind=train batch_idx=1229 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668117.517 kind=train batch_idx=1230 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+  Step 1230: loss=10.3750, 11753 tok/s, peak_mem=3.5GB, elapsed=214s/600s
+STEP ts=1789668117.683 kind=train batch_idx=1231 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668117.922 kind=train batch_idx=1232 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789668118.088 kind=train batch_idx=1233 tokens=2048 passes=1 node=0 rank=0 loss=10.3750
+W0917 18:01:58.103000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py:704] Received Signals.SIGTERM death signal, shutting down workers
+W0917 18:01:58.104000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50400 closing signal SIGTERM
+W0917 18:01:58.108000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50401 closing signal SIGTERM
+W0917 18:01:58.109000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50402 closing signal SIGTERM
+W0917 18:01:58.109000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50403 closing signal SIGTERM
+W0917 18:01:58.109000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50404 closing signal SIGTERM
+W0917 18:01:58.110000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50405 closing signal SIGTERM
+W0917 18:01:58.110000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50406 closing signal SIGTERM
+W0917 18:01:58.110000 50334 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 50407 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 260, in launch_agent
+    result = agent.run()
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/metrics/api.py", line 137, in wrapper
+    result = f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 696, in run
+    result = self._invoke_run(role)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/agent/server/api.py", line 855, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 50334 got signal: 15

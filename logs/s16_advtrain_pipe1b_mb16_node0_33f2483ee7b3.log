@@ -1,0 +1,257 @@
+2026-09-08 04:07:50,560 [spar.multi_gpu] INFO: Multi-GPU run: s16_advtrain_pipe1b_mb16, 8 GPUs, node=0, run_id=33f2483ee7b3
+Run ID: 33f2483ee7b3
+2026-09-08 04:07:50,590 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,591 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,591 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,610 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,611 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,611 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,628 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,629 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,629 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,648 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,649 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,649 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,667 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,667 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,667 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,685 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,686 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,686 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,705 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,705 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,706 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:50,724 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-08 04:07:50,724 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_advtrain_pipe1b_mb16, run=33f2483ee7b3)
+2026-09-08 04:07:50,724 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-08 04:07:52,726 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/adversarial_multinode_pipeline.py --size 1b --microbatches 16 --batch-size 8 --seq-len 1024 --duration 600
+W0908 04:07:54.370000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0908 04:07:54.370000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0908 04:07:54.370000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0908 04:07:54.370000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+MN-P pipeline disguise: 1b over 2 stages x 8 FSDP ranks
+  stage layer bounds: [(0, 12), (12, 24)]  (n_layers=24)
+  microbatches=16 batch=8 seq=1024 hidden=2048
+  activation tensor: 33.6 MB per rank per hop
+  predicted inter-node bytes/step: 8590 MB (fwd activations + bwd grads, 8 ranks)
+  Duration: 600s
+  Post-init GPU memory: 0.4 GB
+[rank0]:[W908 04:08:22.060520748 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank1]:[W908 04:08:23.391711482 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank3]:[W908 04:08:23.493208805 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank5]:[W908 04:08:23.495472061 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 5]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank4]:[W908 04:08:23.529149920 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 4]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank7]:[W908 04:08:23.600115033 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 7]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank6]:[W908 04:08:23.642684578 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 6]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank2]:[W908 04:08:23.703288898 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+  edge communicators warm
+STEP ts=1788840515.107 kind=train batch_idx=1 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840524.085 kind=train batch_idx=2 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840533.186 kind=train batch_idx=3 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840542.445 kind=train batch_idx=4 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  39s: steps=4 useful=108750 tok/s internode=111.4 MB/s loss=nan
+STEP ts=1788840551.520 kind=train batch_idx=5 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840560.444 kind=train batch_idx=6 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840569.318 kind=train batch_idx=7 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840578.189 kind=train batch_idx=8 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  74s: steps=8 useful=112884 tok/s internode=115.6 MB/s loss=nan
+STEP ts=1788840587.118 kind=train batch_idx=9 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840596.004 kind=train batch_idx=10 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840605.002 kind=train batch_idx=11 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840613.969 kind=train batch_idx=12 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  110s: steps=12 useful=114294 tok/s internode=117.0 MB/s loss=nan
+STEP ts=1788840622.951 kind=train batch_idx=13 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840631.879 kind=train batch_idx=14 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840640.812 kind=train batch_idx=15 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840649.772 kind=train batch_idx=16 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  146s: steps=16 useful=114995 tok/s internode=117.8 MB/s loss=nan
+STEP ts=1788840658.713 kind=train batch_idx=17 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840667.929 kind=train batch_idx=18 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840676.833 kind=train batch_idx=19 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840685.966 kind=train batch_idx=20 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  182s: steps=20 useful=115172 tok/s internode=117.9 MB/s loss=nan
+STEP ts=1788840694.799 kind=train batch_idx=21 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840703.913 kind=train batch_idx=22 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840713.014 kind=train batch_idx=23 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840722.154 kind=train batch_idx=24 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  218s: steps=24 useful=115293 tok/s internode=118.1 MB/s loss=nan
+STEP ts=1788840731.394 kind=train batch_idx=25 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840740.624 kind=train batch_idx=26 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840749.783 kind=train batch_idx=27 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840758.746 kind=train batch_idx=28 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  255s: steps=28 useful=115197 tok/s internode=118.0 MB/s loss=nan
+STEP ts=1788840767.709 kind=train batch_idx=29 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840776.799 kind=train batch_idx=30 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840785.883 kind=train batch_idx=31 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840794.830 kind=train batch_idx=32 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  291s: steps=32 useful=115326 tok/s internode=118.1 MB/s loss=nan
+STEP ts=1788840803.685 kind=train batch_idx=33 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840812.745 kind=train batch_idx=34 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840821.808 kind=train batch_idx=35 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840830.869 kind=train batch_idx=36 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  327s: steps=36 useful=115442 tok/s internode=118.2 MB/s loss=nan
+STEP ts=1788840839.846 kind=train batch_idx=37 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840848.953 kind=train batch_idx=38 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840858.217 kind=train batch_idx=39 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840867.595 kind=train batch_idx=40 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  364s: steps=40 useful=115317 tok/s internode=118.1 MB/s loss=nan
+STEP ts=1788840877.093 kind=train batch_idx=41 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840886.545 kind=train batch_idx=42 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840895.903 kind=train batch_idx=43 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840904.870 kind=train batch_idx=44 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  401s: steps=44 useful=115058 tok/s internode=117.8 MB/s loss=nan
+STEP ts=1788840913.836 kind=train batch_idx=45 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840922.776 kind=train batch_idx=46 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840931.648 kind=train batch_idx=47 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840940.628 kind=train batch_idx=48 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  437s: steps=48 useful=115241 tok/s internode=118.0 MB/s loss=nan
+STEP ts=1788840949.652 kind=train batch_idx=49 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840958.741 kind=train batch_idx=50 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840967.897 kind=train batch_idx=51 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840976.998 kind=train batch_idx=52 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  473s: steps=52 useful=115247 tok/s internode=118.0 MB/s loss=nan
+STEP ts=1788840986.040 kind=train batch_idx=53 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788840994.918 kind=train batch_idx=54 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841003.814 kind=train batch_idx=55 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841012.848 kind=train batch_idx=56 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  509s: steps=56 useful=115371 tok/s internode=118.1 MB/s loss=nan
+STEP ts=1788841021.984 kind=train batch_idx=57 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841031.059 kind=train batch_idx=58 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841040.410 kind=train batch_idx=59 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841049.512 kind=train batch_idx=60 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  546s: steps=60 useful=115305 tok/s internode=118.1 MB/s loss=nan
+STEP ts=1788841058.558 kind=train batch_idx=61 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841067.677 kind=train batch_idx=62 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841076.719 kind=train batch_idx=63 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841085.593 kind=train batch_idx=64 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  582s: steps=64 useful=115364 tok/s internode=118.1 MB/s loss=nan
+STEP ts=1788841094.621 kind=train batch_idx=65 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841103.519 kind=train batch_idx=66 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841112.408 kind=train batch_idx=67 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+STEP ts=1788841121.322 kind=train batch_idx=68 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+  617s: steps=68 useful=115481 tok/s internode=118.3 MB/s loss=nan
+STEP ts=1788841130.202 kind=train batch_idx=69 tokens=1048576 passes=1 node=0 rank=0 loss=nan
+
+MN-P complete: 69 steps in 626.4s
+  Useful tokens: 72,351,744 (115511 tok/s)
+  Inter-node bytes (this rank): 74.09 GB = 118.3 MB/s = 946 Mbps
+  EVASION_TAX_DATA: strategy=MN-P world_size=16 train_frac=1.0 dilution= steps=69 train_steps=69 useful_tokens=72351744 attributed_tokens=72351744 duration=626.4 microbatches=16 size=1b internode_mbps=946.3
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank4]:     main()
+[rank4]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank4]:     sync_teardown(device)
+[rank4]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank5]:     main()
+[rank5]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank5]:     sync_teardown(device)
+[rank5]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank2]:     main()
+[rank2]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank2]:     sync_teardown(device)
+[rank2]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank0]:     main()
+[rank0]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank0]:     sync_teardown(device)
+[rank0]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank7]:     main()
+[rank7]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank7]:     sync_teardown(device)
+[rank7]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank6]:     main()
+[rank6]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank6]:     sync_teardown(device)
+[rank6]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank3]:     main()
+[rank3]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank3]:     sync_teardown(device)
+[rank3]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 422, in <module>
+[rank1]:     main()
+[rank1]:   File "/opt/spar/repo/workloads/adversarial_multinode_pipeline.py", line 417, in main
+[rank1]:     sync_teardown(device)
+[rank1]: TypeError: sync_teardown() takes 0 positional arguments but 1 was given
+[rank4]:[W908 04:18:50.692870113 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank3]:[W908 04:18:50.694365698 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank6]:[W908 04:18:50.695178178 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank2]:[W908 04:18:50.712881371 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank5]:[W908 04:18:50.712897871 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank0]:[W908 04:18:50.715060257 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank7]:[W908 04:18:50.715200906 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+[rank1]:[W908 04:18:50.716358385 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0908 04:18:52.277000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14450 closing signal SIGTERM
+W0908 04:18:52.278000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14451 closing signal SIGTERM
+W0908 04:18:52.278000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14452 closing signal SIGTERM
+W0908 04:18:52.279000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14453 closing signal SIGTERM
+W0908 04:18:52.279000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14454 closing signal SIGTERM
+W0908 04:18:52.279000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14455 closing signal SIGTERM
+W0908 04:18:52.279000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 14456 closing signal SIGTERM
+E0908 04:18:53.786000 14379 venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 0 (pid: 14449) of binary: /opt/spar/repo/venv-main/bin/python3
+Traceback (most recent call last):
+  File "/opt/spar/repo/venv-main/bin/torchrun", line 6, in <module>
+    sys.exit(main())
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+workloads/adversarial_multinode_pipeline.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-08_04:18:52
+  host      : spar-a100-0.c.focus-surfer-494820-g0.internal
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 14449)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+2026-09-08 04:18:54,278 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
+2026-09-08 04:18:56,281 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,310 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,314 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_advtrain_pipe1b_mb16_node0_gpu0_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,314 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,322 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,326 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_advtrain_pipe1b_mb16_node0_gpu1_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,326 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,334 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,337 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_advtrain_pipe1b_mb16_node0_gpu2_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,338 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,345 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,349 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_advtrain_pipe1b_mb16_node0_gpu3_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,349 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,356 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,360 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_advtrain_pipe1b_mb16_node0_gpu4_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,360 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,368 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,371 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_advtrain_pipe1b_mb16_node0_gpu5_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,372 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,379 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,383 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_advtrain_pipe1b_mb16_node0_gpu6_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,383 [spar.telemetry] INFO: Telemetry stopped. 666 samples collected.
+2026-09-08 04:18:56,390 [spar.telemetry] INFO: Saved 666 rows to data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet
+2026-09-08 04:18:56,394 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_advtrain_pipe1b_mb16_node0_gpu7_NVIDIA_A100_SXM4_40GB_33f2483ee7b3.parquet (666 rows)
+2026-09-08 04:18:56,395 [spar.multi_gpu] INFO: Multi-GPU run complete: 33f2483ee7b3 (rc=1)

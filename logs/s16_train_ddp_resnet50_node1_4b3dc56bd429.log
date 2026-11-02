@@ -1,0 +1,122 @@
+2026-09-05 00:37:46,762 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_ddp_resnet50, 8 GPUs, node=1, run_id=4b3dc56bd429
+Run ID: 4b3dc56bd429
+2026-09-05 00:37:46,793 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,793 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,794 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,808 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,808 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,808 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,823 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,823 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,823 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,837 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,838 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,838 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,862 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,862 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,862 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,878 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,878 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,878 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,895 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,895 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,895 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:46,913 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-05 00:37:46,913 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_ddp_resnet50, run=4b3dc56bd429)
+2026-09-05 00:37:46,913 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-05 00:37:48,915 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=1 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=120 --nproc-per-node=8 workloads/pytorch_training_ddp.py --model resnet50 --duration 600
+W0905 00:37:50.570000 149833 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0905 00:37:50.570000 149833 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0905 00:37:50.570000 149833 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0905 00:37:50.570000 149833 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+[E905 00:38:42.424510290 socket.cpp:1011] [c10d] The client socket has timed out after 60000ms while trying to connect to (spar-a100-0, 29500).
+[W905 00:38:42.424877302 TCPStore.cpp:358] [c10d] TCP client failed to connect/validate to host spar-a100-0:29500 - retrying (try=0, timeout=60000ms, delay=58706ms): The client socket has timed out after 60000ms while trying to connect to (spar-a100-0, 29500).
+Exception raised from throwTimeoutError at ../torch/csrc/distributed/c10d/socket.cpp:1013 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7180d68b9446 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x15e04c6 (0x7180c17e04c6 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: <unknown function> + 0x6029d95 (0x7180c6229d95 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0x6029f36 (0x7180c6229f36 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #4: <unknown function> + 0x602a3a4 (0x7180c622a3a4 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #5: <unknown function> + 0x5fe8016 (0x7180c61e8016 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #6: c10d::TCPStore::TCPStore(std::string, c10d::TCPStoreOptions const&) + 0x20c (0x7180c61eaf7c in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #7: <unknown function> + 0xd9acdd (0x7180d5d9acdd in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #8: <unknown function> + 0x4cb474 (0x7180d54cb474 in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #9: <unknown function> + 0x18a872 (0x5c2cbc523872 in /opt/spar/repo/venv-main/bin/python3)
+frame #10: _PyObject_MakeTpCall + 0x25b (0x5c2cbc51a1bb in /opt/spar/repo/venv-main/bin/python3)
+frame #11: <unknown function> + 0x1985ab (0x5c2cbc5315ab in /opt/spar/repo/venv-main/bin/python3)
+frame #12: _PyObject_Call + 0x118 (0x5c2cbc532118 in /opt/spar/repo/venv-main/bin/python3)
+frame #13: <unknown function> + 0x194c1b (0x5c2cbc52dc1b in /opt/spar/repo/venv-main/bin/python3)
+frame #14: <unknown function> + 0x18153b (0x5c2cbc51a53b in /opt/spar/repo/venv-main/bin/python3)
+frame #15: <unknown function> + 0x4c9ccb (0x7180d54c9ccb in /opt/spar/repo/venv-main/lib/python3.10/site-packages/torch/lib/libtorch_python.so)
+frame #16: _PyObject_MakeTpCall + 0x25b (0x5c2cbc51a1bb in /opt/spar/repo/venv-main/bin/python3)
+frame #17: _PyEval_EvalFrameDefault + 0x6847 (0x5c2cbc514607 in /opt/spar/repo/venv-main/bin/python3)
+frame #18: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #19: _PyEval_EvalFrameDefault + 0x6c0 (0x5c2cbc50e480 in /opt/spar/repo/venv-main/bin/python3)
+frame #20: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #21: _PyEval_EvalFrameDefault + 0x6c0 (0x5c2cbc50e480 in /opt/spar/repo/venv-main/bin/python3)
+frame #22: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #23: _PyEval_EvalFrameDefault + 0x6c0 (0x5c2cbc50e480 in /opt/spar/repo/venv-main/bin/python3)
+frame #24: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #25: _PyEval_EvalFrameDefault + 0x8b2 (0x5c2cbc50e672 in /opt/spar/repo/venv-main/bin/python3)
+frame #26: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #27: _PyEval_EvalFrameDefault + 0x56bb (0x5c2cbc51347b in /opt/spar/repo/venv-main/bin/python3)
+frame #28: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #29: _PyEval_EvalFrameDefault + 0x6c0 (0x5c2cbc50e480 in /opt/spar/repo/venv-main/bin/python3)
+frame #30: _PyObject_FastCallDictTstate + 0xc4 (0x5c2cbc519394 in /opt/spar/repo/venv-main/bin/python3)
+frame #31: _PyObject_Call_Prepend + 0xc1 (0x5c2cbc52e441 in /opt/spar/repo/venv-main/bin/python3)
+frame #32: <unknown function> + 0x29d0a4 (0x5c2cbc6360a4 in /opt/spar/repo/venv-main/bin/python3)
+frame #33: PyObject_Call + 0xbb (0x5c2cbc531f0b in /opt/spar/repo/venv-main/bin/python3)
+frame #34: _PyEval_EvalFrameDefault + 0x2a04 (0x5c2cbc5107c4 in /opt/spar/repo/venv-main/bin/python3)
+frame #35: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #36: _PyEval_EvalFrameDefault + 0x6c0 (0x5c2cbc50e480 in /opt/spar/repo/venv-main/bin/python3)
+frame #37: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #38: _PyEval_EvalFrameDefault + 0x2a04 (0x5c2cbc5107c4 in /opt/spar/repo/venv-main/bin/python3)
+frame #39: _PyFunction_Vectorcall + 0x7c (0x5c2cbc5240cc in /opt/spar/repo/venv-main/bin/python3)
+frame #40: _PyEval_EvalFrameDefault + 0x6c0 (0x5c2cbc50e480 in /opt/spar/repo/venv-main/bin/python3)
+frame #41: <unknown function> + 0x259f76 (0x5c2cbc5f2f76 in /opt/spar/repo/venv-main/bin/python3)
+frame #42: PyEval_EvalCode + 0x86 (0x5c2cbc5f2e46 in /opt/spar/repo/venv-main/bin/python3)
+frame #43: <unknown function> + 0x280958 (0x5c2cbc619958 in /opt/spar/repo/venv-main/bin/python3)
+frame #44: <unknown function> + 0x27afaf (0x5c2cbc613faf in /opt/spar/repo/venv-main/bin/python3)
+frame #45: <unknown function> + 0x2806f5 (0x5c2cbc6196f5 in /opt/spar/repo/venv-main/bin/python3)
+frame #46: _PyRun_SimpleFileObject + 0x1a8 (0x5c2cbc618c38 in /opt/spar/repo/venv-main/bin/python3)
+frame #47: _PyRun_AnyFileObject + 0x47 (0x5c2cbc618917 in /opt/spar/repo/venv-main/bin/python3)
+frame #48: Py_RunMain + 0x2be (0x5c2cbc60cd5e in /opt/spar/repo/venv-main/bin/python3)
+frame #49: Py_BytesMain + 0x2d (0x5c2cbc5e6e8d in /opt/spar/repo/venv-main/bin/python3)
+frame #50: <unknown function> + 0x29d90 (0x7180d7629d90 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #51: __libc_start_main + 0x80 (0x7180d7629e40 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #52: _start + 0x25 (0x5c2cbc5e6d85 in /opt/spar/repo/venv-main/bin/python3)
+
+[rank8]:[W905 00:39:50.249770742 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 8]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank14]:[W905 00:39:50.618096880 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 14]  using GPU 6 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank11]:[W905 00:39:50.653022433 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 11]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank9]:[W905 00:39:50.846508711 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 9]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank10]:[W905 00:39:50.846978374 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 10]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank12]:[W905 00:39:50.876597068 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 12]  using GPU 4 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank15]:[W905 00:39:50.902458750 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 15]  using GPU 7 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank13]:[W905 00:39:50.936697627 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 13]  using GPU 5 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+2026-09-05 00:49:56,071 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-05 00:49:58,073 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,102 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu0_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,107 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_ddp_resnet50_node1_gpu0_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,107 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,116 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu1_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,121 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_ddp_resnet50_node1_gpu1_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,121 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,130 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu2_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,134 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_ddp_resnet50_node1_gpu2_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,134 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,143 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu3_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,147 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_ddp_resnet50_node1_gpu3_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,147 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,156 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu4_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,160 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_ddp_resnet50_node1_gpu4_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,161 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,169 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu5_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,174 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_ddp_resnet50_node1_gpu5_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,174 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,182 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu6_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,187 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_ddp_resnet50_node1_gpu6_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,187 [spar.telemetry] INFO: Telemetry stopped. 732 samples collected.
+2026-09-05 00:49:58,195 [spar.telemetry] INFO: Saved 732 rows to data/s16_train_ddp_resnet50_node1_gpu7_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet
+2026-09-05 00:49:58,200 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_ddp_resnet50_node1_gpu7_NVIDIA_A100_SXM4_40GB_4b3dc56bd429.parquet (732 rows)
+2026-09-05 00:49:58,201 [spar.multi_gpu] INFO: Multi-GPU run complete: 4b3dc56bd429 (rc=0)

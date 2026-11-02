@@ -1,0 +1,132 @@
+2026-09-17 15:00:49,995 [spar.multi_gpu] INFO: Multi-GPU run: s16_train_fsdp7b_nockpt, 8 GPUs, node=0, run_id=faa5a831bf43
+Run ID: faa5a831bf43
+2026-09-17 15:00:50,025 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,026 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,026 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,044 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,044 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,044 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,062 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,062 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,062 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,081 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,082 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,082 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,101 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,101 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,101 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,124 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,124 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,125 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,143 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,143 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,143 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:50,161 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
+2026-09-17 15:00:50,161 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_train_fsdp7b_nockpt, run=faa5a831bf43)
+2026-09-17 15:00:50,161 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
+2026-09-17 15:00:52,164 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-main/bin/torchrun --nnodes=2 --node-rank=0 --rdzv-backend=c10d --rdzv-endpoint=spar-a100-0:29500 --rdzv-conf=join_timeout=600 --nproc-per-node=8 workloads/fsdp_training.py --size 7b --batch-size 8 --seq-len 1024 --no-activation-ckpt --duration 600
+W0917 15:00:53.802000 51637 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] 
+W0917 15:00:53.802000 51637 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+W0917 15:00:53.802000 51637 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0917 15:00:53.802000 51637 venv-main/lib/python3.10/site-packages/torch/distributed/run.py:793] *****************************************
+FSDP Training: 7b model on 16 GPUs
+  Hidden: 4096, Layers: 32, Heads: 32, FFN: 11008
+  Per-GPU batch: 8, Seq len: 1024
+  Global batch: 128
+  Mixed precision: bf16, Sharding: FULL_SHARD
+  Activation checkpointing: False
+  CPU offload: False
+  Duration: 600s
+  Parameters: 5,304,754,176 (5.3B)
+  Optimizer: adamw
+  Post-init GPU memory: 3.5 GB
+  Training started...
+STEP ts=1789657274.345 kind=train batch_idx=1 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657284.294 kind=train batch_idx=2 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657293.841 kind=train batch_idx=3 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657303.795 kind=train batch_idx=4 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657314.230 kind=train batch_idx=5 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 5: loss=10.3750, 12829 tok/s, peak_mem=36.1GB, elapsed=51s/600s
+STEP ts=1789657325.671 kind=train batch_idx=6 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657335.491 kind=train batch_idx=7 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657346.485 kind=train batch_idx=8 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657359.666 kind=train batch_idx=9 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657372.257 kind=train batch_idx=10 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 10: loss=10.3750, 12013 tok/s, peak_mem=36.1GB, elapsed=109s/600s
+STEP ts=1789657383.707 kind=train batch_idx=11 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657396.039 kind=train batch_idx=12 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657408.744 kind=train batch_idx=13 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657421.501 kind=train batch_idx=14 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657432.992 kind=train batch_idx=15 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 15: loss=10.3750, 11576 tok/s, peak_mem=36.1GB, elapsed=170s/600s
+STEP ts=1789657445.941 kind=train batch_idx=16 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657459.094 kind=train batch_idx=17 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657473.162 kind=train batch_idx=18 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657487.675 kind=train batch_idx=19 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657502.325 kind=train batch_idx=20 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 20: loss=10.3750, 10960 tok/s, peak_mem=36.1GB, elapsed=239s/600s
+STEP ts=1789657516.823 kind=train batch_idx=21 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657531.050 kind=train batch_idx=22 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657545.329 kind=train batch_idx=23 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657559.537 kind=train batch_idx=24 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657573.935 kind=train batch_idx=25 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 25: loss=10.3750, 10543 tok/s, peak_mem=36.1GB, elapsed=311s/600s
+STEP ts=1789657587.913 kind=train batch_idx=26 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657601.981 kind=train batch_idx=27 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657617.025 kind=train batch_idx=28 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657630.898 kind=train batch_idx=29 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657644.735 kind=train batch_idx=30 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 30: loss=10.3750, 10305 tok/s, peak_mem=36.1GB, elapsed=382s/600s
+STEP ts=1789657660.060 kind=train batch_idx=31 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657674.850 kind=train batch_idx=32 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657689.798 kind=train batch_idx=33 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657703.981 kind=train batch_idx=34 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657717.385 kind=train batch_idx=35 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 35: loss=10.3750, 10099 tok/s, peak_mem=36.1GB, elapsed=454s/600s
+STEP ts=1789657730.701 kind=train batch_idx=36 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657745.009 kind=train batch_idx=37 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657758.952 kind=train batch_idx=38 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657772.779 kind=train batch_idx=39 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657787.550 kind=train batch_idx=40 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 40: loss=10.3750, 9998 tok/s, peak_mem=36.1GB, elapsed=524s/600s
+STEP ts=1789657802.078 kind=train batch_idx=41 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657816.277 kind=train batch_idx=42 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657830.887 kind=train batch_idx=43 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657845.190 kind=train batch_idx=44 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657859.741 kind=train batch_idx=45 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+  Step 45: loss=10.3750, 9887 tok/s, peak_mem=36.1GB, elapsed=597s/600s
+STEP ts=1789657873.580 kind=train batch_idx=46 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657887.225 kind=train batch_idx=47 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657901.677 kind=train batch_idx=48 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1789657915.744 kind=train batch_idx=49 tokens=131072 passes=1 node=0 rank=0 loss=10.3750
+
+FSDP training complete: 49 steps in 652.6s
+  Total tokens: 6,422,528
+  Throughput: 9841 tok/s
+  Peak GPU memory: 36.1 GB
+2026-09-17 15:11:58,439 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-09-17 15:12:00,442 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,471 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu0_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,475 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_train_fsdp7b_nockpt_node0_gpu0_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,475 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,483 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu1_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,487 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_train_fsdp7b_nockpt_node0_gpu1_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,487 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,494 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu2_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,498 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_train_fsdp7b_nockpt_node0_gpu2_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,498 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,506 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu3_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,509 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_train_fsdp7b_nockpt_node0_gpu3_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,510 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,517 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu4_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,521 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_train_fsdp7b_nockpt_node0_gpu4_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,521 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,528 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu5_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,532 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_train_fsdp7b_nockpt_node0_gpu5_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,532 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,540 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu6_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,543 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_train_fsdp7b_nockpt_node0_gpu6_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,544 [spar.telemetry] INFO: Telemetry stopped. 671 samples collected.
+2026-09-17 15:12:00,551 [spar.telemetry] INFO: Saved 671 rows to data/s16_train_fsdp7b_nockpt_node0_gpu7_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet
+2026-09-17 15:12:00,555 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_train_fsdp7b_nockpt_node0_gpu7_NVIDIA_A100_SXM4_40GB_faa5a831bf43.parquet (671 rows)
+2026-09-17 15:12:00,556 [spar.multi_gpu] INFO: Multi-GPU run complete: faa5a831bf43 (rc=0)
