@@ -1,0 +1,50 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    gpt2_wikitext2_amp
+  Command:     /workspace/GPU-monitoring-h100/venv/bin/python /workspace/GPU-monitoring-h100/workloads/gpt2_finetune.py --steps 400 --batch-size 8 --amp
+  GPU:         NVIDIA H100 80GB HBM3 (index 0)
+  Run ID:      dfa14924a843
+  Output:      /workspace/GPU-monitoring-h100/data/gpt2_wikitext2_amp_NVIDIA_H100_80GB_HBM3_dfa14924_20261102_191528.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring-h100/data/gpt2_wikitext2_amp_NVIDIA_H100_80GB_HBM3_dfa14924_20261102_191528.parquet.partial
+  Timeout:     1200s
+  NCU (Tier3): no
+============================================================
+2026-11-02 19:15:28,131 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=gpt2_wikitext2_amp, run=dfa14924a843)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring-h100/venv/bin/python /workspace/GPU-monitoring-h100/workloads/gpt2_finetune.py --steps 400 --batch-size 8 --amp
+----------------------------------------
+GPT-2 124M fine-tuning
+  Device: cuda, Steps: 400, Batch: 8, AMP: True
+Loading WikiText-2 dataset...
+Token indices sequence length is longer than the specified maximum sequence length for this model (2403644 > 1024). Running this sequence through the model will result in indexing errors
+`loss_type=None` was set in the config but it is unrecognized. Using the default loss: `ForCausalLMLoss`.
+  Step 50/400: loss=3.2612, elapsed=2.7s
+  Step 100/400: loss=3.3687, elapsed=4.9s
+  Step 150/400: loss=3.4656, elapsed=7.1s
+  Step 200/400: loss=3.2075, elapsed=9.2s
+  Step 250/400: loss=3.1674, elapsed=11.4s
+  Step 300/400: loss=3.0459, elapsed=13.6s
+  Step 350/400: loss=3.0104, elapsed=15.8s
+  Step 400/400: loss=3.1029, elapsed=18.0s
+GPT-2 fine-tuning complete. Steps: 400, Wall time: 18.0s
+----------------------------------------
+Workload finished (exit_code=0, duration=36.3s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 19:16:08,389 [spar.telemetry] INFO: Telemetry stopped. 41 samples collected.
+2026-11-02 19:16:08,406 [spar.telemetry] INFO: Saved 41 rows to /workspace/GPU-monitoring-h100/data/gpt2_wikitext2_amp_NVIDIA_H100_80GB_HBM3_dfa14924_20261102_191528.parquet
+2026-11-02 19:16:08,408 [scripts.run_health] INFO: Run health: ok (span 40s, GPU busy in 43.9% of 41 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 41
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring-h100/data/gpt2_wikitext2_amp_NVIDIA_H100_80GB_HBM3_dfa14924_20261102_191528.parquet
+============================================================
+SPAR_CELL_DONE cell=gpt2_wikitext2_amp rep=1 exit=0

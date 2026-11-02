@@ -1,0 +1,52 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    pytorch_resnet_cifar10
+  Command:     /workspace/GPU-monitoring-h100/venv/bin/python /workspace/GPU-monitoring-h100/workloads/pytorch_training.py --model resnet18 --dataset cifar10 --epochs 10 --batch-size 512
+  GPU:         NVIDIA H100 80GB HBM3 (index 0)
+  Run ID:      ba12c86dba54
+  Output:      /workspace/GPU-monitoring-h100/data/pytorch_resnet_cifar10_NVIDIA_H100_80GB_HBM3_ba12c86d_20261102_194155.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring-h100/data/pytorch_resnet_cifar10_NVIDIA_H100_80GB_HBM3_ba12c86d_20261102_194155.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+2026-11-02 19:41:55,656 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=pytorch_resnet_cifar10, run=ba12c86dba54)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring-h100/venv/bin/python /workspace/GPU-monitoring-h100/workloads/pytorch_training.py --model resnet18 --dataset cifar10 --epochs 10 --batch-size 512
+----------------------------------------
+Training resnet18 on cifar10
+  Device: cuda
+  Epochs: 10, Batch size: 512, LR: 0.01
+  AMP: False
+Files already downloaded and verified
+  Epoch 1/10: loss=1.7312, acc=34.9%, time=3.2s
+  Epoch 2/10: loss=1.2676, acc=53.8%, time=2.7s
+  Epoch 3/10: loss=1.0264, acc=63.3%, time=2.7s
+  Epoch 4/10: loss=0.8353, acc=70.1%, time=2.8s
+  Epoch 5/10: loss=0.6672, acc=76.6%, time=2.7s
+  Epoch 6/10: loss=0.4884, acc=83.2%, time=2.8s
+  Epoch 7/10: loss=0.3149, acc=89.8%, time=2.8s
+  Epoch 8/10: loss=0.1761, acc=94.9%, time=2.8s
+  Epoch 9/10: loss=0.0875, acc=97.8%, time=2.8s
+  Epoch 10/10: loss=0.0420, acc=99.2%, time=2.8s
+Training complete. Total wall time: 28.0s
+----------------------------------------
+Workload finished (exit_code=0, duration=31.8s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 19:42:31,421 [spar.telemetry] INFO: Telemetry stopped. 36 samples collected.
+2026-11-02 19:42:31,438 [spar.telemetry] INFO: Saved 36 rows to /workspace/GPU-monitoring-h100/data/pytorch_resnet_cifar10_NVIDIA_H100_80GB_HBM3_ba12c86d_20261102_194155.parquet
+2026-11-02 19:42:31,440 [scripts.run_health] INFO: Run health: ok (span 35s, GPU busy in 75.0% of 36 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 36
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring-h100/data/pytorch_resnet_cifar10_NVIDIA_H100_80GB_HBM3_ba12c86d_20261102_194155.parquet
+============================================================
+SPAR_CELL_DONE cell=pytorch_resnet_cifar10 rep=2 exit=0

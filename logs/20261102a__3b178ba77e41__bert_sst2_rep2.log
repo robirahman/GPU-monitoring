@@ -1,0 +1,48 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    bert_sst2
+  Command:     /workspace/GPU-monitoring-h100/venv/bin/python /workspace/GPU-monitoring-h100/workloads/bert_finetune.py --steps 300 --batch-size 32
+  GPU:         NVIDIA H100 80GB HBM3 (index 0)
+  Run ID:      fbcecef7aaae
+  Output:      /workspace/GPU-monitoring-h100/data/bert_sst2_NVIDIA_H100_80GB_HBM3_fbcecef7_20261102_191118.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring-h100/data/bert_sst2_NVIDIA_H100_80GB_HBM3_fbcecef7_20261102_191118.parquet.partial
+  Timeout:     900s
+  NCU (Tier3): no
+============================================================
+2026-11-02 19:11:18,524 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA H100 80GB HBM3, interval=1.0s, dcgm=disabled, label=bert_sst2, run=fbcecef7aaae)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring-h100/venv/bin/python /workspace/GPU-monitoring-h100/workloads/bert_finetune.py --steps 300 --batch-size 32
+----------------------------------------
+BERT-base fine-tuning on SST-2
+  Device: cuda, Steps: 300, Batch: 32, AMP: False
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Loading SST-2 dataset...
+  Step 50/300: loss=0.3352, elapsed=3.4s
+  Step 100/300: loss=0.2754, elapsed=6.6s
+  Step 150/300: loss=0.2823, elapsed=9.7s
+  Step 200/300: loss=0.0664, elapsed=12.9s
+  Step 250/300: loss=0.3956, elapsed=16.0s
+  Step 300/300: loss=0.1570, elapsed=19.2s
+BERT fine-tuning complete. Steps: 300, Wall time: 19.2s
+----------------------------------------
+Workload finished (exit_code=0, duration=29.3s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 19:11:51,812 [spar.telemetry] INFO: Telemetry stopped. 34 samples collected.
+2026-11-02 19:11:51,829 [spar.telemetry] INFO: Saved 34 rows to /workspace/GPU-monitoring-h100/data/bert_sst2_NVIDIA_H100_80GB_HBM3_fbcecef7_20261102_191118.parquet
+2026-11-02 19:11:51,831 [scripts.run_health] INFO: Run health: ok (span 33s, GPU busy in 55.9% of 34 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 34
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring-h100/data/bert_sst2_NVIDIA_H100_80GB_HBM3_fbcecef7_20261102_191118.parquet
+============================================================
+SPAR_CELL_DONE cell=bert_sst2 rep=2 exit=0
