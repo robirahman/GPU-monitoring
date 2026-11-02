@@ -1,0 +1,49 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    llm_infer_phi3_mini_seq2048
+  Command:     /workspace/GPU-monitoring/venv-cu128/bin/python /workspace/GPU-monitoring-5080/workloads/llm_inference.py --model phi3_mini --duration 300 --batch-size 1 --seq-len 2048 --max-tokens 256
+  GPU:         NVIDIA GeForce RTX 5080 (index 0)
+  Run ID:      54d7c1cab3f1
+  Output:      /workspace/GPU-monitoring-5080/data/llm_infer_phi3_mini_seq2048_NVIDIA_GeForce_RTX_5080_54d7c1ca_20261102_194237.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring-5080/data/llm_infer_phi3_mini_seq2048_NVIDIA_GeForce_RTX_5080_54d7c1ca_20261102_194237.parquet.partial
+  Timeout:     480s
+  NCU (Tier3): no
+============================================================
+2026-11-02 19:42:37,660 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA GeForce RTX 5080, interval=1.0s, dcgm=disabled, label=llm_infer_phi3_mini_seq2048, run=54d7c1cab3f1)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring/venv-cu128/bin/python /workspace/GPU-monitoring-5080/workloads/llm_inference.py --model phi3_mini --duration 300 --batch-size 1 --seq-len 2048 --max-tokens 256
+----------------------------------------
+Loading phi3_mini (microsoft/Phi-3-mini-4k-instruct, fp16)
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.41s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.75s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.85s/it]
+  params: 3.82B | batch_size=1 | seq_len=2048 | max_tokens=256
+  iter 5: 1280 tok, 29.0 tok/s, 44s
+  iter 10: 2308 tok, 29.1 tok/s, 79s
+  iter 15: 3588 tok, 29.4 tok/s, 122s
+  iter 20: 4868 tok, 29.3 tok/s, 166s
+  iter 25: 6148 tok, 29.3 tok/s, 210s
+  iter 30: 7428 tok, 29.4 tok/s, 253s
+2026-11-02 19:47:37,806 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /workspace/GPU-monitoring-5080/data/llm_infer_phi3_mini_seq2048_NVIDIA_GeForce_RTX_5080_54d7c1ca_20261102_194237.parquet.partial
+  iter 35: 8708 tok, 29.4 tok/s, 296s
+phi3_mini done: 36 iters, 8964 tok, 29.4 tok/s, 304.5s wall
+----------------------------------------
+Workload finished (exit_code=0, duration=316.8s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 19:47:58,453 [spar.telemetry] INFO: Telemetry stopped. 321 samples collected.
+2026-11-02 19:47:58,467 [spar.telemetry] INFO: Saved 321 rows to /workspace/GPU-monitoring-5080/data/llm_infer_phi3_mini_seq2048_NVIDIA_GeForce_RTX_5080_54d7c1ca_20261102_194237.parquet
+2026-11-02 19:47:58,476 [scripts.run_health] INFO: Run health: ok (span 320s of 300s requested, GPU busy in 95.6% of 321 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 321
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring-5080/data/llm_infer_phi3_mini_seq2048_NVIDIA_GeForce_RTX_5080_54d7c1ca_20261102_194237.parquet
+============================================================
+SPAR_CELL_DONE cell=llm_infer_phi3_mini_seq2048 rep=1 exit=0
