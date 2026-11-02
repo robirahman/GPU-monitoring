@@ -1,0 +1,127 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    resnet50_inference
+  Command:     /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/inference.py --model resnet50 --batch-size 256 --duration 600
+  GPU:         NVIDIA B200 (index 0)
+  Run ID:      24b9672c5330
+  Output:      /workspace/GPU-monitoring/data/resnet50_inference_NVIDIA_B200_24b9672c_20261102_174804.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring/data/resnet50_inference_NVIDIA_B200_24b9672c_20261102_174804.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+2026-11-02 17:48:04,025 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA B200, interval=1.0s, dcgm=disabled, label=resnet50_inference, run=24b9672c5330)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/inference.py --model resnet50 --batch-size 256 --duration 600
+----------------------------------------
+Inference workload: resnet50
+  Device: cuda, Batch: 256, Duration: 600s
+  Pass 1: 10000 samples, 1329 img/s, 7.5s elapsed
+  Pass 2: 20000 samples, 1390 img/s, 14.4s elapsed
+  Pass 3: 30000 samples, 1392 img/s, 21.6s elapsed
+  Pass 4: 40000 samples, 1396 img/s, 28.7s elapsed
+  Pass 5: 50000 samples, 1401 img/s, 35.7s elapsed
+  Pass 6: 60000 samples, 1406 img/s, 42.7s elapsed
+  Pass 7: 70000 samples, 1407 img/s, 49.8s elapsed
+  Pass 8: 80000 samples, 1409 img/s, 56.8s elapsed
+  Pass 9: 90000 samples, 1408 img/s, 63.9s elapsed
+  Pass 10: 100000 samples, 1407 img/s, 71.1s elapsed
+  Pass 11: 110000 samples, 1408 img/s, 78.1s elapsed
+  Pass 12: 120000 samples, 1408 img/s, 85.2s elapsed
+  Pass 13: 130000 samples, 1407 img/s, 92.4s elapsed
+  Pass 14: 140000 samples, 1409 img/s, 99.4s elapsed
+  Pass 15: 150000 samples, 1411 img/s, 106.3s elapsed
+  Pass 16: 160000 samples, 1412 img/s, 113.3s elapsed
+  Pass 17: 170000 samples, 1411 img/s, 120.5s elapsed
+  Pass 18: 180000 samples, 1412 img/s, 127.5s elapsed
+  Pass 19: 190000 samples, 1413 img/s, 134.5s elapsed
+  Pass 20: 200000 samples, 1414 img/s, 141.5s elapsed
+  Pass 21: 210000 samples, 1415 img/s, 148.4s elapsed
+  Pass 22: 220000 samples, 1418 img/s, 155.2s elapsed
+  Pass 23: 230000 samples, 1418 img/s, 162.2s elapsed
+  Pass 24: 240000 samples, 1417 img/s, 169.4s elapsed
+  Pass 25: 250000 samples, 1416 img/s, 176.5s elapsed
+  Pass 26: 260000 samples, 1417 img/s, 183.4s elapsed
+  Pass 27: 270000 samples, 1419 img/s, 190.3s elapsed
+  Pass 28: 280000 samples, 1421 img/s, 197.0s elapsed
+  Pass 29: 290000 samples, 1422 img/s, 204.0s elapsed
+  Pass 30: 300000 samples, 1421 img/s, 211.1s elapsed
+  Pass 31: 310000 samples, 1422 img/s, 218.1s elapsed
+  Pass 32: 320000 samples, 1422 img/s, 225.0s elapsed
+  Pass 33: 330000 samples, 1421 img/s, 232.2s elapsed
+  Pass 34: 340000 samples, 1421 img/s, 239.3s elapsed
+  Pass 35: 350000 samples, 1422 img/s, 246.2s elapsed
+  Pass 36: 360000 samples, 1422 img/s, 253.2s elapsed
+  Pass 37: 370000 samples, 1423 img/s, 260.0s elapsed
+  Pass 38: 380000 samples, 1425 img/s, 266.8s elapsed
+  Pass 39: 390000 samples, 1424 img/s, 273.8s elapsed
+  Pass 40: 400000 samples, 1425 img/s, 280.7s elapsed
+  Pass 41: 410000 samples, 1426 img/s, 287.5s elapsed
+2026-11-02 17:53:04,115 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /workspace/GPU-monitoring/data/resnet50_inference_NVIDIA_B200_24b9672c_20261102_174804.parquet.partial
+  Pass 42: 420000 samples, 1426 img/s, 294.5s elapsed
+  Pass 43: 430000 samples, 1426 img/s, 301.5s elapsed
+  Pass 44: 440000 samples, 1426 img/s, 308.5s elapsed
+  Pass 45: 450000 samples, 1426 img/s, 315.5s elapsed
+  Pass 46: 460000 samples, 1426 img/s, 322.5s elapsed
+  Pass 47: 470000 samples, 1426 img/s, 329.6s elapsed
+  Pass 48: 480000 samples, 1426 img/s, 336.6s elapsed
+  Pass 49: 490000 samples, 1426 img/s, 343.7s elapsed
+  Pass 50: 500000 samples, 1426 img/s, 350.6s elapsed
+  Pass 51: 510000 samples, 1426 img/s, 357.6s elapsed
+  Pass 52: 520000 samples, 1426 img/s, 364.7s elapsed
+  Pass 53: 530000 samples, 1425 img/s, 371.8s elapsed
+  Pass 54: 540000 samples, 1425 img/s, 378.9s elapsed
+  Pass 55: 550000 samples, 1425 img/s, 385.9s elapsed
+  Pass 56: 560000 samples, 1425 img/s, 393.0s elapsed
+  Pass 57: 570000 samples, 1425 img/s, 400.0s elapsed
+  Pass 58: 580000 samples, 1425 img/s, 407.1s elapsed
+  Pass 59: 590000 samples, 1425 img/s, 414.1s elapsed
+  Pass 60: 600000 samples, 1425 img/s, 421.1s elapsed
+  Pass 61: 610000 samples, 1424 img/s, 428.4s elapsed
+  Pass 62: 620000 samples, 1424 img/s, 435.3s elapsed
+  Pass 63: 630000 samples, 1424 img/s, 442.3s elapsed
+  Pass 64: 640000 samples, 1425 img/s, 449.3s elapsed
+  Pass 65: 650000 samples, 1424 img/s, 456.4s elapsed
+  Pass 66: 660000 samples, 1424 img/s, 463.4s elapsed
+  Pass 67: 670000 samples, 1424 img/s, 470.4s elapsed
+  Pass 68: 680000 samples, 1425 img/s, 477.3s elapsed
+  Pass 69: 690000 samples, 1425 img/s, 484.2s elapsed
+  Pass 70: 700000 samples, 1425 img/s, 491.2s elapsed
+  Pass 71: 710000 samples, 1426 img/s, 498.0s elapsed
+  Pass 72: 720000 samples, 1426 img/s, 505.0s elapsed
+  Pass 73: 730000 samples, 1426 img/s, 512.1s elapsed
+  Pass 74: 740000 samples, 1425 img/s, 519.2s elapsed
+  Pass 75: 750000 samples, 1425 img/s, 526.3s elapsed
+  Pass 76: 760000 samples, 1425 img/s, 533.2s elapsed
+  Pass 77: 770000 samples, 1426 img/s, 540.1s elapsed
+  Pass 78: 780000 samples, 1425 img/s, 547.2s elapsed
+  Pass 79: 790000 samples, 1425 img/s, 554.2s elapsed
+  Pass 80: 800000 samples, 1426 img/s, 561.0s elapsed
+  Pass 81: 810000 samples, 1426 img/s, 567.9s elapsed
+  Pass 82: 820000 samples, 1426 img/s, 575.0s elapsed
+  Pass 83: 830000 samples, 1426 img/s, 582.0s elapsed
+  Pass 84: 840000 samples, 1426 img/s, 589.1s elapsed
+2026-11-02 17:58:04,129 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /workspace/GPU-monitoring/data/resnet50_inference_NVIDIA_B200_24b9672c_20261102_174804.parquet.partial
+  Pass 85: 850000 samples, 1426 img/s, 596.2s elapsed
+  Pass 86: 855120 samples, 1424 img/s, 600.4s elapsed
+Inference complete. Samples: 855120, Throughput: 1424 img/s
+----------------------------------------
+Workload finished (exit_code=0, duration=605.5s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 17:58:13,572 [spar.telemetry] INFO: Telemetry stopped. 610 samples collected.
+2026-11-02 17:58:13,580 [spar.telemetry] INFO: Saved 610 rows to /workspace/GPU-monitoring/data/resnet50_inference_NVIDIA_B200_24b9672c_20261102_174804.parquet
+2026-11-02 17:58:13,584 [scripts.run_health] INFO: Run health: ok (span 609s of 600s requested, GPU busy in 44.8% of 610 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 610
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring/data/resnet50_inference_NVIDIA_B200_24b9672c_20261102_174804.parquet
+============================================================
+SPAR_CELL_DONE cell=resnet50_inference rep=1 exit=0

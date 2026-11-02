@@ -1,0 +1,61 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    nbody_sim
+  Command:     /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/scientific_hpc.py --workload nbody --duration 600 --n-bodies 4096
+  GPU:         NVIDIA B200 (index 0)
+  Run ID:      6e94eb64dcdb
+  Output:      /workspace/GPU-monitoring/data/nbody_sim_NVIDIA_B200_6e94eb64_20261102_171741.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring/data/nbody_sim_NVIDIA_B200_6e94eb64_20261102_171741.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+2026-11-02 17:17:41,800 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA B200, interval=1.0s, dcgm=disabled, label=nbody_sim, run=6e94eb64dcdb)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/scientific_hpc.py --workload nbody --duration 600 --n-bodies 4096
+----------------------------------------
+Scientific HPC workload: nbody
+  Device: cuda
+  N-body simulation: 4096 bodies, 600s
+  Step 34046: 30.0s elapsed
+  Step 68193: 60.0s elapsed
+  Step 102341: 90.0s elapsed
+  Step 136489: 120.0s elapsed
+  Step 170631: 150.0s elapsed
+  Step 204776: 180.0s elapsed
+  Step 238917: 210.0s elapsed
+  Step 273065: 240.0s elapsed
+  Step 307214: 270.0s elapsed
+2026-11-02 17:22:41,892 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /workspace/GPU-monitoring/data/nbody_sim_NVIDIA_B200_6e94eb64_20261102_171741.parquet.partial
+  Step 341364: 300.0s elapsed
+  Step 375519: 330.0s elapsed
+  Step 409668: 360.0s elapsed
+  Step 443816: 390.0s elapsed
+  Step 477964: 420.0s elapsed
+  Step 512115: 450.0s elapsed
+  Step 546264: 480.0s elapsed
+  Step 580410: 510.0s elapsed
+  Step 614558: 540.0s elapsed
+  Step 648697: 570.0s elapsed
+2026-11-02 17:27:42,899 [spar.telemetry] INFO: Checkpoint 2: 602 samples -> /workspace/GPU-monitoring/data/nbody_sim_NVIDIA_B200_6e94eb64_20261102_171741.parquet.partial
+N-body complete. Steps: 682836, Wall time: 600.0s
+----------------------------------------
+Workload finished (exit_code=0, duration=603.0s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 17:27:48,775 [spar.telemetry] INFO: Telemetry stopped. 607 samples collected.
+2026-11-02 17:27:48,787 [spar.telemetry] INFO: Saved 607 rows to /workspace/GPU-monitoring/data/nbody_sim_NVIDIA_B200_6e94eb64_20261102_171741.parquet
+2026-11-02 17:27:48,794 [scripts.run_health] INFO: Run health: ok (span 606s of 600s requested, GPU busy in 98.8% of 607 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 607
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring/data/nbody_sim_NVIDIA_B200_6e94eb64_20261102_171741.parquet
+============================================================
+SPAR_CELL_DONE cell=nbody_sim rep=1 exit=0

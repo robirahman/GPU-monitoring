@@ -1,0 +1,61 @@
+============================================================
+SPAR Workload Run
+============================================================
+  Workload:    cufft_benchmark
+  Command:     /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/scientific_hpc.py --workload cufft --duration 600
+  GPU:         NVIDIA B200 (index 0)
+  Run ID:      23f1f191b8f7
+  Output:      /workspace/GPU-monitoring/data/cufft_benchmark_NVIDIA_B200_23f1f191_20261102_170734.parquet
+  Interval:    1.0s
+  DCGM:        disabled
+  Checkpoint:  every 300s -> /workspace/GPU-monitoring/data/cufft_benchmark_NVIDIA_B200_23f1f191_20261102_170734.parquet.partial
+  Timeout:     660s
+  NCU (Tier3): no
+============================================================
+2026-11-02 17:07:34,425 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA B200, interval=1.0s, dcgm=disabled, label=cufft_benchmark, run=23f1f191b8f7)
+
+Collecting pre-workload baseline (2s)...
+
+Launching workload: /workspace/GPU-monitoring/venv/bin/python /workspace/GPU-monitoring/workloads/scientific_hpc.py --workload cufft --duration 600
+----------------------------------------
+Scientific HPC workload: cufft
+  Device: cuda
+  cuFFT benchmark: (512, 512, 64) complex float32 tensors, 600s
+  Iteration 53798: 30.0s elapsed
+  Iteration 107690: 60.0s elapsed
+  Iteration 161580: 90.0s elapsed
+  Iteration 215470: 120.0s elapsed
+  Iteration 269340: 150.0s elapsed
+  Iteration 323234: 180.0s elapsed
+  Iteration 377130: 210.0s elapsed
+  Iteration 431031: 240.0s elapsed
+  Iteration 484930: 270.0s elapsed
+2026-11-02 17:12:34,518 [spar.telemetry] INFO: Checkpoint 1: 301 samples -> /workspace/GPU-monitoring/data/cufft_benchmark_NVIDIA_B200_23f1f191_20261102_170734.parquet.partial
+  Iteration 538828: 300.0s elapsed
+  Iteration 592730: 330.0s elapsed
+  Iteration 646638: 360.0s elapsed
+  Iteration 700545: 390.0s elapsed
+  Iteration 754440: 420.0s elapsed
+  Iteration 808335: 450.0s elapsed
+  Iteration 862213: 480.0s elapsed
+  Iteration 916106: 510.0s elapsed
+  Iteration 969995: 540.0s elapsed
+  Iteration 1023887: 570.0s elapsed
+2026-11-02 17:17:34,527 [spar.telemetry] INFO: Checkpoint 2: 601 samples -> /workspace/GPU-monitoring/data/cufft_benchmark_NVIDIA_B200_23f1f191_20261102_170734.parquet.partial
+cuFFT complete. Iterations: 1077762, Wall time: 600.0s
+----------------------------------------
+Workload finished (exit_code=0, duration=602.9s)
+Collecting post-workload cooldown (2s)...
+2026-11-02 17:17:41,326 [spar.telemetry] INFO: Telemetry stopped. 607 samples collected.
+2026-11-02 17:17:41,334 [spar.telemetry] INFO: Saved 607 rows to /workspace/GPU-monitoring/data/cufft_benchmark_NVIDIA_B200_23f1f191_20261102_170734.parquet
+2026-11-02 17:17:41,338 [scripts.run_health] INFO: Run health: ok (span 606s of 600s requested, GPU busy in 98.8% of 607 samples)
+
+============================================================
+Run Summary
+============================================================
+  Samples collected: 607
+  Workload exit code: 0
+  Run health: ok
+  Output file: /workspace/GPU-monitoring/data/cufft_benchmark_NVIDIA_B200_23f1f191_20261102_170734.parquet
+============================================================
+SPAR_CELL_DONE cell=cufft_benchmark rep=3 exit=0
