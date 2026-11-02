@@ -39,6 +39,14 @@ EXPECT = {
     "AMD Instinct MI300X VF": "MI300X",
 }
 
+# Cells a standard rented container cannot run, with the reason. Surfaced in
+# the ranking so a rental is not taken for work the instance cannot do.
+BLOCKED = {
+    "adversarial_G_clock_throttled":
+        "needs privileged `nvidia-smi -pl` / `--lock-gpu-clocks`; "
+        "bare-metal or a privileged container only",
+}
+
 RENT = {
     "GeForce RTX 4050 Laptop GPU": ("rtx4050", "the laptop you already have", ""),
     "GeForce RTX 5080": ("rtx5080", "1x RTX 5080 (Vast.ai)",
@@ -305,9 +313,21 @@ def main():
              "the frozen corpus rather than only to coverage claims.\n",
              "| # | rent | cells | runs | windows restored | quickstart |",
              "| --: | :-- | --: | --: | --: | :-- |"]
+    notes = []
     for i, (_, r) in enumerate(idx.iterrows(), 1):
-        lines.append(f"| {i} | {r.rent} | {r.cells} | {r.runs} | "
+        hw_cells = sorted(set(todo[todo.hw.eq(r.device)].collect_as))
+        blocked = [c for c in hw_cells if c in BLOCKED]
+        flag = " **(see note)**" if blocked and len(blocked) == len(hw_cells) else (
+            " (partly blocked)" if blocked else "")
+        lines.append(f"| {i} | {r.rent}{flag} | {r.cells} | {r.runs} | "
                      f"~{r.windows} | `quickstart_{r.slug}.md` |")
+        for c in blocked:
+            notes.append(f"- **{r.device} / `{c}`** -- {BLOCKED[c]}."
+                         + (" This is the device's ONLY remaining cell, so an"
+                            " ordinary rental achieves nothing here."
+                            if len(blocked) == len(hw_cells) else ""))
+    if notes:
+        lines += ["", "## Blocked cells", ""] + notes
     lines += ["",
               f"**{int(idx.runs.sum())} runs, ~{int(idx.windows.sum())} windows, "
               f"{len(idx)} rentals.**\n",

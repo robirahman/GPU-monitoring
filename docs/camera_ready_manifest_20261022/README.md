@@ -18,7 +18,7 @@ gating change the latter.
 | `unassigned_pre_rebuttal` | 66 | 66 | 41 | 16 | 431 | 2.2 | 7,952 | 2026-06-24 | 2026-06-24 |
 | `B_rebuttal` | 115 | 115 | 61 | 12 | 14,619 | 61.7 | 222,112 | 2026-07-24 | 2026-08-04 |
 | `unassigned_post_rebuttal` | 0 | 0 | 0 | 0 | 0 | 0 | 0 | - | - |
-| `C_followup` | 1,490 | 8,191 | 345 | 83 | 314,500 | 1,357.4 | 4,893,988 | 2026-08-20 | 2026-10-29 |
+| `C_followup` | 1,499 | 8,200 | 345 | 83 | 314,851 | 1,359.0 | 4,899,460 | 2026-08-20 | 2026-11-02 |
 
 ## Tier definitions
 
@@ -60,7 +60,7 @@ are the jobs where window-level and run-level scoring actually disagree.
 | `unassigned_pre_rebuttal` | 66 | 0 | 35 | 0 | 228 |
 | `B_rebuttal` | 115 | 114 | 115 | 114 | 14,619 |
 | `unassigned_post_rebuttal` | 0 | 0 | 0 | 0 | 0 |
-| `C_followup` | 1,490 | 610 | 554 | 247 | 56,471 |
+| `C_followup` | 1,499 | 610 | 554 | 247 | 56,471 |
 
 ## Unreadable inputs (32)
 

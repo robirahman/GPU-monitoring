@@ -1,6 +1,6 @@
 # Collecting the missing B200 runs
 
-**Rent: 1x B200.** 4 cells x 3 reps = 12 runs.
+**Rent: 1x B200.** 1 cells x 3 reps = 3 runs.
 
 Needs `requirements_blackwell.txt` (cu128). The repo's default pin is torch 2.5.1+cu121, which carries no sm_100 kernels.
 
@@ -47,10 +47,10 @@ torch.cuda.synchronize(); print('preflight OK')
 PY
 ```
 
-## 3. The 4 single-GPU cells
+## 3. The 1 single-GPU cells
 
 ```bash
-CELLS="adversarial_G_clock_throttled cufft_benchmark nbody_sim resnet50_inference"
+CELLS="adversarial_G_clock_throttled"
 for cell in $CELLS; do for rep in 1 2 3; do
   log="logs/${STAMP}__$(hostname -s)__${cell#adversarial_}_rep${rep}.log"
   grep -q "SPAR_CELL_DONE.*exit=0" "$log" 2>/dev/null && continue
@@ -74,6 +74,9 @@ done; done
 | `adversarial_L_diluted_20_mw8` | 3 |
 | `adversarial_L_diluted_2_mw8` | 3 |
 | `adversarial_L_diluted_5_mw8` | 3 |
+| `cufft_benchmark` | 3 |
+| `nbody_sim` | 3 |
+| `resnet50_inference` | 3 |
 
 ## Cannot be reproduced on B200
 
