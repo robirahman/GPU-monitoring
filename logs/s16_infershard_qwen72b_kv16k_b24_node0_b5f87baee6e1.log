@@ -1,280 +1,0 @@
-2026-09-21 03:18:42,917 [spar.multi_gpu] INFO: Multi-GPU run: s16_infershard_qwen72b_kv16k_b24, 8 GPUs, node=0, run_id=b5f87baee6e1
-Run ID: b5f87baee6e1
-2026-09-21 03:18:42,947 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:42,948 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:42,948 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:42,965 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:42,965 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:42,965 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:42,980 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:42,980 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:42,980 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:42,999 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:42,999 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:42,999 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:43,019 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:43,019 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:43,019 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:43,040 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:43,040 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:43,041 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:43,063 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:43,064 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:43,064 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:43,081 [spar.telemetry] INFO: DCGM Python bindings not available; Tier 2 metrics will be omitted. To enable: apt-get install datacenter-gpu-manager && nv-hostengine -d
-2026-09-21 03:18:43,082 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-40GB, interval=1.0s, dcgm=disabled, label=s16_infershard_qwen72b_kv16k_b24, run=b5f87baee6e1)
-2026-09-21 03:18:43,082 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-40GB)
-2026-09-21 03:18:45,083 [spar.multi_gpu] INFO:   Launching: /opt/spar/repo/venv-vllm/bin/python workloads/llm_inference_vllm.py --model qwen25_72b_fp16 --tensor-parallel-size 8 --pipeline-parallel-size 2 --distributed-executor-backend ray --duration 600 --prompt-tokens 16000 --max-tokens 128 --batch-size 24 --gpu-memory-utilization 0.92
-Loading qwen25_72b_fp16 via vLLM
-  model_id=Qwen/Qwen2.5-72B-Instruct dtype=float16 tensor_parallel_size=8 pipeline_parallel_size=2 backend=ray
-INFO 09-21 03:18:54 [api_utils.py:272] non-default args: {'trust_remote_code': True, 'dtype': 'float16', 'max_model_len': 4096, 'distributed_executor_backend': 'ray', 'pipeline_parallel_size': 2, 'tensor_parallel_size': 8, 'disable_log_stats': True, 'model': 'Qwen/Qwen2.5-72B-Instruct'}
-INFO 09-21 03:18:54 [model.py:672] Resolved architecture: Qwen2ForCausalLM
-WARNING 09-21 03:18:54 [model.py:2299] Casting torch.bfloat16 to torch.float16.
-INFO 09-21 03:18:54 [model.py:1965] Using max model len 4096
-INFO 09-21 03:18:54 [scheduler.py:242] Chunked prefill is enabled with max_num_batched_tokens=8192.
-INFO 09-21 03:18:54 [kernel.py:308] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-(EngineCore pid=10652) INFO 09-21 03:19:07 [core.py:122] Initializing a V1 LLM engine (v0.28.0) with config: model='Qwen/Qwen2.5-72B-Instruct', speculative_config=None, tokenizer='Qwen/Qwen2.5-72B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=True, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=8, pipeline_parallel_size=2, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=Qwen/Qwen2.5-72B-Instruct, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native']), enable_flashinfer_autotune=True, enable_cutedsl_warmup=True, enable_jit_warmup=True, enable_bf16x3_router_gemm=False, moe_backend='auto', linear_backend='auto')
-(EngineCore pid=10652) WARNING 09-21 03:19:07 [ray_utils.py:569] Tensor parallel size (16) exceeds available GPUs (8). This may result in Ray placement group allocation failures. Consider reducing tensor_parallel_size to 8 or less, or ensure your Ray cluster has 16 GPUs available.
-(EngineCore pid=10652) 2026-09-21 03:19:07,857	INFO worker.py:1683 -- Using address spar-a100-0:6379 set in the environment variable RAY_ADDRESS
-(EngineCore pid=10652) 2026-09-21 03:19:07,863	INFO worker.py:1833 -- Connecting to existing Ray cluster at address: spar-a100-0:6379...
-(EngineCore pid=10652) 2026-09-21 03:19:08,011	INFO worker.py:2024 -- Connected to Ray cluster.
-(EngineCore pid=10652) INFO 09-21 03:19:08 [ray_utils.py:634] No current placement group found. Creating a new placement group.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10884)[0m (Worker_PP0_TP1 pid=10884) Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:   0% Completed | 0/37 [00:00<?, ?it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8731, ip=10.128.15.224)[0m (Worker_PP1_TP6 pid=8731) Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.[32m [repeated 5x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:   3% Completed | 1/37 [00:00<00:24,  1.50it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:   5% Completed | 2/37 [00:01<00:25,  1.40it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:   8% Completed | 3/37 [00:02<00:24,  1.40it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  11% Completed | 4/37 [00:02<00:24,  1.37it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  14% Completed | 5/37 [00:03<00:23,  1.36it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  16% Completed | 6/37 [00:04<00:23,  1.34it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  19% Completed | 7/37 [00:05<00:21,  1.37it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  22% Completed | 8/37 [00:05<00:21,  1.36it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  24% Completed | 9/37 [00:06<00:20,  1.36it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  27% Completed | 10/37 [00:07<00:20,  1.34it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  30% Completed | 11/37 [00:08<00:19,  1.35it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  32% Completed | 12/37 [00:08<00:18,  1.34it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  35% Completed | 13/37 [00:09<00:17,  1.34it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  38% Completed | 14/37 [00:10<00:17,  1.33it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  41% Completed | 15/37 [00:11<00:16,  1.35it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  43% Completed | 16/37 [00:11<00:15,  1.34it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  46% Completed | 17/37 [00:12<00:14,  1.34it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  49% Completed | 18/37 [00:13<00:14,  1.32it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards:  51% Completed | 19/37 [00:13<00:11,  1.57it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Loading safetensors checkpoint shards: 100% Completed | 37/37 [00:13<00:00,  2.69it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) 
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m WARNING 09-21 03:19:26 [worker_base.py:310] Missing `shared_worker_lock` argument from executor. This argument is needed for mm_processor_cache_type='shm'.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) INFO 09-21 03:19:32 [parallel_state.py:1638] world_size=16 rank=0 local_rank=0 distributed_init_method=tcp://10.128.15.222:100 backend=nccl
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8730, ip=10.128.15.224)[0m WARNING 09-21 03:19:26 [worker_base.py:310] Missing `shared_worker_lock` argument from executor. This argument is needed for mm_processor_cache_type='shm'.[32m [repeated 15x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker pid=8726) INFO 09-21 03:19:33 [pynccl.py:113] vLLM is using nccl==2.29.7
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) WARNING 09-21 03:19:35 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.0 not supported, communicator is not available.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) INFO 09-21 03:19:35 [cuda_communicator.py:266] Using ['CUSTOM', 'PYNCCL'] all-reduce backends (in dispatch order) for group 'tp:0' out of potential backends: ['NCCL_SYMM_MEM', 'QUICK_REDUCE', 'FLASHINFER', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) INFO 09-21 03:19:35 [cuda_communicator.py:266] Using ['PYNCCL'] all-reduce backends (in dispatch order) for group 'pp:0' out of potential backends: ['NCCL_SYMM_MEM', 'QUICK_REDUCE', 'FLASHINFER', 'AITER_CUSTOM', 'CUSTOM', 'SYMM_MEM', 'PYNCCL'].
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) INFO 09-21 03:19:35 [parallel_state.py:1982] rank 0 in world size 16 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) INFO 09-21 03:19:35 [gpu_worker.py:396] Using V2 Model Runner
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:19:35 [model_runner.py:358] Loading model from scratch...
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:19:36 [cuda.py:486] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'TRITON_ATTN', 'FLEX_ATTENTION'].
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:19:36 [flash_attn.py:866] Using FlashAttention version 2
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8727, ip=10.128.15.224)[0m (Worker_PP1_TP2 pid=8727) INFO 09-21 03:35:15 [weight_utils.py:521] Time spent downloading weights for Qwen/Qwen2.5-72B-Instruct: 938.806015 seconds
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8730, ip=10.128.15.224)[0m (Worker pid=8730) INFO 09-21 03:19:33 [parallel_state.py:1638] world_size=16 rank=13 local_rank=5 distributed_init_method=tcp://10.128.15.222:100 backend=nccl[32m [repeated 15x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker pid=10885) INFO 09-21 03:19:33 [pynccl.py:113] vLLM is using nccl==2.29.7
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8730, ip=10.128.15.224)[0m (Worker pid=8730) WARNING 09-21 03:19:35 [symm_mem.py:67] SymmMemCommunicator: Device capability 8.0 not supported, communicator is not available.[32m [repeated 15x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker pid=8726) INFO 09-21 03:19:35 [parallel_state.py:1982] rank 8 in world size 16 is assigned as DP rank 0, PP rank 1, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker pid=8726) INFO 09-21 03:19:35 [gpu_worker.py:396] Using V2 Model Runner
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:19:36 [model_runner.py:358] Loading model from scratch...
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:19:36 [cuda.py:486] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'TRITON_ATTN', 'FLEX_ATTENTION'].
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:19:36 [flash_attn.py:866] Using FlashAttention version 2
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:35:15 [weight_utils.py:858] Filesystem type for checkpoints: EXT4. Checkpoint size: 135.43 GiB. Available RAM: 642.72 GiB.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:35:15 [weight_utils.py:881] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:35:28 [default_loader.py:430] Loading weights took 12.78 seconds
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:35:29 [model_runner.py:380] Model loading took 8.5 GiB memory and 953.701491 seconds
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:35:29 [topk_topp_sampler.py:46] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10884)[0m (Worker_PP0_TP1 pid=10884) INFO 09-21 03:37:31 [weight_utils.py:521] Time spent downloading weights for Qwen/Qwen2.5-72B-Instruct: 1074.968306 seconds
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8732, ip=10.128.15.224)[0m (Worker_PP1_TP7 pid=8732) INFO 09-21 03:35:30 [model_runner.py:380] Model loading took 8.5 GiB memory and 954.905890 seconds[32m [repeated 7x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:37:32 [weight_utils.py:858] Filesystem type for checkpoints: EXT4. Checkpoint size: 135.43 GiB. Available RAM: 638.71 GiB.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:37:32 [weight_utils.py:881] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:37:45 [default_loader.py:430] Loading weights took 13.75 seconds
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10888)[0m (Worker_PP0_TP4 pid=10888) INFO 09-21 03:37:46 [model_runner.py:380] Model loading took 8.5 GiB memory and 1090.192386 seconds
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:01 [backends.py:1094] Using cache directory: /root/.cache/vllm/torch_compile_cache/7f712ca540/rank_0_0/backbone for vLLM's torch.compile
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:01 [backends.py:1155] Dynamo bytecode transform time: 10.59 s
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:37:46 [model_runner.py:380] Model loading took 8.5 GiB memory and 1090.889187 seconds[32m [repeated 7x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:13 [backends.py:393] Compiling a graph for compile range (1, 8192) takes 10.58 s
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:02 [backends.py:1094] Using cache directory: /root/.cache/vllm/torch_compile_cache/4c7ec37240/rank_8_0/backbone for vLLM's torch.compile
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:02 [backends.py:1155] Dynamo bytecode transform time: 10.52 s
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10884)[0m (Worker_PP0_TP1 pid=10884) INFO 09-21 03:38:20 [backends.py:920] collected artifacts: 41 entries, 3 artifacts, 4749450 bytes total
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:13 [backends.py:393] Compiling a graph for compile range (1, 8192) takes 10.56 s
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:20 [decorators.py:708] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/aade5d0a501c555e74082fbab4cfd2ce964052bca15b499a5ec954559b1192d3/rank_0_0/model
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:20 [monitor.py:53] torch.compile took 29.41 s in total
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:21 [monitor.py:81] Initial profiling/warmup run took 1.06 s
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) INFO 09-21 03:38:22 [gpu_worker.py:578] Available KV cache memory: 27.1 GiB
-(EngineCore pid=10652) INFO 09-21 03:38:23 [kv_cache_utils.py:1869] GPU KV cache size: 1,400,992 tokens, Maximum concurrency for 4,096 tokens per request: 342.04x
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Capturing CUDA graphs (PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):   2%|▏         | 1/51 [00:00<00:12,  4.16it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):   4%|▍         | 2/51 [00:00<00:08,  5.62it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):   6%|▌         | 3/51 [00:00<00:07,  6.29it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):   8%|▊         | 4/51 [00:00<00:07,  6.68it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  10%|▉         | 5/51 [00:00<00:06,  6.73it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  12%|█▏        | 6/51 [00:00<00:06,  7.01it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  14%|█▎        | 7/51 [00:01<00:06,  7.29it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  16%|█▌        | 8/51 [00:01<00:05,  7.36it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  18%|█▊        | 9/51 [00:01<00:05,  7.57it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  20%|█▉        | 10/51 [00:01<00:05,  7.88it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  22%|██▏       | 11/51 [00:01<00:05,  7.99it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  24%|██▎       | 12/51 [00:01<00:04,  8.15it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  25%|██▌       | 13/51 [00:01<00:04,  7.83it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  27%|██▋       | 14/51 [00:01<00:04,  7.85it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  29%|██▉       | 15/51 [00:02<00:04,  7.97it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  31%|███▏      | 16/51 [00:02<00:04,  8.22it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  33%|███▎      | 17/51 [00:02<00:04,  8.15it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  35%|███▌      | 18/51 [00:02<00:03,  8.31it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  37%|███▋      | 19/51 [00:02<00:03,  8.27it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  39%|███▉      | 20/51 [00:02<00:03,  8.38it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  41%|████      | 21/51 [00:02<00:03,  8.21it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 22/51 [00:02<00:03,  8.30it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  45%|████▌     | 23/51 [00:02<00:03,  8.42it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  47%|████▋     | 24/51 [00:03<00:03,  8.57it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  49%|████▉     | 25/51 [00:03<00:02,  8.72it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  51%|█████     | 26/51 [00:03<00:02,  8.85it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  53%|█████▎    | 27/51 [00:03<00:02,  9.03it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  55%|█████▍    | 28/51 [00:03<00:02,  9.02it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  57%|█████▋    | 29/51 [00:03<00:02,  9.08it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  59%|█████▉    | 30/51 [00:03<00:02,  8.82it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  61%|██████    | 31/51 [00:03<00:02,  8.62it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  63%|██████▎   | 32/51 [00:04<00:02,  8.46it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  65%|██████▍   | 33/51 [00:04<00:02,  8.57it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 34/51 [00:04<00:01,  8.71it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  69%|██████▊   | 35/51 [00:04<00:01,  8.60it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  71%|███████   | 36/51 [00:04<00:01,  8.59it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  73%|███████▎  | 37/51 [00:04<00:01,  8.62it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  75%|███████▍  | 38/51 [00:04<00:01,  8.60it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  76%|███████▋  | 39/51 [00:04<00:01,  8.36it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  78%|███████▊  | 40/51 [00:04<00:01,  8.38it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  80%|████████  | 41/51 [00:05<00:01,  8.40it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  82%|████████▏ | 42/51 [00:05<00:01,  8.41it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  84%|████████▍ | 43/51 [00:05<00:00,  8.49it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  86%|████████▋ | 44/51 [00:05<00:00,  8.52it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  88%|████████▊ | 45/51 [00:05<00:00,  8.54it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  90%|█████████ | 46/51 [00:05<00:00,  8.66it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  92%|█████████▏| 47/51 [00:05<00:00,  8.10it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  94%|█████████▍| 48/51 [00:05<00:00,  8.19it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  96%|█████████▌| 49/51 [00:06<00:00,  8.27it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE):  98%|█████████▊| 50/51 [00:06<00:00,  8.42it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:06<00:00,  8.14it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 51/51 [00:06<00:00,  8.12it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m (Worker_PP0_TP0 pid=10885) Capturing CUDA graphs (FULL):   0%|          | 0/35 [00:00<?, ?it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):   6%|▌         | 2/35 [00:00<00:02, 14.12it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  11%|█▏        | 4/35 [00:00<00:02, 14.56it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  17%|█▋        | 6/35 [00:00<00:01, 14.80it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  23%|██▎       | 8/35 [00:00<00:01, 14.81it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  29%|██▊       | 10/35 [00:00<00:01, 14.87it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  34%|███▍      | 12/35 [00:00<00:01, 14.70it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  40%|████      | 14/35 [00:00<00:01, 14.82it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  46%|████▌     | 16/35 [00:01<00:01, 14.81it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  51%|█████▏    | 18/35 [00:01<00:01, 14.85it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  57%|█████▋    | 20/35 [00:01<00:01, 14.95it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  63%|██████▎   | 22/35 [00:01<00:00, 14.96it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  69%|██████▊   | 24/35 [00:01<00:00, 15.03it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  74%|███████▍  | 26/35 [00:01<00:00, 15.11it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  80%|████████  | 28/35 [00:01<00:00, 15.11it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  86%|████████▌ | 30/35 [00:02<00:00, 15.25it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  91%|█████████▏| 32/35 [00:02<00:00, 15.21it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL):  97%|█████████▋| 34/35 [00:02<00:00, 15.21it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10885)[0m Capturing CUDA graphs (FULL): 100%|██████████| 35/35 [00:02<00:00, 15.00it/s]
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10884)[0m (Worker_PP0_TP1 pid=10884) /opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/distributed/parallel_state.py:834: UserWarning: The given buffer is not writable, and PyTorch does not support non-writable tensors. This means you can write to the underlying (supposedly non-writable) buffer using the tensor. You may want to copy the buffer to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:1556.)
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10884)[0m (Worker_PP0_TP1 pid=10884)   object_tensor = torch.frombuffer(pickle.dumps(obj), dtype=torch.uint8)
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10884)[0m [rank1]:[W921 03:38:35.364149679 ProcessGroupNCCL.cpp:4173] Warning: An unbatched P2P op (send/recv) was called on this ProcessGroup with size 2.  In lazy initialization mode, this will result in a new 2-rank NCCL communicator to be created. (function operator())
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8732, ip=10.128.15.224)[0m (Worker_PP1_TP7 pid=8732) INFO 09-21 03:38:34 [model_runner.py:906] Graph capturing finished in 10 secs, took 0.65 GiB
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8732, ip=10.128.15.224)[0m (Worker_PP1_TP7 pid=8732) INFO 09-21 03:38:34 [gpu_worker.py:804] Free memory on device (38.34/39.49 GiB) on startup. Desired GPU memory utilization is (0.92, 36.33 GiB). Actual usage is 8.93 GiB for consumed memory (weights + non-torch), 0.68 GiB for peak activation, and 0.65 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=27836693484` (25.92 GiB) to fit into requested memory, or `--kv-cache-memory=29986580992` (27.93 GiB) to fully utilize gpu memory. Current kv cache memory in use is 26.72 GiB.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8730, ip=10.128.15.224)[0m (Worker_PP1_TP5 pid=8730) INFO 09-21 03:38:21 [backends.py:920] collected artifacts: 41 entries, 3 artifacts, 5002194 bytes total[32m [repeated 15x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:20 [decorators.py:708] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/ae8586e302ea5b894af5a255d5a7d800d3c7ecff2516853a31007c6613406076/rank_8_0/model
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:20 [monitor.py:53] torch.compile took 29.49 s in total
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:22 [monitor.py:81] Initial profiling/warmup run took 1.05 s
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8726, ip=10.128.15.224)[0m (Worker_PP1_TP0 pid=8726) INFO 09-21 03:38:23 [gpu_worker.py:578] Available KV cache memory: 26.72 GiB
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8729, ip=10.128.15.224)[0m (Worker_PP1_TP4 pid=8729) INFO 09-21 03:38:46 [jit_monitor.py:85] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8730, ip=10.128.15.224)[0m (Worker_PP1_TP5 pid=8730) INFO 09-21 03:38:34 [model_runner.py:906] Graph capturing finished in 10 secs, took 0.65 GiB[32m [repeated 15x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8730, ip=10.128.15.224)[0m (Worker_PP1_TP5 pid=8730) INFO 09-21 03:38:34 [gpu_worker.py:804] Free memory on device (38.34/39.49 GiB) on startup. Desired GPU memory utilization is (0.92, 36.33 GiB). Actual usage is 8.93 GiB for consumed memory (weights + non-torch), 0.68 GiB for peak activation, and 0.65 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=27836693484` (25.92 GiB) to fit into requested memory, or `--kv-cache-memory=29986580992` (27.93 GiB) to fully utilize gpu memory. Current kv cache memory in use is 26.72 GiB.[32m [repeated 15x across cluster][0m
-(EngineCore pid=10652) INFO 09-21 03:38:47 [core.py:347] init engine (profile, create kv cache, warmup model) took 60.37 s (compilation: 29.63 s)
-(EngineCore pid=10652) INFO 09-21 03:38:49 [kernel.py:308] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
-INFO 09-21 03:38:50 [hf.py:551] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
-Rendering prompts:   0%|          | 0/24 [00:00<?, ?it/s]Traceback (most recent call last):
-  File "/opt/spar/repo/workloads/llm_inference_vllm.py", line 231, in <module>
-    main()
-  File "/opt/spar/repo/workloads/llm_inference_vllm.py", line 227, in main
-    run_vllm(args)
-  File "/opt/spar/repo/workloads/llm_inference_vllm.py", line 172, in run_vllm
-    outputs = llm.generate(batch_prompts, sampling_params)
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/llm.py", line 472, in generate
-    return self._run_completion(
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 340, in _run_completion
-    self._add_completion_requests(
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 308, in _add_completion_requests
-    return self._render_and_add_requests(
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 548, in _render_and_add_requests
-    raise e
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 534, in _render_and_add_requests
-    for i, prompt in enumerate(prompts):
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 310, in <genexpr>
-    self._preprocess_cmpl_one(
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 151, in _preprocess_cmpl_one
-    (engine_input,) = self._preprocess_cmpl(
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/entrypoints/offline_utils.py", line 139, in _preprocess_cmpl
-    return renderer.render_cmpl(
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/base.py", line 999, in render_cmpl
-    tok_prompts = self.tokenize_prompts(dict_prompts, tok_params)
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/base.py", line 629, in tokenize_prompts
-    return [self.tokenize_prompt(prompt, params) for prompt in prompts]
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/base.py", line 629, in <listcomp>
-    return [self.tokenize_prompt(prompt, params) for prompt in prompts]
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/base.py", line 622, in tokenize_prompt
-    return self._tokenize_singleton_prompt(prompt, params)
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/base.py", line 536, in _tokenize_singleton_prompt
-    return params.apply_post_tokenization(self.tokenizer, prompt)  # type: ignore[arg-type]
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/params.py", line 486, in apply_post_tokenization
-    prompt["prompt_token_ids"] = self._validate_tokens(  # type: ignore[typeddict-unknown-key]
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/params.py", line 470, in _validate_tokens
-    tokens = validator(tokenizer, tokens)
-  File "/opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/renderers/params.py", line 449, in _token_len_check
-    raise VLLMValidationError(
-vllm.exceptions.VLLMValidationError: This model's maximum context length is 4096 tokens. However, you requested 0 output tokens and your prompt contains at least 4097 input tokens, for a total of at least 4097 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=4097)
-INFO 09-21 03:38:50 [utils.py:615] [shutdown] Process manager: send sigterm to process EngineCore
-(EngineCore pid=10652) INFO 09-21 03:38:50 [core.py:1329] [shutdown] EngineCore: trigger received signal=SIGTERM
-(EngineCore pid=10652) INFO 09-21 03:38:50 [core.py:1465] [shutdown] EngineCore: start mode=abort timeout=0s
-(EngineCore pid=10652) INFO 09-21 03:38:50 [core.py:1496] [shutdown] EngineCore: request processing complete; starting resource teardown
-(EngineCore pid=10652) INFO 09-21 03:38:50 [core.py:1342] [shutdown] EngineCore: exiting busy loop
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10887)[0m (Worker_PP0_TP2 pid=10887) /opt/spar/repo/venv-vllm/lib/python3.10/site-packages/vllm/distributed/parallel_state.py:834: UserWarning: The given buffer is not writable, and PyTorch does not support non-writable tensors. This means you can write to the underlying (supposedly non-writable) buffer using the tensor. You may want to copy the buffer to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:1556.)[32m [repeated 7x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10887)[0m (Worker_PP0_TP2 pid=10887)   object_tensor = torch.frombuffer(pickle.dumps(obj), dtype=torch.uint8)[32m [repeated 7x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=8731, ip=10.128.15.224)[0m [rank14]:[W921 03:38:35.364197038 ProcessGroupNCCL.cpp:4173] Warning: An unbatched P2P op (send/recv) was called on this ProcessGroup with size 2.  In lazy initialization mode, this will result in a new 2-rank NCCL communicator to be created. (function operator())[32m [repeated 15x across cluster][0m
-(EngineCore pid=10652) [36m(RayWorkerProc pid=10886)[0m (Worker_PP0_TP3 pid=10886) INFO 09-21 03:38:46 [jit_monitor.py:85] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.[32m [repeated 15x across cluster][0m
-WARNING 09-21 03:38:54 [core_client.py:728] [shutdown] MPClient: engine core exited unexpectedly; starting cleanup
-INFO 09-21 03:38:54 [core_client.py:689] [shutdown] MPClient: start timeout=default
-INFO 09-21 03:38:54 [core_client.py:691] [shutdown] MPClient: stopping engine manager
-INFO 09-21 03:38:54 [core_client.py:693] [shutdown] MPClient: engine manager stopped
-INFO 09-21 03:38:54 [core_client.py:694] [shutdown] MPClient: cleaning up background resources
-INFO 09-21 03:38:54 [core_client.py:696] [shutdown] MPClient: complete
-Rendering prompts:   0%|          | 0/24 [00:04<?, ?it/s]
-2026-09-21 03:38:56,253 [spar.multi_gpu] INFO:   Workload finished: FAIL(1)
-2026-09-21 03:38:58,256 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,289 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu0_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,296 [spar.multi_gpu] INFO:   GPU 0: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu0_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,296 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,306 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu1_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,312 [spar.multi_gpu] INFO:   GPU 1: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu1_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,312 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,323 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu2_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,328 [spar.multi_gpu] INFO:   GPU 2: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu2_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,329 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,338 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu3_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,344 [spar.multi_gpu] INFO:   GPU 3: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu3_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,344 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,354 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu4_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,360 [spar.multi_gpu] INFO:   GPU 4: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu4_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,360 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,370 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu5_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,376 [spar.multi_gpu] INFO:   GPU 5: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu5_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,376 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,386 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu6_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,391 [spar.multi_gpu] INFO:   GPU 6: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu6_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,391 [spar.telemetry] INFO: Telemetry stopped. 1216 samples collected.
-2026-09-21 03:38:58,401 [spar.telemetry] INFO: Saved 1216 rows to data/s16_infershard_qwen72b_kv16k_b24_node0_gpu7_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet
-2026-09-21 03:38:58,407 [spar.multi_gpu] INFO:   GPU 7: saved data/s16_infershard_qwen72b_kv16k_b24_node0_gpu7_NVIDIA_A100_SXM4_40GB_b5f87baee6e1.parquet (1216 rows)
-2026-09-21 03:38:58,409 [spar.multi_gpu] INFO: Multi-GPU run complete: b5f87baee6e1 (rc=1)
