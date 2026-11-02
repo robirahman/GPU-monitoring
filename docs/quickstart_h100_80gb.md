@@ -15,6 +15,11 @@ pip install --upgrade pip
 pip install -r requirements_v2.txt
 pip install psutil   # so the run records its CPU, cores and RAM
 python -c "import torchvision; torchvision.datasets.CIFAR10('data/cifar10', train=False, download=True)"
+
+# Do NOT add requirements_gptq.txt to this venv. On 2026-11-02 it
+# pulled torch 2.14.1 over the pinned 2.5.1 and gptqmodel still did
+# not import. The quantized cell runs without it -- see the note
+# at the end of this file if it ever does not.
 export STAMP=$(date -u +%Y%m%d)a
 mkdir -p data logs
 ```

@@ -18,7 +18,16 @@
 # corpus was collected under, and these wheels are large, change fast, and are
 # only needed by one cell. Install it alongside, not instead:
 #
-#     pip install -r requirements_v2.txt -r requirements_gptq.txt
+# DO NOT install this into the venv that holds the corpus pin. On 2026-11-02,
+# `pip install -r requirements_gptq.txt` into venv-main pulled torch 2.14.1 over
+# torch 2.5.1 and gptqmodel still failed to import. Give it its own venv:
+#
+#     python3 -m venv venv-gptq
+#     venv-gptq/bin/pip install -r requirements_v2.txt -r requirements_gptq.txt
+#
+# And check first whether you need it at all: mistral_7b_q4 collected cleanly
+# on A100-SXM4-80GB, on H200 NVL in the archived corpus, and again on H200 NVL
+# on 2026-10-29 at 97.5% busy, in every case with no gptq backend declared.
 #
 # Floors rather than exact pins, for the same reason as
 # requirements_blackwell.txt: which build is current moves faster than this

@@ -180,9 +180,14 @@ def main():
         # Any quantized inference cell needs a GPTQ backend that no base
         # requirements file declares; see requirements_gptq.txt.
         if any("mistral_7b_q4" in c for c in list(single) + [c for c, _ in multi]):
-            t.append("pip install -r requirements_gptq.txt   # mistral_7b_q4 is a GPTQ checkpoint")
+            t.append("pip install transformers accelerate sentencepiece  # llm_infer_* cells")
         t += ["pip install psutil   # so the run records its CPU, cores and RAM",
               "python -c \"import torchvision; torchvision.datasets.CIFAR10('data/cifar10', train=False, download=True)\"",
+              "",
+              "# Do NOT add requirements_gptq.txt to this venv. On 2026-11-02 it",
+              "# pulled torch 2.14.1 over the pinned 2.5.1 and gptqmodel still did",
+              "# not import. The quantized cell runs without it -- see the note",
+              "# at the end of this file if it ever does not.",
               "export STAMP=$(date -u +%Y%m%d)a",
               "mkdir -p data logs", "```\n",
               "## 2. Preflight\n", "```bash",
