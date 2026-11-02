@@ -102,24 +102,23 @@ Each run is `--duration 600`, so expect ~10-11 minutes per rep and roughly
 it is single-GPU and is being collected on Google Cloud separately. Do not run
 it here or you will produce a duplicate.
 
-## 4. Expect 70b to fail, and record it either way
+## 4. Both cells are known to work here
 
-`fsdp_70b_nvlink` has exactly one A100 80GB run in the corpus and it is the
-broken one: 24 s, zero windows. The same cell runs 844 s on B200 and ~305 s on
-H200. The likely reason is memory -- AdamW keeps fp32 momentum and variance
-alongside bf16 parameters, which for 70b is on the order of 560 GB against
-8x80 = 640 GB, before activations.
+Collected on 2026-11-02 on an 8x A100-SXM4-80GB node, three reps each:
 
-So treat 70b as a probe:
+| cell | span | busy | mean util | steps |
+| :-- | --: | --: | --: | --: |
+| `fsdp_30b_nvlink` | 619-621 s | 0.97 | 96.1-96.3% | 414 |
+| `fsdp_70b_nvlink` | 620-622 s | 0.98 | 96.5-96.9% | 189 |
 
-- **If it runs**, you have recovered a cell no A100 run has ever captured.
-- **If it OOMs**, that is a hardware limit worth stating in the paper, not a
-  collection error to retry. Keep the log either way -- the failure mode is the
-  evidence.
+An earlier revision of this file told you to expect `fsdp_70b_nvlink` to OOM,
+reasoning that AdamW fp32 moments beside bf16 parameters come to about 560 GB
+against 640 GB of HBM, and to record the failure as a hardware limit. That was
+wrong: it runs, at 98% busy for the full ten minutes. The corpus's single A100
+70b run -- 24 s, zero windows -- was a collection failure like the others, not
+evidence about the hardware.
 
-`fsdp_30b_nvlink` is known to work on this device (784 s, 96% busy, 408
-windows), so a 30b failure means something is wrong with the setup, not with
-the hardware.
+So a failure of either cell here means the setup is wrong, not the GPU.
 
 ## 5. Check, then ship
 

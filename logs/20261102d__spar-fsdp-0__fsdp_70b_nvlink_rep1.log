@@ -1,0 +1,375 @@
+SPAR_CELL_BEGIN cell=fsdp_70b_nvlink rep=1 stamp=20261102d host=spar-fsdp-0 utc=2026-11-02T18:45:31Z
+2026-11-02 18:45:32,297 [spar.multi_gpu] INFO: Multi-GPU run: fsdp_70b_nvlink, 8 GPUs, node=0, run_id=1ece69275120
+Run ID: 1ece692751204da5baa883e18c625041
+2026-11-02 18:45:32,346 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,346 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,366 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,366 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,387 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,387 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,409 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,409 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,432 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,432 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,452 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,452 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,472 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,472 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:32,494 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_70b_nvlink, run=1ece692751204da5baa883e18c625041)
+2026-11-02 18:45:32,495 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:45:34,497 [spar.multi_gpu] INFO:   Launching: torchrun --nproc_per_node=8 /opt/spar/repo/workloads/fsdp_training.py --size 70b --duration 600
+W1102 18:45:36.164000 13559 torch/distributed/run.py:793] 
+W1102 18:45:36.164000 13559 torch/distributed/run.py:793] *****************************************
+W1102 18:45:36.164000 13559 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1102 18:45:36.164000 13559 torch/distributed/run.py:793] *****************************************
+FSDP Training: 70b model on 8 GPUs
+  Hidden: 8192, Layers: 80, Heads: 64, FFN: 28672
+  Per-GPU batch: 1, Seq len: 1024
+  Global batch: 8
+  Mixed precision: bf16, Sharding: FULL_SHARD
+  Activation checkpointing: True
+  CPU offload: False
+  Duration: 600s
+  Parameters: 59,602,124,800 (59.6B)
+  Optimizer: sgd
+  Post-init GPU memory: 35.4 GB
+  Training started...
+STEP ts=1793645150.796451 kind=train batch_idx=1 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645153.915432 kind=train batch_idx=2 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645157.044778 kind=train batch_idx=3 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645160.171674 kind=train batch_idx=4 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645163.304222 kind=train batch_idx=5 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 5: loss=10.3750, 2188 tok/s, peak_mem=66.2GB, elapsed=19s/600s
+STEP ts=1793645166.444719 kind=train batch_idx=6 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645169.697439 kind=train batch_idx=7 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645172.834743 kind=train batch_idx=8 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645175.969978 kind=train batch_idx=9 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645179.103836 kind=train batch_idx=10 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 10: loss=10.3750, 2373 tok/s, peak_mem=66.2GB, elapsed=35s/600s
+STEP ts=1793645182.238513 kind=train batch_idx=11 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645185.376699 kind=train batch_idx=12 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645188.637467 kind=train batch_idx=13 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645191.775419 kind=train batch_idx=14 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:46:32,428 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,429 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,446 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,472 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,498 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,509 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,532 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:46:32,554 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645194.916812 kind=train batch_idx=15 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 15: loss=10.3750, 2441 tok/s, peak_mem=66.2GB, elapsed=50s/600s
+STEP ts=1793645198.063139 kind=train batch_idx=16 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645201.202472 kind=train batch_idx=17 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645204.450929 kind=train batch_idx=18 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645207.595723 kind=train batch_idx=19 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645210.745551 kind=train batch_idx=20 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 20: loss=10.3750, 2476 tok/s, peak_mem=66.2GB, elapsed=66s/600s
+STEP ts=1793645213.886130 kind=train batch_idx=21 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645217.035725 kind=train batch_idx=22 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645220.186080 kind=train batch_idx=23 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645223.340106 kind=train batch_idx=24 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645226.608016 kind=train batch_idx=25 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 25: loss=10.3750, 2497 tok/s, peak_mem=66.2GB, elapsed=82s/600s
+STEP ts=1793645229.755626 kind=train batch_idx=26 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645232.905125 kind=train batch_idx=27 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645236.055094 kind=train batch_idx=28 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645239.205715 kind=train batch_idx=29 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645242.480557 kind=train batch_idx=30 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 30: loss=10.3750, 2510 tok/s, peak_mem=66.2GB, elapsed=98s/600s
+STEP ts=1793645245.635347 kind=train batch_idx=31 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645248.795331 kind=train batch_idx=32 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645251.947224 kind=train batch_idx=33 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:47:32,438 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:32,483 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:32,520 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:32,541 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:33,415 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:33,454 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:33,500 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:47:33,559 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645255.100570 kind=train batch_idx=34 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645258.254467 kind=train batch_idx=35 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 35: loss=10.3750, 2522 tok/s, peak_mem=66.2GB, elapsed=114s/600s
+STEP ts=1793645261.524697 kind=train batch_idx=36 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645264.677385 kind=train batch_idx=37 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645267.833775 kind=train batch_idx=38 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645270.988654 kind=train batch_idx=39 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645274.146357 kind=train batch_idx=40 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 40: loss=10.3750, 2529 tok/s, peak_mem=66.2GB, elapsed=130s/600s
+STEP ts=1793645277.303106 kind=train batch_idx=41 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645280.580655 kind=train batch_idx=42 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645283.735406 kind=train batch_idx=43 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645286.895458 kind=train batch_idx=44 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645290.056771 kind=train batch_idx=45 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 45: loss=10.3750, 2534 tok/s, peak_mem=66.2GB, elapsed=145s/600s
+STEP ts=1793645293.221285 kind=train batch_idx=46 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645296.499493 kind=train batch_idx=47 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645299.660406 kind=train batch_idx=48 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645302.823440 kind=train batch_idx=49 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645305.985182 kind=train batch_idx=50 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 50: loss=10.3750, 2538 tok/s, peak_mem=66.2GB, elapsed=161s/600s
+STEP ts=1793645309.150092 kind=train batch_idx=51 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645312.315795 kind=train batch_idx=52 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:48:32,609 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:32,609 [spar.telemetry] INFO: Checkpoint 3: 181 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:33,444 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:33,462 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:33,490 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:33,509 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:33,567 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:48:34,424 [spar.telemetry] INFO: Checkpoint 3: 183 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645315.480156 kind=train batch_idx=53 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645318.746983 kind=train batch_idx=54 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645321.908769 kind=train batch_idx=55 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 55: loss=10.3750, 2541 tok/s, peak_mem=66.2GB, elapsed=177s/600s
+STEP ts=1793645325.073642 kind=train batch_idx=56 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645328.238331 kind=train batch_idx=57 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645331.402539 kind=train batch_idx=58 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645334.681384 kind=train batch_idx=59 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645337.845189 kind=train batch_idx=60 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 60: loss=10.3750, 2543 tok/s, peak_mem=66.2GB, elapsed=193s/600s
+STEP ts=1793645341.010242 kind=train batch_idx=61 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645344.173175 kind=train batch_idx=62 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645347.339206 kind=train batch_idx=63 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645350.504447 kind=train batch_idx=64 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645353.775569 kind=train batch_idx=65 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 65: loss=10.3750, 2545 tok/s, peak_mem=66.2GB, elapsed=209s/600s
+STEP ts=1793645356.946492 kind=train batch_idx=66 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645360.107005 kind=train batch_idx=67 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645363.271887 kind=train batch_idx=68 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645366.443741 kind=train batch_idx=69 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645369.611676 kind=train batch_idx=70 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 70: loss=10.3750, 2548 tok/s, peak_mem=66.2GB, elapsed=225s/600s
+STEP ts=1793645372.871956 kind=train batch_idx=71 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:49:33,454 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:33,470 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:33,501 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:33,517 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:33,542 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:33,559 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:34,435 [spar.telemetry] INFO: Checkpoint 4: 243 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:49:34,575 [spar.telemetry] INFO: Checkpoint 4: 243 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645376.039376 kind=train batch_idx=72 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645379.207234 kind=train batch_idx=73 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645382.376298 kind=train batch_idx=74 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645385.538664 kind=train batch_idx=75 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 75: loss=10.3750, 2550 tok/s, peak_mem=66.2GB, elapsed=241s/600s
+STEP ts=1793645388.804406 kind=train batch_idx=76 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645391.966460 kind=train batch_idx=77 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645395.135308 kind=train batch_idx=78 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645398.302300 kind=train batch_idx=79 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645401.469444 kind=train batch_idx=80 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 80: loss=10.3750, 2551 tok/s, peak_mem=66.2GB, elapsed=257s/600s
+STEP ts=1793645404.641074 kind=train batch_idx=81 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645407.815045 kind=train batch_idx=82 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645411.098183 kind=train batch_idx=83 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645414.271050 kind=train batch_idx=84 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645417.441900 kind=train batch_idx=85 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 85: loss=10.3750, 2552 tok/s, peak_mem=66.2GB, elapsed=273s/600s
+STEP ts=1793645420.612011 kind=train batch_idx=86 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645423.785779 kind=train batch_idx=87 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645427.054718 kind=train batch_idx=88 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645430.224787 kind=train batch_idx=89 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645433.394463 kind=train batch_idx=90 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 90: loss=10.3750, 2553 tok/s, peak_mem=66.2GB, elapsed=289s/600s
+2026-11-02 18:50:33,555 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:34,464 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:34,478 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:34,511 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:34,524 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:34,569 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:35,441 [spar.telemetry] INFO: Checkpoint 5: 304 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:50:35,584 [spar.telemetry] INFO: Checkpoint 5: 304 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645436.561975 kind=train batch_idx=91 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645439.728640 kind=train batch_idx=92 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645442.901101 kind=train batch_idx=93 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645446.175863 kind=train batch_idx=94 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645449.348666 kind=train batch_idx=95 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 95: loss=10.3750, 2554 tok/s, peak_mem=66.2GB, elapsed=305s/600s
+STEP ts=1793645452.514508 kind=train batch_idx=96 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645455.684160 kind=train batch_idx=97 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645458.855308 kind=train batch_idx=98 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645462.028686 kind=train batch_idx=99 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645465.285612 kind=train batch_idx=100 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 100: loss=10.3750, 2554 tok/s, peak_mem=66.2GB, elapsed=321s/600s
+STEP ts=1793645468.455982 kind=train batch_idx=101 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645471.625817 kind=train batch_idx=102 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645474.790981 kind=train batch_idx=103 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645477.955431 kind=train batch_idx=104 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645481.221617 kind=train batch_idx=105 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 105: loss=10.3750, 2555 tok/s, peak_mem=66.2GB, elapsed=337s/600s
+STEP ts=1793645484.388615 kind=train batch_idx=106 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645487.555444 kind=train batch_idx=107 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645490.719094 kind=train batch_idx=108 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645493.893308 kind=train batch_idx=109 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:51:34,563 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:34,583 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:35,472 [spar.telemetry] INFO: Checkpoint 6: 364 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:35,485 [spar.telemetry] INFO: Checkpoint 6: 364 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:35,519 [spar.telemetry] INFO: Checkpoint 6: 364 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:35,532 [spar.telemetry] INFO: Checkpoint 6: 364 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:36,450 [spar.telemetry] INFO: Checkpoint 6: 365 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:51:36,591 [spar.telemetry] INFO: Checkpoint 6: 365 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645497.062786 kind=train batch_idx=110 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 110: loss=10.3750, 2557 tok/s, peak_mem=66.2GB, elapsed=352s/600s
+STEP ts=1793645500.232463 kind=train batch_idx=111 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645503.493080 kind=train batch_idx=112 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645506.658909 kind=train batch_idx=113 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645509.826489 kind=train batch_idx=114 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645512.996663 kind=train batch_idx=115 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 115: loss=10.3750, 2557 tok/s, peak_mem=66.2GB, elapsed=368s/600s
+STEP ts=1793645516.161223 kind=train batch_idx=116 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645519.419029 kind=train batch_idx=117 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645522.583350 kind=train batch_idx=118 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645525.751865 kind=train batch_idx=119 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645528.924521 kind=train batch_idx=120 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 120: loss=10.3750, 2558 tok/s, peak_mem=66.2GB, elapsed=384s/600s
+STEP ts=1793645532.090813 kind=train batch_idx=121 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645535.259050 kind=train batch_idx=122 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645538.536215 kind=train batch_idx=123 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645541.701444 kind=train batch_idx=124 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645544.869764 kind=train batch_idx=125 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 125: loss=10.3750, 2558 tok/s, peak_mem=66.2GB, elapsed=400s/600s
+STEP ts=1793645548.036906 kind=train batch_idx=126 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645551.208090 kind=train batch_idx=127 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645554.381905 kind=train batch_idx=128 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:52:34,595 [spar.telemetry] INFO: Checkpoint 7: 423 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:35,498 [spar.telemetry] INFO: Checkpoint 7: 424 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:35,542 [spar.telemetry] INFO: Checkpoint 7: 424 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:35,572 [spar.telemetry] INFO: Checkpoint 7: 424 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:36,460 [spar.telemetry] INFO: Checkpoint 7: 425 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:36,481 [spar.telemetry] INFO: Checkpoint 7: 425 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:36,528 [spar.telemetry] INFO: Checkpoint 7: 425 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:52:37,599 [spar.telemetry] INFO: Checkpoint 7: 426 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645557.650572 kind=train batch_idx=129 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645560.823339 kind=train batch_idx=130 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 130: loss=10.3750, 2559 tok/s, peak_mem=66.2GB, elapsed=416s/600s
+STEP ts=1793645563.987606 kind=train batch_idx=131 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645567.148640 kind=train batch_idx=132 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645570.316736 kind=train batch_idx=133 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645573.583894 kind=train batch_idx=134 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645576.752918 kind=train batch_idx=135 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 135: loss=10.3750, 2559 tok/s, peak_mem=66.2GB, elapsed=432s/600s
+STEP ts=1793645579.923424 kind=train batch_idx=136 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645583.097961 kind=train batch_idx=137 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645586.261258 kind=train batch_idx=138 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645589.434609 kind=train batch_idx=139 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645592.610940 kind=train batch_idx=140 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 140: loss=10.3750, 2560 tok/s, peak_mem=66.2GB, elapsed=448s/600s
+STEP ts=1793645595.872649 kind=train batch_idx=141 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645599.039234 kind=train batch_idx=142 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645602.205583 kind=train batch_idx=143 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645605.377718 kind=train batch_idx=144 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645608.544406 kind=train batch_idx=145 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 145: loss=10.3750, 2560 tok/s, peak_mem=66.2GB, elapsed=464s/600s
+STEP ts=1793645611.809307 kind=train batch_idx=146 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:53:34,612 [spar.telemetry] INFO: Checkpoint 8: 483 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645614.977292 kind=train batch_idx=147 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:53:35,511 [spar.telemetry] INFO: Checkpoint 8: 484 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:53:35,556 [spar.telemetry] INFO: Checkpoint 8: 484 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:53:35,583 [spar.telemetry] INFO: Checkpoint 8: 484 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:53:36,494 [spar.telemetry] INFO: Checkpoint 8: 485 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:53:36,541 [spar.telemetry] INFO: Checkpoint 8: 485 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:53:37,470 [spar.telemetry] INFO: Checkpoint 8: 486 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645618.142289 kind=train batch_idx=148 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:53:38,608 [spar.telemetry] INFO: Checkpoint 8: 487 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645621.311761 kind=train batch_idx=149 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645624.483296 kind=train batch_idx=150 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 150: loss=10.3750, 2561 tok/s, peak_mem=66.2GB, elapsed=480s/600s
+STEP ts=1793645627.653458 kind=train batch_idx=151 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645630.913920 kind=train batch_idx=152 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645634.088768 kind=train batch_idx=153 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645637.251168 kind=train batch_idx=154 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645640.419546 kind=train batch_idx=155 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 155: loss=10.3750, 2561 tok/s, peak_mem=66.2GB, elapsed=496s/600s
+STEP ts=1793645643.591161 kind=train batch_idx=156 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645646.759217 kind=train batch_idx=157 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645650.018306 kind=train batch_idx=158 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645653.185534 kind=train batch_idx=159 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645656.353805 kind=train batch_idx=160 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 160: loss=10.3750, 2561 tok/s, peak_mem=66.2GB, elapsed=512s/600s
+STEP ts=1793645659.523767 kind=train batch_idx=161 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645662.688273 kind=train batch_idx=162 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645665.949931 kind=train batch_idx=163 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645669.122846 kind=train batch_idx=164 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645672.294722 kind=train batch_idx=165 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 165: loss=10.3750, 2561 tok/s, peak_mem=66.2GB, elapsed=528s/600s
+STEP ts=1793645675.460426 kind=train batch_idx=166 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:54:35,525 [spar.telemetry] INFO: Checkpoint 9: 544 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:54:35,570 [spar.telemetry] INFO: Checkpoint 9: 544 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:54:35,622 [spar.telemetry] INFO: Checkpoint 9: 544 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:54:36,553 [spar.telemetry] INFO: Checkpoint 9: 545 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:54:36,593 [spar.telemetry] INFO: Checkpoint 9: 545 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:54:37,503 [spar.telemetry] INFO: Checkpoint 9: 546 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:54:38,480 [spar.telemetry] INFO: Checkpoint 9: 547 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645678.620805 kind=train batch_idx=167 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:54:39,616 [spar.telemetry] INFO: Checkpoint 9: 548 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645681.792566 kind=train batch_idx=168 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645684.953936 kind=train batch_idx=169 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645688.221396 kind=train batch_idx=170 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 170: loss=10.3750, 2562 tok/s, peak_mem=66.2GB, elapsed=544s/600s
+STEP ts=1793645691.389287 kind=train batch_idx=171 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645694.557687 kind=train batch_idx=172 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645697.720901 kind=train batch_idx=173 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645700.890907 kind=train batch_idx=174 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645704.156203 kind=train batch_idx=175 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 175: loss=10.3750, 2562 tok/s, peak_mem=66.2GB, elapsed=560s/600s
+STEP ts=1793645707.324941 kind=train batch_idx=176 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645710.499334 kind=train batch_idx=177 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645713.669200 kind=train batch_idx=178 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645716.840779 kind=train batch_idx=179 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645720.012407 kind=train batch_idx=180 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 180: loss=10.3750, 2563 tok/s, peak_mem=66.2GB, elapsed=575s/600s
+STEP ts=1793645723.290891 kind=train batch_idx=181 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645726.456795 kind=train batch_idx=182 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645729.625556 kind=train batch_idx=183 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645732.799173 kind=train batch_idx=184 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:55:35,537 [spar.telemetry] INFO: Checkpoint 10: 604 samples -> data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:55:35,636 [spar.telemetry] INFO: Checkpoint 10: 604 samples -> data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645735.967834 kind=train batch_idx=185 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 185: loss=10.3750, 2563 tok/s, peak_mem=66.2GB, elapsed=591s/600s
+2026-11-02 18:55:36,580 [spar.telemetry] INFO: Checkpoint 10: 605 samples -> data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:55:36,603 [spar.telemetry] INFO: Checkpoint 10: 605 samples -> data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:55:37,562 [spar.telemetry] INFO: Checkpoint 10: 606 samples -> data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:55:38,512 [spar.telemetry] INFO: Checkpoint 10: 607 samples -> data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645739.134832 kind=train batch_idx=186 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:55:39,488 [spar.telemetry] INFO: Checkpoint 10: 608 samples -> data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+2026-11-02 18:55:39,655 [spar.telemetry] INFO: Checkpoint 10: 608 samples -> data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet.partial
+STEP ts=1793645742.406467 kind=train batch_idx=187 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645745.574986 kind=train batch_idx=188 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645748.743689 kind=train batch_idx=189 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+
+FSDP training complete: 189 steps in 604.2s
+  Total tokens: 1,548,288
+  Throughput: 2563 tok/s
+  Peak GPU memory: 66.2 GB
+2026-11-02 18:55:52,026 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-11-02 18:55:54,029 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,046 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,051 [spar.multi_gpu] INFO:   GPU 0: saved data/fsdp_70b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,051 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,065 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,070 [spar.multi_gpu] INFO:   GPU 1: saved data/fsdp_70b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,070 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,083 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,088 [spar.multi_gpu] INFO:   GPU 2: saved data/fsdp_70b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,088 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,102 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,106 [spar.multi_gpu] INFO:   GPU 3: saved data/fsdp_70b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,106 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,120 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,125 [spar.multi_gpu] INFO:   GPU 4: saved data/fsdp_70b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,125 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,138 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,143 [spar.multi_gpu] INFO:   GPU 5: saved data/fsdp_70b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,143 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,156 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,161 [spar.multi_gpu] INFO:   GPU 6: saved data/fsdp_70b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,161 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 18:55:54,174 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet
+2026-11-02 18:55:54,179 [spar.multi_gpu] INFO:   GPU 7: saved data/fsdp_70b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_1ece69275120.parquet (622 rows)
+2026-11-02 18:55:54,181 [spar.multi_gpu] INFO: Multi-GPU run complete: 1ece69275120 (rc=0)
+2026-11-02 18:55:54,183 [scripts.run_health] INFO: Run health: ok (span 621s of 600s requested, GPU busy in 97.7% of 622 samples)
+SPAR_CELL_DONE cell=fsdp_70b_nvlink rep=1 exit=0 utc=2026-11-02T18:55:54Z

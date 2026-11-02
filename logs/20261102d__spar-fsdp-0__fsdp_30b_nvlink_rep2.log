@@ -1,0 +1,645 @@
+SPAR_CELL_BEGIN cell=fsdp_30b_nvlink rep=2 stamp=20261102d host=spar-fsdp-0 utc=2026-11-02T18:56:29Z
+2026-11-02 18:56:30,410 [spar.multi_gpu] INFO: Multi-GPU run: fsdp_30b_nvlink, 8 GPUs, node=0, run_id=ecf42220d22a
+Run ID: ecf42220d22a4a3ba6eb95b60966e26f
+2026-11-02 18:56:30,455 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,455 [spar.multi_gpu] INFO:   GPU 0: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,476 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,476 [spar.multi_gpu] INFO:   GPU 1: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,496 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,496 [spar.multi_gpu] INFO:   GPU 2: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,520 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,520 [spar.multi_gpu] INFO:   GPU 3: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,541 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,541 [spar.multi_gpu] INFO:   GPU 4: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,561 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,561 [spar.multi_gpu] INFO:   GPU 5: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,584 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,584 [spar.multi_gpu] INFO:   GPU 6: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:30,604 [spar.telemetry] INFO: Telemetry started (gpu=NVIDIA A100-SXM4-80GB, interval=1.0s, dcgm=disabled, label=fsdp_30b_nvlink, run=ecf42220d22a4a3ba6eb95b60966e26f)
+2026-11-02 18:56:30,604 [spar.multi_gpu] INFO:   GPU 7: telemetry started (NVIDIA A100-SXM4-80GB)
+2026-11-02 18:56:32,606 [spar.multi_gpu] INFO:   Launching: torchrun --nproc_per_node=8 /opt/spar/repo/workloads/fsdp_training.py --size 30b --duration 600
+W1102 18:56:34.239000 14827 torch/distributed/run.py:793] 
+W1102 18:56:34.239000 14827 torch/distributed/run.py:793] *****************************************
+W1102 18:56:34.239000 14827 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1102 18:56:34.239000 14827 torch/distributed/run.py:793] *****************************************
+FSDP Training: 30b model on 8 GPUs
+  Hidden: 6656, Layers: 60, Heads: 52, FFN: 17920
+  Per-GPU batch: 1, Seq len: 1024
+  Global batch: 8
+  Mixed precision: bf16, Sharding: FULL_SHARD
+  Activation checkpointing: True
+  CPU offload: False
+  Duration: 600s
+  Parameters: 25,388,446,720 (25.4B)
+  Optimizer: sgd_momentum
+  Post-init GPU memory: 16.2 GB
+  Training started...
+STEP ts=1793645806.179501 kind=train batch_idx=1 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645807.776373 kind=train batch_idx=2 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645809.188579 kind=train batch_idx=3 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645810.600157 kind=train batch_idx=4 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645812.017604 kind=train batch_idx=5 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 5: loss=10.3750, 4186 tok/s, peak_mem=42.2GB, elapsed=10s/600s
+STEP ts=1793645813.431041 kind=train batch_idx=6 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645814.848324 kind=train batch_idx=7 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645816.268056 kind=train batch_idx=8 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645817.693132 kind=train batch_idx=9 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645819.246901 kind=train batch_idx=10 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 10: loss=10.3750, 4815 tok/s, peak_mem=42.2GB, elapsed=17s/600s
+STEP ts=1793645820.668353 kind=train batch_idx=11 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645822.085755 kind=train batch_idx=12 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645823.508112 kind=train batch_idx=13 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645824.934614 kind=train batch_idx=14 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645826.358162 kind=train batch_idx=15 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 15: loss=10.3750, 5093 tok/s, peak_mem=42.2GB, elapsed=24s/600s
+STEP ts=1793645827.788900 kind=train batch_idx=16 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645829.216541 kind=train batch_idx=17 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645830.769943 kind=train batch_idx=18 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645832.199722 kind=train batch_idx=19 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645833.629404 kind=train batch_idx=20 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 20: loss=10.3750, 5218 tok/s, peak_mem=42.2GB, elapsed=31s/600s
+STEP ts=1793645835.059930 kind=train batch_idx=21 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645836.485501 kind=train batch_idx=22 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645837.910746 kind=train batch_idx=23 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645839.336468 kind=train batch_idx=24 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645840.765072 kind=train batch_idx=25 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 25: loss=10.3750, 5315 tok/s, peak_mem=42.2GB, elapsed=39s/600s
+STEP ts=1793645842.318523 kind=train batch_idx=26 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645843.748709 kind=train batch_idx=27 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645845.175296 kind=train batch_idx=28 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645846.605427 kind=train batch_idx=29 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645848.034242 kind=train batch_idx=30 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 30: loss=10.3750, 5366 tok/s, peak_mem=42.2GB, elapsed=46s/600s
+STEP ts=1793645849.464353 kind=train batch_idx=31 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:57:30,536 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,537 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,556 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,587 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,605 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,618 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,642 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:57:30,668 [spar.telemetry] INFO: Checkpoint 1: 61 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793645850.894047 kind=train batch_idx=32 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645852.326079 kind=train batch_idx=33 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645853.868506 kind=train batch_idx=34 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645855.301900 kind=train batch_idx=35 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 35: loss=10.3750, 5403 tok/s, peak_mem=42.2GB, elapsed=53s/600s
+STEP ts=1793645856.733563 kind=train batch_idx=36 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645858.164364 kind=train batch_idx=37 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645859.592344 kind=train batch_idx=38 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645861.022311 kind=train batch_idx=39 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645862.453506 kind=train batch_idx=40 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 40: loss=10.3750, 5441 tok/s, peak_mem=42.2GB, elapsed=60s/600s
+STEP ts=1793645863.886636 kind=train batch_idx=41 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645865.436748 kind=train batch_idx=42 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645866.868792 kind=train batch_idx=43 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645868.299176 kind=train batch_idx=44 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645869.730824 kind=train batch_idx=45 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 45: loss=10.3750, 5462 tok/s, peak_mem=42.2GB, elapsed=67s/600s
+STEP ts=1793645871.164972 kind=train batch_idx=46 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645872.597335 kind=train batch_idx=47 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645874.029193 kind=train batch_idx=48 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645875.463199 kind=train batch_idx=49 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645877.010554 kind=train batch_idx=50 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 50: loss=10.3750, 5478 tok/s, peak_mem=42.2GB, elapsed=75s/600s
+STEP ts=1793645878.446813 kind=train batch_idx=51 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645879.882767 kind=train batch_idx=52 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645881.317148 kind=train batch_idx=53 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645882.750937 kind=train batch_idx=54 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645884.186160 kind=train batch_idx=55 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 55: loss=10.3750, 5498 tok/s, peak_mem=42.2GB, elapsed=82s/600s
+STEP ts=1793645885.621897 kind=train batch_idx=56 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645887.056737 kind=train batch_idx=57 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645888.596136 kind=train batch_idx=58 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645890.032435 kind=train batch_idx=59 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645891.464628 kind=train batch_idx=60 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 60: loss=10.3750, 5508 tok/s, peak_mem=42.2GB, elapsed=89s/600s
+STEP ts=1793645892.900321 kind=train batch_idx=61 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645894.335786 kind=train batch_idx=62 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645895.774922 kind=train batch_idx=63 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645897.208249 kind=train batch_idx=64 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645898.644481 kind=train batch_idx=65 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 65: loss=10.3750, 5523 tok/s, peak_mem=42.2GB, elapsed=96s/600s
+STEP ts=1793645900.189102 kind=train batch_idx=66 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645901.624086 kind=train batch_idx=67 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645903.064631 kind=train batch_idx=68 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645904.504432 kind=train batch_idx=69 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645905.943766 kind=train batch_idx=70 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 70: loss=10.3750, 5529 tok/s, peak_mem=42.2GB, elapsed=104s/600s
+STEP ts=1793645907.381235 kind=train batch_idx=71 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645908.816667 kind=train batch_idx=72 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645910.253061 kind=train batch_idx=73 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 18:58:30,605 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:30,630 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:30,652 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:30,655 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:30,655 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:30,679 [spar.telemetry] INFO: Checkpoint 2: 121 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:31,526 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:58:31,540 [spar.telemetry] INFO: Checkpoint 2: 122 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793645911.802991 kind=train batch_idx=74 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645913.241447 kind=train batch_idx=75 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 75: loss=10.3750, 5535 tok/s, peak_mem=42.2GB, elapsed=111s/600s
+STEP ts=1793645914.679428 kind=train batch_idx=76 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645916.118348 kind=train batch_idx=77 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645917.557636 kind=train batch_idx=78 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645918.994593 kind=train batch_idx=79 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645920.436031 kind=train batch_idx=80 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 80: loss=10.3750, 5544 tok/s, peak_mem=42.2GB, elapsed=118s/600s
+STEP ts=1793645921.874922 kind=train batch_idx=81 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645923.417848 kind=train batch_idx=82 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645924.854827 kind=train batch_idx=83 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645926.292856 kind=train batch_idx=84 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645927.731915 kind=train batch_idx=85 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 85: loss=10.3750, 5548 tok/s, peak_mem=42.2GB, elapsed=125s/600s
+STEP ts=1793645929.172812 kind=train batch_idx=86 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645930.610192 kind=train batch_idx=87 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645932.051699 kind=train batch_idx=88 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645933.490816 kind=train batch_idx=89 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645935.043244 kind=train batch_idx=90 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 90: loss=10.3750, 5551 tok/s, peak_mem=42.2GB, elapsed=133s/600s
+STEP ts=1793645936.485837 kind=train batch_idx=91 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645937.924835 kind=train batch_idx=92 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645939.364161 kind=train batch_idx=93 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645940.803918 kind=train batch_idx=94 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645942.242953 kind=train batch_idx=95 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 95: loss=10.3750, 5558 tok/s, peak_mem=42.2GB, elapsed=140s/600s
+STEP ts=1793645943.686376 kind=train batch_idx=96 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645945.124435 kind=train batch_idx=97 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645946.670739 kind=train batch_idx=98 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645948.111493 kind=train batch_idx=99 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645949.552029 kind=train batch_idx=100 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 100: loss=10.3750, 5561 tok/s, peak_mem=42.2GB, elapsed=147s/600s
+STEP ts=1793645950.994946 kind=train batch_idx=101 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645952.432279 kind=train batch_idx=102 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645953.875349 kind=train batch_idx=103 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645955.317985 kind=train batch_idx=104 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645956.760149 kind=train batch_idx=105 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 105: loss=10.3750, 5566 tok/s, peak_mem=42.2GB, elapsed=155s/600s
+STEP ts=1793645958.323550 kind=train batch_idx=106 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645959.764312 kind=train batch_idx=107 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645961.205972 kind=train batch_idx=108 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645962.644624 kind=train batch_idx=109 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645964.087518 kind=train batch_idx=110 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 110: loss=10.3750, 5567 tok/s, peak_mem=42.2GB, elapsed=162s/600s
+STEP ts=1793645965.527465 kind=train batch_idx=111 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645966.968371 kind=train batch_idx=112 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645968.408622 kind=train batch_idx=113 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645969.957999 kind=train batch_idx=114 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645971.396954 kind=train batch_idx=115 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 115: loss=10.3750, 5569 tok/s, peak_mem=42.2GB, elapsed=169s/600s
+2026-11-02 18:59:31,556 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,557 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,573 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,603 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,620 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,635 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,659 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 18:59:31,686 [spar.telemetry] INFO: Checkpoint 3: 182 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793645972.840311 kind=train batch_idx=116 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645974.279526 kind=train batch_idx=117 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645975.719927 kind=train batch_idx=118 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645977.161519 kind=train batch_idx=119 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645978.604398 kind=train batch_idx=120 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 120: loss=10.3750, 5574 tok/s, peak_mem=42.2GB, elapsed=176s/600s
+STEP ts=1793645980.045045 kind=train batch_idx=121 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645981.592922 kind=train batch_idx=122 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645983.033682 kind=train batch_idx=123 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645984.471417 kind=train batch_idx=124 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645985.913454 kind=train batch_idx=125 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 125: loss=10.3750, 5575 tok/s, peak_mem=42.2GB, elapsed=184s/600s
+STEP ts=1793645987.357170 kind=train batch_idx=126 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645988.800562 kind=train batch_idx=127 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645990.239193 kind=train batch_idx=128 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645991.681137 kind=train batch_idx=129 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645993.227361 kind=train batch_idx=130 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 130: loss=10.3750, 5576 tok/s, peak_mem=42.2GB, elapsed=191s/600s
+STEP ts=1793645994.669594 kind=train batch_idx=131 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645996.110743 kind=train batch_idx=132 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645997.550852 kind=train batch_idx=133 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793645998.993051 kind=train batch_idx=134 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646000.436388 kind=train batch_idx=135 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 135: loss=10.3750, 5580 tok/s, peak_mem=42.2GB, elapsed=198s/600s
+STEP ts=1793646001.878905 kind=train batch_idx=136 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646003.321484 kind=train batch_idx=137 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646004.869034 kind=train batch_idx=138 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646006.307693 kind=train batch_idx=139 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646007.752582 kind=train batch_idx=140 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 140: loss=10.3750, 5580 tok/s, peak_mem=42.2GB, elapsed=206s/600s
+STEP ts=1793646009.195089 kind=train batch_idx=141 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646010.635383 kind=train batch_idx=142 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646012.077523 kind=train batch_idx=143 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646013.520342 kind=train batch_idx=144 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646014.962246 kind=train batch_idx=145 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 145: loss=10.3750, 5584 tok/s, peak_mem=42.2GB, elapsed=213s/600s
+STEP ts=1793646016.521372 kind=train batch_idx=146 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646017.964495 kind=train batch_idx=147 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646019.406752 kind=train batch_idx=148 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646020.844367 kind=train batch_idx=149 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646022.284883 kind=train batch_idx=150 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 150: loss=10.3750, 5584 tok/s, peak_mem=42.2GB, elapsed=220s/600s
+STEP ts=1793646023.731207 kind=train batch_idx=151 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646025.171002 kind=train batch_idx=152 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646026.613760 kind=train batch_idx=153 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646028.159000 kind=train batch_idx=154 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646029.599438 kind=train batch_idx=155 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 155: loss=10.3750, 5585 tok/s, peak_mem=42.2GB, elapsed=227s/600s
+STEP ts=1793646031.044538 kind=train batch_idx=156 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:00:31,566 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:00:31,582 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:00:31,614 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:00:31,628 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:00:31,643 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:00:31,695 [spar.telemetry] INFO: Checkpoint 4: 242 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646032.486670 kind=train batch_idx=157 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:00:32,594 [spar.telemetry] INFO: Checkpoint 4: 243 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:00:32,663 [spar.telemetry] INFO: Checkpoint 4: 243 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646033.931205 kind=train batch_idx=158 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646035.374609 kind=train batch_idx=159 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646036.816597 kind=train batch_idx=160 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 160: loss=10.3750, 5587 tok/s, peak_mem=42.2GB, elapsed=235s/600s
+STEP ts=1793646038.257983 kind=train batch_idx=161 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646039.803377 kind=train batch_idx=162 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646041.246630 kind=train batch_idx=163 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646042.689473 kind=train batch_idx=164 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646044.133627 kind=train batch_idx=165 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 165: loss=10.3750, 5588 tok/s, peak_mem=42.2GB, elapsed=242s/600s
+STEP ts=1793646045.577917 kind=train batch_idx=166 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646047.019938 kind=train batch_idx=167 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646048.463133 kind=train batch_idx=168 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646049.902314 kind=train batch_idx=169 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646051.450379 kind=train batch_idx=170 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 170: loss=10.3750, 5588 tok/s, peak_mem=42.2GB, elapsed=249s/600s
+STEP ts=1793646052.890958 kind=train batch_idx=171 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646054.334002 kind=train batch_idx=172 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646055.776219 kind=train batch_idx=173 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646057.218903 kind=train batch_idx=174 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646058.659532 kind=train batch_idx=175 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 175: loss=10.3750, 5591 tok/s, peak_mem=42.2GB, elapsed=256s/600s
+STEP ts=1793646060.100650 kind=train batch_idx=176 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646061.543182 kind=train batch_idx=177 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646063.094832 kind=train batch_idx=178 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646064.538307 kind=train batch_idx=179 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646065.983016 kind=train batch_idx=180 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 180: loss=10.3750, 5591 tok/s, peak_mem=42.2GB, elapsed=264s/600s
+STEP ts=1793646067.423670 kind=train batch_idx=181 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646068.865576 kind=train batch_idx=182 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646070.304851 kind=train batch_idx=183 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646071.744138 kind=train batch_idx=184 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646073.186661 kind=train batch_idx=185 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 185: loss=10.3750, 5593 tok/s, peak_mem=42.2GB, elapsed=271s/600s
+STEP ts=1793646074.732405 kind=train batch_idx=186 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646076.175708 kind=train batch_idx=187 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646077.615726 kind=train batch_idx=188 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646079.052297 kind=train batch_idx=189 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646080.492227 kind=train batch_idx=190 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 190: loss=10.3750, 5594 tok/s, peak_mem=42.2GB, elapsed=278s/600s
+STEP ts=1793646081.932678 kind=train batch_idx=191 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646083.378428 kind=train batch_idx=192 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646084.819418 kind=train batch_idx=193 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646086.363109 kind=train batch_idx=194 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646087.803730 kind=train batch_idx=195 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 195: loss=10.3750, 5594 tok/s, peak_mem=42.2GB, elapsed=286s/600s
+STEP ts=1793646089.247209 kind=train batch_idx=196 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646090.688820 kind=train batch_idx=197 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:01:31,579 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:01:31,594 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:01:31,640 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:01:31,652 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:01:31,707 [spar.telemetry] INFO: Checkpoint 5: 302 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646092.132229 kind=train batch_idx=198 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:01:32,622 [spar.telemetry] INFO: Checkpoint 5: 303 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:01:33,560 [spar.telemetry] INFO: Checkpoint 5: 304 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646093.575520 kind=train batch_idx=199 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:01:33,679 [spar.telemetry] INFO: Checkpoint 5: 304 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646095.019916 kind=train batch_idx=200 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 200: loss=10.3750, 5596 tok/s, peak_mem=42.2GB, elapsed=293s/600s
+STEP ts=1793646096.463205 kind=train batch_idx=201 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646098.006571 kind=train batch_idx=202 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646099.447546 kind=train batch_idx=203 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646100.887701 kind=train batch_idx=204 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646102.332761 kind=train batch_idx=205 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 205: loss=10.3750, 5596 tok/s, peak_mem=42.2GB, elapsed=300s/600s
+STEP ts=1793646103.773966 kind=train batch_idx=206 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646105.214824 kind=train batch_idx=207 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646106.657511 kind=train batch_idx=208 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646108.101117 kind=train batch_idx=209 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646109.643324 kind=train batch_idx=210 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 210: loss=10.3750, 5596 tok/s, peak_mem=42.2GB, elapsed=307s/600s
+STEP ts=1793646111.084902 kind=train batch_idx=211 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646112.525161 kind=train batch_idx=212 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646113.965897 kind=train batch_idx=213 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646115.410520 kind=train batch_idx=214 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646116.852332 kind=train batch_idx=215 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 215: loss=10.3750, 5598 tok/s, peak_mem=42.2GB, elapsed=315s/600s
+STEP ts=1793646118.293875 kind=train batch_idx=216 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646119.731398 kind=train batch_idx=217 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646121.276570 kind=train batch_idx=218 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646122.722982 kind=train batch_idx=219 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646124.165078 kind=train batch_idx=220 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 220: loss=10.3750, 5598 tok/s, peak_mem=42.2GB, elapsed=322s/600s
+STEP ts=1793646125.607076 kind=train batch_idx=221 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646127.051214 kind=train batch_idx=222 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646128.494553 kind=train batch_idx=223 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646129.934227 kind=train batch_idx=224 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646131.376311 kind=train batch_idx=225 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 225: loss=10.3750, 5600 tok/s, peak_mem=42.2GB, elapsed=329s/600s
+STEP ts=1793646132.924627 kind=train batch_idx=226 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646134.367894 kind=train batch_idx=227 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646135.812184 kind=train batch_idx=228 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646137.254458 kind=train batch_idx=229 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646138.700024 kind=train batch_idx=230 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 230: loss=10.3750, 5600 tok/s, peak_mem=42.2GB, elapsed=336s/600s
+STEP ts=1793646140.146758 kind=train batch_idx=231 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646141.590394 kind=train batch_idx=232 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646143.033479 kind=train batch_idx=233 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646144.583071 kind=train batch_idx=234 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646146.023720 kind=train batch_idx=235 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 235: loss=10.3750, 5600 tok/s, peak_mem=42.2GB, elapsed=344s/600s
+STEP ts=1793646147.468145 kind=train batch_idx=236 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646148.911956 kind=train batch_idx=237 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646150.353587 kind=train batch_idx=238 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:02:31,606 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:02:31,655 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:02:31,661 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:02:31,716 [spar.telemetry] INFO: Checkpoint 6: 362 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646151.797328 kind=train batch_idx=239 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:02:32,588 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:02:32,635 [spar.telemetry] INFO: Checkpoint 6: 363 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646153.240545 kind=train batch_idx=240 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 240: loss=10.3750, 5601 tok/s, peak_mem=42.2GB, elapsed=351s/600s
+2026-11-02 19:02:34,570 [spar.telemetry] INFO: Checkpoint 6: 365 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:02:34,679 [spar.telemetry] INFO: Checkpoint 6: 365 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646154.685132 kind=train batch_idx=241 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646156.231574 kind=train batch_idx=242 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646157.676343 kind=train batch_idx=243 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646159.117474 kind=train batch_idx=244 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646160.562884 kind=train batch_idx=245 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 245: loss=10.3750, 5601 tok/s, peak_mem=42.2GB, elapsed=358s/600s
+STEP ts=1793646162.006891 kind=train batch_idx=246 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646163.451502 kind=train batch_idx=247 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646164.892785 kind=train batch_idx=248 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646166.333109 kind=train batch_idx=249 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646167.881508 kind=train batch_idx=250 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 250: loss=10.3750, 5601 tok/s, peak_mem=42.2GB, elapsed=366s/600s
+STEP ts=1793646169.326481 kind=train batch_idx=251 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646170.768902 kind=train batch_idx=252 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646172.209086 kind=train batch_idx=253 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646173.653075 kind=train batch_idx=254 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646175.095108 kind=train batch_idx=255 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 255: loss=10.3750, 5602 tok/s, peak_mem=42.2GB, elapsed=373s/600s
+STEP ts=1793646176.538233 kind=train batch_idx=256 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646177.982770 kind=train batch_idx=257 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646179.530953 kind=train batch_idx=258 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646180.970819 kind=train batch_idx=259 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646182.414886 kind=train batch_idx=260 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 260: loss=10.3750, 5602 tok/s, peak_mem=42.2GB, elapsed=380s/600s
+STEP ts=1793646183.858376 kind=train batch_idx=261 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646185.300243 kind=train batch_idx=262 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646186.741163 kind=train batch_idx=263 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646188.182364 kind=train batch_idx=264 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646189.625446 kind=train batch_idx=265 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 265: loss=10.3750, 5604 tok/s, peak_mem=42.2GB, elapsed=387s/600s
+STEP ts=1793646191.172976 kind=train batch_idx=266 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646192.614106 kind=train batch_idx=267 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646194.057879 kind=train batch_idx=268 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646195.500055 kind=train batch_idx=269 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646196.943673 kind=train batch_idx=270 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 270: loss=10.3750, 5604 tok/s, peak_mem=42.2GB, elapsed=395s/600s
+STEP ts=1793646198.386395 kind=train batch_idx=271 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646199.829792 kind=train batch_idx=272 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646201.273481 kind=train batch_idx=273 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646202.840769 kind=train batch_idx=274 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646204.283013 kind=train batch_idx=275 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 275: loss=10.3750, 5603 tok/s, peak_mem=42.2GB, elapsed=402s/600s
+STEP ts=1793646205.724816 kind=train batch_idx=276 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646207.167239 kind=train batch_idx=277 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646208.610103 kind=train batch_idx=278 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646210.053790 kind=train batch_idx=279 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646211.498308 kind=train batch_idx=280 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 280: loss=10.3750, 5605 tok/s, peak_mem=42.2GB, elapsed=409s/600s
+2026-11-02 19:03:31,617 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:03:31,671 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:03:31,672 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:03:31,727 [spar.telemetry] INFO: Checkpoint 7: 422 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:03:32,647 [spar.telemetry] INFO: Checkpoint 7: 423 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646212.940216 kind=train batch_idx=281 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:03:33,600 [spar.telemetry] INFO: Checkpoint 7: 424 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646214.490321 kind=train batch_idx=282 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:03:35,580 [spar.telemetry] INFO: Checkpoint 7: 426 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:03:35,686 [spar.telemetry] INFO: Checkpoint 7: 426 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646215.934141 kind=train batch_idx=283 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646217.378801 kind=train batch_idx=284 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646218.824984 kind=train batch_idx=285 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 285: loss=10.3750, 5604 tok/s, peak_mem=42.2GB, elapsed=417s/600s
+STEP ts=1793646220.267137 kind=train batch_idx=286 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646221.710177 kind=train batch_idx=287 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646223.152392 kind=train batch_idx=288 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646224.595768 kind=train batch_idx=289 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646226.154290 kind=train batch_idx=290 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 290: loss=10.3750, 5604 tok/s, peak_mem=42.2GB, elapsed=424s/600s
+STEP ts=1793646227.596737 kind=train batch_idx=291 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646229.038609 kind=train batch_idx=292 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646230.480515 kind=train batch_idx=293 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646231.926087 kind=train batch_idx=294 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646233.369004 kind=train batch_idx=295 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 295: loss=10.3750, 5605 tok/s, peak_mem=42.2GB, elapsed=431s/600s
+STEP ts=1793646234.811953 kind=train batch_idx=296 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646236.253994 kind=train batch_idx=297 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646237.801821 kind=train batch_idx=298 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646239.248072 kind=train batch_idx=299 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646240.689774 kind=train batch_idx=300 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 300: loss=10.3750, 5605 tok/s, peak_mem=42.2GB, elapsed=438s/600s
+STEP ts=1793646242.134127 kind=train batch_idx=301 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646243.579023 kind=train batch_idx=302 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646245.023085 kind=train batch_idx=303 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646246.465253 kind=train batch_idx=304 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646247.909585 kind=train batch_idx=305 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 305: loss=10.3750, 5606 tok/s, peak_mem=42.2GB, elapsed=446s/600s
+STEP ts=1793646249.457961 kind=train batch_idx=306 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646250.900033 kind=train batch_idx=307 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646252.340076 kind=train batch_idx=308 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646253.780971 kind=train batch_idx=309 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646255.224711 kind=train batch_idx=310 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 310: loss=10.3750, 5606 tok/s, peak_mem=42.2GB, elapsed=453s/600s
+STEP ts=1793646256.667774 kind=train batch_idx=311 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646258.114628 kind=train batch_idx=312 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646259.562089 kind=train batch_idx=313 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646261.115687 kind=train batch_idx=314 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646262.562475 kind=train batch_idx=315 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 315: loss=10.3750, 5606 tok/s, peak_mem=42.2GB, elapsed=460s/600s
+STEP ts=1793646264.004701 kind=train batch_idx=316 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646265.446730 kind=train batch_idx=317 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646266.886698 kind=train batch_idx=318 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646268.329278 kind=train batch_idx=319 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646269.772754 kind=train batch_idx=320 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 320: loss=10.3750, 5607 tok/s, peak_mem=42.2GB, elapsed=468s/600s
+STEP ts=1793646271.219090 kind=train batch_idx=321 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:04:31,629 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:04:31,709 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:04:31,709 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:04:31,739 [spar.telemetry] INFO: Checkpoint 8: 482 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:04:32,658 [spar.telemetry] INFO: Checkpoint 8: 483 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646272.767268 kind=train batch_idx=322 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646274.208227 kind=train batch_idx=323 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:04:34,607 [spar.telemetry] INFO: Checkpoint 8: 485 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646275.653065 kind=train batch_idx=324 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:04:35,738 [spar.telemetry] INFO: Checkpoint 8: 486 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:04:36,587 [spar.telemetry] INFO: Checkpoint 8: 487 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646277.098351 kind=train batch_idx=325 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 325: loss=10.3750, 5607 tok/s, peak_mem=42.2GB, elapsed=475s/600s
+STEP ts=1793646278.543034 kind=train batch_idx=326 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646279.988087 kind=train batch_idx=327 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646281.432123 kind=train batch_idx=328 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646282.876915 kind=train batch_idx=329 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646284.423346 kind=train batch_idx=330 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 330: loss=10.3750, 5606 tok/s, peak_mem=42.2GB, elapsed=482s/600s
+STEP ts=1793646285.866104 kind=train batch_idx=331 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646287.306681 kind=train batch_idx=332 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646288.750677 kind=train batch_idx=333 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646290.195081 kind=train batch_idx=334 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646291.641018 kind=train batch_idx=335 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 335: loss=10.3750, 5607 tok/s, peak_mem=42.2GB, elapsed=489s/600s
+STEP ts=1793646293.087827 kind=train batch_idx=336 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646294.528927 kind=train batch_idx=337 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646296.086313 kind=train batch_idx=338 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646297.531334 kind=train batch_idx=339 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646298.974365 kind=train batch_idx=340 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 340: loss=10.3750, 5607 tok/s, peak_mem=42.2GB, elapsed=497s/600s
+STEP ts=1793646300.417623 kind=train batch_idx=341 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646301.859492 kind=train batch_idx=342 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646303.301731 kind=train batch_idx=343 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646304.744452 kind=train batch_idx=344 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646306.188165 kind=train batch_idx=345 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 345: loss=10.3750, 5608 tok/s, peak_mem=42.2GB, elapsed=504s/600s
+STEP ts=1793646307.736740 kind=train batch_idx=346 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646309.181109 kind=train batch_idx=347 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646310.625179 kind=train batch_idx=348 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646312.067771 kind=train batch_idx=349 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646313.512412 kind=train batch_idx=350 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 350: loss=10.3750, 5608 tok/s, peak_mem=42.2GB, elapsed=511s/600s
+STEP ts=1793646314.954224 kind=train batch_idx=351 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646316.400166 kind=train batch_idx=352 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646317.843078 kind=train batch_idx=353 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646319.389194 kind=train batch_idx=354 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646320.835114 kind=train batch_idx=355 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 355: loss=10.3750, 5608 tok/s, peak_mem=42.2GB, elapsed=519s/600s
+STEP ts=1793646322.279714 kind=train batch_idx=356 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646323.724923 kind=train batch_idx=357 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646325.167451 kind=train batch_idx=358 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646326.607170 kind=train batch_idx=359 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646328.050269 kind=train batch_idx=360 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 360: loss=10.3750, 5609 tok/s, peak_mem=42.2GB, elapsed=526s/600s
+STEP ts=1793646329.494314 kind=train batch_idx=361 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646331.040827 kind=train batch_idx=362 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:05:31,646 [spar.telemetry] INFO: Checkpoint 9: 542 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:05:31,749 [spar.telemetry] INFO: Checkpoint 9: 542 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646332.481695 kind=train batch_idx=363 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:05:32,673 [spar.telemetry] INFO: Checkpoint 9: 543 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:05:32,693 [spar.telemetry] INFO: Checkpoint 9: 543 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:05:32,696 [spar.telemetry] INFO: Checkpoint 9: 543 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646333.924034 kind=train batch_idx=364 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646335.367580 kind=train batch_idx=365 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 365: loss=10.3750, 5608 tok/s, peak_mem=42.2GB, elapsed=533s/600s
+2026-11-02 19:05:35,615 [spar.telemetry] INFO: Checkpoint 9: 546 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:05:36,601 [spar.telemetry] INFO: Checkpoint 9: 547 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:05:36,700 [spar.telemetry] INFO: Checkpoint 9: 547 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646336.811877 kind=train batch_idx=366 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646338.253927 kind=train batch_idx=367 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646339.698275 kind=train batch_idx=368 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646341.139828 kind=train batch_idx=369 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646342.686471 kind=train batch_idx=370 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 370: loss=10.3750, 5608 tok/s, peak_mem=42.2GB, elapsed=540s/600s
+STEP ts=1793646344.131362 kind=train batch_idx=371 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646345.574781 kind=train batch_idx=372 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646347.014292 kind=train batch_idx=373 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646348.460479 kind=train batch_idx=374 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646349.902802 kind=train batch_idx=375 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 375: loss=10.3750, 5609 tok/s, peak_mem=42.2GB, elapsed=548s/600s
+STEP ts=1793646351.344508 kind=train batch_idx=376 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646352.788943 kind=train batch_idx=377 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646354.338949 kind=train batch_idx=378 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646355.783114 kind=train batch_idx=379 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646357.227180 kind=train batch_idx=380 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 380: loss=10.3750, 5609 tok/s, peak_mem=42.2GB, elapsed=555s/600s
+STEP ts=1793646358.671399 kind=train batch_idx=381 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646360.116163 kind=train batch_idx=382 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646361.558187 kind=train batch_idx=383 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646363.002784 kind=train batch_idx=384 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646364.449250 kind=train batch_idx=385 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 385: loss=10.3750, 5610 tok/s, peak_mem=42.2GB, elapsed=562s/600s
+STEP ts=1793646366.000313 kind=train batch_idx=386 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646367.442252 kind=train batch_idx=387 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646368.887916 kind=train batch_idx=388 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646370.331411 kind=train batch_idx=389 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646371.773824 kind=train batch_idx=390 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 390: loss=10.3750, 5610 tok/s, peak_mem=42.2GB, elapsed=570s/600s
+STEP ts=1793646373.217560 kind=train batch_idx=391 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646374.663117 kind=train batch_idx=392 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646376.107797 kind=train batch_idx=393 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646377.658597 kind=train batch_idx=394 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646379.102712 kind=train batch_idx=395 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 395: loss=10.3750, 5609 tok/s, peak_mem=42.2GB, elapsed=577s/600s
+STEP ts=1793646380.546122 kind=train batch_idx=396 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646381.989702 kind=train batch_idx=397 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646383.432719 kind=train batch_idx=398 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646384.873638 kind=train batch_idx=399 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646386.318904 kind=train batch_idx=400 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 400: loss=10.3750, 5610 tok/s, peak_mem=42.2GB, elapsed=584s/600s
+STEP ts=1793646387.765218 kind=train batch_idx=401 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646389.313827 kind=train batch_idx=402 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646390.755964 kind=train batch_idx=403 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:06:31,660 [spar.telemetry] INFO: Checkpoint 10: 602 samples -> data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646392.199291 kind=train batch_idx=404 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:06:32,708 [spar.telemetry] INFO: Checkpoint 10: 603 samples -> data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:06:32,759 [spar.telemetry] INFO: Checkpoint 10: 603 samples -> data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646393.641614 kind=train batch_idx=405 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 405: loss=10.3750, 5610 tok/s, peak_mem=42.2GB, elapsed=591s/600s
+2026-11-02 19:06:33,736 [spar.telemetry] INFO: Checkpoint 10: 604 samples -> data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:06:33,737 [spar.telemetry] INFO: Checkpoint 10: 604 samples -> data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646395.090012 kind=train batch_idx=406 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646396.535682 kind=train batch_idx=407 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+2026-11-02 19:06:36,615 [spar.telemetry] INFO: Checkpoint 10: 607 samples -> data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:06:36,622 [spar.telemetry] INFO: Checkpoint 10: 607 samples -> data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+2026-11-02 19:06:37,709 [spar.telemetry] INFO: Checkpoint 10: 608 samples -> data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet.partial
+STEP ts=1793646397.980176 kind=train batch_idx=408 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646399.422251 kind=train batch_idx=409 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646400.972485 kind=train batch_idx=410 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+  Step 410: loss=10.3750, 5610 tok/s, peak_mem=42.2GB, elapsed=599s/600s
+STEP ts=1793646402.416721 kind=train batch_idx=411 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646403.859581 kind=train batch_idx=412 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646405.303052 kind=train batch_idx=413 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+STEP ts=1793646406.743286 kind=train batch_idx=414 tokens=8192 passes=1 node=0 rank=0 loss=10.3750
+
+FSDP training complete: 414 steps in 604.5s
+  Total tokens: 3,391,488
+  Throughput: 5610 tok/s
+  Peak GPU memory: 42.2 GB
+2026-11-02 19:06:49,848 [spar.multi_gpu] INFO:   Workload finished: OK
+2026-11-02 19:06:51,851 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,868 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,873 [spar.multi_gpu] INFO:   GPU 0: saved data/fsdp_30b_nvlink_node0_gpu0_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,873 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,887 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,892 [spar.multi_gpu] INFO:   GPU 1: saved data/fsdp_30b_nvlink_node0_gpu1_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,892 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,906 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,910 [spar.multi_gpu] INFO:   GPU 2: saved data/fsdp_30b_nvlink_node0_gpu2_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,911 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,924 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,929 [spar.multi_gpu] INFO:   GPU 3: saved data/fsdp_30b_nvlink_node0_gpu3_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,929 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,942 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,947 [spar.multi_gpu] INFO:   GPU 4: saved data/fsdp_30b_nvlink_node0_gpu4_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,947 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,960 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,965 [spar.multi_gpu] INFO:   GPU 5: saved data/fsdp_30b_nvlink_node0_gpu5_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,965 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,978 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:51,983 [spar.multi_gpu] INFO:   GPU 6: saved data/fsdp_30b_nvlink_node0_gpu6_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:51,983 [spar.telemetry] INFO: Telemetry stopped. 622 samples collected.
+2026-11-02 19:06:51,997 [spar.telemetry] INFO: Saved 622 rows to data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet
+2026-11-02 19:06:52,001 [spar.multi_gpu] INFO:   GPU 7: saved data/fsdp_30b_nvlink_node0_gpu7_NVIDIA_A100_SXM4_80GB_ecf42220d22a.parquet (622 rows)
+2026-11-02 19:06:52,003 [spar.multi_gpu] INFO: Multi-GPU run complete: ecf42220d22a (rc=0)
+2026-11-02 19:06:52,005 [scripts.run_health] INFO: Run health: ok (span 621s of 600s requested, GPU busy in 97.3% of 622 samples)
+SPAR_CELL_DONE cell=fsdp_30b_nvlink rep=2 exit=0 utc=2026-11-02T19:06:52Z
