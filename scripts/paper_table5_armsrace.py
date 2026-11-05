@@ -209,9 +209,28 @@ def family_of(label):
     return None
 
 
+def _model_kind():
+    import os
+    return os.environ.get("PAPER_MODEL", "rf").strip().lower()
+
+
 def forest():
+    """The classifier under test. PAPER_MODEL=xgb swaps in XGBoost.
+
+    Both configurations are the ones Table 6 compared, so a stack run with
+    PAPER_MODEL=xgb is comparable with that measurement rather than being a
+    third tuning. Note XGBoost has no class_weight; Table 6 ran it without one
+    and the corpus is 57% positive, so the imbalance correction is small.
+    """
+    import os
+    nj = int(os.environ.get("PAPER_NJOBS", "0")) or -1
+    if _model_kind() in ("xgb", "xgboost"):
+        from xgboost import XGBClassifier
+        return XGBClassifier(n_estimators=400, max_depth=6, learning_rate=0.1,
+                             n_jobs=nj, random_state=42,
+                             eval_metric="logloss", tree_method="hist")
     return RandomForestClassifier(n_estimators=400, class_weight="balanced",
-                                  random_state=42, n_jobs=-1)
+                                  random_state=42, n_jobs=nj)
 
 
 def features_for_round(n, standard, plateau, physics):

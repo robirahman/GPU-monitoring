@@ -1,0 +1,98 @@
+{
+ "model": "xgb",
+ "window_sec": 30.0,
+ "stride_sec": 15.0,
+ "source": "cache/win_30.parquet",
+ "results": [
+  {
+   "variant": "causal, job labels | holdout=job_id",
+   "group_by": "job_id",
+   "windows": 32481,
+   "groups": 1116,
+   "workloads": 161,
+   "folds": 5,
+   "accuracy": 0.9869612665231656,
+   "std": 0.012346109878787306,
+   "fold_accuracies": [
+    0.997685,
+    0.995722,
+    0.963935,
+    0.992849,
+    0.984615
+   ],
+   "precision": 0.9924069855732726,
+   "recall": 0.9830763444904099,
+   "specificity": 0.9899048168445341,
+   "false_positive_rate": 0.01009518315546587,
+   "macro_f1": 0.9857089066057401,
+   "confusion": {
+    "tp": 18298,
+    "fp": 140,
+    "tn": 13728,
+    "fn": 315
+   },
+   "jobs_split_across_folds": 0,
+   "training_share": 0.5730427018872571
+  },
+  {
+   "variant": "causal, job labels | holdout=run_id",
+   "group_by": "run_id",
+   "windows": 32481,
+   "groups": 1477,
+   "workloads": 161,
+   "folds": 5,
+   "accuracy": 0.9935892399494856,
+   "std": 0.005996470504821772,
+   "fold_accuracies": [
+    0.996855,
+    0.998631,
+    0.981967,
+    0.996498,
+    0.993995
+   ],
+   "precision": 0.9963312651739952,
+   "recall": 0.9921560199860313,
+   "specificity": 0.9950966253244881,
+   "false_positive_rate": 0.00490337467551194,
+   "macro_f1": 0.9932726460562769,
+   "confusion": {
+    "tp": 18467,
+    "fp": 68,
+    "tn": 13800,
+    "fn": 146
+   },
+   "jobs_split_across_folds": 245,
+   "training_share": 0.5730427018872571
+  },
+  {
+   "variant": "causal, job labels | holdout=workload",
+   "group_by": "workload",
+   "windows": 32481,
+   "groups": 161,
+   "workloads": 161,
+   "folds": 5,
+   "accuracy": 0.9032468722958307,
+   "std": 0.08579902575573654,
+   "fold_accuracies": [
+    0.928248,
+    0.986395,
+    0.939339,
+    0.737416,
+    0.924837
+   ],
+   "precision": 0.867200834439598,
+   "recall": 0.9827002632568634,
+   "specificity": 0.7980242284395731,
+   "false_positive_rate": 0.2019757715604269,
+   "macro_f1": 0.8988480146795887,
+   "confusion": {
+    "tp": 18291,
+    "fp": 2801,
+    "tn": 11067,
+    "fn": 322
+   },
+   "jobs_split_across_folds": 0,
+   "training_share": 0.5730427018872571
+  }
+ ]
+}
