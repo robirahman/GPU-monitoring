@@ -129,9 +129,22 @@ setsid bash "\$REPO/scripts/gcp/sync_data.sh" --loop 120 </dev/null >/var/log/sp
 
 cd "\$REPO"
 . /etc/spar/node_env
+# PY/PY_VLLM are NOT optional. multinode_queue.sh defaults PY to python3 and
+# derives TORCHRUN as \$(dirname \$PY)/torchrun, so leaving them unset yields
+# "./torchrun" and the queue aborts on its launcher check after ~90 s -- which
+# is exactly what the first attempt at this cell did, on a billing 8xH100.
+# launch_queue.sh:67 passes these; calling the queue directly means passing
+# them here.
+PY="\$REPO/venv-main/bin/python"
+PY_VLLM="\$REPO/venv-vllm/bin/python"
+if [ ! -x "\$PY" ] || [ ! -x "\$(dirname "\$PY")/torchrun" ]; then
+  echo "FATAL: venv incomplete -- python=\$PY torchrun=\$(dirname "\$PY")/torchrun"
+  ls -la "\$(dirname "\$PY")" 2>&1 | head -20
+fi
 # Call the queue directly: NNODES=1 disables cell_barrier, and skipping
 # launch_queue.sh / run_stage_and_stop.sh avoids their four peer gates.
 NNODES=1 NODE_RANK=0 MASTER_ADDR="\$NODE" MASTER_PORT=29500 \\
+  NODE_NAME="\$NODE" PY="\$PY" PY_VLLM="\$PY_VLLM" \\
   RUN_STAMP="\$STAMP" REPS="\$REPS" DUR="\$DUR" ONLY_CELLS="\$ONLY" \\
   GCPDIR=/opt/spar/gcp \\
   bash scripts/rebuttal_collection/multinode_queue.sh \\
@@ -172,20 +185,28 @@ exists() { gcloud compute instances describe "$NODE" --project="$PROJECT" --zone
 
 MODELS="STANDARD"
 [ "$ALLOW_SPOT" = "1" ] && MODELS="STANDARD SPOT"
-for model in $MODELS; do
- for z in $ZONES; do
-  for MACHINE_TYPE in $MACHINE_TYPES; do
-    say "trying $z ($MACHINE_TYPE, $model)"
+# A3 capacity comes and goes: on 2026-11-05 every H100 zone returned
+# ZONE_RESOURCE_POOL_EXHAUSTED for both STANDARD and SPOT inside 20 minutes.
+# One pass over the zone list is therefore a snapshot, not an answer; PASSES
+# re-walks it. Each failed create costs 10 s (fast reject) to 3 min (slow),
+# so a pass is cheap and nothing bills until one lands.
+for pass in $(seq 1 "${PASSES:-1}"); do
+ for model in $MODELS; do
+  for z in $ZONES; do
+   for MACHINE_TYPE in $MACHINE_TYPES; do
+    say "pass $pass: trying $z ($MACHINE_TYPE, $model)"
     if mk "$z" "$model" || exists "$z"; then
       say "UP in $z ($model $MACHINE_TYPE): $NODE"
       say "  cells: $ONLY_CELLS  REPS=$REPS DUR=$DUR  stamp=$RUN_STAMP"
-      [ "$model" = "SPOT" ] && say "  SPOT: if reclaimed, re-run this script with the SAME RUN_STAMP to resume."
+      [ "$model" = "SPOT" ] && say "  SPOT: if reclaimed, re-run with the SAME RUN_STAMP to resume."
       say "  watch: gcloud compute instances list --filter='name=$NODE'"
       exit 0
     fi
     say "  failed in $z: $(why "$z" "$model")"
+   done
   done
+  say "pass $pass: no zone had $model capacity for $MACHINE_TYPES"
  done
- say "no zone had $model capacity for $MACHINE_TYPES"
+ [ "$pass" -lt "${PASSES:-1}" ] && { say "sleeping ${SLEEP_BETWEEN:-300}s before pass $((pass+1))"; sleep "${SLEEP_BETWEEN:-300}"; }
 done
 exit 1
