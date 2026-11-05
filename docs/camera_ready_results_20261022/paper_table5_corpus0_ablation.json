@@ -1,0 +1,29 @@
+{
+  "target": "symgemm_L4_fused_sgd",
+  "conditions": [
+    {
+      "corpus_0": "corpus_0 as run in option (b)",
+      "train_windows": 26078,
+      "L4_baseline_detection": 0.006837606837606838,
+      "L1_flagged_as_training": 0.0
+    },
+    {
+      "corpus_0": "minus L3_graddiscard",
+      "train_windows": 25922,
+      "L4_baseline_detection": 0.011965811965811967,
+      "L1_flagged_as_training": 0.0
+    },
+    {
+      "corpus_0": "minus the L0/L1/L3 synthetic ladder",
+      "train_windows": 25491,
+      "L4_baseline_detection": 0.20683760683760682,
+      "L1_flagged_as_training": 0.01818181818181818
+    },
+    {
+      "corpus_0": "minus every symgemm negative",
+      "train_windows": 25355,
+      "L4_baseline_detection": 0.20170940170940171,
+      "L1_flagged_as_training": 0.014545454545454545
+    }
+  ]
+}

@@ -18,7 +18,13 @@ from classifier.threeway_improved import load_all_data
 
 ROOT = Path(".").resolve()
 OUT = ROOT / "cache" / "paper_corpus_r6.parquet"
-PAT = r"^(symgemm_|ppo_rlhf|s16_train_ppodist)"
+# Every cell collected outside tier A that the arms-race analysis needs. The
+# tiers are frozen by collection date, so the whole Round 6 campaign and its
+# later controls sit in B_rebuttal / C_followup and no tier-A cache contains
+# them. ppo_rlhf matches ppo_rlhf_accum* too; s\\d+ covers the 8- and 16-rank
+# distributed RL cells (the 16-rank one is then dropped by the single-node
+# scope filter, not here, so the exclusion stays visible in one place).
+PAT = r"^(symgemm_|ppo_rlhf|bestofn_rm|s\d+_train_ppodist)"
 
 t0 = time.time()
 man = pd.read_parquet("docs/camera_ready_manifest_20261022/streams.parquet")
