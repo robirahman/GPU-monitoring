@@ -1,75 +1,76 @@
-# The symgemm_ppo_fused rollout sweep is confounded by collection epoch
+# A collection-epoch effect, scoped to the `generate()` path
 
-Status: **the Round 6 `symgemm_ppo_fused` row of
-`paper_table5_armsrace_final_seeds.json` must not be used.** A matched
-re-collection is in flight; this note records why.
+A `transformers` version change between the August and November collections
+moves detection of an identical workload by up to 100 points — but only for
+cells that spend their time in `model.generate()`. The GEMM ladder that Round 6
+rests on is unaffected, and Round 6's claim has now been replicated across both
+epochs.
 
-## What was intended
+## The effect
 
-`symgemm_ppo_fused` had two workload cells (r8, r32) against five CV folds, so
-its workload-holdout number was bimodal: either both cells land in the same
-test fold and the family reads its leave-one-family-out value (~1.3%), or they
-split and it reads ~98%. Five fold-assignment seeds gave 2.1, 99.6, 0.4, 97.0,
-99.1 — mean 59.7%, sd 53.3, and no seed anywhere near the mean. Three more
-cells (r4, r16, r64) were collected to make every fold split partial.
+`symgemm_ppo_fused_r8`, same program, same rollout count, same GPU model:
 
-## What actually happened
-
-Per-cell baseline detection is **not monotone in rollout count**:
-
-| cell | collected | baseline det. | prev.-round | unseen |
+| | collected | baseline det. | mean util | mean power |
 |---|---|---|---|---|
-| r4   | 2026-11-05 |  98.3% | 100.0% | 100.0% |
-| r8   | 2026-08-03 |   0.0% |  57.3% |  18.8% |
-| r16  | 2026-11-05 | 100.0% | 100.0% | 100.0% |
-| r32  | 2026-08-03 |  84.6% |  93.2% |  80.3% |
-| r64  | 2026-11-05 | 100.0% | 100.0% | 100.0% |
+| `symgemm_ppo_fused_r8` | 2026-08-03 | **0.0%** | 35.3% | 107 W |
+| `symgemm_ppo_fused_nov_r8` | 2026-11-05 | **100.0%** | 25.5% | 70 W |
+| `symgemm_ppo_fused_r32` | 2026-08-03 | 81.2% | 35.8% | 103 W |
+| `symgemm_ppo_fused_nov_r32` | 2026-11-05 | 99.2% | 25.8% | 69 W |
 
-If temporal dilution were the mechanism, detection would fall as rollout count
-rises. It does not. The split is by collection date, and the raw telemetry
-says why:
+Driver 580.126.16 → 580.178.04, and the node was pinned to transformers 4.57.6
+after the August run (`requirements_v2.txt:53` names 5.20.2, which disables
+PyTorch under torch 2.5.1).
 
-| collected | cells | mean util | mean power | SM clock | PCIe rx |
-|---|---|---|---|---|---|
-| 2026-08-03 | r8, r32      | 35.2% | 105 W | 1171 MHz | 80 MB/s |
-| 2026-11-05 | r4, r16, r64 | 25.4% |  69 W | 1152 MHz | 52 MB/s |
+## What it does NOT affect
 
-The three November cells sit at 25.2%, 25.4% and 25.5% mean utilisation — a
-16x change in rollout count moves utilisation by 0.3 points. The collection
-epoch moves it by ten points and power by 35 W. Driver differs too
-(580.126.16 vs 580.178.04), and the node was pinned to transformers 4.57.6
-after the August run, which changes the `generate()` path the rollout phase
-spends most of its time in.
+`symgemm_L4_sgdfused`, re-collected for exactly this test, with its matched
+FLOP-equivalent control:
 
-So the sweep did not widen the family along the axis it is named for. The
-rollout parameter has no detectable effect on 1 Hz telemetry at this scale;
-what the detector separates is the software stack.
+| cell | epoch | baseline | prev.-round | unseen | util | W |
+|---|---|---|---|---|---|---|
+| `symgemm_L4_sgdfused` | Aug | 0.0% | 0.0% | 0.0% | 97.5% | 387 |
+| `symgemm_L4_sgdfused_nov` | Nov | 0.0% | 0.9% | 0.0% | 96.0% | 346 |
+| `symgemm_L1_fwd3` (control) | Aug | 0.0% FP | 0.0% FP | — | 98.5% | 391 |
+| `symgemm_L1_fwd3_nov` (control) | Nov | 0.0% FP | 0.0% FP | — | 97.8% | 348 |
 
-## Consequence
+Zero to zero, on both the attack and its control.
 
-The family's baseline detection reads 76.7% with five cells where it read
-0.0% with two. That change is an artifact. The seed spread did collapse — the
-bimodality is gone — but the family is now heterogeneous for the wrong reason,
-and 76.7% would misreport Round 6 as far more detectable than it is.
+## The mechanism, and the boundary it draws
 
-`symgemm_L4_fused_sgd` is unaffected: 0.0-5.9% per cell at baseline across all
-five of its cells, which span both epochs. The Round 6 headline rests on L4
-and still holds.
+| cell type | time spent in | Aug → Nov util | detection |
+|---|---|---|---|
+| rollout / decode | `model.generate()` | 35% → 25% | 0% → 100% |
+| GEMM ladder | `torch.matmul` loop | 97.5% → 96.0% | 0% → 0% |
 
-## Fix in flight
+The library change altered the generation path. L4 saturates the card at ~97%
+in both epochs because it never calls it.
 
-r8 and r32 re-collected on the November node as
-`symgemm_ppo_fused_nov_r8` / `_nov_r32`, 3 reps each. That gives five cells in
-one environment (nov_r8, nov_r32, r4, r16, r64) so the rollout axis is
-isolated, and keeps the August r8/r32 as a matched cross-epoch pair — which
-measures the batch effect itself, a reproducibility number the paper does not
-currently have.
+  affected    symgemm_ppo_fused, symgemm_decode_g256, ppo_rlhf, bestofn_rm
+  unaffected  symgemm_L0, L1, L3, L4, L5
 
-## Generalisation worth checking before camera-ready
+## Consequences
 
-If a driver bump and a transformers pin move mean power by a third on an
-identical workload, then any corpus cell re-collected between April and
-November may carry the same shift. The corpus spans 2026-03-09 to 2026-11-05
-and rounds 1-4 were re-collected into late October. Nothing here shows that
-has distorted another number, but nothing rules it out either, and the
-cross-epoch pair above is the cheapest instrument for measuring it.
+1. **Round 6's headline stands.** `symgemm_L4_fused_sgd` reads 0.3% baseline
+   detection across six cells spanning both epochs, against a matched control
+   at 0% false positives in both. The symmetric-GEMM disguise is real and now
+   has a cross-epoch replication, which the single August collection did not.
+
+2. **`symgemm_ppo_fused` cannot be reported as an evasion success.** With the
+   environment held constant, rollout count does essentially nothing: r4 94.9,
+   nov_r8 100.0, r16 99.2, nov_r32 99.2, r64 100.0, while update density falls
+   16x (74 to 5 optimiser steps per 600 s) and mean utilisation moves 0.4
+   points. The original 0.0% was the August `generate()` path, not the disguise.
+   Temporal dilution of the policy update does not register at 1 Hz.
+
+3. **Open editorial choice.** The family's Round 6 row currently pools seven
+   cells across two software stacks. Keeping the August pair preserves the data
+   and shows the spread; dropping it makes the row single-environment. Both are
+   defensible; the table is generated with all seven so the spread is visible.
+
+## What this does not tell us
+
+Only the symgemm family was re-collected. The corpus spans 2026-03-09 to
+2026-11-05 and rounds 1-4 were re-collected into late October, so other cells
+may carry their own environment shifts. Nothing here shows that they do. The
+cheap check for any suspect cell is the one run here: re-collect it and compare,
+which costs about 20 minutes of single-GPU time per cell.

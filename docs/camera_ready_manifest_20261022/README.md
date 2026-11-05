@@ -18,7 +18,7 @@ gating change the latter.
 | `unassigned_pre_rebuttal` | 66 | 66 | 41 | 16 | 431 | 2.2 | 7,952 | 2026-06-24 | 2026-06-24 |
 | `B_rebuttal` | 115 | 115 | 61 | 12 | 14,619 | 61.7 | 222,112 | 2026-07-24 | 2026-08-04 |
 | `unassigned_post_rebuttal` | 0 | 0 | 0 | 0 | 0 | 0 | 0 | - | - |
-| `C_followup` | 1,344 | 8,068 | 347 | 82 | 313,778 | 1,353.7 | 4,880,521 | 2026-08-20 | 2026-11-05 |
+| `C_followup` | 1,356 | 8,080 | 351 | 82 | 314,246 | 1,355.7 | 4,887,882 | 2026-08-20 | 2026-11-05 |
 
 ## Tier definitions
 
@@ -60,7 +60,7 @@ are the jobs where window-level and run-level scoring actually disagree.
 | `unassigned_pre_rebuttal` | 66 | 0 | 35 | 0 | 228 |
 | `B_rebuttal` | 115 | 114 | 115 | 114 | 14,619 |
 | `unassigned_post_rebuttal` | 0 | 0 | 0 | 0 | 0 |
-| `C_followup` | 1,344 | 530 | 472 | 177 | 56,332 |
+| `C_followup` | 1,356 | 530 | 484 | 177 | 56,800 |
 
 ## Present on disk but outside the scan
 
