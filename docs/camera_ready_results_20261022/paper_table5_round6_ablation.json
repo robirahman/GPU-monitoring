@@ -1,0 +1,46 @@
+{
+  "target": "symgemm_L4_fused_sgd",
+  "window_sec": 30.0,
+  "conditions": [
+    {
+      "condition": "corpus_5 only (no Round 6 data at all)",
+      "train_windows": 32478,
+      "L4_detection": 0.044444444444444446
+    },
+    {
+      "condition": "corpus_5 + symgemm_negatives",
+      "train_windows": 33201,
+      "L4_detection": 0.006837606837606838
+    },
+    {
+      "condition": "corpus_5 + symgemm_L5_adam",
+      "train_windows": 32634,
+      "L4_detection": 0.06153846153846154
+    },
+    {
+      "condition": "corpus_5 + symgemm_ppo_fused",
+      "train_windows": 32712,
+      "L4_detection": 0.04957264957264957
+    },
+    {
+      "condition": "corpus_5 + ppo_rlhf",
+      "train_windows": 32826,
+      "L4_detection": 0.0547008547008547
+    },
+    {
+      "condition": "corpus_5 + rl_distributed",
+      "train_windows": 33126,
+      "L4_detection": 0.04786324786324787
+    },
+    {
+      "condition": "corpus_5 + everything except symgemm_negatives",
+      "train_windows": 33864,
+      "L4_detection": 0.09914529914529914
+    },
+    {
+      "condition": "corpus_6 minus L4 (the table's `unseen`)",
+      "train_windows": 34587,
+      "L4_detection": 0.011965811965811967
+    }
+  ]
+}

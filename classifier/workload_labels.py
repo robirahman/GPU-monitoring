@@ -118,6 +118,13 @@ INFERENCE_LABELS = {
     # Round 5: White-box inference baseline (control)
     "whitebox_inference",
     "whitebox_WB-I_inference",
+    # Round 7 organic negative: best-of-n / rejection sampling against a reward
+    # model. Generation plus a scoring forward, no weight ever updated. This is
+    # the non-training null pair for symgemm_ppo_fused, and unlike a
+    # "PPO-with-the-update-removed" ablation it is a workload people actually
+    # run (STaR/RFT data generation, inference-time scaling), so it belongs in
+    # the baseline corpus rather than in the evasion ladder.
+    "bestofn_rm_n8", "bestofn_rm_n32",
     # Round 6 negatives. L1 runs three forward passes per iteration so it is
     # FLOP- and throughput-matched to a training step; L3 additionally runs the
     # dW GEMM but discards the output, so it has identical compulsory DRAM
@@ -221,6 +228,11 @@ def _legacy_label(label: str) -> str:
     # out of the clean training pool). Without this rule "ppo_rlhf_*" matches
     # none of the keywords below and would land in "other" -- teaching the
     # corpus that RL training is not training.
+    # Best-of-n / rejection sampling: generation + reward-model scoring, no
+    # optimiser anywhere. Checked BEFORE the "ppo_"/train keyword rules so a
+    # future bestofn_ppo_* naming cannot be swept into training.
+    if lc.startswith("bestofn_"):
+        return "ml_inference"
     if lc.startswith("ppo_"):
         return "ml_training"
     if lc.startswith("symgemm_"):
