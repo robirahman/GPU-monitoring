@@ -1097,6 +1097,24 @@ for rep in $(seq 1 "$REPS"); do
   c=s8_train_fsdp1b_b1;            s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 1b --batch-size 1 --seq-len 256 --duration "$DUR"
   c=s8_train_fsdp7b_b1;            s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/fsdp_training.py --size 7b --batch-size 1 --seq-len 256 --duration "$DUR"
   c=s8_train_ddp_resnet50;         s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/pytorch_training_ddp.py --model resnet50 --duration "$DUR"
+  # HONEST DISTRIBUTED RL, single node. The paper scopes itself to one node, so
+  # every s16_train_{ppodist,impala,apexrl} cell is out of corpus -- and
+  # ppo_rlhf_r8/r32 are single-GPU, which leaves the corpus with NO in-scope
+  # multi-GPU honest RL at all. The cross-rank features (xr_level_spread,
+  # xr_corr_mean_*, xr_active_ranks_frac) have therefore never seen an honest
+  # training job whose ranks do categorically different work, which is the case
+  # train_rl_dist.py was written for.
+  #
+  # ppo is the architecture that survives 16 -> 8 unchanged in kind: is_learner
+  # is `rank in learner_ranks or arch == "ppo"`, so every rank is a learner and
+  # halving the world changes only the global batch. impala/apex would also run
+  # (learner_rank is taken modulo world) but their actor:learner ratio goes
+  # 15:1 -> 7:1, which is a different experiment, not a port.
+  #
+  # NOT a recollection of s16_train_ppodist_r4: no inter-node traffic, half the
+  # global batch, asymmetry confined to one NVLink domain. It must never be
+  # promoted under the s16 name in data/tier_a_recollections.json.
+  c=s8_train_ppodist_r4;           s8_torchrun "$c" "$(rid_for "$c" "$rep")" "$TIMEOUT"     -- workloads/train_rl_dist.py --arch ppo --rollout-steps 4 --duration "$DUR"
   c=s8_infershard_qwen72b_tp8;     s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL" 8 1
   c=s8_infershard_qwen1_5b_tp4pp2; s8_shard "$c" "$(rid_for "$c" "$rep")" "$SHARD_MODEL_SMALL" 4 2
   c=s8_inferrep_qwen1_5b;            mn_replicated "$c" "$(rid_for "$c" "$rep")" "$INFER_MODEL"
