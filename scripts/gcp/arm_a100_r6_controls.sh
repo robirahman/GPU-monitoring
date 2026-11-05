@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Get a 1-GPU A100 SXM4 80GB for the Round 7 organic-control collection.
+# Get a 1-GPU A100 SXM4 80GB for the Round 6 organic-control collection.
 #
 # Differences from scripts/gcp/arm_a100_1g.sh, which this is modelled on:
 #   * stages the WORKING TREE, not git HEAD -- the new workloads are not

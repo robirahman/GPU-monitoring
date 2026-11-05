@@ -118,7 +118,7 @@ INFERENCE_LABELS = {
     # Round 5: White-box inference baseline (control)
     "whitebox_inference",
     "whitebox_WB-I_inference",
-    # Round 7 organic negative: best-of-n / rejection sampling against a reward
+    # Round 6 organic negative: best-of-n / rejection sampling against a reward
     # model. Generation plus a scoring forward, no weight ever updated. This is
     # the non-training null pair for symgemm_ppo_fused, and unlike a
     # "PPO-with-the-update-removed" ablation it is a workload people actually

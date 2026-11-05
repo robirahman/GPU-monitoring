@@ -1,5 +1,10 @@
 #!/bin/bash
-# Round 7 collection: the organic controls Round 6 was missing.
+# Round 6, completing it: the organic controls the first pass was missing.
+#
+# These are NOT a new round. A round in Table 3 is a new ATTACKER capability;
+# nothing here attacks anything. Every cell is a control for the Round 6
+# symmetric-GEMM result, so they belong to Round 6's collection and the paper
+# gains no Table 3 row for them.
 #
 # Round 6 showed the symmetric-GEMM disguise defeats 1 Hz NVML telemetry, but
 # two of its claims had no matched control:
@@ -42,13 +47,13 @@
 # stages. Serial by necessity: one visible GPU.
 #
 # RUN THIS FIRST:
-#   SMOKE=1 bash scripts/rebuttal_collection/round7_controls_queue.sh
+#   SMOKE=1 bash scripts/rebuttal_collection/round6_controls_queue.sh
 # One 60 s pass over every distinct cell including 7B, ~20 min. Smoke output
 # goes to logs/smoke_data/ and is NOT data -- a "smoke_bestofn_*" label does
 # not match the bestofn_ rule in threeway_label and would land in "other".
 #
 # Then:
-#   nohup bash scripts/rebuttal_collection/round7_controls_queue.sh &
+#   nohup bash scripts/rebuttal_collection/round6_controls_queue.sh &
 #
 # TIME AND COST (a2-ultragpu-1g, ~$3.7/hr on-demand)
 #   12 generation stages (3 reps x 4 cells)  x 610 s   = 2.0 h
@@ -93,7 +98,7 @@ if [ "$SMOKE" = "1" ]; then
 fi
 
 mkdir -p logs logs/.done data
-MASTER=logs/round7_master.log
+MASTER=logs/round6_controls_master.log
 stamp() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
 say()   { echo "[$(stamp)] $*" | tee -a "$MASTER"; }
 
@@ -168,7 +173,7 @@ cell_l1_7b() {  # cell_l1_7b <stage> <duration>
       --grad-ckpt --duration "$d"
 }
 
-say "===== Round 7 controls queue starting (pid $$) ====="
+say "===== Round 6 controls queue starting (pid $$) ====="
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader | tee -a "$MASTER"
 
 # ── Gate G1: the label rules must place every new cell before any GPU time ──
@@ -217,7 +222,7 @@ cell_l1_7b "${PREFIX}symgemm_L1_fwd3_short7b_rep1"  $DUR_SHORT7B
 cell_l1_7b "${PREFIX}symgemm_L1_fwd3_7bmatch_rep1"  $DUR_7BMATCH
 cell_l1_1b "${PREFIX}symgemm_L1_fwd3_long1b_rep1"   $DUR_LONG1B
 
-say "===== Round 7 queue complete ====="
+say "===== Round 6 controls queue complete ====="
 say "done:   $(ls logs/.done/${PREFIX}bestofn_* logs/.done/${PREFIX}ppo_rlhf_accum* logs/.done/${PREFIX}symgemm_L1_fwd3_{short7b,7bmatch,long1b}* 2>/dev/null | grep -c done)"
 ls logs/.done/${PREFIX}*.failed 2>/dev/null | tee -a "$MASTER"
 if [ "$SMOKE" = "1" ]; then

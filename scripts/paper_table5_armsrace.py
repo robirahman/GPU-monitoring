@@ -104,6 +104,15 @@ FAMILY_SPEC = {
     "whitebox_lora":       (5, True),
     "whitebox_inference":  (5, False),   # R5 inference control
 
+    # Round 6 organic controls, collected 2026-11-05 to complete the round.
+    # They are Round 6 COLLECTION, not a new round -- a round in Table 3 is a
+    # new attacker capability, and neither of these attacks anything. Carrying
+    # round 6 here (rather than a hardcoded 0) means --controls-round 0 moves
+    # them into corpus_0 alongside every other non-adversarial family, instead
+    # of leaving them in a third state the other variants never visit.
+    "bestofn_rm":           (6, False),  # best-of-n vs a reward model
+    "ppo_rlhf_accum":       (6, False),  # PPO + gradient accumulation
+
     "symgemm_L4_fused_sgd": (6, True),   # the attack: write-minimised SGD
     "symgemm_ppo_fused":    (6, True),   # disguised PPO, fused policy update
     "symgemm_L5_adam":      (6, False),  # positive control: undisguised AdamW
@@ -172,6 +181,13 @@ def family_of(label):
         if "_l5" in lc:
             return "symgemm_L5_adam"
         return "symgemm_negatives"          # L0, L1, L3, decode, idle
+    if lc.startswith("bestofn_"):
+        return "bestofn_rm"
+    # Checked before the plain ppo_rlhf rule: grad-accum PPO is a separate
+    # family, or it would pool with undisguised PPO and its whole point --
+    # an honest job wearing Round 4's temporal signature -- would vanish.
+    if lc.startswith("ppo_rlhf_accum"):
+        return "ppo_rlhf_accum"
     if lc.startswith("ppo_rlhf"):
         return "ppo_rlhf"
     if re.match(r"^s\d+_train_ppodist", lc):
@@ -247,6 +263,10 @@ def main():
                          "that collected it")
     ap.add_argument("--out", default=str(OUTDIR / "paper_table5_armsrace.json"))
     ap.add_argument("--tag", default="", help="suffix for the output filename")
+    ap.add_argument("--seeds", type=int, nargs="+", default=[42],
+                    help="fold-assignment seeds for the in-distribution CV; "
+                         "several makes that column a mean +- sd instead of a "
+                         "single draw")
     a = ap.parse_args()
     t0 = time.time()
     # Undisguised PPO-RLHF is benign training, not an evasion, but it was
@@ -364,21 +384,33 @@ def main():
                 else win[gb].astype(str).to_numpy())
         g = gcol[b0]
         k = min(FOLDS, len(np.unique(g)))
-        pred = np.full(len(b0), -1, dtype=int)
-        for tr, te in StratifiedGroupKFold(
-                n_splits=k, shuffle=True, random_state=42).split(X_all[b0], y[b0], g):
-            pred[te] = forest().fit(X_all[b0][tr], y[b0][tr]).predict(X_all[b0][te])
         yy = y[b0]
-        tp = int(((pred == 1) & (yy == 1)).sum()); fp = int(((pred == 1) & (yy == 0)).sum())
-        tn = int(((pred == 0) & (yy == 0)).sum()); fn = int(((pred == 0) & (yy == 1)).sum())
-        baseline_row[f"accuracy_{gb}"] = float((pred == yy).mean())
-        baseline_row[f"recall_{gb}"] = tp / max(tp + fn, 1)
-        baseline_row[f"specificity_{gb}"] = tn / max(tn + fp, 1)
+        accs, recs, specs = [], [], []
+        for sd in a.seeds:
+            pred = np.full(len(b0), -1, dtype=int)
+            for tr, te in StratifiedGroupKFold(
+                    n_splits=k, shuffle=True, random_state=sd).split(X_all[b0], yy, g):
+                pred[te] = forest().fit(X_all[b0][tr], yy[tr]).predict(X_all[b0][te])
+            tp = int(((pred == 1) & (yy == 1)).sum()); fp = int(((pred == 1) & (yy == 0)).sum())
+            tn = int(((pred == 0) & (yy == 0)).sum()); fn = int(((pred == 0) & (yy == 1)).sum())
+            accs.append(float((pred == yy).mean()))
+            recs.append(tp / max(tp + fn, 1))
+            specs.append(tn / max(tn + fp, 1))
+        def _sd(v):
+            return float(np.std(v, ddof=1)) if len(v) > 1 else 0.0
+        baseline_row[f"accuracy_{gb}"] = float(np.mean(accs))
+        baseline_row[f"accuracy_{gb}_sd"] = _sd(accs)
+        baseline_row[f"accuracy_{gb}_seeds"] = accs
+        baseline_row[f"recall_{gb}"] = float(np.mean(recs))
+        baseline_row[f"recall_{gb}_sd"] = _sd(recs)
+        baseline_row[f"specificity_{gb}"] = float(np.mean(specs))
+        baseline_row[f"specificity_{gb}_sd"] = _sd(specs)
         baseline_row[f"groups_{gb}"] = int(len(np.unique(g)))
         print(f"[Baseline row] group_by={gb} k={k} groups={len(np.unique(g))} "
-              f"acc={baseline_row[f'accuracy_{gb}']*100:.2f}% "
-              f"recall={baseline_row[f'recall_{gb}']*100:.2f}% "
-              f"spec={baseline_row[f'specificity_{gb}']*100:.2f}% "
+              f"acc={np.mean(accs)*100:.2f}+-{_sd(accs)*100:.2f}% "
+              f"recall={np.mean(recs)*100:.2f}+-{_sd(recs)*100:.2f}% "
+              f"spec={np.mean(specs)*100:.2f}+-{_sd(specs)*100:.2f}% "
+              f"min-max acc {min(accs)*100:.2f}-{max(accs)*100:.2f}% "
               f"[{time.time()-t0:.0f}s]", flush=True)
 
     for n in range(1, a.max_round + 1):
@@ -416,6 +448,14 @@ def main():
             print(f"   unseen fit done: {f} [{time.time()-t0:.0f}s]", flush=True)
 
         # ---- 2. in-distribution: grouped CV over corpus_N, per protocol -----
+        # Repeated over several fold-assignment seeds. A single seed is not a
+        # measurement here: 10 of the 22 families are one workload cell, so
+        # under workload grouping the whole family lands in one test fold and
+        # the result is a single draw. Dropping 156 windows (0.6% of corpus_0)
+        # moved symgemm_ppo_fused's workload cell from 97.4% to 2.1% on one
+        # seed. Only the fold assignment varies; the forest stays at
+        # random_state=42, so the spread reported is fold-assignment variance
+        # and nothing else.
         idx = np.flatnonzero(upto)
         Xn, yn = X_all[idx], y[idx]
         oof = {}
@@ -424,24 +464,32 @@ def main():
                     else win[gb].astype(str).to_numpy())
             g = gcol[idx]
             k = min(FOLDS, len(np.unique(g)))
-            p = np.full(len(idx), -1, dtype=int)
-            for tr, te in StratifiedGroupKFold(
-                    n_splits=k, shuffle=True, random_state=42).split(Xn, yn, g):
-                p[te] = forest().fit(Xn[tr], yn[tr]).predict(Xn[te])
-            full = np.full(len(y), -1, dtype=int)
-            full[idx] = p
-            oof[gb] = full
-            # Benign specificity of the hardened detector on corpus_N.
+            per_seed = []
+            specs = []
             ben = upto & (y == 0)
-            spec = float((full[ben] == 0).mean())
+            for sd in a.seeds:
+                p = np.full(len(idx), -1, dtype=int)
+                for tr, te in StratifiedGroupKFold(
+                        n_splits=k, shuffle=True, random_state=sd).split(Xn, yn, g):
+                    p[te] = forest().fit(Xn[tr], yn[tr]).predict(Xn[te])
+                full = np.full(len(y), -1, dtype=int)
+                full[idx] = p
+                per_seed.append(full)
+                specs.append(float((full[ben] == 0).mean()))
+            oof[gb] = per_seed
             diag.append({"round": n, "group_by": gb, "folds": int(k),
                          "groups": int(len(np.unique(g))),
                          "corpus_windows": int(upto.sum()),
                          "benign_windows": int(ben.sum()),
-                         "hardened_specificity": spec})
+                         "seeds": list(a.seeds),
+                         "hardened_specificity": float(np.mean(specs)),
+                         "hardened_specificity_sd": float(np.std(specs, ddof=1))
+                                                    if len(specs) > 1 else 0.0})
             print(f"   in-dist CV done: group_by={gb} k={k} "
-                  f"groups={len(np.unique(g))} spec={spec*100:.2f}% "
-                  f"[{time.time()-t0:.0f}s]", flush=True)
+                  f"groups={len(np.unique(g))} "
+                  f"spec={np.mean(specs)*100:.2f}%"
+                  + (f" +-{np.std(specs, ddof=1)*100:.2f}" if len(specs) > 1 else "")
+                  + f"  [{time.time()-t0:.0f}s]", flush=True)
 
         # ---- assemble ------------------------------------------------------
         for f in evasions + controls:
@@ -473,7 +521,11 @@ def main():
                            if f in unseen_pred else None),
             }
             for gb in a.group_by:
-                r[f"in_dist_{gb}"] = float((oof[gb][sel] == 1).mean())
+                vals = [float((o[sel] == 1).mean()) for o in oof[gb]]
+                r[f"in_dist_{gb}"] = float(np.mean(vals))
+                r[f"in_dist_{gb}_sd"] = (float(np.std(vals, ddof=1))
+                                         if len(vals) > 1 else 0.0)
+                r[f"in_dist_{gb}_seeds"] = vals
             rows.append(r)
             tag = ("" if r["is_evasion"] else
                    "  (control)" if r["scored_class"] == "training" else
@@ -501,6 +553,8 @@ def main():
                 vs = [r[f"in_dist_{gb}"] for r in grp]
                 agg[f"in_dist_{gb}_min"] = min(vs)
                 agg[f"in_dist_{gb}_max"] = max(vs)
+                agg[f"in_dist_{gb}_max_sd"] = max(r[f"in_dist_{gb}_sd"]
+                                                  for r in grp)
             round_rows.append(agg)
 
     out = Path(a.out)
@@ -509,7 +563,7 @@ def main():
     out.write_text(json.dumps({
         "table": 5, "procedure": "sequential arms race",
         "window_sec": a.window, "cache": a.cache, "folds": FOLDS,
-        "n_features": len(feats), "group_by": a.group_by,
+        "n_features": len(feats), "group_by": a.group_by, "seeds": list(a.seeds),
         "ppo_rlhf_round": a.ppo_rlhf_round, "max_gpus": a.max_gpus,
         "controls_round": a.controls_round,
         "instruments_excluded": (sorted(INSTRUMENT_CELLS)
@@ -527,7 +581,8 @@ def main():
     df = pd.DataFrame(round_rows)
     for gb in a.group_by:
         print(f"\n=== Table 5  (sequential arms race; in-dist holdout = {gb}) ===")
-        print(f"  Baseline (no evasion): accuracy {baseline_row[f'accuracy_{gb}']*100:.1f}%  "
+        print(f"  Baseline (no evasion): accuracy {baseline_row[f'accuracy_{gb}']*100:.1f}"
+              f"+-{baseline_row[f'accuracy_{gb}_sd']*100:.1f}%  "
               f"recall {baseline_row[f'recall_{gb}']*100:.1f}%  "
               f"specificity {baseline_row[f'specificity_{gb}']*100:.1f}%  "
               f"({baseline_row['windows']:,} windows, "
@@ -538,8 +593,10 @@ def main():
                              zip(df.baseline_clean_only_min, df.baseline_clean_only_max)],
             "prev_round_det": [rng(l, h) for l, h in
                                zip(df.prev_round_min, df.prev_round_max)],
-            "hardened_in_dist": [rng(l, h) for l, h in
-                                 zip(df[f"in_dist_{gb}_min"], df[f"in_dist_{gb}_max"])],
+            "hardened_in_dist": [rng(l, h) + (f"  (sd<={s_*100:.1f})" if s_ > 0.005 else "")
+                                 for l, h, s_ in
+                                 zip(df[f"in_dist_{gb}_min"], df[f"in_dist_{gb}_max"],
+                                     df[f"in_dist_{gb}_max_sd"])],
             "hardened_unseen": [rng(l, h) for l, h in
                                 zip(df.unseen_min, df.unseen_max)],
         })
