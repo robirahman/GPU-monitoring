@@ -1,0 +1,478 @@
+{
+  "table": 7,
+  "column": "LOO (whole-corpus, leave-one-family-out)",
+  "model": "rf",
+  "window_sec": 30.0,
+  "cache": "/srv/gpu-monitoring/cloudshell-workspace/cache/win_30_r6.parquet",
+  "holdout_key": "not applicable: no cross-validation, family held out whole",
+  "groups_spanning_multiple_families": {
+    "job_id": 0,
+    "run_id": 0,
+    "cell": 0
+  },
+  "n_evasion_families": 22,
+  "loo_mean_unweighted": 0.878066073568542,
+  "loo_mean_window_weighted": 0.8754370629370629,
+  "rows": [
+    {
+      "family": "A_util_modulation",
+      "round": 1,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 190,
+      "cells": 1,
+      "runs": 10,
+      "train_windows": 36476,
+      "loo_rate": 0.9894736842105263,
+      "by_cell": {
+        "adversarial_A_util_modulation": 0.9894736842105263
+      }
+    },
+    {
+      "family": "B_low_util",
+      "round": 1,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 190,
+      "cells": 1,
+      "runs": 10,
+      "train_windows": 36476,
+      "loo_rate": 0.38421052631578945,
+      "by_cell": {
+        "adversarial_B_low_util": 0.38421052631578945
+      }
+    },
+    {
+      "family": "D_temporal_disruption",
+      "round": 1,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 236,
+      "cells": 1,
+      "runs": 12,
+      "train_windows": 36430,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_D_temporal_disruption": 1.0
+      }
+    },
+    {
+      "family": "E_memory_minimal",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 173,
+      "cells": 1,
+      "runs": 9,
+      "train_windows": 36493,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_E_memory_minimal": 1.0
+      }
+    },
+    {
+      "family": "F_interleave",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 346,
+      "cells": 2,
+      "runs": 18,
+      "train_windows": 36320,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_F_interleave_30": 1.0,
+        "adversarial_F_interleave_50": 1.0
+      }
+    },
+    {
+      "family": "G_clock_throttled",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 117,
+      "cells": 1,
+      "runs": 6,
+      "train_windows": 36549,
+      "loo_rate": 0.9914529914529915,
+      "by_cell": {
+        "adversarial_G_clock_throttled": 0.9914529914529915
+      }
+    },
+    {
+      "family": "H_mimicry",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 419,
+      "cells": 2,
+      "runs": 22,
+      "train_windows": 36247,
+      "loo_rate": 0.9498806682577565,
+      "by_cell": {
+        "adversarial_H_mimicry_cufft": 0.9342105263157895,
+        "adversarial_H_mimicry_mining": 0.9685863874345549
+      }
+    },
+    {
+      "family": "I_stochastic",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 172,
+      "cells": 1,
+      "runs": 9,
+      "train_windows": 36494,
+      "loo_rate": 0.936046511627907,
+      "by_cell": {
+        "adversarial_I_stochastic_30": 0.936046511627907
+      }
+    },
+    {
+      "family": "J_pid",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 228,
+      "cells": 1,
+      "runs": 12,
+      "train_windows": 36438,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_J_pid_75": 1.0
+      }
+    },
+    {
+      "family": "K_ddp",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 592,
+      "cells": 1,
+      "runs": 24,
+      "train_windows": 36074,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_K_ddp": 1.0
+      }
+    },
+    {
+      "family": "K_ddp_accum",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 1016,
+      "cells": 2,
+      "runs": 48,
+      "train_windows": 35650,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_K_ddp_accum_4": 1.0,
+        "adversarial_K_ddp_accum_8": 1.0
+      }
+    },
+    {
+      "family": "K_online_learning",
+      "round": 3,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 348,
+      "cells": 1,
+      "runs": 18,
+      "train_windows": 36318,
+      "loo_rate": 0.9454022988505747,
+      "by_cell": {
+        "adversarial_K_online_learning": 0.9454022988505747
+      }
+    },
+    {
+      "family": "L_ddp",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 1128,
+      "cells": 2,
+      "runs": 48,
+      "train_windows": 35538,
+      "loo_rate": 0.99822695035461,
+      "by_cell": {
+        "adversarial_L_ddp_10": 1.0,
+        "adversarial_L_ddp_5": 0.996268656716418
+      }
+    },
+    {
+      "family": "L_ddp_stagger",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 480,
+      "cells": 1,
+      "runs": 24,
+      "train_windows": 36186,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_L_ddp_stagger_5": 1.0
+      }
+    },
+    {
+      "family": "L_diluted",
+      "round": 3,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 983,
+      "cells": 4,
+      "runs": 51,
+      "train_windows": 35683,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_L_diluted_10": 1.0,
+        "adversarial_L_diluted_2": 1.0,
+        "adversarial_L_diluted_20": 1.0,
+        "adversarial_L_diluted_5": 1.0
+      }
+    },
+    {
+      "family": "M_composite_memmin",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 76,
+      "cells": 4,
+      "runs": 4,
+      "train_windows": 36590,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_M_composite_memmin_10": 1.0,
+        "adversarial_M_composite_memmin_20": 1.0,
+        "adversarial_M_composite_memmin_30": 1.0,
+        "adversarial_M_composite_memmin_40": 1.0
+      }
+    },
+    {
+      "family": "N_grad_accum",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 57,
+      "cells": 3,
+      "runs": 3,
+      "train_windows": 36609,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_N_grad_accum_16": 1.0,
+        "adversarial_N_grad_accum_4": 1.0,
+        "adversarial_N_grad_accum_8": 1.0
+      }
+    },
+    {
+      "family": "O_composite_idle_pad",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 448,
+      "cells": 11,
+      "runs": 64,
+      "train_windows": 36218,
+      "loo_rate": 0.9464285714285714,
+      "by_cell": {
+        "adversarial_composite_00": 0.8412698412698413,
+        "adversarial_composite_10": 0.7857142857142857,
+        "adversarial_composite_20": 1.0,
+        "adversarial_composite_30": 0.9682539682539683,
+        "adversarial_composite_40": 1.0,
+        "adversarial_composite_50": 0.9523809523809523,
+        "adversarial_composite_60": 1.0,
+        "adversarial_composite_70": 1.0,
+        "adversarial_composite_80": 1.0,
+        "adversarial_composite_90": 0.9365079365079365,
+        "adversarial_composite_95": 0.9682539682539683
+      }
+    },
+    {
+      "family": "bestofn_rm",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "false_positive",
+      "windows": 240,
+      "cells": 2,
+      "runs": 6,
+      "train_windows": 36426,
+      "loo_rate": 0.9875,
+      "by_cell": {
+        "bestofn_rm_n32": 0.9916666666666667,
+        "bestofn_rm_n8": 0.9833333333333333
+      }
+    },
+    {
+      "family": "ppo_rlhf",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 348,
+      "cells": 2,
+      "runs": 12,
+      "train_windows": 36318,
+      "loo_rate": 0.7212643678160919,
+      "by_cell": {
+        "ppo_rlhf_r32": 0.4425287356321839,
+        "ppo_rlhf_r8": 1.0
+      }
+    },
+    {
+      "family": "ppo_rlhf_accum",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 240,
+      "cells": 2,
+      "runs": 6,
+      "train_windows": 36426,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "ppo_rlhf_accum4_r8": 1.0,
+        "ppo_rlhf_accum8_r32": 1.0
+      }
+    },
+    {
+      "family": "rl_distributed",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 640,
+      "cells": 1,
+      "runs": 2,
+      "train_windows": 36026,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "s8_train_ppodist_r4": 1.0
+      }
+    },
+    {
+      "family": "symgemm_L4_fused_sgd",
+      "round": 6,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 702,
+      "cells": 6,
+      "runs": 12,
+      "train_windows": 35964,
+      "loo_rate": 0.05128205128205128,
+      "by_cell": {
+        "symgemm_L4_sgdfused": 0.0,
+        "symgemm_L4_sgdfused_7b": 0.3473684210526316,
+        "symgemm_L4_sgdfused_long1b": 0.0,
+        "symgemm_L4_sgdfused_m8192": 0.02564102564102564,
+        "symgemm_L4_sgdfused_nov": 0.0,
+        "symgemm_L4_sgdfused_short7b": 0.058823529411764705
+      }
+    },
+    {
+      "family": "symgemm_L5_adam",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 156,
+      "cells": 1,
+      "runs": 4,
+      "train_windows": 36510,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "symgemm_L5_adam": 1.0
+      }
+    },
+    {
+      "family": "symgemm_negatives",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "false_positive",
+      "windows": 1039,
+      "cells": 10,
+      "runs": 21,
+      "train_windows": 35627,
+      "loo_rate": 0.890279114533205,
+      "by_cell": {
+        "symgemm_L0_fwd1": 0.9423076923076923,
+        "symgemm_L1_fwd3": 0.9871794871794872,
+        "symgemm_L1_fwd3_7b": 1.0,
+        "symgemm_L1_fwd3_7bmatch": 1.0,
+        "symgemm_L1_fwd3_long1b": 0.8333333333333334,
+        "symgemm_L1_fwd3_m8192": 1.0,
+        "symgemm_L1_fwd3_nov": 0.5299145299145299,
+        "symgemm_L1_fwd3_short7b": 1.0,
+        "symgemm_decode_g256": 1.0,
+        "symgemm_idle": 0.5789473684210527
+      }
+    },
+    {
+      "family": "symgemm_ppo_fused",
+      "round": 6,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 823,
+      "cells": 7,
+      "runs": 21,
+      "train_windows": 35843,
+      "loo_rate": 0.764277035236938,
+      "by_cell": {
+        "symgemm_ppo_fused_nov_r32": 1.0,
+        "symgemm_ppo_fused_nov_r8": 1.0,
+        "symgemm_ppo_fused_r16": 1.0,
+        "symgemm_ppo_fused_r32": 0.3162393162393162,
+        "symgemm_ppo_fused_r4": 1.0,
+        "symgemm_ppo_fused_r64": 1.0,
+        "symgemm_ppo_fused_r8": 0.02564102564102564
+      }
+    },
+    {
+      "family": "whitebox_full",
+      "round": 5,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 313,
+      "cells": 8,
+      "runs": 16,
+      "train_windows": 36353,
+      "loo_rate": 0.952076677316294,
+      "by_cell": {
+        "whitebox_diluted_N10": 1.0,
+        "whitebox_diluted_N10_ckpt": 1.0,
+        "whitebox_diluted_N20": 1.0,
+        "whitebox_diluted_N20_ckpt": 1.0,
+        "whitebox_diluted_N5": 1.0,
+        "whitebox_diluted_N50": 1.0,
+        "whitebox_diluted_N5_ckpt": 1.0,
+        "whitebox_oracle": 0.6511627906976745
+      }
+    },
+    {
+      "family": "whitebox_inference",
+      "round": 5,
+      "is_evasion": false,
+      "scored": "false_positive",
+      "windows": 42,
+      "cells": 1,
+      "runs": 2,
+      "train_windows": 36624,
+      "loo_rate": 0.07142857142857142,
+      "by_cell": {
+        "whitebox_inference": 0.07142857142857142
+      }
+    },
+    {
+      "family": "whitebox_lora",
+      "round": 5,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 115,
+      "cells": 3,
+      "runs": 6,
+      "train_windows": 36551,
+      "loo_rate": 0.40869565217391307,
+      "by_cell": {
+        "whitebox_lora_N10": 0.46153846153846156,
+        "whitebox_lora_N20": 0.39473684210526316,
+        "whitebox_lora_N5": 0.3684210526315789
+      }
+    }
+  ]
+}

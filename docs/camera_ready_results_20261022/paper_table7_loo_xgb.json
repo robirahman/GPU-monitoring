@@ -1,0 +1,478 @@
+{
+  "table": 7,
+  "column": "LOO (whole-corpus, leave-one-family-out)",
+  "model": "xgb",
+  "window_sec": 30.0,
+  "cache": "/srv/gpu-monitoring/cloudshell-workspace/cache/win_30_r6.parquet",
+  "holdout_key": "not applicable: no cross-validation, family held out whole",
+  "groups_spanning_multiple_families": {
+    "job_id": 0,
+    "run_id": 0,
+    "cell": 0
+  },
+  "n_evasion_families": 22,
+  "loo_mean_unweighted": 0.8985936989563392,
+  "loo_mean_window_weighted": 0.897618006993007,
+  "rows": [
+    {
+      "family": "A_util_modulation",
+      "round": 1,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 190,
+      "cells": 1,
+      "runs": 10,
+      "train_windows": 36476,
+      "loo_rate": 0.9842105263157894,
+      "by_cell": {
+        "adversarial_A_util_modulation": 0.9842105263157894
+      }
+    },
+    {
+      "family": "B_low_util",
+      "round": 1,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 190,
+      "cells": 1,
+      "runs": 10,
+      "train_windows": 36476,
+      "loo_rate": 0.7,
+      "by_cell": {
+        "adversarial_B_low_util": 0.7
+      }
+    },
+    {
+      "family": "D_temporal_disruption",
+      "round": 1,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 236,
+      "cells": 1,
+      "runs": 12,
+      "train_windows": 36430,
+      "loo_rate": 0.9915254237288136,
+      "by_cell": {
+        "adversarial_D_temporal_disruption": 0.9915254237288136
+      }
+    },
+    {
+      "family": "E_memory_minimal",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 173,
+      "cells": 1,
+      "runs": 9,
+      "train_windows": 36493,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_E_memory_minimal": 1.0
+      }
+    },
+    {
+      "family": "F_interleave",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 346,
+      "cells": 2,
+      "runs": 18,
+      "train_windows": 36320,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_F_interleave_30": 1.0,
+        "adversarial_F_interleave_50": 1.0
+      }
+    },
+    {
+      "family": "G_clock_throttled",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 117,
+      "cells": 1,
+      "runs": 6,
+      "train_windows": 36549,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_G_clock_throttled": 1.0
+      }
+    },
+    {
+      "family": "H_mimicry",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 419,
+      "cells": 2,
+      "runs": 22,
+      "train_windows": 36247,
+      "loo_rate": 0.9928400954653938,
+      "by_cell": {
+        "adversarial_H_mimicry_cufft": 0.9912280701754386,
+        "adversarial_H_mimicry_mining": 0.9947643979057592
+      }
+    },
+    {
+      "family": "I_stochastic",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 172,
+      "cells": 1,
+      "runs": 9,
+      "train_windows": 36494,
+      "loo_rate": 0.9186046511627907,
+      "by_cell": {
+        "adversarial_I_stochastic_30": 0.9186046511627907
+      }
+    },
+    {
+      "family": "J_pid",
+      "round": 2,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 228,
+      "cells": 1,
+      "runs": 12,
+      "train_windows": 36438,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_J_pid_75": 1.0
+      }
+    },
+    {
+      "family": "K_ddp",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 592,
+      "cells": 1,
+      "runs": 24,
+      "train_windows": 36074,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_K_ddp": 1.0
+      }
+    },
+    {
+      "family": "K_ddp_accum",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 1016,
+      "cells": 2,
+      "runs": 48,
+      "train_windows": 35650,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_K_ddp_accum_4": 1.0,
+        "adversarial_K_ddp_accum_8": 1.0
+      }
+    },
+    {
+      "family": "K_online_learning",
+      "round": 3,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 348,
+      "cells": 1,
+      "runs": 18,
+      "train_windows": 36318,
+      "loo_rate": 0.9454022988505747,
+      "by_cell": {
+        "adversarial_K_online_learning": 0.9454022988505747
+      }
+    },
+    {
+      "family": "L_ddp",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 1128,
+      "cells": 2,
+      "runs": 48,
+      "train_windows": 35538,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_L_ddp_10": 1.0,
+        "adversarial_L_ddp_5": 1.0
+      }
+    },
+    {
+      "family": "L_ddp_stagger",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 480,
+      "cells": 1,
+      "runs": 24,
+      "train_windows": 36186,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_L_ddp_stagger_5": 1.0
+      }
+    },
+    {
+      "family": "L_diluted",
+      "round": 3,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 983,
+      "cells": 4,
+      "runs": 51,
+      "train_windows": 35683,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_L_diluted_10": 1.0,
+        "adversarial_L_diluted_2": 1.0,
+        "adversarial_L_diluted_20": 1.0,
+        "adversarial_L_diluted_5": 1.0
+      }
+    },
+    {
+      "family": "M_composite_memmin",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 76,
+      "cells": 4,
+      "runs": 4,
+      "train_windows": 36590,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_M_composite_memmin_10": 1.0,
+        "adversarial_M_composite_memmin_20": 1.0,
+        "adversarial_M_composite_memmin_30": 1.0,
+        "adversarial_M_composite_memmin_40": 1.0
+      }
+    },
+    {
+      "family": "N_grad_accum",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 57,
+      "cells": 3,
+      "runs": 3,
+      "train_windows": 36609,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "adversarial_N_grad_accum_16": 1.0,
+        "adversarial_N_grad_accum_4": 1.0,
+        "adversarial_N_grad_accum_8": 1.0
+      }
+    },
+    {
+      "family": "O_composite_idle_pad",
+      "round": 4,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 448,
+      "cells": 11,
+      "runs": 64,
+      "train_windows": 36218,
+      "loo_rate": 0.8214285714285714,
+      "by_cell": {
+        "adversarial_composite_00": 0.8412698412698413,
+        "adversarial_composite_10": 0.42857142857142855,
+        "adversarial_composite_20": 0.7857142857142857,
+        "adversarial_composite_30": 0.9841269841269841,
+        "adversarial_composite_40": 0.9285714285714286,
+        "adversarial_composite_50": 0.9682539682539683,
+        "adversarial_composite_60": 1.0,
+        "adversarial_composite_70": 0.8888888888888888,
+        "adversarial_composite_80": 0.07142857142857142,
+        "adversarial_composite_90": 0.6984126984126984,
+        "adversarial_composite_95": 0.746031746031746
+      }
+    },
+    {
+      "family": "bestofn_rm",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "false_positive",
+      "windows": 240,
+      "cells": 2,
+      "runs": 6,
+      "train_windows": 36426,
+      "loo_rate": 0.5083333333333333,
+      "by_cell": {
+        "bestofn_rm_n32": 1.0,
+        "bestofn_rm_n8": 0.016666666666666666
+      }
+    },
+    {
+      "family": "ppo_rlhf",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 348,
+      "cells": 2,
+      "runs": 12,
+      "train_windows": 36318,
+      "loo_rate": 0.5172413793103449,
+      "by_cell": {
+        "ppo_rlhf_r32": 0.40804597701149425,
+        "ppo_rlhf_r8": 0.6264367816091954
+      }
+    },
+    {
+      "family": "ppo_rlhf_accum",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 240,
+      "cells": 2,
+      "runs": 6,
+      "train_windows": 36426,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "ppo_rlhf_accum4_r8": 1.0,
+        "ppo_rlhf_accum8_r32": 1.0
+      }
+    },
+    {
+      "family": "rl_distributed",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 640,
+      "cells": 1,
+      "runs": 2,
+      "train_windows": 36026,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "s8_train_ppodist_r4": 1.0
+      }
+    },
+    {
+      "family": "symgemm_L4_fused_sgd",
+      "round": 6,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 702,
+      "cells": 6,
+      "runs": 12,
+      "train_windows": 35964,
+      "loo_rate": 0.1168091168091168,
+      "by_cell": {
+        "symgemm_L4_sgdfused": 0.0,
+        "symgemm_L4_sgdfused_7b": 0.35789473684210527,
+        "symgemm_L4_sgdfused_long1b": 0.0041841004184100415,
+        "symgemm_L4_sgdfused_m8192": 0.6025641025641025,
+        "symgemm_L4_sgdfused_nov": 0.0,
+        "symgemm_L4_sgdfused_short7b": 0.0
+      }
+    },
+    {
+      "family": "symgemm_L5_adam",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "detection",
+      "windows": 156,
+      "cells": 1,
+      "runs": 4,
+      "train_windows": 36510,
+      "loo_rate": 1.0,
+      "by_cell": {
+        "symgemm_L5_adam": 1.0
+      }
+    },
+    {
+      "family": "symgemm_negatives",
+      "round": 6,
+      "is_evasion": false,
+      "scored": "false_positive",
+      "windows": 1039,
+      "cells": 10,
+      "runs": 21,
+      "train_windows": 35627,
+      "loo_rate": 0.588065447545717,
+      "by_cell": {
+        "symgemm_L0_fwd1": 0.532051282051282,
+        "symgemm_L1_fwd3": 0.8910256410256411,
+        "symgemm_L1_fwd3_7b": 1.0,
+        "symgemm_L1_fwd3_7bmatch": 1.0,
+        "symgemm_L1_fwd3_long1b": 0.12916666666666668,
+        "symgemm_L1_fwd3_m8192": 1.0,
+        "symgemm_L1_fwd3_nov": 0.05982905982905983,
+        "symgemm_L1_fwd3_short7b": 1.0,
+        "symgemm_decode_g256": 1.0,
+        "symgemm_idle": 0.0
+      }
+    },
+    {
+      "family": "symgemm_ppo_fused",
+      "round": 6,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 823,
+      "cells": 7,
+      "runs": 21,
+      "train_windows": 35843,
+      "loo_rate": 0.9623329283110571,
+      "by_cell": {
+        "symgemm_ppo_fused_nov_r32": 1.0,
+        "symgemm_ppo_fused_nov_r8": 1.0,
+        "symgemm_ppo_fused_r16": 1.0,
+        "symgemm_ppo_fused_r32": 1.0,
+        "symgemm_ppo_fused_r4": 1.0,
+        "symgemm_ppo_fused_r64": 1.0,
+        "symgemm_ppo_fused_r8": 0.7350427350427351
+      }
+    },
+    {
+      "family": "whitebox_full",
+      "round": 5,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 313,
+      "cells": 8,
+      "runs": 16,
+      "train_windows": 36353,
+      "loo_rate": 0.8402555910543131,
+      "by_cell": {
+        "whitebox_diluted_N10": 0.7948717948717948,
+        "whitebox_diluted_N10_ckpt": 0.7368421052631579,
+        "whitebox_diluted_N20": 0.9736842105263158,
+        "whitebox_diluted_N20_ckpt": 0.9210526315789473,
+        "whitebox_diluted_N5": 0.8717948717948718,
+        "whitebox_diluted_N50": 0.9743589743589743,
+        "whitebox_diluted_N5_ckpt": 0.7435897435897436,
+        "whitebox_oracle": 0.7209302325581395
+      }
+    },
+    {
+      "family": "whitebox_inference",
+      "round": 5,
+      "is_evasion": false,
+      "scored": "false_positive",
+      "windows": 42,
+      "cells": 1,
+      "runs": 2,
+      "train_windows": 36624,
+      "loo_rate": 0.07142857142857142,
+      "by_cell": {
+        "whitebox_inference": 0.07142857142857142
+      }
+    },
+    {
+      "family": "whitebox_lora",
+      "round": 5,
+      "is_evasion": true,
+      "scored": "detection",
+      "windows": 115,
+      "cells": 3,
+      "runs": 6,
+      "train_windows": 36551,
+      "loo_rate": 0.4956521739130435,
+      "by_cell": {
+        "whitebox_lora_N10": 0.6410256410256411,
+        "whitebox_lora_N20": 0.13157894736842105,
+        "whitebox_lora_N5": 0.7105263157894737
+      }
+    }
+  ]
+}
