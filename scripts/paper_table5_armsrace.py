@@ -280,6 +280,14 @@ def main():
                     help="0 puts undisguised PPO-RLHF in the pre-race benign "
                          "corpus; 6 introduces it with the Round 6 campaign "
                          "that collected it")
+    ap.add_argument("--unseen-only", action="store_true",
+                    help="compute ONLY the per-family 'unseen' column (fit on "
+                         "corpus_N minus the family, predict on it) and its "
+                         "per-cell breakdown. Skips the baseline row, the "
+                         "era-feature fit and the in-distribution CV, which is "
+                         "where nearly all the runtime goes. Figure 4 needs "
+                         "the per-cell rates for its min/max error bars; "
+                         "by_family in the full run reports the mean only.")
     ap.add_argument("--out", default=str(OUTDIR / "paper_table5_armsrace.json"))
     ap.add_argument("--tag", default="", help="suffix for the output filename")
     ap.add_argument("--seeds", type=int, nargs="+", default=[42],
@@ -389,6 +397,7 @@ def main():
     rows = []            # per family, per round
     round_rows = []      # per round aggregate
     diag = []
+    unseen_cells = {}    # family -> {cell: unseen detection rate}
     clean_clf = None     # fit on corpus_0; the published "Baseline det." column
 
     # ---- the published table's own "Baseline" row ---------------------------
@@ -398,7 +407,7 @@ def main():
     b0 = np.flatnonzero(rno == 0)
     baseline_row = {"round": 0, "label": "Baseline (no evasion)",
                     "windows": int(len(b0))}
-    for gb in a.group_by:
+    for gb in (() if a.unseen_only else a.group_by):
         gcol = (win.cell.to_numpy(object) if gb == "workload"
                 else win[gb].astype(str).to_numpy())
         g = gcol[b0]
@@ -451,7 +460,7 @@ def main():
         # had, as a sensitivity check on the §4.4 response timeline.
         era_cols = features_for_round(n, standard, plateau, physics)
         Xe = Xc(era_cols)
-        era_clf = forest().fit(Xe[prior], y[prior])
+        era_clf = None if a.unseen_only else forest().fit(Xe[prior], y[prior])
         era_n = len(era_cols)
         print(f"[R{n}] corpus_{n-1}={int(prior.sum()):,}w  "
               f"corpus_{n}={int(upto.sum()):,}w  "
@@ -464,7 +473,15 @@ def main():
             clf = forest().fit(X_all[tr], y[tr])
             sel = (fam == f) & (y == 1)
             unseen_pred[f] = (clf.predict(X_all[sel]) == 1)
-            print(f"   unseen fit done: {f} [{time.time()-t0:.0f}s]", flush=True)
+            # Per-cell breakdown. Figure 4's error bars are min/max across the
+            # workload cells inside a family, so the family mean alone cannot
+            # redraw them. Unweighted per-cell rates, matching Table 7.
+            cells_f = win.loc[sel, "cell"].to_numpy(object)
+            unseen_cells[f] = {c: float(unseen_pred[f][cells_f == c].mean())
+                               for c in sorted(set(cells_f))}
+            print(f"   unseen fit done: {f} "
+                  f"({len(unseen_cells[f])} cells) [{time.time()-t0:.0f}s]",
+                  flush=True)
 
         # ---- 2. in-distribution: grouped CV over corpus_N, per protocol -----
         # Repeated over several fold-assignment seeds. A single seed is not a
@@ -478,7 +495,7 @@ def main():
         idx = np.flatnonzero(upto)
         Xn, yn = X_all[idx], y[idx]
         oof = {}
-        for gb in a.group_by:
+        for gb in (() if a.unseen_only else a.group_by):
             gcol = (win.cell.to_numpy(object) if gb == "workload"
                     else win[gb].astype(str).to_numpy())
             g = gcol[idx]
@@ -534,12 +551,15 @@ def main():
                 "subgroup": SUBGROUP.get(f),
                 "baseline_clean_only": float((clean_clf.predict(X_all[sel]) == 1).mean()),
                 "prev_round": float((base_clf.predict(X_all[sel]) == 1).mean()),
-                "prev_round_era_features": float((era_clf.predict(Xe[sel]) == 1).mean()),
+                "prev_round_era_features": (
+                    None if era_clf is None
+                    else float((era_clf.predict(Xe[sel]) == 1).mean())),
                 "era_n_features": era_n,
                 "unseen": (float(unseen_pred[f].mean())
                            if f in unseen_pred else None),
+                "unseen_by_cell": unseen_cells.get(f),
             }
-            for gb in a.group_by:
+            for gb in (() if a.unseen_only else a.group_by):
                 vals = [float((o[sel] == 1).mean()) for o in oof[gb]]
                 r[f"in_dist_{gb}"] = float(np.mean(vals))
                 r[f"in_dist_{gb}_sd"] = (float(np.std(vals, ddof=1))
@@ -550,7 +570,7 @@ def main():
                    "  (control)" if r["scored_class"] == "training" else
                    "  (CONTROL, rates are FALSE POSITIVES)")
             cols_s = "  ".join(f"{gb[:4]} {r['in_dist_'+gb]*100:5.1f}%"
-                               for gb in a.group_by)
+                               for gb in (() if a.unseen_only else a.group_by))
             print(f"   {f:24s} n={r['windows']:6,}  clean {r['baseline_clean_only']*100:5.1f}%"
                   f"  prev {r['prev_round']*100:5.1f}%"
                   f"  unseen {('%5.1f%%' % (r['unseen']*100)) if r['unseen'] is not None else '    -'}"
@@ -566,9 +586,12 @@ def main():
                    "windows": int(sum(r["windows"] for r in grp))}
             for key in ("baseline_clean_only", "prev_round",
                         "prev_round_era_features", "unseen"):
-                agg[f"{key}_min"] = min(r[key] for r in grp)
-                agg[f"{key}_max"] = max(r[key] for r in grp)
-            for gb in a.group_by:
+                vals = [r[key] for r in grp if r[key] is not None]
+                if not vals:
+                    continue
+                agg[f"{key}_min"] = min(vals)
+                agg[f"{key}_max"] = max(vals)
+            for gb in (() if a.unseen_only else a.group_by):
                 vs = [r[f"in_dist_{gb}"] for r in grp]
                 agg[f"in_dist_{gb}_min"] = min(vs)
                 agg[f"in_dist_{gb}_max"] = max(vs)
@@ -598,7 +621,7 @@ def main():
         return f"{lo*100:.1f}%" if abs(hi - lo) < 5e-4 else f"{lo*100:.1f}-{hi*100:.1f}%"
 
     df = pd.DataFrame(round_rows)
-    for gb in a.group_by:
+    for gb in (() if a.unseen_only else a.group_by):
         print(f"\n=== Table 5  (sequential arms race; in-dist holdout = {gb}) ===")
         print(f"  Baseline (no evasion): accuracy {baseline_row[f'accuracy_{gb}']*100:.1f}"
               f"+-{baseline_row[f'accuracy_{gb}_sd']*100:.1f}%  "
@@ -625,7 +648,7 @@ def main():
     fd = pd.DataFrame(rows)
     show = ["round", "family", "is_evasion", "windows", "cells", "runs",
             "baseline_clean_only", "prev_round", "unseen"] + \
-           [f"in_dist_{gb}" for gb in a.group_by]
+           [f"in_dist_{gb}" for gb in (() if a.unseen_only else a.group_by)]
     pc = [c for c in show if c not in ("round", "family", "is_evasion",
                                        "windows", "cells", "runs")]
     fdp = fd[show].copy()
