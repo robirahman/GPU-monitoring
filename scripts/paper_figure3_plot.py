@@ -10,6 +10,9 @@ accuracy differences between window sizes are smaller than the fold-to-fold
 spread at most sizes, which is what makes the "latency is nearly free" claim
 defensible.
 
+Accuracy only: specificity is reported per window size in the source JSON and in
+Table 2, and plotting it here made the figure argue two things at once.
+
 Usage:
   python3 scripts/paper_figure3_plot.py \
       --json docs/camera_ready_results_20261022/paper_figure3_job_id_xgb.json \
@@ -35,14 +38,11 @@ rows = sorted(J["rows"], key=lambda r: r["window_sec"])
 w = np.array([r["window_sec"] for r in rows], float)
 acc = np.array([r["accuracy"] for r in rows]) * 100
 sd = np.array([r["std"] for r in rows]) * 100
-spec = np.array([r["specificity"] for r in rows]) * 100
 
 fig, ax = plt.subplots(figsize=(7.0, 4.2))
 ax.fill_between(w, acc - sd, acc + sd, color="#1f77b4", alpha=0.15,
                 label="±1 sd across folds")
 ax.plot(w, acc, marker="o", color="#1f77b4", lw=1.9, ms=6, label="Accuracy")
-ax.plot(w, spec, marker="^", color="#ff7f0e", lw=1.3, ms=5, ls="--",
-        label="Specificity")
 
 for x, yv in zip(w, acc):
     ax.annotate(f"{yv:.2f}", (x, yv), textcoords="offset points",
@@ -54,7 +54,7 @@ ax.set_xticklabels([f"{int(v)}" for v in w])
 ax.minorticks_off()
 ax.set_xlabel("Window size (s)")
 ax.set_ylabel("Accuracy (%)")
-ax.set_ylim(95.5, 100.3)
+ax.set_ylim(min(acc - sd) - 0.4, min(max(acc + sd) + 0.4, 100.3))
 ax.grid(alpha=0.3)
 ax.set_title(a.title, fontsize=11)
 ax.legend(loc="lower left", fontsize=8.5, framealpha=0.95)
