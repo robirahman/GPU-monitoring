@@ -326,6 +326,17 @@ Here is a visual representation of some telemetry features transcribed from sele
 \label{fig:catalog}
 \end{figure}
 
+\section{Implications for HEMs}
+\label{sec:hems}
+
+Our results naturally suggest a minimal HEM design for preventing covert training on monitored hardware. The software-level classifier demonstrates that always-available NVML counters at 1 Hz carry enough signal to detect training-versus-not at 98.7\% accuracy with LOO adversarial robustness --- but this result only holds if the counters themselves are trustworthy. A deployable monitoring system therefore requires three HEM components in addition to the classifier:
+
+\begin{itemize}\itemsep2pt
+  \item \textbf{Tamper-resistant NVML read path.} The monitoring agent must read counter values from a source the adversary cannot tamper with --- e.g., an attested enclave on the GPU firmware boundary \citep{aarne2025} or a verified read path through secure-boot-chained firmware \citep{petriesolo2025,ogara2025}. Without this, an adversary with software privilege simply returns forged values.
+  \item \textbf{Authenticated telemetry channel.} Telemetry in transit from the GPU agent to the verifier must be signed with a hardware-rooted key so an in-path adversary cannot substitute a permitted workload's telemetry for the actual workload. This extends to rate-limiting and nonce-binding to prevent replay of previously-observed benign signatures.
+  \item \textbf{Secure boot of the monitoring software.} The process itself, its classifier weights, and its feature-extraction code must be attested so an adversary cannot replace them with a permissive version (e.g., a classifier that labels everything as inference).
+\end{itemize}
+
 \section{Limitations and Future Work}
 \label{sec:limits}
 
