@@ -35,6 +35,35 @@
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{5}
 
+% --- Author footnote marks --------------------------------------------
+% neurips_2026.sty sets \@makefnmark to \hbox to \z@{...}, a zero-width box, so
+% that marker glyphs do not shift the centred author names. Two \thanks on one
+% author then print on top of each other. This is the style's own \maketitle
+% with that one line changed to give the in-text mark its natural width. The
+% footnote text at the bottom of the page is unaffected: \@makefntext below
+% typesets the symbol itself rather than calling \@makefnmark. Redefined in
+% full rather than patched because the original contains a parameter token,
+% which \patchcmd cannot handle.
+\makeatletter
+\renewcommand{\maketitle}{%
+  \par
+  \begingroup
+    \renewcommand{\thefootnote}{\fnsymbol{footnote}}
+    \renewcommand{\@makefnmark}{\textsuperscript{\@thefnmark}}% <- was zero-width
+    \long\def\@makefntext##1{%
+      \parindent 1em\noindent
+      \hbox to 1.8em{\hss $\m@th ^{\@thefnmark}$}##1
+    }
+    \thispagestyle{empty}
+    \@maketitle
+    \@thanks
+    \@notice
+  \endgroup
+  \let\maketitle\relax
+  \let\thanks\relax
+}
+\makeatother
+
 \graphicspath{{figs/}}
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
 
@@ -44,10 +73,10 @@
   % The shared \thanks marker is the equal-contribution note; \footnotemark[1]
   % repeats that same symbol on the second author rather than making a second
   % footnote. Affiliations keep their own markers, as on arXiv.
-  Robi Rahman\thanks{Equal contribution.}\,\thanks{Machine Intelligence Research
+  Robi Rahman\thanks{Equal contribution.}\thinspace\thanks{Machine Intelligence Research
   Institute. Correspondence to \texttt{robi@intelligence.org}.} \\
   \And
-  Sabiha Tajdari\footnotemark[1]\,\thanks{University of Virginia.} \\
+  Sabiha Tajdari\footnotemark[1]\thinspace\thanks{University of Virginia.} \\
 }
 
 \begin{document}
