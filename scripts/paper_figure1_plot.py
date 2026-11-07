@@ -29,7 +29,25 @@ def main():
     ap.add_argument("--json", required=True)
     ap.add_argument("--out", required=True, help="path stem; .png and .pdf are written")
     ap.add_argument("--title", default=None)
+    # Sizing. The default geometry is generous and is meant to be viewed on
+    # screen; at the width a NeurIPS column allows it is downscaled ~2.3x, which
+    # drops the 9 pt tick labels to about 4 pt. --figsize lets the figure be
+    # generated at the size it will actually be printed, so the font arguments
+    # below are true point sizes on the page rather than nominal ones.
+    ap.add_argument("--figsize", default=None, metavar="W,H",
+                    help="inches, e.g. 5.4,2.6 (default: scales with GPU count)")
+    ap.add_argument("--font-tick", type=float, default=9.0)
+    ap.add_argument("--font-cell", type=float, default=8.0)
+    ap.add_argument("--font-title", type=float, default=10.0)
+    ap.add_argument("--font-axis", type=float, default=None,
+                    help="axis labels and colorbar; defaults to --font-tick")
+    # The column labels repeat the row labels verbatim, and rotating the full
+    # names eats roughly a third of the figure height. Abbreviating just the
+    # columns keeps the full names on the rows, where they cost nothing.
+    ap.add_argument("--short-xticks", action="store_true")
+    ap.add_argument("--xtick-rotation", type=float, default=35.0)
     a = ap.parse_args()
+    f_axis = a.font_axis if a.font_axis is not None else a.font_tick
 
     d = json.loads(Path(a.json).read_text())
     gpus = d["gpus"]; tr = d["transfer"]; logo = d["logo"]
@@ -48,19 +66,32 @@ def main():
     lo = float(np.nanmin(M))
     vmin = 0.2 if lo < 0.5 else 0.5
 
-    fig, ax = plt.subplots(figsize=(0.95 * n + 3.0, 0.58 * (n + 1) + 2.0))
+    if a.figsize:
+        fs = tuple(float(x) for x in a.figsize.split(","))
+    else:
+        fs = (0.95 * n + 3.0, 0.58 * (n + 1) + 2.0)
+    fig, ax = plt.subplots(figsize=fs)
     im = ax.imshow(M, cmap="RdYlGn", vmin=vmin, vmax=1.0, aspect="auto")
     ax.set_xticks(range(n)); ax.set_yticks(range(n + 1))
-    ax.set_xticklabels(gpus, rotation=35, ha="right", fontsize=9)
-    ax.set_yticklabels(rows, fontsize=9)
-    ax.set_xlabel("Test GPU"); ax.set_ylabel("Train GPU")
+    def _short(g):
+        g = (g.replace("A100 SXM4 ", "A100-").replace("H100 80GB", "H100-80")
+              .replace("H100 NVL", "H100-NVL").replace("H200 / H200 NVL", "H200")
+              .replace("RTX 4050 Laptop", "RTX4050").replace("RTX ", "RTX"))
+        return g
+    xlab = [_short(g) for g in gpus] if a.short_xticks else gpus
+    ax.set_xticklabels(xlab, rotation=a.xtick_rotation,
+                       ha="right" if a.xtick_rotation else "center",
+                       fontsize=a.font_tick)
+    ax.set_yticklabels(rows, fontsize=a.font_tick)
+    ax.set_xlabel("Test GPU", fontsize=f_axis)
+    ax.set_ylabel("Train GPU", fontsize=f_axis)
     for i in range(n + 1):
         for j in range(n):
             v = M[i, j]
             if np.isnan(v):
                 continue
             ax.text(j, i, f"{v*100:.1f}", ha="center", va="center",
-                    color="white" if v < 0.55 else "black", fontsize=8)
+                    color="white" if v < 0.55 else "black", fontsize=a.font_cell)
     # The diagonal trains and tests on the same GPU WITHOUT grouping, so it is an
     # upper bound rather than a generalisation estimate. Outline it so no reader
     # mistakes those cells for the honest within-GPU number (Table 4's grouped CV).
@@ -70,12 +101,14 @@ def main():
     # Separate the LOGO row from the pairwise block.
     ax.axhline(n - 0.5, color="black", lw=2.0)
     if a.title:
-        ax.set_title(a.title, fontsize=10)
-    fig.colorbar(im, ax=ax, fraction=0.035, pad=0.03, label="binary accuracy")
+        ax.set_title(a.title, fontsize=a.font_title)
+    cb = fig.colorbar(im, ax=ax, fraction=0.035, pad=0.03)
+    cb.set_label("binary accuracy", fontsize=f_axis)
+    cb.ax.tick_params(labelsize=f_axis)
     fig.tight_layout()
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out.with_suffix(".png"), dpi=200)
+    fig.savefig(out.with_suffix(".png"), dpi=400)
     fig.savefig(out.with_suffix(".pdf"))
     print(f"wrote {out.with_suffix('.png')} and {out.with_suffix('.pdf')}")
     print(f"  matrix {M.shape}, range {np.nanmin(M)*100:.1f}-{np.nanmax(M)*100:.1f}%")

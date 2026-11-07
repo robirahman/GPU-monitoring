@@ -15,6 +15,26 @@
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1\linewidth}}
 
+% --- Float containment -------------------------------------------------
+% Floats default to drifting into whatever page has room, which pushed four
+% figures out of the section that introduces them. A FloatBarrier before every
+% section that needs one forces LaTeX to flush pending floats first, so each
+% figure and table appears under its own heading. The barriers are placed in
+% the source (body_main.tex, body_appendix.tex) rather than by patching
+% \section, so the main text pays for only the one it actually needs.
+\usepackage{float}
+\usepackage{placeins}
+% Barriers alone would push any float that cannot fit the remaining space onto
+% a page of its own. Loosening the default area fractions lets a large float
+% share a page with text instead, which keeps the page count down.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.80}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+
 \graphicspath{{figs/}}
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue}
 

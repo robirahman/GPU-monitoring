@@ -182,13 +182,24 @@ RTX 4050 Laptop & 94.74\% & 66.75\% \\
 
 In-distribution pooled classification is highly accurate for non-adversarial workloads: when data from all 9 GPUs is used to develop the classifier, it is 98.70\% accurate on new, non-disguised workloads performed on any of those GPUs. A harder case is when the classifier is developed using workload logs on a set of GPUs and then it is deployed to classify telemetry from a novel GPU. This case is evaluated in the LOGO column of Table~\ref{tab:gpu}. Our results show that a regulator with access to telemetry from a variety of GPUs can train one classifier and deploy it even to datacenter GPU models they have not sampled before at 86--99\% accuracy. Generalization to consumer hardware is weaker, at 67--80\%, so a deployment that must cover consumer GPUs should be trained on more telemetry from that category.
 
-\begin{figure}[htbp]
+% [H] rather than a float: section 4.1 leaves exactly one gap big enough for
+% this figure, and letting it float sends it past the FloatBarrier into 4.2.
+% The _compact variant is generated at the size it is printed at, so its fonts
+% are true point sizes rather than being downscaled 2.3x like the full-size
+% figure was. Reproduce with:
+%   python3 scripts/paper_figure1_plot.py \
+%     --json docs/camera_ready_results_20261022/paper_figure1_30s_xgb.json \
+%     --out report/neurips2026/figs/cross_gpu_heatmap_xgb_compact \
+%     --figsize 4.1,2.15 --font-tick 5.6 --font-cell 4.4 --font-axis 5.6 \
+%     --short-xticks --xtick-rotation 30
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.92\linewidth]{figs/cross_gpu_heatmap_xgb.png}
+\includegraphics[width=0.74\linewidth]{figs/cross_gpu_heatmap_xgb_compact.pdf}
 \caption{Cross-GPU transfer heatmap (binary XGB, 30s windows). Cell values are accuracy when training on the row GPU and testing on the column GPU. The bottom row is LOGO: for each test GPU, the classifier is trained only on data from the other 8 GPUs. By contrast, \emph{in-distribution} evaluation (with runs from the target GPU included in the training dataset) averages 98.70\% accuracy on unseen non-adversarial runs. LOGO evaluates the harder case of generalization to new hardware types.}
 \label{fig:heatmap}
 \end{figure}
 
+\FloatBarrier
 \subsection{Adversary-Defender Iteration}
 
 The arms race proceeds through six rounds. Table~\ref{tab:arms} summarizes the classifier's detection rates and the adversary's evasion strategies.

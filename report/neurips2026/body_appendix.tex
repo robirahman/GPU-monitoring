@@ -8,6 +8,7 @@ Other past work covers several adjacent but distinct tasks. WAVE \citep{xu2026} 
 
 Using physical side channels rather than software telemetry, \citet{maia2022} show magnetic flux from GPU power cables reveals neural network topology. \citet{arefin2025} demonstrate USB/HDMI port power measurement can infer GPU activities. \citet{latif2025} empirically measure power signatures of training on 8-GPU H100 nodes. These establish that physical signals carry workload-identifying information; we extend this to software-accessible telemetry for governance. POLCA \citep{patel2023} characterize LLM power consumption profiles across a Microsoft Azure fleet for energy planning and find systematic differences in power patterns between training and inference, providing independent evidence for the signal detected by our classifier, at the scale of large cloud datacenters.
 
+\FloatBarrier
 \section{Classifier Design}
 \label{sec:clfdesign}
 
@@ -104,6 +105,7 @@ symgemm\_ppo\_fused & 6 & Matmul disguise: diluted PPO updates & 100\% & 100\% &
 
 The hardest strategy for our classifier is symgemm\_L4\_fused\_sgd, which uses a custom matrix multiplication implementation to reshape backpropagation to have the compute and memory footprint of two forward passes. All R1--R5 families are detected at 90--100\% in the in-distribution hardened state.
 
+\FloatBarrier
 \section{Power Validation}
 
 While testing 49 workloads on the RTX 5080 desktop workstation, wall-power readings were collected using a TP-Link Tapo P115 smart plug (readings logged and timestamped using the tapo python library).
@@ -124,6 +126,7 @@ Overhead (wall power minus NVML-reported GPU power) averages 107.8 $\pm$ 64.2W f
 
 The wall signal is richer than NVML alone, because it captures the host workstation costs incurred by strategies that manipulate GPU utilization. A layered monitoring system that combines NVML with wall or rack-level power measurements will detect evasion that NVML alone misses.
 
+\FloatBarrier
 \section{Roofline Analysis}
 
 We establish that static architectural heuristics such as the roofline model \citep{williams2009} are insufficient to detect ML training. We perform a 286-configuration corner-case sweep on H100 NVL, spanning 6 workload families:
@@ -146,6 +149,7 @@ Result: 101/286 (35.3\%) non-training configurations fall inside the training ar
 \label{fig:roofline}
 \end{figure}
 
+\FloatBarrier
 \section{Window Size vs Accuracy}
 \label{sec:window}
 
@@ -158,6 +162,7 @@ Classification accuracy is compared across 5/10/15/20/30/45/60/90/120 s windows.
 \label{fig:window}
 \end{figure}
 
+\FloatBarrier
 \section{Holdout Methodologies}
 \label{sec:holdout}
 
@@ -224,6 +229,7 @@ Family-level grouping answers the harder question of whether the detector genera
 
 Run-level grouping splits 245 jobs across its folds, so it is not used and should not be read as an estimate of deployed performance.
 
+\FloatBarrier
 \section{Job-Level Evaluation}
 \label{sec:joblevel}
 
@@ -304,6 +310,7 @@ There are two caveats. First, 25.0\% run-level detection of an unseen fused-writ
 \label{fig:runlevel}
 \end{figure}
 
+\FloatBarrier
 \section{Additional Results}
 
 Here we compare the 22 adversarial evasion strategies, sorted by detection rate in leave-one-out evaluation.
@@ -315,6 +322,7 @@ Here we compare the 22 adversarial evasion strategies, sorted by detection rate 
 \label{fig:loo}
 \end{figure}
 
+\FloatBarrier
 \section{Telemetry Visualizations}
 
 Here is a visual representation of some telemetry features transcribed from selected workloads.
@@ -326,6 +334,7 @@ Here is a visual representation of some telemetry features transcribed from sele
 \label{fig:catalog}
 \end{figure}
 
+\FloatBarrier
 \section{Implications for HEMs}
 \label{sec:hems}
 
@@ -337,6 +346,7 @@ Our results naturally suggest a minimal HEM design for preventing covert trainin
   \item \textbf{Secure boot of the monitoring software.} The process itself, its classifier weights, and its feature-extraction code must be attested so an adversary cannot replace them with a permissive version (e.g., a classifier that labels everything as inference).
 \end{itemize}
 
+\FloatBarrier
 \section{Limitations and Future Work}
 \label{sec:limits}
 
