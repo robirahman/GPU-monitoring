@@ -27,6 +27,8 @@ matplotlib.rcParams["ps.fonttype"] = 42
 matplotlib.rcParams["font.family"] = "DejaVu Sans"
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+import numpy as np
+from scipy.interpolate import PchipInterpolator
 
 RES = Path("docs/camera_ready_results_20261022")
 INK, MUTED, GRID = "#17263c", "#3d4f68", "#d6dce4"
@@ -90,14 +92,25 @@ def line_chart(out):
     wx, xgb = rows("paper_figure3_job_id_xgb.json")
     wr, rf = rows("paper_figure3_job_id.json")
 
+    # Smooth with PCHIP rather than a cubic spline. PCHIP is shape-preserving:
+    # it will not overshoot between knots, so the curve never implies an
+    # accuracy higher (or lower) than anything actually measured. Markers stay
+    # on the nine measured sizes so the curve is not mistaken for data.
+    def smooth(x, y):
+        xs = np.linspace(min(x), max(x), 400)
+        return xs, PchipInterpolator(np.asarray(x, float), np.asarray(y, float))(xs)
+
     fig, ax = plt.subplots(figsize=(7.63, 3.10))
     ax.axvspan(0, 15, color=MINT, alpha=0.18, zorder=0)
     ax.text(7.5, 96.62, "$\\leq$15 s alert latency", fontsize=8.4,
             color=MUTED, ha="center", va="bottom")
-    ax.plot(wr, rf, marker="o", ms=4.5, lw=1.8, color="#9db0c2",
-            label="RandomForest", zorder=3)
-    ax.plot(wx, xgb, marker="o", ms=4.8, lw=2.2, color=BLUE,
-            label="XGBoost", zorder=4)
+    sr = smooth(wr, rf); sx = smooth(wx, xgb)
+    ax.plot(*sr, lw=1.9, color="#9db0c2", label="RandomForest", zorder=3,
+            solid_capstyle="round")
+    ax.plot(wr, rf, ls="none", marker="o", ms=4.5, color="#9db0c2", zorder=3)
+    ax.plot(*sx, lw=2.4, color=BLUE, label="XGBoost", zorder=4,
+            solid_capstyle="round")
+    ax.plot(wx, xgb, ls="none", marker="o", ms=5.0, color=BLUE, zorder=5)
     ax.set_xlim(0, 126); ax.set_ylim(96.5, 99.6)
     ax.set_xticks([0, 20, 40, 60, 80, 100, 120])
     ax.set_yticks([96.5, 97.0, 97.5, 98.0, 98.5, 99.0, 99.5])
@@ -109,8 +122,9 @@ def line_chart(out):
     for s in ("top", "right"): ax.spines[s].set_visible(False)
     for s in ("left", "bottom"): ax.spines[s].set_color(GRID)
     ax.yaxis.grid(True, color=GRID, lw=0.8, zorder=0); ax.set_axisbelow(True)
-    ax.legend(fontsize=8.8, frameon=False, loc="lower right", labelcolor=INK,
-              ncol=2, handlelength=1.6)
+    h, l = ax.get_legend_handles_labels()
+    ax.legend(h, l, fontsize=8.8, frameon=False, loc="lower right",
+              labelcolor=INK, ncol=2, handlelength=1.8)
     fig.tight_layout(pad=0.4)
     fig.savefig(out / "poster_window_accuracy.png", dpi=400, transparent=True)
     plt.close(fig)
