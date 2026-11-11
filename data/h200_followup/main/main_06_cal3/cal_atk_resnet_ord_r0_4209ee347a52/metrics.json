@@ -1,0 +1,272 @@
+{
+ "family": "resnet",
+ "mode": "ordinary",
+ "args": {
+  "family": "resnet",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "cosine",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 63000,
+  "duration": 720.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 2520,
+  "eval_every_sec": 1000000000.0,
+  "seed": 418112,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_06_cal3/cal_atk_resnet_ord_r0_4209ee347a52/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_06_cal3/cal_atk_resnet_ord_r0_4209ee347a52/events.jsonl"
+ },
+ "batch_size": 256,
+ "unit": "samples",
+ "updates": 63000,
+ "useful_units": 16128000,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "cosine",
+ "update_budget": 63000,
+ "wall_s_train_loop": 352.8819305090001,
+ "useful_units_per_s": 45703.671980984764,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 2.5426281982421877,
+   "val_acc": 0.0844,
+   "val_n": 10000
+  },
+  {
+   "updates": 2520,
+   "t": 19.94233788200654,
+   "train_loss": 0.1676548719406128,
+   "val_loss": 0.7755994506835937,
+   "val_acc": 0.7799,
+   "val_n": 10000
+  },
+  {
+   "updates": 5040,
+   "t": 33.80011689197272,
+   "train_loss": 0.16449198126792908,
+   "val_loss": 0.5353339965820313,
+   "val_acc": 0.8452,
+   "val_n": 10000
+  },
+  {
+   "updates": 7560,
+   "t": 47.6610233450192,
+   "train_loss": 0.2023141086101532,
+   "val_loss": 0.5324435607910156,
+   "val_acc": 0.843,
+   "val_n": 10000
+  },
+  {
+   "updates": 10080,
+   "t": 61.520535214978736,
+   "train_loss": 0.06948037445545197,
+   "val_loss": 0.43266956176757815,
+   "val_acc": 0.8695,
+   "val_n": 10000
+  },
+  {
+   "updates": 12600,
+   "t": 75.39087445102632,
+   "train_loss": 0.0958159863948822,
+   "val_loss": 0.47536126403808593,
+   "val_acc": 0.8603,
+   "val_n": 10000
+  },
+  {
+   "updates": 15120,
+   "t": 89.2609862369718,
+   "train_loss": 0.1416005790233612,
+   "val_loss": 0.5404589813232422,
+   "val_acc": 0.8496,
+   "val_n": 10000
+  },
+  {
+   "updates": 17640,
+   "t": 103.13404480798636,
+   "train_loss": 0.06057039648294449,
+   "val_loss": 0.5212292114257813,
+   "val_acc": 0.8526,
+   "val_n": 10000
+  },
+  {
+   "updates": 20160,
+   "t": 116.99884457100416,
+   "train_loss": 0.05469363182783127,
+   "val_loss": 0.5494403015136718,
+   "val_acc": 0.8503,
+   "val_n": 10000
+  },
+  {
+   "updates": 22680,
+   "t": 130.86849148001056,
+   "train_loss": 0.06477773934602737,
+   "val_loss": 0.44142522888183594,
+   "val_acc": 0.8747,
+   "val_n": 10000
+  },
+  {
+   "updates": 25200,
+   "t": 144.74241915601306,
+   "train_loss": 0.07202565670013428,
+   "val_loss": 0.45047367858886717,
+   "val_acc": 0.87,
+   "val_n": 10000
+  },
+  {
+   "updates": 27720,
+   "t": 158.60784060700098,
+   "train_loss": 0.04023505374789238,
+   "val_loss": 0.44809998168945314,
+   "val_acc": 0.8769,
+   "val_n": 10000
+  },
+  {
+   "updates": 30240,
+   "t": 172.4751812670147,
+   "train_loss": 0.03690358251333237,
+   "val_loss": 0.5654996002197266,
+   "val_acc": 0.8512,
+   "val_n": 10000
+  },
+  {
+   "updates": 32760,
+   "t": 186.34528762300033,
+   "train_loss": 0.07089018821716309,
+   "val_loss": 0.43981705322265624,
+   "val_acc": 0.8819,
+   "val_n": 10000
+  },
+  {
+   "updates": 35280,
+   "t": 200.21667858201545,
+   "train_loss": 0.05276903510093689,
+   "val_loss": 0.4570532958984375,
+   "val_acc": 0.8817,
+   "val_n": 10000
+  },
+  {
+   "updates": 37800,
+   "t": 214.08568526402814,
+   "train_loss": 0.016411080956459045,
+   "val_loss": 0.4032072296142578,
+   "val_acc": 0.896,
+   "val_n": 10000
+  },
+  {
+   "updates": 40320,
+   "t": 227.95111795398407,
+   "train_loss": 0.01698821596801281,
+   "val_loss": 0.41934756469726564,
+   "val_acc": 0.8922,
+   "val_n": 10000
+  },
+  {
+   "updates": 42840,
+   "t": 241.8155900189886,
+   "train_loss": 0.02036001719534397,
+   "val_loss": 0.47022496032714844,
+   "val_acc": 0.8762,
+   "val_n": 10000
+  },
+  {
+   "updates": 45360,
+   "t": 255.68414767301874,
+   "train_loss": 0.0012148749083280563,
+   "val_loss": 0.2857893356323242,
+   "val_acc": 0.9193,
+   "val_n": 10000
+  },
+  {
+   "updates": 47880,
+   "t": 269.55020787898684,
+   "train_loss": 0.0016341358423233032,
+   "val_loss": 0.25748313903808595,
+   "val_acc": 0.9242,
+   "val_n": 10000
+  },
+  {
+   "updates": 50400,
+   "t": 283.41928325698245,
+   "train_loss": 0.0015089400112628937,
+   "val_loss": 0.2532066421508789,
+   "val_acc": 0.9247,
+   "val_n": 10000
+  },
+  {
+   "updates": 52920,
+   "t": 297.28550025302684,
+   "train_loss": 0.0015243440866470337,
+   "val_loss": 0.25041624298095705,
+   "val_acc": 0.9255,
+   "val_n": 10000
+  },
+  {
+   "updates": 55440,
+   "t": 311.154304642987,
+   "train_loss": 0.001673176884651184,
+   "val_loss": 0.24942410125732423,
+   "val_acc": 0.9272,
+   "val_n": 10000
+  },
+  {
+   "updates": 57960,
+   "t": 325.0232599520241,
+   "train_loss": 0.0015483349561691284,
+   "val_loss": 0.24994356689453126,
+   "val_acc": 0.9277,
+   "val_n": 10000
+  },
+  {
+   "updates": 60480,
+   "t": 338.89823255699594,
+   "train_loss": 0.0017986670136451721,
+   "val_loss": 0.2481947967529297,
+   "val_acc": 0.9268,
+   "val_n": 10000
+  },
+  {
+   "updates": 63000,
+   "t": 352.77273195498856,
+   "train_loss": 0.001601971685886383,
+   "val_loss": 0.2494900451660156,
+   "val_acc": 0.9276,
+   "val_n": 10000
+  },
+  {
+   "updates": 63000,
+   "t": 352.8341866109986,
+   "final": true,
+   "val_loss": 0.2494900451660156,
+   "val_acc": 0.9276,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "dc9b490412f5c250/sha=c5b8e1d062f7373a/n=50000",
+  "test": "bab4620c7501a3e6/sha=f9b1e2130bab680d/n=10000"
+ },
+ "model_revision": "torchvision-resnet",
+ "seed": 418112,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-10 cross-entropy"
+}

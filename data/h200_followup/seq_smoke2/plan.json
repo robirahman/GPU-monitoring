@@ -1,0 +1,32 @@
+{
+ "session_id": "seq_smoke2",
+ "partition": "pilot",
+ "notes": "type-4 tooling smoke test",
+ "sensors": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "runs": [
+  {
+   "label": "seq_whisper_resnet_burst20_at53",
+   "class_label": "mixed",
+   "family": "resnet+whisper",
+   "kind": "sequence",
+   "argv": [
+    "--serve-model",
+    "whisper",
+    "--serve-rate",
+    "1.0",
+    "--bursts",
+    "20@53",
+    "--burst-family",
+    "resnet",
+    "--observe",
+    "60"
+   ],
+   "timeout_s": 900
+  }
+ ]
+}

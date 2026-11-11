@@ -1,0 +1,1482 @@
+{
+ "session_id": "main_00_cal0",
+ "partition": "calibration",
+ "block": 0,
+ "order_index": 0,
+ "campaign_seed": 293735711,
+ "sensors": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "runs": [
+  {
+   "label": "cal_benign_19",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 60,
+      "planned_s": 307.5698465949755,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "307",
+         "--size",
+         "2048"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 430.9956682379935,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "117:2,234:5,79:2"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 319.18825476022164,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "52:0.03,10:0.03,167:0.03,88:0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 656.599841451146,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "249:0.03,240:0.15,59:0.3,107:0.3"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 232.99484319249945,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "232",
+         "--size",
+         "4096"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 575.1036917305553,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "575",
+         "--size",
+         "1024"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 187.54785403260848,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "51:5,75:2,12:2,48:0.5"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "cufft": 1115.6683815180302,
+     "idle": 290.0,
+     "wav2vec2": 618.543522270602,
+     "phi3": 975.7880962113676
+    }
+   }
+  },
+  {
+   "label": "cal_atk_qwen_shape_r0",
+   "class_label": "ml_training",
+   "family": "qwen",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "calibration-attack-qwen-rep0",
+   "attack": {
+    "strategy": "power_utilization_shaping",
+    "duty": 0.4,
+    "period_ms": 200
+   },
+   "timeout_s": 3599,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "Qwen/Qwen2.5-0.5B",
+    "--dataset",
+    "wikitext",
+    "--updates",
+    "2613",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "104",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "1799",
+    "--seed",
+    "226479",
+    "--mode",
+    "shape",
+    "--duty",
+    "0.4",
+    "--period-ms",
+    "200"
+   ]
+  },
+  {
+   "label": "cal_t1_resnet_long",
+   "class_label": "ml_training",
+   "family": "resnet",
+   "kind": "train",
+   "collection_type": "training_timing",
+   "timeout_s": 3600,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "resnet",
+    "--duration",
+    "1200",
+    "--seed",
+    "306726",
+    "--eval-every-sec",
+    "60",
+    "--ckpt-every-sec",
+    "120"
+   ]
+  },
+  {
+   "label": "cal_atk_bert_shape_r1",
+   "class_label": "ml_training",
+   "family": "bert",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "calibration-attack-bert-rep1",
+   "attack": {
+    "strategy": "power_utilization_shaping",
+    "duty": 0.4,
+    "period_ms": 200
+   },
+   "timeout_s": 3600,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "bert",
+    "--updates",
+    "22680",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "907",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "1800",
+    "--seed",
+    "65344",
+    "--mode",
+    "shape",
+    "--duty",
+    "0.4",
+    "--period-ms",
+    "200"
+   ]
+  },
+  {
+   "label": "cal_t1_qwen_short0",
+   "class_label": "ml_training",
+   "family": "qwen",
+   "kind": "train",
+   "collection_type": "training_timing",
+   "timeout_s": 1200,
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "Qwen/Qwen2.5-0.5B",
+    "--dataset",
+    "wikitext",
+    "--duration",
+    "90",
+    "--seed",
+    "848373",
+    "--eval-every-sec",
+    "30"
+   ]
+  },
+  {
+   "label": "cal_benign_21",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 60,
+      "planned_s": 239.97884223811383,
+      "procs": [
+       {
+        "label": "qiskit_aer",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "qiskit",
+         "--duration",
+         "239",
+         "--seed",
+         "974627"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 324.1479735900272,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "324",
+         "--rays",
+         "32768"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 612.1363047181297,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "612",
+         "--size",
+         "2048"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 415.1025415034484,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "249:0.15,165:0.03"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 251.8628356925516,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "47:0.5,118:0.5,85:2"
+        ]
+       },
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "251",
+         "--seed",
+         "289928"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 485.4736441949789,
+      "procs": [
+       {
+        "label": "nbody",
+        "kind": "nbody",
+        "argv": [
+         "--duration",
+         "485",
+         "--particles",
+         "8192"
+        ]
+       },
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "136:0.5,219:0,129:10"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 421.2978580627505,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "421",
+         "--size",
+         "4096"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "qiskit_aer": 239.97884223811383,
+     "idle": 250.0,
+     "render": 324.1479735900272,
+     "cufft": 1033.4341627808803,
+     "phi3": 415.1025415034484,
+     "wav2vec2": 737.3364798875305,
+     "cupy_montecarlo": 251.8628356925516,
+     "nbody": 485.4736441949789
+    }
+   }
+  },
+  {
+   "label": "cal_seq_10_whisper_resnet",
+   "class_label": "mixed",
+   "family": "resnet+whisper",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "whisper",
+    "--serve-rate",
+    "1.0",
+    "--bursts",
+    "45@70.0,20@238,10@321",
+    "--burst-family",
+    "resnet",
+    "--burst-args=",
+    "--observe",
+    "180",
+    "--lead",
+    "46",
+    "--seed",
+    "255480"
+   ]
+  },
+  {
+   "label": "cal_seq_06_whisper_resnet",
+   "class_label": "mixed",
+   "family": "resnet+whisper",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "whisper",
+    "--serve-rate",
+    "1.0",
+    "--bursts",
+    "10@73.0,20@206",
+    "--burst-family",
+    "resnet",
+    "--burst-args=",
+    "--observe",
+    "180",
+    "--lead",
+    "46",
+    "--seed",
+    "118420"
+   ]
+  },
+  {
+   "label": "cal_atk_bert_cover_r0",
+   "class_label": "other",
+   "family": "cufft",
+   "kind": "train",
+   "collection_type": "attack_cover_only_control",
+   "job_id": "calibration-attack-bert-rep0",
+   "timeout_s": 2400,
+   "argv": [
+    "--family",
+    "bert",
+    "--mode",
+    "cover_only",
+    "--other",
+    "fft",
+    "--duration",
+    "360",
+    "--seed",
+    "139596"
+   ]
+  },
+  {
+   "label": "cal_atk_resnet_cover_r0",
+   "class_label": "other",
+   "family": "cufft",
+   "kind": "train",
+   "collection_type": "attack_cover_only_control",
+   "job_id": "calibration-attack-resnet-rep0",
+   "timeout_s": 2400,
+   "argv": [
+    "--family",
+    "resnet",
+    "--mode",
+    "cover_only",
+    "--other",
+    "fft",
+    "--duration",
+    "360",
+    "--seed",
+    "418112"
+   ]
+  },
+  {
+   "label": "cal_t1_bert_short1",
+   "class_label": "ml_training",
+   "family": "bert",
+   "kind": "train",
+   "collection_type": "training_timing",
+   "timeout_s": 1200,
+   "argv": [
+    "--family",
+    "bert",
+    "--duration",
+    "90",
+    "--seed",
+    "818217",
+    "--eval-every-sec",
+    "30"
+   ]
+  },
+  {
+   "label": "cal_benign_30",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 30,
+      "planned_s": 711.5806733441514,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "207:0.08,232:0.15,121:0.15,150:0.15"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 371.3367412138148,
+      "procs": [
+       {
+        "label": "nbody",
+        "kind": "nbody",
+        "argv": [
+         "--duration",
+         "371",
+         "--particles",
+         "8192"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 319.39805647457575,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "168:10,150:5"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 553.8602493030664,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "451:0.5,102:5"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 258.4384847221022,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "258",
+         "--size",
+         "2048"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 328.40330142710525,
+      "procs": [
+       {
+        "label": "nbody",
+        "kind": "nbody",
+        "argv": [
+         "--duration",
+         "328",
+         "--particles",
+         "8192"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 296.98249351518416,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "100:2,25:2,96:0.5,75:2"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "phi3": 711.5806733441514,
+     "idle": 160.0,
+     "nbody": 699.74004264092,
+     "wav2vec2": 1170.2407992928263,
+     "cufft": 258.4384847221022
+    }
+   }
+  },
+  {
+   "label": "cal_seq_01_phi3_resnet",
+   "class_label": "mixed",
+   "family": "resnet+phi3",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "phi3",
+    "--serve-rate",
+    "0.1",
+    "--bursts",
+    "10@70.0,10@117,10@194",
+    "--burst-family",
+    "resnet",
+    "--burst-args=",
+    "--observe",
+    "180",
+    "--lead",
+    "46",
+    "--seed",
+    "605807"
+   ]
+  },
+  {
+   "label": "cal_benign_28",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 10,
+      "planned_s": 537.6661007535533,
+      "procs": [
+       {
+        "label": "nbody",
+        "kind": "nbody",
+        "argv": [
+         "--duration",
+         "537",
+         "--particles",
+         "8192"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 586.4748495865358,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "586",
+         "--rays",
+         "65536"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 586.7115935636734,
+      "procs": [
+       {
+        "label": "qiskit_aer",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "qiskit",
+         "--duration",
+         "586",
+         "--seed",
+         "348259"
+        ]
+       },
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "586",
+         "--rays",
+         "32768"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 655.0199037039772,
+      "procs": [
+       {
+        "label": "qiskit_aer",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "qiskit",
+         "--duration",
+         "655",
+         "--seed",
+         "512894"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 378.1735766723324,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "378",
+         "--rays",
+         "16384"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 225.95397571992817,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "93:0.15,67:0.03,64:0.08"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "nbody": 537.6661007535533,
+     "idle": 30.0,
+     "render": 1551.3600198225417,
+     "qiskit_aer": 1241.7314972676506,
+     "phi3": 225.95397571992817
+    }
+   }
+  },
+  {
+   "label": "cal_atk_bert_int_r0",
+   "class_label": "ml_training",
+   "family": "bert",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "calibration-attack-bert-rep0",
+   "attack": {
+    "strategy": "interleaving",
+    "train_s": 5,
+    "cover_s": 15,
+    "cover": "cuFFT"
+   },
+   "timeout_s": 4320,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "bert",
+    "--updates",
+    "22680",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "907",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "2520",
+    "--seed",
+    "139596",
+    "--mode",
+    "interleave",
+    "--train-sec",
+    "5",
+    "--other-sec",
+    "15",
+    "--other",
+    "fft"
+   ]
+  },
+  {
+   "label": "cal_atk_resnet_int_r1",
+   "class_label": "ml_training",
+   "family": "resnet",
+   "kind": "train",
+   "collection_type": "attack",
+   "job_id": "calibration-attack-resnet-rep1",
+   "attack": {
+    "strategy": "interleaving",
+    "train_s": 5,
+    "cover_s": 15,
+    "cover": "cuFFT"
+   },
+   "timeout_s": 4320,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "argv": [
+    "--family",
+    "resnet",
+    "--updates",
+    "63000",
+    "--lr-schedule",
+    "cosine",
+    "--eval-every",
+    "2520",
+    "--eval-every-sec",
+    "1e9",
+    "--duration",
+    "2520",
+    "--seed",
+    "120308",
+    "--mode",
+    "interleave",
+    "--train-sec",
+    "5",
+    "--other-sec",
+    "15",
+    "--other",
+    "fft"
+   ]
+  },
+  {
+   "label": "cal_benign_17",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 60,
+      "planned_s": 386.6117136409588,
+      "procs": [
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "386",
+         "--seed",
+         "898654"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 417.95610972710165,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "154:2,52:5,211:0"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 503.5685719436068,
+      "procs": [
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "503",
+         "--seed",
+         "701149"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 523.8733126063689,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "523",
+         "--size",
+         "4096"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 30,
+      "planned_s": 523.7412531531099,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "523",
+         "--rays",
+         "65536"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 464.24903892885413,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "464",
+         "--rays",
+         "65536"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 3000.0,
+    "lineage_seconds": {
+     "cupy_montecarlo": 890.1802855845656,
+     "idle": 180.0,
+     "wav2vec2": 417.95610972710165,
+     "cufft": 523.8733126063689,
+     "render": 987.9902920819641
+    }
+   }
+  },
+  {
+   "label": "cal_seq_07_phi3_bert",
+   "class_label": "mixed",
+   "family": "bert+phi3",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "phi3",
+    "--serve-rate",
+    "0.1",
+    "--bursts",
+    "10@63.0,45@193,90@268",
+    "--burst-family",
+    "bert",
+    "--burst-args=",
+    "--observe",
+    "180",
+    "--lead",
+    "44",
+    "--seed",
+    "900356"
+   ]
+  },
+  {
+   "label": "cal_atk_qwen_cover_r1",
+   "class_label": "other",
+   "family": "cufft",
+   "kind": "train",
+   "collection_type": "attack_cover_only_control",
+   "job_id": "calibration-attack-qwen-rep1",
+   "timeout_s": 2400,
+   "argv": [
+    "--family",
+    "lora",
+    "--model",
+    "Qwen/Qwen2.5-0.5B",
+    "--dataset",
+    "wikitext",
+    "--mode",
+    "cover_only",
+    "--other",
+    "fft",
+    "--duration",
+    "359",
+    "--seed",
+    "37400"
+   ]
+  },
+  {
+   "label": "cal_seq_04_phi3_bert",
+   "class_label": "mixed",
+   "family": "bert+phi3",
+   "kind": "sequence",
+   "collection_type": "burst_in_operation",
+   "timeout_s": 3600,
+   "argv": [
+    "--serve-model",
+    "phi3",
+    "--serve-rate",
+    "0.1",
+    "--bursts",
+    "45@60.0,10@225,45@302",
+    "--burst-family",
+    "bert",
+    "--burst-args=",
+    "--observe",
+    "180",
+    "--lead",
+    "44",
+    "--seed",
+    "835652"
+   ]
+  },
+  {
+   "label": "cal_atk_resnet_cover_r1",
+   "class_label": "other",
+   "family": "cufft",
+   "kind": "train",
+   "collection_type": "attack_cover_only_control",
+   "job_id": "calibration-attack-resnet-rep1",
+   "timeout_s": 2400,
+   "argv": [
+    "--family",
+    "resnet",
+    "--mode",
+    "cover_only",
+    "--other",
+    "fft",
+    "--duration",
+    "360",
+    "--seed",
+    "120308"
+   ]
+  },
+  {
+   "label": "cal_benign_18",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 30,
+      "planned_s": 231.79519119084003,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "231",
+         "--rays",
+         "16384"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 434.947945921107,
+      "procs": [
+       {
+        "label": "nbody",
+        "kind": "nbody",
+        "argv": [
+         "--duration",
+         "434",
+         "--particles",
+         "32768"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 622.2078041702928,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "118:0.03,87:0.3,87:0.03,328:0.03"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 631.8094858624384,
+      "procs": [
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "631",
+         "--seed",
+         "379073"
+        ]
+       },
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "489:0,142:0.3"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 328.3394940316548,
+      "procs": [
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "328",
+         "--seed",
+         "896202"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 60,
+      "planned_s": 527.281004759255,
+      "procs": [
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "527",
+         "--seed",
+         "458627"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2906.3809259355876,
+    "lineage_seconds": {
+     "render": 231.79519119084003,
+     "idle": 130.0,
+     "nbody": 434.947945921107,
+     "phi3": 1254.0172900327311,
+     "cupy_montecarlo": 1487.4299846533481
+    }
+   }
+  },
+  {
+   "label": "cal_benign_20",
+   "class_label": "benign_mixed",
+   "family": "mixed",
+   "kind": "timeline",
+   "collection_type": "long_normal_operation",
+   "timeline": {
+    "segments": [
+     {
+      "gap_before_s": 0,
+      "planned_s": 192.6091695188467,
+      "procs": [
+       {
+        "label": "render",
+        "kind": "render",
+        "argv": [
+         "--duration",
+         "192",
+         "--rays",
+         "65536"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 336.82986925023636,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "336",
+         "--size",
+         "4096"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 251.29670967241555,
+      "procs": [
+       {
+        "label": "qiskit_aer",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "qiskit",
+         "--duration",
+         "251",
+         "--seed",
+         "36915"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 318.77995212258753,
+      "procs": [
+       {
+        "label": "cupy_montecarlo",
+        "kind": "nonml",
+        "argv": [
+         "--app",
+         "cupymc",
+         "--duration",
+         "318",
+         "--seed",
+         "374007"
+        ]
+       },
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "119:2,199:0.5"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 120,
+      "planned_s": 256.13853387403486,
+      "procs": [
+       {
+        "label": "wav2vec2",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "wav2vec2",
+         "--schedule",
+         "89:10,77:2,44:0,44:10"
+        ]
+       },
+       {
+        "label": "nbody",
+        "kind": "nbody",
+        "argv": [
+         "--duration",
+         "256",
+         "--particles",
+         "8192"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 418.6403188597307,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "418",
+         "--size",
+         "2048"
+        ]
+       },
+       {
+        "label": "whisper",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "whisper",
+         "--schedule",
+         "143:0.3,275:0.3"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 0,
+      "planned_s": 591.9817809338799,
+      "procs": [
+       {
+        "label": "phi3",
+        "kind": "serve",
+        "argv": [
+         "--model",
+         "phi3",
+         "--schedule",
+         "482:0.15,109:0.3"
+        ]
+       }
+      ]
+     },
+     {
+      "gap_before_s": 10,
+      "planned_s": 262.5338303290964,
+      "procs": [
+       {
+        "label": "cufft",
+        "kind": "cufft",
+        "argv": [
+         "--duration",
+         "262",
+         "--size",
+         "2048"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "timeout_s": 4800,
+   "sensor_overrides": {
+    "scope_raw": "every:60:10"
+   },
+   "extra": {
+    "planned_s": 2998.8101645608276,
+    "lineage_seconds": {
+     "render": 192.6091695188467,
+     "idle": 370.0,
+     "cufft": 1018.0040184390634,
+     "qiskit_aer": 251.29670967241555,
+     "cupy_montecarlo": 318.77995212258753,
+     "wav2vec2": 574.9184859966224,
+     "nbody": 256.13853387403486,
+     "whisper": 418.6403188597307,
+     "phi3": 591.9817809338799
+    }
+   }
+  }
+ ]
+}

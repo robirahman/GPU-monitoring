@@ -1,0 +1,272 @@
+{
+ "family": "effnet",
+ "mode": "shape",
+ "args": {
+  "family": "effnet",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": 2000,
+  "lr_schedule": "cosine",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "shape",
+  "updates": 11304,
+  "duration": 1800.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 452,
+  "eval_every_sec": 1000000000.0,
+  "seed": 374677,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.4,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_01_tes0/tes_atk_efficientnet_shape_r1_077dff013196/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_01_tes0/tes_atk_efficientnet_shape_r1_077dff013196/events.jsonl"
+ },
+ "batch_size": 128,
+ "unit": "samples",
+ "updates": 11304,
+ "useful_units": 1446912,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "cosine",
+ "update_budget": 11304,
+ "wall_s_train_loop": 793.5279932580015,
+ "useful_units_per_s": 1823.3912505838496,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 4.657400695800781,
+   "val_acc": 0.004,
+   "val_n": 2000
+  },
+  {
+   "updates": 452,
+   "t": 67.8345396349905,
+   "train_loss": 0.7685703039169312,
+   "val_loss": 0.7629067764282227,
+   "val_acc": 0.7655,
+   "val_n": 2000
+  },
+  {
+   "updates": 904,
+   "t": 98.03303922200575,
+   "train_loss": 0.2541142702102661,
+   "val_loss": 0.7036136627197266,
+   "val_acc": 0.7935,
+   "val_n": 2000
+  },
+  {
+   "updates": 1356,
+   "t": 128.2331158599991,
+   "train_loss": 0.3999784588813782,
+   "val_loss": 0.7109863433837891,
+   "val_acc": 0.792,
+   "val_n": 2000
+  },
+  {
+   "updates": 1808,
+   "t": 158.4331267660018,
+   "train_loss": 0.268940269947052,
+   "val_loss": 0.7226986083984375,
+   "val_acc": 0.798,
+   "val_n": 2000
+  },
+  {
+   "updates": 2260,
+   "t": 188.63312366401078,
+   "train_loss": 0.26317062973976135,
+   "val_loss": 0.7497553253173828,
+   "val_acc": 0.78,
+   "val_n": 2000
+  },
+  {
+   "updates": 2712,
+   "t": 218.8331164830015,
+   "train_loss": 0.25234454870224,
+   "val_loss": 0.815529167175293,
+   "val_acc": 0.7675,
+   "val_n": 2000
+  },
+  {
+   "updates": 3164,
+   "t": 249.0330867510056,
+   "train_loss": 0.34629982709884644,
+   "val_loss": 0.8138647232055664,
+   "val_acc": 0.781,
+   "val_n": 2000
+  },
+  {
+   "updates": 3616,
+   "t": 279.23307330999523,
+   "train_loss": 0.2191120982170105,
+   "val_loss": 0.802816665649414,
+   "val_acc": 0.7835,
+   "val_n": 2000
+  },
+  {
+   "updates": 4068,
+   "t": 309.4332763669954,
+   "train_loss": 0.3275534510612488,
+   "val_loss": 0.861546730041504,
+   "val_acc": 0.7665,
+   "val_n": 2000
+  },
+  {
+   "updates": 4520,
+   "t": 339.63307956501376,
+   "train_loss": 0.3728887438774109,
+   "val_loss": 0.8518235244750977,
+   "val_acc": 0.7655,
+   "val_n": 2000
+  },
+  {
+   "updates": 4972,
+   "t": 369.83311848298763,
+   "train_loss": 0.2738202214241028,
+   "val_loss": 0.8405321350097656,
+   "val_acc": 0.769,
+   "val_n": 2000
+  },
+  {
+   "updates": 5424,
+   "t": 400.0331404120079,
+   "train_loss": 0.25890159606933594,
+   "val_loss": 0.8172343292236328,
+   "val_acc": 0.786,
+   "val_n": 2000
+  },
+  {
+   "updates": 5876,
+   "t": 430.2331022899889,
+   "train_loss": 0.21306689083576202,
+   "val_loss": 0.8711962280273438,
+   "val_acc": 0.769,
+   "val_n": 2000
+  },
+  {
+   "updates": 6328,
+   "t": 460.43317644801573,
+   "train_loss": 0.22277402877807617,
+   "val_loss": 0.8242526550292969,
+   "val_acc": 0.793,
+   "val_n": 2000
+  },
+  {
+   "updates": 6780,
+   "t": 490.633087219001,
+   "train_loss": 0.17931167781352997,
+   "val_loss": 0.7780077667236328,
+   "val_acc": 0.795,
+   "val_n": 2000
+  },
+  {
+   "updates": 7232,
+   "t": 520.8331068909902,
+   "train_loss": 0.12322486937046051,
+   "val_loss": 0.7811904830932617,
+   "val_acc": 0.794,
+   "val_n": 2000
+  },
+  {
+   "updates": 7684,
+   "t": 551.033104311995,
+   "train_loss": 0.06791176646947861,
+   "val_loss": 0.7361420822143555,
+   "val_acc": 0.8135,
+   "val_n": 2000
+  },
+  {
+   "updates": 8136,
+   "t": 581.2330789229891,
+   "train_loss": 0.03546607121825218,
+   "val_loss": 0.708186710357666,
+   "val_acc": 0.8265,
+   "val_n": 2000
+  },
+  {
+   "updates": 8588,
+   "t": 611.4331522540015,
+   "train_loss": 0.030352525413036346,
+   "val_loss": 0.7018146324157715,
+   "val_acc": 0.8255,
+   "val_n": 2000
+  },
+  {
+   "updates": 9040,
+   "t": 641.6331036459887,
+   "train_loss": 0.012116067111492157,
+   "val_loss": 0.6659504623413086,
+   "val_acc": 0.832,
+   "val_n": 2000
+  },
+  {
+   "updates": 9492,
+   "t": 671.8331514160091,
+   "train_loss": 0.013905415311455727,
+   "val_loss": 0.643082389831543,
+   "val_acc": 0.836,
+   "val_n": 2000
+  },
+  {
+   "updates": 9944,
+   "t": 702.0333411069878,
+   "train_loss": 0.015457008965313435,
+   "val_loss": 0.6646610336303711,
+   "val_acc": 0.8315,
+   "val_n": 2000
+  },
+  {
+   "updates": 10396,
+   "t": 732.2332345989998,
+   "train_loss": 0.013512274250388145,
+   "val_loss": 0.668507064819336,
+   "val_acc": 0.8345,
+   "val_n": 2000
+  },
+  {
+   "updates": 10848,
+   "t": 762.4332535100111,
+   "train_loss": 0.01039878185838461,
+   "val_loss": 0.6505617218017579,
+   "val_acc": 0.844,
+   "val_n": 2000
+  },
+  {
+   "updates": 11300,
+   "t": 792.6336685790156,
+   "train_loss": 0.013458277098834515,
+   "val_loss": 0.6628162384033203,
+   "val_acc": 0.831,
+   "val_n": 2000
+  },
+  {
+   "updates": 11304,
+   "t": 792.9277767679887,
+   "final": true,
+   "val_loss": 0.6451893638610839,
+   "val_acc": 0.8324,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "047a0fee608abe9b/sha=4e457917601a66ae/n=50000",
+  "test": "193be2aeaeb3c378/sha=4cb8e5d9309da489/n=10000"
+ },
+ "model_revision": "3d8d75d0812b65064f0151b456f869c6344bf20c",
+ "seed": 374677,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-100 cross-entropy (ImageNet-pretrained EfficientNet-B0)"
+}

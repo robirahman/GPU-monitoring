@@ -1,0 +1,23 @@
+{
+ "schema": 1,
+ "seed": 4390937826454204550,
+ "seed_source": "python secrets.randbits(63), generated once on 2026-10-22 and committed with this file before the feasibility results existed and before any draw was executed on the real pool",
+ "test_counts": {"training_capable": 3, "inference_only": 2, "other": 2},
+ "test_training_must_include_strata_any_of": [["llm_decoder"], ["vision", "seq2seq", "graph"]],
+ "test_training_min_distinct_strata": 2,
+ "partition_rules": [
+  "Lineages are atomic: every model variant, size, repetition, and training/inference use of a lineage goes to one partition.",
+  "Seen lineages (lineages.json 'seen') are development/calibration only.",
+  "Drawn lineages form the test partition; their three training-capable lineages are the attacked test lineages. Eligible lineages not drawn join development/calibration.",
+  "Every partition contains ordinary training, inference and non-ML work (test: guaranteed by test_counts; calibration: by the seen lineages).",
+  "A candidate is eligible only if its pre-draw feasibility check (feasibility.py) succeeds on amodo; failures are excluded with the recorded error, before the draw."
+ ],
+ "collection_rules_checked_when_scheduling": {
+  "benign_hours": {"calibration": 30, "test": 30},
+  "max_share_of_partition_benign_hours_per_lineage": 0.35,
+  "max_idle_share_of_partition_benign_hours": 0.10,
+  "calibration_includes_ordinary_training": true,
+  "separate_sessions_and_days_between_partitions": true
+ },
+ "redraw_rule": "Only an attempt that violates a constraint above is redrawn; every attempt and its violations are logged in draw_result.json. Constraints are never relaxed after a draw; if no valid draw exists the draw stops and the problem is reported."
+}

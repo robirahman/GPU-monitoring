@@ -1,0 +1,19 @@
+{
+ "logger": "h200_campaign/sensors.py bmc",
+ "interval_s": 0.5,
+ "sources": [
+  "ipmitool dcmi power reading (in-band KCS)",
+  "ipmitool sensor reading SYS_POWER"
+ ],
+ "note": "P = whole-node power; DCMI reports a 5 s sampling period",
+ "failures": {},
+ "ipmitool_mc_info": "Device ID                 : 32\nDevice Revision           : 1\nFirmware Revision         : 13.06\nIPMI Version              : 2.0\nManufacturer ID           : 15370\nManufacturer Name         : GIGA-BYTE TECHNOLOGY CO., LTD\nProduct ID                : 4214 (0x1076)\nProduct Name              : Unknown (0x1076)\nDevice Available          : yes\nProvides Device SDRs      : yes\nAdditional Device Support :\n    Sensor Device\n    SDR Repository Device\n    SEL Device\n    FRU Inventory Device\n    IPMB Event Receiver\n    IPMB Event Generator\n    Chassis Device\nAux Firmware Rev Info     : \n    0x19\n    0x00\n    0x00\n    0x00\n",
+ "note_sys_power": "SDR SYS_POWER takes ~1.6 s per query, so it is polled back-to-back in its own thread into {prefix}_bmcsys_*.parquet and never delays the DCMI loop",
+ "sys_rows": 2111,
+ "rows": 6382,
+ "elapsed_s": 3191.9822769910097,
+ "cpu_user_s": 91.10908699999999,
+ "cpu_sys_s": 51.714737,
+ "max_rss_mb": 118.84375,
+ "bytes_written": 585499
+}

@@ -1,0 +1,72 @@
+{
+ "family": "bert",
+ "mode": "ordinary",
+ "args": {
+  "family": "bert",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 90.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 1000000000.0,
+  "seed": 900358,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": 169480.700322,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_00_cal0/cal_seq_07_phi3_bert_8e5dfbf57af0/burst2_metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_00_cal0/cal_seq_07_phi3_bert_8e5dfbf57af0/events.jsonl"
+ },
+ "batch_size": 32,
+ "unit": "samples",
+ "updates": 5469,
+ "useful_units": 175008,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 90.07556735200342,
+ "useful_units_per_s": 1942.902000451375,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 0.6980764428409961,
+   "val_acc": 0.4782110091743119,
+   "val_n": 872
+  },
+  {
+   "updates": 5469,
+   "t": 90.00475914700655,
+   "final": true,
+   "val_loss": 0.24832317656880126,
+   "val_acc": 0.9254587155963303,
+   "val_n": 872
+  }
+ ],
+ "data_fingerprint": {
+  "train": "e0f6962d602757cb",
+  "validation": "0e2b00033b48693f"
+ },
+ "model_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+ "seed": 900358,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "SST-2 cross-entropy"
+}

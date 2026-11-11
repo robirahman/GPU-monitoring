@@ -1,0 +1,62 @@
+{
+ "run_id": "a3100829877e",
+ "job_id": "main_04_cal2-cal_seq_00_whisper_qwen",
+ "session_id": "main_04_cal2",
+ "partition": "calibration",
+ "label": "cal_seq_00_whisper_qwen",
+ "class_label": "mixed",
+ "family": "qwen+whisper",
+ "kind": "sequence",
+ "argv": [
+  "--serve-model",
+  "whisper",
+  "--serve-rate",
+  "1.0",
+  "--bursts",
+  "20@63.0",
+  "--burst-family",
+  "lora",
+  "--burst-args=--model Qwen/Qwen2.5-0.5B --dataset wikitext",
+  "--observe",
+  "180",
+  "--lead",
+  "36",
+  "--seed",
+  "884835"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "aee4885d2ebf513d972f3a5c4a3bb4460e7c43fe",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "attempt": 1,
+ "frozen_settings_sha256": "d0f44692120ae5a3a4257ce9a7b19911aadc631215a8809c8c2700bfb207d4a9",
+ "block": 2,
+ "day": null,
+ "collection_type": "burst_in_operation",
+ "attack": null,
+ "extra": null,
+ "started_wall_ns": 1792792814690632327,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 294.43604040303035,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792793152206869746,
+ "ok": true,
+ "bytes_on_disk": 668464352
+}

@@ -1,0 +1,133 @@
+{
+ "family": "bert",
+ "mode": "ordinary",
+ "args": {
+  "family": "bert",
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 300.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 0,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/pilot_s1/bert_sst2_ord_940172ce92be/metrics.json",
+  "events": "/home/tenant/campaign/sessions/pilot_s1/bert_sst2_ord_940172ce92be/events.jsonl"
+ },
+ "batch_size": 32,
+ "unit": "samples",
+ "updates": 18831,
+ "useful_units": 602592,
+ "forward_only_units": 0,
+ "wall_s_train_loop": 300.0793976839923,
+ "useful_units_per_s": 2008.1085361100925,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 0.718371472227464,
+   "val_acc": 0.4896788990825688,
+   "val_n": 872
+  },
+  {
+   "updates": 1756,
+   "t": 30.00438800099073,
+   "train_loss": 0.26589155197143555,
+   "val_loss": 0.2652502349757273,
+   "val_acc": 0.9048165137614679,
+   "val_n": 872
+  },
+  {
+   "updates": 3654,
+   "t": 60.094995042003575,
+   "train_loss": 0.12405276298522949,
+   "val_loss": 0.23490387392700265,
+   "val_acc": 0.9174311926605505,
+   "val_n": 872
+  },
+  {
+   "updates": 5555,
+   "t": 90.17192370600242,
+   "train_loss": 0.18510782718658447,
+   "val_loss": 0.2619755505968671,
+   "val_acc": 0.9174311926605505,
+   "val_n": 872
+  },
+  {
+   "updates": 7458,
+   "t": 120.25722658199084,
+   "train_loss": 0.1165708601474762,
+   "val_loss": 0.2735683857847791,
+   "val_acc": 0.9174311926605505,
+   "val_n": 872
+  },
+  {
+   "updates": 9362,
+   "t": 150.33840346700163,
+   "train_loss": 0.3729434311389923,
+   "val_loss": 0.2811380433380057,
+   "val_acc": 0.9151376146788991,
+   "val_n": 872
+  },
+  {
+   "updates": 11265,
+   "t": 180.41690073099744,
+   "train_loss": 0.05336412787437439,
+   "val_loss": 0.3117622984658687,
+   "val_acc": 0.9208715596330275,
+   "val_n": 872
+  },
+  {
+   "updates": 13168,
+   "t": 210.49677153499215,
+   "train_loss": 0.002981618046760559,
+   "val_loss": 0.3382035307927963,
+   "val_acc": 0.9185779816513762,
+   "val_n": 872
+  },
+  {
+   "updates": 15071,
+   "t": 240.57290526499855,
+   "train_loss": 0.0046237558126449585,
+   "val_loss": 0.3027464238875503,
+   "val_acc": 0.9174311926605505,
+   "val_n": 872
+  },
+  {
+   "updates": 16974,
+   "t": 270.6599530179956,
+   "train_loss": 0.25357258319854736,
+   "val_loss": 0.3464263264739185,
+   "val_acc": 0.9162844036697247,
+   "val_n": 872
+  },
+  {
+   "updates": 18831,
+   "t": 300.0083870279923,
+   "final": true,
+   "val_loss": 0.3997990002325915,
+   "val_acc": 0.9094036697247706,
+   "val_n": 872
+  }
+ ],
+ "data_fingerprint": {
+  "train": "e0f6962d602757cb",
+  "validation": "0e2b00033b48693f"
+ },
+ "model_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+ "seed": 0,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "SST-2 cross-entropy"
+}

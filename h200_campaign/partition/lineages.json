@@ -1,0 +1,79 @@
+{
+ "schema": 1,
+ "lineage_rule": "A lineage is one unit for partitioning. Models are the same lineage if one is a size variant, fine-tune, distillation or derivative of another, if they share pretrained weights (including a pretrained sub-network such as a text encoder or backbone), or if a model explicitly adopts another family's architecture and tokenizer (e.g. TinyLlama adopts Llama 2's). Training and inference uses of one lineage always go to the same partition. For non-ML work a lineage is an application family (e.g. all RAPIDS libraries are one unit).",
+ "seen_rule": "A lineage is SEEN if any file in this repository's data (any GPU, any campaign) carries a workload label of that lineage, because that data may be used to train or calibrate the detector. Seen lineages are development/calibration only.",
+ "inventory_source": "git ls-files of data/, week*/, logs/ at commit d8e68ac7 (excluding data/h200_followup), labels extracted from file names, cross-checked against workloads/registry*.py and workloads/*.py",
+ "seen": {
+  "ml_training_or_inference": {
+   "mlp": {"evidence_files": 9, "examples": ["pytorch_mlp_cifar10"]},
+   "resnet": {"evidence_files": 904, "examples": ["pytorch_resnet_cifar10", "resnet50_inference", "ddp_resnet50_cifar10"]},
+   "bert (incl. RoBERTa, DistilBERT, DeBERTa, ELECTRA, BERT-based embedders)": {"evidence_files": 164, "examples": ["bert_sst2", "bert_finetune"]},
+   "gpt2": {"evidence_files": 195, "examples": ["gpt2_wikitext2", "gpt2_finetune"]},
+   "qwen (all sizes)": {"evidence_files": 2215, "examples": ["llm_infer_qwen25_7b_fp16", "llm_train_qwen25_1p5b_lora", "infermem_qwen72b_u65"]},
+   "phi (Phi-3)": {"evidence_files": 134, "examples": ["llm_infer_phi3_mini", "llm_train_phi3_mini_lora"]},
+   "smollm": {"evidence_files": 86, "examples": ["llm_train_smollm2_1p7b_lora", "lora_finetune_smollm2_135m"]},
+   "llama (incl. TinyLlama)": {"evidence_files": 169, "examples": ["llm_infer_tinyllama", "llm_infer_tinyllama_bs1"]},
+   "mistral (incl. Mixtral)": {"evidence_files": 162, "examples": ["llm_infer_mistral_7b_q4", "llm_train_mistral_7b_lora", "llm_infer_mixtral_8x7b"]},
+   "vit": {"evidence_files": 141, "examples": ["infervis_vitl", "llm_infer_vit_l_bs64"]},
+   "whisper": {"evidence_files": 110, "examples": ["whisper_inference", "inferasr_whisper"]},
+   "stable diffusion (incl. SDXL)": {"evidence_files": 180, "examples": ["inferdiff_sdxl", "llm_infer_sdxl"]},
+   "clip": {"evidence_files": 137, "examples": ["inferembed_clip", "llm_infer_clip_embed_bs256"]},
+   "yolo": {"evidence_files": 6, "examples": ["yolo_train_coco128"]},
+   "dlrm": {"evidence_files": 144, "examples": ["inferrec_dlrm"]},
+   "contrastive training workload": {"evidence_files": 72, "examples": ["train_contrastive"]},
+   "ppo / rlhf": {"evidence_files": 88, "examples": ["ppo_rlhf_r32", "nic_s16_train_ppodist_r4"]}
+  },
+  "other": {
+   "fft / cuFFT (incl. sharded FFT)": {"evidence_files": 174, "examples": ["cufft_benchmark", "nic_s16_nonml_fftshard"]},
+   "n-body": {"evidence_files": 108, "examples": ["nbody_sim"]},
+   "path-tracing render proxy": {"evidence_files": 92, "examples": ["rendering_proxy"]},
+   "blender": {"evidence_files": 15, "examples": ["blender_bmw"]},
+   "gromacs": {"evidence_files": 64, "examples": ["nonml_gromacs"]},
+   "hpl / hpcg (NVIDIA HPC benchmarks)": {"evidence_files": 143, "examples": ["nonml_hpl", "nic_s16_nonml_hpc"]},
+   "distributed stencil": {"evidence_files": null, "examples": ["workloads/hpc_distributed.py --mode stencil"]},
+   "sparse kernels": {"evidence_files": 2, "examples": ["EC3_sparse"]},
+   "mining / hashing": {"evidence_files": 166, "examples": ["mining_ethash_proxy", "ethash_cuda"]},
+   "video encode (ffmpeg NVENC/AMF/VAAPI)": {"evidence_files": 23, "examples": ["ffmpeg_amf_h264"]},
+   "collective comm / high-memory fillers": {"evidence_files": 22, "examples": ["nic_s16_nonml_comm", "nic_s16_nonml_himem"]},
+   "idle": {"evidence_files": null, "examples": ["idle"]}
+  }
+ },
+ "candidates": {
+  "training_capable": {
+   "t5": {"stratum": "seq2seq", "models": ["google/flan-t5-base"], "train": "fine-tune on SAMSum dialogue summarisation", "infer": "summarisation serving"},
+   "swin": {"stratum": "vision", "models": ["microsoft/swin-tiny-patch4-window7-224"], "train": "fine-tune on CIFAR-100", "infer": "image classification serving"},
+   "efficientnet": {"stratum": "vision", "models": ["google/efficientnet-b0"], "train": "fine-tune on CIFAR-100", "infer": "image classification serving"},
+   "pythia": {"stratum": "llm_decoder", "models": ["EleutherAI/pythia-410m", "EleutherAI/pythia-1b"], "train": "LoRA / full fine-tune on TinyStories", "infer": "text generation serving"},
+   "olmo": {"stratum": "llm_decoder", "models": ["allenai/OLMo-2-0425-1B"], "train": "LoRA on TinyStories", "infer": "text generation serving"},
+   "falcon": {"stratum": "llm_decoder", "models": ["tiiuae/Falcon3-1B-Base"], "train": "LoRA on TinyStories", "infer": "text generation serving"},
+   "granite": {"stratum": "llm_decoder", "models": ["ibm-granite/granite-3.3-2b-base"], "train": "LoRA on TinyStories", "infer": "text generation serving"},
+   "mamba": {"stratum": "llm_decoder", "models": ["state-spaces/mamba-370m-hf"], "train": "fine-tune on TinyStories", "infer": "text generation serving"},
+   "gnn_gin": {"stratum": "graph", "models": ["GIN (PyTorch Geometric), trained from scratch"], "train": "graph classification on OGB molhiv", "infer": "batch graph scoring"}
+  },
+  "inference_only": {
+   "wav2vec2": {"models": ["facebook/wav2vec2-large-960h-lv60-self"], "infer": "CTC speech recognition on LibriSpeech"},
+   "dit": {"models": ["facebook/DiT-XL-2-256"], "infer": "class-conditional image generation (diffusers)"},
+   "bark": {"models": ["suno/bark-small"], "infer": "text-to-speech"}
+  },
+  "other": {
+   "openmm": {"app": "OpenMM molecular dynamics (CUDA platform)"},
+   "rapids": {"app": "RAPIDS cuDF dataframe analytics + cuGraph graph analytics"},
+   "qiskit_aer": {"app": "Qiskit Aer GPU state-vector quantum circuit simulation"},
+   "cupy_montecarlo": {"app": "CuPy Monte Carlo option pricing"}
+  }
+ },
+ "excluded_before_draw": {
+  "llama": "seen (TinyLlama) and gated: license acceptance not available on amodo",
+  "gemma": "gated: license acceptance and HF token not available on amodo at pre-registration time",
+  "convnext": "design explicitly derived from ResNet; ambiguous lineage, excluded conservatively",
+  "deit / beit": "ViT lineage (seen)",
+  "pixart / musicgen / speecht5": "contain pretrained T5 components; would tie to the t5 candidate",
+  "detr": "ResNet backbone (seen)",
+  "yolos": "ViT backbone (seen)",
+  "e5 / bge / gte embedders": "BERT lineage (seen)",
+  "kandinsky": "CLIP components (seen)",
+  "lattice-Boltzmann CFD": "stencil family (seen); ambiguous, excluded conservatively",
+  "video decode (NVDEC)": "ffmpeg video lineage (seen)",
+  "hashcat / password cracking": "hashing lineage (seen)"
+ }
+}

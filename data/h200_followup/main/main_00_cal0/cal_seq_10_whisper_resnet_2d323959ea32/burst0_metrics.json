@@ -1,0 +1,72 @@
+{
+ "family": "resnet",
+ "mode": "ordinary",
+ "args": {
+  "family": "resnet",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "constant",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 45.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 1000000000.0,
+  "seed": 255480,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": 154602.444371,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_00_cal0/cal_seq_10_whisper_resnet_2d323959ea32/burst0_metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_00_cal0/cal_seq_10_whisper_resnet_2d323959ea32/events.jsonl"
+ },
+ "batch_size": 256,
+ "unit": "samples",
+ "updates": 6370,
+ "useful_units": 1630720,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "constant",
+ "update_budget": null,
+ "wall_s_train_loop": 45.093129386979854,
+ "useful_units_per_s": 36163.38058965703,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 2.745754638671875,
+   "val_acc": 0.1,
+   "val_n": 10000
+  },
+  {
+   "updates": 6370,
+   "t": 45.02497287999722,
+   "final": true,
+   "val_loss": 0.6260491455078125,
+   "val_acc": 0.8207,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "dc9b490412f5c250/sha=c5b8e1d062f7373a/n=50000",
+  "test": "bab4620c7501a3e6/sha=f9b1e2130bab680d/n=10000"
+ },
+ "model_revision": "torchvision-resnet",
+ "seed": 255480,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-10 cross-entropy"
+}

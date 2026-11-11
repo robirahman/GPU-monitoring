@@ -1,0 +1,50 @@
+{
+ "run_id": "25f4212f75d0",
+ "job_id": "seq_smoke2-seq_whisper_resnet_burst20_at53",
+ "session_id": "seq_smoke2",
+ "partition": "pilot",
+ "label": "seq_whisper_resnet_burst20_at53",
+ "class_label": "mixed",
+ "family": "resnet+whisper",
+ "kind": "sequence",
+ "argv": [
+  "--serve-model",
+  "whisper",
+  "--serve-rate",
+  "1.0",
+  "--bursts",
+  "20@53",
+  "--burst-family",
+  "resnet",
+  "--observe",
+  "60"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "a969745e494e7e9283380b81c0de82d593e336e3",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "started_wall_ns": 1792609473060048894,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 145.34305037598824,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792609661289565970,
+ "ok": true,
+ "bytes_on_disk": 369715810
+}

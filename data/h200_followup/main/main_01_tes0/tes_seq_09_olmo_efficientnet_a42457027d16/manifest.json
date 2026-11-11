@@ -1,0 +1,62 @@
+{
+ "run_id": "a42457027d16",
+ "job_id": "main_01_tes0-tes_seq_09_olmo_efficientnet",
+ "session_id": "main_01_tes0",
+ "partition": "test",
+ "label": "tes_seq_09_olmo_efficientnet",
+ "class_label": "mixed",
+ "family": "efficientnet+olmo",
+ "kind": "sequence",
+ "argv": [
+  "--serve-model",
+  "olmo",
+  "--serve-rate",
+  "0.1",
+  "--bursts",
+  "90@87.0,20@240",
+  "--burst-family",
+  "effnet",
+  "--burst-args=--eval-images 2000",
+  "--observe",
+  "180",
+  "--lead",
+  "55",
+  "--seed",
+  "305062"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "aee4885d2ebf513d972f3a5c4a3bb4460e7c43fe",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "attempt": 1,
+ "frozen_settings_sha256": "d0f44692120ae5a3a4257ce9a7b19911aadc631215a8809c8c2700bfb207d4a9",
+ "block": 0,
+ "day": null,
+ "collection_type": "burst_in_operation",
+ "attack": null,
+ "extra": null,
+ "started_wall_ns": 1792679736152932827,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 517.8097382510023,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792680297117541807,
+ "ok": true,
+ "bytes_on_disk": 1118740612
+}

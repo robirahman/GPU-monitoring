@@ -1,0 +1,105 @@
+{
+ "seed": 293735711,
+ "order": [
+  "main_00_cal0.json",
+  "main_01_tes0.json",
+  "main_02_cal1.json",
+  "main_03_tes1.json",
+  "main_04_cal2.json",
+  "main_05_tes2.json",
+  "main_06_cal3.json",
+  "main_07_tes3.json",
+  "main_08_cal4.json",
+  "main_09_tes4.json"
+ ],
+ "benign": {
+  "calibration": {
+   "hours": 30.601081201711384,
+   "shares": {
+    "qiskit_aer": 0.09794838482487225,
+    "idle": 0.06880657391405506,
+    "render": 0.15413153702561933,
+    "phi3": 0.13561158661140946,
+    "cufft": 0.148363686037222,
+    "cupy_montecarlo": 0.14210590581884686,
+    "wav2vec2": 0.1407721309881746,
+    "whisper": 0.11513673434948288,
+    "nbody": 0.13911944469357373
+   },
+   "busy_lineage_hours": 32.840756290912665
+  },
+  "test": {
+   "hours": 30.475945443707428,
+   "shares": {
+    "openmm": 0.17326316239627007,
+    "idle": 0.08595121189210879,
+    "rapids": 0.2104956546860271,
+    "efficientnet": 0.1418321922084154,
+    "olmo": 0.1241532193462382,
+    "pythia": 0.1575440801034997,
+    "dit": 0.1160417709775431,
+    "bark": 0.17690732700191947
+   },
+   "busy_lineage_hours": 33.53077518232221
+  }
+ },
+ "run_counts": {
+  "calibration": {
+   "attack": 18,
+   "attack_cover_only_control": 6,
+   "attack_matched_ordinary": 6,
+   "burst_control_inference_only": 4,
+   "burst_in_operation": 12,
+   "long_normal_operation": 37,
+   "training_timing": 12
+  },
+  "test": {
+   "attack": 18,
+   "attack_cover_only_control": 6,
+   "attack_matched_ordinary": 6,
+   "burst_control_inference_only": 4,
+   "burst_in_operation": 12,
+   "long_normal_operation": 37,
+   "training_timing": 9
+  }
+ },
+ "estimated_hours": {
+  "calibration": 48.7,
+  "test": 48.1
+ },
+ "benign_schedule_attempts": [
+  {
+   "partition": "calibration",
+   "attempt": 0,
+   "hours": 30.601081201711384,
+   "shares": {
+    "qiskit_aer": 0.09794838482487225,
+    "idle": 0.06880657391405506,
+    "render": 0.15413153702561933,
+    "phi3": 0.13561158661140946,
+    "cufft": 0.148363686037222,
+    "cupy_montecarlo": 0.14210590581884686,
+    "wav2vec2": 0.1407721309881746,
+    "whisper": 0.11513673434948288,
+    "nbody": 0.13911944469357373
+   },
+   "violations": []
+  },
+  {
+   "partition": "test",
+   "attempt": 0,
+   "hours": 30.475945443707428,
+   "shares": {
+    "openmm": 0.17326316239627007,
+    "idle": 0.08595121189210879,
+    "rapids": 0.2104956546860271,
+    "efficientnet": 0.1418321922084154,
+    "olmo": 0.1241532193462382,
+    "pythia": 0.1575440801034997,
+    "dit": 0.1160417709775431,
+    "bark": 0.17690732700191947
+   },
+   "violations": []
+  }
+ ]
+}

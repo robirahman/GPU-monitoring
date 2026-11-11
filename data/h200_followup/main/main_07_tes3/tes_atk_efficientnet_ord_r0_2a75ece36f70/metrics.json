@@ -1,0 +1,272 @@
+{
+ "family": "effnet",
+ "mode": "ordinary",
+ "args": {
+  "family": "effnet",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": 2000,
+  "lr_schedule": "cosine",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 11304,
+  "duration": 720.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 452,
+  "eval_every_sec": 1000000000.0,
+  "seed": 415228,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_07_tes3/tes_atk_efficientnet_ord_r0_2a75ece36f70/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_07_tes3/tes_atk_efficientnet_ord_r0_2a75ece36f70/events.jsonl"
+ },
+ "batch_size": 128,
+ "unit": "samples",
+ "updates": 11304,
+ "useful_units": 1446912,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "cosine",
+ "update_budget": 11304,
+ "wall_s_train_loop": 400.9107081320253,
+ "useful_units_per_s": 3609.062992459439,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 4.6337735595703125,
+   "val_acc": 0.01,
+   "val_n": 2000
+  },
+  {
+   "updates": 452,
+   "t": 52.117046119004954,
+   "train_loss": 0.5031251907348633,
+   "val_loss": 0.8068867950439453,
+   "val_acc": 0.76,
+   "val_n": 2000
+  },
+  {
+   "updates": 904,
+   "t": 66.63605571503285,
+   "train_loss": 0.3215143084526062,
+   "val_loss": 0.7246040496826172,
+   "val_acc": 0.7845,
+   "val_n": 2000
+  },
+  {
+   "updates": 1356,
+   "t": 81.13196704699658,
+   "train_loss": 0.2944648265838623,
+   "val_loss": 0.7316935348510742,
+   "val_acc": 0.799,
+   "val_n": 2000
+  },
+  {
+   "updates": 1808,
+   "t": 95.6270351150306,
+   "train_loss": 0.4193592071533203,
+   "val_loss": 0.7379318466186523,
+   "val_acc": 0.7875,
+   "val_n": 2000
+  },
+  {
+   "updates": 2260,
+   "t": 110.12047452200204,
+   "train_loss": 0.3328973650932312,
+   "val_loss": 0.7766240921020507,
+   "val_acc": 0.7815,
+   "val_n": 2000
+  },
+  {
+   "updates": 2712,
+   "t": 124.61617826501606,
+   "train_loss": 0.24646127223968506,
+   "val_loss": 0.7942621841430664,
+   "val_acc": 0.7935,
+   "val_n": 2000
+  },
+  {
+   "updates": 3164,
+   "t": 139.11183554900344,
+   "train_loss": 0.26998716592788696,
+   "val_loss": 0.7942236938476562,
+   "val_acc": 0.785,
+   "val_n": 2000
+  },
+  {
+   "updates": 3616,
+   "t": 153.60671334702056,
+   "train_loss": 0.2863004803657532,
+   "val_loss": 0.8305953826904297,
+   "val_acc": 0.778,
+   "val_n": 2000
+  },
+  {
+   "updates": 4068,
+   "t": 168.10059610102326,
+   "train_loss": 0.3802664875984192,
+   "val_loss": 0.8144192428588867,
+   "val_acc": 0.7755,
+   "val_n": 2000
+  },
+  {
+   "updates": 4520,
+   "t": 182.59419797704322,
+   "train_loss": 0.26990342140197754,
+   "val_loss": 0.8131298446655273,
+   "val_acc": 0.7765,
+   "val_n": 2000
+  },
+  {
+   "updates": 4972,
+   "t": 197.0875572040095,
+   "train_loss": 0.18119670450687408,
+   "val_loss": 0.8519390487670898,
+   "val_acc": 0.7785,
+   "val_n": 2000
+  },
+  {
+   "updates": 5424,
+   "t": 211.5820887540467,
+   "train_loss": 0.27960675954818726,
+   "val_loss": 0.8385026397705078,
+   "val_acc": 0.7805,
+   "val_n": 2000
+  },
+  {
+   "updates": 5876,
+   "t": 226.07690827304032,
+   "train_loss": 0.22508560121059418,
+   "val_loss": 0.8219716796875,
+   "val_acc": 0.779,
+   "val_n": 2000
+  },
+  {
+   "updates": 6328,
+   "t": 240.57017276104307,
+   "train_loss": 0.11689455807209015,
+   "val_loss": 0.8039664077758789,
+   "val_acc": 0.7895,
+   "val_n": 2000
+  },
+  {
+   "updates": 6780,
+   "t": 255.06401099503273,
+   "train_loss": 0.18660008907318115,
+   "val_loss": 0.7685285110473633,
+   "val_acc": 0.803,
+   "val_n": 2000
+  },
+  {
+   "updates": 7232,
+   "t": 269.5584477560478,
+   "train_loss": 0.07081415504217148,
+   "val_loss": 0.7720372848510743,
+   "val_acc": 0.7945,
+   "val_n": 2000
+  },
+  {
+   "updates": 7684,
+   "t": 284.0513715260313,
+   "train_loss": 0.04074745997786522,
+   "val_loss": 0.7268279647827148,
+   "val_acc": 0.8115,
+   "val_n": 2000
+  },
+  {
+   "updates": 8136,
+   "t": 298.5447915230179,
+   "train_loss": 0.04727775976061821,
+   "val_loss": 0.7075761184692383,
+   "val_acc": 0.8225,
+   "val_n": 2000
+  },
+  {
+   "updates": 8588,
+   "t": 313.04386485699797,
+   "train_loss": 0.013512694276869297,
+   "val_loss": 0.6610961303710937,
+   "val_acc": 0.831,
+   "val_n": 2000
+  },
+  {
+   "updates": 9040,
+   "t": 327.5427794410498,
+   "train_loss": 0.012249461375176907,
+   "val_loss": 0.6840917892456054,
+   "val_acc": 0.831,
+   "val_n": 2000
+  },
+  {
+   "updates": 9492,
+   "t": 342.04249433102086,
+   "train_loss": 0.016151592135429382,
+   "val_loss": 0.6772330474853515,
+   "val_acc": 0.8335,
+   "val_n": 2000
+  },
+  {
+   "updates": 9944,
+   "t": 356.54293483600486,
+   "train_loss": 0.02508975751698017,
+   "val_loss": 0.667379051208496,
+   "val_acc": 0.8305,
+   "val_n": 2000
+  },
+  {
+   "updates": 10396,
+   "t": 371.04174353100825,
+   "train_loss": 0.015088379383087158,
+   "val_loss": 0.6635794677734375,
+   "val_acc": 0.8355,
+   "val_n": 2000
+  },
+  {
+   "updates": 10848,
+   "t": 385.5414812300005,
+   "train_loss": 0.014866984449326992,
+   "val_loss": 0.6572524681091308,
+   "val_acc": 0.838,
+   "val_n": 2000
+  },
+  {
+   "updates": 11300,
+   "t": 400.0416094380198,
+   "train_loss": 0.011973745189607143,
+   "val_loss": 0.6670027618408203,
+   "val_acc": 0.831,
+   "val_n": 2000
+  },
+  {
+   "updates": 11304,
+   "t": 400.31018256000243,
+   "final": true,
+   "val_loss": 0.6541720184326172,
+   "val_acc": 0.8335,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "047a0fee608abe9b/sha=4e457917601a66ae/n=50000",
+  "test": "193be2aeaeb3c378/sha=4cb8e5d9309da489/n=10000"
+ },
+ "model_revision": "3d8d75d0812b65064f0151b456f869c6344bf20c",
+ "seed": 415228,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-100 cross-entropy (ImageNet-pretrained EfficientNet-B0)"
+}

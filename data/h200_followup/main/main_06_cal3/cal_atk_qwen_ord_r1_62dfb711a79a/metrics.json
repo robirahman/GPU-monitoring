@@ -1,0 +1,273 @@
+{
+ "family": "lora",
+ "mode": "ordinary",
+ "args": {
+  "family": "lora",
+  "dataset": "wikitext",
+  "eval_tokens": 65536,
+  "eval_images": null,
+  "lr_schedule": "cosine",
+  "warmup_frac": 0.03,
+  "ckpt_every_sec": 0.0,
+  "ckpt_dir": null,
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 2613,
+  "duration": 719.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 104,
+  "eval_every_sec": 1000000000.0,
+  "seed": 37400,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "start_at_mono": null,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/main_06_cal3/cal_atk_qwen_ord_r1_62dfb711a79a/metrics.json",
+  "events": "/home/tenant/campaign/sessions/main_06_cal3/cal_atk_qwen_ord_r1_62dfb711a79a/events.jsonl"
+ },
+ "batch_size": 8,
+ "unit": "tokens",
+ "updates": 2613,
+ "useful_units": 10702848,
+ "forward_only_units": 0,
+ "ckpt_bytes": 0,
+ "lr_schedule": "cosine",
+ "update_budget": 2613,
+ "wall_s_train_loop": 376.5341660049744,
+ "useful_units_per_s": 28424.63969088692,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 3.0446191132068634,
+   "val_ppl": 21.002030283289976,
+   "val_n": 65536
+  },
+  {
+   "updates": 104,
+   "t": 15.311714501993265,
+   "train_loss": 2.782013416290283,
+   "val_loss": 2.4381620958447456,
+   "val_ppl": 11.451973759018923,
+   "val_n": 65536
+  },
+  {
+   "updates": 208,
+   "t": 30.191692513995804,
+   "train_loss": 2.6539721488952637,
+   "val_loss": 2.418768063187599,
+   "val_ppl": 11.232013657043646,
+   "val_n": 65536
+  },
+  {
+   "updates": 312,
+   "t": 45.055376943026204,
+   "train_loss": 2.3886423110961914,
+   "val_loss": 2.415353886783123,
+   "val_ppl": 11.193730970151316,
+   "val_n": 65536
+  },
+  {
+   "updates": 416,
+   "t": 60.101159892976284,
+   "train_loss": 2.6141326427459717,
+   "val_loss": 2.4130486249923706,
+   "val_ppl": 11.1679562100491,
+   "val_n": 65536
+  },
+  {
+   "updates": 520,
+   "t": 74.97767819801811,
+   "train_loss": 2.6060097217559814,
+   "val_loss": 2.4152758046984673,
+   "val_ppl": 11.19285697442424,
+   "val_n": 65536
+  },
+  {
+   "updates": 624,
+   "t": 89.85693883697968,
+   "train_loss": 2.4550976753234863,
+   "val_loss": 2.420130304992199,
+   "val_ppl": 11.24732480197021,
+   "val_n": 65536
+  },
+  {
+   "updates": 728,
+   "t": 104.73698358098045,
+   "train_loss": 2.48301100730896,
+   "val_loss": 2.42337766289711,
+   "val_ppl": 11.283908258714991,
+   "val_n": 65536
+  },
+  {
+   "updates": 832,
+   "t": 119.79735935496865,
+   "train_loss": 2.3025174140930176,
+   "val_loss": 2.4286802411079407,
+   "val_ppl": 11.343900982265456,
+   "val_n": 65536
+  },
+  {
+   "updates": 936,
+   "t": 134.67348287202185,
+   "train_loss": 2.4104764461517334,
+   "val_loss": 2.437266558408737,
+   "val_ppl": 11.441722678599776,
+   "val_n": 65536
+  },
+  {
+   "updates": 1040,
+   "t": 149.55240987299476,
+   "train_loss": 2.1895055770874023,
+   "val_loss": 2.43832066655159,
+   "val_ppl": 11.45378985057831,
+   "val_n": 65536
+  },
+  {
+   "updates": 1144,
+   "t": 164.43181747099152,
+   "train_loss": 2.107558012008667,
+   "val_loss": 2.4484885036945343,
+   "val_ppl": 11.570844206794481,
+   "val_n": 65536
+  },
+  {
+   "updates": 1248,
+   "t": 179.49486359901493,
+   "train_loss": 2.2348079681396484,
+   "val_loss": 2.4525256156921387,
+   "val_ppl": 11.617651420172448,
+   "val_n": 65536
+  },
+  {
+   "updates": 1352,
+   "t": 194.37029559898656,
+   "train_loss": 2.422091007232666,
+   "val_loss": 2.454502895474434,
+   "val_ppl": 11.640645492809242,
+   "val_n": 65536
+  },
+  {
+   "updates": 1456,
+   "t": 209.24753530998714,
+   "train_loss": 2.171954870223999,
+   "val_loss": 2.4660198763012886,
+   "val_ppl": 11.775485568607436,
+   "val_n": 65536
+  },
+  {
+   "updates": 1560,
+   "t": 224.1264058210072,
+   "train_loss": 2.126903772354126,
+   "val_loss": 2.473818100988865,
+   "val_ppl": 11.86767243063423,
+   "val_n": 65536
+  },
+  {
+   "updates": 1664,
+   "t": 239.2009737730259,
+   "train_loss": 1.9702000617980957,
+   "val_loss": 2.478941075503826,
+   "val_ppl": 11.928626213075022,
+   "val_n": 65536
+  },
+  {
+   "updates": 1768,
+   "t": 254.07630142499693,
+   "train_loss": 2.414876937866211,
+   "val_loss": 2.4809567630290985,
+   "val_ppl": 11.952694845398087,
+   "val_n": 65536
+  },
+  {
+   "updates": 1872,
+   "t": 268.9569713649689,
+   "train_loss": 2.1421008110046387,
+   "val_loss": 2.4837696701288223,
+   "val_ppl": 11.986363997487572,
+   "val_n": 65536
+  },
+  {
+   "updates": 1976,
+   "t": 283.8385942099849,
+   "train_loss": 2.3394358158111572,
+   "val_loss": 2.4842464402318,
+   "val_ppl": 11.992080100010101,
+   "val_n": 65536
+  },
+  {
+   "updates": 2080,
+   "t": 298.7197428140207,
+   "train_loss": 1.9650957584381104,
+   "val_loss": 2.4872485026717186,
+   "val_ppl": 12.02813516595597,
+   "val_n": 65536
+  },
+  {
+   "updates": 2184,
+   "t": 313.78364880301524,
+   "train_loss": 2.147881507873535,
+   "val_loss": 2.489978313446045,
+   "val_ppl": 12.061014555765594,
+   "val_n": 65536
+  },
+  {
+   "updates": 2288,
+   "t": 328.66314175201114,
+   "train_loss": 2.378669500350952,
+   "val_loss": 2.489703491330147,
+   "val_ppl": 12.057700377651079,
+   "val_n": 65536
+  },
+  {
+   "updates": 2392,
+   "t": 343.5420163240051,
+   "train_loss": 1.9667361974716187,
+   "val_loss": 2.489197202026844,
+   "val_ppl": 12.051597238034965,
+   "val_n": 65536
+  },
+  {
+   "updates": 2496,
+   "t": 358.418578717974,
+   "train_loss": 2.314420700073242,
+   "val_loss": 2.4897088557481766,
+   "val_ppl": 12.057765060369876,
+   "val_n": 65536
+  },
+  {
+   "updates": 2600,
+   "t": 373.497848487983,
+   "train_loss": 2.1939737796783447,
+   "val_loss": 2.4899279698729515,
+   "val_ppl": 12.06040737648164,
+   "val_n": 65536
+  },
+  {
+   "updates": 2613,
+   "t": 375.9138338579796,
+   "final": true,
+   "val_loss": 2.4896079376339912,
+   "val_ppl": 12.056548274857576,
+   "val_n": 65536
+  }
+ ],
+ "data_fingerprint": {
+  "train": "5d4fb603254a7a5b/tokens=2564764",
+  "validation": "51d84d52d095f90d/tokens=267130",
+  "dataset": "wikitext"
+ },
+ "model_revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+ "seed": 37400,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "wikitext causal LM cross-entropy"
+}

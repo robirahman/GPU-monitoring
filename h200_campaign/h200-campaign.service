@@ -1,0 +1,17 @@
+[Unit]
+Description=H200 follow-up collection campaign driver
+After=network-online.target nvidia-dcgm.service
+Wants=nvidia-dcgm.service
+
+[Service]
+Type=simple
+User=tenant
+WorkingDirectory=/home/tenant/gpu-monitoring
+Environment=HOME=/home/tenant
+ExecStart=/bin/bash /home/tenant/gpu-monitoring/h200_campaign/campaign_driver.sh /home/tenant/gpu-monitoring/h200_campaign/plans_main
+Restart=on-failure
+RestartSec=120
+# a clean stop (touch ~/campaign/STOP) exits 0 and is not restarted
+
+[Install]
+WantedBy=multi-user.target

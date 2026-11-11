@@ -1,0 +1,101 @@
+{
+ "family": "mlp",
+ "mode": "ordinary",
+ "args": {
+  "family": "mlp",
+  "model": "Qwen/Qwen2.5-0.5B",
+  "mode": "ordinary",
+  "updates": 1000000000,
+  "duration": 180.0,
+  "batch_size": null,
+  "seq_len": 512,
+  "eval_every": 1000000000,
+  "eval_every_sec": 30.0,
+  "seed": 0,
+  "dilution": 5,
+  "train_sec": 5.0,
+  "other_sec": 15.0,
+  "other": "fft",
+  "duty": 0.3,
+  "period_ms": 200.0,
+  "power_cap": 0,
+  "warmup_updates": 5,
+  "gpu_marks": 1,
+  "metrics": "/home/tenant/campaign/sessions/pilot_s1/mlp_cifar10_ord_b2eb8cef79f0/metrics.json",
+  "events": "/home/tenant/campaign/sessions/pilot_s1/mlp_cifar10_ord_b2eb8cef79f0/events.jsonl"
+ },
+ "batch_size": 512,
+ "unit": "samples",
+ "updates": 204229,
+ "useful_units": 104565248,
+ "forward_only_units": 0,
+ "wall_s_train_loop": 180.0030720789946,
+ "useful_units_per_s": 580908.1300240887,
+ "evals": [
+  {
+   "updates": 0,
+   "t": 0.0,
+   "val_loss": 2.302099755859375,
+   "val_acc": 0.0944,
+   "val_n": 10000
+  },
+  {
+   "updates": 32968,
+   "t": 30.000629656002275,
+   "train_loss": 0.14355263113975525,
+   "val_loss": 2.6861038330078126,
+   "val_acc": 0.5297,
+   "val_n": 10000
+  },
+  {
+   "updates": 66853,
+   "t": 60.00341533799656,
+   "train_loss": 0.05123583972454071,
+   "val_loss": 2.7805303955078124,
+   "val_acc": 0.5493,
+   "val_n": 10000
+  },
+  {
+   "updates": 101183,
+   "t": 90.00674587499816,
+   "train_loss": 0.07181467115879059,
+   "val_loss": 2.6911887939453125,
+   "val_acc": 0.5402,
+   "val_n": 10000
+  },
+  {
+   "updates": 135561,
+   "t": 120.00957932599704,
+   "train_loss": 0.08709323406219482,
+   "val_loss": 2.6680395751953125,
+   "val_acc": 0.5527,
+   "val_n": 10000
+  },
+  {
+   "updates": 169885,
+   "t": 150.01281925498915,
+   "train_loss": 0.053195927292108536,
+   "val_loss": 2.7587969970703123,
+   "val_acc": 0.5456,
+   "val_n": 10000
+  },
+  {
+   "updates": 204229,
+   "t": 180.00064356699295,
+   "final": true,
+   "val_loss": 2.683966748046875,
+   "val_acc": 0.5492,
+   "val_n": 10000
+  }
+ ],
+ "data_fingerprint": {
+  "train": "dc9b490412f5c250/sha=c5b8e1d062f7373a/n=50000",
+  "test": "bab4620c7501a3e6/sha=f9b1e2130bab680d/n=10000"
+ },
+ "model_revision": "torchvision-mlp",
+ "seed": 0,
+ "torch": "2.11.0+cu128",
+ "cuda": "12.8",
+ "python": "3.12.15",
+ "objective": "CIFAR-10 cross-entropy"
+}

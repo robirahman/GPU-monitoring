@@ -1,0 +1,17 @@
+[Unit]
+Description=Upload H200 follow-up campaign data to Google Drive (rclone)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tenant
+Environment=HOME=/home/tenant
+WorkingDirectory=/home/tenant/campaign
+ExecStart=/bin/bash /home/tenant/campaign/upload_to_drive.sh
+# resumable: a restart skips files already on Drive
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target

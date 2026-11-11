@@ -1,0 +1,59 @@
+{
+ "run_id": "53d334162f45",
+ "job_id": "main_04_cal2-cal_t1_qwen_short1",
+ "session_id": "main_04_cal2",
+ "partition": "calibration",
+ "label": "cal_t1_qwen_short1",
+ "class_label": "ml_training",
+ "family": "qwen",
+ "kind": "train",
+ "argv": [
+  "--family",
+  "lora",
+  "--model",
+  "Qwen/Qwen2.5-0.5B",
+  "--dataset",
+  "wikitext",
+  "--duration",
+  "90",
+  "--seed",
+  "453797",
+  "--eval-every-sec",
+  "30"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "none",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "aee4885d2ebf513d972f3a5c4a3bb4460e7c43fe",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "attempt": 1,
+ "frozen_settings_sha256": "d0f44692120ae5a3a4257ce9a7b19911aadc631215a8809c8c2700bfb207d4a9",
+ "block": 2,
+ "day": null,
+ "collection_type": "training_timing",
+ "attack": null,
+ "extra": null,
+ "started_wall_ns": 1792790827917270276,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 112.56865718204062,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792790983565111393,
+ "ok": true,
+ "bytes_on_disk": 302969592
+}

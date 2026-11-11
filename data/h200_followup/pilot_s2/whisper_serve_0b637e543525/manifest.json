@@ -1,0 +1,46 @@
+{
+ "run_id": "0b637e543525",
+ "job_id": "pilot_s2-whisper_serve",
+ "session_id": "pilot_s2",
+ "partition": "pilot",
+ "label": "whisper_serve",
+ "class_label": "ml_inference",
+ "family": "whisper",
+ "kind": "serve",
+ "argv": [
+  "--model",
+  "whisper",
+  "--schedule",
+  "60:1,30:0,60:3",
+  "--seed",
+  "0"
+ ],
+ "sensors_on": true,
+ "sensor_cfg": {
+  "scope_range": "V10",
+  "scope_raw": "all",
+  "scope_hires": "every:60:1:20",
+  "dcgm": true
+ },
+ "git": {
+  "commit": "a969745e494e7e9283380b81c0de82d593e336e3",
+  "branch": "h200-followup-collection",
+  "dirty_files": []
+ },
+ "host": "amodo-gigabyte-6",
+ "started_wall_ns": 1792610683898080781,
+ "marker_start_rc": 0,
+ "workload_rc": 0,
+ "workload_wall_s": 162.09628928199527,
+ "marker_end_rc": 0,
+ "sensor_rc": {
+  "scope": 0,
+  "nvml": 0,
+  "bmc": 0,
+  "dcgm": 0
+ },
+ "validate_rc": 0,
+ "ended_wall_ns": 1792610889073222397,
+ "ok": true,
+ "bytes_on_disk": 519320093
+}
